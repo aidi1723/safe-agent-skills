@@ -11,6 +11,7 @@ The catalog is ready for public maintenance when:
 - normal selection excludes quarantined and review-required skills
 - `task-pack` can emit a trusted-skill instruction pack for a representative
   task
+- scenario bundles reference only existing `trusted` skills
 
 Current baseline:
 
@@ -57,6 +58,7 @@ Confirm:
 - each category has at least 3 trusted skills
 - task-pack output contains only trusted skills unless review mode is explicitly
   requested
+- every bundle in `bundles/index.json` references existing trusted skills
 - batch docs exist for new entries
 
 ## Contribution Standard

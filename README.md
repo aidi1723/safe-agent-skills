@@ -156,6 +156,10 @@ its planning context. The pack provides method, verifier expectations, and
 provenance. It does not grant filesystem, network, connector, shell, or
 production permissions; those remain controlled by the host runtime.
 
+Scenario bundles in `bundles/` combine multiple trusted skills for common
+workflows such as website launch, code review hardening, document-to-knowledge
+base, data analysis, open source release, and commerce listing growth.
+
 The first MVP can also be exposed through OneCode:
 
 ```bash
@@ -172,6 +176,7 @@ onecode skills approve pdf
 - [Architecture](docs/architecture.md)
 - [Skill Taxonomy](docs/skill-taxonomy.md)
 - [Skill Index](docs/skill-index.md)
+- [Skill Bundles](docs/skill-bundles.md)
 - [Sanitization Policy](docs/sanitization-policy.md)
 - [MVP Roadmap](docs/mvp-roadmap.md)
 - [Implementation Plan](docs/implementation-plan.md)

@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "bundle_count": 8,
+  "bundles": [
+    {
+      "id": "website-build-launch",
+      "name": "Website Build Launch",
+      "scenario": "Build or polish a website, landing page, dashboard, or product page and prepare it for release.",
+      "status": "trusted",
+      "skills": [
+        "business-requirements-brief",
+        "engineering-build-release",
+        "design-ui-review",
+        "design-system-consistency",
+        "content-seo-brief",
+        "content-social-post",
+        "execution-browser-check",
+        "execution-publish-check"
+      ],
+      "expected_output": [
+        "requirements and acceptance criteria",
+        "build readiness notes",
+        "UI and responsive review",
+        "page copy and SEO notes",
+        "browser verification evidence",
+        "publish readiness checklist"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "code-review-hardening",
+      "name": "Code Review Hardening",
+      "scenario": "Review generated code, pull requests, bug fixes, or automation changes before acceptance.",
+      "status": "trusted",
+      "skills": [
+        "code-review-risk",
+        "code-test-regression",
+        "ai-pydantic-schema-contract",
+        "ai-output-schema-eval",
+        "security-supply-chain-review",
+        "engineering-ci-troubleshoot"
+      ],
+      "expected_output": [
+        "findings ordered by severity",
+        "missing test notes",
+        "schema or contract risks",
+        "dependency and supply-chain risks",
+        "verification commands and results"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "security-agent-guardrails",
+      "name": "Security Agent Guardrails",
+      "scenario": "Review an AI agent, connector, prompt, or workflow for safety boundaries.",
+      "status": "trusted",
+      "skills": [
+        "security-prompt-injection-review",
+        "security-guardrails-output-validation",
+        "security-llm-guard-io-scanning",
+        "ai-outlines-structured-generation",
+        "security-supply-chain-review",
+        "compliance-privacy-check"
+      ],
+      "expected_output": [
+        "prompt-injection findings",
+        "input and output scanning boundaries",
+        "validation contract",
+        "supply-chain notes",
+        "privacy and escalation notes"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "document-to-knowledge-base",
+      "name": "Document To Knowledge Base",
+      "scenario": "Turn PDFs, office files, or mixed documents into Markdown, retrieval-ready chunks, summaries, or knowledge-base entries.",
+      "status": "trusted",
+      "skills": [
+        "office-pdf-report",
+        "data-markitdown-file-to-markdown",
+        "data-marker-pdf-markdown-review",
+        "data-unstructured-document-partition",
+        "research-source-check",
+        "office-docx-brief"
+      ],
+      "expected_output": [
+        "source file inventory",
+        "extracted Markdown paths or notes",
+        "conversion quality review",
+        "chunking and metadata plan",
+        "source-backed summary",
+        "extraction uncertainty list"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "data-analysis-report",
+      "name": "Data Analysis Report",
+      "scenario": "Clean a dataset, analyze tables, plan charts, and prepare a business or research report.",
+      "status": "trusted",
+      "skills": [
+        "data-quality-audit",
+        "data-table-analysis",
+        "data-visualization-plan",
+        "office-spreadsheet-cleanup",
+        "research-source-check",
+        "office-docx-brief"
+      ],
+      "expected_output": [
+        "data quality findings",
+        "analysis summary",
+        "chart and dashboard plan",
+        "spreadsheet cleanup notes",
+        "source and assumption notes",
+        "final report outline"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "open-source-release",
+      "name": "Open Source Release",
+      "scenario": "Prepare a repository, package, catalog, or public artifact for open source publication.",
+      "status": "trusted",
+      "skills": [
+        "execution-publish-check",
+        "security-supply-chain-review",
+        "compliance-terms-review",
+        "content-editorial-review",
+        "content-social-post",
+        "research-source-check"
+      ],
+      "expected_output": [
+        "release readiness checklist",
+        "source and license review",
+        "public docs review",
+        "social launch copy",
+        "blockers and residual risks"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "content-seo-publication",
+      "name": "Content SEO Publication",
+      "scenario": "Draft, fact-check, optimize, and publish public content.",
+      "status": "trusted",
+      "skills": [
+        "content-seo-brief",
+        "content-editorial-review",
+        "content-prompt-engineering-patterns",
+        "research-source-check",
+        "content-social-post"
+      ],
+      "expected_output": [
+        "audience and search intent",
+        "article or page outline",
+        "source-backed claims",
+        "edited copy",
+        "social distribution copy"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "commerce-listing-growth",
+      "name": "Commerce Listing Growth",
+      "scenario": "Prepare marketplace listings, search keywords, inquiry replies, and trade communication.",
+      "status": "trusted",
+      "skills": [
+        "commerce-icbu-listing",
+        "commerce-product-keyword-plan",
+        "commerce-inquiry-reply",
+        "content-editorial-review",
+        "business-requirements-brief"
+      ],
+      "expected_output": [
+        "product listing structure",
+        "keyword plan",
+        "buyer-facing copy",
+        "inquiry response templates",
+        "assumptions and next actions"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    }
+  ]
+}
