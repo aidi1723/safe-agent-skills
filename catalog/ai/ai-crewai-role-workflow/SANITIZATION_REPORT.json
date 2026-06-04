@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T10:12:12Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "0d5ca0a126c1e826511693e1cc88e65ecdb0faedd200a6c318e662de49c1d074",
+    "source_sha256": "68264b25a2d555f409fe552508028247b79805e7f3ea1efc89b26f2dc49ab48d"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-crewai-role-workflow",
+  "source": {
+    "author": "crewAIInc",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-007-community-agent-workflows/ai-crewai-role-workflow",
+    "reference": "Community project reference: CrewAI, role-playing autonomous AI agents",
+    "type": "github_reference",
+    "url": "https://github.com/crewAIInc/crewAI"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.role_workflow",
+    "task_intent": "design role-based collaborative agent workflows"
+  }
+}

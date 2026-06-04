@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.multi_agent",
+    "task_intent": "review multi-agent collaboration roles and handoffs",
+    "artifact_type": "workflow",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/microsoft/autogen",
+    "author": "Microsoft",
+    "license": "CC-BY-4.0",
+    "reference": "Community project reference: AutoGen, programming framework for agentic AI",
+    "collected_by": "onecode-community-review"
+  }
+}

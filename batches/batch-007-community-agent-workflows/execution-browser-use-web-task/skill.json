@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "execution",
+    "subcategory": "execution.browser_agent",
+    "task_intent": "plan safe browser-based agent workflows",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/browser-use/browser-use",
+    "author": "browser-use",
+    "license": "MIT",
+    "reference": "Community project reference: browser-use, making websites accessible for AI agents",
+    "collected_by": "onecode-community-review"
+  }
+}

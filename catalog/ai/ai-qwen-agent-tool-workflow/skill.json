@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T10:12:52Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "06351fc52839dd0c1238b730bf425bc1176a52974cc43296b5e1f5213cf6cb36",
+    "source_sha256": "5d45e3137391c3883415ea548b4ca7eca5bacb6d3c5ec445d499b81da48d39b7"
+  },
+  "name": "ai-qwen-agent-tool-workflow",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "QwenLM",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-007-community-agent-workflows/ai-qwen-agent-tool-workflow",
+    "reference": "Community project reference: Qwen-Agent, function calling, MCP, code interpreter, RAG, and Chrome extension workflows",
+    "type": "github_reference",
+    "url": "https://github.com/QwenLM/Qwen-Agent"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.tool_workflow",
+    "task_intent": "review model tool workflows with function calling, RAG, and connectors"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "execution",
+    "subcategory": "execution.browser_test",
+    "task_intent": "plan deterministic browser automation and UI verification",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/microsoft/playwright",
+    "author": "Microsoft",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Playwright, web testing and automation framework",
+    "collected_by": "onecode-community-review"
+  }
+}

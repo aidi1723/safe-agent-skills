@@ -29,6 +29,7 @@ agent can start from a more complete plan.
 | `data-analysis-report` | Clean data, analyze tables, plan visuals, and write reports |
 | `open-source-release` | Prepare a public repository or artifact for release |
 | `content-seo-publication` | Draft and review SEO/GEO content for publication |
+| `rag-agent-knowledge-app` | Design a source-grounded RAG or knowledge-base agent |
 | `commerce-listing-growth` | Prepare marketplace listings and buyer communication |
 
 ## Safety Rule

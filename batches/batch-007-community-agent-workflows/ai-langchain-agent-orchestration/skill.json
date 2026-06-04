@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.orchestration",
+    "task_intent": "design modular agent orchestration and tool routing workflows",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/langchain-ai/langchain",
+    "author": "langchain-ai",
+    "license": "MIT",
+    "reference": "Community project reference: LangChain, the agent engineering platform",
+    "collected_by": "onecode-community-review"
+  }
+}

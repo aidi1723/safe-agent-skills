@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.role_workflow",
+    "task_intent": "design role-based collaborative agent workflows",
+    "artifact_type": "workflow",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/crewAIInc/crewAI",
+    "author": "crewAIInc",
+    "license": "MIT",
+    "reference": "Community project reference: CrewAI, role-playing autonomous AI agents",
+    "collected_by": "onecode-community-review"
+  }
+}

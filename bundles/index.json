@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "bundle_count": 8,
+  "bundle_count": 9,
   "bundles": [
     {
       "id": "website-build-launch",
@@ -15,6 +15,8 @@
         "content-seo-brief",
         "content-social-post",
         "execution-browser-check",
+        "execution-browser-use-web-task",
+        "execution-playwright-browser-automation",
         "execution-publish-check"
       ],
       "expected_output": [
@@ -38,6 +40,7 @@
         "ai-pydantic-schema-contract",
         "ai-output-schema-eval",
         "security-supply-chain-review",
+        "execution-e2b-sandbox-boundary",
         "engineering-ci-troubleshoot"
       ],
       "expected_output": [
@@ -45,6 +48,7 @@
         "missing test notes",
         "schema or contract risks",
         "dependency and supply-chain risks",
+        "sandbox and execution boundary notes",
         "verification commands and results"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
@@ -81,6 +85,9 @@
         "data-markitdown-file-to-markdown",
         "data-marker-pdf-markdown-review",
         "data-unstructured-document-partition",
+        "ai-llamaindex-rag-knowledge-workflow",
+        "data-haystack-rag-pipeline",
+        "data-qdrant-vector-retrieval",
         "research-source-check",
         "office-docx-brief"
       ],
@@ -89,6 +96,7 @@
         "extracted Markdown paths or notes",
         "conversion quality review",
         "chunking and metadata plan",
+        "RAG and vector retrieval plan",
         "source-backed summary",
         "extraction uncertainty list"
       ],
@@ -157,6 +165,32 @@
         "source-backed claims",
         "edited copy",
         "social distribution copy"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "rag-agent-knowledge-app",
+      "name": "RAG Agent Knowledge App",
+      "scenario": "Design a source-grounded RAG or knowledge-base agent with retrieval, citations, structured outputs, and safety checks.",
+      "status": "trusted",
+      "skills": [
+        "business-requirements-brief",
+        "ai-langchain-agent-orchestration",
+        "ai-llamaindex-rag-knowledge-workflow",
+        "data-haystack-rag-pipeline",
+        "data-qdrant-vector-retrieval",
+        "ai-pydantic-schema-contract",
+        "ai-output-schema-eval",
+        "research-source-check",
+        "security-prompt-injection-review"
+      ],
+      "expected_output": [
+        "requirements and source boundaries",
+        "agent orchestration and retrieval plan",
+        "indexing and chunking design",
+        "vector retrieval quality checks",
+        "structured answer contract",
+        "citation and prompt-injection review"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
     },

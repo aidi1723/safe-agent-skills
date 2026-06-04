@@ -27,6 +27,7 @@ host agent choose a stronger starting plan.
 | `data-analysis-report` | Clean data, analyze tables, plan visuals, and write a decision report | table analysis, data quality, visualization, office brief |
 | `open-source-release` | Prepare a public repository, docs, safety statement, and release handoff | publish check, supply-chain review, editorial review, social post |
 | `content-seo-publication` | Draft and review SEO/GEO content for publication | SEO brief, editorial review, source check, prompt patterns |
+| `rag-agent-knowledge-app` | Design a source-grounded RAG or knowledge-base agent | orchestration, RAG workflow, retrieval, schema, source check, prompt-injection review |
 | `commerce-listing-growth` | Prepare marketplace product listings and buyer communication | listing, keyword plan, inquiry reply, content review |
 
 ## Website Build Launch
@@ -43,7 +44,9 @@ Recommended skills:
 5. `content-seo-brief`
 6. `content-social-post`
 7. `execution-browser-check`
-8. `execution-publish-check`
+8. `execution-browser-use-web-task`
+9. `execution-playwright-browser-automation`
+10. `execution-publish-check`
 
 Expected output:
 
@@ -66,7 +69,8 @@ Recommended skills:
 3. `ai-pydantic-schema-contract`
 4. `ai-output-schema-eval`
 5. `security-supply-chain-review`
-6. `engineering-ci-troubleshoot`
+6. `execution-e2b-sandbox-boundary`
+7. `engineering-ci-troubleshoot`
 
 Expected output:
 
@@ -74,6 +78,7 @@ Expected output:
 - missing test notes
 - schema or contract risks
 - dependency and supply-chain risks
+- sandbox and execution boundary notes
 - verification commands and results
 
 ## Security Agent Guardrails
@@ -109,8 +114,11 @@ Recommended skills:
 2. `data-markitdown-file-to-markdown`
 3. `data-marker-pdf-markdown-review`
 4. `data-unstructured-document-partition`
-5. `research-source-check`
-6. `office-docx-brief`
+5. `ai-llamaindex-rag-knowledge-workflow`
+6. `data-haystack-rag-pipeline`
+7. `data-qdrant-vector-retrieval`
+8. `research-source-check`
+9. `office-docx-brief`
 
 Expected output:
 
@@ -118,6 +126,7 @@ Expected output:
 - extracted Markdown paths or notes
 - conversion quality review
 - chunking and metadata plan
+- RAG and vector retrieval plan
 - source-backed summary
 - extraction uncertainty list
 
@@ -185,6 +194,32 @@ Expected output:
 - source-backed claims
 - edited copy
 - social distribution copy
+
+## RAG Agent Knowledge App
+
+Use when designing a source-grounded RAG or knowledge-base agent with
+retrieval, citations, structured outputs, and safety checks.
+
+Recommended skills:
+
+1. `business-requirements-brief`
+2. `ai-langchain-agent-orchestration`
+3. `ai-llamaindex-rag-knowledge-workflow`
+4. `data-haystack-rag-pipeline`
+5. `data-qdrant-vector-retrieval`
+6. `ai-pydantic-schema-contract`
+7. `ai-output-schema-eval`
+8. `research-source-check`
+9. `security-prompt-injection-review`
+
+Expected output:
+
+- requirements and source boundaries
+- agent orchestration and retrieval plan
+- indexing and chunking design
+- vector retrieval quality checks
+- structured answer contract
+- citation and prompt-injection review
 
 ## Commerce Listing Growth
 

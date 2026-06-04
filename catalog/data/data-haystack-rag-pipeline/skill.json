@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T10:12:52Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
+    "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
+  },
+  "name": "data-haystack-rag-pipeline",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "deepset-ai",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-007-community-agent-workflows/data-haystack-rag-pipeline",
+    "reference": "Community project reference: Haystack, AI orchestration framework for context-engineered LLM applications",
+    "type": "github_reference",
+    "url": "https://github.com/deepset-ai/haystack"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "data",
+    "collection_priority": "P1",
+    "subcategory": "data.rag_pipeline",
+    "task_intent": "review modular RAG pipelines and retrieval grounding"
+  },
+  "version": "0.1.0"
+}

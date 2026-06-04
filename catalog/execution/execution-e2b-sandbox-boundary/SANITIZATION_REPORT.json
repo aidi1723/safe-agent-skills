@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T10:13:15Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "bbab8377fecfa5a8413740eeb4187ca023103994de9ea6bcabb165ffd047aeab",
+    "source_sha256": "2651993db045279c65fe9149f70fc7498d8bbb50239e3895d4aef9394fac81fb"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "execution-e2b-sandbox-boundary",
+  "source": {
+    "author": "e2b-dev",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-007-community-agent-workflows/execution-e2b-sandbox-boundary",
+    "reference": "Community project reference: E2B, secure environment with real-world tools for agents",
+    "type": "github_reference",
+    "url": "https://github.com/e2b-dev/E2B"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "execution",
+    "collection_priority": "P0",
+    "subcategory": "execution.sandbox",
+    "task_intent": "review sandboxed agent execution boundaries"
+  }
+}

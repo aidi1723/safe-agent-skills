@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T10:12:52Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "e7663b9d4a7b65e3c63bead301d546d7e60cd64cfca2e3230c6754697411a723",
+    "source_sha256": "90028dfc3b518c5092c30da8fafd584e21496186ba64eb57bd6a802b61e3264e"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "execution-browser-use-web-task",
+  "source": {
+    "author": "browser-use",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-007-community-agent-workflows/execution-browser-use-web-task",
+    "reference": "Community project reference: browser-use, making websites accessible for AI agents",
+    "type": "github_reference",
+    "url": "https://github.com/browser-use/browser-use"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "execution",
+    "collection_priority": "P0",
+    "subcategory": "execution.browser_agent",
+    "task_intent": "plan safe browser-based agent workflows"
+  }
+}

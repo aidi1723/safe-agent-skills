@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T10:13:15Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "6870023e80141f3f8bfbad5c4990cdbbc891d6252b9659ae788cf0f3e5ab9907",
+    "source_sha256": "a683c4c1bd29677bb6d983051c934491d1f0964de342c4aad3342d818c52860b"
+  },
+  "name": "execution-playwright-browser-automation",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "Microsoft",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-007-community-agent-workflows/execution-playwright-browser-automation",
+    "reference": "Community project reference: Playwright, web testing and automation framework",
+    "type": "github_reference",
+    "url": "https://github.com/microsoft/playwright"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "execution",
+    "collection_priority": "P0",
+    "subcategory": "execution.browser_test",
+    "task_intent": "plan deterministic browser automation and UI verification"
+  },
+  "version": "0.1.0"
+}

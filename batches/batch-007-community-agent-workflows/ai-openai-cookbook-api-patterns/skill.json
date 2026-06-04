@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.api_patterns",
+    "task_intent": "review practical API patterns for LLM applications",
+    "artifact_type": "workflow",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/openai/openai-cookbook",
+    "author": "OpenAI",
+    "license": "MIT",
+    "reference": "Community project reference: OpenAI Cookbook, examples and guides for using the OpenAI API",
+    "collected_by": "onecode-community-review"
+  }
+}

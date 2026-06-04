@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "data",
+    "subcategory": "data.vector_retrieval",
+    "task_intent": "review vector search and retrieval quality boundaries",
+    "artifact_type": "dataset",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/qdrant/qdrant",
+    "author": "qdrant",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Qdrant, vector database and vector search engine",
+    "collected_by": "onecode-community-review"
+  }
+}

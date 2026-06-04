@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T10:12:12Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "c6d80969d90e023528dc6684e04bd64c029a95bb252b6957dcabfab05e78855f",
+    "source_sha256": "f3da5086b6bffa6fb5a36657bc3780e748435415c4fd72ffd60bfac70093ab77"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-langchain-agent-orchestration",
+  "source": {
+    "author": "langchain-ai",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-007-community-agent-workflows/ai-langchain-agent-orchestration",
+    "reference": "Community project reference: LangChain, the agent engineering platform",
+    "type": "github_reference",
+    "url": "https://github.com/langchain-ai/langchain"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.orchestration",
+    "task_intent": "design modular agent orchestration and tool routing workflows"
+  }
+}

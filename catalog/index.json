@@ -1,8 +1,62 @@
 {
-  "generated_at": "2026-06-04T09:26:21Z",
+  "generated_at": "2026-06-04T10:13:15Z",
   "schema_version": 1,
-  "skill_count": 60,
+  "skill_count": 72,
   "skills": [
+    {
+      "hashes": {
+        "sanitized_sha256": "3db5c126cb110276ea5b5b5619707048a2261800ed41c11f8f9ba06581b5bc99",
+        "source_sha256": "c6186295e35cbd96b1a4cc6344fd035233466d1a641b60117b6646e770f4a973"
+      },
+      "name": "ai-autogen-multi-agent-review",
+      "registry_path": "ai/ai-autogen-multi-agent-review",
+      "risk_level": "low",
+      "source": {
+        "author": "Microsoft",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "CC-BY-4.0",
+        "path": "batches/batch-007-community-agent-workflows/ai-autogen-multi-agent-review",
+        "reference": "Community project reference: AutoGen, programming framework for agentic AI",
+        "type": "github_reference",
+        "url": "https://github.com/microsoft/autogen"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.multi_agent",
+        "task_intent": "review multi-agent collaboration roles and handoffs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "0d5ca0a126c1e826511693e1cc88e65ecdb0faedd200a6c318e662de49c1d074",
+        "source_sha256": "68264b25a2d555f409fe552508028247b79805e7f3ea1efc89b26f2dc49ab48d"
+      },
+      "name": "ai-crewai-role-workflow",
+      "registry_path": "ai/ai-crewai-role-workflow",
+      "risk_level": "low",
+      "source": {
+        "author": "crewAIInc",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-007-community-agent-workflows/ai-crewai-role-workflow",
+        "reference": "Community project reference: CrewAI, role-playing autonomous AI agents",
+        "type": "github_reference",
+        "url": "https://github.com/crewAIInc/crewAI"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.role_workflow",
+        "task_intent": "design role-based collaborative agent workflows"
+      }
+    },
     {
       "hashes": {
         "sanitized_sha256": "56829ffce10f4983ad9a3cd2a135afdaf360107841a78b0798e7558d3a56ac9f",
@@ -28,6 +82,33 @@
         "collection_priority": "P0",
         "subcategory": "ai.constrained_generation",
         "task_intent": "control LLM generation with explicit output constraints"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "c6d80969d90e023528dc6684e04bd64c029a95bb252b6957dcabfab05e78855f",
+        "source_sha256": "f3da5086b6bffa6fb5a36657bc3780e748435415c4fd72ffd60bfac70093ab77"
+      },
+      "name": "ai-langchain-agent-orchestration",
+      "registry_path": "ai/ai-langchain-agent-orchestration",
+      "risk_level": "low",
+      "source": {
+        "author": "langchain-ai",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-007-community-agent-workflows/ai-langchain-agent-orchestration",
+        "reference": "Community project reference: LangChain, the agent engineering platform",
+        "type": "github_reference",
+        "url": "https://github.com/langchain-ai/langchain"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.orchestration",
+        "task_intent": "design modular agent orchestration and tool routing workflows"
       }
     },
     {
@@ -82,6 +163,60 @@
         "collection_priority": "P1",
         "subcategory": "ai.local_inference",
         "task_intent": "review local LLM inference boundaries and model provenance"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "164a6e8d0b6f32d3ffb93bf4cb128d7eeaf3de8f32fb3d4783be07f572e7e8c8",
+        "source_sha256": "3ce32a4629294a00bd8f815d0bdc109e41c3e3d49bb5d5f30a53308a112a36c7"
+      },
+      "name": "ai-llamaindex-rag-knowledge-workflow",
+      "registry_path": "ai/ai-llamaindex-rag-knowledge-workflow",
+      "risk_level": "low",
+      "source": {
+        "author": "run-llama",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-007-community-agent-workflows/ai-llamaindex-rag-knowledge-workflow",
+        "reference": "Community project reference: LlamaIndex, document agent and OCR platform",
+        "type": "github_reference",
+        "url": "https://github.com/run-llama/llama_index"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.rag",
+        "task_intent": "design source-grounded RAG and document-agent workflows"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "be5d403ae940bcb9eb2be597c1f164807b0496fa82449ca50759313c815c0b40",
+        "source_sha256": "0b1fe931f78f828d0af1885afdd9021eb47be9dfe2111b2e7ae1324ddadc0a6d"
+      },
+      "name": "ai-openai-cookbook-api-patterns",
+      "registry_path": "ai/ai-openai-cookbook-api-patterns",
+      "risk_level": "low",
+      "source": {
+        "author": "OpenAI",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-007-community-agent-workflows/ai-openai-cookbook-api-patterns",
+        "reference": "Community project reference: OpenAI Cookbook, examples and guides for using the OpenAI API",
+        "type": "github_reference",
+        "url": "https://github.com/openai/openai-cookbook"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.api_patterns",
+        "task_intent": "review practical API patterns for LLM applications"
       }
     },
     {
@@ -163,6 +298,33 @@
         "collection_priority": "P0",
         "subcategory": "ai.schema",
         "task_intent": "define typed schema contracts for AI outputs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "06351fc52839dd0c1238b730bf425bc1176a52974cc43296b5e1f5213cf6cb36",
+        "source_sha256": "5d45e3137391c3883415ea548b4ca7eca5bacb6d3c5ec445d499b81da48d39b7"
+      },
+      "name": "ai-qwen-agent-tool-workflow",
+      "registry_path": "ai/ai-qwen-agent-tool-workflow",
+      "risk_level": "low",
+      "source": {
+        "author": "QwenLM",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-007-community-agent-workflows/ai-qwen-agent-tool-workflow",
+        "reference": "Community project reference: Qwen-Agent, function calling, MCP, code interpreter, RAG, and Chrome extension workflows",
+        "type": "github_reference",
+        "url": "https://github.com/QwenLM/Qwen-Agent"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.tool_workflow",
+        "task_intent": "review model tool workflows with function calling, RAG, and connectors"
       }
     },
     {
@@ -761,6 +923,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
+        "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
+      },
+      "name": "data-haystack-rag-pipeline",
+      "registry_path": "data/data-haystack-rag-pipeline",
+      "risk_level": "low",
+      "source": {
+        "author": "deepset-ai",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-007-community-agent-workflows/data-haystack-rag-pipeline",
+        "reference": "Community project reference: Haystack, AI orchestration framework for context-engineered LLM applications",
+        "type": "github_reference",
+        "url": "https://github.com/deepset-ai/haystack"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.rag_pipeline",
+        "task_intent": "review modular RAG pipelines and retrieval grounding"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
         "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
       },
@@ -811,6 +1000,33 @@
         "collection_priority": "P1",
         "subcategory": "data.markdown_conversion",
         "task_intent": "convert mixed files into Markdown for agent workflows"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "070df168c4036c32e63228bfa32f2f416836ff0a30e592fc327c2b8b160fee60",
+        "source_sha256": "fc6a662dde8dd74bd7f6bbd81e12f9a0eabb35973ba3395ec3dd2a5ef63ebe01"
+      },
+      "name": "data-qdrant-vector-retrieval",
+      "registry_path": "data/data-qdrant-vector-retrieval",
+      "risk_level": "low",
+      "source": {
+        "author": "qdrant",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-007-community-agent-workflows/data-qdrant-vector-retrieval",
+        "reference": "Community project reference: Qdrant, vector database and vector search engine",
+        "type": "github_reference",
+        "url": "https://github.com/qdrant/qdrant"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.vector_retrieval",
+        "task_intent": "review vector search and retrieval quality boundaries"
       }
     },
     {
@@ -1112,6 +1328,60 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "e7663b9d4a7b65e3c63bead301d546d7e60cd64cfca2e3230c6754697411a723",
+        "source_sha256": "90028dfc3b518c5092c30da8fafd584e21496186ba64eb57bd6a802b61e3264e"
+      },
+      "name": "execution-browser-use-web-task",
+      "registry_path": "execution/execution-browser-use-web-task",
+      "risk_level": "low",
+      "source": {
+        "author": "browser-use",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-007-community-agent-workflows/execution-browser-use-web-task",
+        "reference": "Community project reference: browser-use, making websites accessible for AI agents",
+        "type": "github_reference",
+        "url": "https://github.com/browser-use/browser-use"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.browser_agent",
+        "task_intent": "plan safe browser-based agent workflows"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "bbab8377fecfa5a8413740eeb4187ca023103994de9ea6bcabb165ffd047aeab",
+        "source_sha256": "2651993db045279c65fe9149f70fc7498d8bbb50239e3895d4aef9394fac81fb"
+      },
+      "name": "execution-e2b-sandbox-boundary",
+      "registry_path": "execution/execution-e2b-sandbox-boundary",
+      "risk_level": "low",
+      "source": {
+        "author": "e2b-dev",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-007-community-agent-workflows/execution-e2b-sandbox-boundary",
+        "reference": "Community project reference: E2B, secure environment with real-world tools for agents",
+        "type": "github_reference",
+        "url": "https://github.com/e2b-dev/E2B"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.sandbox",
+        "task_intent": "review sandboxed agent execution boundaries"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "8203f7738f50394bcbf8b54a588d76cbe65f2e23e4e243cd8bf398fcb60f10ea",
         "source_sha256": "d1200761d1db95b2ed237786862b6acb9568fa61e33bf62823fd454e9054fcc6"
       },
@@ -1135,6 +1405,60 @@
         "collection_priority": "P0",
         "subcategory": "execution.files",
         "task_intent": "run bounded batch file workflows inside the workspace"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "2d4d957adc42a1098c1a6abd8dff4e7d7e4b68eb26a723f941a7b92d8542b4e5",
+        "source_sha256": "3e0cbcd05833e8bb9c9f3871f3758eb93626f551f23e25646ebee74e453ab67e"
+      },
+      "name": "execution-mcp-tool-connector-review",
+      "registry_path": "execution/execution-mcp-tool-connector-review",
+      "risk_level": "high",
+      "source": {
+        "author": "modelcontextprotocol",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "Other",
+        "path": "batches/batch-007-community-agent-workflows/execution-mcp-tool-connector-review",
+        "reference": "Community project reference: Model Context Protocol Servers; license reported as Other by GitHub",
+        "type": "github_reference",
+        "url": "https://github.com/modelcontextprotocol/servers"
+      },
+      "status": "review_required",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.connector",
+        "task_intent": "review MCP and tool connector permissions and safety boundaries"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "6870023e80141f3f8bfbad5c4990cdbbc891d6252b9659ae788cf0f3e5ab9907",
+        "source_sha256": "a683c4c1bd29677bb6d983051c934491d1f0964de342c4aad3342d818c52860b"
+      },
+      "name": "execution-playwright-browser-automation",
+      "registry_path": "execution/execution-playwright-browser-automation",
+      "risk_level": "low",
+      "source": {
+        "author": "Microsoft",
+        "captured_at": "2026-06-04T10:05:45Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-007-community-agent-workflows/execution-playwright-browser-automation",
+        "reference": "Community project reference: Playwright, web testing and automation framework",
+        "type": "github_reference",
+        "url": "https://github.com/microsoft/playwright"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.browser_test",
+        "task_intent": "plan deterministic browser automation and UI verification"
       }
     },
     {

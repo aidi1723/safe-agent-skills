@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T10:12:12Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "164a6e8d0b6f32d3ffb93bf4cb128d7eeaf3de8f32fb3d4783be07f572e7e8c8",
+    "source_sha256": "3ce32a4629294a00bd8f815d0bdc109e41c3e3d49bb5d5f30a53308a112a36c7"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-llamaindex-rag-knowledge-workflow",
+  "source": {
+    "author": "run-llama",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-007-community-agent-workflows/ai-llamaindex-rag-knowledge-workflow",
+    "reference": "Community project reference: LlamaIndex, document agent and OCR platform",
+    "type": "github_reference",
+    "url": "https://github.com/run-llama/llama_index"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.rag",
+    "task_intent": "design source-grounded RAG and document-agent workflows"
+  }
+}

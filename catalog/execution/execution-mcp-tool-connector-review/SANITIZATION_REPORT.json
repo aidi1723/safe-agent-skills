@@ -1,0 +1,56 @@
+{
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [
+    {
+      "id": "broad-filesystem-access",
+      "severity": "high",
+      "status": "unresolved",
+      "summary": "Found broad filesystem or credential access guidance."
+    }
+  ],
+  "hashes": {
+    "sanitized_sha256": "2d4d957adc42a1098c1a6abd8dff4e7d7e4b68eb26a723f941a7b92d8542b4e5",
+    "source_sha256": "3e0cbcd05833e8bb9c9f3871f3758eb93626f551f23e25646ebee74e453ab67e"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [
+    {
+      "id": "broad-filesystem-access",
+      "line": "19",
+      "severity": "high",
+      "status": "removed",
+      "summary": "Found broad filesystem or credential access guidance."
+    }
+  ],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "execution-mcp-tool-connector-review",
+  "source": {
+    "author": "modelcontextprotocol",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "Other",
+    "path": "batches/batch-007-community-agent-workflows/execution-mcp-tool-connector-review",
+    "reference": "Community project reference: Model Context Protocol Servers; license reported as Other by GitHub",
+    "type": "github_reference",
+    "url": "https://github.com/modelcontextprotocol/servers"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 1,
+    "rewritten_fragment_count": 0,
+    "risk_level": "high",
+    "status": "review_required",
+    "unresolved_finding_count": 1
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "execution",
+    "collection_priority": "P0",
+    "subcategory": "execution.connector",
+    "task_intent": "review MCP and tool connector permissions and safety boundaries"
+  }
+}

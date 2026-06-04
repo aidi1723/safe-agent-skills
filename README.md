@@ -24,8 +24,8 @@ internet.
 
 Current public baseline:
 
-- 60 total skills
-- 56 trusted skills
+- 72 total skills
+- 67 trusted skills
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
 - 0 tampered skills

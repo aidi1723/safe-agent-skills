@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T10:11:35Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "3db5c126cb110276ea5b5b5619707048a2261800ed41c11f8f9ba06581b5bc99",
+    "source_sha256": "c6186295e35cbd96b1a4cc6344fd035233466d1a641b60117b6646e770f4a973"
+  },
+  "name": "ai-autogen-multi-agent-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "Microsoft",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "CC-BY-4.0",
+    "path": "batches/batch-007-community-agent-workflows/ai-autogen-multi-agent-review",
+    "reference": "Community project reference: AutoGen, programming framework for agentic AI",
+    "type": "github_reference",
+    "url": "https://github.com/microsoft/autogen"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.multi_agent",
+    "task_intent": "review multi-agent collaboration roles and handoffs"
+  },
+  "version": "0.1.0"
+}

@@ -15,10 +15,10 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 60
-- trusted skills: 56
+- total skills: 72
+- trusted skills: 67
 - quarantined skills: 3
-- review-required skills: 1
+- review-required skills: 2
 - categories meeting 3 trusted skills: 15 / 15
 
 ## Intake Rule

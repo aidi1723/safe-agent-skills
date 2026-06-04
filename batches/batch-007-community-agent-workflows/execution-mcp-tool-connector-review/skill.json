@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "execution",
+    "subcategory": "execution.connector",
+    "task_intent": "review MCP and tool connector permissions and safety boundaries",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/modelcontextprotocol/servers",
+    "author": "modelcontextprotocol",
+    "license": "Other",
+    "reference": "Community project reference: Model Context Protocol Servers; license reported as Other by GitHub",
+    "collected_by": "onecode-community-review"
+  }
+}

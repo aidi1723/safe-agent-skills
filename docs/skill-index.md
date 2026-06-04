@@ -16,12 +16,18 @@ Each individual `SKILL.md` also contains:
 
 | Category | Skill | Status | Capability |
 | --- | --- | --- | --- |
+| ai | `ai-autogen-multi-agent-review` | trusted | Use when reviewing multi-agent collaboration, role boundaries, conversation loops, or agent handoff workflows. |
+| ai | `ai-crewai-role-workflow` | trusted | Use when designing role-based agent teams, task delegation, process sequencing, or collaborative agent workflows. |
 | ai | `ai-guidance-constrained-generation` | trusted | Use when an LLM task needs constrained generation, token-level control, or explicit output structure. |
+| ai | `ai-langchain-agent-orchestration` | trusted | Use when designing agent orchestration, tool routing, prompt chains, memory boundaries, or production LLM workflow structure. |
 | ai | `ai-litellm-gateway-cost-control` | review_required | Use when reviewing model gateway routing, provider fallback, budget limits, rate limits, or agent cost controls. |
 | ai | `ai-llama-cpp-local-inference-boundary` | trusted | Use when reviewing local LLM inference, offline model use, context limits, quantization tradeoffs, or local privacy boundaries. |
+| ai | `ai-llamaindex-rag-knowledge-workflow` | trusted | Use when designing RAG, document agents, knowledge indexing, citation retrieval, or OCR-backed knowledge workflows. |
+| ai | `ai-openai-cookbook-api-patterns` | trusted | Use when reviewing OpenAI API implementation patterns, examples, evals, structured outputs, RAG, or application recipes. |
 | ai | `ai-outlines-structured-generation` | trusted | Use when an AI workflow needs strict structured output, regex-like constraints, or schema-shaped generation. |
 | ai | `ai-output-schema-eval` | trusted | Use when evaluating AI outputs against schema, format, task requirements, safety constraints, and regression examples. |
 | ai | `ai-pydantic-schema-contract` | trusted | Use when defining typed contracts, JSON Schema outputs, validation models, or parser-safe AI response formats. |
+| ai | `ai-qwen-agent-tool-workflow` | trusted | Use when reviewing function calling, MCP tools, code interpreter flows, RAG, or browser-extension agent workflows. |
 | ai | `ai-vllm-serving-capacity-plan` | trusted | Use when reviewing high-throughput LLM serving, batching, memory planning, latency targets, or inference capacity. |
 | ai | `ecc-agent-coding-safety` | trusted | Use when adapting community context-engineering ideas for AI coding assistants, memory, safety checks, and bounded code work. |
 | ai | `headroom-context-compression` | trusted | Use when compressing long task context, chat history, notes, or documents before an AI workflow while preserving key facts. |
@@ -44,8 +50,10 @@ Each individual `SKILL.md` also contains:
 | content | `content-prompt-engineering-patterns` | trusted | Use when designing prompts, context instructions, RAG workflows, agent behavior specs, or prompt review checklists. |
 | content | `content-seo-brief` | trusted | Use when preparing an SEO, GEO, article, or product content brief with factual claims and source boundaries. |
 | content | `content-social-post` | trusted | Use when preparing social posts, short announcements, community updates, launch notes, and channel-specific copy. |
+| data | `data-haystack-rag-pipeline` | trusted | Use when reviewing modular RAG pipelines, retrieval routing, semantic search, memory, or production LLM application flows. |
 | data | `data-marker-pdf-markdown-review` | trusted | Use when reviewing PDF-to-Markdown extraction quality, layout preservation, table handling, or OCR uncertainty. |
 | data | `data-markitdown-file-to-markdown` | trusted | Use when converting mixed office files, documents, or local assets into clean Markdown for agent workflows. |
+| data | `data-qdrant-vector-retrieval` | trusted | Use when reviewing vector search, embedding indexes, retrieval filters, similarity results, or RAG database boundaries. |
 | data | `data-quality-audit` | trusted | Use when checking datasets for missing values, duplicates, schema drift, outliers, freshness, and readiness for analysis. |
 | data | `data-table-analysis` | trusted | Use when cleaning, summarizing, validating, or explaining tabular datasets inside an approved workspace. |
 | data | `data-unstructured-document-partition` | trusted | Use when transforming complex documents into clean chunks, structured records, or retrieval-ready text. |
@@ -57,7 +65,11 @@ Each individual `SKILL.md` also contains:
 | engineering | `engineering-ci-troubleshoot` | trusted | Use when diagnosing CI failures, build jobs, test matrix problems, cache issues, and release pipeline breakage. |
 | engineering | `engineering-performance-profile` | trusted | Use when reviewing performance, latency, memory growth, slow builds, bottlenecks, and reliability under load. |
 | execution | `execution-browser-check` | trusted | Use when running bounded browser inspection, form-flow checks, screenshots, or UI smoke verification. |
+| execution | `execution-browser-use-web-task` | trusted | Use when designing browser-based agent tasks, web navigation plans, form workflows, or online task automation boundaries. |
+| execution | `execution-e2b-sandbox-boundary` | trusted | Use when reviewing code execution sandboxes, tool environments, ephemeral workspaces, or agent runtime isolation. |
 | execution | `execution-file-batch` | trusted | Use when running bounded batch work over workspace files, generated artifacts, exports, or repeated local file operations. |
+| execution | `execution-mcp-tool-connector-review` | review_required | Use when reviewing MCP servers, tool connectors, permission scopes, data access, or agent integration boundaries. |
+| execution | `execution-playwright-browser-automation` | trusted | Use when planning deterministic browser checks, UI smoke tests, page assertions, screenshots, or web automation verification. |
 | execution | `execution-publish-check` | trusted | Use when preparing controlled publishing, release handoff, artifact upload, or public repository readiness checks. |
 | media | `media-asset-review` | trusted | Use when checking image, video, audio, or presentation assets for readiness, format, rights, and output quality. |
 | media | `media-brand-asset-pack` | trusted | Use when organizing brand assets, image sets, logo files, usage notes, and publication-ready media packs. |

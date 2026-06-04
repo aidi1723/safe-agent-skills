@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T10:12:12Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "be5d403ae940bcb9eb2be597c1f164807b0496fa82449ca50759313c815c0b40",
+    "source_sha256": "0b1fe931f78f828d0af1885afdd9021eb47be9dfe2111b2e7ae1324ddadc0a6d"
+  },
+  "name": "ai-openai-cookbook-api-patterns",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OpenAI",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-007-community-agent-workflows/ai-openai-cookbook-api-patterns",
+    "reference": "Community project reference: OpenAI Cookbook, examples and guides for using the OpenAI API",
+    "type": "github_reference",
+    "url": "https://github.com/openai/openai-cookbook"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.api_patterns",
+    "task_intent": "review practical API patterns for LLM applications"
+  },
+  "version": "0.1.0"
+}

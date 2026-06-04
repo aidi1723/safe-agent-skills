@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "data",
+    "subcategory": "data.rag_pipeline",
+    "task_intent": "review modular RAG pipelines and retrieval grounding",
+    "artifact_type": "workflow",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/deepset-ai/haystack",
+    "author": "deepset-ai",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Haystack, AI orchestration framework for context-engineered LLM applications",
+    "collected_by": "onecode-community-review"
+  }
+}

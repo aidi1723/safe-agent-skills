@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.rag",
+    "task_intent": "design source-grounded RAG and document-agent workflows",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/run-llama/llama_index",
+    "author": "run-llama",
+    "license": "MIT",
+    "reference": "Community project reference: LlamaIndex, document agent and OCR platform",
+    "collected_by": "onecode-community-review"
+  }
+}

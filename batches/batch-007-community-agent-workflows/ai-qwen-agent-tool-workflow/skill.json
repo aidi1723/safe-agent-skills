@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.tool_workflow",
+    "task_intent": "review model tool workflows with function calling, RAG, and connectors",
+    "artifact_type": "workflow",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/QwenLM/Qwen-Agent",
+    "author": "QwenLM",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Qwen-Agent, function calling, MCP, code interpreter, RAG, and Chrome extension workflows",
+    "collected_by": "onecode-community-review"
+  }
+}

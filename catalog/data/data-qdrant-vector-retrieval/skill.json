@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T10:12:52Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "070df168c4036c32e63228bfa32f2f416836ff0a30e592fc327c2b8b160fee60",
+    "source_sha256": "fc6a662dde8dd74bd7f6bbd81e12f9a0eabb35973ba3395ec3dd2a5ef63ebe01"
+  },
+  "name": "data-qdrant-vector-retrieval",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "qdrant",
+    "captured_at": "2026-06-04T10:05:45Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-007-community-agent-workflows/data-qdrant-vector-retrieval",
+    "reference": "Community project reference: Qdrant, vector database and vector search engine",
+    "type": "github_reference",
+    "url": "https://github.com/qdrant/qdrant"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "dataset",
+    "category": "data",
+    "collection_priority": "P1",
+    "subcategory": "data.vector_retrieval",
+    "task_intent": "review vector search and retrieval quality boundaries"
+  },
+  "version": "0.1.0"
+}
