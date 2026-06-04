@@ -20,6 +20,7 @@ The local MVP is complete when the project can:
 
 ## Current Status
 
+- [x] Phase 001 closure report
 - [x] Single-folder scan
 - [x] Single-folder sanitize
 - [x] Batch import
@@ -43,7 +44,25 @@ The local MVP is complete when the project can:
 - [x] Catalog status record
 - [x] Public maintenance guide
 - [x] Universal Agent task-pack guide
+- [x] Cross-agent skill bundle guide
+- [x] Scenario bundles
+- [x] Public open-source statement
+- [x] Standalone tool open-source statement
 - [x] At least 3 trusted skills in every top-level category
+
+## Phase 001 Public Baseline
+
+- total skills: 72
+- trusted skills: 67
+- quarantined skills: 3
+- review-required skills: 2
+- top-level category coverage: 15 / 15
+- scenario bundles: 9
+- registry verification: ok
+
+Closure report:
+
+- [Phase 001 Closure Report](phase-001-closure-report.md)
 
 ## Not In MVP
 

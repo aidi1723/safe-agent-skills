@@ -34,6 +34,9 @@ Current public baseline:
 See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
+Phase 001 is closed and ready for public maintenance. See
+[Phase 001 Closure Report](docs/phase-001-closure-report.md).
+
 ## Core Position
 
 Skills provide method.
@@ -181,6 +184,7 @@ onecode skills approve pdf
 - [Agent Task Pack](docs/agent-task-pack.md)
 - [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md)
 - [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md)
+- [Phase 001 Closure Report](docs/phase-001-closure-report.md)
 - [Architecture](docs/architecture.md)
 - [Skill Taxonomy](docs/skill-taxonomy.md)
 - [Skill Index](docs/skill-index.md)

@@ -20,6 +20,12 @@ Current baseline:
 - quarantined skills: 3
 - review-required skills: 2
 - categories meeting 3 trusted skills: 15 / 15
+- scenario bundles: 9
+- phase status: Phase 001 closed for public maintenance
+
+Closure report:
+
+- [Phase 001 Closure Report](phase-001-closure-report.md)
 
 ## Intake Rule
 
