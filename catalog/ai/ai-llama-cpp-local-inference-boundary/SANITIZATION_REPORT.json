@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T09:26:21Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "a03a317c20ec7e0a9e122273ffd6ae6583c63ae7e9105118f97d906c2a700016",
+    "source_sha256": "a79fe2f0582b299338df7aa6929bfea432b4de72dd9bc01774e660090474ac90"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-llama-cpp-local-inference-boundary",
+  "source": {
+    "author": "ggml-org",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/ai-llama-cpp-local-inference-boundary",
+    "reference": "Community project reference: llama.cpp, LLM inference in C and C++",
+    "type": "github_reference",
+    "url": "https://github.com/ggml-org/llama.cpp"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.local_inference",
+    "task_intent": "review local LLM inference boundaries and model provenance"
+  }
+}

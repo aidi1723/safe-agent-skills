@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.serving",
+    "task_intent": "plan high-throughput LLM serving capacity and readiness",
+    "artifact_type": "deployment",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/vllm-project/vllm",
+    "author": "vllm-project",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: vLLM, high-throughput and memory-efficient inference and serving engine for LLMs",
+    "collected_by": "onecode-community-review"
+  }
+}

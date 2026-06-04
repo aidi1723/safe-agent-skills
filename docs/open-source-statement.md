@@ -119,9 +119,10 @@ OneCode provides boundary, execution control, verification, and evidence.
 当前 catalog 状态：
 
 ```text
-total skills: 48
-trusted skills: 45
+total skills: 60
+trusted skills: 56
 quarantined skills: 3
+review_required skills: 1
 top-level categories: 15 / 15
 minimum trusted coverage: 3 trusted skills per category
 tampered skills: 0

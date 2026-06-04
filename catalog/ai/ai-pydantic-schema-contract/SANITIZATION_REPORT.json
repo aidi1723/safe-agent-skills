@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T09:25:50Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "ab2b332df8eaff6f10fe79cf4a65cc7cb6012f1b0b1163145f00b9a0251b273d",
+    "source_sha256": "853d20f46044b4a934c482a9b3af1080eb6588af99c5edc0809e98bc6cee8057"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-pydantic-schema-contract",
+  "source": {
+    "author": "Pydantic",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/ai-pydantic-schema-contract",
+    "reference": "Community project reference: Pydantic, data validation using Python type hints",
+    "type": "github_reference",
+    "url": "https://github.com/pydantic/pydantic"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "schema",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.schema",
+    "task_intent": "define typed schema contracts for AI outputs"
+  }
+}

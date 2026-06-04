@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T09:25:50Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
+    "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
+  },
+  "name": "data-unstructured-document-partition",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "Unstructured-IO",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-006-community-infrastructure/data-unstructured-document-partition",
+    "reference": "Community project reference: Unstructured, document transformation into structured formats for language models",
+    "type": "github_reference",
+    "url": "https://github.com/Unstructured-IO/unstructured"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "dataset",
+    "category": "data",
+    "collection_priority": "P1",
+    "subcategory": "data.document_partition",
+    "task_intent": "partition complex documents into structured retrieval-ready data"
+  },
+  "version": "0.1.0"
+}

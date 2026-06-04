@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.local_inference",
+    "task_intent": "review local LLM inference boundaries and model provenance",
+    "artifact_type": "policy",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/ggml-org/llama.cpp",
+    "author": "ggml-org",
+    "license": "MIT",
+    "reference": "Community project reference: llama.cpp, LLM inference in C and C++",
+    "collected_by": "onecode-community-review"
+  }
+}

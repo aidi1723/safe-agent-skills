@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "data",
+    "subcategory": "data.document_partition",
+    "task_intent": "partition complex documents into structured retrieval-ready data",
+    "artifact_type": "dataset",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/Unstructured-IO/unstructured",
+    "author": "Unstructured-IO",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Unstructured, document transformation into structured formats for language models",
+    "collected_by": "onecode-community-review"
+  }
+}

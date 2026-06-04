@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "security",
+    "subcategory": "security.guardrails",
+    "task_intent": "validate agent outputs against guardrails and policy contracts",
+    "artifact_type": "audit",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/guardrails-ai/guardrails",
+    "author": "guardrails-ai",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Guardrails AI, adding guardrails to large language models",
+    "collected_by": "onecode-community-review"
+  }
+}

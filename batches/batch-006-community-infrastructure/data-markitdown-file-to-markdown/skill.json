@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "data",
+    "subcategory": "data.markdown_conversion",
+    "task_intent": "convert mixed files into Markdown for agent workflows",
+    "artifact_type": "document",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/microsoft/markitdown",
+    "author": "Microsoft",
+    "license": "MIT",
+    "reference": "Community project reference: MarkItDown, converting files and office documents to Markdown",
+    "collected_by": "onecode-community-review"
+  }
+}

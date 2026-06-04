@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.constrained_generation",
+    "task_intent": "control LLM generation with explicit output constraints",
+    "artifact_type": "prompt",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/guidance-ai/guidance",
+    "author": "guidance-ai",
+    "license": "MIT",
+    "reference": "Community project reference: Guidance, a language for controlling large language models",
+    "collected_by": "onecode-community-review"
+  }
+}

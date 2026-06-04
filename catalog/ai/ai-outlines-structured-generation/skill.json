@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T09:25:13Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "d60f77bcafb22d66282bc8b82c8529ef4a34ada222b635a831d9a5077b953421",
+    "source_sha256": "fd22d2a130d9bf6b067296ae5083962373644e7df09e2512666409a04753d1df"
+  },
+  "name": "ai-outlines-structured-generation",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "dottxt-ai",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-006-community-infrastructure/ai-outlines-structured-generation",
+    "reference": "Community project reference: Outlines, structured outputs",
+    "type": "github_reference",
+    "url": "https://github.com/dottxt-ai/outlines"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "schema",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.structured_generation",
+    "task_intent": "produce parser-safe structured AI outputs"
+  },
+  "version": "0.1.0"
+}

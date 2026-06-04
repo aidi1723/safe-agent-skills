@@ -1,8 +1,116 @@
 {
-  "generated_at": "2026-06-04T07:47:37Z",
+  "generated_at": "2026-06-04T09:26:21Z",
   "schema_version": 1,
-  "skill_count": 48,
+  "skill_count": 60,
   "skills": [
+    {
+      "hashes": {
+        "sanitized_sha256": "56829ffce10f4983ad9a3cd2a135afdaf360107841a78b0798e7558d3a56ac9f",
+        "source_sha256": "b408a20f91a76de3ada7bf0d8ddb42385c29099a2443bf5c6e2279a71a2403c4"
+      },
+      "name": "ai-guidance-constrained-generation",
+      "registry_path": "ai/ai-guidance-constrained-generation",
+      "risk_level": "low",
+      "source": {
+        "author": "guidance-ai",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-006-community-infrastructure/ai-guidance-constrained-generation",
+        "reference": "Community project reference: Guidance, a language for controlling large language models",
+        "type": "github_reference",
+        "url": "https://github.com/guidance-ai/guidance"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.constrained_generation",
+        "task_intent": "control LLM generation with explicit output constraints"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "30a92876502856b1e6bb4ba98406f229028240ec2d3ef7d74878e4a2d4dc218c",
+        "source_sha256": "f6ebc71cd015c9dc543ace98c36b3b51cc53f3c2fc1710d06e576534c0e63cc3"
+      },
+      "name": "ai-litellm-gateway-cost-control",
+      "registry_path": "ai/ai-litellm-gateway-cost-control",
+      "risk_level": "high",
+      "source": {
+        "author": "BerriAI",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "Other",
+        "path": "batches/batch-006-community-infrastructure/ai-litellm-gateway-cost-control",
+        "reference": "Community project reference: LiteLLM, model gateway with cost tracking, guardrails, load balancing, and logging; license reported as Other by GitHub",
+        "type": "github_reference",
+        "url": "https://github.com/BerriAI/litellm"
+      },
+      "status": "review_required",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.gateway",
+        "task_intent": "review LLM gateway routing, budget limits, and provider fallback"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "a03a317c20ec7e0a9e122273ffd6ae6583c63ae7e9105118f97d906c2a700016",
+        "source_sha256": "a79fe2f0582b299338df7aa6929bfea432b4de72dd9bc01774e660090474ac90"
+      },
+      "name": "ai-llama-cpp-local-inference-boundary",
+      "registry_path": "ai/ai-llama-cpp-local-inference-boundary",
+      "risk_level": "low",
+      "source": {
+        "author": "ggml-org",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-006-community-infrastructure/ai-llama-cpp-local-inference-boundary",
+        "reference": "Community project reference: llama.cpp, LLM inference in C and C++",
+        "type": "github_reference",
+        "url": "https://github.com/ggml-org/llama.cpp"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.local_inference",
+        "task_intent": "review local LLM inference boundaries and model provenance"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "d60f77bcafb22d66282bc8b82c8529ef4a34ada222b635a831d9a5077b953421",
+        "source_sha256": "fd22d2a130d9bf6b067296ae5083962373644e7df09e2512666409a04753d1df"
+      },
+      "name": "ai-outlines-structured-generation",
+      "registry_path": "ai/ai-outlines-structured-generation",
+      "risk_level": "low",
+      "source": {
+        "author": "dottxt-ai",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-006-community-infrastructure/ai-outlines-structured-generation",
+        "reference": "Community project reference: Outlines, structured outputs",
+        "type": "github_reference",
+        "url": "https://github.com/dottxt-ai/outlines"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "schema",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.structured_generation",
+        "task_intent": "produce parser-safe structured AI outputs"
+      }
+    },
     {
       "hashes": {
         "sanitized_sha256": "2fce3196b4f9ae19e6d12a78ed9242464038f7adec2d9de7c29bbd23e7ed461b",
@@ -28,6 +136,60 @@
         "collection_priority": "P1",
         "subcategory": "ai.eval",
         "task_intent": "evaluate AI outputs against schemas and task requirements"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "ab2b332df8eaff6f10fe79cf4a65cc7cb6012f1b0b1163145f00b9a0251b273d",
+        "source_sha256": "853d20f46044b4a934c482a9b3af1080eb6588af99c5edc0809e98bc6cee8057"
+      },
+      "name": "ai-pydantic-schema-contract",
+      "registry_path": "ai/ai-pydantic-schema-contract",
+      "risk_level": "low",
+      "source": {
+        "author": "Pydantic",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-006-community-infrastructure/ai-pydantic-schema-contract",
+        "reference": "Community project reference: Pydantic, data validation using Python type hints",
+        "type": "github_reference",
+        "url": "https://github.com/pydantic/pydantic"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "schema",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.schema",
+        "task_intent": "define typed schema contracts for AI outputs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "5405505aa267cf33b620853e70353c591b7a0fbe355e66fbcc2d699b98b2cba8",
+        "source_sha256": "a73cda1d23a9e1b3f81cab6aa60de893c7a18e26bf6864076ea750905fef7483"
+      },
+      "name": "ai-vllm-serving-capacity-plan",
+      "registry_path": "ai/ai-vllm-serving-capacity-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "vllm-project",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-006-community-infrastructure/ai-vllm-serving-capacity-plan",
+        "reference": "Community project reference: vLLM, high-throughput and memory-efficient inference and serving engine for LLMs",
+        "type": "github_reference",
+        "url": "https://github.com/vllm-project/vllm"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "deployment",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.serving",
+        "task_intent": "plan high-throughput LLM serving capacity and readiness"
       }
     },
     {
@@ -518,6 +680,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "b6ebffb190855c43dbb5725fe4a23245db1d9372f37d2724332e9dffe836d75b",
+        "source_sha256": "8946c9c7897983a3a50283480e93d65ff2cf87fd3464ea0e9eb1e7b68d64294c"
+      },
+      "name": "content-prompt-engineering-patterns",
+      "registry_path": "content/content-prompt-engineering-patterns",
+      "risk_level": "low",
+      "source": {
+        "author": "DAIR.AI",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-006-community-infrastructure/content-prompt-engineering-patterns",
+        "reference": "Community project reference: Prompt Engineering Guide, resources for prompt engineering, context engineering, RAG, and AI agents",
+        "type": "github_reference",
+        "url": "https://github.com/dair-ai/Prompt-Engineering-Guide"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "content",
+        "collection_priority": "P1",
+        "subcategory": "content.prompt",
+        "task_intent": "design and review prompts and context instructions"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "98555332f20c1125e1439551a0b5ed6c7182477697a45013eac6edf0c323e2ed",
         "source_sha256": "ac5e5582f4911c2f2a043db250b318476b19db59faeb1338359366fa260a10c0"
       },
@@ -572,6 +761,60 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
+        "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
+      },
+      "name": "data-marker-pdf-markdown-review",
+      "registry_path": "data/data-marker-pdf-markdown-review",
+      "risk_level": "low",
+      "source": {
+        "author": "datalab-to",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "GPL-3.0",
+        "path": "batches/batch-006-community-infrastructure/data-marker-pdf-markdown-review",
+        "reference": "Community project reference: Marker, converting PDF to Markdown and JSON with high accuracy; reference workflow only, no code copied",
+        "type": "github_reference",
+        "url": "https://github.com/datalab-to/marker"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.pdf_markdown",
+        "task_intent": "review PDF to Markdown conversion quality and extraction uncertainty"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "8c63709c028c08f23611f3e3df987de92098ea486be6b8a1eeaace0213df3c0c",
+        "source_sha256": "f5a023b31314e3d488a1c87244c3574592860ffc8452a804640b604cf7e8733b"
+      },
+      "name": "data-markitdown-file-to-markdown",
+      "registry_path": "data/data-markitdown-file-to-markdown",
+      "risk_level": "low",
+      "source": {
+        "author": "Microsoft",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-006-community-infrastructure/data-markitdown-file-to-markdown",
+        "reference": "Community project reference: MarkItDown, converting files and office documents to Markdown",
+        "type": "github_reference",
+        "url": "https://github.com/microsoft/markitdown"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.markdown_conversion",
+        "task_intent": "convert mixed files into Markdown for agent workflows"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "e4fa29e3e7327178b10e5375b0120defb3d6345f8aa3d517a943fbfd00b9b370",
         "source_sha256": "06abcdb2162b88bfbb7bd352cfe5b33252af833a863d099c22b532949b69c575"
       },
@@ -622,6 +865,33 @@
         "collection_priority": "P1",
         "subcategory": "data.analysis",
         "task_intent": "analyze tabular data with reproducible checks"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
+        "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
+      },
+      "name": "data-unstructured-document-partition",
+      "registry_path": "data/data-unstructured-document-partition",
+      "risk_level": "low",
+      "source": {
+        "author": "Unstructured-IO",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-006-community-infrastructure/data-unstructured-document-partition",
+        "reference": "Community project reference: Unstructured, document transformation into structured formats for language models",
+        "type": "github_reference",
+        "url": "https://github.com/Unstructured-IO/unstructured"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.document_partition",
+        "task_intent": "partition complex documents into structured retrieval-ready data"
       }
     },
     {
@@ -1135,6 +1405,60 @@
         "collection_priority": "P1",
         "subcategory": "research.source",
         "task_intent": "verify claims against primary sources"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
+        "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
+      },
+      "name": "security-guardrails-output-validation",
+      "registry_path": "security/security-guardrails-output-validation",
+      "risk_level": "low",
+      "source": {
+        "author": "guardrails-ai",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-006-community-infrastructure/security-guardrails-output-validation",
+        "reference": "Community project reference: Guardrails AI, adding guardrails to large language models",
+        "type": "github_reference",
+        "url": "https://github.com/guardrails-ai/guardrails"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "audit",
+        "category": "security",
+        "collection_priority": "P0",
+        "subcategory": "security.guardrails",
+        "task_intent": "validate agent outputs against guardrails and policy contracts"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "c0005c155384ed3ef6a7fc7c64f13b74285945f7730ace3903c33c813df24dc2",
+        "source_sha256": "b34a564b300023407053a45d02e9a9aa662add202ecb5663faf218909af02c34"
+      },
+      "name": "security-llm-guard-io-scanning",
+      "registry_path": "security/security-llm-guard-io-scanning",
+      "risk_level": "low",
+      "source": {
+        "author": "Protect AI",
+        "captured_at": "2026-06-04T09:21:50Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-006-community-infrastructure/security-llm-guard-io-scanning",
+        "reference": "Community project reference: LLM Guard, security toolkit for LLM interactions",
+        "type": "github_reference",
+        "url": "https://github.com/protectai/llm-guard"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "audit",
+        "category": "security",
+        "collection_priority": "P0",
+        "subcategory": "security.io_scan",
+        "task_intent": "scan LLM inputs and outputs for sensitive or unsafe content"
       }
     },
     {

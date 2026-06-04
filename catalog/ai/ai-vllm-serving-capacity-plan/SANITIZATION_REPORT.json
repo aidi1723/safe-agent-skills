@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T09:26:21Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "5405505aa267cf33b620853e70353c591b7a0fbe355e66fbcc2d699b98b2cba8",
+    "source_sha256": "a73cda1d23a9e1b3f81cab6aa60de893c7a18e26bf6864076ea750905fef7483"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-vllm-serving-capacity-plan",
+  "source": {
+    "author": "vllm-project",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-006-community-infrastructure/ai-vllm-serving-capacity-plan",
+    "reference": "Community project reference: vLLM, high-throughput and memory-efficient inference and serving engine for LLMs",
+    "type": "github_reference",
+    "url": "https://github.com/vllm-project/vllm"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "deployment",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.serving",
+    "task_intent": "plan high-throughput LLM serving capacity and readiness"
+  }
+}

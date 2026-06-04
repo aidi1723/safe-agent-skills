@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.gateway",
+    "task_intent": "review LLM gateway routing, budget limits, and provider fallback",
+    "artifact_type": "policy",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/BerriAI/litellm",
+    "author": "BerriAI",
+    "license": "Other",
+    "reference": "Community project reference: LiteLLM, model gateway with cost tracking, guardrails, load balancing, and logging; license reported as Other by GitHub",
+    "collected_by": "onecode-community-review"
+  }
+}

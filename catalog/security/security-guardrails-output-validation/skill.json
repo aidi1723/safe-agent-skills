@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T09:25:12Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
+    "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
+  },
+  "name": "security-guardrails-output-validation",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "guardrails-ai",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-006-community-infrastructure/security-guardrails-output-validation",
+    "reference": "Community project reference: Guardrails AI, adding guardrails to large language models",
+    "type": "github_reference",
+    "url": "https://github.com/guardrails-ai/guardrails"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "audit",
+    "category": "security",
+    "collection_priority": "P0",
+    "subcategory": "security.guardrails",
+    "task_intent": "validate agent outputs against guardrails and policy contracts"
+  },
+  "version": "0.1.0"
+}

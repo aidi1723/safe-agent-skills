@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T09:25:13Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "c0005c155384ed3ef6a7fc7c64f13b74285945f7730ace3903c33c813df24dc2",
+    "source_sha256": "b34a564b300023407053a45d02e9a9aa662add202ecb5663faf218909af02c34"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "security-llm-guard-io-scanning",
+  "source": {
+    "author": "Protect AI",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/security-llm-guard-io-scanning",
+    "reference": "Community project reference: LLM Guard, security toolkit for LLM interactions",
+    "type": "github_reference",
+    "url": "https://github.com/protectai/llm-guard"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "audit",
+    "category": "security",
+    "collection_priority": "P0",
+    "subcategory": "security.io_scan",
+    "task_intent": "scan LLM inputs and outputs for sensitive or unsafe content"
+  }
+}

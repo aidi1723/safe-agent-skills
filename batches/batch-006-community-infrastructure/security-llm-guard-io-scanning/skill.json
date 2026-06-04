@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "security",
+    "subcategory": "security.io_scan",
+    "task_intent": "scan LLM inputs and outputs for sensitive or unsafe content",
+    "artifact_type": "audit",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/protectai/llm-guard",
+    "author": "Protect AI",
+    "license": "MIT",
+    "reference": "Community project reference: LLM Guard, security toolkit for LLM interactions",
+    "collected_by": "onecode-community-review"
+  }
+}

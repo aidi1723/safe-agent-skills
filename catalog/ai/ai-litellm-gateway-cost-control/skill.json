@@ -1,0 +1,52 @@
+{
+  "allowed_tools": [],
+  "findings": [
+    {
+      "id": "broad-filesystem-access",
+      "severity": "high",
+      "status": "unresolved",
+      "summary": "Found broad filesystem or credential access guidance."
+    }
+  ],
+  "hashes": {
+    "sanitized_sha256": "30a92876502856b1e6bb4ba98406f229028240ec2d3ef7d74878e4a2d4dc218c",
+    "source_sha256": "f6ebc71cd015c9dc543ace98c36b3b51cc53f3c2fc1710d06e576534c0e63cc3"
+  },
+  "name": "ai-litellm-gateway-cost-control",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "high",
+  "schema_version": 1,
+  "source": {
+    "author": "BerriAI",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "Other",
+    "path": "batches/batch-006-community-infrastructure/ai-litellm-gateway-cost-control",
+    "reference": "Community project reference: LiteLLM, model gateway with cost tracking, guardrails, load balancing, and logging; license reported as Other by GitHub",
+    "type": "github_reference",
+    "url": "https://github.com/BerriAI/litellm"
+  },
+  "status": "review_required",
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.gateway",
+    "task_intent": "review LLM gateway routing, budget limits, and provider fallback"
+  },
+  "version": "0.1.0"
+}

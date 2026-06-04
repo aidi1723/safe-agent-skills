@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T09:26:21Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "b6ebffb190855c43dbb5725fe4a23245db1d9372f37d2724332e9dffe836d75b",
+    "source_sha256": "8946c9c7897983a3a50283480e93d65ff2cf87fd3464ea0e9eb1e7b68d64294c"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "content-prompt-engineering-patterns",
+  "source": {
+    "author": "DAIR.AI",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/content-prompt-engineering-patterns",
+    "reference": "Community project reference: Prompt Engineering Guide, resources for prompt engineering, context engineering, RAG, and AI agents",
+    "type": "github_reference",
+    "url": "https://github.com/dair-ai/Prompt-Engineering-Guide"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "content",
+    "collection_priority": "P1",
+    "subcategory": "content.prompt",
+    "task_intent": "design and review prompts and context instructions"
+  }
+}

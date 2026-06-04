@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "content",
+    "subcategory": "content.prompt",
+    "task_intent": "design and review prompts and context instructions",
+    "artifact_type": "prompt",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/dair-ai/Prompt-Engineering-Guide",
+    "author": "DAIR.AI",
+    "license": "MIT",
+    "reference": "Community project reference: Prompt Engineering Guide, resources for prompt engineering, context engineering, RAG, and AI agents",
+    "collected_by": "onecode-community-review"
+  }
+}

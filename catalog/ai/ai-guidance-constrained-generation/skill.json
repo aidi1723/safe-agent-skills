@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T09:25:13Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "56829ffce10f4983ad9a3cd2a135afdaf360107841a78b0798e7558d3a56ac9f",
+    "source_sha256": "b408a20f91a76de3ada7bf0d8ddb42385c29099a2443bf5c6e2279a71a2403c4"
+  },
+  "name": "ai-guidance-constrained-generation",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "guidance-ai",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/ai-guidance-constrained-generation",
+    "reference": "Community project reference: Guidance, a language for controlling large language models",
+    "type": "github_reference",
+    "url": "https://github.com/guidance-ai/guidance"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.constrained_generation",
+    "task_intent": "control LLM generation with explicit output constraints"
+  },
+  "version": "0.1.0"
+}

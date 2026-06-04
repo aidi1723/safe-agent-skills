@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T09:25:13Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "56829ffce10f4983ad9a3cd2a135afdaf360107841a78b0798e7558d3a56ac9f",
+    "source_sha256": "b408a20f91a76de3ada7bf0d8ddb42385c29099a2443bf5c6e2279a71a2403c4"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-guidance-constrained-generation",
+  "source": {
+    "author": "guidance-ai",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/ai-guidance-constrained-generation",
+    "reference": "Community project reference: Guidance, a language for controlling large language models",
+    "type": "github_reference",
+    "url": "https://github.com/guidance-ai/guidance"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.constrained_generation",
+    "task_intent": "control LLM generation with explicit output constraints"
+  }
+}

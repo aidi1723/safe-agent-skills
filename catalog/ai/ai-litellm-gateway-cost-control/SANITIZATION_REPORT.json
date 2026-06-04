@@ -1,0 +1,70 @@
+{
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [
+    {
+      "id": "broad-filesystem-access",
+      "severity": "high",
+      "status": "unresolved",
+      "summary": "Found broad filesystem or credential access guidance."
+    }
+  ],
+  "hashes": {
+    "sanitized_sha256": "30a92876502856b1e6bb4ba98406f229028240ec2d3ef7d74878e4a2d4dc218c",
+    "source_sha256": "f6ebc71cd015c9dc543ace98c36b3b51cc53f3c2fc1710d06e576534c0e63cc3"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [
+    {
+      "id": "broad-filesystem-access",
+      "line": "20",
+      "severity": "high",
+      "status": "removed",
+      "summary": "Found broad filesystem or credential access guidance."
+    },
+    {
+      "id": "broad-filesystem-access",
+      "line": "21",
+      "severity": "high",
+      "status": "removed",
+      "summary": "Found broad filesystem or credential access guidance."
+    },
+    {
+      "id": "broad-filesystem-access",
+      "line": "46",
+      "severity": "high",
+      "status": "removed",
+      "summary": "Found broad filesystem or credential access guidance."
+    }
+  ],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-litellm-gateway-cost-control",
+  "source": {
+    "author": "BerriAI",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "Other",
+    "path": "batches/batch-006-community-infrastructure/ai-litellm-gateway-cost-control",
+    "reference": "Community project reference: LiteLLM, model gateway with cost tracking, guardrails, load balancing, and logging; license reported as Other by GitHub",
+    "type": "github_reference",
+    "url": "https://github.com/BerriAI/litellm"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 3,
+    "rewritten_fragment_count": 0,
+    "risk_level": "high",
+    "status": "review_required",
+    "unresolved_finding_count": 1
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.gateway",
+    "task_intent": "review LLM gateway routing, budget limits, and provider fallback"
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T09:25:50Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "8c63709c028c08f23611f3e3df987de92098ea486be6b8a1eeaace0213df3c0c",
+    "source_sha256": "f5a023b31314e3d488a1c87244c3574592860ffc8452a804640b604cf7e8733b"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "data-markitdown-file-to-markdown",
+  "source": {
+    "author": "Microsoft",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/data-markitdown-file-to-markdown",
+    "reference": "Community project reference: MarkItDown, converting files and office documents to Markdown",
+    "type": "github_reference",
+    "url": "https://github.com/microsoft/markitdown"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "document",
+    "category": "data",
+    "collection_priority": "P1",
+    "subcategory": "data.markdown_conversion",
+    "task_intent": "convert mixed files into Markdown for agent workflows"
+  }
+}

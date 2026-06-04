@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T09:26:21Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "a03a317c20ec7e0a9e122273ffd6ae6583c63ae7e9105118f97d906c2a700016",
+    "source_sha256": "a79fe2f0582b299338df7aa6929bfea432b4de72dd9bc01774e660090474ac90"
+  },
+  "name": "ai-llama-cpp-local-inference-boundary",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "ggml-org",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-006-community-infrastructure/ai-llama-cpp-local-inference-boundary",
+    "reference": "Community project reference: llama.cpp, LLM inference in C and C++",
+    "type": "github_reference",
+    "url": "https://github.com/ggml-org/llama.cpp"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.local_inference",
+    "task_intent": "review local LLM inference boundaries and model provenance"
+  },
+  "version": "0.1.0"
+}

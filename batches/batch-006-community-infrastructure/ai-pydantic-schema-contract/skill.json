@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.schema",
+    "task_intent": "define typed schema contracts for AI outputs",
+    "artifact_type": "schema",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/pydantic/pydantic",
+    "author": "Pydantic",
+    "license": "MIT",
+    "reference": "Community project reference: Pydantic, data validation using Python type hints",
+    "collected_by": "onecode-community-review"
+  }
+}

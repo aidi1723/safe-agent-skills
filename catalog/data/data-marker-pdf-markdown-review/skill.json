@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T09:25:50Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
+    "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
+  },
+  "name": "data-marker-pdf-markdown-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "datalab-to",
+    "captured_at": "2026-06-04T09:21:50Z",
+    "collected_by": "onecode-community-review",
+    "license": "GPL-3.0",
+    "path": "batches/batch-006-community-infrastructure/data-marker-pdf-markdown-review",
+    "reference": "Community project reference: Marker, converting PDF to Markdown and JSON with high accuracy; reference workflow only, no code copied",
+    "type": "github_reference",
+    "url": "https://github.com/datalab-to/marker"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "document",
+    "category": "data",
+    "collection_priority": "P1",
+    "subcategory": "data.pdf_markdown",
+    "task_intent": "review PDF to Markdown conversion quality and extraction uncertainty"
+  },
+  "version": "0.1.0"
+}
