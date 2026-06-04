@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:47:37Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "4a2f86c9d55536c2c1e201d86518c9e8668601096e721d619688efb8b225d14c",
+    "source_sha256": "8d651ca2e8e2515c5bef961e26d14ab96b81b5f83acdbcec85d59c24e0e20d23"
+  },
+  "name": "research-paper-synthesis",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/research-paper-synthesis",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-paper-synthesis"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.academic",
+    "task_intent": "summarize and compare research papers and technical evidence"
+  },
+  "version": "0.1.0"
+}

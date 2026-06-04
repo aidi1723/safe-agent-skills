@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:10:07Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "f03fdced2bf2d867c87c16dee13109cd8eaf5278e123211cbd97c6e94ea60d2b",
+    "source_sha256": "b530b5d4dd1571ebe29505307bcddf9309e3b759d626803f65701690323ca3b6"
+  },
+  "name": "vertical-education-plan",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:09:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-003-coverage-seed/vertical-education-plan",
+    "reference": "docs/batches/batch-003-coverage-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/vertical-education-plan"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "vertical",
+    "collection_priority": "P3",
+    "subcategory": "vertical.education",
+    "task_intent": "plan education workflows safely"
+  },
+  "version": "0.1.0"
+}

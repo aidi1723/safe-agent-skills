@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:36Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "e305f8081c2fc4a1051c8ef4b9271a43d5bcb942306af242a00e563ffaff6eda",
+    "source_sha256": "fe13372bb83ac4f497b293f1a656aa136d1ea00520ce07e4fd579fd1e78ad243"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-process-sop",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/business-process-sop",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/business-process-sop"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P2",
+    "subcategory": "business.process",
+    "task_intent": "document repeatable business operations and SOPs"
+  }
+}

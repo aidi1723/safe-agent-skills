@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "compliance",
+    "subcategory": "compliance.privacy",
+    "task_intent": "check privacy and data-handling risk",
+    "artifact_type": "policy",
+    "collection_priority": "P2"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/compliance-privacy-check",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-003-coverage-seed.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

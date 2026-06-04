@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:05:34Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "98555332f20c1125e1439551a0b5ed6c7182477697a45013eac6edf0c323e2ed",
+    "source_sha256": "ac5e5582f4911c2f2a043db250b318476b19db59faeb1338359366fa260a10c0"
+  },
+  "name": "content-seo-brief",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:05:20Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-002-p1-seed/content-seo-brief",
+    "reference": "docs/batches/batch-002-p1-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/content-seo-brief"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "content",
+    "category": "content",
+    "collection_priority": "P1",
+    "subcategory": "content.seo",
+    "task_intent": "create safe SEO and content briefs"
+  },
+  "version": "0.1.0"
+}

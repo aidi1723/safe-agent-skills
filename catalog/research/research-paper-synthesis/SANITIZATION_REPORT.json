@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:37Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "4a2f86c9d55536c2c1e201d86518c9e8668601096e721d619688efb8b225d14c",
+    "source_sha256": "8d651ca2e8e2515c5bef961e26d14ab96b81b5f83acdbcec85d59c24e0e20d23"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "research-paper-synthesis",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/research-paper-synthesis",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-paper-synthesis"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.academic",
+    "task_intent": "summarize and compare research papers and technical evidence"
+  }
+}

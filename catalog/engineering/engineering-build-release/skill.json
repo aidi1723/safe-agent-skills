@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:01:58Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
+    "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
+  },
+  "name": "engineering-build-release",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:01:33Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-001-seed/engineering-build-release",
+    "reference": "docs/batches/batch-001-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/engineering-build-release"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "deployment",
+    "category": "engineering",
+    "collection_priority": "P0",
+    "subcategory": "engineering.build",
+    "task_intent": "prepare build and release checks safely"
+  },
+  "version": "0.1.0"
+}

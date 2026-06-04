@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "office",
+    "subcategory": "office.pdf",
+    "task_intent": "process PDF reports safely",
+    "artifact_type": "document",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/office-pdf-report",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-001-seed.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

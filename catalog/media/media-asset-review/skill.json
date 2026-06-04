@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:10:07Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "84e25802452dbc624295e268e381261b50cd5ffa51d4d030712291f894204146",
+    "source_sha256": "e150ec1899867f8c20c94f1f8d9cbabb637577b03083c6178a072ee86f386e9a"
+  },
+  "name": "media-asset-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:09:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-003-coverage-seed/media-asset-review",
+    "reference": "docs/batches/batch-003-coverage-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/media-asset-review"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "asset",
+    "category": "media",
+    "collection_priority": "P2",
+    "subcategory": "media.image",
+    "task_intent": "review media assets for readiness and usage risk"
+  },
+  "version": "0.1.0"
+}

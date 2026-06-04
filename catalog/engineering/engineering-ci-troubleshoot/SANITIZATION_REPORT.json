@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:37Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
+    "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "engineering-ci-troubleshoot",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/engineering-ci-troubleshoot",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-ci-troubleshoot"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "deployment",
+    "category": "engineering",
+    "collection_priority": "P0",
+    "subcategory": "engineering.ci",
+    "task_intent": "diagnose CI and release pipeline failures"
+  }
+}

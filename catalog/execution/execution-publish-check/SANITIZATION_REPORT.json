@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:37Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "e1600c4868599dfd83b65fcec7f3d8095ebe89fea416b4308faf41432624e1e8",
+    "source_sha256": "55c003e53bc282b1ab8bb92064a351b1982e28c2c7449c8465812aa357f63c18"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "execution-publish-check",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/execution-publish-check",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/execution-publish-check"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "execution",
+    "collection_priority": "P0",
+    "subcategory": "execution.publish",
+    "task_intent": "check controlled publishing and release readiness"
+  }
+}

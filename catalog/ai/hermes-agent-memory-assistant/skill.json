@@ -1,0 +1,45 @@
+{
+  "allowed_tools": [],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "7c5c8ee35ae4f744eb69bc37860d2686f2d13f71a0cae2e1f21234cf6f8e83d5",
+    "source_sha256": "7bb87a1b060b564367fe31aba63f2ffe55f61fd7647a9f7d6c9a7d0d00a57f0e"
+  },
+  "name": "hermes-agent-memory-assistant",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "NousResearch",
+    "captured_at": "2026-06-04T07:34:53Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-004-community-hot/hermes-agent-memory-assistant",
+    "reference": "Community project reference: Hermes Agent memory and assistant growth patterns",
+    "type": "github_reference",
+    "url": "https://github.com/NousResearch/hermes-agent"
+  },
+  "status": "quarantined",
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.memory",
+    "task_intent": "review assistant memory and personalization workflows under explicit safety boundaries"
+  },
+  "version": "0.1.0"
+}

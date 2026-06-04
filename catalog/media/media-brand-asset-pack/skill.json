@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:47:37Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "c28b571a1903db977954b304ceea6dc14631ae75f1cb97e1c25a77262f206545",
+    "source_sha256": "96814e2209ddb2d85f8520c559965ff9e71187b7e41588a3ed88ae0ed38aeb37"
+  },
+  "name": "media-brand-asset-pack",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/media-brand-asset-pack",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-brand-asset-pack"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "asset",
+    "category": "media",
+    "collection_priority": "P2",
+    "subcategory": "media.brand",
+    "task_intent": "organize and review brand media asset packs"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "commerce",
+    "subcategory": "commerce.icbu",
+    "task_intent": "prepare Alibaba International Station listing guidance",
+    "artifact_type": "listing",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/commerce-icbu-listing",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-002-p1-seed.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

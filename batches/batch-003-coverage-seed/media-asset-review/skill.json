@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "media",
+    "subcategory": "media.image",
+    "task_intent": "review media assets for readiness and usage risk",
+    "artifact_type": "asset",
+    "collection_priority": "P2"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/media-asset-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-003-coverage-seed.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

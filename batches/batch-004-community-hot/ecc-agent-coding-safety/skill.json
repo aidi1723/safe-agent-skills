@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.context-engineering",
+    "task_intent": "adapt context-engineering patterns for safer AI coding workflows",
+    "artifact_type": "prompt",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/affaan-m/ecc",
+    "author": "affaan-m",
+    "license": "MIT",
+    "reference": "Community project reference: ECC / Enhanced Context Engineering for AI coding assistants",
+    "collected_by": "onecode-community-review"
+  }
+}

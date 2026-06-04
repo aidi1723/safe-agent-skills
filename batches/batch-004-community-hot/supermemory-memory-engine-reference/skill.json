@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.memory",
+    "task_intent": "design persistent AI memory retrieval with privacy and provenance controls",
+    "artifact_type": "policy",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/supermemoryai/supermemory",
+    "author": "supermemoryai",
+    "license": "MIT",
+    "reference": "Community project reference: SuperMemory AI memory engine",
+    "collected_by": "onecode-community-review"
+  }
+}

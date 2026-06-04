@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "design",
+    "subcategory": "design.review",
+    "task_intent": "review and polish UI screens safely",
+    "artifact_type": "interface",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/design-ui-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-001-seed.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

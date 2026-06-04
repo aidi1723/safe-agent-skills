@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "security",
+    "subcategory": "security.prompt",
+    "task_intent": "review prompts and agent instructions for injection risk",
+    "artifact_type": "audit",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/security-prompt-injection-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-001-seed.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

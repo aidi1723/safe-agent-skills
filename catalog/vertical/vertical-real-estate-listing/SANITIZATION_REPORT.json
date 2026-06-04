@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:37Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "8453d18fccb7e03ecdb505dc51dc9546dd9975f253f934a42d2daf8428f9ccf4",
+    "source_sha256": "3fb3d065fc4ff9614a9e7d6edaa304f8daf84826faaa7941811fb3898ef4c9f5"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "vertical-real-estate-listing",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/vertical-real-estate-listing",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-real-estate-listing"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "vertical",
+    "collection_priority": "P3",
+    "subcategory": "vertical.real_estate",
+    "task_intent": "draft and review real-estate listing content safely"
+  }
+}

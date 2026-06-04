@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:05:34Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "607acc05e6702165f73ab809f968c241253daeac94b63d8c74c8631c30ddf78f",
+    "source_sha256": "718da8eb550b947211605894d823c991e48c834609aae89a512a82c93ea09861"
+  },
+  "name": "data-table-analysis",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:05:20Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-002-p1-seed/data-table-analysis",
+    "reference": "docs/batches/batch-002-p1-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/data-table-analysis"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "dataset",
+    "category": "data",
+    "collection_priority": "P1",
+    "subcategory": "data.analysis",
+    "task_intent": "analyze tabular data with reproducible checks"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:37Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "19770834be6143f769847f9865f7645e5fa654551ec5e409ff1dcef1cc25ddeb",
+    "source_sha256": "260ee0d4d9089fb710ae96d1b5da1d9d635e6cdf034eeb1fa2b227d544ebf4ce"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "compliance-terms-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/compliance-terms-review",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-terms-review"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "compliance",
+    "collection_priority": "P2",
+    "subcategory": "compliance.terms",
+    "task_intent": "review policy and terms documents for operational risk"
+  }
+}

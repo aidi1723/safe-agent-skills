@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:10:07Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "ea53796a10f62ac0ad81dec80c2e98d69bdea8bef7197eba1af8f2647d5e18c5",
+    "source_sha256": "544e0255bb143d3aee738e77b8e38f2aaeb407908d0946f72287b2291d7d844e"
+  },
+  "name": "compliance-privacy-check",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:09:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-003-coverage-seed/compliance-privacy-check",
+    "reference": "docs/batches/batch-003-coverage-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/compliance-privacy-check"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "compliance",
+    "collection_priority": "P2",
+    "subcategory": "compliance.privacy",
+    "task_intent": "check privacy and data-handling risk"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:10:07Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "d91e3855b9ed4eeb797c720766aa979429f49feb804f368a609f8cbbc2776b14",
+    "source_sha256": "4320b8aacfa5d7a12d89bd648d337ca18b2eecc53fe8baf34ba1772752b68999"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-support-triage",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:09:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-003-coverage-seed/business-support-triage",
+    "reference": "docs/batches/batch-003-coverage-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/business-support-triage"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P2",
+    "subcategory": "business.support",
+    "task_intent": "triage customer support requests safely"
+  }
+}

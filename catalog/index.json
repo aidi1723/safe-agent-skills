@@ -1,0 +1,1303 @@
+{
+  "generated_at": "2026-06-04T07:47:37Z",
+  "schema_version": 1,
+  "skill_count": 48,
+  "skills": [
+    {
+      "hashes": {
+        "sanitized_sha256": "2fce3196b4f9ae19e6d12a78ed9242464038f7adec2d9de7c29bbd23e7ed461b",
+        "source_sha256": "364bcf0a17ff8fa007072e36f135105f0247090c98db29f94c4cbe038ce98675"
+      },
+      "name": "ai-output-schema-eval",
+      "registry_path": "ai/ai-output-schema-eval",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:05:20Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-002-p1-seed/ai-output-schema-eval",
+        "reference": "docs/batches/batch-002-p1-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/ai-output-schema-eval"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.eval",
+        "task_intent": "evaluate AI outputs against schemas and task requirements"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "badcc5058e375fa0e20dda9cb930b328fb455fa0446793629a92392de17df5c3",
+        "source_sha256": "47dfabdf228d71fe544a285d07a37749743ca08bf14a973c22b89e10c512ec7e"
+      },
+      "name": "ecc-agent-coding-safety",
+      "registry_path": "ai/ecc-agent-coding-safety",
+      "risk_level": "low",
+      "source": {
+        "author": "affaan-m",
+        "captured_at": "2026-06-04T07:34:53Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-004-community-hot/ecc-agent-coding-safety",
+        "reference": "Community project reference: ECC / Enhanced Context Engineering for AI coding assistants",
+        "type": "github_reference",
+        "url": "https://github.com/affaan-m/ecc"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.context-engineering",
+        "task_intent": "adapt context-engineering patterns for safer AI coding workflows"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "3979276b7e35d28c3306db88004e281ee8c1318975408d121659fa105d6eafbe",
+        "source_sha256": "6f6d6bfdab2347747a4ca02cfe0224797e4f1a1f139299b7b3e6d5f8839f8035"
+      },
+      "name": "headroom-context-compression",
+      "registry_path": "ai/headroom-context-compression",
+      "risk_level": "low",
+      "source": {
+        "author": "chopratejas",
+        "captured_at": "2026-06-04T07:34:53Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-004-community-hot/headroom-context-compression",
+        "reference": "Community project reference: Headroom context compression and token reduction",
+        "type": "github_reference",
+        "url": "https://github.com/chopratejas/headroom"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.context-compression",
+        "task_intent": "compress AI workflow context while preserving decisions and safety boundaries"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "7c5c8ee35ae4f744eb69bc37860d2686f2d13f71a0cae2e1f21234cf6f8e83d5",
+        "source_sha256": "7bb87a1b060b564367fe31aba63f2ffe55f61fd7647a9f7d6c9a7d0d00a57f0e"
+      },
+      "name": "hermes-agent-memory-assistant",
+      "registry_path": "ai/hermes-agent-memory-assistant",
+      "risk_level": "low",
+      "source": {
+        "author": "NousResearch",
+        "captured_at": "2026-06-04T07:34:53Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-004-community-hot/hermes-agent-memory-assistant",
+        "reference": "Community project reference: Hermes Agent memory and assistant growth patterns",
+        "type": "github_reference",
+        "url": "https://github.com/NousResearch/hermes-agent"
+      },
+      "status": "quarantined",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.memory",
+        "task_intent": "review assistant memory and personalization workflows under explicit safety boundaries"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "112e37eb5156c87965aeeecb474b0c0bca83cf5a57a46f513c06982493d6e060",
+        "source_sha256": "432cc40a2a7f79b562463dcab31822dcd6a37d3dad0bb833bc7f7bcb6fa1e34c"
+      },
+      "name": "supermemory-memory-engine-reference",
+      "registry_path": "ai/supermemory-memory-engine-reference",
+      "risk_level": "low",
+      "source": {
+        "author": "supermemoryai",
+        "captured_at": "2026-06-04T07:34:53Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-004-community-hot/supermemory-memory-engine-reference",
+        "reference": "Community project reference: SuperMemory AI memory engine",
+        "type": "github_reference",
+        "url": "https://github.com/supermemoryai/supermemory"
+      },
+      "status": "quarantined",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.memory",
+        "task_intent": "design persistent AI memory retrieval with privacy and provenance controls"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e305f8081c2fc4a1051c8ef4b9271a43d5bcb942306af242a00e563ffaff6eda",
+        "source_sha256": "fe13372bb83ac4f497b293f1a656aa136d1ea00520ce07e4fd579fd1e78ad243"
+      },
+      "name": "business-process-sop",
+      "registry_path": "business/business-process-sop",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/business-process-sop",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/business-process-sop"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P2",
+        "subcategory": "business.process",
+        "task_intent": "document repeatable business operations and SOPs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "2e802eb01d54ce6569692116c98662f5e019696023ccf187bbec7f293901018a",
+        "source_sha256": "d012b81bda16b8d5ff0535b685806196a870436dbbfee6e1fd1b6c888e06f28b"
+      },
+      "name": "business-requirements-brief",
+      "registry_path": "business/business-requirements-brief",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/business-requirements-brief",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/business-requirements-brief"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P2",
+        "subcategory": "business.requirements",
+        "task_intent": "turn business goals into clear requirements and acceptance criteria"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "d91e3855b9ed4eeb797c720766aa979429f49feb804f368a609f8cbbc2776b14",
+        "source_sha256": "4320b8aacfa5d7a12d89bd648d337ca18b2eecc53fe8baf34ba1772752b68999"
+      },
+      "name": "business-support-triage",
+      "registry_path": "business/business-support-triage",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:09:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-003-coverage-seed/business-support-triage",
+        "reference": "docs/batches/batch-003-coverage-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/business-support-triage"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P2",
+        "subcategory": "business.support",
+        "task_intent": "triage customer support requests safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "0e9bcc45df3bee0793bd92dac5b6949c4ede00747262a4163f68eb986db40b4f",
+        "source_sha256": "3bff531dffd66fda53b60e82c5667c8fdc2e345d553d0b5c09f708adbfd60c4d"
+      },
+      "name": "code-python-debug",
+      "registry_path": "code/code-python-debug",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:01:33Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-001-seed/code-python-debug",
+        "reference": "docs/batches/batch-001-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/code-python-debug"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.debug",
+        "task_intent": "debug and repair Python code safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e0075ddcaa3e33add5ea5b0a363211b65e001df8574c45156623fa1ea1c14bdb",
+        "source_sha256": "d15096f5f9f453ddef5edbd8eae0bbe729223174cd55691f5178f44eb5547a52"
+      },
+      "name": "code-review-risk",
+      "registry_path": "code/code-review-risk",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/code-review-risk",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-review-risk"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.review",
+        "task_intent": "review code changes for bugs and regressions"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "60e9c0237617a047c487b233da9cb5eaad87a0ae26db1bcedcb73d8b2616ae6e",
+        "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
+      },
+      "name": "code-test-regression",
+      "registry_path": "code/code-test-regression",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/code-test-regression",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-test-regression"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.test",
+        "task_intent": "create and review regression tests for code changes"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e67cd4fef87f6e8e5da7a8585a0648ea229b1a683f3e216986aeced3046ad854",
+        "source_sha256": "64a3428fea1a24897132438885ae841e05d6a31953c5e7ad77ea0becc0a679e3"
+      },
+      "name": "commerce-icbu-listing",
+      "registry_path": "commerce/commerce-icbu-listing",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:05:20Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-002-p1-seed/commerce-icbu-listing",
+        "reference": "docs/batches/batch-002-p1-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/commerce-icbu-listing"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "listing",
+        "category": "commerce",
+        "collection_priority": "P1",
+        "subcategory": "commerce.icbu",
+        "task_intent": "prepare Alibaba International Station listing guidance"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "b90092107c258cb29ce62bbde009679784a3f5c55366ebdb6a3d10b65746bf6e",
+        "source_sha256": "4cc4363f7102634d0f7695a8f42cbfb87ce329652e7334d4d8734f79477360bb"
+      },
+      "name": "commerce-inquiry-reply",
+      "registry_path": "commerce/commerce-inquiry-reply",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/commerce-inquiry-reply",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-inquiry-reply"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "listing",
+        "category": "commerce",
+        "collection_priority": "P1",
+        "subcategory": "commerce.inquiry",
+        "task_intent": "draft safe buyer inquiry and trade follow-up replies"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "95df65b5566334a3955894736aea1ce9a6299d93cce2a2ddcda8b003599f4b58",
+        "source_sha256": "120ae43bb74e01e6384fcb84afc225ca3ce5b0769f0ec3f51631eab9d4e3c0a2"
+      },
+      "name": "commerce-product-keyword-plan",
+      "registry_path": "commerce/commerce-product-keyword-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/commerce-product-keyword-plan",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-product-keyword-plan"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "listing",
+        "category": "commerce",
+        "collection_priority": "P1",
+        "subcategory": "commerce.keyword",
+        "task_intent": "plan product listing keywords and marketplace search structure"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "6b78043d3d6aa1124d737cf88d75031ac54ed7280517c8f7ea1e608318e5eb80",
+        "source_sha256": "9ac244fe631bf26deca5dc370402f1c94beebf896c28713a70ee105b1d9eb5d6"
+      },
+      "name": "compliance-accessibility-policy",
+      "registry_path": "compliance/compliance-accessibility-policy",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/compliance-accessibility-policy",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-accessibility-policy"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "compliance",
+        "collection_priority": "P2",
+        "subcategory": "compliance.accessibility",
+        "task_intent": "review accessibility policy commitments and evidence"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "ea53796a10f62ac0ad81dec80c2e98d69bdea8bef7197eba1af8f2647d5e18c5",
+        "source_sha256": "544e0255bb143d3aee738e77b8e38f2aaeb407908d0946f72287b2291d7d844e"
+      },
+      "name": "compliance-privacy-check",
+      "registry_path": "compliance/compliance-privacy-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:09:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-003-coverage-seed/compliance-privacy-check",
+        "reference": "docs/batches/batch-003-coverage-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/compliance-privacy-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "compliance",
+        "collection_priority": "P2",
+        "subcategory": "compliance.privacy",
+        "task_intent": "check privacy and data-handling risk"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "19770834be6143f769847f9865f7645e5fa654551ec5e409ff1dcef1cc25ddeb",
+        "source_sha256": "260ee0d4d9089fb710ae96d1b5da1d9d635e6cdf034eeb1fa2b227d544ebf4ce"
+      },
+      "name": "compliance-terms-review",
+      "registry_path": "compliance/compliance-terms-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/compliance-terms-review",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-terms-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "compliance",
+        "collection_priority": "P2",
+        "subcategory": "compliance.terms",
+        "task_intent": "review policy and terms documents for operational risk"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "93ab1362ea891806dec1ad7cf038d4397f2cb242bf35c72546180e10b2421250",
+        "source_sha256": "ff9ca794db34906d33dbda18f08121f35ff7b53e338c2c2f3031811e4b00cb9d"
+      },
+      "name": "vibe-trading-research-assistant",
+      "registry_path": "compliance/vibe-trading-research-assistant",
+      "risk_level": "low",
+      "source": {
+        "author": "HKUDS",
+        "captured_at": "2026-06-04T07:34:53Z",
+        "collected_by": "onecode-community-review",
+        "license": "MIT",
+        "path": "batches/batch-004-community-hot/vibe-trading-research-assistant",
+        "reference": "Community project reference: Vibe-Trading AI-assisted trading research",
+        "type": "github_reference",
+        "url": "https://github.com/HKUDS/Vibe-Trading"
+      },
+      "status": "quarantined",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "compliance",
+        "collection_priority": "P2",
+        "subcategory": "compliance.finance",
+        "task_intent": "review AI-assisted trading research under financial safety and compliance boundaries"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "8aceb7f6cb724e26defb5469a7fecf2ee44de6ffb11bd40ad986a92a0726a497",
+        "source_sha256": "13abab2fc301ce61c68759001c489ebbc0a752259204f49d3778c39e42a3da93"
+      },
+      "name": "content-editorial-review",
+      "registry_path": "content/content-editorial-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/content-editorial-review",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/content-editorial-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P1",
+        "subcategory": "content.edit",
+        "task_intent": "review and improve written content for publication readiness"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "98555332f20c1125e1439551a0b5ed6c7182477697a45013eac6edf0c323e2ed",
+        "source_sha256": "ac5e5582f4911c2f2a043db250b318476b19db59faeb1338359366fa260a10c0"
+      },
+      "name": "content-seo-brief",
+      "registry_path": "content/content-seo-brief",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:05:20Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-002-p1-seed/content-seo-brief",
+        "reference": "docs/batches/batch-002-p1-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/content-seo-brief"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P1",
+        "subcategory": "content.seo",
+        "task_intent": "create safe SEO and content briefs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "9907c0e719e4d7e755d6d5cf37086aaae2bf115567058aeffb84421572969486",
+        "source_sha256": "816151ea8e709afb38891ca035fabc6f4ba7ea9a82f78e3ece6b7271dd8509cd"
+      },
+      "name": "content-social-post",
+      "registry_path": "content/content-social-post",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/content-social-post",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/content-social-post"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P1",
+        "subcategory": "content.social",
+        "task_intent": "prepare short channel-specific social and announcement copy"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e4fa29e3e7327178b10e5375b0120defb3d6345f8aa3d517a943fbfd00b9b370",
+        "source_sha256": "06abcdb2162b88bfbb7bd352cfe5b33252af833a863d099c22b532949b69c575"
+      },
+      "name": "data-quality-audit",
+      "registry_path": "data/data-quality-audit",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/data-quality-audit",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/data-quality-audit"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.quality",
+        "task_intent": "audit dataset quality before analysis or import"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "607acc05e6702165f73ab809f968c241253daeac94b63d8c74c8631c30ddf78f",
+        "source_sha256": "718da8eb550b947211605894d823c991e48c834609aae89a512a82c93ea09861"
+      },
+      "name": "data-table-analysis",
+      "registry_path": "data/data-table-analysis",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:05:20Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-002-p1-seed/data-table-analysis",
+        "reference": "docs/batches/batch-002-p1-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/data-table-analysis"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.analysis",
+        "task_intent": "analyze tabular data with reproducible checks"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "53246e9c02adf42684a6315ab4a9324d38a3d491804e2b6331d1349567015b62",
+        "source_sha256": "b0ab7a5d0b1a1d89221f932b522e1b4f92a5950d363ac25efb2dcd23f1d39bfd"
+      },
+      "name": "data-visualization-plan",
+      "registry_path": "data/data-visualization-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/data-visualization-plan",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/data-visualization-plan"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P1",
+        "subcategory": "data.visualization",
+        "task_intent": "plan charts and dashboards for data communication"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "d7a1816ecf16eb543c7b699c61dc45eb946f71627b523b251f6c8509789c660c",
+        "source_sha256": "d5641f41f4e717a5182385519e1b341e20c9a83dbd75d981b2eac02f30ddc0ad"
+      },
+      "name": "design-accessibility-check",
+      "registry_path": "design/design-accessibility-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/design-accessibility-check",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/design-accessibility-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "interface",
+        "category": "design",
+        "collection_priority": "P0",
+        "subcategory": "design.accessibility",
+        "task_intent": "review UI accessibility and responsive readability"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "3e584d8866708f8693b1a5d8b4733176023107ac98a25d3538bb6e67cc73a496",
+        "source_sha256": "6d76b7490d836997a0216bc11ee49745d90033056516850e77679f0bea80a50b"
+      },
+      "name": "design-system-consistency",
+      "registry_path": "design/design-system-consistency",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/design-system-consistency",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/design-system-consistency"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "interface",
+        "category": "design",
+        "collection_priority": "P0",
+        "subcategory": "design.system",
+        "task_intent": "check and improve UI design-system consistency"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "22a8ebbcc112ea5bf446d37358822873ce585f6be3ca28ca9cc81e318e3804c9",
+        "source_sha256": "a43ea63e3339c6b698873a8cf4fc35d029d5eca618b5155989a0ba7dc30bb7ad"
+      },
+      "name": "design-ui-review",
+      "registry_path": "design/design-ui-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:01:33Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-001-seed/design-ui-review",
+        "reference": "docs/batches/batch-001-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/design-ui-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "interface",
+        "category": "design",
+        "collection_priority": "P0",
+        "subcategory": "design.review",
+        "task_intent": "review and polish UI screens safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
+        "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
+      },
+      "name": "engineering-build-release",
+      "registry_path": "engineering/engineering-build-release",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:01:33Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-001-seed/engineering-build-release",
+        "reference": "docs/batches/batch-001-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/engineering-build-release"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "deployment",
+        "category": "engineering",
+        "collection_priority": "P0",
+        "subcategory": "engineering.build",
+        "task_intent": "prepare build and release checks safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
+        "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
+      },
+      "name": "engineering-ci-troubleshoot",
+      "registry_path": "engineering/engineering-ci-troubleshoot",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/engineering-ci-troubleshoot",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-ci-troubleshoot"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "deployment",
+        "category": "engineering",
+        "collection_priority": "P0",
+        "subcategory": "engineering.ci",
+        "task_intent": "diagnose CI and release pipeline failures"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "6984b5fa11f8dba38e47dde7ac1675c498a3132fb10a97f4056e2f9b6315729d",
+        "source_sha256": "d006514de01b48836879e1d236973c55be4b5e51a5c49772f266167e7a77b3d4"
+      },
+      "name": "engineering-performance-profile",
+      "registry_path": "engineering/engineering-performance-profile",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/engineering-performance-profile",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-performance-profile"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "deployment",
+        "category": "engineering",
+        "collection_priority": "P0",
+        "subcategory": "engineering.performance",
+        "task_intent": "profile and improve software performance safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "460bc4fba7f2006fe2081127351f503ef8f5985c37a20d81a07a5e291b2c5c2f",
+        "source_sha256": "ea0eb409a616a037176ddcbffc396f1ec8547f93945cd558806470595b04d1d9"
+      },
+      "name": "execution-browser-check",
+      "registry_path": "execution/execution-browser-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:01:33Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-001-seed/execution-browser-check",
+        "reference": "docs/batches/batch-001-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/execution-browser-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.browser",
+        "task_intent": "run bounded browser checks safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "8203f7738f50394bcbf8b54a588d76cbe65f2e23e4e243cd8bf398fcb60f10ea",
+        "source_sha256": "d1200761d1db95b2ed237786862b6acb9568fa61e33bf62823fd454e9054fcc6"
+      },
+      "name": "execution-file-batch",
+      "registry_path": "execution/execution-file-batch",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/execution-file-batch",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/execution-file-batch"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.files",
+        "task_intent": "run bounded batch file workflows inside the workspace"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e1600c4868599dfd83b65fcec7f3d8095ebe89fea416b4308faf41432624e1e8",
+        "source_sha256": "55c003e53bc282b1ab8bb92064a351b1982e28c2c7449c8465812aa357f63c18"
+      },
+      "name": "execution-publish-check",
+      "registry_path": "execution/execution-publish-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/execution-publish-check",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/execution-publish-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.publish",
+        "task_intent": "check controlled publishing and release readiness"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "84e25802452dbc624295e268e381261b50cd5ffa51d4d030712291f894204146",
+        "source_sha256": "e150ec1899867f8c20c94f1f8d9cbabb637577b03083c6178a072ee86f386e9a"
+      },
+      "name": "media-asset-review",
+      "registry_path": "media/media-asset-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:09:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-003-coverage-seed/media-asset-review",
+        "reference": "docs/batches/batch-003-coverage-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/media-asset-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "asset",
+        "category": "media",
+        "collection_priority": "P2",
+        "subcategory": "media.image",
+        "task_intent": "review media assets for readiness and usage risk"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "c28b571a1903db977954b304ceea6dc14631ae75f1cb97e1c25a77262f206545",
+        "source_sha256": "96814e2209ddb2d85f8520c559965ff9e71187b7e41588a3ed88ae0ed38aeb37"
+      },
+      "name": "media-brand-asset-pack",
+      "registry_path": "media/media-brand-asset-pack",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/media-brand-asset-pack",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-brand-asset-pack"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "asset",
+        "category": "media",
+        "collection_priority": "P2",
+        "subcategory": "media.brand",
+        "task_intent": "organize and review brand media asset packs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "c35d1123ff3e2fe3e2a984d396db4cb8b498f68e92abcd33b6f57c1a567d964c",
+        "source_sha256": "2eb8af96b886fa1333cae265e211253bc23479926b1482da90de568845f7e152"
+      },
+      "name": "media-video-script-review",
+      "registry_path": "media/media-video-script-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/media-video-script-review",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-video-script-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "asset",
+        "category": "media",
+        "collection_priority": "P2",
+        "subcategory": "media.video",
+        "task_intent": "review and improve video scripts and shot plans"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "bd3f81e1640f954d2438dd2191fe79bad59ee9a7bb1976c8bc3b17642b0fcc67",
+        "source_sha256": "f9b6206d85b37cad967a410aa7515bec5ad9b9762234d7ce027895241a5b182f"
+      },
+      "name": "office-docx-brief",
+      "registry_path": "office/office-docx-brief",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/office-docx-brief",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-docx-brief"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "office",
+        "collection_priority": "P0",
+        "subcategory": "office.docx",
+        "task_intent": "draft and review structured office documents"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "46255a24aeb2597d4001cde08b061869468cc52088272b4e241ce8fd53519707",
+        "source_sha256": "f1db1c3ff28abbe1094a00868d68a79175c10769453483a5aaaf183f394f94fa"
+      },
+      "name": "office-pdf-report",
+      "registry_path": "office/office-pdf-report",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:01:33Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-001-seed/office-pdf-report",
+        "reference": "docs/batches/batch-001-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/office-pdf-report"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "office",
+        "collection_priority": "P0",
+        "subcategory": "office.pdf",
+        "task_intent": "process PDF reports safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "79abd4eeb05775e6517899772c8bb024f8d653a8a78cbc14dcd6fcb0473aeddd",
+        "source_sha256": "29a458e41c3f0a48f940528c4c27a7b3ccc782f9d05b83f47db46a41cb13f2fa"
+      },
+      "name": "office-spreadsheet-cleanup",
+      "registry_path": "office/office-spreadsheet-cleanup",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/office-spreadsheet-cleanup",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-spreadsheet-cleanup"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "office",
+        "collection_priority": "P0",
+        "subcategory": "office.sheet",
+        "task_intent": "clean and review spreadsheet data"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "d848cf4490246859c8a3f75a9d1b6629d895935d64e5f8d59721cc12a4451992",
+        "source_sha256": "7cf428b1e81aa5737bbfb480ce272e7eb304daa2daf4d9bc30938cc7a28fc354"
+      },
+      "name": "research-competitor-brief",
+      "registry_path": "research/research-competitor-brief",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/research-competitor-brief",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-competitor-brief"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.market",
+        "task_intent": "compare competitors and product market signals"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "4a2f86c9d55536c2c1e201d86518c9e8668601096e721d619688efb8b225d14c",
+        "source_sha256": "8d651ca2e8e2515c5bef961e26d14ab96b81b5f83acdbcec85d59c24e0e20d23"
+      },
+      "name": "research-paper-synthesis",
+      "registry_path": "research/research-paper-synthesis",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/research-paper-synthesis",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-paper-synthesis"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.academic",
+        "task_intent": "summarize and compare research papers and technical evidence"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "ebcfc0b49dfde45a231e2c825aac9c26b3220038246fa85be846bc2b53f45bb3",
+        "source_sha256": "6e4498e8804857bafc1994ec32d3fbf1cc97446745f6828a8f8146fe937f3e8b"
+      },
+      "name": "research-source-check",
+      "registry_path": "research/research-source-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:05:20Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-002-p1-seed/research-source-check",
+        "reference": "docs/batches/batch-002-p1-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/research-source-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.source",
+        "task_intent": "verify claims against primary sources"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "8e303e1dc3b88bbeedbe025d533ef50fe6aa22e588e0778ee581d21be78eb56f",
+        "source_sha256": "8fb186df92da0dfc902b990c5a9b27de2aca1aa682ea27123e83e14f7ccddbfa"
+      },
+      "name": "security-prompt-injection-review",
+      "registry_path": "security/security-prompt-injection-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:01:33Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-001-seed/security-prompt-injection-review",
+        "reference": "docs/batches/batch-001-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/security-prompt-injection-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "audit",
+        "category": "security",
+        "collection_priority": "P0",
+        "subcategory": "security.prompt",
+        "task_intent": "review prompts and agent instructions for injection risk"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
+        "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
+      },
+      "name": "security-supply-chain-review",
+      "registry_path": "security/security-supply-chain-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/security-supply-chain-review",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/security-supply-chain-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "audit",
+        "category": "security",
+        "collection_priority": "P0",
+        "subcategory": "security.supply_chain",
+        "task_intent": "review external package, connector, and skill supply-chain risk"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "0e8f526c9c1d1e2e140966c5b1f17c8ece3f9be16f81c3156a0a8eda6c757e05",
+        "source_sha256": "bf9c26cdfb36665e2278b0933bdf3e9113a7ae9b75c49d6cf107663bb1381b30"
+      },
+      "name": "trivy-container-security-scan",
+      "registry_path": "security/trivy-container-security-scan",
+      "risk_level": "low",
+      "source": {
+        "author": "Aqua Security",
+        "captured_at": "2026-06-04T07:34:53Z",
+        "collected_by": "onecode-community-review",
+        "license": "Apache-2.0",
+        "path": "batches/batch-004-community-hot/trivy-container-security-scan",
+        "reference": "Community project reference: Trivy vulnerability, misconfiguration, secret, and SBOM scanner",
+        "type": "github_reference",
+        "url": "https://github.com/aquasecurity/trivy"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "audit",
+        "category": "security",
+        "collection_priority": "P0",
+        "subcategory": "security.container",
+        "task_intent": "review container, dependency, IaC, secret, and SBOM security scan results"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "f03fdced2bf2d867c87c16dee13109cd8eaf5278e123211cbd97c6e94ea60d2b",
+        "source_sha256": "b530b5d4dd1571ebe29505307bcddf9309e3b759d626803f65701690323ca3b6"
+      },
+      "name": "vertical-education-plan",
+      "registry_path": "vertical/vertical-education-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:09:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-003-coverage-seed/vertical-education-plan",
+        "reference": "docs/batches/batch-003-coverage-seed.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/vertical-education-plan"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "vertical",
+        "collection_priority": "P3",
+        "subcategory": "vertical.education",
+        "task_intent": "plan education workflows safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "90885f9a513f29b569300bc5bb07e5b59eda8f6a85d009ed6ee124b50281a803",
+        "source_sha256": "b4aa94375dc0d9c4483a8af95ddcf46fb6022e4b44846b5621a509f835305801"
+      },
+      "name": "vertical-manufacturing-qc",
+      "registry_path": "vertical/vertical-manufacturing-qc",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/vertical-manufacturing-qc",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-manufacturing-qc"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "vertical",
+        "collection_priority": "P3",
+        "subcategory": "vertical.manufacturing",
+        "task_intent": "prepare manufacturing quality-control checklists and defect summaries"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "8453d18fccb7e03ecdb505dc51dc9546dd9975f253f934a42d2daf8428f9ccf4",
+        "source_sha256": "3fb3d065fc4ff9614a9e7d6edaa304f8daf84826faaa7941811fb3898ef4c9f5"
+      },
+      "name": "vertical-real-estate-listing",
+      "registry_path": "vertical/vertical-real-estate-listing",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-04T07:47:13Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-005-minimum-three/vertical-real-estate-listing",
+        "reference": "docs/batches/batch-005-minimum-three.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-real-estate-listing"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "vertical",
+        "collection_priority": "P3",
+        "subcategory": "vertical.real_estate",
+        "task_intent": "draft and review real-estate listing content safely"
+      }
+    }
+  ]
+}

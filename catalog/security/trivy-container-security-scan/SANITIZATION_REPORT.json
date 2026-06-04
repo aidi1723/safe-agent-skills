@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:35:45Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "0e8f526c9c1d1e2e140966c5b1f17c8ece3f9be16f81c3156a0a8eda6c757e05",
+    "source_sha256": "bf9c26cdfb36665e2278b0933bdf3e9113a7ae9b75c49d6cf107663bb1381b30"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "trivy-container-security-scan",
+  "source": {
+    "author": "Aqua Security",
+    "captured_at": "2026-06-04T07:34:53Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-004-community-hot/trivy-container-security-scan",
+    "reference": "Community project reference: Trivy vulnerability, misconfiguration, secret, and SBOM scanner",
+    "type": "github_reference",
+    "url": "https://github.com/aquasecurity/trivy"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "audit",
+    "category": "security",
+    "collection_priority": "P0",
+    "subcategory": "security.container",
+    "task_intent": "review container, dependency, IaC, secret, and SBOM security scan results"
+  }
+}

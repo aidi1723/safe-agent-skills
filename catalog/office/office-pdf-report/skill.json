@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:01:58Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "46255a24aeb2597d4001cde08b061869468cc52088272b4e241ce8fd53519707",
+    "source_sha256": "f1db1c3ff28abbe1094a00868d68a79175c10769453483a5aaaf183f394f94fa"
+  },
+  "name": "office-pdf-report",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:01:33Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-001-seed/office-pdf-report",
+    "reference": "docs/batches/batch-001-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/office-pdf-report"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "document",
+    "category": "office",
+    "collection_priority": "P0",
+    "subcategory": "office.pdf",
+    "task_intent": "process PDF reports safely"
+  },
+  "version": "0.1.0"
+}

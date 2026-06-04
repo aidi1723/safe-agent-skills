@@ -1,0 +1,56 @@
+{
+  "schema_version": 1,
+  "skill_name": "pdf",
+  "taxonomy": {
+    "category": "office",
+    "subcategory": "office.pdf",
+    "task_intent": "process PDF documents safely",
+    "artifact_type": "document",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "path": "./incoming/pdf",
+    "url": "unknown",
+    "author": "unknown",
+    "license": "unknown",
+    "reference": "unknown",
+    "collected_by": "onecode-local",
+    "captured_at": "2026-06-04T00:00:00Z"
+  },
+  "hashes": {
+    "source_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+    "sanitized_sha256": "1111111111111111111111111111111111111111111111111111111111111111"
+  },
+  "summary": {
+    "status": "review_required",
+    "risk_level": "medium",
+    "preserved_sections": [
+      "workflow",
+      "input_requirements",
+      "verification_guidance"
+    ],
+    "removed_fragment_count": 2,
+    "rewritten_fragment_count": 1,
+    "unresolved_finding_count": 0
+  },
+  "findings": [
+    {
+      "id": "shell-download-execute",
+      "severity": "critical",
+      "status": "removed",
+      "summary": "Removed remote install command from source instructions."
+    },
+    {
+      "id": "broad-filesystem-access",
+      "severity": "high",
+      "status": "rewritten",
+      "summary": "Rewrote whole-machine search guidance to workspace-only inspection."
+    }
+  ],
+  "required_verifiers": [
+    "render_check",
+    "text_extract_check"
+  ],
+  "recommendation": "Keep quarantined until verifier bindings are configured."
+}

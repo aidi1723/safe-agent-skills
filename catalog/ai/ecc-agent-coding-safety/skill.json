@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:35:45Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "badcc5058e375fa0e20dda9cb930b328fb455fa0446793629a92392de17df5c3",
+    "source_sha256": "47dfabdf228d71fe544a285d07a37749743ca08bf14a973c22b89e10c512ec7e"
+  },
+  "name": "ecc-agent-coding-safety",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "affaan-m",
+    "captured_at": "2026-06-04T07:34:53Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-004-community-hot/ecc-agent-coding-safety",
+    "reference": "Community project reference: ECC / Enhanced Context Engineering for AI coding assistants",
+    "type": "github_reference",
+    "url": "https://github.com/affaan-m/ecc"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.context-engineering",
+    "task_intent": "adapt context-engineering patterns for safer AI coding workflows"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "compliance",
+    "subcategory": "compliance.finance",
+    "task_intent": "review AI-assisted trading research under financial safety and compliance boundaries",
+    "artifact_type": "policy",
+    "collection_priority": "P2"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/HKUDS/Vibe-Trading",
+    "author": "HKUDS",
+    "license": "MIT",
+    "reference": "Community project reference: Vibe-Trading AI-assisted trading research",
+    "collected_by": "onecode-community-review"
+  }
+}

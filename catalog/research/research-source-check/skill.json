@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:05:34Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "ebcfc0b49dfde45a231e2c825aac9c26b3220038246fa85be846bc2b53f45bb3",
+    "source_sha256": "6e4498e8804857bafc1994ec32d3fbf1cc97446745f6828a8f8146fe937f3e8b"
+  },
+  "name": "research-source-check",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:05:20Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-002-p1-seed/research-source-check",
+    "reference": "docs/batches/batch-002-p1-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/research-source-check"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.source",
+    "task_intent": "verify claims against primary sources"
+  },
+  "version": "0.1.0"
+}

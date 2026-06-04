@@ -1,0 +1,75 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/verify-report.schema.json",
+  "title": "OneCode Skill Registry Verify Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "status",
+    "skill_count",
+    "trusted_count",
+    "tampered_count",
+    "unknown_provenance_count",
+    "issues"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "status": {
+      "type": "string",
+      "enum": ["ok", "failed"]
+    },
+    "skill_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "trusted_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "tampered_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "unknown_provenance_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "skill", "path"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "enum": [
+              "sanitized-skill-missing",
+              "sanitized-hash-mismatch",
+              "unknown-provenance"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "skill": {
+            "type": "string"
+          },
+          "path": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

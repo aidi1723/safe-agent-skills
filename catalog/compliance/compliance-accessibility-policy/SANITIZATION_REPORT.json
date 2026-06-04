@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:36Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "6b78043d3d6aa1124d737cf88d75031ac54ed7280517c8f7ea1e608318e5eb80",
+    "source_sha256": "9ac244fe631bf26deca5dc370402f1c94beebf896c28713a70ee105b1d9eb5d6"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "compliance-accessibility-policy",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/compliance-accessibility-policy",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-accessibility-policy"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "compliance",
+    "collection_priority": "P2",
+    "subcategory": "compliance.accessibility",
+    "task_intent": "review accessibility policy commitments and evidence"
+  }
+}

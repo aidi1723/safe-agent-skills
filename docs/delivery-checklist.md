@@ -1,0 +1,56 @@
+# Delivery Checklist
+
+## MVP Scope
+
+The local MVP is complete when the project can:
+
+- scan one local skill folder
+- sanitize one local skill folder
+- batch import multiple skill folders
+- classify skills into the shared taxonomy
+- record required provenance for every skill
+- write sanitized `SKILL.md`, `skill.json`, and `SANITIZATION_REPORT.json`
+- maintain `registry/index.json`
+- list and inspect registry entries
+- approve, reject, and disable reviewed skills
+- select only `trusted` skills by default
+- verify registry integrity before runtime use
+- rebuild stale registry indexes
+
+## Current Status
+
+- [x] Single-folder scan
+- [x] Single-folder sanitize
+- [x] Batch import
+- [x] Taxonomy classification
+- [x] Required provenance fields
+- [x] Sanitized skill manifest
+- [x] Sanitization report
+- [x] Registry index
+- [x] List and inspect
+- [x] Approve, reject, disable
+- [x] Trusted-only selection
+- [x] Review-mode selection
+- [x] Registry verification
+- [x] Reindex
+- [x] Module entrypoint
+- [x] Project verify script
+- [x] Tests for scan, workflow, registry, verification, and tamper detection
+- [x] Public-safe seed catalog
+- [x] Batch records
+- [x] Catalog status record
+- [x] Public maintenance guide
+- [x] At least 3 trusted skills in every top-level category
+
+## Not In MVP
+
+- network crawling
+- Git clone intake
+- LLM-based distillation
+- JSON Schema runtime validation dependency
+- OneCode kernel command integration
+- review UI
+- remote publishing
+
+These remain future phases because the local trust chain should be stable
+before external collection or runtime integration expands the blast radius.

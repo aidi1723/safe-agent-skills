@@ -1,0 +1,66 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/registry-index.schema.json",
+  "title": "OneCode Skill Registry Index",
+  "type": "object",
+  "required": ["schema_version", "generated_at", "skill_count", "skills"],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "generated_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "skill_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "status",
+          "risk_level",
+          "taxonomy",
+          "source",
+          "hashes",
+          "registry_path"
+        ],
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "status": {
+            "type": "string",
+            "enum": ["quarantined", "review_required", "trusted", "rejected", "disabled"]
+          },
+          "risk_level": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "taxonomy": {
+            "type": "object"
+          },
+          "source": {
+            "type": "object"
+          },
+          "hashes": {
+            "type": "object"
+          },
+          "registry_path": {
+            "type": "string"
+          },
+          "match_score": {
+            "type": "integer"
+          }
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}

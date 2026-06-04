@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "office",
+    "subcategory": "office.sheet",
+    "task_intent": "clean and review spreadsheet data",
+    "artifact_type": "document",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-spreadsheet-cleanup",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

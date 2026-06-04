@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "commerce",
+    "subcategory": "commerce.inquiry",
+    "task_intent": "draft safe buyer inquiry and trade follow-up replies",
+    "artifact_type": "listing",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-inquiry-reply",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

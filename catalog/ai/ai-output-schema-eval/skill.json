@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:05:34Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "2fce3196b4f9ae19e6d12a78ed9242464038f7adec2d9de7c29bbd23e7ed461b",
+    "source_sha256": "364bcf0a17ff8fa007072e36f135105f0247090c98db29f94c4cbe038ce98675"
+  },
+  "name": "ai-output-schema-eval",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:05:20Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-002-p1-seed/ai-output-schema-eval",
+    "reference": "docs/batches/batch-002-p1-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/ai-output-schema-eval"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.eval",
+    "task_intent": "evaluate AI outputs against schemas and task requirements"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "security",
+    "subcategory": "security.container",
+    "task_intent": "review container, dependency, IaC, secret, and SBOM security scan results",
+    "artifact_type": "audit",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/aquasecurity/trivy",
+    "author": "Aqua Security",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Trivy vulnerability, misconfiguration, secret, and SBOM scanner",
+    "collected_by": "onecode-community-review"
+  }
+}

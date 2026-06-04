@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:47:36Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "b90092107c258cb29ce62bbde009679784a3f5c55366ebdb6a3d10b65746bf6e",
+    "source_sha256": "4cc4363f7102634d0f7695a8f42cbfb87ce329652e7334d4d8734f79477360bb"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "commerce-inquiry-reply",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/commerce-inquiry-reply",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-inquiry-reply"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "listing",
+    "category": "commerce",
+    "collection_priority": "P1",
+    "subcategory": "commerce.inquiry",
+    "task_intent": "draft safe buyer inquiry and trade follow-up replies"
+  }
+}

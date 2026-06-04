@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:01:58Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "8e303e1dc3b88bbeedbe025d533ef50fe6aa22e588e0778ee581d21be78eb56f",
+    "source_sha256": "8fb186df92da0dfc902b990c5a9b27de2aca1aa682ea27123e83e14f7ccddbfa"
+  },
+  "name": "security-prompt-injection-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:01:33Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-001-seed/security-prompt-injection-review",
+    "reference": "docs/batches/batch-001-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/security-prompt-injection-review"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "audit",
+    "category": "security",
+    "collection_priority": "P0",
+    "subcategory": "security.prompt",
+    "task_intent": "review prompts and agent instructions for injection risk"
+  },
+  "version": "0.1.0"
+}

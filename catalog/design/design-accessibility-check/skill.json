@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:47:37Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "d7a1816ecf16eb543c7b699c61dc45eb946f71627b523b251f6c8509789c660c",
+    "source_sha256": "d5641f41f4e717a5182385519e1b341e20c9a83dbd75d981b2eac02f30ddc0ad"
+  },
+  "name": "design-accessibility-check",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:47:13Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-005-minimum-three/design-accessibility-check",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/design-accessibility-check"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "interface",
+    "category": "design",
+    "collection_priority": "P0",
+    "subcategory": "design.accessibility",
+    "task_intent": "review UI accessibility and responsive readability"
+  },
+  "version": "0.1.0"
+}

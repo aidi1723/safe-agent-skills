@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.context-compression",
+    "task_intent": "compress AI workflow context while preserving decisions and safety boundaries",
+    "artifact_type": "prompt",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/chopratejas/headroom",
+    "author": "chopratejas",
+    "license": "Apache-2.0",
+    "reference": "Community project reference: Headroom context compression and token reduction",
+    "collected_by": "onecode-community-review"
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "engineering",
+    "subcategory": "engineering.ci",
+    "task_intent": "diagnose CI and release pipeline failures",
+    "artifact_type": "deployment",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-ci-troubleshoot",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

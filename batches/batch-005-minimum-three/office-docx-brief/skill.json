@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "office",
+    "subcategory": "office.docx",
+    "task_intent": "draft and review structured office documents",
+    "artifact_type": "document",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-docx-brief",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

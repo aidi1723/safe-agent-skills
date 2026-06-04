@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.memory",
+    "task_intent": "review assistant memory and personalization workflows under explicit safety boundaries",
+    "artifact_type": "policy",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/NousResearch/hermes-agent",
+    "author": "NousResearch",
+    "license": "MIT",
+    "reference": "Community project reference: Hermes Agent memory and assistant growth patterns",
+    "collected_by": "onecode-community-review"
+  }
+}

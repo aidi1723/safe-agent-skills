@@ -1,0 +1,45 @@
+{
+  "allowed_tools": [],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "112e37eb5156c87965aeeecb474b0c0bca83cf5a57a46f513c06982493d6e060",
+    "source_sha256": "432cc40a2a7f79b562463dcab31822dcd6a37d3dad0bb833bc7f7bcb6fa1e34c"
+  },
+  "name": "supermemory-memory-engine-reference",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "supermemoryai",
+    "captured_at": "2026-06-04T07:34:53Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-004-community-hot/supermemory-memory-engine-reference",
+    "reference": "Community project reference: SuperMemory AI memory engine",
+    "type": "github_reference",
+    "url": "https://github.com/supermemoryai/supermemory"
+  },
+  "status": "quarantined",
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.memory",
+    "task_intent": "design persistent AI memory retrieval with privacy and provenance controls"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,242 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/skill-manifest.schema.json",
+  "title": "OneCode Sanitized Skill Manifest",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "name",
+    "version",
+    "status",
+    "risk_level",
+    "taxonomy",
+    "source",
+    "hashes",
+    "allowed_tools",
+    "required_verifiers",
+    "policy"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{1,80}$"
+    },
+    "version": {
+      "type": "string",
+      "minLength": 1
+    },
+    "status": {
+      "type": "string",
+      "enum": ["quarantined", "review_required", "trusted", "rejected", "disabled"]
+    },
+    "risk_level": {
+      "type": "string",
+      "enum": ["low", "medium", "high", "critical"]
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": ["category", "subcategory", "collection_priority"],
+      "properties": {
+        "category": {
+          "type": "string",
+          "enum": [
+            "design",
+            "code",
+            "engineering",
+            "security",
+            "office",
+            "execution",
+            "research",
+            "data",
+            "business",
+            "content",
+            "commerce",
+            "media",
+            "compliance",
+            "ai",
+            "vertical"
+          ]
+        },
+        "subcategory": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)?$"
+        },
+        "task_intent": {
+          "type": "string"
+        },
+        "artifact_type": {
+          "type": "string"
+        },
+        "collection_priority": {
+          "type": "string",
+          "enum": ["P0", "P1", "P2", "P3"]
+        }
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "type",
+        "path",
+        "url",
+        "author",
+        "license",
+        "reference",
+        "collected_by",
+        "captured_at"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["local_folder", "archive", "git", "community_index"]
+        },
+        "url": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "collected_by": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "hashes": {
+      "type": "object",
+      "required": ["source_sha256", "sanitized_sha256"],
+      "properties": {
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sanitized_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "allowed_tools": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "required_verifiers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "uniqueItems": true
+    },
+    "policy": {
+      "type": "object",
+      "required": ["filesystem", "network", "approval"],
+      "properties": {
+        "filesystem": {
+          "type": "object",
+          "required": ["scope"],
+          "properties": {
+            "scope": {
+              "type": "string",
+              "enum": ["workspace_only", "read_only_workspace", "none"]
+            }
+          },
+          "additionalProperties": false
+        },
+        "network": {
+          "type": "object",
+          "required": ["scope"],
+          "properties": {
+            "scope": {
+              "type": "string",
+              "enum": ["none", "approved_hosts", "onecode_api_only"]
+            },
+            "approved_hosts": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        },
+        "approval": {
+          "type": "object",
+          "required": ["required_for"],
+          "properties": {
+            "required_for": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              },
+              "uniqueItems": true
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "severity", "status"],
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"]
+          },
+          "status": {
+            "type": "string",
+            "enum": ["removed", "rewritten", "waived", "unresolved"]
+          },
+          "summary": {
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "approval_note": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

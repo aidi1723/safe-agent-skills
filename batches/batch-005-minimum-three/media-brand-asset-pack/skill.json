@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "media",
+    "subcategory": "media.brand",
+    "task_intent": "organize and review brand media asset packs",
+    "artifact_type": "asset",
+    "collection_priority": "P2"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-brand-asset-pack",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

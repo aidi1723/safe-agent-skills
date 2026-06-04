@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "vertical",
+    "subcategory": "vertical.real_estate",
+    "task_intent": "draft and review real-estate listing content safely",
+    "artifact_type": "workflow",
+    "collection_priority": "P3"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-real-estate-listing",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-005-minimum-three.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

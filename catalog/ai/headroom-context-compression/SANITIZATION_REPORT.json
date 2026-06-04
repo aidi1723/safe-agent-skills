@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T07:35:45Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "3979276b7e35d28c3306db88004e281ee8c1318975408d121659fa105d6eafbe",
+    "source_sha256": "6f6d6bfdab2347747a4ca02cfe0224797e4f1a1f139299b7b3e6d5f8839f8035"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "headroom-context-compression",
+  "source": {
+    "author": "chopratejas",
+    "captured_at": "2026-06-04T07:34:53Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-004-community-hot/headroom-context-compression",
+    "reference": "Community project reference: Headroom context compression and token reduction",
+    "type": "github_reference",
+    "url": "https://github.com/chopratejas/headroom"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.context-compression",
+    "task_intent": "compress AI workflow context while preserving decisions and safety boundaries"
+  }
+}

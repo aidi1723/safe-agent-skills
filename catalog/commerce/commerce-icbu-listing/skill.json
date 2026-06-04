@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T07:05:34Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "e67cd4fef87f6e8e5da7a8585a0648ea229b1a683f3e216986aeced3046ad854",
+    "source_sha256": "64a3428fea1a24897132438885ae841e05d6a31953c5e7ad77ea0becc0a679e3"
+  },
+  "name": "commerce-icbu-listing",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-04T07:05:20Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-002-p1-seed/commerce-icbu-listing",
+    "reference": "docs/batches/batch-002-p1-seed.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/commerce-icbu-listing"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "listing",
+    "category": "commerce",
+    "collection_priority": "P1",
+    "subcategory": "commerce.icbu",
+    "task_intent": "prepare Alibaba International Station listing guidance"
+  },
+  "version": "0.1.0"
+}
