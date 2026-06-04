@@ -3,6 +3,13 @@
 This catalog contains sanitized, provenance-recorded skills that passed the
 local OneCode Skill Sanitizer workflow.
 
+Every published catalog entry has passed OneCode safety validation and
+cleaning: provenance recording, static risk scan, unsafe-instruction cleanup,
+status review, sanitized hash recording, and registry integrity verification.
+Normal selection is limited to `trusted` skills by default, so this catalog is
+safer and more reliable than copying unverified prompts or agent instructions
+directly from the open internet.
+
 ## Current Catalog Status
 
 - total skills: 48
@@ -60,6 +67,10 @@ For one-line capability descriptions, see
 ## Trust Rule
 
 Only skills with `status: trusted` are intended for normal task selection.
+`trusted` means the skill passed the current OneCode safety validation and
+cleaning process. It does not grant unrestricted runtime permissions;
+connector, filesystem, network, and production actions remain controlled by the
+host runtime policy.
 
 Before runtime use, verify:
 

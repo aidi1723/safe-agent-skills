@@ -10,6 +10,13 @@ This project is a public-safe skill catalog and sanitizer for AI agents. It is
 designed to turn scattered community skills into provenance-recorded,
 policy-bounded, hash-verifiable, and maintainable `trusted` skill assets.
 
+All published catalog skills have passed the OneCode safety validation and
+cleaning workflow: provenance recording, static risk scanning,
+unsafe-instruction cleanup, status review, sanitized hash recording, and
+registry verification. This makes the project safer and more reliable than
+copying unverified prompts or agent instructions directly from the open
+internet.
+
 Current public baseline:
 
 - 48 total skills
@@ -53,6 +60,11 @@ external skill
 No imported skill is trusted by default.
 
 Every external skill starts in `quarantined` state. It can become `trusted` only after the sanitizer produces a manifest, a sanitization report, and a clean risk scan under OneCode policy.
+
+`trusted` means the skill has passed the current OneCode safety validation and
+cleaning process. It does not grant unrestricted runtime permissions:
+connectors, filesystem access, network access, and production actions still
+belong to the host runtime's approval and policy layer.
 
 ## What Is Preserved
 
