@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-04T12:58:26Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "aa6411e4875f25fbe37553e86d535d7d0b2f4ad01eeac18e97727238d225b66f",
+    "source_sha256": "4ab61fae5175387adb757ef299fab542416131abe0be63cbd1cc4045b8a64e33"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "security-opensquilla-sandbox-policy",
+  "source": {
+    "author": "OpenSquilla community",
+    "captured_at": "2026-06-04T12:57:58Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-008-opensquilla-reference/security-opensquilla-sandbox-policy",
+    "reference": "OpenSquilla public product reference: secure sandbox, policy tiers, and decision logging",
+    "type": "web_reference",
+    "url": "https://opensquilla.ai/"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "security",
+    "collection_priority": "P0",
+    "subcategory": "security.sandbox",
+    "task_intent": "review agent sandbox boundaries and refusal escalation policy"
+  }
+}

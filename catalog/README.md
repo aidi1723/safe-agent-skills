@@ -12,8 +12,8 @@ directly from the open internet.
 
 ## Current Catalog Status
 
-- total skills: 72
-- trusted skills: 67
+- total skills: 75
+- trusted skills: 70
 - quarantined skills: 3
 - review-required skills: 2
 - tampered skills: 0
@@ -29,7 +29,7 @@ For one-line capability descriptions, see
 
 | Category | Skill |
 | --- | --- |
-| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-litellm-gateway-cost-control`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression`, `hermes-agent-memory-assistant`, `supermemory-memory-engine-reference` |
+| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-litellm-gateway-cost-control`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression`, `hermes-agent-memory-assistant`, `supermemory-memory-engine-reference` |
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` |
 | code | `code-python-debug`, `code-review-risk`, `code-test-regression` |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-product-keyword-plan` |
@@ -42,14 +42,14 @@ For one-line capability descriptions, see
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` |
 | office | `office-docx-brief`, `office-pdf-report`, `office-spreadsheet-cleanup` |
 | research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check` |
-| security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` |
+| security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` |
 | vertical | `vertical-education-plan`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` |
 
 ## Trusted Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
-| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 14 |
+| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 16 |
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
 | code | `code-python-debug`, `code-review-risk`, `code-test-regression` | 3 |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-product-keyword-plan` | 3 |
@@ -62,7 +62,7 @@ For one-line capability descriptions, see
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
 | office | `office-docx-brief`, `office-pdf-report`, `office-spreadsheet-cleanup` | 3 |
 | research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check` | 3 |
-| security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` | 5 |
+| security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` | 6 |
 | vertical | `vertical-education-plan`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 3 |
 
 ## Trust Rule

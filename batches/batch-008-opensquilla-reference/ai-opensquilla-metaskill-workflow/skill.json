@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.metaskill",
+    "task_intent": "capture repeated agent workflows as reusable meta skills or bundles",
+    "artifact_type": "workflow",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "web_reference",
+    "url": "https://opensquilla.ai/",
+    "author": "OpenSquilla community",
+    "license": "Apache-2.0",
+    "reference": "OpenSquilla public product reference: MetaSkills turn repeatable multi-step work into reusable workflows",
+    "collected_by": "onecode-community-review"
+  }
+}

@@ -24,6 +24,8 @@ Each individual `SKILL.md` also contains:
 | ai | `ai-llama-cpp-local-inference-boundary` | trusted | Use when reviewing local LLM inference, offline model use, context limits, quantization tradeoffs, or local privacy boundaries. |
 | ai | `ai-llamaindex-rag-knowledge-workflow` | trusted | Use when designing RAG, document agents, knowledge indexing, citation retrieval, or OCR-backed knowledge workflows. |
 | ai | `ai-openai-cookbook-api-patterns` | trusted | Use when reviewing OpenAI API implementation patterns, examples, evals, structured outputs, RAG, or application recipes. |
+| ai | `ai-opensquilla-metaskill-workflow` | trusted | Use when turning repeated multi-step agent work into reusable scenario skills, workflows, or bundle candidates. |
+| ai | `ai-opensquilla-token-routing-pattern` | trusted | Use when reviewing token-aware skill loading, model routing, task-pack compression, or cost-sensitive agent planning. |
 | ai | `ai-outlines-structured-generation` | trusted | Use when an AI workflow needs strict structured output, regex-like constraints, or schema-shaped generation. |
 | ai | `ai-output-schema-eval` | trusted | Use when evaluating AI outputs against schema, format, task requirements, safety constraints, and regression examples. |
 | ai | `ai-pydantic-schema-contract` | trusted | Use when defining typed contracts, JSON Schema outputs, validation models, or parser-safe AI response formats. |
@@ -82,6 +84,7 @@ Each individual `SKILL.md` also contains:
 | research | `research-source-check` | trusted | Use when verifying factual claims against primary or high-quality sources with explicit citations. |
 | security | `security-guardrails-output-validation` | trusted | Use when designing output validation, structured compliance checks, or guardrail review for LLM and agent responses. |
 | security | `security-llm-guard-io-scanning` | trusted | Use when reviewing LLM input and output scanning, sensitive-data filtering, or prompt security gates. |
+| security | `security-opensquilla-sandbox-policy` | trusted | Use when reviewing agent sandbox boundaries, refusal logs, approval gates, or repeated unsafe action attempts. |
 | security | `security-prompt-injection-review` | trusted | Use when reviewing prompts, skills, connector instructions, or agent workflows for prompt-injection and unsafe authority risks. |
 | security | `security-supply-chain-review` | trusted | Use when reviewing package, plugin, connector, dependency, or skill supply-chain risk before adoption. |
 | security | `trivy-container-security-scan` | trusted | Use when reviewing container images, filesystems, dependencies, IaC, secrets, or SBOM security findings with Trivy-style scanners. |

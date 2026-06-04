@@ -231,8 +231,10 @@ The local MVP exposes:
 - `inspect`: print one skill manifest
 - `select`: choose matching skills for a task; defaults to `trusted` only
 - `task-pack`: verify the registry and emit selected skill instructions for any
-  host agent as JSON or Markdown
+  host agent as JSON or Markdown; can include matching trusted scenario bundles
 - `verify`: check sanitized hashes and provenance across the registry
+- `maintain-check`: verify the registry and ensure trusted bundles reference
+  only existing trusted skills
 - `reindex`: rebuild `index.json` from manifests
 - `approve`, `reject`, `disable`: update review state and refresh the index
 
@@ -259,9 +261,10 @@ requested.
 
 For cross-agent use, `task-pack` performs the same trusted selection after
 registry verification, then serializes the cleaned skill guidance,
-provenance, hashes, verifier expectations, and safety boundary into a single
-instruction pack. The pack can be consumed by OneCode or by another agent
-runtime. It remains advisory and cannot widen the host runtime's permissions.
+provenance, hashes, verifier expectations, optional trusted scenario bundles,
+and safety boundary into a single instruction pack. The pack can be consumed by
+OneCode or by another agent runtime. It remains advisory and cannot widen the
+host runtime's permissions.
 
 The effective permission set is:
 

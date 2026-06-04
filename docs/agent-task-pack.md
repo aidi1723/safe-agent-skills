@@ -45,6 +45,7 @@ The JSON output includes:
 - `skills`: selected skill records with status, source, taxonomy, hashes,
   capability description, safe workflow, expected output, verifier
   expectations, and failure handling
+- `bundles`: optional trusted scenario bundles when `--include-bundles` is used
 - `agent_instructions`: ready-to-paste runtime instructions for the host agent
 - `safety_boundary`: the fixed rule that skills provide method, not permissions
 
@@ -70,6 +71,25 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
 `quarantined`, `rejected`, and `disabled` skills are never selected by
 `task-pack`, even in review mode.
 
+## Bundle-Aware Output
+
+Use `--include-bundles` when the host agent should receive both individual
+skill guidance and matching scenario playbooks:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "design a RAG document agent with vector retrieval and citation checks" \
+  --registry catalog \
+  --top 5 \
+  --include-bundles \
+  --bundles bundles/index.json \
+  --format json
+```
+
+Only `trusted` bundles are emitted, and trusted bundles must reference only
+existing `trusted` skills. Use `maintain-check` before publishing bundle
+changes.
+
 ## Safety Boundary
 
 Before building a task pack, the command verifies the registry. If hashes do
@@ -91,10 +111,11 @@ decides what the agent is allowed to do.
 
 1. Receive the user task.
 2. Run `task-pack` against the local or synced safe skill catalog.
-3. Inject `agent_instructions` into the agent's planning context.
-4. Execute only under the host runtime's existing permission policy.
-5. Run the verifier expectations listed by the selected skills.
-6. Record selected skill names, source URLs, and sanitized hashes in the final
+3. Optionally include trusted scenario bundles with `--include-bundles`.
+4. Inject `agent_instructions` into the agent's planning context.
+5. Execute only under the host runtime's existing permission policy.
+6. Run the verifier expectations listed by the selected skills.
+7. Record selected skill names, source URLs, and sanitized hashes in the final
    evidence or task report.
 
 This makes the skill catalog a shared capability layer: different agents can

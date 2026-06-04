@@ -571,6 +571,200 @@ class RegistryCliTest(unittest.TestCase):
             names = [skill["name"] for skill in task_pack["skills"]]
             self.assertEqual(names, ["security-review"])
 
+    def test_task_pack_can_include_matching_trusted_bundles(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            bundles_dir = root / "bundles"
+            bundles_dir.mkdir()
+            skill_names = [
+                ("business-requirements-brief", "business", "Use when defining business requirements."),
+                ("ai-langchain-agent-orchestration", "ai", "Use when designing agent orchestration."),
+                ("ai-llamaindex-rag-knowledge-workflow", "ai", "Use when designing RAG document agents."),
+                ("data-qdrant-vector-retrieval", "data", "Use when reviewing vector retrieval."),
+                ("research-source-check", "research", "Use when checking source citations."),
+            ]
+            for name, category, description in skill_names:
+                skill = incoming / name
+                skill.mkdir(parents=True)
+                (skill / "SKILL.md").write_text(
+                    "\n".join(
+                        [
+                            "---",
+                            f"name: {name}",
+                            f"description: {description}",
+                            "---",
+                            f"# {name}",
+                            "",
+                            "## Safe Workflow",
+                            "1. Keep evidence separate from generated claims.",
+                            "",
+                            "## Expected Output",
+                            "- bounded plan",
+                            "",
+                            "## Verifier Expectations",
+                            "- evidence check",
+                        ]
+                    ),
+                    encoding="utf-8",
+                )
+                (skill / "skill.json").write_text(
+                    json.dumps(
+                        {
+                            "taxonomy": {
+                                "category": category,
+                                "subcategory": f"{category}.test",
+                                "task_intent": description,
+                                "artifact_type": "workflow",
+                                "collection_priority": "P1",
+                            }
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/skills",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            for name, category, _ in skill_names:
+                main(["approve", str(registry / category / name)])
+            (bundles_dir / "index.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "bundle_count": 2,
+                        "bundles": [
+                            {
+                                "id": "rag-agent-knowledge-app",
+                                "name": "RAG Agent Knowledge App",
+                                "scenario": "Design a source-grounded RAG document agent with vector retrieval and citations.",
+                                "status": "trusted",
+                                "skills": [name for name, _, _ in skill_names],
+                                "expected_output": ["retrieval plan", "citation checks"],
+                                "safety_boundary": "Skills provide method only.",
+                            },
+                            {
+                                "id": "commerce-listing-growth",
+                                "name": "Commerce Listing Growth",
+                                "scenario": "Prepare marketplace listings and buyer communication.",
+                                "status": "trusted",
+                                "skills": ["business-requirements-brief"],
+                                "expected_output": ["listing copy"],
+                                "safety_boundary": "Skills provide method only.",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            task_pack_out = io.StringIO()
+            with contextlib.redirect_stdout(task_pack_out):
+                task_pack_code = main(
+                    [
+                        "task-pack",
+                        "design a RAG document agent with vector retrieval and citation checks",
+                        "--registry",
+                        str(registry),
+                        "--top",
+                        "3",
+                        "--include-bundles",
+                        "--bundles",
+                        str(bundles_dir / "index.json"),
+                    ]
+                )
+
+            self.assertEqual(task_pack_code, 0)
+            task_pack = json.loads(task_pack_out.getvalue())
+            self.assertEqual(task_pack["bundle_count"], 1)
+            self.assertEqual(task_pack["bundles"][0]["id"], "rag-agent-knowledge-app")
+            self.assertNotIn("commerce-listing-growth", [bundle["id"] for bundle in task_pack["bundles"]])
+            self.assertIn("RAG Agent Knowledge App", task_pack["agent_instructions"])
+
+    def test_maintain_check_fails_when_bundle_references_non_trusted_skill(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            bundles_dir = root / "bundles"
+            bundles_dir.mkdir()
+            trusted = incoming / "security-review"
+            review_required = incoming / "security-connector-review"
+            trusted.mkdir(parents=True)
+            review_required.mkdir(parents=True)
+            (trusted / "SKILL.md").write_text("Use this workflow for security review.", encoding="utf-8")
+            (review_required / "SKILL.md").write_text(
+                "Use API_KEY=abc1234567890SECRET only in review fixtures.",
+                encoding="utf-8",
+            )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/security",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/security",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["approve", str(registry / "security" / "security-review")])
+            (bundles_dir / "index.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "bundle_count": 1,
+                        "bundles": [
+                            {
+                                "id": "bad-security-bundle",
+                                "status": "trusted",
+                                "skills": ["security-review", "security-connector-review"],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            check_out = io.StringIO()
+            with contextlib.redirect_stdout(check_out):
+                check_code = main(
+                    [
+                        "maintain-check",
+                        "--registry",
+                        str(registry),
+                        "--bundles",
+                        str(bundles_dir / "index.json"),
+                    ]
+                )
+
+            self.assertEqual(check_code, 2)
+            result = json.loads(check_out.getvalue())
+            self.assertEqual(result["status"], "failed")
+            self.assertEqual(result["issues"][0]["id"], "bundle-non-trusted-skill")
+
 
 if __name__ == "__main__":
     unittest.main()

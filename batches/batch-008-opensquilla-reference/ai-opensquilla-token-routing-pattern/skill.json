@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.routing",
+    "task_intent": "review token-aware skill selection and model routing patterns",
+    "artifact_type": "policy",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "web_reference",
+    "url": "https://opensquilla.ai/",
+    "author": "OpenSquilla community",
+    "license": "Apache-2.0",
+    "reference": "OpenSquilla public product reference: token-efficient agent intelligence, on-demand skills, and smart routing",
+    "collected_by": "onecode-community-review"
+  }
+}

@@ -121,6 +121,18 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli task-pack \
   --format markdown
 ```
 
+To include trusted scenario bundle suggestions:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli task-pack \
+  "design a RAG document agent with vector retrieval and citation checks" \
+  --registry ./registry \
+  --top 5 \
+  --include-bundles \
+  --bundles ./bundles/index.json \
+  --format markdown
+```
+
 `task-pack` verifies the registry before output. If provenance is incomplete or
 a sanitized hash does not match, generation is refused.
 
@@ -147,3 +159,15 @@ Rebuild the index after manual edits or external sync:
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli reindex --registry ./registry
 ```
+
+Run the maintenance gate before publishing a registry and bundle set:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli maintain-check \
+  --registry ./registry \
+  --bundles ./bundles/index.json
+```
+
+`maintain-check` combines registry verification with bundle validation. It
+fails if a trusted bundle references a missing, quarantined, review-required,
+rejected, or disabled skill.

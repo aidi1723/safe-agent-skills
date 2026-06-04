@@ -15,8 +15,8 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 72
-- trusted skills: 67
+- total skills: 75
+- trusted skills: 70
 - quarantined skills: 3
 - review-required skills: 2
 - categories meeting 3 trusted skills: 15 / 15
@@ -53,6 +53,9 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   --registry catalog \
   --top 2 \
   --format markdown
+PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
+  --registry catalog \
+  --bundles bundles/index.json
 bash scripts/verify.sh
 ```
 
@@ -65,6 +68,7 @@ Confirm:
 - task-pack output contains only trusted skills unless review mode is explicitly
   requested
 - every bundle in `bundles/index.json` references existing trusted skills
+- `maintain-check` reports `status: ok`
 - batch docs exist for new entries
 
 ## Contribution Standard

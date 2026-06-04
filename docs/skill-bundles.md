@@ -47,16 +47,24 @@ network, shell, connector, account, and production permissions.
 For the full cross-agent usage model, see
 [Agent-Compatible Skill Bundles](agent-compatible-skill-bundles.md).
 
-## Future Runtime Integration
+## Task-Pack Integration
 
-The next step is to let `task-pack` optionally include bundle suggestions:
+`task-pack` can include matching trusted bundle suggestions:
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   "build a product landing page and prepare launch copy" \
   --registry catalog \
+  --bundles bundles/index.json \
   --include-bundles
 ```
 
-Until then, bundles can be used manually by reading `bundles/README.md` or by
-loading `bundles/index.json` from another agent runtime.
+Before publishing bundle changes, run:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
+  --registry catalog \
+  --bundles bundles/index.json
+```
+
+This fails if a trusted bundle references a missing or non-trusted skill.

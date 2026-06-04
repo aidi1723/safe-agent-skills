@@ -24,8 +24,8 @@ internet.
 
 Current public baseline:
 
-- 72 total skills
-- 67 trusted skills
+- 75 total skills
+- 70 trusted skills
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
 - 0 tampered skills
@@ -138,6 +138,7 @@ onecode-skill-sanitizer task-pack "process a pdf report" --registry ./registry \
   --top 3 \
   --format json
 onecode-skill-sanitizer verify --registry ./registry
+onecode-skill-sanitizer maintain-check --registry ./registry --bundles ./bundles/index.json
 onecode-skill-sanitizer reindex --registry ./registry
 ```
 
@@ -158,6 +159,10 @@ and emits a JSON or Markdown instruction pack that any host Agent can place in
 its planning context. The pack provides method, verifier expectations, and
 provenance. It does not grant filesystem, network, connector, shell, or
 production permissions; those remain controlled by the host runtime.
+
+`task-pack --include-bundles` can also include matching trusted scenario
+bundles, so a host Agent receives both individual skill guidance and a larger
+task playbook when the task matches a known workflow.
 
 Scenario bundles in `bundles/` combine multiple trusted skills for common
 workflows such as website launch, code review hardening, document-to-knowledge

@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "security",
+    "subcategory": "security.sandbox",
+    "task_intent": "review agent sandbox boundaries and refusal escalation policy",
+    "artifact_type": "policy",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "web_reference",
+    "url": "https://opensquilla.ai/",
+    "author": "OpenSquilla community",
+    "license": "Apache-2.0",
+    "reference": "OpenSquilla public product reference: secure sandbox, policy tiers, and decision logging",
+    "collected_by": "onecode-community-review"
+  }
+}

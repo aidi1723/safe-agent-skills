@@ -2,8 +2,8 @@
 
 ## Summary
 
-The current public-safe catalog contains 72 sanitized skills across all
-top-level taxonomy categories, including 30 community project reference skills
+The current public-safe catalog contains 75 sanitized skills across all
+top-level taxonomy categories, including 33 community project reference skills
 and 27 minimum-coverage seed skills.
 
 Verification command:
@@ -16,8 +16,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 72
-trusted_count: 67
+skill_count: 75
+trusted_count: 70
 tampered_count: 0
 unknown_provenance_count: 0
 ```
@@ -39,12 +39,13 @@ Phase 001 closure:
 | `batch-005-minimum-three` | 27 | 27 | Minimum 3 trusted skills per top-level category |
 | `batch-006-community-infrastructure` | 12 | 11 | Community AI infrastructure reference skills |
 | `batch-007-community-agent-workflows` | 12 | 11 | Community agent workflow, RAG, browser, sandbox, and retrieval reference skills |
+| `batch-008-opensquilla-reference` | 3 | 3 | OpenSquilla-inspired MetaSkill, token routing, and sandbox policy reference skills |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
-| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 14 |
+| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 16 |
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
 | code | `code-python-debug`, `code-review-risk`, `code-test-regression` | 3 |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-product-keyword-plan` | 3 |
@@ -57,7 +58,7 @@ Phase 001 closure:
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
 | office | `office-docx-brief`, `office-pdf-report`, `office-spreadsheet-cleanup` | 3 |
 | research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check` | 3 |
-| security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` | 5 |
+| security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` | 6 |
 | vertical | `vertical-education-plan`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 3 |
 
 ## Current Skill List
@@ -72,6 +73,8 @@ Phase 001 closure:
 | `ai-llama-cpp-local-inference-boundary` | ai | trusted |
 | `ai-llamaindex-rag-knowledge-workflow` | ai | trusted |
 | `ai-openai-cookbook-api-patterns` | ai | trusted |
+| `ai-opensquilla-metaskill-workflow` | ai | trusted |
+| `ai-opensquilla-token-routing-pattern` | ai | trusted |
 | `ai-outlines-structured-generation` | ai | trusted |
 | `ai-output-schema-eval` | ai | trusted |
 | `ai-pydantic-schema-contract` | ai | trusted |
@@ -128,6 +131,7 @@ Phase 001 closure:
 | `research-source-check` | research | trusted |
 | `security-guardrails-output-validation` | security | trusted |
 | `security-llm-guard-io-scanning` | security | trusted |
+| `security-opensquilla-sandbox-policy` | security | trusted |
 | `security-prompt-injection-review` | security | trusted |
 | `security-supply-chain-review` | security | trusted |
 | `supermemory-memory-engine-reference` | ai | quarantined |
@@ -141,6 +145,6 @@ Phase 001 closure:
 
 Recommended next waves:
 
-- `batch-008-community-depth`: additional popular community skills with clear licenses
-- `batch-009-domain-depth`: deeper skills for design, code, security, and office
-- `batch-010-connectors`: connector-aware skills after host adapter verification
+- `batch-009-community-depth`: additional popular community skills with clear licenses
+- `batch-010-domain-depth`: deeper skills for design, code, security, and office
+- `batch-011-connectors`: connector-aware skills after host adapter verification

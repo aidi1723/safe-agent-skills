@@ -43,12 +43,14 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   "build a product website and prepare launch checks" \
   --registry catalog \
   --top 5 \
+  --include-bundles \
+  --bundles bundles/index.json \
   --format markdown
 ```
 
-The generated pack contains selected skill names, capability descriptions,
-safe workflows, expected outputs, verifier expectations, provenance records,
-and sanitized hashes.
+The generated pack contains selected skill names, matching trusted scenario
+bundles, capability descriptions, safe workflows, expected outputs, verifier
+expectations, provenance records, and sanitized hashes.
 
 ## Scenario Bundles
 
@@ -103,8 +105,8 @@ skill guidance is not execution authority
 ## Recommended Integration Pattern
 
 1. Receive the user task.
-2. Run `verify --registry catalog`.
-3. Run `task-pack` or load a matching scenario bundle.
+2. Run `maintain-check --registry catalog --bundles bundles/index.json`.
+3. Run `task-pack --include-bundles` or load a matching scenario bundle.
 4. Inject the generated instructions into the agent planning context.
 5. Let the host runtime enforce filesystem, network, shell, connector, and
    production permissions.
@@ -116,13 +118,13 @@ skill guidance is not execution authority
 
 ### Claude or Claude Code
 
-Use Markdown output from `task-pack`, then place the generated instructions in
-the task context or project instructions.
+Use Markdown output from `task-pack --include-bundles`, then place the
+generated instructions in the task context or project instructions.
 
 ### Codex
 
-Use Markdown or JSON output from `task-pack`, then let Codex execute under its
-normal workspace, approval, and verification policy.
+Use Markdown or JSON output from `task-pack --include-bundles`, then let Codex
+execute under its normal workspace, approval, and verification policy.
 
 ### OpenClaw or Custom Agents
 

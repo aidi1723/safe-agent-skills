@@ -6,6 +6,7 @@ cd "$ROOT_DIR"
 
 PYTHONPATH=src python3 -m compileall src tests
 PYTHONPATH=src python3 -m unittest discover -s tests -v
+PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check --registry catalog --bundles bundles/index.json >/dev/null
 python3 -m json.tool schemas/skill-manifest.schema.json >/dev/null
 python3 -m json.tool schemas/registry-index.schema.json >/dev/null
 python3 -m json.tool schemas/verify-report.schema.json >/dev/null

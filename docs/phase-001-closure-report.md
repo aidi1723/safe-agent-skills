@@ -206,17 +206,20 @@ the host environment's safety policy.
 
 ## Phase 002 Direction
 
+Post-closure update: the first post-Phase-001 enhancement added bundle-aware
+`task-pack`, `maintain-check`, and `batch-008-opensquilla-reference`. The
+remaining direction below should be read as the next maintenance path after
+those updates.
+
 Recommended next phase:
 
-1. Add `batch-008-community-depth` with more high-value community skills that
+1. Add `batch-009-community-depth` with more high-value community skills that
    have clear source and license records.
-2. Add `batch-009-domain-depth` for deeper design, code, security, office,
+2. Add `batch-010-domain-depth` for deeper design, code, security, office,
    research, and commerce workflows.
-3. Add `batch-010-connectors` only after connector permission policy and host
+3. Add `batch-011-connectors` only after connector permission policy and host
    adapter verification are ready.
-4. Add optional bundle-aware task-pack output so agents can receive both
-   individual skill matches and scenario bundle suggestions.
-5. Add CI checks that block unknown provenance, tampered trusted skills, and
+4. Add CI checks that block unknown provenance, tampered trusted skills, and
    default bundles referencing non-trusted skills.
 
 ## Closure Decision

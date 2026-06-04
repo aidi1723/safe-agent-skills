@@ -337,7 +337,72 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
     }
 
 
-def build_agent_instructions(task: str, skills: list[dict]) -> str:
+def load_bundles_index(bundles_path: Path) -> dict:
+    if not bundles_path.exists():
+        raise SystemExit(f"missing bundles index: {bundles_path}")
+    payload = json.loads(bundles_path.read_text(encoding="utf-8"))
+    if not isinstance(payload.get("bundles"), list):
+        raise SystemExit(f"invalid bundles index: {bundles_path}")
+    return payload
+
+
+def trusted_skill_names(registry_dir: Path) -> set[str]:
+    index = load_registry_index(registry_dir)
+    return {entry["name"] for entry in index["skills"] if entry.get("status") == "trusted"}
+
+
+def bundle_matches_task(bundle: dict, task: str, selected_skill_names: set[str]) -> int:
+    score = 0
+    bundle_skills = set(bundle.get("skills", []))
+    overlap_count = len(bundle_skills & selected_skill_names)
+    if overlap_count == 0:
+        return 0
+    score += overlap_count * 5
+    haystack = " ".join(
+        [
+            bundle.get("id", ""),
+            bundle.get("name", ""),
+            bundle.get("scenario", ""),
+            " ".join(bundle.get("skills", [])),
+            " ".join(bundle.get("expected_output", [])),
+        ]
+    ).lower()
+    for token in task.lower().replace("-", " ").replace("_", " ").split():
+        if len(token) >= 3 and token in haystack:
+            score += 1
+    return score
+
+
+def select_bundles_for_task(registry_dir: Path, bundles_path: Path, task: str, selected_skills: list[dict]) -> list[dict]:
+    bundles_index = load_bundles_index(bundles_path)
+    trusted_names = trusted_skill_names(registry_dir)
+    selected_skill_names = {skill["name"] for skill in selected_skills}
+    selected_bundles = []
+    for bundle in bundles_index["bundles"]:
+        if bundle.get("status") != "trusted":
+            continue
+        bundle_skills = set(bundle.get("skills", []))
+        if not bundle_skills or not bundle_skills.issubset(trusted_names):
+            continue
+        score = bundle_matches_task(bundle, task, selected_skill_names)
+        if score <= 0:
+            continue
+        item = {
+            "id": bundle.get("id", ""),
+            "name": bundle.get("name", bundle.get("id", "")),
+            "status": bundle.get("status"),
+            "scenario": bundle.get("scenario", ""),
+            "skills": bundle.get("skills", []),
+            "expected_output": bundle.get("expected_output", []),
+            "safety_boundary": bundle.get("safety_boundary", ""),
+            "match_score": score,
+        }
+        selected_bundles.append(item)
+    selected_bundles.sort(key=lambda item: (-item["match_score"], item["id"]))
+    return selected_bundles
+
+
+def build_agent_instructions(task: str, skills: list[dict], bundles: list[dict] | None = None) -> str:
     lines = [
         "You are executing a task with a OneCode verified skill pack.",
         f"Task: {task}",
@@ -372,26 +437,58 @@ def build_agent_instructions(task: str, skills: list[dict]) -> str:
         )
         if skill["failure_handling"]:
             lines.extend(["", "Failure handling:", skill["failure_handling"]])
+    if bundles:
+        lines.extend(["", "Selected scenario bundles:"])
+        for bundle in bundles:
+            lines.extend(
+                [
+                    "",
+                    f"## {bundle['name']} (score {bundle['match_score']})",
+                    f"Scenario: {bundle['scenario']}",
+                    "",
+                    "Bundle skills:",
+                    "\n".join(f"- {skill_name}" for skill_name in bundle["skills"]) or "Not specified.",
+                    "",
+                    "Expected output:",
+                    "\n".join(f"- {item}" for item in bundle["expected_output"]) or "Not specified.",
+                    "",
+                    "Safety boundary:",
+                    bundle["safety_boundary"] or "Skills provide method only; host runtime controls permissions.",
+                ]
+            )
     return "\n".join(lines).strip()
 
 
-def build_task_pack(registry_dir: Path, task: str, top: int, include_review_required: bool) -> dict:
+def build_task_pack(
+    registry_dir: Path,
+    task: str,
+    top: int,
+    include_review_required: bool,
+    include_bundles: bool = False,
+    bundles_path: Path | None = None,
+) -> dict:
     verification = verify_registry(registry_dir)
     if verification["status"] != "ok":
         raise SystemExit("registry verification failed; refusing to build task pack")
     task_taxonomy = classify_skill("task", task).to_json()
     selected = select_skills_for_task(registry_dir, task_taxonomy, task, include_review_required)[:top]
     skills = [load_skill_pack_item(registry_dir, entry) for entry in selected]
+    bundles = []
+    if include_bundles:
+        bundle_index_path = bundles_path or Path("bundles/index.json")
+        bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills)
     return {
         "schema_version": 1,
         "generated_at": utc_now(),
         "task": task,
         "task_taxonomy": task_taxonomy,
         "skill_count": len(skills),
+        "bundle_count": len(bundles),
         "safety_boundary": "Only use trusted skills by default. Skills provide method and verification guidance, not runtime permissions.",
         "registry_verification": verification,
         "skills": skills,
-        "agent_instructions": build_agent_instructions(task, skills),
+        "bundles": bundles,
+        "agent_instructions": build_agent_instructions(task, skills, bundles),
     }
 
 
@@ -436,6 +533,29 @@ def render_task_pack_markdown(task_pack: dict) -> str:
                 skill["verifier_expectations"] or "Not specified.",
             ]
         )
+    if task_pack.get("bundles"):
+        lines.extend(["", "## Scenario Bundles"])
+        for bundle in task_pack["bundles"]:
+            lines.extend(
+                [
+                    "",
+                    f"### {bundle['name']}",
+                    "",
+                    f"- id: `{bundle['id']}`",
+                    f"- status: `{bundle['status']}`",
+                    f"- match score: `{bundle['match_score']}`",
+                    "",
+                    bundle["scenario"],
+                    "",
+                    "#### Skills",
+                    "",
+                    "\n".join(f"- `{skill_name}`" for skill_name in bundle["skills"]),
+                    "",
+                    "#### Expected Output",
+                    "",
+                    "\n".join(f"- {item}" for item in bundle["expected_output"]) or "Not specified.",
+                ]
+            )
     lines.extend(["", "## Agent Instructions", "", task_pack["agent_instructions"], ""])
     return "\n".join(lines)
 
@@ -446,6 +566,8 @@ def task_pack_command(args: argparse.Namespace) -> int:
         args.task,
         args.top,
         args.include_review_required,
+        args.include_bundles,
+        Path(args.bundles) if args.bundles else None,
     )
     if args.format == "markdown":
         print(render_task_pack_markdown(task_pack))
@@ -521,6 +643,79 @@ def verify_registry(registry_dir: Path) -> dict:
 
 def verify_command(args: argparse.Namespace) -> int:
     result = verify_registry(Path(args.registry))
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["status"] == "ok" else 2
+
+
+def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
+    issues = []
+    bundles_index = load_bundles_index(bundles_path)
+    index = load_registry_index(registry_dir)
+    statuses = {entry["name"]: entry.get("status") for entry in index["skills"]}
+    bundles = bundles_index["bundles"]
+    declared_count = bundles_index.get("bundle_count")
+    if declared_count is not None and declared_count != len(bundles):
+        issues.append(
+            {
+                "id": "bundle-count-mismatch",
+                "severity": "medium",
+                "path": bundles_path.as_posix(),
+                "expected": len(bundles),
+                "actual": declared_count,
+            }
+        )
+    for bundle in bundles:
+        bundle_id = bundle.get("id", "unknown")
+        if bundle.get("status") != "trusted":
+            continue
+        for skill_name in bundle.get("skills", []):
+            status = statuses.get(skill_name)
+            if status is None:
+                issues.append(
+                    {
+                        "id": "bundle-missing-skill",
+                        "severity": "high",
+                        "bundle": bundle_id,
+                        "skill": skill_name,
+                    }
+                )
+            elif status != "trusted":
+                issues.append(
+                    {
+                        "id": "bundle-non-trusted-skill",
+                        "severity": "high",
+                        "bundle": bundle_id,
+                        "skill": skill_name,
+                        "status": status,
+                    }
+                )
+    return {
+        "schema_version": 1,
+        "bundle_count": len(bundles),
+        "trusted_bundle_count": sum(1 for bundle in bundles if bundle.get("status") == "trusted"),
+        "issues": issues,
+    }
+
+
+def maintain_check(registry_dir: Path, bundles_path: Path | None = None) -> dict:
+    registry_verification = verify_registry(registry_dir)
+    issues = list(registry_verification["issues"])
+    bundle_validation = None
+    if bundles_path is not None:
+        bundle_validation = validate_bundles(registry_dir, bundles_path)
+        issues.extend(bundle_validation["issues"])
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "status": "failed" if issues else "ok",
+        "registry_verification": registry_verification,
+        "bundle_validation": bundle_validation,
+        "issues": issues,
+    }
+
+
+def maintain_check_command(args: argparse.Namespace) -> int:
+    result = maintain_check(Path(args.registry), Path(args.bundles) if args.bundles else None)
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
 
@@ -670,11 +865,18 @@ def build_parser() -> argparse.ArgumentParser:
     task_pack_parser.add_argument("--top", type=int, default=3)
     task_pack_parser.add_argument("--format", choices=["json", "markdown"], default="json")
     task_pack_parser.add_argument("--include-review-required", action="store_true")
+    task_pack_parser.add_argument("--include-bundles", action="store_true")
+    task_pack_parser.add_argument("--bundles", default="bundles/index.json")
     task_pack_parser.set_defaults(func=task_pack_command)
 
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("--registry", required=True)
     verify_parser.set_defaults(func=verify_command)
+
+    maintain_check_parser = subparsers.add_parser("maintain-check")
+    maintain_check_parser.add_argument("--registry", required=True)
+    maintain_check_parser.add_argument("--bundles")
+    maintain_check_parser.set_defaults(func=maintain_check_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

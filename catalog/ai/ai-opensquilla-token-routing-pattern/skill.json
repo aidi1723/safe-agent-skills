@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-04T12:58:26Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "36086d4ab5063843cde2d9776f9c475910ae3775bd5c7e1ad30378332e965a7d",
+    "source_sha256": "ee8814bb349ca4a647d47b5b92b51a7aa5e667e418785062f4276998e8060adb"
+  },
+  "name": "ai-opensquilla-token-routing-pattern",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OpenSquilla community",
+    "captured_at": "2026-06-04T12:57:58Z",
+    "collected_by": "onecode-community-review",
+    "license": "Apache-2.0",
+    "path": "batches/batch-008-opensquilla-reference/ai-opensquilla-token-routing-pattern",
+    "reference": "OpenSquilla public product reference: token-efficient agent intelligence, on-demand skills, and smart routing",
+    "type": "web_reference",
+    "url": "https://opensquilla.ai/"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.routing",
+    "task_intent": "review token-aware skill selection and model routing patterns"
+  },
+  "version": "0.1.0"
+}

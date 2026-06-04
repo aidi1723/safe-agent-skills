@@ -34,6 +34,8 @@ The local MVP is complete when the project can:
 - [x] Trusted-only selection
 - [x] Review-mode selection
 - [x] Agent task pack output
+- [x] Bundle-aware task pack output
+- [x] Maintenance check for registry and trusted bundle references
 - [x] Registry verification
 - [x] Reindex
 - [x] Module entrypoint
@@ -50,10 +52,10 @@ The local MVP is complete when the project can:
 - [x] Standalone tool open-source statement
 - [x] At least 3 trusted skills in every top-level category
 
-## Phase 001 Public Baseline
+## Current Public Baseline
 
-- total skills: 72
-- trusted skills: 67
+- total skills: 75
+- trusted skills: 70
 - quarantined skills: 3
 - review-required skills: 2
 - top-level category coverage: 15 / 15

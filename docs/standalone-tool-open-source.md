@@ -176,6 +176,7 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
 The task pack includes:
 
 - selected skill names
+- optional trusted scenario bundles
 - match scores
 - capability descriptions
 - source and license records
@@ -185,6 +186,20 @@ The task pack includes:
 - verifier expectations
 - failure handling
 - final agent instructions
+
+### 7. Run Maintenance Check
+
+Before publishing a registry and bundle set, verify both skill integrity and
+trusted bundle references:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
+  --registry ./registry \
+  --bundles ./bundles/index.json
+```
+
+This command fails if the registry has tampered or unknown-provenance skills,
+or if a trusted bundle references a missing or non-trusted skill.
 
 ## What The Tool Does Not Do
 
@@ -228,8 +243,10 @@ skills should not be used for normal execution.
 4. Inspect each generated `skill.json` and `SANITIZATION_REPORT.json`.
 5. Approve only the skills you understand and accept.
 6. Run `verify --registry ./registry`.
-7. Use `task-pack` before agent execution.
-8. Record selected skill names and hashes in the agent's final report.
+7. Run `maintain-check --registry ./registry --bundles ./bundles/index.json`
+   when using scenario bundles.
+8. Use `task-pack` before agent execution.
+9. Record selected skill names and hashes in the agent's final report.
 
 ## Open Source Position
 
