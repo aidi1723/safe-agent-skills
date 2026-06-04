@@ -4,6 +4,11 @@ OneCode Skill Sanitizer is a standalone project for turning external or communit
 
 Its purpose is not to execute third-party skills directly. Its purpose is to preserve useful domain workflows while removing unsafe commands, privilege-escalation instructions, hidden dependencies, secret leakage, and content that conflicts with OneCode's execution rules.
 
+The CLI can also be used independently of OneCode. Users can bring their own
+`incoming/` skill folders, build a private or public `registry/`, approve their
+own trusted skills, and generate JSON or Markdown task packs for any host
+agent. See [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md).
+
 ## Open Source Statement
 
 This project is a public-safe skill catalog and sanitizer for AI agents. It is
@@ -34,6 +39,11 @@ positioning and contribution stance.
 Skills provide method.
 
 OneCode provides boundary, execution control, verification, and evidence.
+
+When used outside OneCode, the host agent or operating environment provides
+that boundary. The sanitizer still records provenance, cleans risky
+instructions, verifies hashes, and emits bounded task packs, but it does not
+grant runtime permissions.
 
 This project is designed to stay usable even when the host product changes.
 It does not assume that every OneCode or AgentCore OS runtime already exposes
@@ -158,6 +168,7 @@ onecode skills approve pdf
 
 - [Source Baseline](docs/source-baseline.md)
 - [Agent Task Pack](docs/agent-task-pack.md)
+- [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md)
 - [Architecture](docs/architecture.md)
 - [Skill Taxonomy](docs/skill-taxonomy.md)
 - [Skill Index](docs/skill-index.md)
