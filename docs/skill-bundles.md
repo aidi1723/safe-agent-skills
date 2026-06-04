@@ -13,6 +13,12 @@ workflow may need requirements, engineering, UI review, content, SEO, browser
 verification, and publish readiness. A bundle records that combination so an
 agent can start from a more complete plan.
 
+Bundles are agent-compatible by design. Claude, Codex, OpenClaw, Cursor, MCP
+hosts, local agents, and custom agent systems can read the same bundle
+definitions as Markdown or JSON. The bundle only recommends method and
+verification steps; it does not grant filesystem, shell, network, connector,
+account, or production permissions.
+
 ## Files
 
 - human-readable bundle catalog: `bundles/README.md`
@@ -37,6 +43,9 @@ agent can start from a more complete plan.
 Bundles do not grant permissions. They only recommend a sequence of trusted
 skills and expected outputs. The host runtime still controls filesystem,
 network, shell, connector, account, and production permissions.
+
+For the full cross-agent usage model, see
+[Agent-Compatible Skill Bundles](agent-compatible-skill-bundles.md).
 
 ## Future Runtime Integration
 

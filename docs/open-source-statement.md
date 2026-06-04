@@ -88,6 +88,37 @@ Skills provide method.
 
 OneCode provides boundary, execution control, verification, and evidence.
 
+## 所有 Agent 都可以安全调用
+
+这些 skill 不是 Claude 专属，也不是 Codex 专属。
+
+每个 skill 都是清洗后的 `SKILL.md` 说明书，场景组合则是由多个
+`trusted` skill 组成的任务 playbook。Claude、Codex、OpenClaw、
+Cursor、本地 Agent、MCP Host、CI Worker 和自研 Agent 都可以读取这些
+Markdown 或 JSON 说明，并把它们放进自己的规划上下文中。
+
+通用调用方式有两种：
+
+- 直接读取单个 `SKILL.md`
+- 通过 `task-pack` 根据任务自动选择匹配的 `trusted` skill
+
+场景组合适合更大的任务，例如：
+
+- 建站：需求、工程、UI、文案、SEO、浏览器验证、发布检查组合使用
+- RAG 知识库：编排、文档索引、检索、向量库、结构化输出、来源核验组合使用
+- 代码审查：风险审查、回归测试、结构化输出、供应链、安全沙箱和 CI 组合使用
+- Agent 安全：提示词注入、输出护栏、I/O 扫描、供应链、隐私边界组合使用
+
+安全边界保持不变：
+
+> skill guidance is method, not execution authority.
+
+skill 可以告诉 Agent 如何做任务，但不能自动授予文件系统、Shell、网络、
+浏览器、连接器、账号或生产环境写入权限。这些权限必须由 Claude、Codex、
+OpenClaw、OneCode 或其他宿主运行时自己的安全策略控制。
+
+详见 [Agent-Compatible Skill Bundles](agent-compatible-skill-bundles.md)。
+
 ## 安全边界
 
 这个仓库不会默认执行第三方 skill。

@@ -158,7 +158,14 @@ production permissions; those remain controlled by the host runtime.
 
 Scenario bundles in `bundles/` combine multiple trusted skills for common
 workflows such as website launch, code review hardening, document-to-knowledge
-base, data analysis, open source release, and commerce listing growth.
+base, RAG agent design, data analysis, open source release, and commerce
+listing growth.
+
+These skills and bundles are agent-compatible by design. Claude, Codex,
+OpenClaw, Cursor, local agents, MCP hosts, CI workers, and custom agent
+systems can consume the same cleaned Markdown or JSON task packs. The safety
+rule stays the same across all hosts: skill guidance is method, not execution
+authority. See [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md).
 
 The first MVP can also be exposed through OneCode:
 
@@ -172,6 +179,7 @@ onecode skills approve pdf
 
 - [Source Baseline](docs/source-baseline.md)
 - [Agent Task Pack](docs/agent-task-pack.md)
+- [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md)
 - [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md)
 - [Architecture](docs/architecture.md)
 - [Skill Taxonomy](docs/skill-taxonomy.md)
