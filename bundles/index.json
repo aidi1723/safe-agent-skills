@@ -7,6 +7,29 @@
       "name": "Website Build Launch",
       "scenario": "Build or polish a website, landing page, dashboard, or product page and prepare it for release.",
       "status": "trusted",
+      "task_signals": ["website", "landing page", "official site", "dashboard", "launch", "publish"],
+      "required_capabilities": [
+        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
+        {"id": "engineering_release", "required": true, "preferred_skills": ["engineering-build-release"]},
+        {"id": "ui_review", "required": true, "preferred_skills": ["design-ui-review"]},
+        {"id": "design_consistency", "required": true, "preferred_skills": ["design-system-consistency"]},
+        {"id": "seo_copy", "required": true, "preferred_skills": ["content-seo-brief"]},
+        {"id": "browser_verification", "required": true, "preferred_skills": ["execution-browser-check", "execution-playwright-browser-automation"]},
+        {"id": "publish_check", "required": true, "preferred_skills": ["execution-publish-check"]},
+        {"id": "social_post", "required": false, "preferred_skills": ["content-social-post"]}
+      ],
+      "execution_order": [
+        "business-requirements-brief",
+        "engineering-build-release",
+        "design-ui-review",
+        "design-system-consistency",
+        "content-seo-brief",
+        "execution-browser-check",
+        "execution-playwright-browser-automation",
+        "execution-publish-check",
+        "execution-browser-use-web-task",
+        "content-social-post"
+      ],
       "skills": [
         "business-requirements-brief",
         "engineering-build-release",
@@ -34,6 +57,24 @@
       "name": "Code Review Hardening",
       "scenario": "Review generated code, pull requests, bug fixes, or automation changes before acceptance.",
       "status": "trusted",
+      "task_signals": ["code review", "pull request", "generated code", "bug fix", "refactor", "tests"],
+      "required_capabilities": [
+        {"id": "code_review", "required": true, "preferred_skills": ["code-review-risk"]},
+        {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
+        {"id": "schema_contract", "required": false, "preferred_skills": ["ai-pydantic-schema-contract", "ai-output-schema-eval"]},
+        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]},
+        {"id": "sandbox_boundary", "required": false, "preferred_skills": ["execution-e2b-sandbox-boundary"]},
+        {"id": "ci_check", "required": true, "preferred_skills": ["engineering-ci-troubleshoot"]}
+      ],
+      "execution_order": [
+        "code-review-risk",
+        "code-test-regression",
+        "ai-pydantic-schema-contract",
+        "ai-output-schema-eval",
+        "security-supply-chain-review",
+        "execution-e2b-sandbox-boundary",
+        "engineering-ci-troubleshoot"
+      ],
       "skills": [
         "code-review-risk",
         "code-test-regression",
@@ -58,6 +99,22 @@
       "name": "Security Agent Guardrails",
       "scenario": "Review an AI agent, connector, prompt, or workflow for safety boundaries.",
       "status": "trusted",
+      "task_signals": ["prompt injection", "connector", "tool permission", "agent safety", "guardrail", "sandbox"],
+      "required_capabilities": [
+        {"id": "prompt_injection_review", "required": true, "preferred_skills": ["security-prompt-injection-review"]},
+        {"id": "output_guardrail", "required": true, "preferred_skills": ["security-guardrails-output-validation", "ai-outlines-structured-generation"]},
+        {"id": "io_scanning", "required": true, "preferred_skills": ["security-llm-guard-io-scanning"]},
+        {"id": "supply_chain_review", "required": false, "preferred_skills": ["security-supply-chain-review"]},
+        {"id": "privacy_check", "required": true, "preferred_skills": ["compliance-privacy-check"]}
+      ],
+      "execution_order": [
+        "security-prompt-injection-review",
+        "security-guardrails-output-validation",
+        "security-llm-guard-io-scanning",
+        "ai-outlines-structured-generation",
+        "security-supply-chain-review",
+        "compliance-privacy-check"
+      ],
       "skills": [
         "security-prompt-injection-review",
         "security-guardrails-output-validation",
@@ -80,6 +137,26 @@
       "name": "Document To Knowledge Base",
       "scenario": "Turn PDFs, office files, or mixed documents into Markdown, retrieval-ready chunks, summaries, or knowledge-base entries.",
       "status": "trusted",
+      "task_signals": ["pdf", "document", "markdown", "knowledge base", "docs", "office file"],
+      "required_capabilities": [
+        {"id": "source_inventory", "required": true, "preferred_skills": ["office-pdf-report"]},
+        {"id": "file_conversion", "required": true, "preferred_skills": ["data-markitdown-file-to-markdown", "data-marker-pdf-markdown-review"]},
+        {"id": "document_partition", "required": true, "preferred_skills": ["data-unstructured-document-partition"]},
+        {"id": "rag_plan", "required": true, "preferred_skills": ["ai-llamaindex-rag-knowledge-workflow", "data-haystack-rag-pipeline"]},
+        {"id": "retrieval", "required": false, "preferred_skills": ["data-qdrant-vector-retrieval"]},
+        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]}
+      ],
+      "execution_order": [
+        "office-pdf-report",
+        "data-markitdown-file-to-markdown",
+        "data-marker-pdf-markdown-review",
+        "data-unstructured-document-partition",
+        "ai-llamaindex-rag-knowledge-workflow",
+        "data-haystack-rag-pipeline",
+        "data-qdrant-vector-retrieval",
+        "research-source-check",
+        "office-docx-brief"
+      ],
       "skills": [
         "office-pdf-report",
         "data-markitdown-file-to-markdown",
@@ -107,6 +184,23 @@
       "name": "Data Analysis Report",
       "scenario": "Clean a dataset, analyze tables, plan charts, and prepare a business or research report.",
       "status": "trusted",
+      "task_signals": ["dataset", "spreadsheet", "chart", "data analysis", "table", "report"],
+      "required_capabilities": [
+        {"id": "data_quality", "required": true, "preferred_skills": ["data-quality-audit"]},
+        {"id": "table_analysis", "required": true, "preferred_skills": ["data-table-analysis"]},
+        {"id": "visualization", "required": true, "preferred_skills": ["data-visualization-plan"]},
+        {"id": "spreadsheet_cleanup", "required": false, "preferred_skills": ["office-spreadsheet-cleanup"]},
+        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]},
+        {"id": "report_brief", "required": true, "preferred_skills": ["office-docx-brief"]}
+      ],
+      "execution_order": [
+        "data-quality-audit",
+        "data-table-analysis",
+        "data-visualization-plan",
+        "office-spreadsheet-cleanup",
+        "research-source-check",
+        "office-docx-brief"
+      ],
       "skills": [
         "data-quality-audit",
         "data-table-analysis",
@@ -130,6 +224,23 @@
       "name": "Open Source Release",
       "scenario": "Prepare a repository, package, catalog, or public artifact for open source publication.",
       "status": "trusted",
+      "task_signals": ["open source", "release", "github", "publish repo", "public repository"],
+      "required_capabilities": [
+        {"id": "publish_check", "required": true, "preferred_skills": ["execution-publish-check"]},
+        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]},
+        {"id": "license_review", "required": true, "preferred_skills": ["compliance-terms-review"]},
+        {"id": "editorial_review", "required": true, "preferred_skills": ["content-editorial-review"]},
+        {"id": "social_post", "required": false, "preferred_skills": ["content-social-post"]},
+        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]}
+      ],
+      "execution_order": [
+        "execution-publish-check",
+        "security-supply-chain-review",
+        "compliance-terms-review",
+        "content-editorial-review",
+        "research-source-check",
+        "content-social-post"
+      ],
       "skills": [
         "execution-publish-check",
         "security-supply-chain-review",
@@ -152,6 +263,21 @@
       "name": "Content SEO Publication",
       "scenario": "Draft, fact-check, optimize, and publish public content.",
       "status": "trusted",
+      "task_signals": ["article", "seo", "social", "public content", "blog", "post"],
+      "required_capabilities": [
+        {"id": "seo_copy", "required": true, "preferred_skills": ["content-seo-brief"]},
+        {"id": "editorial_review", "required": true, "preferred_skills": ["content-editorial-review"]},
+        {"id": "prompt_pattern", "required": false, "preferred_skills": ["content-prompt-engineering-patterns"]},
+        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]},
+        {"id": "social_post", "required": true, "preferred_skills": ["content-social-post"]}
+      ],
+      "execution_order": [
+        "content-seo-brief",
+        "research-source-check",
+        "content-editorial-review",
+        "content-prompt-engineering-patterns",
+        "content-social-post"
+      ],
       "skills": [
         "content-seo-brief",
         "content-editorial-review",
@@ -173,6 +299,27 @@
       "name": "RAG Agent Knowledge App",
       "scenario": "Design a source-grounded RAG or knowledge-base agent with retrieval, citations, structured outputs, and safety checks.",
       "status": "trusted",
+      "task_signals": ["rag", "retrieval", "vector", "citation", "knowledge agent", "document agent"],
+      "required_capabilities": [
+        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
+        {"id": "agent_orchestration", "required": true, "preferred_skills": ["ai-langchain-agent-orchestration"]},
+        {"id": "rag_plan", "required": true, "preferred_skills": ["ai-llamaindex-rag-knowledge-workflow", "data-haystack-rag-pipeline"]},
+        {"id": "vector_retrieval", "required": true, "preferred_skills": ["data-qdrant-vector-retrieval"]},
+        {"id": "schema_contract", "required": true, "preferred_skills": ["ai-pydantic-schema-contract", "ai-output-schema-eval"]},
+        {"id": "citation_check", "required": true, "preferred_skills": ["research-source-check"]},
+        {"id": "prompt_injection_review", "required": false, "preferred_skills": ["security-prompt-injection-review"]}
+      ],
+      "execution_order": [
+        "business-requirements-brief",
+        "ai-langchain-agent-orchestration",
+        "ai-llamaindex-rag-knowledge-workflow",
+        "data-haystack-rag-pipeline",
+        "data-qdrant-vector-retrieval",
+        "ai-pydantic-schema-contract",
+        "ai-output-schema-eval",
+        "research-source-check",
+        "security-prompt-injection-review"
+      ],
       "skills": [
         "business-requirements-brief",
         "ai-langchain-agent-orchestration",
@@ -199,6 +346,21 @@
       "name": "Commerce Listing Growth",
       "scenario": "Prepare marketplace listings, search keywords, inquiry replies, and trade communication.",
       "status": "trusted",
+      "task_signals": ["listing", "keyword", "inquiry", "trade", "buyer", "marketplace"],
+      "required_capabilities": [
+        {"id": "listing", "required": true, "preferred_skills": ["commerce-icbu-listing"]},
+        {"id": "keyword_plan", "required": true, "preferred_skills": ["commerce-product-keyword-plan"]},
+        {"id": "inquiry_reply", "required": true, "preferred_skills": ["commerce-inquiry-reply"]},
+        {"id": "editorial_review", "required": false, "preferred_skills": ["content-editorial-review"]},
+        {"id": "requirements", "required": false, "preferred_skills": ["business-requirements-brief"]}
+      ],
+      "execution_order": [
+        "business-requirements-brief",
+        "commerce-icbu-listing",
+        "commerce-product-keyword-plan",
+        "content-editorial-review",
+        "commerce-inquiry-reply"
+      ],
       "skills": [
         "commerce-icbu-listing",
         "commerce-product-keyword-plan",

@@ -966,6 +966,59 @@ class RegistryCliTest(unittest.TestCase):
             self.assertNotIn("router", task_pack)
             self.assertEqual(task_pack["skills"][0]["name"], "design-dashboard")
 
+    def test_real_catalog_scenario_router_selects_website_bundle(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "build a product website and prepare launch checks",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        self.assertEqual(task_pack["selected_scenario"]["id"], "website-build-launch")
+        self.assertEqual(task_pack["bundles"][0]["id"], "website-build-launch")
+        self.assertIn("design-ui-review", [skill["name"] for skill in task_pack["skills"]])
+        self.assertIn("execution-publish-check", [skill["name"] for skill in task_pack["skills"]])
+        self.assertIn("ui_review", [item["capability"] for item in task_pack["coverage"]])
+
+    def test_real_catalog_scenario_router_selects_rag_bundle(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "design a RAG document agent with vector retrieval and citation checks",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        self.assertEqual(task_pack["selected_scenario"]["id"], "rag-agent-knowledge-app")
+        self.assertEqual(task_pack["bundles"][0]["id"], "rag-agent-knowledge-app")
+        self.assertIn("data-qdrant-vector-retrieval", [skill["name"] for skill in task_pack["skills"]])
+        self.assertIn("citation_check", [item["capability"] for item in task_pack["coverage"]])
+
 
 if __name__ == "__main__":
     unittest.main()
