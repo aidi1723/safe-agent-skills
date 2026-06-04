@@ -35,6 +35,10 @@ The local MVP is complete when the project can:
 - [x] Review-mode selection
 - [x] Agent task pack output
 - [x] Bundle-aware task pack output
+- [x] Scenario router task-pack output
+- [x] Scenario router capability coverage
+- [x] Scenario router execution plan
+- [x] Scenario router selection explanations
 - [x] Maintenance check for registry and trusted bundle references
 - [x] Registry verification
 - [x] Reindex
@@ -65,6 +69,7 @@ The local MVP is complete when the project can:
 Closure report:
 
 - [Phase 001 Closure Report](phase-001-closure-report.md)
+- [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
 
 ## Not In MVP
 

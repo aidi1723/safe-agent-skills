@@ -21,11 +21,16 @@ Current baseline:
 - review-required skills: 2
 - categories meeting 3 trusted skills: 15 / 15
 - scenario bundles: 9
-- phase status: Phase 001 closed for public maintenance
+- phase status: Phase 002 scenario router closed for today's delivery
 
 Closure report:
 
 - [Phase 001 Closure Report](phase-001-closure-report.md)
+- [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
+
+Latest update:
+
+- [Scenario Skill Router](updates/2026-06-04-scenario-skill-router.md)
 
 ## Intake Rule
 
@@ -56,6 +61,22 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
   --registry catalog \
   --bundles bundles/index.json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "build a product website and prepare launch checks" \
+  --registry catalog \
+  --include-bundles \
+  --bundles bundles/index.json \
+  --router scenario \
+  --max-skills 8 \
+  --format json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "design a RAG document agent with vector retrieval and citation checks" \
+  --registry catalog \
+  --include-bundles \
+  --bundles bundles/index.json \
+  --router scenario \
+  --max-skills 8 \
+  --format json
 bash scripts/verify.sh
 ```
 
@@ -69,6 +90,8 @@ Confirm:
   requested
 - every bundle in `bundles/index.json` references existing trusted skills
 - `maintain-check` reports `status: ok`
+- scenario router website sample selects `website-build-launch`
+- scenario router RAG sample selects `rag-agent-knowledge-app`
 - batch docs exist for new entries
 
 ## Contribution Standard

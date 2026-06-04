@@ -26,11 +26,26 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Scenario Skill Router](updates/2026-06-04-scenario-skill-router.md)
 - [Bundle-Aware Task Packs and OpenSquilla Reference Batch](updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
 
 Phase 001 closure:
 
 - [Phase 001 Closure Report](phase-001-closure-report.md)
+
+Phase 002 closure:
+
+- [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
+
+Scenario router status:
+
+```text
+router mode: scenario
+router type: deterministic
+scenario bundles: 9 trusted
+sample website route: website-build-launch
+sample RAG route: rag-agent-knowledge-app
+```
 
 ## Completed Batches
 
