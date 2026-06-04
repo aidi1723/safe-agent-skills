@@ -7,6 +7,7 @@ import re
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .router import route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
 
@@ -322,7 +323,7 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
         "name": entry["name"],
         "status": entry["status"],
         "risk_level": entry["risk_level"],
-        "match_score": entry["match_score"],
+        "match_score": entry.get("match_score", 0),
         "taxonomy": entry["taxonomy"],
         "source": entry["source"],
         "hashes": entry["hashes"],
@@ -335,6 +336,18 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
         "failure_handling": sections.get("Failure Handling", ""),
         "policy": manifest.get("policy", {}),
     }
+
+
+def load_trusted_skill_pack_items(registry_dir: Path) -> list[dict]:
+    index = load_registry_index(registry_dir)
+    skills = []
+    for entry in index["skills"]:
+        if entry.get("status") != "trusted":
+            continue
+        item = load_skill_pack_item(registry_dir, entry)
+        item["match_score"] = item.get("match_score", 0)
+        skills.append(item)
+    return skills
 
 
 def load_bundles_index(bundles_path: Path) -> dict:
@@ -402,7 +415,12 @@ def select_bundles_for_task(registry_dir: Path, bundles_path: Path, task: str, s
     return selected_bundles
 
 
-def build_agent_instructions(task: str, skills: list[dict], bundles: list[dict] | None = None) -> str:
+def build_agent_instructions(
+    task: str,
+    skills: list[dict],
+    bundles: list[dict] | None = None,
+    router_context: dict | None = None,
+) -> str:
     lines = [
         "You are executing a task with a OneCode verified skill pack.",
         f"Task: {task}",
@@ -413,8 +431,19 @@ def build_agent_instructions(task: str, skills: list[dict], bundles: list[dict] 
         "- Follow the host runtime approval policy before any action outside the current approved workspace.",
         "- Preserve provenance, verification notes, and unresolved assumptions in the final answer.",
         "",
-        "Selected skills:",
     ]
+    if router_context and router_context.get("execution_plan"):
+        lines.extend(["Execution plan:"])
+        for step in router_context["execution_plan"]:
+            lines.append(f"- {step['order']}. {step['skill']}: {step['instruction']}")
+        lines.append("")
+    if router_context and router_context.get("coverage"):
+        lines.extend(["Capability coverage:"])
+        for item in router_context["coverage"]:
+            skill = item.get("skill") or "missing"
+            lines.append(f"- {item['capability']}: {item['status']} by {skill}")
+        lines.append("")
+    lines.append("Selected skills:")
     for skill in skills:
         lines.extend(
             [
@@ -466,17 +495,58 @@ def build_task_pack(
     include_review_required: bool,
     include_bundles: bool = False,
     bundles_path: Path | None = None,
+    router_mode: str = "simple",
+    max_skills: int | None = None,
 ) -> dict:
     verification = verify_registry(registry_dir)
     if verification["status"] != "ok":
         raise SystemExit("registry verification failed; refusing to build task pack")
     task_taxonomy = classify_skill("task", task).to_json()
-    selected = select_skills_for_task(registry_dir, task_taxonomy, task, include_review_required)[:top]
+    candidate_limit = max(top, max_skills or top) if router_mode == "scenario" else top
+    selected = select_skills_for_task(registry_dir, task_taxonomy, task, include_review_required)[:candidate_limit]
     skills = [load_skill_pack_item(registry_dir, entry) for entry in selected]
     bundles = []
     if include_bundles:
         bundle_index_path = bundles_path or Path("bundles/index.json")
         bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills)
+    if router_mode == "scenario":
+        bundle_index_path = bundles_path or Path("bundles/index.json")
+        bundles_index = load_bundles_index(bundle_index_path)
+        selected_by_name = {skill["name"]: skill for skill in skills}
+        for skill in load_trusted_skill_pack_items(registry_dir):
+            selected_by_name.setdefault(skill["name"], skill)
+        routed = route_scenario_task(
+            task=task,
+            selected_skills=list(selected_by_name.values()),
+            bundles_index=bundles_index,
+            trusted_skill_names=trusted_skill_names(registry_dir),
+            max_skills=max_skills or top,
+        )
+        skills = routed["skills"]
+        bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills) if include_bundles else []
+        if include_bundles and routed["selected_scenario"].get("id"):
+            scenario_id = routed["selected_scenario"]["id"]
+            bundles = [bundle for bundle in bundles if bundle["id"] == scenario_id] or bundles
+        task_pack = {
+            "schema_version": 1,
+            "generated_at": utc_now(),
+            "task": task,
+            "task_taxonomy": task_taxonomy,
+            "skill_count": len(skills),
+            "bundle_count": len(bundles),
+            "safety_boundary": "Only use trusted skills by default. Skills provide method and verification guidance, not runtime permissions.",
+            "registry_verification": verification,
+            "skills": skills,
+            "bundles": bundles,
+            "router": routed["router"],
+            "task_profile": routed["task_profile"],
+            "selected_scenario": routed["selected_scenario"],
+            "coverage": routed["coverage"],
+            "execution_plan": routed["execution_plan"],
+            "selection_explanations": routed["selection_explanations"],
+        }
+        task_pack["agent_instructions"] = build_agent_instructions(task, skills, bundles, task_pack)
+        return task_pack
     return {
         "schema_version": 1,
         "generated_at": utc_now(),
@@ -503,9 +573,35 @@ def render_task_pack_markdown(task_pack: dict) -> str:
         "## Safety Boundary",
         "",
         task_pack["safety_boundary"],
-        "",
-        "## Selected Skills",
     ]
+    if task_pack.get("router"):
+        lines.extend(
+            [
+                "",
+                "## Task Profile",
+                "",
+                f"- router: `{task_pack['router']['mode']}`",
+                f"- task type: `{task_pack['task_profile']['task_type']}`",
+                f"- primary domain: `{task_pack['task_profile']['primary_domain']}`",
+                "",
+                "## Selected Scenario",
+                "",
+                f"- id: `{task_pack['selected_scenario'].get('id', '')}`",
+                f"- score: `{task_pack['selected_scenario'].get('match_score', 0)}`",
+                "",
+                "## Capability Coverage",
+                "",
+            ]
+        )
+        for item in task_pack.get("coverage", []):
+            lines.append(f"- `{item['capability']}`: {item['status']} by `{item.get('skill') or 'missing'}`")
+        lines.extend(["", "## Execution Plan", ""])
+        for step in task_pack.get("execution_plan", []):
+            lines.append(f"{step['order']}. `{step['skill']}` - {step['instruction']}")
+        lines.extend(["", "## Selection Explanations", ""])
+        for item in task_pack.get("selection_explanations", []):
+            lines.append(f"- `{item['name']}` ({item['type']}, {item['role']}): {item['selection_reason']}")
+    lines.extend(["", "## Selected Skills"])
     for skill in task_pack["skills"]:
         lines.extend(
             [
@@ -568,6 +664,8 @@ def task_pack_command(args: argparse.Namespace) -> int:
         args.include_review_required,
         args.include_bundles,
         Path(args.bundles) if args.bundles else None,
+        args.router,
+        args.max_skills,
     )
     if args.format == "markdown":
         print(render_task_pack_markdown(task_pack))
@@ -867,6 +965,8 @@ def build_parser() -> argparse.ArgumentParser:
     task_pack_parser.add_argument("--include-review-required", action="store_true")
     task_pack_parser.add_argument("--include-bundles", action="store_true")
     task_pack_parser.add_argument("--bundles", default="bundles/index.json")
+    task_pack_parser.add_argument("--router", choices=["simple", "scenario"], default="simple")
+    task_pack_parser.add_argument("--max-skills", type=int)
     task_pack_parser.set_defaults(func=task_pack_command)
 
     verify_parser = subparsers.add_parser("verify")

@@ -765,6 +765,207 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["status"], "failed")
             self.assertEqual(result["issues"][0]["id"], "bundle-non-trusted-skill")
 
+    def test_task_pack_scenario_router_outputs_profile_plan_and_explanations(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            bundles_dir = root / "bundles"
+            bundles_dir.mkdir()
+            skill_names = [
+                ("business-requirements-brief", "business", "Use when defining requirements."),
+                ("design-ui-review", "design", "Use when reviewing website UI."),
+                ("content-seo-brief", "content", "Use when preparing SEO copy."),
+                ("execution-publish-check", "execution", "Use when checking publish readiness."),
+            ]
+            for name, category, description in skill_names:
+                skill = incoming / name
+                skill.mkdir(parents=True)
+                (skill / "SKILL.md").write_text(
+                    "\n".join(
+                        [
+                            "---",
+                            f"name: {name}",
+                            f"description: {description}",
+                            "---",
+                            f"# {name}",
+                            "",
+                            "## Safe Workflow",
+                            "1. Follow bounded workflow.",
+                            "",
+                            "## Expected Output",
+                            "- evidence",
+                            "",
+                            "## Verifier Expectations",
+                            "- verification notes",
+                        ]
+                    ),
+                    encoding="utf-8",
+                )
+                (skill / "skill.json").write_text(
+                    json.dumps(
+                        {
+                            "taxonomy": {
+                                "category": category,
+                                "subcategory": f"{category}.test",
+                                "task_intent": description,
+                                "artifact_type": "workflow",
+                                "collection_priority": "P1",
+                            }
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/skills",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            for name, category, _ in skill_names:
+                main(["approve", str(registry / category / name)])
+            (bundles_dir / "index.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "bundle_count": 1,
+                        "bundles": [
+                            {
+                                "id": "website-build-launch",
+                                "name": "Website Build Launch",
+                                "scenario": "Build or polish a website and prepare it for release.",
+                                "status": "trusted",
+                                "task_signals": ["website", "launch"],
+                                "skills": [name for name, _, _ in skill_names],
+                                "required_capabilities": [
+                                    {
+                                        "id": "requirements",
+                                        "required": True,
+                                        "preferred_skills": ["business-requirements-brief"],
+                                    },
+                                    {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                                    {"id": "seo_copy", "required": True, "preferred_skills": ["content-seo-brief"]},
+                                    {
+                                        "id": "publish_check",
+                                        "required": True,
+                                        "preferred_skills": ["execution-publish-check"],
+                                    },
+                                ],
+                                "execution_order": [name for name, _, _ in skill_names],
+                                "expected_output": ["release checklist"],
+                                "safety_boundary": "Skills provide method only.",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            task_pack_out = io.StringIO()
+            with contextlib.redirect_stdout(task_pack_out):
+                task_pack_code = main(
+                    [
+                        "task-pack",
+                        "build a product website and prepare launch checks",
+                        "--registry",
+                        str(registry),
+                        "--include-bundles",
+                        "--bundles",
+                        str(bundles_dir / "index.json"),
+                        "--router",
+                        "scenario",
+                        "--max-skills",
+                        "4",
+                    ]
+                )
+
+            self.assertEqual(task_pack_code, 0)
+            task_pack = json.loads(task_pack_out.getvalue())
+            self.assertEqual(task_pack["router"]["mode"], "deterministic_scenario_router")
+            self.assertEqual(task_pack["task_profile"]["task_type"], "website_build")
+            self.assertEqual(task_pack["selected_scenario"]["id"], "website-build-launch")
+            self.assertEqual(task_pack["bundle_count"], 1)
+            self.assertEqual(task_pack["bundles"][0]["id"], "website-build-launch")
+            self.assertEqual([step["skill"] for step in task_pack["execution_plan"]], [name for name, _, _ in skill_names])
+            self.assertTrue(task_pack["coverage"])
+            self.assertTrue(task_pack["selection_explanations"])
+            self.assertIn("Execution plan:", task_pack["agent_instructions"])
+
+    def test_task_pack_simple_router_remains_backward_compatible(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "design-dashboard"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text(
+                "\n".join(
+                    [
+                        "---",
+                        "name: design-dashboard",
+                        "description: Use when polishing dashboard UI layout.",
+                        "---",
+                        "# Design Dashboard",
+                        "",
+                        "## Safe Workflow",
+                        "1. Inspect dashboard.",
+                        "",
+                        "## Verifier Expectations",
+                        "- screenshot check",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/design-dashboard",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/design-dashboard",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["approve", str(registry / "design" / "design-dashboard")])
+
+            task_pack_out = io.StringIO()
+            with contextlib.redirect_stdout(task_pack_out):
+                task_pack_code = main(
+                    [
+                        "task-pack",
+                        "polish this dashboard interface",
+                        "--registry",
+                        str(registry),
+                        "--router",
+                        "simple",
+                    ]
+                )
+
+            self.assertEqual(task_pack_code, 0)
+            task_pack = json.loads(task_pack_out.getvalue())
+            self.assertNotIn("router", task_pack)
+            self.assertEqual(task_pack["skills"][0]["name"], "design-dashboard")
+
 
 if __name__ == "__main__":
     unittest.main()
