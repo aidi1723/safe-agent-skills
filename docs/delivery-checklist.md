@@ -14,6 +14,7 @@ The local MVP is complete when the project can:
 - list and inspect registry entries
 - approve, reject, and disable reviewed skills
 - select only `trusted` skills by default
+- emit a verified Agent task pack from selected skills
 - verify registry integrity before runtime use
 - rebuild stale registry indexes
 
@@ -31,6 +32,7 @@ The local MVP is complete when the project can:
 - [x] Approve, reject, disable
 - [x] Trusted-only selection
 - [x] Review-mode selection
+- [x] Agent task pack output
 - [x] Registry verification
 - [x] Reindex
 - [x] Module entrypoint
@@ -40,6 +42,7 @@ The local MVP is complete when the project can:
 - [x] Batch records
 - [x] Catalog status record
 - [x] Public maintenance guide
+- [x] Universal Agent task-pack guide
 - [x] At least 3 trusted skills in every top-level category
 
 ## Not In MVP

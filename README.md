@@ -121,6 +121,9 @@ onecode-skill-sanitizer import ./incoming --registry ./registry \
 onecode-skill-sanitizer list --registry ./registry
 onecode-skill-sanitizer inspect office-pdf --registry ./registry
 onecode-skill-sanitizer select "process a pdf report" --registry ./registry
+onecode-skill-sanitizer task-pack "process a pdf report" --registry ./registry \
+  --top 3 \
+  --format json
 onecode-skill-sanitizer verify --registry ./registry
 onecode-skill-sanitizer reindex --registry ./registry
 ```
@@ -136,6 +139,13 @@ onecode-skill-sanitizer disable ./registry/office/old-skill
 `select` returns only `trusted` skills by default. Use
 `--include-review-required` only for review work, not normal execution.
 
+`task-pack` is the universal Agent-facing interface. It verifies the registry,
+selects matching trusted skills, loads their cleaned `SKILL.md` instructions,
+and emits a JSON or Markdown instruction pack that any host Agent can place in
+its planning context. The pack provides method, verifier expectations, and
+provenance. It does not grant filesystem, network, connector, shell, or
+production permissions; those remain controlled by the host runtime.
+
 The first MVP can also be exposed through OneCode:
 
 ```bash
@@ -147,6 +157,7 @@ onecode skills approve pdf
 ## Project Docs
 
 - [Source Baseline](docs/source-baseline.md)
+- [Agent Task Pack](docs/agent-task-pack.md)
 - [Architecture](docs/architecture.md)
 - [Skill Taxonomy](docs/skill-taxonomy.md)
 - [Skill Index](docs/skill-index.md)

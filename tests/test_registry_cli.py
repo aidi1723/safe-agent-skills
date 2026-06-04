@@ -61,7 +61,24 @@ class RegistryCliTest(unittest.TestCase):
                 "Use this workflow for PDF office reports.",
                 encoding="utf-8",
             )
-            main(["import", str(incoming), "--registry", str(registry)])
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/skills",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
 
             list_out = io.StringIO()
             with contextlib.redirect_stdout(list_out):
@@ -123,10 +140,27 @@ class RegistryCliTest(unittest.TestCase):
             office = incoming / "office-pdf"
             office.mkdir(parents=True)
             (office / "SKILL.md").write_text(
-                "Use this workflow for PDF office reports.",
+                "Use this workflow for PDF office reports.\nUse API_KEY=abc1234567890SECRET only in a mocked fixture.",
                 encoding="utf-8",
             )
-            main(["import", str(incoming), "--registry", str(registry)])
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/skills",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
 
             selected_out = io.StringIO()
             with contextlib.redirect_stdout(selected_out):
@@ -289,6 +323,253 @@ class RegistryCliTest(unittest.TestCase):
             rebuilt = json.loads(index_path.read_text(encoding="utf-8"))
             self.assertEqual(rebuilt["skill_count"], 1)
             self.assertEqual(rebuilt["skills"][0]["name"], "design-dashboard")
+
+    def test_task_pack_outputs_json_for_trusted_matching_skills(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            design = incoming / "design-dashboard"
+            office = incoming / "office-pdf"
+            design.mkdir(parents=True)
+            office.mkdir(parents=True)
+            (design / "SKILL.md").write_text(
+                "\n".join(
+                    [
+                        "---",
+                        "name: design-dashboard",
+                        "description: Use when polishing dashboard UI layout.",
+                        "---",
+                        "# Design Dashboard",
+                        "",
+                        "## When To Use",
+                        "Use this skill for dashboard interface polish.",
+                        "",
+                        "## Safe Workflow",
+                        "1. Inspect the target route.",
+                        "2. Preserve business logic.",
+                        "",
+                        "## Expected Output",
+                        "- UI findings",
+                        "- screenshot notes",
+                        "",
+                        "## Verifier Expectations",
+                        "- build check",
+                        "- responsive screenshot check",
+                        "",
+                        "## Failure Handling",
+                        "Report rendering blockers.",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            (design / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "design",
+                            "subcategory": "design.dashboard",
+                            "task_intent": "polish dashboard interfaces",
+                            "artifact_type": "interface",
+                            "collection_priority": "P0",
+                        },
+                        "source": {
+                            "type": "local_folder",
+                            "url": "https://github.com/example/design-dashboard",
+                            "author": "example-team",
+                            "license": "MIT",
+                            "reference": "https://github.com/example/design-dashboard",
+                            "collected_by": "onecode-test",
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (office / "SKILL.md").write_text(
+                "Use this workflow for PDF office reports.",
+                encoding="utf-8",
+            )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/skills",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["approve", str(registry / "design" / "design-dashboard")])
+
+            task_pack_out = io.StringIO()
+            with contextlib.redirect_stdout(task_pack_out):
+                task_pack_code = main(
+                    [
+                        "task-pack",
+                        "polish this dashboard interface",
+                        "--registry",
+                        str(registry),
+                        "--top",
+                        "1",
+                    ]
+                )
+
+            self.assertEqual(task_pack_code, 0)
+            task_pack = json.loads(task_pack_out.getvalue())
+            self.assertEqual(task_pack["schema_version"], 1)
+            self.assertEqual(task_pack["task"], "polish this dashboard interface")
+            self.assertEqual(task_pack["skill_count"], 1)
+            self.assertEqual(task_pack["skills"][0]["name"], "design-dashboard")
+            self.assertEqual(task_pack["skills"][0]["status"], "trusted")
+            self.assertIn("Use when polishing dashboard UI layout.", task_pack["skills"][0]["description"])
+            self.assertIn("Inspect the target route.", task_pack["agent_instructions"])
+            self.assertIn("responsive screenshot check", task_pack["agent_instructions"])
+            self.assertIn("Only use trusted skills", task_pack["safety_boundary"])
+
+    def test_task_pack_outputs_markdown(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "security-review"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text(
+                "\n".join(
+                    [
+                        "---",
+                        "name: security-review",
+                        "description: Use when reviewing security risk.",
+                        "---",
+                        "# Security Review",
+                        "",
+                        "## When To Use",
+                        "Use this skill for security review.",
+                        "",
+                        "## Safe Workflow",
+                        "1. Review permissions.",
+                        "",
+                        "## Expected Output",
+                        "- risk findings",
+                        "",
+                        "## Verifier Expectations",
+                        "- policy check",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/security-review",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/security-review",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["approve", str(registry / "security" / "security-review")])
+
+            task_pack_out = io.StringIO()
+            with contextlib.redirect_stdout(task_pack_out):
+                task_pack_code = main(
+                    [
+                        "task-pack",
+                        "review security risk",
+                        "--registry",
+                        str(registry),
+                        "--format",
+                        "markdown",
+                    ]
+                )
+
+            self.assertEqual(task_pack_code, 0)
+            markdown = task_pack_out.getvalue()
+            self.assertIn("# OneCode Agent Task Pack", markdown)
+            self.assertIn("security-review", markdown)
+            self.assertIn("Review permissions.", markdown)
+            self.assertIn("policy check", markdown)
+
+    def test_task_pack_never_selects_rejected_or_disabled_skills(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            rejected = incoming / "security-rejected"
+            disabled = incoming / "security-disabled"
+            review = incoming / "security-review"
+            rejected.mkdir(parents=True)
+            disabled.mkdir(parents=True)
+            review.mkdir(parents=True)
+            for skill_dir in [rejected, disabled, review]:
+                lines = [
+                    "---",
+                    f"name: {skill_dir.name}",
+                    "description: Use when reviewing security risk.",
+                    "---",
+                    "# Security Review",
+                    "",
+                    "## Safe Workflow",
+                    "1. Review permissions.",
+                    "",
+                    "## Verifier Expectations",
+                    "- policy check",
+                ]
+                if skill_dir == review:
+                    lines.append("Use API_KEY=abc1234567890SECRET only in a mocked fixture.")
+                (skill_dir / "SKILL.md").write_text("\n".join(lines), encoding="utf-8")
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/security-skills",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/security-skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["reject", str(registry / "security" / "security-rejected")])
+            main(["disable", str(registry / "security" / "security-disabled")])
+
+            task_pack_out = io.StringIO()
+            with contextlib.redirect_stdout(task_pack_out):
+                task_pack_code = main(
+                    [
+                        "task-pack",
+                        "review security risk",
+                        "--registry",
+                        str(registry),
+                        "--include-review-required",
+                    ]
+                )
+
+            self.assertEqual(task_pack_code, 0)
+            task_pack = json.loads(task_pack_out.getvalue())
+            names = [skill["name"] for skill in task_pack["skills"]]
+            self.assertEqual(names, ["security-review"])
 
 
 if __name__ == "__main__":

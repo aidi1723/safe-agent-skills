@@ -230,6 +230,8 @@ The local MVP exposes:
 - `list`: print `registry/index.json`
 - `inspect`: print one skill manifest
 - `select`: choose matching skills for a task; defaults to `trusted` only
+- `task-pack`: verify the registry and emit selected skill instructions for any
+  host agent as JSON or Markdown
 - `verify`: check sanitized hashes and provenance across the registry
 - `reindex`: rebuild `index.json` from manifests
 - `approve`, `reject`, `disable`: update review state and refresh the index
@@ -240,8 +242,9 @@ When a trusted skill is used:
 
 ```text
 user task
-  -> skill selected
-  -> sanitized SKILL.md loaded into model context
+  -> task-pack verifies registry
+  -> matching trusted skills selected
+  -> sanitized SKILL.md guidance loaded into model context
   -> model emits plan
   -> OneCode validates plan
   -> kernel intersects permissions
@@ -253,6 +256,12 @@ user task
 Before runtime selection, `select` intersects task taxonomy with registry
 entries and filters out non-`trusted` skills unless review mode is explicitly
 requested.
+
+For cross-agent use, `task-pack` performs the same trusted selection after
+registry verification, then serializes the cleaned skill guidance,
+provenance, hashes, verifier expectations, and safety boundary into a single
+instruction pack. The pack can be consumed by OneCode or by another agent
+runtime. It remains advisory and cannot widen the host runtime's permissions.
 
 The effective permission set is:
 

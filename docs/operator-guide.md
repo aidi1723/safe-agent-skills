@@ -98,6 +98,40 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli select "process a pdf repo
   --include-review-required
 ```
 
+## Agent Task Pack
+
+Use `task-pack` when an agent needs ready-to-use skill instructions, not just a
+candidate list:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli task-pack \
+  "process a pdf report" \
+  --registry ./registry \
+  --top 3 \
+  --format json
+```
+
+For agents that consume plain text, use Markdown:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli task-pack \
+  "review security risk" \
+  --registry ./registry \
+  --top 2 \
+  --format markdown
+```
+
+`task-pack` verifies the registry before output. If provenance is incomplete or
+a sanitized hash does not match, generation is refused.
+
+Default mode only emits `trusted` skills. `--include-review-required` can add
+`review_required` skills for review workflows, but `quarantined`, `rejected`,
+and `disabled` entries are still excluded.
+
+The task pack is safe to hand to any host agent as method guidance. It does not
+grant runtime permissions; shell, filesystem, network, connector, and
+production actions remain controlled by the host runtime.
+
 ## Verification
 
 Run this before handing a registry to OneCode runtime:

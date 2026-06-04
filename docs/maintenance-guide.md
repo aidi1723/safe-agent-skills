@@ -9,6 +9,8 @@ The catalog is ready for public maintenance when:
   source hash, and sanitized hash
 - `verify` reports no tamper or unknown provenance issues
 - normal selection excludes quarantined and review-required skills
+- `task-pack` can emit a trusted-skill instruction pack for a representative
+  task
 
 Current baseline:
 
@@ -38,6 +40,11 @@ Before publishing or updating the public repository:
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer verify --registry catalog
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "review security risk in this package" \
+  --registry catalog \
+  --top 2 \
+  --format markdown
 bash scripts/verify.sh
 ```
 
@@ -47,6 +54,8 @@ Confirm:
 - `unknown_provenance_count: 0`
 - `tampered_count: 0`
 - each category has at least 3 trusted skills
+- task-pack output contains only trusted skills unless review mode is explicitly
+  requested
 - batch docs exist for new entries
 
 ## Contribution Standard

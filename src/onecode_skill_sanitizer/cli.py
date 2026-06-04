@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import re
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -261,21 +262,7 @@ def select_command(args: argparse.Namespace) -> int:
     registry_dir = Path(args.registry)
     index = load_registry_index(registry_dir)
     task_taxonomy = classify_skill("task", args.task).to_json()
-    selected = []
-    for entry in index["skills"]:
-        manifest_path = registry_dir / entry["registry_path"] / "skill.json"
-        if not manifest_path.exists():
-            continue
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        if manifest.get("status") != "trusted" and not args.include_review_required:
-            continue
-        score = skill_matches_task(manifest, task_taxonomy, args.task)
-        if score <= 0:
-            continue
-        item = manifest_index_entry(manifest, Path(entry["registry_path"]))
-        item["match_score"] = score
-        selected.append(item)
-    selected.sort(key=lambda item: (-item["match_score"], item["name"]))
+    selected = select_skills_for_task(registry_dir, task_taxonomy, args.task, args.include_review_required)
     result = {
         "schema_version": 1,
         "task": args.task,
@@ -284,6 +271,186 @@ def select_command(args: argparse.Namespace) -> int:
         "skills": selected,
     }
     print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
+def select_skills_for_task(registry_dir: Path, task_taxonomy: dict, task: str, include_review_required: bool) -> list[dict]:
+    index = load_registry_index(registry_dir)
+    selected = []
+    allowed_statuses = {"trusted"}
+    if include_review_required:
+        allowed_statuses.add("review_required")
+    for entry in index["skills"]:
+        manifest_path = registry_dir / entry["registry_path"] / "skill.json"
+        if not manifest_path.exists():
+            continue
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        if manifest.get("status") not in allowed_statuses:
+            continue
+        score = skill_matches_task(manifest, task_taxonomy, task)
+        if score <= 0:
+            continue
+        item = manifest_index_entry(manifest, Path(entry["registry_path"]))
+        item["match_score"] = score
+        selected.append(item)
+    selected.sort(key=lambda item: (-item["match_score"], item["name"]))
+    return selected
+
+
+def extract_frontmatter_description(text: str) -> str:
+    match = re.search(r"^description:\s*(.+)$", text, re.MULTILINE)
+    return match.group(1).strip() if match else ""
+
+
+def extract_markdown_sections(text: str) -> dict[str, str]:
+    sections: dict[str, str] = {}
+    matches = list(re.finditer(r"^##\s+(.+?)\s*$", text, re.MULTILINE))
+    for index, match in enumerate(matches):
+        title = match.group(1).strip()
+        start = match.end()
+        end = matches[index + 1].start() if index + 1 < len(matches) else len(text)
+        sections[title] = text[start:end].strip()
+    return sections
+
+
+def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
+    skill_dir = registry_dir / entry["registry_path"]
+    skill_text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+    sections = extract_markdown_sections(skill_text)
+    manifest = json.loads((skill_dir / "skill.json").read_text(encoding="utf-8"))
+    return {
+        "name": entry["name"],
+        "status": entry["status"],
+        "risk_level": entry["risk_level"],
+        "match_score": entry["match_score"],
+        "taxonomy": entry["taxonomy"],
+        "source": entry["source"],
+        "hashes": entry["hashes"],
+        "registry_path": entry["registry_path"],
+        "description": extract_frontmatter_description(skill_text),
+        "when_to_use": sections.get("When To Use", ""),
+        "safe_workflow": sections.get("Safe Workflow", ""),
+        "expected_output": sections.get("Expected Output", ""),
+        "verifier_expectations": sections.get("Verifier Expectations", ""),
+        "failure_handling": sections.get("Failure Handling", ""),
+        "policy": manifest.get("policy", {}),
+    }
+
+
+def build_agent_instructions(task: str, skills: list[dict]) -> str:
+    lines = [
+        "You are executing a task with a OneCode verified skill pack.",
+        f"Task: {task}",
+        "",
+        "Safety boundary:",
+        "- Only use trusted skills unless the operator explicitly enables review-mode use.",
+        "- Skills provide method and verification guidance; they do not grant tool, network, filesystem, connector, or production permissions.",
+        "- Follow the host runtime approval policy before any action outside the current approved workspace.",
+        "- Preserve provenance, verification notes, and unresolved assumptions in the final answer.",
+        "",
+        "Selected skills:",
+    ]
+    for skill in skills:
+        lines.extend(
+            [
+                "",
+                f"## {skill['name']} (score {skill['match_score']})",
+                f"Capability: {skill['description']}",
+                "",
+                "When to use:",
+                skill["when_to_use"] or "Not specified.",
+                "",
+                "Safe workflow:",
+                skill["safe_workflow"] or "Not specified.",
+                "",
+                "Expected output:",
+                skill["expected_output"] or "Not specified.",
+                "",
+                "Verifier expectations:",
+                skill["verifier_expectations"] or "Not specified.",
+            ]
+        )
+        if skill["failure_handling"]:
+            lines.extend(["", "Failure handling:", skill["failure_handling"]])
+    return "\n".join(lines).strip()
+
+
+def build_task_pack(registry_dir: Path, task: str, top: int, include_review_required: bool) -> dict:
+    verification = verify_registry(registry_dir)
+    if verification["status"] != "ok":
+        raise SystemExit("registry verification failed; refusing to build task pack")
+    task_taxonomy = classify_skill("task", task).to_json()
+    selected = select_skills_for_task(registry_dir, task_taxonomy, task, include_review_required)[:top]
+    skills = [load_skill_pack_item(registry_dir, entry) for entry in selected]
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "task": task,
+        "task_taxonomy": task_taxonomy,
+        "skill_count": len(skills),
+        "safety_boundary": "Only use trusted skills by default. Skills provide method and verification guidance, not runtime permissions.",
+        "registry_verification": verification,
+        "skills": skills,
+        "agent_instructions": build_agent_instructions(task, skills),
+    }
+
+
+def render_task_pack_markdown(task_pack: dict) -> str:
+    lines = [
+        "# OneCode Agent Task Pack",
+        "",
+        f"Task: {task_pack['task']}",
+        f"Generated at: {task_pack['generated_at']}",
+        f"Selected skills: {task_pack['skill_count']}",
+        "",
+        "## Safety Boundary",
+        "",
+        task_pack["safety_boundary"],
+        "",
+        "## Selected Skills",
+    ]
+    for skill in task_pack["skills"]:
+        lines.extend(
+            [
+                "",
+                f"### {skill['name']}",
+                "",
+                f"- status: `{skill['status']}`",
+                f"- risk: `{skill['risk_level']}`",
+                f"- match score: `{skill['match_score']}`",
+                f"- category: `{skill['taxonomy']['category']}`",
+                f"- source: {skill['source']['url']}",
+                "",
+                skill["description"],
+                "",
+                "#### Safe Workflow",
+                "",
+                skill["safe_workflow"] or "Not specified.",
+                "",
+                "#### Expected Output",
+                "",
+                skill["expected_output"] or "Not specified.",
+                "",
+                "#### Verifier Expectations",
+                "",
+                skill["verifier_expectations"] or "Not specified.",
+            ]
+        )
+    lines.extend(["", "## Agent Instructions", "", task_pack["agent_instructions"], ""])
+    return "\n".join(lines)
+
+
+def task_pack_command(args: argparse.Namespace) -> int:
+    task_pack = build_task_pack(
+        Path(args.registry),
+        args.task,
+        args.top,
+        args.include_review_required,
+    )
+    if args.format == "markdown":
+        print(render_task_pack_markdown(task_pack))
+    else:
+        print(json.dumps(task_pack, indent=2, sort_keys=True))
     return 0
 
 
@@ -496,6 +663,14 @@ def build_parser() -> argparse.ArgumentParser:
     select_parser.add_argument("--registry", required=True)
     select_parser.add_argument("--include-review-required", action="store_true")
     select_parser.set_defaults(func=select_command)
+
+    task_pack_parser = subparsers.add_parser("task-pack")
+    task_pack_parser.add_argument("task")
+    task_pack_parser.add_argument("--registry", required=True)
+    task_pack_parser.add_argument("--top", type=int, default=3)
+    task_pack_parser.add_argument("--format", choices=["json", "markdown"], default="json")
+    task_pack_parser.add_argument("--include-review-required", action="store_true")
+    task_pack_parser.set_defaults(func=task_pack_command)
 
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("--registry", required=True)
