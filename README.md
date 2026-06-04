@@ -26,6 +26,7 @@ Current public baseline:
 
 - 75 total skills
 - 70 trusted skills
+- 9 trusted scenario bundles
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
 - 0 tampered skills
@@ -33,6 +34,9 @@ Current public baseline:
 
 See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
+
+Latest update statement:
+[Bundle-Aware Task Packs and OpenSquilla Reference Batch](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).
@@ -186,6 +190,7 @@ onecode skills approve pdf
 ## Project Docs
 
 - [Source Baseline](docs/source-baseline.md)
+- [Latest Update Statement](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
 - [Agent Task Pack](docs/agent-task-pack.md)
 - [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md)
 - [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md)

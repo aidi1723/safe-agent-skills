@@ -208,7 +208,11 @@ the host environment's safety policy.
 
 Post-closure update: the first post-Phase-001 enhancement added bundle-aware
 `task-pack`, `maintain-check`, and `batch-008-opensquilla-reference`. The
-remaining direction below should be read as the next maintenance path after
+current public baseline is now 75 total skills, 70 trusted skills, and 9
+scenario bundles. See
+[Bundle-Aware Task Packs and OpenSquilla Reference Batch](updates/2026-06-04-bundle-aware-task-pack-opensquilla.md).
+
+The remaining direction below should be read as the next maintenance path after
 those updates.
 
 Recommended next phase:

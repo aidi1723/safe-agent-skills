@@ -24,6 +24,10 @@ unknown_provenance_count: 0
 
 Every top-level category now has at least 3 trusted skills.
 
+Latest update statement:
+
+- [Bundle-Aware Task Packs and OpenSquilla Reference Batch](updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
+
 Phase 001 closure:
 
 - [Phase 001 Closure Report](phase-001-closure-report.md)
