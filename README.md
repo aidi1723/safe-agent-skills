@@ -168,6 +168,23 @@ production permissions; those remain controlled by the host runtime.
 bundles, so a host Agent receives both individual skill guidance and a larger
 task playbook when the task matches a known workflow.
 
+For more precise task-aware composition, use the deterministic scenario router:
+
+```bash
+onecode-skill-sanitizer task-pack "build a product website and prepare launch checks" \
+  --registry ./registry \
+  --include-bundles \
+  --bundles ./bundles/index.json \
+  --router scenario \
+  --max-skills 8 \
+  --format json
+```
+
+`--router scenario` adds a task profile, selected scenario, capability
+coverage, ordered execution plan, and selection explanations. It still does
+not grant filesystem, network, connector, shell, browser, or production
+permissions.
+
 Scenario bundles in `bundles/` combine multiple trusted skills for common
 workflows such as website launch, code review hardening, document-to-knowledge
 base, RAG agent design, data analysis, open source release, and commerce

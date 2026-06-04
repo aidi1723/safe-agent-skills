@@ -52,6 +52,22 @@ The generated pack contains selected skill names, matching trusted scenario
 bundles, capability descriptions, safe workflows, expected outputs, verifier
 expectations, provenance records, and sanitized hashes.
 
+For task-aware composition, use the deterministic scenario router:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "build a product website and prepare launch checks" \
+  --registry catalog \
+  --include-bundles \
+  --bundles bundles/index.json \
+  --router scenario \
+  --max-skills 8 \
+  --format markdown
+```
+
+This adds a task profile, selected scenario, capability coverage, ordered
+execution plan, and selection explanations.
+
 ## Scenario Bundles
 
 A single skill is a focused capability. A scenario bundle is a proven
@@ -78,6 +94,17 @@ Bundle definitions live in:
 
 Default bundles only reference `trusted` skills. `review_required`,
 `quarantined`, `rejected`, and `disabled` skills are excluded.
+
+Scenario bundles can include optional router metadata:
+
+- `task_signals`: words or phrases that identify the scenario
+- `required_capabilities`: capabilities that should be covered by selected skills
+- `execution_order`: recommended skill order for host-agent planning
+
+When `task-pack --router scenario` is used, the router chooses the closest
+trusted bundle, maps capabilities to trusted skills, and emits an execution
+plan. This keeps the agent's task flow more consistent than selecting skills
+by keyword overlap alone.
 
 ## Cross-Agent Safety Boundary
 
@@ -106,7 +133,8 @@ skill guidance is not execution authority
 
 1. Receive the user task.
 2. Run `maintain-check --registry catalog --bundles bundles/index.json`.
-3. Run `task-pack --include-bundles` or load a matching scenario bundle.
+3. Run `task-pack --include-bundles --router scenario` or load a matching
+   scenario bundle.
 4. Inject the generated instructions into the agent planning context.
 5. Let the host runtime enforce filesystem, network, shell, connector, and
    production permissions.

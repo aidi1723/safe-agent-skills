@@ -46,6 +46,12 @@ The JSON output includes:
   capability description, safe workflow, expected output, verifier
   expectations, and failure handling
 - `bundles`: optional trusted scenario bundles when `--include-bundles` is used
+- `router`: optional router metadata when `--router scenario` is used
+- `task_profile`: optional deterministic task profile for scenario routing
+- `selected_scenario`: optional best matching trusted scenario bundle
+- `coverage`: optional capability coverage records for the selected scenario
+- `execution_plan`: optional ordered skill execution guidance
+- `selection_explanations`: optional reasons for selected bundles and skills
 - `agent_instructions`: ready-to-paste runtime instructions for the host agent
 - `safety_boundary`: the fixed rule that skills provide method, not permissions
 
@@ -90,6 +96,36 @@ Only `trusted` bundles are emitted, and trusted bundles must reference only
 existing `trusted` skills. Use `maintain-check` before publishing bundle
 changes.
 
+## Scenario Router
+
+Use `--router scenario` when the host agent should receive a task-aware skill
+composition rather than a simple match-score list.
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "build a product website and prepare launch checks" \
+  --registry catalog \
+  --include-bundles \
+  --bundles bundles/index.json \
+  --router scenario \
+  --max-skills 8 \
+  --format json
+```
+
+Scenario router output adds:
+
+- `router`
+- `task_profile`
+- `selected_scenario`
+- `coverage`
+- `execution_plan`
+- `selection_explanations`
+
+The router is deterministic. It does not call an external model, does not
+execute selected skills, and does not grant runtime permissions. It chooses a
+trusted scenario, maps required capabilities to trusted skills, and emits an
+ordered plan that the host agent can follow under its own permission policy.
+
 ## Safety Boundary
 
 Before building a task pack, the command verifies the registry. If hashes do
@@ -112,10 +148,12 @@ decides what the agent is allowed to do.
 1. Receive the user task.
 2. Run `task-pack` against the local or synced safe skill catalog.
 3. Optionally include trusted scenario bundles with `--include-bundles`.
-4. Inject `agent_instructions` into the agent's planning context.
-5. Execute only under the host runtime's existing permission policy.
-6. Run the verifier expectations listed by the selected skills.
-7. Record selected skill names, source URLs, and sanitized hashes in the final
+4. Use `--router scenario` when the task should be composed from a known
+   scenario, required capabilities, and an ordered skill plan.
+5. Inject `agent_instructions` into the agent's planning context.
+6. Execute only under the host runtime's existing permission policy.
+7. Run the verifier expectations listed by the selected skills.
+8. Record selected skill names, source URLs, and sanitized hashes in the final
    evidence or task report.
 
 This makes the skill catalog a shared capability layer: different agents can
