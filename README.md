@@ -202,6 +202,11 @@ systems can consume the same cleaned Markdown or JSON task packs. The safety
 rule stays the same across all hosts: skill guidance is method, not execution
 authority. See [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md).
 
+Agents can also install the single router skill:
+[Safe Agent Router Skill Integration](docs/router-skill-integration.md).
+After installing `safe-agent-router`, a host agent can route tasks through the
+verified catalog without manually learning or combining every catalog skill.
+
 The first MVP can also be exposed through OneCode:
 
 ```bash
@@ -218,6 +223,7 @@ onecode skills approve pdf
 - [Previous Update Statement](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
 - [Agent Task Pack](docs/agent-task-pack.md)
 - [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md)
+- [Safe Agent Router Skill Integration](docs/router-skill-integration.md)
 - [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md)
 - [Phase 001 Closure Report](docs/phase-001-closure-report.md)
 - [Architecture](docs/architecture.md)
