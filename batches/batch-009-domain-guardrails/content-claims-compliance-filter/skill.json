@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "content",
+    "subcategory": "content.claims",
+    "task_intent": "review content claims and compliance-sensitive wording",
+    "artifact_type": "content",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-claims-compliance-filter",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

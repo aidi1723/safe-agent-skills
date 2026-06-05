@@ -80,8 +80,8 @@ internet.
 
 Current public baseline:
 
-- 75 total skills
-- 70 trusted skills
+- 80 total skills
+- 75 trusted skills
 - 9 trusted scenario bundles
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
@@ -92,10 +92,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Verification Hardening](docs/updates/2026-06-05-verification-hardening.md).
+[Domain Guardrail Skills](docs/updates/2026-06-05-domain-guardrails.md).
 
 Previous update:
-[Single-Entry Router Skill](docs/updates/2026-06-05-router-skill-single-entry.md).
+[Verification Hardening](docs/updates/2026-06-05-verification-hardening.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).
@@ -284,6 +284,7 @@ onecode skills approve pdf
 
 - [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
+- [Latest Domain Guardrails Update](docs/updates/2026-06-05-domain-guardrails.md)
 - [Latest Verification Hardening Update](docs/updates/2026-06-05-verification-hardening.md)
 - [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)
 - [Router Skill Primary Entry](docs/router-skill-primary-entry.md)

@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T10:56:41Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "f23b665d9efc07d377425f1d535982299dc593a3b9a4554e77bf145c13711d86",
+    "source_sha256": "4e3fc7d4057994d43e98cd9e2e728bcfdea030ec6a8d5b1d76d8005e62b1ff8f"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "content-fact-contradiction-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T10:56:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-009-domain-guardrails/content-fact-contradiction-review",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-fact-contradiction-review"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "content",
+    "category": "content",
+    "collection_priority": "P0",
+    "subcategory": "content.fact_check",
+    "task_intent": "review content for contradictions, source gaps, and factual consistency"
+  }
+}

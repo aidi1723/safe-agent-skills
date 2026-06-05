@@ -48,7 +48,9 @@ Each individual `SKILL.md` also contains:
 | compliance | `compliance-privacy-check` | trusted | Use when checking whether a workflow, document, or dataset has privacy and data-handling risks that need review. |
 | compliance | `compliance-terms-review` | trusted | Use when reviewing terms, policies, disclaimers, user-facing rules, and operational commitments for risk. |
 | compliance | `vibe-trading-research-assistant` | quarantined | Use when evaluating AI-assisted trading research workflows, quantitative analysis notes, and financial decision safety boundaries. |
+| content | `content-claims-compliance-filter` | trusted | Use when reviewing marketing, SEO, listing, ad, landing-page, or sales copy for risky claims, absolute language, unsupported promises, or compliance-sensitive wording. |
 | content | `content-editorial-review` | trusted | Use when reviewing drafts for clarity, structure, tone, factual consistency, audience fit, and publication readiness. |
+| content | `content-fact-contradiction-review` | trusted | Use when reviewing long-form content, reports, documentation, or generated copy for internal contradictions, conflicting facts, timeline errors, or source gaps. |
 | content | `content-prompt-engineering-patterns` | trusted | Use when designing prompts, context instructions, RAG workflows, agent behavior specs, or prompt review checklists. |
 | content | `content-seo-brief` | trusted | Use when preparing an SEO, GEO, article, or product content brief with factual claims and source boundaries. |
 | content | `content-social-post` | trusted | Use when preparing social posts, short announcements, community updates, launch notes, and channel-specific copy. |
@@ -58,9 +60,11 @@ Each individual `SKILL.md` also contains:
 | data | `data-qdrant-vector-retrieval` | trusted | Use when reviewing vector search, embedding indexes, retrieval filters, similarity results, or RAG database boundaries. |
 | data | `data-quality-audit` | trusted | Use when checking datasets for missing values, duplicates, schema drift, outliers, freshness, and readiness for analysis. |
 | data | `data-table-analysis` | trusted | Use when cleaning, summarizing, validating, or explaining tabular datasets inside an approved workspace. |
+| data | `data-table-calculation-verify` | trusted | Use when checking tables, spreadsheets, reports, financial summaries, percentages, totals, averages, or numeric claims for calculation consistency. |
 | data | `data-unstructured-document-partition` | trusted | Use when transforming complex documents into clean chunks, structured records, or retrieval-ready text. |
 | data | `data-visualization-plan` | trusted | Use when choosing charts, dashboard views, metric summaries, visual encodings, and data storytelling structure. |
 | design | `design-accessibility-check` | trusted | Use when reviewing interface accessibility, labels, contrast, keyboard reachability, focus states, and responsive readability. |
+| design | `design-responsive-viewport-check` | trusted | Use when reviewing responsive UI layouts, viewport breakpoints, text overflow, mobile readability, or screenshot-based layout regressions. |
 | design | `design-system-consistency` | trusted | Use when checking UI tokens, components, spacing, typography, states, and visual consistency across screens. |
 | design | `design-ui-review` | trusted | Use when reviewing or polishing a UI screen, dashboard, or frontend view for layout, visual hierarchy, responsiveness, and accessibility. |
 | engineering | `engineering-build-release` | trusted | Use when preparing a local build, release readiness check, or engineering handoff with explicit smoke tests and rollback notes. |
@@ -77,6 +81,7 @@ Each individual `SKILL.md` also contains:
 | media | `media-brand-asset-pack` | trusted | Use when organizing brand assets, image sets, logo files, usage notes, and publication-ready media packs. |
 | media | `media-video-script-review` | trusted | Use when reviewing short video scripts, narration, shot plans, product demos, and edit briefs for clarity and risk. |
 | office | `office-docx-brief` | trusted | Use when drafting, editing, structuring, or reviewing Word-style documents, briefs, memos, and formatted reports. |
+| office | `office-markdown-structure-lint` | trusted | Use when reviewing Markdown, documentation, briefs, generated reports, or knowledge-base pages for heading structure, broken tables, links, frontmatter, or format consistency. |
 | office | `office-pdf-report` | trusted | Use when extracting, reviewing, summarizing, or checking PDF reports inside an approved workspace. |
 | office | `office-spreadsheet-cleanup` | trusted | Use when cleaning, reviewing, formatting, or summarizing spreadsheets, CSV files, tables, and business data sheets. |
 | research | `research-competitor-brief` | trusted | Use when comparing competitors, products, pricing pages, positioning, features, and public market signals. |

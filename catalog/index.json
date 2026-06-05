@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-04T12:58:26Z",
+  "generated_at": "2026-06-05T10:57:07Z",
   "schema_version": 1,
-  "skill_count": 75,
+  "skill_count": 80,
   "skills": [
     {
       "hashes": {
@@ -869,6 +869,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "dd00d8b52c87cf5524a8f67fab07d06190489b5cd39e4682c8e39591b62954f8",
+        "source_sha256": "8ade10e70311c3a09b962e1e3f2ee2bedbc1a0027ba5ab5abe08d8ebaee73f08"
+      },
+      "name": "content-claims-compliance-filter",
+      "registry_path": "content/content-claims-compliance-filter",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T10:56:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-009-domain-guardrails/content-claims-compliance-filter",
+        "reference": "docs/batches/batch-009-domain-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-claims-compliance-filter"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P0",
+        "subcategory": "content.claims",
+        "task_intent": "review content claims and compliance-sensitive wording"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "8aceb7f6cb724e26defb5469a7fecf2ee44de6ffb11bd40ad986a92a0726a497",
         "source_sha256": "13abab2fc301ce61c68759001c489ebbc0a752259204f49d3778c39e42a3da93"
       },
@@ -892,6 +919,33 @@
         "collection_priority": "P1",
         "subcategory": "content.edit",
         "task_intent": "review and improve written content for publication readiness"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "f23b665d9efc07d377425f1d535982299dc593a3b9a4554e77bf145c13711d86",
+        "source_sha256": "4e3fc7d4057994d43e98cd9e2e728bcfdea030ec6a8d5b1d76d8005e62b1ff8f"
+      },
+      "name": "content-fact-contradiction-review",
+      "registry_path": "content/content-fact-contradiction-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T10:56:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-009-domain-guardrails/content-fact-contradiction-review",
+        "reference": "docs/batches/batch-009-domain-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-fact-contradiction-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P0",
+        "subcategory": "content.fact_check",
+        "task_intent": "review content for contradictions, source gaps, and factual consistency"
       }
     },
     {
@@ -1139,6 +1193,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "b9c6cc30f14fcaf280676ab57319f9dd2be653fe28d550ab84666617301e93ab",
+        "source_sha256": "579d8d7925d075cb67db87507c8f9201f1e976625773cbd3f41b6b6e94559fea"
+      },
+      "name": "data-table-calculation-verify",
+      "registry_path": "data/data-table-calculation-verify",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T10:56:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-009-domain-guardrails/data-table-calculation-verify",
+        "reference": "docs/batches/batch-009-domain-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/data-table-calculation-verify"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P0",
+        "subcategory": "data.calculation",
+        "task_intent": "verify table calculations and numeric claims in reports"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
         "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
       },
@@ -1216,6 +1297,33 @@
         "collection_priority": "P0",
         "subcategory": "design.accessibility",
         "task_intent": "review UI accessibility and responsive readability"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "1cb5d06263979d4a1b5acdd086f8a9687ebc5b7d187bebee8e2bd12e6eda2bf9",
+        "source_sha256": "025a1ccc4a7ee18d28926022f2014fcab27e0c6370660037d37488d359195698"
+      },
+      "name": "design-responsive-viewport-check",
+      "registry_path": "design/design-responsive-viewport-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T10:56:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-009-domain-guardrails/design-responsive-viewport-check",
+        "reference": "docs/batches/batch-009-domain-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/design-responsive-viewport-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "interface",
+        "category": "design",
+        "collection_priority": "P0",
+        "subcategory": "design.responsive",
+        "task_intent": "check responsive layout behavior and viewport regressions"
       }
     },
     {
@@ -1648,6 +1756,33 @@
         "collection_priority": "P0",
         "subcategory": "office.docx",
         "task_intent": "draft and review structured office documents"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "0c4cc4aeade78bb85bc7f61b089796bff2192eed73688de7f7c5a8ce2c3b045f",
+        "source_sha256": "79d7e40137be1bdef0fbd4ec3abfbb1c4a959ceb8072b4f51ca97794143fb2e1"
+      },
+      "name": "office-markdown-structure-lint",
+      "registry_path": "office/office-markdown-structure-lint",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T10:56:23Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-009-domain-guardrails/office-markdown-structure-lint",
+        "reference": "docs/batches/batch-009-domain-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/office-markdown-structure-lint"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "office",
+        "collection_priority": "P1",
+        "subcategory": "office.markdown",
+        "task_intent": "review Markdown structure and documentation format integrity"
       }
     },
     {

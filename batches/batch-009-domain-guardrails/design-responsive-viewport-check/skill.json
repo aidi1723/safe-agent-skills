@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "design",
+    "subcategory": "design.responsive",
+    "task_intent": "check responsive layout behavior and viewport regressions",
+    "artifact_type": "interface",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/design-responsive-viewport-check",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

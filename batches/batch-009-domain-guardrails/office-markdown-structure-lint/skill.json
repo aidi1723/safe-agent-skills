@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "office",
+    "subcategory": "office.markdown",
+    "task_intent": "review Markdown structure and documentation format integrity",
+    "artifact_type": "document",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/office-markdown-structure-lint",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

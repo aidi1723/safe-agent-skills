@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "content",
+    "subcategory": "content.fact_check",
+    "task_intent": "review content for contradictions, source gaps, and factual consistency",
+    "artifact_type": "content",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-fact-contradiction-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

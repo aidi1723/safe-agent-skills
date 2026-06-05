@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T10:57:07Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "b9c6cc30f14fcaf280676ab57319f9dd2be653fe28d550ab84666617301e93ab",
+    "source_sha256": "579d8d7925d075cb67db87507c8f9201f1e976625773cbd3f41b6b6e94559fea"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "data-table-calculation-verify",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T10:56:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-009-domain-guardrails/data-table-calculation-verify",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/data-table-calculation-verify"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "dataset",
+    "category": "data",
+    "collection_priority": "P0",
+    "subcategory": "data.calculation",
+    "task_intent": "verify table calculations and numeric claims in reports"
+  }
+}

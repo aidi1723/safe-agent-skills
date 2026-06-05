@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T10:56:41Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "0c4cc4aeade78bb85bc7f61b089796bff2192eed73688de7f7c5a8ce2c3b045f",
+    "source_sha256": "79d7e40137be1bdef0fbd4ec3abfbb1c4a959ceb8072b4f51ca97794143fb2e1"
+  },
+  "name": "office-markdown-structure-lint",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T10:56:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-009-domain-guardrails/office-markdown-structure-lint",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/office-markdown-structure-lint"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "document",
+    "category": "office",
+    "collection_priority": "P1",
+    "subcategory": "office.markdown",
+    "task_intent": "review Markdown structure and documentation format integrity"
+  },
+  "version": "0.1.0"
+}

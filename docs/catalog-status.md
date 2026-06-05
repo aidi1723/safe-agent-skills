@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 75 sanitized skills across all
+The current public-safe catalog contains 80 sanitized skills across all
 top-level taxonomy categories, including 33 community project reference skills
-and 27 minimum-coverage seed skills.
+and 5 domain guardrail seed skills.
 
 Verification command:
 
@@ -18,8 +18,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 75
-trusted_count: 70
+skill_count: 80
+trusted_count: 75
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -30,6 +30,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Domain Guardrail Skills](updates/2026-06-05-domain-guardrails.md)
 - [Verification Hardening](updates/2026-06-05-verification-hardening.md)
 - [Single-Entry Router Skill](updates/2026-06-05-router-skill-single-entry.md)
 - [Scenario Skill Router](updates/2026-06-04-scenario-skill-router.md)
@@ -65,6 +66,7 @@ sample RAG route: rag-agent-knowledge-app
 | `batch-006-community-infrastructure` | 12 | 11 | Community AI infrastructure reference skills |
 | `batch-007-community-agent-workflows` | 12 | 11 | Community agent workflow, RAG, browser, sandbox, and retrieval reference skills |
 | `batch-008-opensquilla-reference` | 3 | 3 | OpenSquilla-inspired MetaSkill, token routing, and sandbox policy reference skills |
+| `batch-009-domain-guardrails` | 5 | 5 | Domain guardrails for responsive UI, claims, contradictions, Markdown structure, and table calculations |
 
 ## Trusted Category Coverage
 
@@ -75,13 +77,13 @@ sample RAG route: rag-agent-knowledge-app
 | code | `code-python-debug`, `code-review-risk`, `code-test-regression` | 3 |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-product-keyword-plan` | 3 |
 | compliance | `compliance-accessibility-policy`, `compliance-privacy-check`, `compliance-terms-review` | 3 |
-| content | `content-editorial-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 4 |
-| data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-table-analysis`, `data-unstructured-document-partition`, `data-visualization-plan` | 8 |
-| design | `design-accessibility-check`, `design-system-consistency`, `design-ui-review` | 3 |
+| content | `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 6 |
+| data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 9 |
+| design | `design-accessibility-check`, `design-responsive-viewport-check`, `design-system-consistency`, `design-ui-review` | 4 |
 | engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-performance-profile` | 3 |
 | execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check` | 6 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
-| office | `office-docx-brief`, `office-pdf-report`, `office-spreadsheet-cleanup` | 3 |
+| office | `office-docx-brief`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup` | 4 |
 | research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check` | 3 |
 | security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` | 6 |
 | vertical | `vertical-education-plan`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 3 |
@@ -117,7 +119,9 @@ sample RAG route: rag-agent-knowledge-app
 | `compliance-accessibility-policy` | compliance | trusted |
 | `compliance-privacy-check` | compliance | trusted |
 | `compliance-terms-review` | compliance | trusted |
+| `content-claims-compliance-filter` | content | trusted |
 | `content-editorial-review` | content | trusted |
+| `content-fact-contradiction-review` | content | trusted |
 | `content-prompt-engineering-patterns` | content | trusted |
 | `content-seo-brief` | content | trusted |
 | `content-social-post` | content | trusted |
@@ -127,9 +131,11 @@ sample RAG route: rag-agent-knowledge-app
 | `data-qdrant-vector-retrieval` | data | trusted |
 | `data-quality-audit` | data | trusted |
 | `data-table-analysis` | data | trusted |
+| `data-table-calculation-verify` | data | trusted |
 | `data-unstructured-document-partition` | data | trusted |
 | `data-visualization-plan` | data | trusted |
 | `design-accessibility-check` | design | trusted |
+| `design-responsive-viewport-check` | design | trusted |
 | `design-system-consistency` | design | trusted |
 | `design-ui-review` | design | trusted |
 | `ecc-agent-coding-safety` | ai | trusted |
@@ -149,6 +155,7 @@ sample RAG route: rag-agent-knowledge-app
 | `media-brand-asset-pack` | media | trusted |
 | `media-video-script-review` | media | trusted |
 | `office-docx-brief` | office | trusted |
+| `office-markdown-structure-lint` | office | trusted |
 | `office-pdf-report` | office | trusted |
 | `office-spreadsheet-cleanup` | office | trusted |
 | `research-competitor-brief` | research | trusted |
@@ -170,6 +177,6 @@ sample RAG route: rag-agent-knowledge-app
 
 Recommended next waves:
 
-- `batch-009-community-depth`: additional popular community skills with clear licenses
-- `batch-010-domain-depth`: deeper skills for design, code, security, and office
-- `batch-011-connectors`: connector-aware skills after host adapter verification
+- `batch-010-community-depth`: additional popular community skills with clear licenses
+- `batch-011-domain-depth`: deeper skills for design, code, security, and office
+- `batch-012-connectors`: connector-aware skills after host adapter verification

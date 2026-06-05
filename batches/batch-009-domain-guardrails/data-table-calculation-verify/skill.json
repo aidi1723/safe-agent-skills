@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "data",
+    "subcategory": "data.calculation",
+    "task_intent": "verify table calculations and numeric claims in reports",
+    "artifact_type": "dataset",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/data-table-calculation-verify",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

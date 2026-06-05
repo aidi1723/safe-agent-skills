@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T10:56:41Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "dd00d8b52c87cf5524a8f67fab07d06190489b5cd39e4682c8e39591b62954f8",
+    "source_sha256": "8ade10e70311c3a09b962e1e3f2ee2bedbc1a0027ba5ab5abe08d8ebaee73f08"
+  },
+  "name": "content-claims-compliance-filter",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T10:56:23Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-009-domain-guardrails/content-claims-compliance-filter",
+    "reference": "docs/batches/batch-009-domain-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-claims-compliance-filter"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "content",
+    "category": "content",
+    "collection_priority": "P0",
+    "subcategory": "content.claims",
+    "task_intent": "review content claims and compliance-sensitive wording"
+  },
+  "version": "0.1.0"
+}
