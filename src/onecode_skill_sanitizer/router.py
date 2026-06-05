@@ -23,7 +23,7 @@ SCENARIO_PROFILES = [
             "browser_verification",
             "publish_check",
         ],
-        "signals": ["website", "landing page", "official site", "dashboard", "launch", "publish"],
+        "signals": ["website", "landing page", "official site", "dashboard", "launch", "publish", "官网", "网站", "上线", "发布", "构建"],
     },
     {
         "task_type": "code_review",
@@ -32,7 +32,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["code", "review_report", "test_plan"],
         "risk_flags": ["code_execution", "supply_chain"],
         "required_capabilities": ["code_review", "regression_test", "schema_contract", "supply_chain_review", "ci_check"],
-        "signals": ["code review", "pull request", "pr", "generated code", "bug fix", "refactor", "tests"],
+        "signals": ["code review", "pull request", "pr", "generated code", "bug fix", "refactor", "tests", "代码审查", "拉取请求", "修复", "测试"],
     },
     {
         "task_type": "agent_security",
@@ -41,7 +41,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["agent_policy", "risk_report"],
         "risk_flags": ["prompt_injection", "tool_permission", "privacy"],
         "required_capabilities": ["prompt_injection_review", "output_guardrail", "io_scanning", "privacy_check"],
-        "signals": ["prompt injection", "connector", "tool permission", "agent safety", "guardrail", "sandbox"],
+        "signals": ["prompt injection", "connector", "tool permission", "agent safety", "guardrail", "sandbox", "提示词注入", "连接器", "工具权限", "沙箱"],
     },
     {
         "task_type": "document_knowledge_base",
@@ -50,7 +50,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["markdown", "chunks", "knowledge_base"],
         "risk_flags": ["source_quality"],
         "required_capabilities": ["file_conversion", "document_partition", "rag_plan", "retrieval", "source_check"],
-        "signals": ["pdf", "document", "markdown", "knowledge base", "docs", "office file"],
+        "signals": ["pdf", "document", "markdown", "knowledge base", "docs", "office file", "文档", "知识库"],
     },
     {
         "task_type": "rag_agent",
@@ -59,7 +59,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["rag_design", "retrieval_plan", "citation_contract"],
         "risk_flags": ["source_grounding", "prompt_injection"],
         "required_capabilities": ["agent_orchestration", "rag_plan", "vector_retrieval", "schema_contract", "citation_check"],
-        "signals": ["rag", "retrieval", "vector", "citation", "knowledge agent"],
+        "signals": ["rag", "retrieval", "vector", "citation", "knowledge agent", "检索", "向量", "引用", "知识代理"],
     },
     {
         "task_type": "data_analysis",
@@ -68,7 +68,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["analysis_report", "chart_plan"],
         "risk_flags": ["data_quality"],
         "required_capabilities": ["data_quality", "table_analysis", "visualization", "spreadsheet_cleanup", "source_check"],
-        "signals": ["dataset", "spreadsheet", "chart", "data analysis", "table", "report"],
+        "signals": ["dataset", "spreadsheet", "chart", "data analysis", "table", "report", "数据集", "表格", "图表", "数据分析", "报告"],
     },
     {
         "task_type": "open_source_release",
@@ -77,7 +77,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["repository", "release_notes", "public_docs"],
         "risk_flags": ["public_release", "license"],
         "required_capabilities": ["publish_check", "supply_chain_review", "license_review", "editorial_review"],
-        "signals": ["open source", "release", "github", "publish repo", "public repository"],
+        "signals": ["open source", "release", "github", "publish repo", "public repository", "开源", "发布仓库", "公开仓库"],
     },
     {
         "task_type": "content_seo",
@@ -86,7 +86,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["article", "seo_brief", "social_copy"],
         "risk_flags": ["public_claims"],
         "required_capabilities": ["seo_copy", "editorial_review", "source_check", "social_post"],
-        "signals": ["article", "seo", "social", "public content", "blog", "post"],
+        "signals": ["article", "seo", "social", "public content", "blog", "post", "文章", "社媒", "博客"],
     },
     {
         "task_type": "commerce_growth",
@@ -95,7 +95,7 @@ SCENARIO_PROFILES = [
         "artifact_types": ["listing", "keyword_plan", "buyer_reply"],
         "risk_flags": ["buyer_communication"],
         "required_capabilities": ["listing", "keyword_plan", "inquiry_reply", "editorial_review"],
-        "signals": ["listing", "keyword", "inquiry", "trade", "buyer", "marketplace"],
+        "signals": ["listing", "keyword", "inquiry", "trade", "buyer", "marketplace", "商品", "关键词", "询盘", "买家"],
     },
 ]
 

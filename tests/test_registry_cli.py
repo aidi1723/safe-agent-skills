@@ -765,6 +765,60 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["status"], "failed")
             self.assertEqual(result["issues"][0]["id"], "bundle-non-trusted-skill")
 
+    def test_maintain_check_fails_when_registry_index_is_stale(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "design-dashboard"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text(
+                "Use this workflow for dashboard UI review.",
+                encoding="utf-8",
+            )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/design-dashboard",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/design-dashboard",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            index_path = registry / "index.json"
+            stale_index = json.loads(index_path.read_text(encoding="utf-8"))
+            stale_index["skills"][0]["status"] = "trusted"
+            index_path.write_text(json.dumps(stale_index), encoding="utf-8")
+
+            check_out = io.StringIO()
+            with contextlib.redirect_stdout(check_out):
+                check_code = main(["maintain-check", "--registry", str(registry)])
+
+            self.assertEqual(check_code, 2)
+            result = json.loads(check_out.getvalue())
+            self.assertEqual(result["status"], "failed")
+            self.assertEqual(result["issues"][0]["id"], "registry-index-stale")
+
+    def test_schema_check_validates_real_catalog(self):
+        schema_out = io.StringIO()
+        with contextlib.redirect_stdout(schema_out):
+            schema_code = main(["schema-check", "--registry", "catalog"])
+
+        self.assertEqual(schema_code, 0)
+        result = json.loads(schema_out.getvalue())
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["skill_manifest_count"], 75)
+        self.assertEqual(result["issues"], [])
+
     def test_task_pack_scenario_router_outputs_profile_plan_and_explanations(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

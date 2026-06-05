@@ -47,6 +47,18 @@ RULES = [
         re.compile(r"\b(api[_-]?key|secret|token|password)\s*[:=]\s*['\"]?[A-Za-z0-9_\-]{12,}", re.IGNORECASE),
         "Found secret-like credential material.",
     ),
+    (
+        "privilege-escalation",
+        "critical",
+        re.compile(r"\b(sudo|su\s+-|chmod\s+-R\s+777|chown\s+-R)\b", re.IGNORECASE),
+        "Found privilege escalation or broad permission-changing guidance.",
+    ),
+    (
+        "destructive-shell",
+        "critical",
+        re.compile(r"\brm\s+-[A-Za-z]*r[A-Za-z]*f[A-Za-z]*\s+(/|~|\$HOME|/tmp|/var|/usr|\.)?", re.IGNORECASE),
+        "Found destructive recursive deletion guidance.",
+    ),
 ]
 
 SEVERITY_ORDER = {

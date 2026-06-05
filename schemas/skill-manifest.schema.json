@@ -93,7 +93,14 @@
       "properties": {
         "type": {
           "type": "string",
-          "enum": ["local_folder", "archive", "git", "community_index"]
+          "enum": [
+            "local_folder",
+            "archive",
+            "git",
+            "community_index",
+            "github_reference",
+            "web_reference"
+          ]
         },
         "url": {
           "type": "string"

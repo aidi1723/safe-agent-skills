@@ -92,10 +92,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Scenario Skill Router](docs/updates/2026-06-04-scenario-skill-router.md).
+[Verification Hardening](docs/updates/2026-06-05-verification-hardening.md).
 
 Previous update:
-[Bundle-Aware Task Packs and OpenSquilla Reference Batch](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md).
+[Single-Entry Router Skill](docs/updates/2026-06-05-router-skill-single-entry.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).
@@ -284,9 +284,10 @@ onecode skills approve pdf
 
 - [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
+- [Latest Verification Hardening Update](docs/updates/2026-06-05-verification-hardening.md)
 - [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)
 - [Router Skill Primary Entry](docs/router-skill-primary-entry.md)
-- [Latest Update Statement](docs/updates/2026-06-04-scenario-skill-router.md)
+- [Scenario Skill Router Update](docs/updates/2026-06-04-scenario-skill-router.md)
 - [Phase 002 Scenario Router Closure Report](docs/phase-002-scenario-router-closure-report.md)
 - [Previous Update Statement](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
 - [Agent Task Pack](docs/agent-task-pack.md)

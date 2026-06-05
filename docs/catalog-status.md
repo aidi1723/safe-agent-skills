@@ -10,6 +10,8 @@ Verification command:
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer verify --registry catalog
+PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalog
+PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check --registry catalog --bundles bundles/index.json
 ```
 
 Latest verified result:
@@ -20,12 +22,16 @@ skill_count: 75
 trusted_count: 70
 tampered_count: 0
 unknown_provenance_count: 0
+schema-check: ok
+maintain-check: ok
 ```
 
 Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Verification Hardening](updates/2026-06-05-verification-hardening.md)
+- [Single-Entry Router Skill](updates/2026-06-05-router-skill-single-entry.md)
 - [Scenario Skill Router](updates/2026-06-04-scenario-skill-router.md)
 - [Bundle-Aware Task Packs and OpenSquilla Reference Batch](updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
 

@@ -22,6 +22,13 @@ class RouterTest(unittest.TestCase):
         self.assertIn("ui_review", profile["required_capabilities"])
         self.assertIn("publish_check", profile["required_capabilities"])
 
+    def test_build_task_profile_detects_chinese_website_launch(self):
+        profile = build_task_profile("构建产品官网并准备上线发布检查")
+
+        self.assertEqual(profile["task_type"], "website_build")
+        self.assertEqual(profile["primary_domain"], "web")
+        self.assertIn("publish_check", profile["required_capabilities"])
+
     def test_score_bundle_prefers_matching_scenario(self):
         profile = build_task_profile("review generated code and harden tests before accepting the PR")
         code_bundle = {

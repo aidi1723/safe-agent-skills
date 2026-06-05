@@ -4,12 +4,21 @@ import argparse
 import hashlib
 import json
 import re
+import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
 from .router import route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
+
+
+STATUS_VALUES = {"quarantined", "review_required", "trusted", "rejected", "disabled"}
+RISK_LEVEL_VALUES = {"low", "medium", "high", "critical"}
+SOURCE_TYPE_VALUES = {"local_folder", "archive", "git", "community_index", "github_reference", "web_reference"}
+SOURCE_REQUIRED_FIELDS = ["type", "path", "url", "author", "license", "reference", "collected_by", "captured_at"]
+SOURCE_PROVENANCE_FIELDS = ["url", "author", "license", "reference", "collected_by"]
+HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 
 
 def utc_now() -> str:
@@ -183,19 +192,23 @@ def manifest_index_entry(manifest: dict, registry_path: Path) -> dict:
 
 
 def write_registry_index(registry_dir: Path) -> dict:
+    index = build_registry_index(registry_dir)
+    registry_dir.mkdir(parents=True, exist_ok=True)
+    (registry_dir / "index.json").write_text(json.dumps(index, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    return index
+
+
+def build_registry_index(registry_dir: Path) -> dict:
     skills = []
     for manifest_path in sorted(registry_dir.glob("*/*/skill.json")):
         manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
         skills.append(manifest_index_entry(manifest, manifest_path.parent.relative_to(registry_dir)))
-    index = {
+    return {
         "schema_version": 1,
         "generated_at": utc_now(),
         "skill_count": len(skills),
         "skills": skills,
     }
-    registry_dir.mkdir(parents=True, exist_ok=True)
-    (registry_dir / "index.json").write_text(json.dumps(index, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    return index
 
 
 def load_registry_index(registry_dir: Path) -> dict:
@@ -680,8 +693,6 @@ def verify_registry(registry_dir: Path) -> dict:
     tampered_count = 0
     unknown_provenance_count = 0
     skill_count = 0
-    required_source_fields = ["url", "author", "license", "reference", "collected_by"]
-
     for manifest_path in sorted(registry_dir.glob("*/*/skill.json")):
         skill_count += 1
         skill_dir = manifest_path.parent
@@ -716,7 +727,7 @@ def verify_registry(registry_dir: Path) -> dict:
                 )
 
         source = manifest.get("source", {})
-        if any(source.get(field, "unknown") == "unknown" for field in required_source_fields):
+        if any(source.get(field, "unknown") == "unknown" for field in SOURCE_PROVENANCE_FIELDS):
             unknown_provenance_count += 1
             issues.append(
                 {
@@ -741,6 +752,201 @@ def verify_registry(registry_dir: Path) -> dict:
 
 def verify_command(args: argparse.Namespace) -> int:
     result = verify_registry(Path(args.registry))
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["status"] == "ok" else 2
+
+
+def comparable_registry_index(index: dict) -> dict:
+    payload = dict(index)
+    payload.pop("generated_at", None)
+    return payload
+
+
+def registry_index_staleness(registry_dir: Path) -> list[dict]:
+    index_path = registry_dir / "index.json"
+    if not index_path.exists():
+        return [
+            {
+                "id": "registry-index-missing",
+                "severity": "high",
+                "path": index_path.as_posix(),
+            }
+        ]
+    existing = json.loads(index_path.read_text(encoding="utf-8"))
+    expected = build_registry_index(registry_dir)
+    if comparable_registry_index(existing) == comparable_registry_index(expected):
+        return []
+    return [
+        {
+            "id": "registry-index-stale",
+            "severity": "high",
+            "path": index_path.as_posix(),
+            "expected_skill_count": expected["skill_count"],
+            "actual_skill_count": existing.get("skill_count"),
+        }
+    ]
+
+
+def add_issue(issues: list[dict], issue_id: str, path: Path | str, summary: str, severity: str = "high") -> None:
+    issues.append(
+        {
+            "id": issue_id,
+            "severity": severity,
+            "path": path.as_posix() if isinstance(path, Path) else str(path),
+            "summary": summary,
+        }
+    )
+
+
+def validate_hashes(payload: dict, path: Path, issues: list[dict]) -> None:
+    hashes = payload.get("hashes")
+    if not isinstance(hashes, dict):
+        add_issue(issues, "schema-invalid-hashes", path, "hashes must be an object")
+        return
+    for key in ["source_sha256", "sanitized_sha256"]:
+        value = hashes.get(key)
+        if not isinstance(value, str) or not HASH_PATTERN.fullmatch(value):
+            add_issue(issues, "schema-invalid-hash", path, f"{key} must be a 64 character lowercase sha256 hex string")
+
+
+def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
+    source = payload.get("source")
+    if not isinstance(source, dict):
+        add_issue(issues, "schema-invalid-source", path, "source must be an object")
+        return
+    for field in SOURCE_REQUIRED_FIELDS:
+        value = source.get(field)
+        if not isinstance(value, str) or not value:
+            add_issue(issues, "schema-missing-source-field", path, f"source.{field} is required")
+    source_type = source.get("type")
+    if isinstance(source_type, str) and source_type not in SOURCE_TYPE_VALUES:
+        add_issue(issues, "schema-invalid-source-type", path, f"source.type {source_type!r} is not supported")
+
+
+def validate_taxonomy(payload: dict, path: Path, issues: list[dict]) -> None:
+    taxonomy = payload.get("taxonomy")
+    if not isinstance(taxonomy, dict):
+        add_issue(issues, "schema-invalid-taxonomy", path, "taxonomy must be an object")
+        return
+    for field in ["category", "subcategory", "collection_priority"]:
+        if not isinstance(taxonomy.get(field), str) or not taxonomy.get(field):
+            add_issue(issues, "schema-missing-taxonomy-field", path, f"taxonomy.{field} is required")
+
+
+def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> None:
+    required = [
+        "schema_version",
+        "name",
+        "version",
+        "status",
+        "risk_level",
+        "taxonomy",
+        "source",
+        "hashes",
+        "allowed_tools",
+        "required_verifiers",
+        "policy",
+    ]
+    for field in required:
+        if field not in payload:
+            add_issue(issues, "schema-missing-manifest-field", path, f"{field} is required")
+    if payload.get("schema_version") != 1:
+        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
+    if payload.get("status") not in STATUS_VALUES:
+        add_issue(issues, "schema-invalid-status", path, "status is not a supported registry state")
+    if payload.get("risk_level") not in RISK_LEVEL_VALUES:
+        add_issue(issues, "schema-invalid-risk-level", path, "risk_level is not supported")
+    if not isinstance(payload.get("allowed_tools"), list):
+        add_issue(issues, "schema-invalid-allowed-tools", path, "allowed_tools must be an array")
+    if not isinstance(payload.get("required_verifiers"), list):
+        add_issue(issues, "schema-invalid-required-verifiers", path, "required_verifiers must be an array")
+    if not isinstance(payload.get("policy"), dict):
+        add_issue(issues, "schema-invalid-policy", path, "policy must be an object")
+    validate_taxonomy(payload, path, issues)
+    validate_source(payload, path, issues)
+    validate_hashes(payload, path, issues)
+
+
+def validate_registry_index_schema(payload: dict, path: Path, issues: list[dict]) -> None:
+    for field in ["schema_version", "generated_at", "skill_count", "skills"]:
+        if field not in payload:
+            add_issue(issues, "schema-missing-index-field", path, f"{field} is required")
+    if payload.get("schema_version") != 1:
+        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
+    skills = payload.get("skills")
+    if not isinstance(skills, list):
+        add_issue(issues, "schema-invalid-index-skills", path, "skills must be an array")
+        return
+    if payload.get("skill_count") != len(skills):
+        add_issue(issues, "schema-index-count-mismatch", path, "skill_count must match skills length")
+    for index, entry in enumerate(skills):
+        entry_path = f"{path.as_posix()}#/skills/{index}"
+        for field in ["name", "status", "risk_level", "taxonomy", "source", "hashes", "registry_path"]:
+            if field not in entry:
+                add_issue(issues, "schema-missing-index-entry-field", entry_path, f"{field} is required")
+        if entry.get("status") not in STATUS_VALUES:
+            add_issue(issues, "schema-invalid-status", entry_path, "status is not a supported registry state")
+        if entry.get("risk_level") not in RISK_LEVEL_VALUES:
+            add_issue(issues, "schema-invalid-risk-level", entry_path, "risk_level is not supported")
+        validate_taxonomy(entry, Path(entry_path), issues)
+        validate_source(entry, Path(entry_path), issues)
+        validate_hashes(entry, Path(entry_path), issues)
+
+
+def validate_verify_report_schema(payload: dict, path: Path, issues: list[dict]) -> None:
+    for field in ["schema_version", "generated_at", "status", "skill_count", "trusted_count", "tampered_count", "unknown_provenance_count", "issues"]:
+        if field not in payload:
+            add_issue(issues, "schema-missing-verify-field", path, f"{field} is required")
+    if payload.get("schema_version") != 1:
+        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
+    if payload.get("status") not in {"ok", "failed"}:
+        add_issue(issues, "schema-invalid-verify-status", path, "status must be ok or failed")
+    for field in ["skill_count", "trusted_count", "tampered_count", "unknown_provenance_count"]:
+        value = payload.get(field)
+        if not isinstance(value, int) or value < 0:
+            add_issue(issues, "schema-invalid-verify-count", path, f"{field} must be a non-negative integer")
+    if not isinstance(payload.get("issues"), list):
+        add_issue(issues, "schema-invalid-verify-issues", path, "issues must be an array")
+
+
+def schema_check(registry_dir: Path) -> dict:
+    issues: list[dict] = []
+    skill_manifest_count = 0
+    for manifest_path in sorted(registry_dir.glob("*/*/skill.json")):
+        skill_manifest_count += 1
+        try:
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        except json.JSONDecodeError as exc:
+            add_issue(issues, "schema-invalid-json", manifest_path, str(exc), "critical")
+            continue
+        validate_manifest_schema(manifest, manifest_path, issues)
+
+    index_path = registry_dir / "index.json"
+    try:
+        registry_index = json.loads(index_path.read_text(encoding="utf-8"))
+        validate_registry_index_schema(registry_index, index_path, issues)
+    except FileNotFoundError:
+        add_issue(issues, "schema-index-missing", index_path, "registry index is missing", "critical")
+    except json.JSONDecodeError as exc:
+        add_issue(issues, "schema-invalid-json", index_path, str(exc), "critical")
+
+    with tempfile.TemporaryDirectory() as tmp:
+        verify_path = Path(tmp) / "verify-report.json"
+        verify_report = verify_registry(registry_dir)
+        verify_path.write_text(json.dumps(verify_report), encoding="utf-8")
+        validate_verify_report_schema(verify_report, verify_path, issues)
+
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "status": "failed" if issues else "ok",
+        "skill_manifest_count": skill_manifest_count,
+        "issues": issues,
+    }
+
+
+def schema_check_command(args: argparse.Namespace) -> int:
+    result = schema_check(Path(args.registry))
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
 
@@ -798,6 +1004,7 @@ def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
 def maintain_check(registry_dir: Path, bundles_path: Path | None = None) -> dict:
     registry_verification = verify_registry(registry_dir)
     issues = list(registry_verification["issues"])
+    issues.extend(registry_index_staleness(registry_dir))
     bundle_validation = None
     if bundles_path is not None:
         bundle_validation = validate_bundles(registry_dir, bundles_path)
@@ -977,6 +1184,10 @@ def build_parser() -> argparse.ArgumentParser:
     maintain_check_parser.add_argument("--registry", required=True)
     maintain_check_parser.add_argument("--bundles")
     maintain_check_parser.set_defaults(func=maintain_check_command)
+
+    schema_check_parser = subparsers.add_parser("schema-check")
+    schema_check_parser.add_argument("--registry", required=True)
+    schema_check_parser.set_defaults(func=schema_check_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

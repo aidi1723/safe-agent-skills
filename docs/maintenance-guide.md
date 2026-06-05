@@ -54,7 +54,7 @@ Closure report:
 
 Latest update:
 
-- [Scenario Skill Router](updates/2026-06-04-scenario-skill-router.md)
+- [Verification Hardening](updates/2026-06-05-verification-hardening.md)
 
 ## Intake Rule
 
@@ -85,6 +85,8 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
   --registry catalog \
   --bundles bundles/index.json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check \
+  --registry catalog
 PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   "build a product website and prepare launch checks" \
   --registry catalog \
@@ -114,6 +116,7 @@ Confirm:
   requested
 - every bundle in `bundles/index.json` references existing trusted skills
 - `maintain-check` reports `status: ok`
+- `schema-check` reports `status: ok`
 - scenario router website sample selects `website-build-launch`
 - scenario router RAG sample selects `rag-agent-knowledge-app`
 - batch docs exist for new entries
