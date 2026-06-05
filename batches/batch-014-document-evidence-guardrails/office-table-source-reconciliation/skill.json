@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "office",
+    "subcategory": "office.table-evidence",
+    "task_intent": "reconcile document tables against source evidence",
+    "artifact_type": "document",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

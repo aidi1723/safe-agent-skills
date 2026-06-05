@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "content",
+    "subcategory": "content.freshness",
+    "task_intent": "review content freshness and expiry risk",
+    "artifact_type": "content",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

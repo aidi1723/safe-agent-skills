@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T13:16:19Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "6eabda0ae8543e0a4fa45a9427254c1d7ca2e89f91d9f23b4d13b3bc4ddd31a5",
+    "source_sha256": "4a6220d19f3b118a5317f9ab1e9c80a8948c62ab86b7da73ba3b17c828a0ab61"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "research-citation-evidence-map",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:16:08Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-014-document-evidence-guardrails/research-citation-evidence-map",
+    "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/research-citation-evidence-map"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "research",
+    "collection_priority": "P0",
+    "subcategory": "research.evidence",
+    "task_intent": "map claims to citation evidence"
+  }
+}

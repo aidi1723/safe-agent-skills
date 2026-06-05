@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T13:16:57Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "0538c72c30b6c0ad9704e2307a1019949095f586eded26f11ee705140f14f27d",
+    "source_sha256": "218224a48aa6303095da71cc161d6057d8f3f97e7d00bf3d722d9d7ccb670106"
+  },
+  "name": "content-freshness-expiry-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:16:08Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review",
+    "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "content",
+    "category": "content",
+    "collection_priority": "P1",
+    "subcategory": "content.freshness",
+    "task_intent": "review content freshness and expiry risk"
+  },
+  "version": "0.1.0"
+}

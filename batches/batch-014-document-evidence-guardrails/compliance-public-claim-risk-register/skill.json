@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "compliance",
+    "subcategory": "compliance.claims",
+    "task_intent": "register public claim risk before publication",
+    "artifact_type": "policy",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

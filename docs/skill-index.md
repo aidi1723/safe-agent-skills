@@ -57,12 +57,14 @@ Each individual `SKILL.md` also contains:
 | compliance | `compliance-accessibility-policy` | trusted | Use when reviewing accessibility commitments, product conformance notes, support process, and public accessibility statements. |
 | compliance | `compliance-license-policy-gate` | trusted | Use when reviewing third-party packages, copied snippets, assets, datasets, model files, or community skills for license and reuse risk. |
 | compliance | `compliance-privacy-check` | trusted | Use when checking whether a workflow, document, or dataset has privacy and data-handling risks that need review. |
+| compliance | `compliance-public-claim-risk-register` | trusted | Use when reviewing public statements, marketing claims, compliance-sensitive assertions, risk registers, disclaimers, or approval notes. |
 | compliance | `compliance-terms-review` | trusted | Use when reviewing terms, policies, disclaimers, user-facing rules, and operational commitments for risk. |
 | compliance | `vibe-trading-research-assistant` | quarantined | Use when evaluating AI-assisted trading research workflows, quantitative analysis notes, and financial decision safety boundaries. |
 | content | `content-brand-voice-boundary` | trusted | Use when reviewing brand voice, tone drift, style consistency, content polish, or whether generated copy matches a defined editorial voice. |
 | content | `content-claims-compliance-filter` | trusted | Use when reviewing marketing, SEO, listing, ad, landing-page, or sales copy for risky claims, absolute language, unsupported promises, or compliance-sensitive wording. |
 | content | `content-editorial-review` | trusted | Use when reviewing drafts for clarity, structure, tone, factual consistency, audience fit, and publication readiness. |
 | content | `content-fact-contradiction-review` | trusted | Use when reviewing long-form content, reports, documentation, or generated copy for internal contradictions, conflicting facts, timeline errors, or source gaps. |
+| content | `content-freshness-expiry-review` | trusted | Use when reviewing stale content, time-sensitive claims, dated screenshots, outdated docs, pricing mentions, policy dates, or freshness risk. |
 | content | `content-prompt-engineering-patterns` | trusted | Use when designing prompts, context instructions, RAG workflows, agent behavior specs, or prompt review checklists. |
 | content | `content-seo-brief` | trusted | Use when preparing an SEO, GEO, article, or product content brief with factual claims and source boundaries. |
 | content | `content-social-post` | trusted | Use when preparing social posts, short announcements, community updates, launch notes, and channel-specific copy. |
@@ -97,9 +99,12 @@ Each individual `SKILL.md` also contains:
 | media | `media-brand-asset-pack` | trusted | Use when organizing brand assets, image sets, logo files, usage notes, and publication-ready media packs. |
 | media | `media-video-script-review` | trusted | Use when reviewing short video scripts, narration, shot plans, product demos, and edit briefs for clarity and risk. |
 | office | `office-docx-brief` | trusted | Use when drafting, editing, structuring, or reviewing Word-style documents, briefs, memos, and formatted reports. |
+| office | `office-link-reference-integrity` | trusted | Use when reviewing document links, Markdown references, footnotes, anchors, cross-references, bibliography entries, or broken reference risk. |
 | office | `office-markdown-structure-lint` | trusted | Use when reviewing Markdown, documentation, briefs, generated reports, or knowledge-base pages for heading structure, broken tables, links, frontmatter, or format consistency. |
 | office | `office-pdf-report` | trusted | Use when extracting, reviewing, summarizing, or checking PDF reports inside an approved workspace. |
 | office | `office-spreadsheet-cleanup` | trusted | Use when cleaning, reviewing, formatting, or summarizing spreadsheets, CSV files, tables, and business data sheets. |
+| office | `office-table-source-reconciliation` | trusted | Use when reconciling report tables, spreadsheet excerpts, copied figures, source datasets, table captions, or numeric document evidence. |
+| research | `research-citation-evidence-map` | trusted | Use when mapping claims to citations, reviewing evidence coverage, checking source-backed summaries, or preparing citation-heavy research output. |
 | research | `research-competitor-brief` | trusted | Use when comparing competitors, products, pricing pages, positioning, features, and public market signals. |
 | research | `research-paper-synthesis` | trusted | Use when summarizing papers, technical reports, datasets, methods, limitations, and evidence across research sources. |
 | research | `research-source-check` | trusted | Use when verifying factual claims against primary or high-quality sources with explicit citations. |

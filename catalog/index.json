@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-05T13:09:10Z",
+  "generated_at": "2026-06-05T13:17:08Z",
   "schema_version": 1,
-  "skill_count": 100,
+  "skill_count": 105,
   "skills": [
     {
       "hashes": {
@@ -1112,6 +1112,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "db7fe77ded5adf6a1063aef198712251e146d1cfaa22064642cf2f040cabe21a",
+        "source_sha256": "7ff2730e1248c6db71a8c938b0035d1903a3bc62c76b7afcc24e8be39e93c609"
+      },
+      "name": "compliance-public-claim-risk-register",
+      "registry_path": "compliance/compliance-public-claim-risk-register",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:16:08Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register",
+        "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "compliance",
+        "collection_priority": "P1",
+        "subcategory": "compliance.claims",
+        "task_intent": "register public claim risk before publication"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "19770834be6143f769847f9865f7645e5fa654551ec5e409ff1dcef1cc25ddeb",
         "source_sha256": "260ee0d4d9089fb710ae96d1b5da1d9d635e6cdf034eeb1fa2b227d544ebf4ce"
       },
@@ -1270,6 +1297,33 @@
         "collection_priority": "P0",
         "subcategory": "content.fact_check",
         "task_intent": "review content for contradictions, source gaps, and factual consistency"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "0538c72c30b6c0ad9704e2307a1019949095f586eded26f11ee705140f14f27d",
+        "source_sha256": "218224a48aa6303095da71cc161d6057d8f3f97e7d00bf3d722d9d7ccb670106"
+      },
+      "name": "content-freshness-expiry-review",
+      "registry_path": "content/content-freshness-expiry-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:16:08Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review",
+        "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P1",
+        "subcategory": "content.freshness",
+        "task_intent": "review content freshness and expiry risk"
       }
     },
     {
@@ -2192,6 +2246,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "c7d95f6182b411567d9d32441f26d68ef01f8a552029061300d573ce296584b8",
+        "source_sha256": "d817b03377f16ba6d4a7b2509e8b5fb002abab4d4adbafe2e7fa6d6811f9b906"
+      },
+      "name": "office-link-reference-integrity",
+      "registry_path": "office/office-link-reference-integrity",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:16:08Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-014-document-evidence-guardrails/office-link-reference-integrity",
+        "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-link-reference-integrity"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "office",
+        "collection_priority": "P1",
+        "subcategory": "office.references",
+        "task_intent": "check document link and reference integrity"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "0c4cc4aeade78bb85bc7f61b089796bff2192eed73688de7f7c5a8ce2c3b045f",
         "source_sha256": "79d7e40137be1bdef0fbd4ec3abfbb1c4a959ceb8072b4f51ca97794143fb2e1"
       },
@@ -2269,6 +2350,60 @@
         "collection_priority": "P0",
         "subcategory": "office.sheet",
         "task_intent": "clean and review spreadsheet data"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "73809050746b5ba3d2fdfb3ad47237fd07ac3cd41347b7a4eee71eb343e59c6b",
+        "source_sha256": "d8288bf571b8bc93200b5fdde4ab4c4a715bea9495982b20cff9452805eb7bb9"
+      },
+      "name": "office-table-source-reconciliation",
+      "registry_path": "office/office-table-source-reconciliation",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:16:08Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation",
+        "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "document",
+        "category": "office",
+        "collection_priority": "P1",
+        "subcategory": "office.table-evidence",
+        "task_intent": "reconcile document tables against source evidence"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "6eabda0ae8543e0a4fa45a9427254c1d7ca2e89f91d9f23b4d13b3bc4ddd31a5",
+        "source_sha256": "4a6220d19f3b118a5317f9ab1e9c80a8948c62ab86b7da73ba3b17c828a0ab61"
+      },
+      "name": "research-citation-evidence-map",
+      "registry_path": "research/research-citation-evidence-map",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:16:08Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-014-document-evidence-guardrails/research-citation-evidence-map",
+        "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/research-citation-evidence-map"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P0",
+        "subcategory": "research.evidence",
+        "task_intent": "map claims to citation evidence"
       }
     },
     {

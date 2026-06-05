@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T13:17:08Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "db7fe77ded5adf6a1063aef198712251e146d1cfaa22064642cf2f040cabe21a",
+    "source_sha256": "7ff2730e1248c6db71a8c938b0035d1903a3bc62c76b7afcc24e8be39e93c609"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "compliance-public-claim-risk-register",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:16:08Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register",
+    "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "compliance",
+    "collection_priority": "P1",
+    "subcategory": "compliance.claims",
+    "task_intent": "register public claim risk before publication"
+  }
+}

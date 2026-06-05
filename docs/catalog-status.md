@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 100 sanitized skills across all
+The current public-safe catalog contains 105 sanitized skills across all
 top-level taxonomy categories, including 33 community project reference skills
-and 25 local guardrail, governance, safety operations, code quality, and AI runtime seed skills.
+and 30 local guardrail, governance, safety operations, code quality, AI runtime, and document evidence seed skills.
 
 Verification command:
 
@@ -18,8 +18,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 100
-trusted_count: 95
+skill_count: 105
+trusted_count: 100
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -30,6 +30,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Document Evidence Guardrails](updates/2026-06-05-document-evidence-guardrails.md)
 - [AI Runtime Guardrails](updates/2026-06-05-ai-runtime-guardrails.md)
 - [Code Quality Guardrails](updates/2026-06-05-code-quality-guardrails.md)
 - [Safety Operations Guardrails](updates/2026-06-05-safety-operations-guardrails.md)
@@ -75,6 +76,7 @@ sample RAG route: rag-agent-knowledge-app
 | `batch-011-safety-operations-guardrails` | 5 | 5 | Safety operations guardrails for command risk, context redaction, licensing, rollback, and AI budgets |
 | `batch-012-code-quality-guardrails` | 5 | 5 | Code quality guardrails for AST refactors, dependency cycles, dead paths, schema contracts, and log triage |
 | `batch-013-ai-runtime-guardrails` | 5 | 5 | AI runtime guardrails for model routing, tool schemas, streamed JSON, RAG namespaces, and context compression |
+| `batch-014-document-evidence-guardrails` | 5 | 5 | Document evidence guardrails for citation maps, link integrity, table source reconciliation, freshness, and public claims |
 
 ## Trusted Category Coverage
 
@@ -84,15 +86,15 @@ sample RAG route: rag-agent-knowledge-app
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
 | code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-test-regression` | 6 |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-product-keyword-plan` | 4 |
-| compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-terms-review` | 4 |
-| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 7 |
+| compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 5 |
+| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 8 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
 | design | `design-accessibility-check`, `design-responsive-viewport-check`, `design-system-consistency`, `design-ui-review` | 4 |
 | engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-error-log-noise-triage`, `engineering-performance-profile` | 4 |
 | execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 7 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
-| office | `office-docx-brief`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup` | 4 |
-| research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check`, `research-source-lineage-trace` | 4 |
+| office | `office-docx-brief`, `office-link-reference-integrity`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup`, `office-table-source-reconciliation` | 6 |
+| research | `research-citation-evidence-map`, `research-competitor-brief`, `research-paper-synthesis`, `research-source-check`, `research-source-lineage-trace` | 5 |
 | security | `security-command-risk-preflight`, `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-secret-context-redaction`, `security-supply-chain-review`, `trivy-container-security-scan` | 8 |
 | vertical | `vertical-education-plan`, `vertical-learning-memory-refresh`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 4 |
 
@@ -137,11 +139,13 @@ sample RAG route: rag-agent-knowledge-app
 | `compliance-accessibility-policy` | compliance | trusted |
 | `compliance-license-policy-gate` | compliance | trusted |
 | `compliance-privacy-check` | compliance | trusted |
+| `compliance-public-claim-risk-register` | compliance | trusted |
 | `compliance-terms-review` | compliance | trusted |
 | `content-brand-voice-boundary` | content | trusted |
 | `content-claims-compliance-filter` | content | trusted |
 | `content-editorial-review` | content | trusted |
 | `content-fact-contradiction-review` | content | trusted |
+| `content-freshness-expiry-review` | content | trusted |
 | `content-prompt-engineering-patterns` | content | trusted |
 | `content-seo-brief` | content | trusted |
 | `content-social-post` | content | trusted |
@@ -179,9 +183,12 @@ sample RAG route: rag-agent-knowledge-app
 | `media-brand-asset-pack` | media | trusted |
 | `media-video-script-review` | media | trusted |
 | `office-docx-brief` | office | trusted |
+| `office-link-reference-integrity` | office | trusted |
 | `office-markdown-structure-lint` | office | trusted |
 | `office-pdf-report` | office | trusted |
 | `office-spreadsheet-cleanup` | office | trusted |
+| `office-table-source-reconciliation` | office | trusted |
+| `research-citation-evidence-map` | research | trusted |
 | `research-competitor-brief` | research | trusted |
 | `research-paper-synthesis` | research | trusted |
 | `research-source-check` | research | trusted |
@@ -205,6 +212,6 @@ sample RAG route: rag-agent-knowledge-app
 
 Recommended next waves:
 
-- `batch-014-community-depth`: additional popular community skills with clear licenses
-- `batch-015-domain-depth`: deeper skills for design, code, security, and office
-- `batch-016-connectors`: connector-aware skills after host adapter verification
+- `batch-015-community-depth`: additional popular community skills with clear licenses
+- `batch-016-domain-depth`: deeper skills for design, code, security, and office
+- `batch-017-connectors`: connector-aware skills after host adapter verification

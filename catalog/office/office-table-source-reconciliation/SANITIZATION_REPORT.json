@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T13:16:46Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "73809050746b5ba3d2fdfb3ad47237fd07ac3cd41347b7a4eee71eb343e59c6b",
+    "source_sha256": "d8288bf571b8bc93200b5fdde4ab4c4a715bea9495982b20cff9452805eb7bb9"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "office-table-source-reconciliation",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:16:08Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation",
+    "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "document",
+    "category": "office",
+    "collection_priority": "P1",
+    "subcategory": "office.table-evidence",
+    "task_intent": "reconcile document tables against source evidence"
+  }
+}
