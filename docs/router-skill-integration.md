@@ -5,6 +5,11 @@
 `safe-agent-router` is the single entry skill for the Safe-Agent-Skills
 catalog.
 
+It is intentionally published in this main repository as the preferred entry
+point, not split into a standalone repository yet. This keeps the router,
+catalog, bundles, provenance records, and safety verification in one source of
+truth. See [Router Skill Primary Entry](router-skill-primary-entry.md).
+
 An agent installs this one skill, then routes non-trivial tasks through the
 OneCode-verified skill catalog before planning. The router chooses trusted
 scenario bundles and trusted skills, emits capability coverage, execution

@@ -9,6 +9,40 @@ The CLI can also be used independently of OneCode. Users can bring their own
 own trusted skills, and generate JSON or Markdown task packs for any host
 agent. See [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md).
 
+## Recommended Entry: Install One Router Skill
+
+The recommended user-facing entry is `safe-agent-router`, published inside
+this main repository:
+
+```text
+integrations/skills/safe-agent-router/
+```
+
+Users do not need to install or combine every catalog skill manually. Install
+this one router skill, then let it select the right OneCode-verified trusted
+skills and scenario bundle for each task.
+
+```bash
+integrations/skills/safe-agent-router/scripts/install.sh ~/.codex/skills
+```
+
+For Claude Code:
+
+```bash
+integrations/skills/safe-agent-router/scripts/install.sh ~/.claude/skills
+```
+
+After installation:
+
+```bash
+safe-agent-router-task-pack "build a product website and prepare launch checks"
+```
+
+Current publishing decision: keep the router skill in this main repository as
+the primary entry point, because it depends on the same `catalog/`, `bundles/`,
+provenance records, trusted status, hash checks, and OneCode safety rules. See
+[Router Skill Primary Entry](docs/router-skill-primary-entry.md).
+
 ## Open Source Statement
 
 This project is a public-safe skill catalog and sanitizer for AI agents. It is
@@ -228,6 +262,7 @@ onecode skills approve pdf
 
 - [Source Baseline](docs/source-baseline.md)
 - [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)
+- [Router Skill Primary Entry](docs/router-skill-primary-entry.md)
 - [Latest Update Statement](docs/updates/2026-06-04-scenario-skill-router.md)
 - [Phase 002 Scenario Router Closure Report](docs/phase-002-scenario-router-closure-report.md)
 - [Previous Update Statement](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
