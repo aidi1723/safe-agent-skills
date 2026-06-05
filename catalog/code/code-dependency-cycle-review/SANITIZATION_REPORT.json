@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T13:01:26Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "f02d80640d8435214a7e2276b5fb68896b19a19e177738e036141ed2f44ac07d",
+    "source_sha256": "aff69ddbec3ebd89d402aa9b4ba2f85f4e63721b5cf58e05b3d0b25eaf43fd9c"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "code-dependency-cycle-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:01:03Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-012-code-quality-guardrails/code-dependency-cycle-review",
+    "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dependency-cycle-review"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P0",
+    "subcategory": "code.dependencies",
+    "task_intent": "review dependency cycles and module boundaries"
+  }
+}

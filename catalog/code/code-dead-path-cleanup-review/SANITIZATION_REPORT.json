@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T13:01:35Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "e5b76e0f5a1941fd8f180689d7be00bd64517e7b63325643ed7d00586e149eee",
+    "source_sha256": "46ff88848b2d86642576d0291b9a9f267bbf11906253b82e3c1841d1b9736ab4"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "code-dead-path-cleanup-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:01:03Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-012-code-quality-guardrails/code-dead-path-cleanup-review",
+    "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dead-path-cleanup-review"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P1",
+    "subcategory": "code.cleanup",
+    "task_intent": "review dead code cleanup safety"
+  }
+}

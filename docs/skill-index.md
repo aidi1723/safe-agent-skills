@@ -40,6 +40,9 @@ Each individual `SKILL.md` also contains:
 | business | `business-process-sop` | trusted | Use when documenting repeatable business operations, handoffs, checklists, roles, and standard operating procedures. |
 | business | `business-requirements-brief` | trusted | Use when turning business goals, stakeholder notes, user needs, and constraints into clear requirements. |
 | business | `business-support-triage` | trusted | Use when triaging customer support requests, drafting safe replies, and identifying escalation needs. |
+| code | `code-ast-refactor-safety` | trusted | Use when planning structural refactors, symbol renames, import rewrites, large edits, AST-aware changes, or regex replacement risk reviews. |
+| code | `code-dead-path-cleanup-review` | trusted | Use when reviewing unused code, stale branches, dead feature paths, unreachable logic, cleanup diffs, or tree-shaking candidates. |
+| code | `code-dependency-cycle-review` | trusted | Use when reviewing imports, module boundaries, package references, circular dependencies, layering violations, or architecture drift. |
 | code | `code-python-debug` | trusted | Use when diagnosing and fixing Python bugs with focused tests, minimal changes, and explicit verification. |
 | code | `code-review-risk` | trusted | Use when reviewing code changes for bugs, regressions, missing tests, unsafe assumptions, and maintainability risks. |
 | code | `code-test-regression` | trusted | Use when adding or reviewing regression tests, failure cases, fixtures, and verification commands for code changes. |
@@ -64,6 +67,7 @@ Each individual `SKILL.md` also contains:
 | data | `data-markitdown-file-to-markdown` | trusted | Use when converting mixed office files, documents, or local assets into clean Markdown for agent workflows. |
 | data | `data-qdrant-vector-retrieval` | trusted | Use when reviewing vector search, embedding indexes, retrieval filters, similarity results, or RAG database boundaries. |
 | data | `data-quality-audit` | trusted | Use when checking datasets for missing values, duplicates, schema drift, outliers, freshness, and readiness for analysis. |
+| data | `data-schema-field-contract-check` | trusted | Use when reviewing database fields, API schemas, ORM models, JSON contracts, migrations, or generated code for field mismatch risk. |
 | data | `data-table-analysis` | trusted | Use when cleaning, summarizing, validating, or explaining tabular datasets inside an approved workspace. |
 | data | `data-table-calculation-verify` | trusted | Use when checking tables, spreadsheets, reports, financial summaries, percentages, totals, averages, or numeric claims for calculation consistency. |
 | data | `data-unstructured-document-partition` | trusted | Use when transforming complex documents into clean chunks, structured records, or retrieval-ready text. |
@@ -74,6 +78,7 @@ Each individual `SKILL.md` also contains:
 | design | `design-ui-review` | trusted | Use when reviewing or polishing a UI screen, dashboard, or frontend view for layout, visual hierarchy, responsiveness, and accessibility. |
 | engineering | `engineering-build-release` | trusted | Use when preparing a local build, release readiness check, or engineering handoff with explicit smoke tests and rollback notes. |
 | engineering | `engineering-ci-troubleshoot` | trusted | Use when diagnosing CI failures, build jobs, test matrix problems, cache issues, and release pipeline breakage. |
+| engineering | `engineering-error-log-noise-triage` | trusted | Use when triaging stack traces, CI logs, runtime errors, noisy logs, repeated failures, or framework noise before debugging. |
 | engineering | `engineering-performance-profile` | trusted | Use when reviewing performance, latency, memory growth, slow builds, bottlenecks, and reliability under load. |
 | execution | `execution-browser-check` | trusted | Use when running bounded browser inspection, form-flow checks, screenshots, or UI smoke verification. |
 | execution | `execution-browser-use-web-task` | trusted | Use when designing browser-based agent tasks, web navigation plans, form workflows, or online task automation boundaries. |

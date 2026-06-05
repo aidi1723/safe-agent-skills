@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 90 sanitized skills across all
+The current public-safe catalog contains 95 sanitized skills across all
 top-level taxonomy categories, including 33 community project reference skills
-and 15 local guardrail, governance, and safety operations seed skills.
+and 20 local guardrail, governance, safety operations, and code quality seed skills.
 
 Verification command:
 
@@ -18,8 +18,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 90
-trusted_count: 85
+skill_count: 95
+trusted_count: 90
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -30,6 +30,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Code Quality Guardrails](updates/2026-06-05-code-quality-guardrails.md)
 - [Safety Operations Guardrails](updates/2026-06-05-safety-operations-guardrails.md)
 - [Domain Governance Extensions](updates/2026-06-05-domain-governance-extensions.md)
 - [Domain Guardrail Skills](updates/2026-06-05-domain-guardrails.md)
@@ -71,6 +72,7 @@ sample RAG route: rag-agent-knowledge-app
 | `batch-009-domain-guardrails` | 5 | 5 | Domain guardrails for responsive UI, claims, contradictions, Markdown structure, and table calculations |
 | `batch-010-domain-governance-extensions` | 5 | 5 | Domain governance extensions for brand voice, tracking links, source lineage, learning refresh, and rule synthesis |
 | `batch-011-safety-operations-guardrails` | 5 | 5 | Safety operations guardrails for command risk, context redaction, licensing, rollback, and AI budgets |
+| `batch-012-code-quality-guardrails` | 5 | 5 | Code quality guardrails for AST refactors, dependency cycles, dead paths, schema contracts, and log triage |
 
 ## Trusted Category Coverage
 
@@ -78,13 +80,13 @@ sample RAG route: rag-agent-knowledge-app
 | --- | --- | ---: |
 | ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-token-rate-budget-guard`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 18 |
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
-| code | `code-python-debug`, `code-review-risk`, `code-test-regression` | 3 |
+| code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-test-regression` | 6 |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-product-keyword-plan` | 4 |
 | compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-terms-review` | 4 |
 | content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 7 |
-| data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 9 |
+| data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 10 |
 | design | `design-accessibility-check`, `design-responsive-viewport-check`, `design-system-consistency`, `design-ui-review` | 4 |
-| engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-performance-profile` | 3 |
+| engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-error-log-noise-triage`, `engineering-performance-profile` | 4 |
 | execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 7 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
 | office | `office-docx-brief`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup` | 4 |
@@ -116,6 +118,9 @@ sample RAG route: rag-agent-knowledge-app
 | `business-process-sop` | business | trusted |
 | `business-requirements-brief` | business | trusted |
 | `business-support-triage` | business | trusted |
+| `code-ast-refactor-safety` | code | trusted |
+| `code-dead-path-cleanup-review` | code | trusted |
+| `code-dependency-cycle-review` | code | trusted |
 | `code-python-debug` | code | trusted |
 | `code-review-risk` | code | trusted |
 | `code-test-regression` | code | trusted |
@@ -139,6 +144,7 @@ sample RAG route: rag-agent-knowledge-app
 | `data-markitdown-file-to-markdown` | data | trusted |
 | `data-qdrant-vector-retrieval` | data | trusted |
 | `data-quality-audit` | data | trusted |
+| `data-schema-field-contract-check` | data | trusted |
 | `data-table-analysis` | data | trusted |
 | `data-table-calculation-verify` | data | trusted |
 | `data-unstructured-document-partition` | data | trusted |
@@ -150,6 +156,7 @@ sample RAG route: rag-agent-knowledge-app
 | `ecc-agent-coding-safety` | ai | trusted |
 | `engineering-build-release` | engineering | trusted |
 | `engineering-ci-troubleshoot` | engineering | trusted |
+| `engineering-error-log-noise-triage` | engineering | trusted |
 | `engineering-performance-profile` | engineering | trusted |
 | `execution-browser-check` | execution | trusted |
 | `execution-browser-use-web-task` | execution | trusted |
@@ -191,6 +198,6 @@ sample RAG route: rag-agent-knowledge-app
 
 Recommended next waves:
 
-- `batch-012-community-depth`: additional popular community skills with clear licenses
-- `batch-013-domain-depth`: deeper skills for design, code, security, and office
-- `batch-014-connectors`: connector-aware skills after host adapter verification
+- `batch-013-community-depth`: additional popular community skills with clear licenses
+- `batch-014-domain-depth`: deeper skills for design, code, security, and office
+- `batch-015-connectors`: connector-aware skills after host adapter verification

@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "engineering",
+    "subcategory": "engineering.logs",
+    "task_intent": "triage noisy error logs before debugging",
+    "artifact_type": "deployment",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/engineering-error-log-noise-triage",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

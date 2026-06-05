@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-05T12:54:22Z",
+  "generated_at": "2026-06-05T13:01:55Z",
   "schema_version": 1,
-  "skill_count": 90,
+  "skill_count": 95,
   "skills": [
     {
       "hashes": {
@@ -649,6 +649,87 @@
         "collection_priority": "P2",
         "subcategory": "business.support",
         "task_intent": "triage customer support requests safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "dc9d9107d239bcb8d2470ca81b9c91cce9318934a7b21225b5f3dacaa6d38731",
+        "source_sha256": "9d4befd7337a96bee73d4083e1dae474a77dc698abc5a51757df5cf243576a49"
+      },
+      "name": "code-ast-refactor-safety",
+      "registry_path": "code/code-ast-refactor-safety",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:01:03Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-012-code-quality-guardrails/code-ast-refactor-safety",
+        "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-ast-refactor-safety"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.refactor",
+        "task_intent": "review structural refactor safety"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e5b76e0f5a1941fd8f180689d7be00bd64517e7b63325643ed7d00586e149eee",
+        "source_sha256": "46ff88848b2d86642576d0291b9a9f267bbf11906253b82e3c1841d1b9736ab4"
+      },
+      "name": "code-dead-path-cleanup-review",
+      "registry_path": "code/code-dead-path-cleanup-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:01:03Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-012-code-quality-guardrails/code-dead-path-cleanup-review",
+        "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dead-path-cleanup-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P1",
+        "subcategory": "code.cleanup",
+        "task_intent": "review dead code cleanup safety"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "f02d80640d8435214a7e2276b5fb68896b19a19e177738e036141ed2f44ac07d",
+        "source_sha256": "aff69ddbec3ebd89d402aa9b4ba2f85f4e63721b5cf58e05b3d0b25eaf43fd9c"
+      },
+      "name": "code-dependency-cycle-review",
+      "registry_path": "code/code-dependency-cycle-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:01:03Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-012-code-quality-guardrails/code-dependency-cycle-review",
+        "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dependency-cycle-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.dependencies",
+        "task_intent": "review dependency cycles and module boundaries"
       }
     },
     {
@@ -1301,6 +1382,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "dcc5e31d41367016c1fb740525a0d825cf3b0b11ab10d92b7ec74ccaa9e0fefc",
+        "source_sha256": "2ec6d3de7397188bc7963cf94a8f083e07e1f2d3a94fff2e062ec46d3fd36742"
+      },
+      "name": "data-schema-field-contract-check",
+      "registry_path": "data/data-schema-field-contract-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:01:03Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-012-code-quality-guardrails/data-schema-field-contract-check",
+        "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/data-schema-field-contract-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P0",
+        "subcategory": "data.schema",
+        "task_intent": "check schema fields and data contracts"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "607acc05e6702165f73ab809f968c241253daeac94b63d8c74c8631c30ddf78f",
         "source_sha256": "718da8eb550b947211605894d823c991e48c834609aae89a512a82c93ea09861"
       },
@@ -1567,6 +1675,33 @@
         "collection_priority": "P0",
         "subcategory": "engineering.ci",
         "task_intent": "diagnose CI and release pipeline failures"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "e194b05e934b2357dd4299ce8c3b1113ee5ee36b8990a853704459bc1532c5ad",
+        "source_sha256": "ac9ef41218d8311d8fe86dbcda7d6bc0fccf8a7f5f4dcace861c72913ae01332"
+      },
+      "name": "engineering-error-log-noise-triage",
+      "registry_path": "engineering/engineering-error-log-noise-triage",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:01:03Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-012-code-quality-guardrails/engineering-error-log-noise-triage",
+        "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/engineering-error-log-noise-triage"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "deployment",
+        "category": "engineering",
+        "collection_priority": "P0",
+        "subcategory": "engineering.logs",
+        "task_intent": "triage noisy error logs before debugging"
       }
     },
     {

@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T13:01:46Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "dcc5e31d41367016c1fb740525a0d825cf3b0b11ab10d92b7ec74ccaa9e0fefc",
+    "source_sha256": "2ec6d3de7397188bc7963cf94a8f083e07e1f2d3a94fff2e062ec46d3fd36742"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "data-schema-field-contract-check",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:01:03Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-012-code-quality-guardrails/data-schema-field-contract-check",
+    "reference": "docs/batches/batch-012-code-quality-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/data-schema-field-contract-check"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "dataset",
+    "category": "data",
+    "collection_priority": "P0",
+    "subcategory": "data.schema",
+    "task_intent": "check schema fields and data contracts"
+  }
+}
