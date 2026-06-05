@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T12:53:55Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "40360a88da8f67015994c436dbceef56b9d2d7a3bc4f96fc1382b863bf8401ec",
+    "source_sha256": "bda97b9fe3a83a1f00f5d6d66d1cbef735d66726c82d4afc50e0926a03713479"
+  },
+  "name": "security-secret-context-redaction",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:53:39Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-011-safety-operations-guardrails/security-secret-context-redaction",
+    "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-secret-context-redaction"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "audit",
+    "category": "security",
+    "collection_priority": "P0",
+    "subcategory": "security.secret-redaction",
+    "task_intent": "redact sensitive context before sharing"
+  },
+  "version": "0.1.0"
+}

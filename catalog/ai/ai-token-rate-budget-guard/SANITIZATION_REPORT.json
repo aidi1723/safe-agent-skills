@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T12:54:22Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "919881b1c0987572f91ff70172324b5074174ee58e30f9bc959ca4ea0d3df3bd",
+    "source_sha256": "930348316f2dc7c390e43f3ab38c613d0f5bfe3a54f0c068857be04a1d6415c2"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-token-rate-budget-guard",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:53:39Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-011-safety-operations-guardrails/ai-token-rate-budget-guard",
+    "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/ai-token-rate-budget-guard"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.budget",
+    "task_intent": "guard token usage and rate budget for AI workflows"
+  }
+}

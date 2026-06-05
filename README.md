@@ -80,8 +80,8 @@ internet.
 
 Current public baseline:
 
-- 85 total skills
-- 80 trusted skills
+- 90 total skills
+- 85 trusted skills
 - 9 trusted scenario bundles
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
@@ -92,7 +92,7 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Domain Governance Extensions](docs/updates/2026-06-05-domain-governance-extensions.md).
+[Safety Operations Guardrails](docs/updates/2026-06-05-safety-operations-guardrails.md).
 
 Previous update:
 [Verification Hardening](docs/updates/2026-06-05-verification-hardening.md).

@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T12:54:12Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "e75b9e73daa7d3788c8fa06dfa3295ff65fa7b4e233ed1aac82666e31ff39ed8",
+    "source_sha256": "d18d8fbbd7862b79df7a76ec20d29d7a28f0710b360d60483970713d32aa3d7c"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "execution-rollback-checkpoint-plan",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:53:39Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-011-safety-operations-guardrails/execution-rollback-checkpoint-plan",
+    "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/execution-rollback-checkpoint-plan"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "execution",
+    "collection_priority": "P0",
+    "subcategory": "execution.rollback",
+    "task_intent": "plan checkpoints and rollback before risky work"
+  }
+}

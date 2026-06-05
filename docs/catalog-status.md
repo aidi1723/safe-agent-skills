@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 85 sanitized skills across all
+The current public-safe catalog contains 90 sanitized skills across all
 top-level taxonomy categories, including 33 community project reference skills
-and 10 domain guardrail and governance seed skills.
+and 15 local guardrail, governance, and safety operations seed skills.
 
 Verification command:
 
@@ -18,8 +18,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 85
-trusted_count: 80
+skill_count: 90
+trusted_count: 85
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -30,6 +30,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Safety Operations Guardrails](updates/2026-06-05-safety-operations-guardrails.md)
 - [Domain Governance Extensions](updates/2026-06-05-domain-governance-extensions.md)
 - [Domain Guardrail Skills](updates/2026-06-05-domain-guardrails.md)
 - [Verification Hardening](updates/2026-06-05-verification-hardening.md)
@@ -69,25 +70,26 @@ sample RAG route: rag-agent-knowledge-app
 | `batch-008-opensquilla-reference` | 3 | 3 | OpenSquilla-inspired MetaSkill, token routing, and sandbox policy reference skills |
 | `batch-009-domain-guardrails` | 5 | 5 | Domain guardrails for responsive UI, claims, contradictions, Markdown structure, and table calculations |
 | `batch-010-domain-governance-extensions` | 5 | 5 | Domain governance extensions for brand voice, tracking links, source lineage, learning refresh, and rule synthesis |
+| `batch-011-safety-operations-guardrails` | 5 | 5 | Safety operations guardrails for command risk, context redaction, licensing, rollback, and AI budgets |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
-| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 17 |
+| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-token-rate-budget-guard`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 18 |
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
 | code | `code-python-debug`, `code-review-risk`, `code-test-regression` | 3 |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-product-keyword-plan` | 4 |
-| compliance | `compliance-accessibility-policy`, `compliance-privacy-check`, `compliance-terms-review` | 3 |
+| compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-terms-review` | 4 |
 | content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 7 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 9 |
 | design | `design-accessibility-check`, `design-responsive-viewport-check`, `design-system-consistency`, `design-ui-review` | 4 |
 | engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-performance-profile` | 3 |
-| execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check` | 6 |
+| execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 7 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
 | office | `office-docx-brief`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup` | 4 |
 | research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check`, `research-source-lineage-trace` | 4 |
-| security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` | 6 |
+| security | `security-command-risk-preflight`, `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-secret-context-redaction`, `security-supply-chain-review`, `trivy-container-security-scan` | 8 |
 | vertical | `vertical-education-plan`, `vertical-learning-memory-refresh`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 4 |
 
 ## Current Skill List
@@ -109,6 +111,7 @@ sample RAG route: rag-agent-knowledge-app
 | `ai-pydantic-schema-contract` | ai | trusted |
 | `ai-qwen-agent-tool-workflow` | ai | trusted |
 | `ai-rule-failure-log-synthesis` | ai | trusted |
+| `ai-token-rate-budget-guard` | ai | trusted |
 | `ai-vllm-serving-capacity-plan` | ai | trusted |
 | `business-process-sop` | business | trusted |
 | `business-requirements-brief` | business | trusted |
@@ -121,6 +124,7 @@ sample RAG route: rag-agent-knowledge-app
 | `commerce-link-tracking-audit` | commerce | trusted |
 | `commerce-product-keyword-plan` | commerce | trusted |
 | `compliance-accessibility-policy` | compliance | trusted |
+| `compliance-license-policy-gate` | compliance | trusted |
 | `compliance-privacy-check` | compliance | trusted |
 | `compliance-terms-review` | compliance | trusted |
 | `content-brand-voice-boundary` | content | trusted |
@@ -154,6 +158,7 @@ sample RAG route: rag-agent-knowledge-app
 | `execution-mcp-tool-connector-review` | execution | review_required |
 | `execution-playwright-browser-automation` | execution | trusted |
 | `execution-publish-check` | execution | trusted |
+| `execution-rollback-checkpoint-plan` | execution | trusted |
 | `headroom-context-compression` | ai | trusted |
 | `hermes-agent-memory-assistant` | ai | quarantined |
 | `media-asset-review` | media | trusted |
@@ -167,10 +172,12 @@ sample RAG route: rag-agent-knowledge-app
 | `research-paper-synthesis` | research | trusted |
 | `research-source-check` | research | trusted |
 | `research-source-lineage-trace` | research | trusted |
+| `security-command-risk-preflight` | security | trusted |
 | `security-guardrails-output-validation` | security | trusted |
 | `security-llm-guard-io-scanning` | security | trusted |
 | `security-opensquilla-sandbox-policy` | security | trusted |
 | `security-prompt-injection-review` | security | trusted |
+| `security-secret-context-redaction` | security | trusted |
 | `security-supply-chain-review` | security | trusted |
 | `supermemory-memory-engine-reference` | ai | quarantined |
 | `trivy-container-security-scan` | security | trusted |
@@ -184,6 +191,6 @@ sample RAG route: rag-agent-knowledge-app
 
 Recommended next waves:
 
-- `batch-011-community-depth`: additional popular community skills with clear licenses
-- `batch-012-domain-depth`: deeper skills for design, code, security, and office
-- `batch-013-connectors`: connector-aware skills after host adapter verification
+- `batch-012-community-depth`: additional popular community skills with clear licenses
+- `batch-013-domain-depth`: deeper skills for design, code, security, and office
+- `batch-014-connectors`: connector-aware skills after host adapter verification

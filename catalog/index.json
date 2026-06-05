@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-05T12:45:27Z",
+  "generated_at": "2026-06-05T12:54:22Z",
   "schema_version": 1,
-  "skill_count": 85,
+  "skill_count": 90,
   "skills": [
     {
       "hashes": {
@@ -406,6 +406,33 @@
         "collection_priority": "P1",
         "subcategory": "ai.rule-synthesis",
         "task_intent": "synthesize safer rules from agent failure logs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "919881b1c0987572f91ff70172324b5074174ee58e30f9bc959ca4ea0d3df3bd",
+        "source_sha256": "930348316f2dc7c390e43f3ab38c613d0f5bfe3a54f0c068857be04a1d6415c2"
+      },
+      "name": "ai-token-rate-budget-guard",
+      "registry_path": "ai/ai-token-rate-budget-guard",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:53:39Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-011-safety-operations-guardrails/ai-token-rate-budget-guard",
+        "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/ai-token-rate-budget-guard"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.budget",
+        "task_intent": "guard token usage and rate budget for AI workflows"
       }
     },
     {
@@ -838,6 +865,33 @@
         "collection_priority": "P2",
         "subcategory": "compliance.accessibility",
         "task_intent": "review accessibility policy commitments and evidence"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "20e03d31d8626101395420f3d04c86751d95f34b49c4c4ddb5e3a171ac34584f",
+        "source_sha256": "f0e6cc59645578f0834f8492e3aeb082a1e89d583a1c24f7c6a169680415116d"
+      },
+      "name": "compliance-license-policy-gate",
+      "registry_path": "compliance/compliance-license-policy-gate",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:53:39Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-011-safety-operations-guardrails/compliance-license-policy-gate",
+        "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/compliance-license-policy-gate"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "compliance",
+        "collection_priority": "P1",
+        "subcategory": "compliance.license",
+        "task_intent": "review license and reuse policy before adoption"
       }
     },
     {
@@ -1733,6 +1787,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "e75b9e73daa7d3788c8fa06dfa3295ff65fa7b4e233ed1aac82666e31ff39ed8",
+        "source_sha256": "d18d8fbbd7862b79df7a76ec20d29d7a28f0710b360d60483970713d32aa3d7c"
+      },
+      "name": "execution-rollback-checkpoint-plan",
+      "registry_path": "execution/execution-rollback-checkpoint-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:53:39Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-011-safety-operations-guardrails/execution-rollback-checkpoint-plan",
+        "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/execution-rollback-checkpoint-plan"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "execution",
+        "collection_priority": "P0",
+        "subcategory": "execution.rollback",
+        "task_intent": "plan checkpoints and rollback before risky work"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "84e25802452dbc624295e268e381261b50cd5ffa51d4d030712291f894204146",
         "source_sha256": "e150ec1899867f8c20c94f1f8d9cbabb637577b03083c6178a072ee86f386e9a"
       },
@@ -2030,6 +2111,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "19c070fb83d78df72708dce7843e44ad8f0390d7bce9d2e348219dcd9107b7f8",
+        "source_sha256": "0b99d0f06e37975b28db96590843c6274293899b5cb730e61a0da9a18194b720"
+      },
+      "name": "security-command-risk-preflight",
+      "registry_path": "security/security-command-risk-preflight",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:53:39Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-011-safety-operations-guardrails/security-command-risk-preflight",
+        "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-command-risk-preflight"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "audit",
+        "category": "security",
+        "collection_priority": "P0",
+        "subcategory": "security.command-preflight",
+        "task_intent": "review command risk before execution"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
         "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
       },
@@ -2134,6 +2242,33 @@
         "collection_priority": "P0",
         "subcategory": "security.prompt",
         "task_intent": "review prompts and agent instructions for injection risk"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "40360a88da8f67015994c436dbceef56b9d2d7a3bc4f96fc1382b863bf8401ec",
+        "source_sha256": "bda97b9fe3a83a1f00f5d6d66d1cbef735d66726c82d4afc50e0926a03713479"
+      },
+      "name": "security-secret-context-redaction",
+      "registry_path": "security/security-secret-context-redaction",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:53:39Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-011-safety-operations-guardrails/security-secret-context-redaction",
+        "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-secret-context-redaction"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "audit",
+        "category": "security",
+        "collection_priority": "P0",
+        "subcategory": "security.secret-redaction",
+        "task_intent": "redact sensitive context before sharing"
       }
     },
     {

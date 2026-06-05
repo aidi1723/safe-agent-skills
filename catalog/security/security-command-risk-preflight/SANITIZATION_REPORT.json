@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T12:53:47Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "19c070fb83d78df72708dce7843e44ad8f0390d7bce9d2e348219dcd9107b7f8",
+    "source_sha256": "0b99d0f06e37975b28db96590843c6274293899b5cb730e61a0da9a18194b720"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "security-command-risk-preflight",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:53:39Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-011-safety-operations-guardrails/security-command-risk-preflight",
+    "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-command-risk-preflight"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "audit",
+    "category": "security",
+    "collection_priority": "P0",
+    "subcategory": "security.command-preflight",
+    "task_intent": "review command risk before execution"
+  }
+}

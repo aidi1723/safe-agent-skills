@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T12:54:03Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "20e03d31d8626101395420f3d04c86751d95f34b49c4c4ddb5e3a171ac34584f",
+    "source_sha256": "f0e6cc59645578f0834f8492e3aeb082a1e89d583a1c24f7c6a169680415116d"
+  },
+  "name": "compliance-license-policy-gate",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:53:39Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-011-safety-operations-guardrails/compliance-license-policy-gate",
+    "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/compliance-license-policy-gate"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "compliance",
+    "collection_priority": "P1",
+    "subcategory": "compliance.license",
+    "task_intent": "review license and reuse policy before adoption"
+  },
+  "version": "0.1.0"
+}

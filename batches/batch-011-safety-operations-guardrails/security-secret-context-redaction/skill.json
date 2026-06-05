@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "security",
+    "subcategory": "security.secret-redaction",
+    "task_intent": "redact sensitive context before sharing",
+    "artifact_type": "audit",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-secret-context-redaction",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}
