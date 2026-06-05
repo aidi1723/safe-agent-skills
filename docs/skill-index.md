@@ -30,6 +30,7 @@ Each individual `SKILL.md` also contains:
 | ai | `ai-output-schema-eval` | trusted | Use when evaluating AI outputs against schema, format, task requirements, safety constraints, and regression examples. |
 | ai | `ai-pydantic-schema-contract` | trusted | Use when defining typed contracts, JSON Schema outputs, validation models, or parser-safe AI response formats. |
 | ai | `ai-qwen-agent-tool-workflow` | trusted | Use when reviewing function calling, MCP tools, code interpreter flows, RAG, or browser-extension agent workflows. |
+| ai | `ai-rule-failure-log-synthesis` | trusted | Use when reviewing agent failures, policy blocks, verifier failures, repeated mistakes, or logs that should become safer future rules. |
 | ai | `ai-vllm-serving-capacity-plan` | trusted | Use when reviewing high-throughput LLM serving, batching, memory planning, latency targets, or inference capacity. |
 | ai | `ecc-agent-coding-safety` | trusted | Use when adapting community context-engineering ideas for AI coding assistants, memory, safety checks, and bounded code work. |
 | ai | `headroom-context-compression` | trusted | Use when compressing long task context, chat history, notes, or documents before an AI workflow while preserving key facts. |
@@ -43,11 +44,13 @@ Each individual `SKILL.md` also contains:
 | code | `code-test-regression` | trusted | Use when adding or reviewing regression tests, failure cases, fixtures, and verification commands for code changes. |
 | commerce | `commerce-icbu-listing` | trusted | Use when preparing Alibaba International Station product listing structure, attributes, keywords, and inquiry-oriented copy. |
 | commerce | `commerce-inquiry-reply` | trusted | Use when drafting buyer inquiry replies, quotation responses, product clarification, and trade follow-up messages. |
+| commerce | `commerce-link-tracking-audit` | trusted | Use when checking campaign links, UTM parameters, commerce landing pages, inquiry funnels, tracking events, or marketing handoff URLs. |
 | commerce | `commerce-product-keyword-plan` | trusted | Use when planning product keywords, category terms, listing search intent, and marketplace discovery structure. |
 | compliance | `compliance-accessibility-policy` | trusted | Use when reviewing accessibility commitments, product conformance notes, support process, and public accessibility statements. |
 | compliance | `compliance-privacy-check` | trusted | Use when checking whether a workflow, document, or dataset has privacy and data-handling risks that need review. |
 | compliance | `compliance-terms-review` | trusted | Use when reviewing terms, policies, disclaimers, user-facing rules, and operational commitments for risk. |
 | compliance | `vibe-trading-research-assistant` | quarantined | Use when evaluating AI-assisted trading research workflows, quantitative analysis notes, and financial decision safety boundaries. |
+| content | `content-brand-voice-boundary` | trusted | Use when reviewing brand voice, tone drift, style consistency, content polish, or whether generated copy matches a defined editorial voice. |
 | content | `content-claims-compliance-filter` | trusted | Use when reviewing marketing, SEO, listing, ad, landing-page, or sales copy for risky claims, absolute language, unsupported promises, or compliance-sensitive wording. |
 | content | `content-editorial-review` | trusted | Use when reviewing drafts for clarity, structure, tone, factual consistency, audience fit, and publication readiness. |
 | content | `content-fact-contradiction-review` | trusted | Use when reviewing long-form content, reports, documentation, or generated copy for internal contradictions, conflicting facts, timeline errors, or source gaps. |
@@ -87,6 +90,7 @@ Each individual `SKILL.md` also contains:
 | research | `research-competitor-brief` | trusted | Use when comparing competitors, products, pricing pages, positioning, features, and public market signals. |
 | research | `research-paper-synthesis` | trusted | Use when summarizing papers, technical reports, datasets, methods, limitations, and evidence across research sources. |
 | research | `research-source-check` | trusted | Use when verifying factual claims against primary or high-quality sources with explicit citations. |
+| research | `research-source-lineage-trace` | trusted | Use when tracing claims back to sources, checking citation lineage, reviewing summaries, or preventing unsupported research assertions. |
 | security | `security-guardrails-output-validation` | trusted | Use when designing output validation, structured compliance checks, or guardrail review for LLM and agent responses. |
 | security | `security-llm-guard-io-scanning` | trusted | Use when reviewing LLM input and output scanning, sensitive-data filtering, or prompt security gates. |
 | security | `security-opensquilla-sandbox-policy` | trusted | Use when reviewing agent sandbox boundaries, refusal logs, approval gates, or repeated unsafe action attempts. |
@@ -94,5 +98,6 @@ Each individual `SKILL.md` also contains:
 | security | `security-supply-chain-review` | trusted | Use when reviewing package, plugin, connector, dependency, or skill supply-chain risk before adoption. |
 | security | `trivy-container-security-scan` | trusted | Use when reviewing container images, filesystems, dependencies, IaC, secrets, or SBOM security findings with Trivy-style scanners. |
 | vertical | `vertical-education-plan` | trusted | Use when preparing education plans, lesson outlines, study workflows, or learning assessments with age and context awareness. |
+| vertical | `vertical-learning-memory-refresh` | trusted | Use when planning learning reinforcement, spaced review, knowledge retention, study workflows, or refresh schedules for long-running knowledge work. |
 | vertical | `vertical-manufacturing-qc` | trusted | Use when preparing manufacturing quality-control checklists, inspection notes, defect summaries, and production handoff records. |
 | vertical | `vertical-real-estate-listing` | trusted | Use when preparing real-estate listing copy, property fact checks, feature summaries, and buyer-facing notes. |

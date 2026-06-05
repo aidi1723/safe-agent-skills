@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "content",
+    "subcategory": "content.voice",
+    "task_intent": "review brand voice and tone consistency",
+    "artifact_type": "content",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/content-brand-voice-boundary",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

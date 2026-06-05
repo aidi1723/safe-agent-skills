@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T12:45:18Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "34e7782685b510e9cc234eae027c67729359788e1a35460e9cdbab8646e7bce2",
+    "source_sha256": "4c42072465a32405a75c363951633c9895d1c216149e2bea3862706d8c2775bf"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "research-source-lineage-trace",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:44:43Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-010-domain-governance-extensions/research-source-lineage-trace",
+    "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/research-source-lineage-trace"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.lineage",
+    "task_intent": "trace factual claims to source lineage"
+  }
+}

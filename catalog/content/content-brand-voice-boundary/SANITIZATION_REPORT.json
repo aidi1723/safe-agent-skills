@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T12:45:11Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "3d0890e41306e08d36ab25ad458175f46a824ba47ec7a82b62db4279e0c32c37",
+    "source_sha256": "fc6752f7d1473f7e76b257915947813c7c38ca2b4686f604c5ee981298e8a4fc"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "content-brand-voice-boundary",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:44:43Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-010-domain-governance-extensions/content-brand-voice-boundary",
+    "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/content-brand-voice-boundary"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "content",
+    "category": "content",
+    "collection_priority": "P1",
+    "subcategory": "content.voice",
+    "task_intent": "review brand voice and tone consistency"
+  }
+}

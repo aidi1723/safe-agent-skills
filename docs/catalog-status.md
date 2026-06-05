@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 80 sanitized skills across all
+The current public-safe catalog contains 85 sanitized skills across all
 top-level taxonomy categories, including 33 community project reference skills
-and 5 domain guardrail seed skills.
+and 10 domain guardrail and governance seed skills.
 
 Verification command:
 
@@ -18,8 +18,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 80
-trusted_count: 75
+skill_count: 85
+trusted_count: 80
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -30,6 +30,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Domain Governance Extensions](updates/2026-06-05-domain-governance-extensions.md)
 - [Domain Guardrail Skills](updates/2026-06-05-domain-guardrails.md)
 - [Verification Hardening](updates/2026-06-05-verification-hardening.md)
 - [Single-Entry Router Skill](updates/2026-06-05-router-skill-single-entry.md)
@@ -67,26 +68,27 @@ sample RAG route: rag-agent-knowledge-app
 | `batch-007-community-agent-workflows` | 12 | 11 | Community agent workflow, RAG, browser, sandbox, and retrieval reference skills |
 | `batch-008-opensquilla-reference` | 3 | 3 | OpenSquilla-inspired MetaSkill, token routing, and sandbox policy reference skills |
 | `batch-009-domain-guardrails` | 5 | 5 | Domain guardrails for responsive UI, claims, contradictions, Markdown structure, and table calculations |
+| `batch-010-domain-governance-extensions` | 5 | 5 | Domain governance extensions for brand voice, tracking links, source lineage, learning refresh, and rule synthesis |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
-| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 16 |
+| ai | `ai-autogen-multi-agent-review`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 17 |
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
 | code | `code-python-debug`, `code-review-risk`, `code-test-regression` | 3 |
-| commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-product-keyword-plan` | 3 |
+| commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-product-keyword-plan` | 4 |
 | compliance | `compliance-accessibility-policy`, `compliance-privacy-check`, `compliance-terms-review` | 3 |
-| content | `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 6 |
+| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 7 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 9 |
 | design | `design-accessibility-check`, `design-responsive-viewport-check`, `design-system-consistency`, `design-ui-review` | 4 |
 | engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-performance-profile` | 3 |
 | execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check` | 6 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
 | office | `office-docx-brief`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup` | 4 |
-| research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check` | 3 |
+| research | `research-competitor-brief`, `research-paper-synthesis`, `research-source-check`, `research-source-lineage-trace` | 4 |
 | security | `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-supply-chain-review`, `trivy-container-security-scan` | 6 |
-| vertical | `vertical-education-plan`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 3 |
+| vertical | `vertical-education-plan`, `vertical-learning-memory-refresh`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 4 |
 
 ## Current Skill List
 
@@ -106,6 +108,7 @@ sample RAG route: rag-agent-knowledge-app
 | `ai-output-schema-eval` | ai | trusted |
 | `ai-pydantic-schema-contract` | ai | trusted |
 | `ai-qwen-agent-tool-workflow` | ai | trusted |
+| `ai-rule-failure-log-synthesis` | ai | trusted |
 | `ai-vllm-serving-capacity-plan` | ai | trusted |
 | `business-process-sop` | business | trusted |
 | `business-requirements-brief` | business | trusted |
@@ -115,10 +118,12 @@ sample RAG route: rag-agent-knowledge-app
 | `code-test-regression` | code | trusted |
 | `commerce-icbu-listing` | commerce | trusted |
 | `commerce-inquiry-reply` | commerce | trusted |
+| `commerce-link-tracking-audit` | commerce | trusted |
 | `commerce-product-keyword-plan` | commerce | trusted |
 | `compliance-accessibility-policy` | compliance | trusted |
 | `compliance-privacy-check` | compliance | trusted |
 | `compliance-terms-review` | compliance | trusted |
+| `content-brand-voice-boundary` | content | trusted |
 | `content-claims-compliance-filter` | content | trusted |
 | `content-editorial-review` | content | trusted |
 | `content-fact-contradiction-review` | content | trusted |
@@ -161,6 +166,7 @@ sample RAG route: rag-agent-knowledge-app
 | `research-competitor-brief` | research | trusted |
 | `research-paper-synthesis` | research | trusted |
 | `research-source-check` | research | trusted |
+| `research-source-lineage-trace` | research | trusted |
 | `security-guardrails-output-validation` | security | trusted |
 | `security-llm-guard-io-scanning` | security | trusted |
 | `security-opensquilla-sandbox-policy` | security | trusted |
@@ -169,6 +175,7 @@ sample RAG route: rag-agent-knowledge-app
 | `supermemory-memory-engine-reference` | ai | quarantined |
 | `trivy-container-security-scan` | security | trusted |
 | `vertical-education-plan` | vertical | trusted |
+| `vertical-learning-memory-refresh` | vertical | trusted |
 | `vertical-manufacturing-qc` | vertical | trusted |
 | `vertical-real-estate-listing` | vertical | trusted |
 | `vibe-trading-research-assistant` | compliance | quarantined |
@@ -177,6 +184,6 @@ sample RAG route: rag-agent-knowledge-app
 
 Recommended next waves:
 
-- `batch-010-community-depth`: additional popular community skills with clear licenses
-- `batch-011-domain-depth`: deeper skills for design, code, security, and office
-- `batch-012-connectors`: connector-aware skills after host adapter verification
+- `batch-011-community-depth`: additional popular community skills with clear licenses
+- `batch-012-domain-depth`: deeper skills for design, code, security, and office
+- `batch-013-connectors`: connector-aware skills after host adapter verification

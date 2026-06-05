@@ -39,8 +39,8 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 80
-- trusted skills: 75
+- total skills: 85
+- trusted skills: 80
 - quarantined skills: 3
 - review-required skills: 2
 - categories meeting 3 trusted skills: 15 / 15
@@ -54,7 +54,7 @@ Closure report:
 
 Latest update:
 
-- [Domain Guardrail Skills](updates/2026-06-05-domain-guardrails.md)
+- [Domain Governance Extensions](updates/2026-06-05-domain-governance-extensions.md)
 
 ## Intake Rule
 

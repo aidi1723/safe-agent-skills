@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T12:45:27Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "83cb78f546a33bc31c7fa77e8ec781d54f43525808c397bfb35133cc842c34ee",
+    "source_sha256": "5d32112c259585c5b1fba7e37295ed3daa312c351a86a76adcee24f4e578e682"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "vertical-learning-memory-refresh",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:44:43Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-010-domain-governance-extensions/vertical-learning-memory-refresh",
+    "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/vertical-learning-memory-refresh"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "vertical",
+    "collection_priority": "P2",
+    "subcategory": "vertical.learning",
+    "task_intent": "plan learning refresh and knowledge retention workflows"
+  }
+}

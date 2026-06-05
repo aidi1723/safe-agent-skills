@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T12:45:02Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "85ead7e760191c8e5e62936d70e1332cd3275616f77eb7c34c8785c2bb0104d1",
+    "source_sha256": "39d9ef068c854592c7eaf3f9fef3a855a1c20de052b37d47089c6400ad59190d"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "commerce-link-tracking-audit",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:44:43Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-010-domain-governance-extensions/commerce-link-tracking-audit",
+    "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/commerce-link-tracking-audit"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "listing",
+    "category": "commerce",
+    "collection_priority": "P1",
+    "subcategory": "commerce.tracking",
+    "task_intent": "audit commerce campaign links and tracking parameters"
+  }
+}

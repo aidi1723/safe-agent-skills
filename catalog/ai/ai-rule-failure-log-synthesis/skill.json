@@ -1,0 +1,54 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T12:44:53Z",
+  "findings": [
+    {
+      "id": "broad-filesystem-access",
+      "severity": "high",
+      "status": "unresolved",
+      "summary": "Found broad filesystem or credential access guidance."
+    }
+  ],
+  "hashes": {
+    "sanitized_sha256": "047c8a8b3bc056cdd65df33fd4311372975b78fd0c80c37937d7ee92e200370a",
+    "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
+  },
+  "name": "ai-rule-failure-log-synthesis",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "high",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T12:44:43Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-010-domain-governance-extensions/ai-rule-failure-log-synthesis",
+    "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/ai-rule-failure-log-synthesis"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.rule-synthesis",
+    "task_intent": "synthesize safer rules from agent failure logs"
+  },
+  "version": "0.1.0"
+}

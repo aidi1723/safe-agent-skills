@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-05T10:57:07Z",
+  "generated_at": "2026-06-05T12:45:27Z",
   "schema_version": 1,
-  "skill_count": 80,
+  "skill_count": 85,
   "skills": [
     {
       "hashes": {
@@ -383,6 +383,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "047c8a8b3bc056cdd65df33fd4311372975b78fd0c80c37937d7ee92e200370a",
+        "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
+      },
+      "name": "ai-rule-failure-log-synthesis",
+      "registry_path": "ai/ai-rule-failure-log-synthesis",
+      "risk_level": "high",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:44:43Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-010-domain-governance-extensions/ai-rule-failure-log-synthesis",
+        "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/ai-rule-failure-log-synthesis"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.rule-synthesis",
+        "task_intent": "synthesize safer rules from agent failure logs"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "5405505aa267cf33b620853e70353c591b7a0fbe355e66fbcc2d699b98b2cba8",
         "source_sha256": "a73cda1d23a9e1b3f81cab6aa60de893c7a18e26bf6864076ea750905fef7483"
       },
@@ -734,6 +761,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "85ead7e760191c8e5e62936d70e1332cd3275616f77eb7c34c8785c2bb0104d1",
+        "source_sha256": "39d9ef068c854592c7eaf3f9fef3a855a1c20de052b37d47089c6400ad59190d"
+      },
+      "name": "commerce-link-tracking-audit",
+      "registry_path": "commerce/commerce-link-tracking-audit",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:44:43Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-010-domain-governance-extensions/commerce-link-tracking-audit",
+        "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/commerce-link-tracking-audit"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "listing",
+        "category": "commerce",
+        "collection_priority": "P1",
+        "subcategory": "commerce.tracking",
+        "task_intent": "audit commerce campaign links and tracking parameters"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "95df65b5566334a3955894736aea1ce9a6299d93cce2a2ddcda8b003599f4b58",
         "source_sha256": "120ae43bb74e01e6384fcb84afc225ca3ce5b0769f0ec3f51631eab9d4e3c0a2"
       },
@@ -865,6 +919,33 @@
         "collection_priority": "P2",
         "subcategory": "compliance.finance",
         "task_intent": "review AI-assisted trading research under financial safety and compliance boundaries"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "3d0890e41306e08d36ab25ad458175f46a824ba47ec7a82b62db4279e0c32c37",
+        "source_sha256": "fc6752f7d1473f7e76b257915947813c7c38ca2b4686f604c5ee981298e8a4fc"
+      },
+      "name": "content-brand-voice-boundary",
+      "registry_path": "content/content-brand-voice-boundary",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:44:43Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-010-domain-governance-extensions/content-brand-voice-boundary",
+        "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/content-brand-voice-boundary"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P1",
+        "subcategory": "content.voice",
+        "task_intent": "review brand voice and tone consistency"
       }
     },
     {
@@ -1922,6 +2003,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "34e7782685b510e9cc234eae027c67729359788e1a35460e9cdbab8646e7bce2",
+        "source_sha256": "4c42072465a32405a75c363951633c9895d1c216149e2bea3862706d8c2775bf"
+      },
+      "name": "research-source-lineage-trace",
+      "registry_path": "research/research-source-lineage-trace",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:44:43Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-010-domain-governance-extensions/research-source-lineage-trace",
+        "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/research-source-lineage-trace"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.lineage",
+        "task_intent": "trace factual claims to source lineage"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
         "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
       },
@@ -2107,6 +2215,33 @@
         "collection_priority": "P3",
         "subcategory": "vertical.education",
         "task_intent": "plan education workflows safely"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "83cb78f546a33bc31c7fa77e8ec781d54f43525808c397bfb35133cc842c34ee",
+        "source_sha256": "5d32112c259585c5b1fba7e37295ed3daa312c351a86a76adcee24f4e578e682"
+      },
+      "name": "vertical-learning-memory-refresh",
+      "registry_path": "vertical/vertical-learning-memory-refresh",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T12:44:43Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-010-domain-governance-extensions/vertical-learning-memory-refresh",
+        "reference": "docs/batches/batch-010-domain-governance-extensions.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/vertical-learning-memory-refresh"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "vertical",
+        "collection_priority": "P2",
+        "subcategory": "vertical.learning",
+        "task_intent": "plan learning refresh and knowledge retention workflows"
       }
     },
     {
