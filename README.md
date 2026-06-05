@@ -204,8 +204,17 @@ authority. See [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bund
 
 Agents can also install the single router skill:
 [Safe Agent Router Skill Integration](docs/router-skill-integration.md).
-After installing `safe-agent-router`, a host agent can route tasks through the
-verified catalog without manually learning or combining every catalog skill.
+After installing `safe-agent-router`, a host agent does not need the operator
+to manually choose, combine, or install every other catalog skill. The router
+selects the best trusted skills and scenario bundle for the task, then returns
+a task pack with the execution order, verifier expectations, source records,
+and safety boundary.
+
+This is the recommended default integration model:
+
+```text
+install one skill -> route every non-trivial task -> use selected trusted skill pack
+```
 
 The first MVP can also be exposed through OneCode:
 
@@ -218,6 +227,7 @@ onecode skills approve pdf
 ## Project Docs
 
 - [Source Baseline](docs/source-baseline.md)
+- [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)
 - [Latest Update Statement](docs/updates/2026-06-04-scenario-skill-router.md)
 - [Phase 002 Scenario Router Closure Report](docs/phase-002-scenario-router-closure-report.md)
 - [Previous Update Statement](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)

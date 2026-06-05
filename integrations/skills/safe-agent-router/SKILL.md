@@ -11,6 +11,10 @@ Use this as the single entry skill for the Safe-Agent-Skills catalog. Before
 planning a non-trivial task, route the task through the verified catalog and
 then follow the returned task pack.
 
+The host agent does not need separate local installs for every catalog skill.
+Install this router once; it selects the right trusted skills and scenario
+bundle for each task on demand.
+
 The router gives method guidance only. It never grants filesystem, shell,
 network, browser, connector, account, credential, or production permissions.
 
@@ -39,11 +43,13 @@ task plan context.
 2. Run the router command before planning the task.
 3. Read the returned `Task Profile`, `Selected Scenario`,
    `Capability Coverage`, `Execution Plan`, and `Selected Skills`.
-4. Follow the returned `Execution Plan` in order.
-5. Apply selected skill guidance only within the host runtime's existing
+4. Do not manually search for or install extra Safe-Agent-Skills unless the
+   operator explicitly requests that workflow.
+5. Follow the returned `Execution Plan` in order.
+6. Apply selected skill guidance only within the host runtime's existing
    permissions.
-6. Run verifier expectations listed in the task pack.
-7. In the final response, record selected skill names, scenario bundle,
+7. Run verifier expectations listed in the task pack.
+8. In the final response, record selected skill names, scenario bundle,
    verification performed, and unresolved risks.
 
 ## Safety Rules
