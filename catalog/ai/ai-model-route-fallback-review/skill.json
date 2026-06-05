@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T13:08:25Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "11ffddd2771e63c1b92173a6dd89cc150c719e03f9dad06dd3f7fe56df38634d",
+    "source_sha256": "95b76045d4d2a45b4f7c68f280eea265431424cc566eda5ef6f6643e8b3fe72c"
+  },
+  "name": "ai-model-route-fallback-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:08:15Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-013-ai-runtime-guardrails/ai-model-route-fallback-review",
+    "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-model-route-fallback-review"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.routing",
+    "task_intent": "review model routing and fallback boundaries"
+  },
+  "version": "0.1.0"
+}

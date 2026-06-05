@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.streaming",
+    "task_intent": "review streamed structured output boundaries",
+    "artifact_type": "prompt",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-stream-json-boundary-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

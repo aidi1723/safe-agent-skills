@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T13:09:10Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "933a3893ab93a742e23d4682f685de62aa5b5941eee6775d3c7613ba3831f0e0",
+    "source_sha256": "eb21433e8de9d8d637f569edf58a583db843fa8b8b9d864986e8bcc9b04a5256"
+  },
+  "name": "ai-context-compression-budget-plan",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:08:15Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-013-ai-runtime-guardrails/ai-context-compression-budget-plan",
+    "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-context-compression-budget-plan"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.context",
+    "task_intent": "plan context compression and budget boundaries"
+  },
+  "version": "0.1.0"
+}

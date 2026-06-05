@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "data",
+    "subcategory": "data.rag-boundary",
+    "task_intent": "check RAG retrieval namespace boundaries",
+    "artifact_type": "dataset",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+    "collected_by": "onecode-local-seed"
+  }
+}

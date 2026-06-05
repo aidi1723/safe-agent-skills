@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-05T13:01:55Z",
+  "generated_at": "2026-06-05T13:09:10Z",
   "schema_version": 1,
-  "skill_count": 95,
+  "skill_count": 100,
   "skills": [
     {
       "hashes": {
@@ -28,6 +28,33 @@
         "collection_priority": "P1",
         "subcategory": "ai.multi_agent",
         "task_intent": "review multi-agent collaboration roles and handoffs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "933a3893ab93a742e23d4682f685de62aa5b5941eee6775d3c7613ba3831f0e0",
+        "source_sha256": "eb21433e8de9d8d637f569edf58a583db843fa8b8b9d864986e8bcc9b04a5256"
+      },
+      "name": "ai-context-compression-budget-plan",
+      "registry_path": "ai/ai-context-compression-budget-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:08:15Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-013-ai-runtime-guardrails/ai-context-compression-budget-plan",
+        "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-context-compression-budget-plan"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.context",
+        "task_intent": "plan context compression and budget boundaries"
       }
     },
     {
@@ -190,6 +217,33 @@
         "collection_priority": "P0",
         "subcategory": "ai.rag",
         "task_intent": "design source-grounded RAG and document-agent workflows"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "11ffddd2771e63c1b92173a6dd89cc150c719e03f9dad06dd3f7fe56df38634d",
+        "source_sha256": "95b76045d4d2a45b4f7c68f280eea265431424cc566eda5ef6f6643e8b3fe72c"
+      },
+      "name": "ai-model-route-fallback-review",
+      "registry_path": "ai/ai-model-route-fallback-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:08:15Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-013-ai-runtime-guardrails/ai-model-route-fallback-review",
+        "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-model-route-fallback-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.routing",
+        "task_intent": "review model routing and fallback boundaries"
       }
     },
     {
@@ -410,6 +464,33 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "8e27430524779e7d293720a3d5b12b3e7d22a5c89ed5d5a980ebbe10f3b84129",
+        "source_sha256": "742c62d179ea3f5b578b6964ef147758d7075ddc0c0fb80255f99fc858b0d038"
+      },
+      "name": "ai-stream-json-boundary-review",
+      "registry_path": "ai/ai-stream-json-boundary-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:08:15Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-013-ai-runtime-guardrails/ai-stream-json-boundary-review",
+        "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-stream-json-boundary-review"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.streaming",
+        "task_intent": "review streamed structured output boundaries"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "919881b1c0987572f91ff70172324b5074174ee58e30f9bc959ca4ea0d3df3bd",
         "source_sha256": "930348316f2dc7c390e43f3ab38c613d0f5bfe3a54f0c068857be04a1d6415c2"
       },
@@ -433,6 +514,33 @@
         "collection_priority": "P1",
         "subcategory": "ai.budget",
         "task_intent": "guard token usage and rate budget for AI workflows"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "d105aea8ae5d8446d2a4ea7d7cd54dce1e569f4761034e5a49a1e7b7ecc7cbee",
+        "source_sha256": "8f348a217dd395e8b3b8122050fa2628ce76df4616299cf06c08b4a4ac466145"
+      },
+      "name": "ai-tool-schema-protocol-check",
+      "registry_path": "ai/ai-tool-schema-protocol-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:08:15Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-013-ai-runtime-guardrails/ai-tool-schema-protocol-check",
+        "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-tool-schema-protocol-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "prompt",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.tool-schema",
+        "task_intent": "check AI tool schemas and protocol contracts"
       }
     },
     {
@@ -1378,6 +1486,33 @@
         "collection_priority": "P1",
         "subcategory": "data.quality",
         "task_intent": "audit dataset quality before analysis or import"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "6fe61e3d956a37843877f50416aab3b16374a96462e592dec205b837fd72dece",
+        "source_sha256": "ab2a3548c1de2a7f9524d32f2026cc6d24507561f63713099c41bdb1a6fae2a6"
+      },
+      "name": "data-rag-namespace-boundary-check",
+      "registry_path": "data/data-rag-namespace-boundary-check",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-05T13:08:15Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check",
+        "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "dataset",
+        "category": "data",
+        "collection_priority": "P0",
+        "subcategory": "data.rag-boundary",
+        "task_intent": "check RAG retrieval namespace boundaries"
       }
     },
     {

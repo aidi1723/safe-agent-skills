@@ -17,12 +17,14 @@ Each individual `SKILL.md` also contains:
 | Category | Skill | Status | Capability |
 | --- | --- | --- | --- |
 | ai | `ai-autogen-multi-agent-review` | trusted | Use when reviewing multi-agent collaboration, role boundaries, conversation loops, or agent handoff workflows. |
+| ai | `ai-context-compression-budget-plan` | trusted | Use when planning context compression, long prompt trimming, memory summaries, retrieval snippets, or token-budget tradeoffs before AI execution. |
 | ai | `ai-crewai-role-workflow` | trusted | Use when designing role-based agent teams, task delegation, process sequencing, or collaborative agent workflows. |
 | ai | `ai-guidance-constrained-generation` | trusted | Use when an LLM task needs constrained generation, token-level control, or explicit output structure. |
 | ai | `ai-langchain-agent-orchestration` | trusted | Use when designing agent orchestration, tool routing, prompt chains, memory boundaries, or production LLM workflow structure. |
 | ai | `ai-litellm-gateway-cost-control` | review_required | Use when reviewing model gateway routing, provider fallback, budget limits, rate limits, or agent cost controls. |
 | ai | `ai-llama-cpp-local-inference-boundary` | trusted | Use when reviewing local LLM inference, offline model use, context limits, quantization tradeoffs, or local privacy boundaries. |
 | ai | `ai-llamaindex-rag-knowledge-workflow` | trusted | Use when designing RAG, document agents, knowledge indexing, citation retrieval, or OCR-backed knowledge workflows. |
+| ai | `ai-model-route-fallback-review` | trusted | Use when reviewing model routing, fallback choices, escalation rules, provider selection, cost tradeoffs, or AI workflow reliability boundaries. |
 | ai | `ai-openai-cookbook-api-patterns` | trusted | Use when reviewing OpenAI API implementation patterns, examples, evals, structured outputs, RAG, or application recipes. |
 | ai | `ai-opensquilla-metaskill-workflow` | trusted | Use when turning repeated multi-step agent work into reusable scenario skills, workflows, or bundle candidates. |
 | ai | `ai-opensquilla-token-routing-pattern` | trusted | Use when reviewing token-aware skill loading, model routing, task-pack compression, or cost-sensitive agent planning. |
@@ -31,7 +33,9 @@ Each individual `SKILL.md` also contains:
 | ai | `ai-pydantic-schema-contract` | trusted | Use when defining typed contracts, JSON Schema outputs, validation models, or parser-safe AI response formats. |
 | ai | `ai-qwen-agent-tool-workflow` | trusted | Use when reviewing function calling, MCP tools, code interpreter flows, RAG, or browser-extension agent workflows. |
 | ai | `ai-rule-failure-log-synthesis` | trusted | Use when reviewing agent failures, policy blocks, verifier failures, repeated mistakes, or logs that should become safer future rules. |
+| ai | `ai-stream-json-boundary-review` | trusted | Use when reviewing streamed AI output, partial JSON parsing, incremental tool arguments, SSE output, or structured response boundaries. |
 | ai | `ai-token-rate-budget-guard` | trusted | Use when planning model calls, agent loops, context size, budget limits, rate limits, or fallback behavior for AI workflows. |
+| ai | `ai-tool-schema-protocol-check` | trusted | Use when reviewing tool calling schemas, JSON arguments, function contracts, MCP-style protocol boundaries, or cross-model tool compatibility. |
 | ai | `ai-vllm-serving-capacity-plan` | trusted | Use when reviewing high-throughput LLM serving, batching, memory planning, latency targets, or inference capacity. |
 | ai | `ecc-agent-coding-safety` | trusted | Use when adapting community context-engineering ideas for AI coding assistants, memory, safety checks, and bounded code work. |
 | ai | `headroom-context-compression` | trusted | Use when compressing long task context, chat history, notes, or documents before an AI workflow while preserving key facts. |
@@ -67,6 +71,7 @@ Each individual `SKILL.md` also contains:
 | data | `data-markitdown-file-to-markdown` | trusted | Use when converting mixed office files, documents, or local assets into clean Markdown for agent workflows. |
 | data | `data-qdrant-vector-retrieval` | trusted | Use when reviewing vector search, embedding indexes, retrieval filters, similarity results, or RAG database boundaries. |
 | data | `data-quality-audit` | trusted | Use when checking datasets for missing values, duplicates, schema drift, outliers, freshness, and readiness for analysis. |
+| data | `data-rag-namespace-boundary-check` | trusted | Use when reviewing RAG namespaces, vector index filters, retrieval scopes, metadata boundaries, tenant isolation, or grounded answer source limits. |
 | data | `data-schema-field-contract-check` | trusted | Use when reviewing database fields, API schemas, ORM models, JSON contracts, migrations, or generated code for field mismatch risk. |
 | data | `data-table-analysis` | trusted | Use when cleaning, summarizing, validating, or explaining tabular datasets inside an approved workspace. |
 | data | `data-table-calculation-verify` | trusted | Use when checking tables, spreadsheets, reports, financial summaries, percentages, totals, averages, or numeric claims for calculation consistency. |

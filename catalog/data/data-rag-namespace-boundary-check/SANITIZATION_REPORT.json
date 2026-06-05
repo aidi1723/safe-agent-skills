@@ -1,0 +1,42 @@
+{
+  "approved_at": "2026-06-05T13:09:00Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "6fe61e3d956a37843877f50416aab3b16374a96462e592dec205b837fd72dece",
+    "source_sha256": "ab2a3548c1de2a7f9524d32f2026cc6d24507561f63713099c41bdb1a6fae2a6"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "data-rag-namespace-boundary-check",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:08:15Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check",
+    "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "dataset",
+    "category": "data",
+    "collection_priority": "P0",
+    "subcategory": "data.rag-boundary",
+    "task_intent": "check RAG retrieval namespace boundaries"
+  }
+}

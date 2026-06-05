@@ -1,0 +1,47 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-05T13:08:38Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "d105aea8ae5d8446d2a4ea7d7cd54dce1e569f4761034e5a49a1e7b7ecc7cbee",
+    "source_sha256": "8f348a217dd395e8b3b8122050fa2628ce76df4616299cf06c08b4a4ac466145"
+  },
+  "name": "ai-tool-schema-protocol-check",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-05T13:08:15Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-013-ai-runtime-guardrails/ai-tool-schema-protocol-check",
+    "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-tool-schema-protocol-check"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "prompt",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.tool-schema",
+    "task_intent": "check AI tool schemas and protocol contracts"
+  },
+  "version": "0.1.0"
+}
