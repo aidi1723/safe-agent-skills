@@ -1,5 +1,29 @@
 # Maintenance Guide
 
+## Workspace Boundary
+
+Maintain this project only from the standalone repository:
+
+```text
+/Users/aidi/大字典/safe-agent-skills
+```
+
+Do not maintain it from the old nested OneCode path:
+
+```text
+/Users/aidi/大字典/one code/onecode-skill-sanitizer
+```
+
+That nested copy has been removed to avoid polluting the OneCode core project.
+Before any maintenance work, run:
+
+```bash
+cd "/Users/aidi/大字典/safe-agent-skills"
+git status --short
+```
+
+See [Workspace Boundary](workspace-boundary.md).
+
 ## Public Baseline
 
 The catalog is ready for public maintenance when:

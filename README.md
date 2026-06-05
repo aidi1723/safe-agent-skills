@@ -9,6 +9,28 @@ The CLI can also be used independently of OneCode. Users can bring their own
 own trusted skills, and generate JSON or Markdown task packs for any host
 agent. See [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md).
 
+## Local Maintenance Location
+
+This repository is maintained as a standalone workspace, separate from the
+OneCode core project.
+
+Local path:
+
+```text
+/Users/aidi/大字典/safe-agent-skills
+```
+
+Do not continue development from the old nested path:
+
+```text
+/Users/aidi/大字典/one code/onecode-skill-sanitizer
+```
+
+That nested copy has been removed to avoid polluting the OneCode core project.
+Future skill catalog, router, documentation, verification, commit, and release
+work should happen from this standalone folder. See
+[Workspace Boundary](docs/workspace-boundary.md).
+
 ## Recommended Entry: Install One Router Skill
 
 The recommended user-facing entry is `safe-agent-router`, published inside
@@ -260,6 +282,7 @@ onecode skills approve pdf
 
 ## Project Docs
 
+- [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
 - [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)
 - [Router Skill Primary Entry](docs/router-skill-primary-entry.md)
