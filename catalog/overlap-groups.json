@@ -1,0 +1,99 @@
+{
+  "schema_version": 1,
+  "group_count": 7,
+  "groups": [
+    {
+      "id": "ai-routing-budget-context",
+      "name": "AI Routing, Budget, and Context",
+      "intent": "Avoid selecting every AI runtime planning skill unless the task spans routing, token cost, protocol shape, and context compression.",
+      "primary_skill": "ai-model-route-fallback-review",
+      "adjacent_skills": [
+        "ai-token-rate-budget-guard",
+        "ai-context-compression-budget-plan",
+        "headroom-context-compression",
+        "ai-opensquilla-token-routing-pattern"
+      ],
+      "use_before": [
+        "ai-tool-schema-protocol-check"
+      ],
+      "use_after": []
+    },
+    {
+      "id": "rag-retrieval-boundaries",
+      "name": "RAG Retrieval Boundaries",
+      "intent": "Separate end-to-end RAG workflow selection from storage, pipeline, and namespace boundary checks.",
+      "primary_skill": "ai-llamaindex-rag-knowledge-workflow",
+      "adjacent_skills": [
+        "data-haystack-rag-pipeline",
+        "data-qdrant-vector-retrieval",
+        "data-rag-namespace-boundary-check"
+      ],
+      "use_before": [],
+      "use_after": []
+    },
+    {
+      "id": "source-fact-evidence",
+      "name": "Source, Fact, and Evidence",
+      "intent": "Start with source verification, then add lineage, citation maps, or contradiction review only when the output needs those extra guarantees.",
+      "primary_skill": "research-source-check",
+      "adjacent_skills": [
+        "research-source-lineage-trace",
+        "research-citation-evidence-map",
+        "content-fact-contradiction-review"
+      ],
+      "use_before": [],
+      "use_after": []
+    },
+    {
+      "id": "table-numeric-evidence",
+      "name": "Table and Numeric Evidence",
+      "intent": "Use calculation verification as the default numeric guardrail and add analysis or office reconciliation only for richer document workflows.",
+      "primary_skill": "data-table-calculation-verify",
+      "adjacent_skills": [
+        "data-table-analysis",
+        "office-table-source-reconciliation",
+        "office-spreadsheet-cleanup"
+      ],
+      "use_before": [],
+      "use_after": []
+    },
+    {
+      "id": "ui-quality-review",
+      "name": "UI Quality Review",
+      "intent": "Use the general UI review skill first, then add system consistency, accessibility, or responsive viewport checks for targeted UI risks.",
+      "primary_skill": "design-ui-review",
+      "adjacent_skills": [
+        "design-system-consistency",
+        "design-accessibility-check",
+        "design-responsive-viewport-check"
+      ],
+      "use_before": [],
+      "use_after": []
+    },
+    {
+      "id": "browser-execution-verification",
+      "name": "Browser Execution Verification",
+      "intent": "Prefer Playwright automation for reproducible browser verification and add browser check or web-task guidance for narrower execution reviews.",
+      "primary_skill": "execution-playwright-browser-automation",
+      "adjacent_skills": [
+        "execution-browser-check",
+        "execution-browser-use-web-task"
+      ],
+      "use_before": [],
+      "use_after": []
+    },
+    {
+      "id": "public-claims-compliance",
+      "name": "Public Claims Compliance",
+      "intent": "Use claims compliance filtering before publication and add legal, terms, or freshness checks when the claim has policy or time sensitivity.",
+      "primary_skill": "content-claims-compliance-filter",
+      "adjacent_skills": [
+        "compliance-public-claim-risk-register",
+        "compliance-terms-review",
+        "content-freshness-expiry-review"
+      ],
+      "use_before": [],
+      "use_after": []
+    }
+  ]
+}

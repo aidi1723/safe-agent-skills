@@ -5,6 +5,8 @@
 The current public-safe catalog contains 105 sanitized skills across all
 top-level taxonomy categories, including 33 community project reference skills
 and 30 local guardrail, governance, safety operations, code quality, AI runtime, and document evidence seed skills.
+It also records 7 trusted-only overlap groups for router and operator skill
+selection hints.
 
 Verification command:
 
@@ -24,12 +26,14 @@ tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
 maintain-check: ok
+overlap groups: 7
 ```
 
 Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Skill Overlap Groups](skill-overlap-groups.md)
 - [Document Evidence Guardrails](updates/2026-06-05-document-evidence-guardrails.md)
 - [AI Runtime Guardrails](updates/2026-06-05-ai-runtime-guardrails.md)
 - [Code Quality Guardrails](updates/2026-06-05-code-quality-guardrails.md)

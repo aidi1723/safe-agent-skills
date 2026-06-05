@@ -115,6 +115,8 @@ Confirm:
 - task-pack output contains only trusted skills unless review mode is explicitly
   requested
 - every bundle in `bundles/index.json` references existing trusted skills
+- every overlap group in `catalog/overlap-groups.json`, when present,
+  references existing trusted skills
 - `maintain-check` reports `status: ok`
 - `schema-check` reports `status: ok`
 - scenario router website sample selects `website-build-launch`

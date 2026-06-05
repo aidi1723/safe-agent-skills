@@ -170,4 +170,6 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer.cli maintain-check \
 
 `maintain-check` combines registry verification with bundle validation. It
 fails if a trusted bundle references a missing, quarantined, review-required,
-rejected, or disabled skill.
+rejected, or disabled skill. When `overlap-groups.json` exists under the
+registry, it also validates that every overlap-group reference points to an
+existing trusted skill.

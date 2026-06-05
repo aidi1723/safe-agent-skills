@@ -83,6 +83,7 @@ Current public baseline:
 - 105 total skills
 - 100 trusted skills
 - 9 trusted scenario bundles
+- 7 trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
 - 0 tampered skills
@@ -92,10 +93,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Document Evidence Guardrails](docs/updates/2026-06-05-document-evidence-guardrails.md).
+[Skill Overlap Groups](docs/updates/2026-06-05-skill-overlap-groups.md).
 
 Previous update:
-[Verification Hardening](docs/updates/2026-06-05-verification-hardening.md).
+[Document Evidence Guardrails](docs/updates/2026-06-05-document-evidence-guardrails.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).
@@ -251,6 +252,11 @@ Scenario bundles in `bundles/` combine multiple trusted skills for common
 workflows such as website launch, code review hardening, document-to-knowledge
 base, RAG agent design, data analysis, open source release, and commerce
 listing growth.
+
+Functional overlap between trusted skills is recorded in
+[`catalog/overlap-groups.json`](catalog/overlap-groups.json) and explained in
+[Skill Overlap Groups](docs/skill-overlap-groups.md). This is a selection hint
+layer for routers and operators, not a deletion or merge list.
 
 These skills and bundles are agent-compatible by design. Claude, Codex,
 OpenClaw, Cursor, local agents, MCP hosts, CI workers, and custom agent

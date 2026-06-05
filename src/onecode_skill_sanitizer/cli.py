@@ -1001,7 +1001,166 @@ def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     }
 
 
-def maintain_check(registry_dir: Path, bundles_path: Path | None = None) -> dict:
+def load_overlap_groups(overlap_path: Path) -> dict:
+    if not overlap_path.exists():
+        raise SystemExit(f"missing overlap groups: {overlap_path}")
+    payload = json.loads(overlap_path.read_text(encoding="utf-8"))
+    if not isinstance(payload.get("groups"), list):
+        raise SystemExit(f"invalid overlap groups: {overlap_path}")
+    return payload
+
+
+def validate_overlap_groups(registry_dir: Path, overlap_path: Path) -> dict:
+    issues = []
+    overlap_index = load_overlap_groups(overlap_path)
+    index = load_registry_index(registry_dir)
+    statuses = {entry["name"]: entry.get("status") for entry in index["skills"]}
+    groups = overlap_index["groups"]
+    declared_count = overlap_index.get("group_count")
+    if overlap_index.get("schema_version") != 1:
+        issues.append(
+            {
+                "id": "overlap-invalid-version",
+                "severity": "high",
+                "path": overlap_path.as_posix(),
+                "expected": 1,
+                "actual": overlap_index.get("schema_version"),
+            }
+        )
+    if declared_count is not None and declared_count != len(groups):
+        issues.append(
+            {
+                "id": "overlap-count-mismatch",
+                "severity": "medium",
+                "path": overlap_path.as_posix(),
+                "expected": len(groups),
+                "actual": declared_count,
+            }
+        )
+
+    seen_group_ids = set()
+    for group_index, group in enumerate(groups):
+        group_id = group.get("id", f"group-{group_index}")
+        group_path = f"{overlap_path.as_posix()}#/groups/{group_index}"
+        if group_id in seen_group_ids:
+            issues.append(
+                {
+                    "id": "overlap-duplicate-group",
+                    "severity": "high",
+                    "group": group_id,
+                    "path": group_path,
+                }
+            )
+        seen_group_ids.add(group_id)
+
+        primary_skill = group.get("primary_skill")
+        if not isinstance(primary_skill, str) or not primary_skill:
+            issues.append(
+                {
+                    "id": "overlap-missing-primary-skill",
+                    "severity": "high",
+                    "group": group_id,
+                    "path": group_path,
+                }
+            )
+        else:
+            validate_overlap_skill_reference(issues, statuses, group_id, primary_skill, "primary_skill")
+
+        group_skill_refs = []
+        for field in ["adjacent_skills", "use_before", "use_after"]:
+            values = group.get(field, [])
+            if not isinstance(values, list):
+                issues.append(
+                    {
+                        "id": "overlap-invalid-skill-list",
+                        "severity": "high",
+                        "group": group_id,
+                        "field": field,
+                        "path": group_path,
+                    }
+                )
+                continue
+            for skill_name in values:
+                if not isinstance(skill_name, str) or not skill_name:
+                    issues.append(
+                        {
+                            "id": "overlap-invalid-skill-name",
+                            "severity": "high",
+                            "group": group_id,
+                            "field": field,
+                            "path": group_path,
+                        }
+                    )
+                    continue
+                group_skill_refs.append((field, skill_name))
+                validate_overlap_skill_reference(issues, statuses, group_id, skill_name, field)
+
+        seen_refs = set()
+        if isinstance(primary_skill, str) and primary_skill:
+            seen_refs.add(primary_skill)
+        for field, skill_name in group_skill_refs:
+            if skill_name in seen_refs:
+                issues.append(
+                    {
+                        "id": "overlap-duplicate-skill",
+                        "severity": "medium",
+                        "group": group_id,
+                        "field": field,
+                        "skill": skill_name,
+                    }
+                )
+            seen_refs.add(skill_name)
+
+    return {
+        "schema_version": 1,
+        "group_count": len(groups),
+        "issues": issues,
+    }
+
+
+def validate_overlap_skill_reference(
+    issues: list[dict],
+    statuses: dict[str, str | None],
+    group_id: str,
+    skill_name: str,
+    field: str,
+) -> None:
+    status = statuses.get(skill_name)
+    if status is None:
+        issues.append(
+            {
+                "id": "overlap-missing-skill",
+                "severity": "high",
+                "group": group_id,
+                "field": field,
+                "skill": skill_name,
+            }
+        )
+    elif status != "trusted":
+        issues.append(
+            {
+                "id": "overlap-non-trusted-skill",
+                "severity": "high",
+                "group": group_id,
+                "field": field,
+                "skill": skill_name,
+                "status": status,
+            }
+        )
+
+
+def resolve_overlap_groups_path(registry_dir: Path, overlap_path: Path | None) -> Path | None:
+    if overlap_path is not None:
+        return overlap_path
+    default_path = registry_dir / "overlap-groups.json"
+    return default_path if default_path.exists() else None
+
+
+def maintain_check(
+    registry_dir: Path,
+    bundles_path: Path | None = None,
+    overlap_groups_path: Path | None = None,
+) -> dict:
     registry_verification = verify_registry(registry_dir)
     issues = list(registry_verification["issues"])
     issues.extend(registry_index_staleness(registry_dir))
@@ -1009,18 +1168,28 @@ def maintain_check(registry_dir: Path, bundles_path: Path | None = None) -> dict
     if bundles_path is not None:
         bundle_validation = validate_bundles(registry_dir, bundles_path)
         issues.extend(bundle_validation["issues"])
+    overlap_validation = None
+    resolved_overlap_path = resolve_overlap_groups_path(registry_dir, overlap_groups_path)
+    if resolved_overlap_path is not None:
+        overlap_validation = validate_overlap_groups(registry_dir, resolved_overlap_path)
+        issues.extend(overlap_validation["issues"])
     return {
         "schema_version": 1,
         "generated_at": utc_now(),
         "status": "failed" if issues else "ok",
         "registry_verification": registry_verification,
         "bundle_validation": bundle_validation,
+        "overlap_validation": overlap_validation,
         "issues": issues,
     }
 
 
 def maintain_check_command(args: argparse.Namespace) -> int:
-    result = maintain_check(Path(args.registry), Path(args.bundles) if args.bundles else None)
+    result = maintain_check(
+        Path(args.registry),
+        Path(args.bundles) if args.bundles else None,
+        Path(args.overlap_groups) if args.overlap_groups else None,
+    )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
 
@@ -1183,6 +1352,7 @@ def build_parser() -> argparse.ArgumentParser:
     maintain_check_parser = subparsers.add_parser("maintain-check")
     maintain_check_parser.add_argument("--registry", required=True)
     maintain_check_parser.add_argument("--bundles")
+    maintain_check_parser.add_argument("--overlap-groups")
     maintain_check_parser.set_defaults(func=maintain_check_command)
 
     schema_check_parser = subparsers.add_parser("schema-check")

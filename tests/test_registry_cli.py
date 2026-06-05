@@ -808,6 +808,81 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["status"], "failed")
             self.assertEqual(result["issues"][0]["id"], "registry-index-stale")
 
+    def test_maintain_check_fails_when_overlap_group_references_non_trusted_skill(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            overlap_path = root / "overlap-groups.json"
+            trusted = incoming / "research-source-check"
+            review_required = incoming / "research-connector-review"
+            trusted.mkdir(parents=True)
+            review_required.mkdir(parents=True)
+            (trusted / "SKILL.md").write_text(
+                "Use this workflow for source verification.",
+                encoding="utf-8",
+            )
+            (review_required / "SKILL.md").write_text(
+                "Use API_KEY=abc1234567890SECRET only in review fixtures.",
+                encoding="utf-8",
+            )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/research",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/research",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["approve", str(registry / "research" / "research-source-check")])
+            overlap_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "group_count": 1,
+                        "groups": [
+                            {
+                                "id": "research-source-overlap",
+                                "name": "Research Source Overlap",
+                                "intent": "Keep source verification skills from being over-selected.",
+                                "primary_skill": "research-source-check",
+                                "adjacent_skills": ["research-connector-review"],
+                                "use_before": [],
+                                "use_after": [],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            check_out = io.StringIO()
+            with contextlib.redirect_stdout(check_out):
+                check_code = main(
+                    [
+                        "maintain-check",
+                        "--registry",
+                        str(registry),
+                        "--overlap-groups",
+                        str(overlap_path),
+                    ]
+                )
+
+            self.assertEqual(check_code, 2)
+            result = json.loads(check_out.getvalue())
+            self.assertEqual(result["status"], "failed")
+            self.assertEqual(result["issues"][0]["id"], "overlap-non-trusted-skill")
+
     def test_schema_check_validates_real_catalog(self):
         schema_out = io.StringIO()
         with contextlib.redirect_stdout(schema_out):

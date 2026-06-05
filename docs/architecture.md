@@ -234,7 +234,8 @@ The local MVP exposes:
   host agent as JSON or Markdown; can include matching trusted scenario bundles
 - `verify`: check sanitized hashes and provenance across the registry
 - `maintain-check`: verify the registry and ensure trusted bundles reference
-  only existing trusted skills
+  only existing trusted skills; also validates trusted-only overlap groups
+  when `overlap-groups.json` exists under the registry
 - `reindex`: rebuild `index.json` from manifests
 - `approve`, `reject`, `disable`: update review state and refresh the index
 
