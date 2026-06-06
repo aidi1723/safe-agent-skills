@@ -184,7 +184,7 @@ def build_execution_plan(bundle: dict, selected_skills: list[dict]) -> list[dict
     selected_by_name = {skill["name"]: skill for skill in selected_skills}
     ordered_names = [name for name in bundle.get("execution_order", []) if name in selected_by_name]
     for skill in selected_skills:
-        if skill["name"] not in ordered_names:
+        if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
             ordered_names.append(skill["name"])
     return [
         {
@@ -262,7 +262,7 @@ def route_scenario_task(
                 if name in selected_by_name and name not in ordered_names:
                     ordered_names.append(name)
     for skill in selected_skills:
-        if skill["name"] not in ordered_names:
+        if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
             ordered_names.append(skill["name"])
     routed_skills = [selected_by_name[name] for name in ordered_names[:max_skills]]
     coverage = build_capability_coverage(selected_bundle, {skill["name"] for skill in routed_skills}) if selected_bundle else []
@@ -281,4 +281,250 @@ def route_scenario_task(
         "coverage": coverage,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
+    }
+
+
+INVARIANT_CAPABILITY_SIGNALS = [
+    {
+        "capability": "secret_redaction",
+        "signals": ["secret", "api key", "token", "password", "credential", "密钥", "秘钥", "凭证", "密码", "泄露"],
+    },
+    {
+        "capability": "claims_compliance",
+        "signals": ["claim", "compliance", "advertising", "ad law", "public copy", "合规", "广告法", "极限词", "公开文案"],
+    },
+    {
+        "capability": "responsive_check",
+        "signals": ["responsive", "viewport", "mobile", "8px", "layout", "响应式", "移动端", "视口", "前端", "ui"],
+    },
+    {
+        "capability": "source_check",
+        "signals": ["source", "citation", "fact", "evidence", "来源", "引用", "事实", "证据"],
+    },
+    {
+        "capability": "browser_verification",
+        "signals": ["browser", "playwright", "screenshot", "render", "浏览器", "截图", "渲染"],
+    },
+]
+
+
+CAPABILITY_SKILL_PREFERENCES = {
+    "secret_redaction": ["security-secret-context-redaction", "security-llm-guard-io-scanning"],
+    "claims_compliance": ["content-claims-compliance-filter", "compliance-public-claim-risk-register"],
+    "responsive_check": ["design-responsive-viewport-check", "design-accessibility-check"],
+    "source_check": ["research-source-check", "research-citation-evidence-map"],
+    "browser_verification": ["execution-playwright-browser-automation", "execution-browser-check"],
+}
+
+
+SKILL_STAGE_HINTS = [
+    ("preflight", ["security-", "compliance-", "research-source-check", "content-claims-compliance-filter"]),
+    ("source", ["research-", "data-", "office-"]),
+    ("planning", ["business-", "ai-", "commerce-"]),
+    ("review", ["design-", "content-", "code-"]),
+    ("execution", ["execution-", "engineering-"]),
+    ("verification", ["test", "check", "verify", "audit", "review"]),
+]
+
+
+def parse_invariant_capabilities(invariants: str | list[str] | None) -> list[str]:
+    if invariants is None:
+        return []
+    text = " ".join(invariants) if isinstance(invariants, list) else str(invariants)
+    normalized = normalize_task_text(text)
+    capabilities = []
+    for rule in INVARIANT_CAPABILITY_SIGNALS:
+        if any(normalize_task_text(signal) in normalized for signal in rule["signals"]):
+            capabilities.append(rule["capability"])
+    return capabilities
+
+
+def capability_skill_names(capabilities: list[str], trusted_skill_names: set[str]) -> list[str]:
+    names = []
+    for capability in capabilities:
+        for skill_name in CAPABILITY_SKILL_PREFERENCES.get(capability, []):
+            if skill_name in trusted_skill_names and skill_name not in names:
+                names.append(skill_name)
+                break
+    return names
+
+
+def select_trusted_bundle_for_profile(bundles_index: dict, profile: dict, trusted_skill_names: set[str]) -> dict:
+    trusted_bundles = [
+        bundle
+        for bundle in bundles_index.get("bundles", [])
+        if bundle.get("status") == "trusted" and set(bundle.get("skills", [])).issubset(trusted_skill_names)
+    ]
+    selected_bundle = max(
+        trusted_bundles,
+        key=lambda bundle: (score_bundle_for_profile(bundle, profile), bundle.get("id", "")),
+        default={},
+    )
+    if selected_bundle and score_bundle_for_profile(selected_bundle, profile) <= 0:
+        return {}
+    return selected_bundle
+
+
+def selected_bundle_required_skill_names(bundle: dict, selected_by_name: dict[str, dict]) -> set[str]:
+    required = set()
+    for capability in bundle.get("required_capabilities", []):
+        if not capability.get("required", True):
+            continue
+        selected = next((name for name in capability.get("preferred_skills", []) if name in selected_by_name), "")
+        if selected:
+            required.add(selected)
+    return required
+
+
+def prune_overlap_skill_names(ordered_names: list[str], overlap_groups: dict | None, required_names: set[str]) -> tuple[list[str], list[str]]:
+    if not overlap_groups:
+        return ordered_names, []
+    keep = list(ordered_names)
+    pruned = []
+    for group in overlap_groups.get("groups", []):
+        primary = group.get("primary_skill", "")
+        adjacent = set(group.get("adjacent_skills", []))
+        present_adjacent = [name for name in keep if name in adjacent]
+        if primary not in keep or not present_adjacent:
+            continue
+        for name in present_adjacent:
+            if name in required_names:
+                continue
+            keep.remove(name)
+            pruned.append(name)
+    return keep, pruned
+
+
+def skill_stage(skill_name: str) -> str:
+    for stage, markers in SKILL_STAGE_HINTS:
+        if any(marker in skill_name for marker in markers):
+            return stage
+    return "review"
+
+
+def build_execution_graph(skills: list[dict]) -> dict:
+    nodes = [
+        {
+            "id": f"n{index}",
+            "skill": skill["name"],
+            "stage": skill_stage(skill["name"]),
+        }
+        for index, skill in enumerate(skills, start=1)
+    ]
+    edges = [
+        {
+            "from": nodes[index]["id"],
+            "to": nodes[index + 1]["id"],
+        }
+        for index in range(len(nodes) - 1)
+    ]
+    return {"schema_version": 1, "acyclic": True, "nodes": nodes, "edges": edges}
+
+
+def sort_mesh_skill_names(ordered_names: list[str]) -> list[str]:
+    stage_rank = {"preflight": 0, "source": 1, "planning": 2, "review": 3, "execution": 4, "verification": 5}
+    return [
+        name
+        for _, name in sorted(
+            enumerate(ordered_names),
+            key=lambda item: (stage_rank.get(skill_stage(item[1]), 3), item[0]),
+        )
+    ]
+
+
+def route_mesh_task(
+    task: str,
+    invariants: list[str] | str | None,
+    selected_skills: list[dict],
+    bundles_index: dict,
+    trusted_skill_names: set[str],
+    overlap_groups: dict | None,
+    max_skills: int,
+    strategy: str = "balanced",
+) -> dict:
+    profile = build_task_profile(task)
+    invariant_capabilities = parse_invariant_capabilities(invariants)
+    selected_bundle = select_trusted_bundle_for_profile(bundles_index, profile, trusted_skill_names)
+    selected_by_name = {skill["name"]: skill for skill in selected_skills}
+
+    ordered_names: list[str] = []
+    if selected_bundle:
+        for name in selected_bundle.get("execution_order", selected_bundle.get("skills", [])):
+            if name in selected_by_name and name not in ordered_names:
+                ordered_names.append(name)
+        for capability in selected_bundle.get("required_capabilities", []):
+            for name in capability.get("preferred_skills", []):
+                if name in selected_by_name and name not in ordered_names:
+                    ordered_names.append(name)
+
+    for name in capability_skill_names(invariant_capabilities, trusted_skill_names):
+        if name in selected_by_name and name not in ordered_names:
+            ordered_names.append(name)
+
+    for skill in selected_skills:
+        if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
+            ordered_names.append(skill["name"])
+
+    required_names = set(capability_skill_names(invariant_capabilities, trusted_skill_names))
+    required_names.update(selected_bundle_required_skill_names(selected_bundle, selected_by_name))
+    ordered_names, pruned_names = prune_overlap_skill_names(ordered_names, overlap_groups, required_names)
+    for skill in selected_skills:
+        if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
+            ordered_names.append(skill["name"])
+    sorted_names = sort_mesh_skill_names(ordered_names)
+    strategy_limits = {"fast": min(max_skills, 5), "balanced": max_skills, "deep": max(max_skills, 10)}
+    required_sorted_names = [name for name in sorted_names if name in required_names]
+    optional_sorted_names = [name for name in sorted_names if name not in required_names]
+    limit = max(strategy_limits.get(strategy, max_skills), len(required_sorted_names))
+    final_names = required_sorted_names + optional_sorted_names[: max(0, limit - len(required_sorted_names))]
+    routed_skills = [selected_by_name[name] for name in final_names]
+    selected_names = {skill["name"] for skill in routed_skills}
+    coverage = build_capability_coverage(selected_bundle, selected_names) if selected_bundle else []
+    for capability in invariant_capabilities:
+        preferred = CAPABILITY_SKILL_PREFERENCES.get(capability, [])
+        selected = next((name for name in preferred if name in selected_names), "")
+        coverage.append(
+            {
+                "capability": capability,
+                "required": True,
+                "status": "covered" if selected else "missing",
+                "skill": selected,
+                "preferred_skills": preferred,
+            }
+        )
+    execution_plan = [
+        {
+            "order": index,
+            "skill": skill["name"],
+            "instruction": f"Apply `{skill['name']}` during the `{skill_stage(skill['name'])}` stage, then record evidence and unresolved assumptions.",
+        }
+        for index, skill in enumerate(routed_skills, start=1)
+    ]
+    explanations = build_selection_explanations(selected_bundle, routed_skills, coverage) if selected_bundle else []
+    explanations.append(
+        {
+            "type": "router",
+            "name": "smart",
+            "role": "mesh",
+            "confidence": 0.8,
+            "matched_capabilities": invariant_capabilities,
+            "selection_reason": "Selected skills from task profile, trusted scenario bundle, invariants, and overlap-group pruning.",
+        }
+    )
+    return {
+        "router": {"mode": "deterministic_mesh_router", "version": ROUTER_VERSION, "strategy": strategy},
+        "task_profile": profile,
+        "selected_scenario": {
+            "id": selected_bundle.get("id", ""),
+            "name": selected_bundle.get("name", selected_bundle.get("id", "")),
+            "match_score": score_bundle_for_profile(selected_bundle, profile) if selected_bundle else 0,
+        },
+        "skills": routed_skills,
+        "bundles": [selected_bundle] if selected_bundle else [],
+        "coverage": coverage,
+        "execution_plan": execution_plan,
+        "selection_explanations": explanations,
+        "execution_graph": build_execution_graph(routed_skills),
+        "invariant_capabilities": invariant_capabilities,
+        "pruned_skills": pruned_names,
     }

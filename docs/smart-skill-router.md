@@ -1,0 +1,131 @@
+# Smart Skill Router
+
+`smart` is the simple default entry for agents and operators who do not want to
+manually choose, combine, or order skills.
+
+It builds a verified task pack from:
+
+- the trusted skill catalog
+- trusted scenario bundles
+- task intent and capability matching
+- optional natural-language invariants
+- overlap-group pruning
+- a deterministic mesh execution graph
+
+It does not call an external model, install skills, execute tools, or grant
+runtime permissions.
+
+## Design References
+
+`smart` adopts the practical shape of modern open tool orchestration without
+copying their runtime trust model:
+
+- AnyTool-style routing: retrieve and trim the relevant tools before exposing a
+  compact tool pack to an agent (`https://github.com/HKUDS/AnyTool`).
+- MCP aggregator-style simplicity: keep one operator-facing entry while
+  hiding server or skill fragmentation behind a unified interface
+  (`https://github.com/punkpeye/awesome-mcp-servers`,
+  `https://github.com/1mcp-app/agent`,
+  `https://github.com/askbudi/roundtable`).
+
+Unlike open-ended MCP aggregation, `smart` only routes skills already present
+in this repository's verified `trusted` catalog. External MCP servers or
+community tools must still pass provenance capture, sanitization, approval,
+and registry verification before selection.
+
+## Quick Start
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "build a landing page and prepare launch checks" \
+  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" \
+  --max-skills 10
+```
+
+Defaults:
+
+```text
+registry: catalog
+bundles: bundles/index.json
+strategy: balanced
+max skills: 8
+format: json
+```
+
+`max-skills` is a target cap. If the selected scenario and invariants require
+more skills to cover mandatory gates, `smart` keeps those required skills
+instead of dropping a safety, verification, or release capability.
+
+Markdown output:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "review this package before publishing" \
+  --strategy deep \
+  --format markdown
+```
+
+## Strategies
+
+| Strategy | Behavior |
+| --- | --- |
+| `fast` | Keeps the selected pack small for low-risk tasks. |
+| `balanced` | Default quality and cost balance. |
+| `deep` | Allows a larger pack for public, risky, or high-verification work. |
+
+## Invariants
+
+Use `--invariants` to describe hard boundaries in natural language:
+
+```bash
+--invariants "绝对不泄露 API 密钥"
+--invariants "公开文案必须合规"
+--invariants "前端必须做响应式验证"
+```
+
+The current deterministic mapper recognizes these capability families:
+
+- `secret_redaction`
+- `claims_compliance`
+- `responsive_check`
+- `source_check`
+- `browser_verification`
+
+Each capability maps to existing trusted skills. If no trusted skill can cover
+an invariant, the output marks the capability as `missing`.
+
+## Output
+
+`smart` emits the normal task-pack fields plus:
+
+- `router.mode`: `deterministic_mesh_router`
+- `router.strategy`
+- `invariant_capabilities`
+- `coverage`
+- `execution_plan`
+- `execution_graph`
+- `selection_explanations`
+- `pruned_skills`
+
+The execution graph is a simple DAG:
+
+```text
+preflight -> source -> planning -> review -> execution -> verification
+```
+
+The graph is guidance for the host agent. It does not execute anything by
+itself.
+
+## When To Use
+
+Use `smart` as the default command for normal tasks:
+
+- website, landing page, dashboard, or launch checks
+- code review or release readiness
+- document-to-knowledge-base conversion
+- RAG planning
+- data analysis
+- commerce listing or public content work
+
+Use `task-pack --router scenario` when you need the older scenario-only output
+shape for a host integration that has not adopted mesh fields yet.

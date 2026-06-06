@@ -1032,6 +1032,174 @@ class RegistryCliTest(unittest.TestCase):
             self.assertTrue(task_pack["selection_explanations"])
             self.assertIn("Execution plan:", task_pack["agent_instructions"])
 
+    def test_smart_command_outputs_mesh_router_pack_with_invariant_skills(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            bundles_dir = root / "bundles"
+            bundles_dir.mkdir()
+            skill_names = [
+                ("business-requirements-brief", "business", "Use when defining requirements."),
+                ("design-ui-review", "design", "Use when reviewing website UI."),
+                ("design-responsive-viewport-check", "design", "Use when checking responsive viewports."),
+                ("content-seo-brief", "content", "Use when preparing SEO copy."),
+                ("content-claims-compliance-filter", "content", "Use when checking public claims."),
+                ("security-secret-context-redaction", "security", "Use when redacting secrets from agent context."),
+                ("execution-browser-check", "execution", "Use when checking browser output."),
+            ]
+            for name, category, description in skill_names:
+                skill = incoming / name
+                skill.mkdir(parents=True)
+                (skill / "SKILL.md").write_text(
+                    "\n".join(
+                        [
+                            "---",
+                            f"name: {name}",
+                            f"description: {description}",
+                            "---",
+                            f"# {name}",
+                            "",
+                            "## Safe Workflow",
+                            "1. Apply the bounded method.",
+                            "",
+                            "## Expected Output",
+                            "- selected evidence",
+                            "",
+                            "## Verifier Expectations",
+                            "- verification check",
+                        ]
+                    ),
+                    encoding="utf-8",
+                )
+                (skill / "skill.json").write_text(
+                    json.dumps(
+                        {
+                            "taxonomy": {
+                                "category": category,
+                                "subcategory": f"{category}.test",
+                                "task_intent": description,
+                                "artifact_type": "workflow",
+                                "collection_priority": "P1",
+                            }
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/smart-skills",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/smart-skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            for name, category, _ in skill_names:
+                main(["approve", str(registry / category / name)])
+            (bundles_dir / "index.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "bundle_count": 1,
+                        "bundles": [
+                            {
+                                "id": "website-build-launch",
+                                "name": "Website Build Launch",
+                                "scenario": "Build or polish a website, landing page, dashboard, or product page.",
+                                "status": "trusted",
+                                "task_signals": ["website", "landing page", "launch"],
+                                "skills": [
+                                    "business-requirements-brief",
+                                    "design-ui-review",
+                                    "content-seo-brief",
+                                    "execution-browser-check",
+                                ],
+                                "required_capabilities": [
+                                    {
+                                        "id": "requirements",
+                                        "required": True,
+                                        "preferred_skills": ["business-requirements-brief"],
+                                    },
+                                    {
+                                        "id": "ui_review",
+                                        "required": True,
+                                        "preferred_skills": ["design-ui-review"],
+                                    },
+                                    {
+                                        "id": "seo_copy",
+                                        "required": True,
+                                        "preferred_skills": ["content-seo-brief"],
+                                    },
+                                ],
+                                "execution_order": [
+                                    "business-requirements-brief",
+                                    "design-ui-review",
+                                    "content-seo-brief",
+                                    "execution-browser-check",
+                                ],
+                                "expected_output": ["launch checklist"],
+                                "safety_boundary": "Skills provide method only.",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (registry / "overlap-groups.json").write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "group_count": 1,
+                        "groups": [
+                            {
+                                "id": "ui-quality-review",
+                                "name": "UI Quality Review",
+                                "intent": "Prefer primary UI review unless responsive checks are required.",
+                                "primary_skill": "design-ui-review",
+                                "adjacent_skills": ["design-responsive-viewport-check"],
+                                "use_before": [],
+                                "use_after": [],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            task_pack_out = io.StringIO()
+            with contextlib.redirect_stdout(task_pack_out):
+                task_pack_code = main(
+                    [
+                        "smart",
+                        "build a landing page and prepare launch checks",
+                        "--registry",
+                        str(registry),
+                        "--bundles",
+                        str(bundles_dir / "index.json"),
+                        "--invariants",
+                        "不能泄露密钥；公开文案必须合规；必须响应式验证",
+                    ]
+                )
+
+            self.assertEqual(task_pack_code, 0)
+            task_pack = json.loads(task_pack_out.getvalue())
+            names = [skill["name"] for skill in task_pack["skills"]]
+            self.assertEqual(task_pack["router"]["mode"], "deterministic_mesh_router")
+            self.assertIn("security-secret-context-redaction", names)
+            self.assertIn("content-claims-compliance-filter", names)
+            self.assertIn("design-responsive-viewport-check", names)
+            self.assertTrue(task_pack["execution_graph"]["edges"])
+
     def test_task_pack_simple_router_remains_backward_compatible(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -1121,6 +1289,38 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("design-ui-review", [skill["name"] for skill in task_pack["skills"]])
         self.assertIn("execution-publish-check", [skill["name"] for skill in task_pack["skills"]])
         self.assertIn("ui_review", [item["capability"] for item in task_pack["coverage"]])
+
+    def test_real_catalog_smart_router_covers_task_and_invariant_skills(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "smart",
+                    "build a landing page and prepare launch checks",
+                    "--invariants",
+                    "不能泄露密钥；公开文案必须合规；必须响应式验证",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        coverage = {item["capability"]: item for item in task_pack["coverage"]}
+        self.assertEqual(task_pack["router"]["mode"], "deterministic_mesh_router")
+        self.assertEqual(task_pack["selected_scenario"]["id"], "website-build-launch")
+        self.assertEqual(task_pack["bundles"][0]["id"], "website-build-launch")
+        self.assertIn("business-requirements-brief", names)
+        self.assertIn("design-ui-review", names)
+        self.assertIn("content-seo-brief", names)
+        self.assertIn("execution-browser-check", names)
+        self.assertIn("execution-publish-check", names)
+        self.assertIn("security-secret-context-redaction", names)
+        self.assertIn("content-claims-compliance-filter", names)
+        self.assertIn("design-responsive-viewport-check", names)
+        self.assertEqual(coverage["secret_redaction"]["status"], "covered")
+        self.assertEqual(coverage["claims_compliance"]["status"], "covered")
+        self.assertEqual(coverage["responsive_check"]["status"], "covered")
+        self.assertTrue(task_pack["execution_graph"]["acyclic"])
 
     def test_real_catalog_scenario_router_selects_rag_bundle(self):
         task_pack_out = io.StringIO()

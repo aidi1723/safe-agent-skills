@@ -8,7 +8,7 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
-from .router import route_scenario_task
+from .router import route_mesh_task, route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
 
@@ -510,18 +510,67 @@ def build_task_pack(
     bundles_path: Path | None = None,
     router_mode: str = "simple",
     max_skills: int | None = None,
+    invariants: list[str] | str | None = None,
+    strategy: str = "balanced",
+    overlap_groups_path: Path | None = None,
 ) -> dict:
     verification = verify_registry(registry_dir)
     if verification["status"] != "ok":
         raise SystemExit("registry verification failed; refusing to build task pack")
     task_taxonomy = classify_skill("task", task).to_json()
-    candidate_limit = max(top, max_skills or top) if router_mode == "scenario" else top
+    candidate_limit = max(top, max_skills or top) if router_mode in {"scenario", "mesh"} else top
     selected = select_skills_for_task(registry_dir, task_taxonomy, task, include_review_required)[:candidate_limit]
     skills = [load_skill_pack_item(registry_dir, entry) for entry in selected]
     bundles = []
     if include_bundles:
         bundle_index_path = bundles_path or Path("bundles/index.json")
         bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills)
+    if router_mode == "mesh":
+        bundle_index_path = bundles_path or Path("bundles/index.json")
+        bundles_index = load_bundles_index(bundle_index_path)
+        selected_by_name = {skill["name"]: skill for skill in skills}
+        for skill in load_trusted_skill_pack_items(registry_dir):
+            selected_by_name.setdefault(skill["name"], skill)
+        resolved_overlap_path = resolve_overlap_groups_path(registry_dir, overlap_groups_path)
+        overlap_groups = load_overlap_groups(resolved_overlap_path) if resolved_overlap_path is not None else None
+        routed = route_mesh_task(
+            task=task,
+            invariants=invariants,
+            selected_skills=list(selected_by_name.values()),
+            bundles_index=bundles_index,
+            trusted_skill_names=trusted_skill_names(registry_dir),
+            overlap_groups=overlap_groups,
+            max_skills=max_skills or top,
+            strategy=strategy,
+        )
+        skills = routed["skills"]
+        bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills) if include_bundles else []
+        if include_bundles and routed["selected_scenario"].get("id"):
+            scenario_id = routed["selected_scenario"]["id"]
+            bundles = [bundle for bundle in bundles if bundle["id"] == scenario_id] or bundles
+        task_pack = {
+            "schema_version": 1,
+            "generated_at": utc_now(),
+            "task": task,
+            "task_taxonomy": task_taxonomy,
+            "skill_count": len(skills),
+            "bundle_count": len(bundles),
+            "safety_boundary": "Only use trusted skills by default. Skills provide method and verification guidance, not runtime permissions.",
+            "registry_verification": verification,
+            "skills": skills,
+            "bundles": bundles,
+            "router": routed["router"],
+            "task_profile": routed["task_profile"],
+            "selected_scenario": routed["selected_scenario"],
+            "coverage": routed["coverage"],
+            "execution_plan": routed["execution_plan"],
+            "selection_explanations": routed["selection_explanations"],
+            "execution_graph": routed["execution_graph"],
+            "invariant_capabilities": routed["invariant_capabilities"],
+            "pruned_skills": routed["pruned_skills"],
+        }
+        task_pack["agent_instructions"] = build_agent_instructions(task, skills, bundles, task_pack)
+        return task_pack
     if router_mode == "scenario":
         bundle_index_path = bundles_path or Path("bundles/index.json")
         bundles_index = load_bundles_index(bundle_index_path)
@@ -608,9 +657,23 @@ def render_task_pack_markdown(task_pack: dict) -> str:
         )
         for item in task_pack.get("coverage", []):
             lines.append(f"- `{item['capability']}`: {item['status']} by `{item.get('skill') or 'missing'}`")
+        if task_pack.get("invariant_capabilities"):
+            lines.extend(["", "## Invariant Capabilities", ""])
+            for capability in task_pack["invariant_capabilities"]:
+                lines.append(f"- `{capability}`")
+        if task_pack.get("pruned_skills"):
+            lines.extend(["", "## Pruned Overlap Skills", ""])
+            for skill_name in task_pack["pruned_skills"]:
+                lines.append(f"- `{skill_name}`")
         lines.extend(["", "## Execution Plan", ""])
         for step in task_pack.get("execution_plan", []):
             lines.append(f"{step['order']}. `{step['skill']}` - {step['instruction']}")
+        if task_pack.get("execution_graph"):
+            lines.extend(["", "## Execution Graph", ""])
+            for node in task_pack["execution_graph"].get("nodes", []):
+                lines.append(f"- `{node['id']}` `{node['stage']}` -> `{node['skill']}`")
+            for edge in task_pack["execution_graph"].get("edges", []):
+                lines.append(f"- edge `{edge['from']}` -> `{edge['to']}`")
         lines.extend(["", "## Selection Explanations", ""])
         for item in task_pack.get("selection_explanations", []):
             lines.append(f"- `{item['name']}` ({item['type']}, {item['role']}): {item['selection_reason']}")
@@ -679,6 +742,30 @@ def task_pack_command(args: argparse.Namespace) -> int:
         Path(args.bundles) if args.bundles else None,
         args.router,
         args.max_skills,
+        args.invariants if getattr(args, "invariants", None) else None,
+        getattr(args, "strategy", "balanced"),
+        Path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
+    )
+    if args.format == "markdown":
+        print(render_task_pack_markdown(task_pack))
+    else:
+        print(json.dumps(task_pack, indent=2, sort_keys=True))
+    return 0
+
+
+def smart_command(args: argparse.Namespace) -> int:
+    task_pack = build_task_pack(
+        Path(args.registry),
+        args.task,
+        args.max_skills,
+        False,
+        True,
+        Path(args.bundles) if args.bundles else None,
+        "mesh",
+        args.max_skills,
+        args.invariants,
+        args.strategy,
+        Path(args.overlap_groups) if args.overlap_groups else None,
     )
     if args.format == "markdown":
         print(render_task_pack_markdown(task_pack))
@@ -1341,9 +1428,23 @@ def build_parser() -> argparse.ArgumentParser:
     task_pack_parser.add_argument("--include-review-required", action="store_true")
     task_pack_parser.add_argument("--include-bundles", action="store_true")
     task_pack_parser.add_argument("--bundles", default="bundles/index.json")
-    task_pack_parser.add_argument("--router", choices=["simple", "scenario"], default="simple")
+    task_pack_parser.add_argument("--router", choices=["simple", "scenario", "mesh"], default="simple")
     task_pack_parser.add_argument("--max-skills", type=int)
+    task_pack_parser.add_argument("--invariants", action="append")
+    task_pack_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
+    task_pack_parser.add_argument("--overlap-groups")
     task_pack_parser.set_defaults(func=task_pack_command)
+
+    smart_parser = subparsers.add_parser("smart")
+    smart_parser.add_argument("task")
+    smart_parser.add_argument("--registry", default="catalog")
+    smart_parser.add_argument("--bundles", default="bundles/index.json")
+    smart_parser.add_argument("--overlap-groups")
+    smart_parser.add_argument("--invariants", action="append")
+    smart_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
+    smart_parser.add_argument("--max-skills", type=int, default=8)
+    smart_parser.add_argument("--format", choices=["json", "markdown"], default="json")
+    smart_parser.set_defaults(func=smart_command)
 
     verify_parser = subparsers.add_parser("verify")
     verify_parser.add_argument("--registry", required=True)

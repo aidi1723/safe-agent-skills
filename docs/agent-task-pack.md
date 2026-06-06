@@ -52,6 +52,9 @@ The JSON output includes:
 - `coverage`: optional capability coverage records for the selected scenario
 - `execution_plan`: optional ordered skill execution guidance
 - `selection_explanations`: optional reasons for selected bundles and skills
+- `execution_graph`: optional mesh DAG when `smart` or `--router mesh` is used
+- `invariant_capabilities`: optional capability mapping from user invariants
+- `pruned_skills`: optional overlap-pruned skill names
 - `agent_instructions`: ready-to-paste runtime instructions for the host agent
 - `safety_boundary`: the fixed rule that skills provide method, not permissions
 
@@ -125,6 +128,36 @@ The router is deterministic. It does not call an external model, does not
 execute selected skills, and does not grant runtime permissions. It chooses a
 trusted scenario, maps required capabilities to trusted skills, and emits an
 ordered plan that the host agent can follow under its own permission policy.
+
+## Smart Router
+
+Use `smart` when the operator wants the simplest default entry. It enables the
+mesh router, trusted scenario bundles, overlap groups, and optional invariant
+mapping without requiring the operator to choose skills manually.
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "build a landing page and prepare launch checks" \
+  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" \
+  --format json
+```
+
+The same mesh router is available through `task-pack` for advanced integrations:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "build a landing page and prepare launch checks" \
+  --registry catalog \
+  --include-bundles \
+  --bundles bundles/index.json \
+  --router mesh \
+  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" \
+  --max-skills 8 \
+  --format json
+```
+
+Mesh output adds an execution graph, invariant capability coverage, and an
+overlap-pruned skill list. It remains deterministic and permission-neutral.
 
 ## Safety Boundary
 

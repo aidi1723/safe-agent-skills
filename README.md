@@ -93,10 +93,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Skill Overlap Groups](docs/updates/2026-06-05-skill-overlap-groups.md).
+[Smart Skill Router](docs/updates/2026-06-06-smart-skill-router.md).
 
 Previous update:
-[Document Evidence Guardrails](docs/updates/2026-06-05-document-evidence-guardrails.md).
+[Skill Overlap Groups](docs/updates/2026-06-05-skill-overlap-groups.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).
@@ -231,6 +231,20 @@ production permissions; those remain controlled by the host runtime.
 bundles, so a host Agent receives both individual skill guidance and a larger
 task playbook when the task matches a known workflow.
 
+For the simplest default entry, use `smart`. It automatically uses the trusted
+catalog, scenario bundles, overlap groups, invariant hints, and deterministic
+mesh router:
+
+```bash
+onecode-skill-sanitizer smart \
+  "build a landing page and prepare launch checks" \
+  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证"
+```
+
+`smart` returns the same task-pack structure plus a mesh execution graph,
+invariant capability coverage, and overlap-pruned skill list. See
+[Smart Skill Router](docs/smart-skill-router.md).
+
 For more precise task-aware composition, use the deterministic scenario router:
 
 ```bash
@@ -290,6 +304,7 @@ onecode skills approve pdf
 
 - [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
+- [Smart Skill Router](docs/smart-skill-router.md)
 - [Latest Domain Guardrails Update](docs/updates/2026-06-05-domain-guardrails.md)
 - [Latest Verification Hardening Update](docs/updates/2026-06-05-verification-hardening.md)
 - [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)

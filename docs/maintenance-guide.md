@@ -103,6 +103,10 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   --router scenario \
   --max-skills 8 \
   --format json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "build a landing page and prepare launch checks" \
+  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" \
+  --format json
 bash scripts/verify.sh
 ```
 
@@ -121,6 +125,7 @@ Confirm:
 - `schema-check` reports `status: ok`
 - scenario router website sample selects `website-build-launch`
 - scenario router RAG sample selects `rag-agent-knowledge-app`
+- smart router reports `deterministic_mesh_router`
 - batch docs exist for new entries
 
 ## Contribution Standard

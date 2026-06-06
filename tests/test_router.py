@@ -5,6 +5,8 @@ from onecode_skill_sanitizer.router import (
     build_execution_plan,
     build_selection_explanations,
     build_task_profile,
+    parse_invariant_capabilities,
+    route_mesh_task,
     route_scenario_task,
     score_bundle_for_profile,
 )
@@ -161,3 +163,87 @@ class RouterTest(unittest.TestCase):
                 "content-seo-brief",
             ],
         )
+
+    def test_parse_invariant_capabilities_maps_hard_boundaries(self):
+        capabilities = parse_invariant_capabilities(
+            "绝对不泄露 API 密钥；公开文案不能违反广告法；前端必须响应式验证"
+        )
+
+        self.assertIn("secret_redaction", capabilities)
+        self.assertIn("claims_compliance", capabilities)
+        self.assertIn("responsive_check", capabilities)
+
+    def test_route_mesh_task_adds_invariant_skills_and_prunes_overlap(self):
+        bundles_index = {
+            "bundles": [
+                {
+                    "id": "website-build-launch",
+                    "name": "Website Build Launch",
+                    "scenario": "Build or polish a website and prepare it for release.",
+                    "status": "trusted",
+                    "task_signals": ["website", "landing page", "launch"],
+                    "skills": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "design-system-consistency",
+                        "content-seo-brief",
+                        "execution-browser-check",
+                    ],
+                    "required_capabilities": [
+                        {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                        {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                        {"id": "seo_copy", "required": True, "preferred_skills": ["content-seo-brief"]},
+                    ],
+                    "execution_order": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "design-system-consistency",
+                        "content-seo-brief",
+                        "execution-browser-check",
+                    ],
+                    "expected_output": ["launch checklist"],
+                    "safety_boundary": "Skills provide method only.",
+                }
+            ]
+        }
+        overlap_groups = {
+            "groups": [
+                {
+                    "id": "ui-quality-review",
+                    "primary_skill": "design-ui-review",
+                    "adjacent_skills": ["design-system-consistency", "design-responsive-viewport-check"],
+                    "use_before": [],
+                    "use_after": [],
+                }
+            ]
+        }
+        selected = [
+            {"name": "business-requirements-brief", "match_score": 7, "taxonomy": {"category": "business"}},
+            {"name": "design-ui-review", "match_score": 9, "taxonomy": {"category": "design"}},
+            {"name": "design-system-consistency", "match_score": 8, "taxonomy": {"category": "design"}},
+            {"name": "design-responsive-viewport-check", "match_score": 0, "taxonomy": {"category": "design"}},
+            {"name": "content-seo-brief", "match_score": 8, "taxonomy": {"category": "content"}},
+            {"name": "content-claims-compliance-filter", "match_score": 0, "taxonomy": {"category": "content"}},
+            {"name": "security-secret-context-redaction", "match_score": 0, "taxonomy": {"category": "security"}},
+            {"name": "execution-browser-check", "match_score": 6, "taxonomy": {"category": "execution"}},
+        ]
+
+        routed = route_mesh_task(
+            task="build a landing page and prepare launch checks",
+            invariants=["不能泄露密钥", "公开文案不能违反广告法", "必须响应式验证"],
+            selected_skills=selected,
+            bundles_index=bundles_index,
+            trusted_skill_names={skill["name"] for skill in selected},
+            overlap_groups=overlap_groups,
+            max_skills=6,
+            strategy="balanced",
+        )
+
+        names = [skill["name"] for skill in routed["skills"]]
+        self.assertEqual(routed["router"]["mode"], "deterministic_mesh_router")
+        self.assertIn("security-secret-context-redaction", names)
+        self.assertIn("content-claims-compliance-filter", names)
+        self.assertIn("design-responsive-viewport-check", names)
+        self.assertIn("design-system-consistency", routed["pruned_skills"])
+        self.assertEqual(routed["execution_graph"]["nodes"][0]["skill"], "security-secret-context-redaction")
+        self.assertTrue(routed["execution_graph"]["edges"])

@@ -33,6 +33,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Smart Skill Router](updates/2026-06-06-smart-skill-router.md)
 - [Skill Overlap Groups](skill-overlap-groups.md)
 - [Document Evidence Guardrails](updates/2026-06-05-document-evidence-guardrails.md)
 - [AI Runtime Guardrails](updates/2026-06-05-ai-runtime-guardrails.md)
@@ -61,6 +62,7 @@ router type: deterministic
 scenario bundles: 9 trusted
 sample website route: website-build-launch
 sample RAG route: rag-agent-knowledge-app
+smart router mode: deterministic_mesh_router
 ```
 
 ## Completed Batches
