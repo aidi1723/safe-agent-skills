@@ -221,6 +221,179 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["tampered_count"], 0)
             self.assertEqual(result["unknown_provenance_count"], 0)
 
+    def test_reference_check_accepts_metadata_only_external_references(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            references = Path(tmp) / "external-references" / "index.json"
+            references.parent.mkdir()
+            references.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "reference_count": 1,
+                        "references": [
+                            {
+                                "name": "AnyTool",
+                                "source_url": "https://github.com/HKUDS/AnyTool",
+                                "source_type": "github_reference",
+                                "author": "HKUDS",
+                                "license": "unknown",
+                                "captured_at": "2026-06-06",
+                                "project_category": "tool_router",
+                                "claimed_capabilities": ["hierarchical_api_retrieval", "tool_selection"],
+                                "taxonomy_categories": ["ai.routing", "ai.orchestration"],
+                                "runtime_permission_notes": "Reference only; no runtime execution.",
+                                "adoption_status": "reference_only",
+                                "review_notes": "Architecture reference for metadata-only routing research.",
+                                "metadata_only": True,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            reference_out = io.StringIO()
+            with contextlib.redirect_stdout(reference_out):
+                reference_code = main(["reference-check", "--references", str(references)])
+
+            self.assertEqual(reference_code, 0)
+            result = json.loads(reference_out.getvalue())
+            self.assertEqual(result["status"], "ok")
+            self.assertEqual(result["reference_count"], 1)
+            self.assertEqual(result["issues"], [])
+
+    def test_reference_check_rejects_incomplete_or_executable_references(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            references = Path(tmp) / "external-references" / "index.json"
+            references.parent.mkdir()
+            references.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "reference_count": 1,
+                        "references": [
+                            {
+                                "name": "unsafe-mcp",
+                                "source_url": "https://github.com/example/unsafe-mcp",
+                                "source_type": "github_reference",
+                                "author": "example",
+                                "captured_at": "2026-06-06",
+                                "project_category": "mcp_server",
+                                "claimed_capabilities": ["filesystem_write"],
+                                "taxonomy_categories": ["execution.file"],
+                                "runtime_permission_notes": "Runs local commands.",
+                                "adoption_status": "trusted",
+                                "review_notes": "",
+                                "metadata_only": False,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            reference_out = io.StringIO()
+            with contextlib.redirect_stdout(reference_out):
+                reference_code = main(["reference-check", "--references", str(references)])
+
+            self.assertEqual(reference_code, 2)
+            result = json.loads(reference_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("reference-missing-field", issue_ids)
+            self.assertIn("reference-not-metadata-only", issue_ids)
+            self.assertIn("reference-invalid-adoption-status", issue_ids)
+
+    def test_maintain_check_can_include_external_references(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            references = root / "external-references" / "index.json"
+            skill = incoming / "ai-router"
+            skill.mkdir(parents=True)
+            references.parent.mkdir()
+            (skill / "SKILL.md").write_text(
+                "Use this workflow for AI routing review.",
+                encoding="utf-8",
+            )
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "ai",
+                            "subcategory": "ai.routing",
+                            "task_intent": "review AI routing metadata",
+                            "artifact_type": "reference",
+                            "collection_priority": "P1",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/ai-router",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/ai-router",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["approve", str(registry / "ai" / "ai-router")])
+            references.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "reference_count": 1,
+                        "references": [
+                            {
+                                "name": "AnyTool",
+                                "source_url": "https://github.com/HKUDS/AnyTool",
+                                "source_type": "github_reference",
+                                "author": "HKUDS",
+                                "license": "unknown",
+                                "captured_at": "2026-06-06",
+                                "project_category": "tool_router",
+                                "claimed_capabilities": ["tool_selection"],
+                                "taxonomy_categories": ["ai.routing"],
+                                "runtime_permission_notes": "Reference only.",
+                                "adoption_status": "reference_only",
+                                "review_notes": "Metadata-only architecture reference.",
+                                "metadata_only": True,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            maintain_out = io.StringIO()
+            with contextlib.redirect_stdout(maintain_out):
+                maintain_code = main(
+                    [
+                        "maintain-check",
+                        "--registry",
+                        str(registry),
+                        "--references",
+                        str(references),
+                    ]
+                )
+
+            self.assertEqual(maintain_code, 0)
+            result = json.loads(maintain_out.getvalue())
+            self.assertEqual(result["status"], "ok")
+            self.assertEqual(result["reference_validation"]["status"], "ok")
+            self.assertEqual(result["reference_validation"]["reference_count"], 1)
+
     def test_verify_registry_reports_tamper_and_unknown_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

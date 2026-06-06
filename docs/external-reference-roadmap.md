@@ -42,10 +42,16 @@ only after source, license, provenance, and maintenance status are recorded.
 
 Create a small curated reference index for external projects.
 
-Suggested path:
+Current path:
 
 ```text
 external-references/index.json
+```
+
+Current check command:
+
+```bash
+onecode-skill-sanitizer reference-check --references external-references/index.json
 ```
 
 Each reference should include:
@@ -68,7 +74,16 @@ Acceptance criteria:
 - References are data only.
 - No external code is downloaded or executed.
 - Every entry has provenance and license fields.
-- The index can be checked by `maintain-check`.
+- The index can be checked by `reference-check`.
+- The index can also be included in `maintain-check` with `--references`.
+
+Current seed references:
+
+- AnyTool
+- Awesome MCP Servers
+- AskBudi Roundtable MCP
+
+All seed references are marked `reference_only` and `metadata_only: true`.
 
 ### Phase 2: Capability Mapping
 

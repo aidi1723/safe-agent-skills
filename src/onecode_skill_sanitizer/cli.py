@@ -19,6 +19,22 @@ SOURCE_TYPE_VALUES = {"local_folder", "archive", "git", "community_index", "gith
 SOURCE_REQUIRED_FIELDS = ["type", "path", "url", "author", "license", "reference", "collected_by", "captured_at"]
 SOURCE_PROVENANCE_FIELDS = ["url", "author", "license", "reference", "collected_by"]
 HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+REFERENCE_REQUIRED_FIELDS = [
+    "name",
+    "source_url",
+    "source_type",
+    "author",
+    "license",
+    "captured_at",
+    "project_category",
+    "claimed_capabilities",
+    "taxonomy_categories",
+    "runtime_permission_notes",
+    "adoption_status",
+    "review_notes",
+    "metadata_only",
+]
+REFERENCE_ADOPTION_STATUSES = {"reference_only", "candidate", "rejected", "converted"}
 
 
 def utc_now() -> str:
@@ -1040,6 +1056,153 @@ def schema_check_command(args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 2
 
 
+def validate_external_references(references_path: Path) -> dict:
+    issues: list[dict] = []
+    try:
+        payload = json.loads(references_path.read_text(encoding="utf-8"))
+    except FileNotFoundError:
+        return {
+            "schema_version": 1,
+            "generated_at": utc_now(),
+            "status": "failed",
+            "reference_count": 0,
+            "issues": [
+                {
+                    "id": "reference-index-missing",
+                    "severity": "high",
+                    "path": references_path.as_posix(),
+                }
+            ],
+        }
+    except json.JSONDecodeError as exc:
+        return {
+            "schema_version": 1,
+            "generated_at": utc_now(),
+            "status": "failed",
+            "reference_count": 0,
+            "issues": [
+                {
+                    "id": "reference-invalid-json",
+                    "severity": "critical",
+                    "path": references_path.as_posix(),
+                    "summary": str(exc),
+                }
+            ],
+        }
+
+    if payload.get("schema_version") != 1:
+        add_issue(issues, "reference-invalid-version", references_path, "schema_version must be 1")
+    references = payload.get("references")
+    if not isinstance(references, list):
+        add_issue(issues, "reference-invalid-list", references_path, "references must be an array")
+        references = []
+    declared_count = payload.get("reference_count")
+    if declared_count is not None and declared_count != len(references):
+        issues.append(
+            {
+                "id": "reference-count-mismatch",
+                "severity": "medium",
+                "path": references_path.as_posix(),
+                "expected": len(references),
+                "actual": declared_count,
+            }
+        )
+
+    seen_names = set()
+    for index, reference in enumerate(references):
+        reference_path = f"{references_path.as_posix()}#/references/{index}"
+        if not isinstance(reference, dict):
+            add_issue(issues, "reference-invalid-entry", reference_path, "reference entry must be an object")
+            continue
+        for field in REFERENCE_REQUIRED_FIELDS:
+            value = reference.get(field)
+            if value in (None, ""):
+                issues.append(
+                    {
+                        "id": "reference-missing-field",
+                        "severity": "high",
+                        "path": reference_path,
+                        "field": field,
+                    }
+                )
+        name = reference.get("name")
+        if isinstance(name, str):
+            if name in seen_names:
+                issues.append(
+                    {
+                        "id": "reference-duplicate-name",
+                        "severity": "medium",
+                        "path": reference_path,
+                        "name": name,
+                    }
+                )
+            seen_names.add(name)
+        source_url = reference.get("source_url")
+        if isinstance(source_url, str) and not source_url.startswith(("https://", "http://")):
+            issues.append(
+                {
+                    "id": "reference-invalid-source-url",
+                    "severity": "high",
+                    "path": reference_path,
+                    "source_url": source_url,
+                }
+            )
+        source_type = reference.get("source_type")
+        if isinstance(source_type, str) and source_type not in SOURCE_TYPE_VALUES:
+            issues.append(
+                {
+                    "id": "reference-invalid-source-type",
+                    "severity": "high",
+                    "path": reference_path,
+                    "source_type": source_type,
+                }
+            )
+        adoption_status = reference.get("adoption_status")
+        if isinstance(adoption_status, str) and adoption_status not in REFERENCE_ADOPTION_STATUSES:
+            issues.append(
+                {
+                    "id": "reference-invalid-adoption-status",
+                    "severity": "high",
+                    "path": reference_path,
+                    "adoption_status": adoption_status,
+                }
+            )
+        for field in ["claimed_capabilities", "taxonomy_categories"]:
+            value = reference.get(field)
+            if not isinstance(value, list) or not value or not all(isinstance(item, str) and item for item in value):
+                issues.append(
+                    {
+                        "id": "reference-invalid-list-field",
+                        "severity": "high",
+                        "path": reference_path,
+                        "field": field,
+                    }
+                )
+        if reference.get("metadata_only") is not True:
+            issues.append(
+                {
+                    "id": "reference-not-metadata-only",
+                    "severity": "critical",
+                    "path": reference_path,
+                    "name": name or "",
+                }
+            )
+
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "status": "failed" if issues else "ok",
+        "reference_count": len(references),
+        "issues": issues,
+    }
+
+
+def reference_check_command(args: argparse.Namespace) -> int:
+    result = validate_external_references(Path(args.references))
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["status"] == "ok" else 2
+
+
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []
     bundles_index = load_bundles_index(bundles_path)
@@ -1249,6 +1412,7 @@ def maintain_check(
     registry_dir: Path,
     bundles_path: Path | None = None,
     overlap_groups_path: Path | None = None,
+    references_path: Path | None = None,
 ) -> dict:
     registry_verification = verify_registry(registry_dir)
     issues = list(registry_verification["issues"])
@@ -1262,6 +1426,10 @@ def maintain_check(
     if resolved_overlap_path is not None:
         overlap_validation = validate_overlap_groups(registry_dir, resolved_overlap_path)
         issues.extend(overlap_validation["issues"])
+    reference_validation = None
+    if references_path is not None:
+        reference_validation = validate_external_references(references_path)
+        issues.extend(reference_validation["issues"])
     return {
         "schema_version": 1,
         "generated_at": utc_now(),
@@ -1269,6 +1437,7 @@ def maintain_check(
         "registry_verification": registry_verification,
         "bundle_validation": bundle_validation,
         "overlap_validation": overlap_validation,
+        "reference_validation": reference_validation,
         "issues": issues,
     }
 
@@ -1278,6 +1447,7 @@ def maintain_check_command(args: argparse.Namespace) -> int:
         Path(args.registry),
         Path(args.bundles) if args.bundles else None,
         Path(args.overlap_groups) if args.overlap_groups else None,
+        Path(args.references) if getattr(args, "references", None) else None,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
@@ -1456,11 +1626,16 @@ def build_parser() -> argparse.ArgumentParser:
     maintain_check_parser.add_argument("--registry", required=True)
     maintain_check_parser.add_argument("--bundles")
     maintain_check_parser.add_argument("--overlap-groups")
+    maintain_check_parser.add_argument("--references")
     maintain_check_parser.set_defaults(func=maintain_check_command)
 
     schema_check_parser = subparsers.add_parser("schema-check")
     schema_check_parser.add_argument("--registry", required=True)
     schema_check_parser.set_defaults(func=schema_check_command)
+
+    reference_check_parser = subparsers.add_parser("reference-check")
+    reference_check_parser.add_argument("--references", required=True)
+    reference_check_parser.set_defaults(func=reference_check_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

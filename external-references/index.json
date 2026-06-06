@@ -1,0 +1,78 @@
+{
+  "schema_version": 1,
+  "reference_count": 3,
+  "references": [
+    {
+      "name": "AnyTool",
+      "source_url": "https://github.com/HKUDS/AnyTool",
+      "source_type": "github_reference",
+      "author": "HKUDS",
+      "license": "unknown",
+      "captured_at": "2026-06-06",
+      "project_category": "tool_router",
+      "claimed_capabilities": [
+        "universal_tool_use_layer",
+        "hierarchical_api_retrieval",
+        "tool_selection",
+        "tool_orchestration"
+      ],
+      "taxonomy_categories": [
+        "ai.routing",
+        "ai.orchestration",
+        "ai.tool-schema"
+      ],
+      "runtime_permission_notes": "Reference only. Do not install, import, execute, or expose its runtime tools through default task packs.",
+      "adoption_status": "reference_only",
+      "review_notes": "Architecture reference for pre-selecting a compact tool pack before agent execution. Any local adoption must be rewritten as catalog-bound metadata or a reviewed local skill.",
+      "metadata_only": true
+    },
+    {
+      "name": "Awesome MCP Servers",
+      "source_url": "https://github.com/punkpeye/awesome-mcp-servers",
+      "source_type": "github_reference",
+      "author": "punkpeye",
+      "license": "unknown",
+      "captured_at": "2026-06-06",
+      "project_category": "mcp_directory",
+      "claimed_capabilities": [
+        "mcp_server_directory",
+        "community_tool_discovery",
+        "category_indexing",
+        "mcp_ecosystem_mapping"
+      ],
+      "taxonomy_categories": [
+        "research.web",
+        "ai.routing",
+        "security.supply_chain"
+      ],
+      "runtime_permission_notes": "Reference only. Directory entries are not trusted skills and must not be auto-installed or auto-executed.",
+      "adoption_status": "reference_only",
+      "review_notes": "Useful as a source-discovery pattern and candidate list. Each downstream MCP server still needs separate provenance, license, risk, and permission review.",
+      "metadata_only": true
+    },
+    {
+      "name": "AskBudi Roundtable MCP",
+      "source_url": "https://askbudi.ai/docs/mcp-server",
+      "source_type": "web_reference",
+      "author": "AskBudi",
+      "license": "unknown",
+      "captured_at": "2026-06-06",
+      "project_category": "meta_mcp_gateway",
+      "claimed_capabilities": [
+        "mcp_gateway",
+        "assistant_discovery",
+        "multi_assistant_unified_interface",
+        "coding_tool_aggregation"
+      ],
+      "taxonomy_categories": [
+        "ai.orchestration",
+        "ai.routing",
+        "ai.tool-schema"
+      ],
+      "runtime_permission_notes": "Reference only. Do not run as a gateway or expose external assistant tools without a separate connector approval path.",
+      "adoption_status": "reference_only",
+      "review_notes": "Useful as a reference for one-entry MCP ergonomics and auto-discovery patterns. License and exact repository provenance require follow-up review before any conversion.",
+      "metadata_only": true
+    }
+  ]
+}
