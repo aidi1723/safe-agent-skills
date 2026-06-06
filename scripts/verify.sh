@@ -11,6 +11,20 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
   --bundles bundles/index.json \
   --references external-references/index.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reference-check --references external-references/index.json >/dev/null
+private_path_patterns=(
+  '/[U]sers/'
+  '大[字]典'
+  '/one[ ]code/'
+)
+for private_path_pattern in "${private_path_patterns[@]}"; do
+  if rg -n "$private_path_pattern" . --glob '!.git/**'; then
+    exit 1
+  fi
+done
+PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
+  --eval evals/router-quality.json \
+  --registry catalog \
+  --bundles bundles/index.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalog >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "build a landing page and prepare launch checks" \
@@ -24,5 +38,7 @@ python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null
 if command -v rg >/dev/null 2>&1; then
-  ! rg -n "TODO|FIXME|PLACEHOLDER|TBD|待定" . --glob '!scripts/verify.sh'
+  if rg -n "TODO|FIXME|PLACEHOLDER|TBD|待定" . --glob '!scripts/verify.sh'; then
+    exit 1
+  fi
 fi

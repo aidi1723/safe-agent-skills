@@ -8,10 +8,11 @@ facts instead of marketing shorthand or similarly named projects.
 The sanitizer can target more than one host runtime, but each host capability
 must be treated as an adapter contract, not an assumed fact.
 
-## Verified Local OneCode Baseline
+## Verified Host Runtime Baseline
 
-The local repository at `/Users/aidi/大字典/one code` currently describes
-OneCode as a local-first agent kernel prototype.
+A local host runtime review described OneCode as a local-first agent kernel
+prototype. Public documentation should record capabilities without exposing
+operator-specific checkout paths.
 
 The verified local README emphasizes:
 

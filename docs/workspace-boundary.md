@@ -7,7 +7,7 @@
 Local source of truth:
 
 ```text
-/Users/aidi/大字典/safe-agent-skills
+<safe-agent-skills-checkout>
 ```
 
 GitHub source of truth:
@@ -20,21 +20,14 @@ All future work for the skill catalog, router skill, scenario bundles,
 sanitizer CLI, documentation, verification, releases, and publishing should
 happen from the standalone folder above.
 
-## Do Not Use The Old Nested Path
+## Do Not Nest The Checkout
 
-Do not create or restore this old nested workspace:
-
-```text
-/Users/aidi/大字典/one code/onecode-skill-sanitizer
-```
-
-That location was removed so the skill project does not pollute the OneCode
-core project.
-
-If a future tool or agent tries to work from the old path, stop and switch to:
+Do not place this checkout inside a host runtime or core agent repository. If a
+future tool or agent tries to work from a nested copy, stop and switch to the
+standalone checkout:
 
 ```bash
-cd "/Users/aidi/大字典/safe-agent-skills"
+cd "<safe-agent-skills-checkout>"
 ```
 
 ## Why This Boundary Exists
@@ -56,7 +49,7 @@ confusion between OneCode runtime code and the skill catalog.
 Before making changes:
 
 ```bash
-cd "/Users/aidi/大字典/safe-agent-skills"
+cd "<safe-agent-skills-checkout>"
 git status --short
 ```
 
@@ -84,7 +77,7 @@ sed -n '1,5p' ~/.local/bin/safe-agent-router-task-pack
 Expected path:
 
 ```text
-SAFE_AGENT_SKILLS_HOME="/Users/aidi/大字典/safe-agent-skills"
+SAFE_AGENT_SKILLS_HOME="<safe-agent-skills-checkout>"
 ```
 
 ## Parent Workspace Ignore Rule

@@ -184,6 +184,12 @@ def score_bundle_for_profile(bundle: dict, task_profile: dict) -> int:
         bundle.get("name", ""),
         bundle.get("scenario", ""),
         " ".join(bundle.get("task_signals", [])),
+        " ".join(capability.get("id", "") for capability in bundle.get("required_capabilities", [])),
+        " ".join(
+            skill_name
+            for capability in bundle.get("required_capabilities", [])
+            for skill_name in capability.get("preferred_skills", [])
+        ),
     ]
     haystack = normalize_task_text(" ".join(text_parts))
     score = 0
@@ -195,9 +201,6 @@ def score_bundle_for_profile(bundle: dict, task_profile: dict) -> int:
             score += 2
     score += _signal_score(haystack, task_profile.get("artifact_types", []))
     score += _signal_score(haystack, task_profile.get("secondary_domains", []))
-    for signal in bundle.get("task_signals", []):
-        if normalize_task_text(signal) in haystack:
-            score += 1
     return score
 
 

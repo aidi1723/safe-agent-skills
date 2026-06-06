@@ -1203,6 +1203,136 @@ def reference_check_command(args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 2
 
 
+def load_router_eval(eval_path: Path) -> dict:
+    if not eval_path.exists():
+        raise SystemExit(f"missing router eval file: {eval_path}")
+    payload = json.loads(eval_path.read_text(encoding="utf-8"))
+    if payload.get("schema_version") != 1:
+        raise SystemExit(f"invalid router eval schema_version: {eval_path}")
+    if not isinstance(payload.get("cases"), list):
+        raise SystemExit(f"invalid router eval cases: {eval_path}")
+    return payload
+
+
+def run_router_eval(
+    eval_path: Path,
+    registry_dir: Path,
+    bundles_path: Path,
+    overlap_groups_path: Path | None = None,
+    max_skills: int = 8,
+) -> dict:
+    payload = load_router_eval(eval_path)
+    cases = payload["cases"]
+    declared_count = payload.get("case_count")
+    results = []
+    issues = []
+    if declared_count is not None and declared_count != len(cases):
+        issues.append(
+            {
+                "id": "router-eval-count-mismatch",
+                "severity": "medium",
+                "expected": len(cases),
+                "actual": declared_count,
+            }
+        )
+    for index, case in enumerate(cases):
+        case_id = case.get("id", f"case-{index + 1}")
+        task = case.get("task", "")
+        router_mode = case.get("router", "scenario")
+        case_issues = []
+        if not isinstance(task, str) or not task:
+            case_issues.append({"id": "router-eval-missing-task"})
+        if router_mode not in {"scenario", "mesh"}:
+            case_issues.append({"id": "router-eval-invalid-router", "router": router_mode})
+        if case_issues:
+            results.append({"id": case_id, "status": "failed", "issues": case_issues})
+            continue
+
+        task_pack = build_task_pack(
+            registry_dir=registry_dir,
+            task=task,
+            top=max_skills,
+            include_review_required=False,
+            include_bundles=True,
+            bundles_path=bundles_path,
+            router_mode=router_mode,
+            max_skills=max_skills,
+            invariants=case.get("invariants"),
+            strategy=case.get("strategy", "balanced"),
+            overlap_groups_path=overlap_groups_path,
+        )
+        actual_scenario = task_pack.get("selected_scenario", {}).get("id", "")
+        actual_task_type = task_pack.get("task_profile", {}).get("task_type", "")
+        actual_skills = [skill["name"] for skill in task_pack.get("skills", [])]
+        expected_scenario = case.get("expected_scenario")
+        expected_task_type = case.get("expected_task_type")
+        expected_skills = case.get("expected_skills", [])
+
+        if expected_scenario is not None and actual_scenario != expected_scenario:
+            case_issues.append(
+                {
+                    "id": "router-eval-scenario-mismatch",
+                    "expected": expected_scenario,
+                    "actual": actual_scenario,
+                }
+            )
+        if expected_task_type is not None and actual_task_type != expected_task_type:
+            case_issues.append(
+                {
+                    "id": "router-eval-task-type-mismatch",
+                    "expected": expected_task_type,
+                    "actual": actual_task_type,
+                }
+            )
+        for skill_name in expected_skills:
+            if skill_name not in actual_skills:
+                case_issues.append(
+                    {
+                        "id": "router-eval-missing-skill",
+                        "skill": skill_name,
+                    }
+                )
+
+        results.append(
+            {
+                "id": case_id,
+                "status": "failed" if case_issues else "ok",
+                "router": router_mode,
+                "task": task,
+                "expected_scenario": expected_scenario,
+                "actual_scenario": actual_scenario,
+                "expected_task_type": expected_task_type,
+                "actual_task_type": actual_task_type,
+                "actual_skills": actual_skills,
+                "issues": case_issues,
+            }
+        )
+
+    failed_count = sum(1 for item in results if item["status"] != "ok")
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "status": "failed" if failed_count or issues else "ok",
+        "case_count": len(cases),
+        "passed_count": len(cases) - failed_count,
+        "failed_count": failed_count,
+        "issues": issues,
+        "cases": results,
+    }
+
+
+def router_eval_command(args: argparse.Namespace) -> int:
+    result = run_router_eval(
+        eval_path=Path(args.eval),
+        registry_dir=Path(args.registry),
+        bundles_path=Path(args.bundles),
+        overlap_groups_path=Path(args.overlap_groups) if args.overlap_groups else None,
+        max_skills=args.max_skills,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["status"] == "ok" else 2
+
+
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []
     bundles_index = load_bundles_index(bundles_path)
@@ -1636,6 +1766,14 @@ def build_parser() -> argparse.ArgumentParser:
     reference_check_parser = subparsers.add_parser("reference-check")
     reference_check_parser.add_argument("--references", required=True)
     reference_check_parser.set_defaults(func=reference_check_command)
+
+    router_eval_parser = subparsers.add_parser("router-eval")
+    router_eval_parser.add_argument("--eval", required=True)
+    router_eval_parser.add_argument("--registry", required=True)
+    router_eval_parser.add_argument("--bundles", default="bundles/index.json")
+    router_eval_parser.add_argument("--overlap-groups")
+    router_eval_parser.add_argument("--max-skills", type=int, default=8)
+    router_eval_parser.set_defaults(func=router_eval_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

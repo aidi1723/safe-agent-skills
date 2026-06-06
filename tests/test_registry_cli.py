@@ -394,6 +394,104 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["reference_validation"]["status"], "ok")
             self.assertEqual(result["reference_validation"]["reference_count"], 1)
 
+    def test_router_eval_passes_expected_scenario_cases(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 3,
+                        "cases": [
+                            {
+                                "id": "website-launch",
+                                "task": "build a product website and prepare launch checks",
+                                "router": "scenario",
+                                "expected_scenario": "website-build-launch",
+                                "expected_task_type": "website_build",
+                            },
+                            {
+                                "id": "skill-router-review",
+                                "task": "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+                                "router": "mesh",
+                                "expected_scenario": "skill-router-quality-review",
+                                "expected_task_type": "skill_router_review",
+                            },
+                            {
+                                "id": "unsupported-vague-task",
+                                "task": "帮我看一下这个事情是否合理",
+                                "router": "scenario",
+                                "expected_scenario": "",
+                                "expected_task_type": "general",
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 0)
+            result = json.loads(eval_out.getvalue())
+            self.assertEqual(result["status"], "ok")
+            self.assertEqual(result["passed_count"], 3)
+            self.assertEqual(result["failed_count"], 0)
+
+    def test_router_eval_fails_unexpected_scenario_case(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 1,
+                        "cases": [
+                            {
+                                "id": "bad-expectation",
+                                "task": "build a product website and prepare launch checks",
+                                "router": "scenario",
+                                "expected_scenario": "rag-agent-knowledge-app",
+                                "expected_task_type": "website_build",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 2)
+            result = json.loads(eval_out.getvalue())
+            self.assertEqual(result["status"], "failed")
+            self.assertEqual(result["failed_count"], 1)
+            self.assertEqual(result["cases"][0]["status"], "failed")
+
     def test_verify_registry_reports_tamper_and_unknown_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

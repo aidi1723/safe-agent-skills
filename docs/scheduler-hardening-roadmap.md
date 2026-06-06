@@ -123,6 +123,10 @@ complete.
 
 Create a task set that measures routing quality.
 
+Status: implemented as a first fixed evaluation suite via
+`evals/router-quality.json` and the `router-eval` CLI command. The suite is
+now part of `scripts/verify.sh`.
+
 Minimum task groups:
 
 - website launch
@@ -143,6 +147,15 @@ Acceptance criteria:
 - required invariant skills survive `max-skills`
 - unrelated website, SEO, or publish skills are not selected for meta-review
   tasks
+
+Current coverage:
+
+- 10 fixed scenario cases covering website launch, code review, RAG, document
+  knowledge base, data analysis, commerce, content SEO, agent security, router
+  review, and vague unsupported tasks
+- expected scenario and task-type checks
+- expected skill-presence checks for key workflow gates
+- failure exit code for CI use
 
 ### Phase 2: Skill Preconditions and Exclusions
 

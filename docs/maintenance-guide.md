@@ -5,20 +5,13 @@
 Maintain this project only from the standalone repository:
 
 ```text
-/Users/aidi/大字典/safe-agent-skills
+<safe-agent-skills-checkout>
 ```
 
-Do not maintain it from the old nested OneCode path:
-
-```text
-/Users/aidi/大字典/one code/onecode-skill-sanitizer
-```
-
-That nested copy has been removed to avoid polluting the OneCode core project.
 Before any maintenance work, run:
 
 ```bash
-cd "/Users/aidi/大字典/safe-agent-skills"
+cd "<safe-agent-skills-checkout>"
 git status --short
 ```
 

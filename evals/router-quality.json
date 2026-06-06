@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "case_count": 10,
+  "cases": [
+    {
+      "id": "website-launch",
+      "task": "build a product website and prepare launch checks",
+      "router": "scenario",
+      "expected_scenario": "website-build-launch",
+      "expected_task_type": "website_build",
+      "expected_skills": [
+        "business-requirements-brief",
+        "design-ui-review",
+        "execution-publish-check"
+      ]
+    },
+    {
+      "id": "code-review-hardening",
+      "task": "review generated code and harden tests before accepting the PR",
+      "router": "scenario",
+      "expected_scenario": "code-review-hardening",
+      "expected_task_type": "code_review",
+      "expected_skills": [
+        "code-review-risk",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "rag-agent",
+      "task": "design a RAG document agent with vector retrieval and citation checks",
+      "router": "scenario",
+      "expected_scenario": "rag-agent-knowledge-app",
+      "expected_task_type": "rag_agent",
+      "expected_skills": [
+        "ai-langchain-agent-orchestration",
+        "data-qdrant-vector-retrieval",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "document-knowledge-base",
+      "task": "turn PDF and office documents into markdown chunks for a knowledge base",
+      "router": "scenario",
+      "expected_scenario": "document-to-knowledge-base",
+      "expected_task_type": "document_knowledge_base",
+      "expected_skills": [
+        "data-markitdown-file-to-markdown",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "data-analysis-report",
+      "task": "clean this spreadsheet dataset, analyze tables, and prepare chart report notes",
+      "router": "scenario",
+      "expected_scenario": "data-analysis-report",
+      "expected_task_type": "data_analysis",
+      "expected_skills": [
+        "data-quality-audit",
+        "data-table-analysis",
+        "data-visualization-plan"
+      ]
+    },
+    {
+      "id": "commerce-growth",
+      "task": "prepare marketplace listing keywords and buyer inquiry replies",
+      "router": "scenario",
+      "expected_scenario": "commerce-listing-growth",
+      "expected_task_type": "commerce_growth",
+      "expected_skills": [
+        "commerce-icbu-listing",
+        "commerce-product-keyword-plan",
+        "commerce-inquiry-reply"
+      ]
+    },
+    {
+      "id": "public-content-seo",
+      "task": "draft and fact check an SEO blog post with social copy",
+      "router": "scenario",
+      "expected_scenario": "content-seo-publication",
+      "expected_task_type": "content_seo",
+      "expected_skills": [
+        "content-seo-brief",
+        "research-source-check",
+        "content-editorial-review"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "task": "review an agent workflow for prompt injection, connector permission, and sandbox guardrails",
+      "router": "scenario",
+      "expected_scenario": "security-agent-guardrails",
+      "expected_task_type": "agent_security",
+      "expected_skills": [
+        "security-prompt-injection-review",
+        "security-llm-guard-io-scanning",
+        "compliance-privacy-check"
+      ]
+    },
+    {
+      "id": "skill-router-review",
+      "task": "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+      "router": "mesh",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "unsupported-vague-task",
+      "task": "帮我看一下这个事情是否合理",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": []
+    }
+  ]
+}
