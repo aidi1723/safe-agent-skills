@@ -310,6 +310,7 @@ onecode skills approve pdf
 - [Source Baseline](docs/source-baseline.md)
 - [Smart Skill Router](docs/smart-skill-router.md)
 - [External Reference Roadmap](docs/external-reference-roadmap.md)
+- [Scheduler Hardening Roadmap](docs/scheduler-hardening-roadmap.md)
 - [Latest Domain Guardrails Update](docs/updates/2026-06-05-domain-guardrails.md)
 - [Latest Verification Hardening Update](docs/updates/2026-06-05-verification-hardening.md)
 - [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)

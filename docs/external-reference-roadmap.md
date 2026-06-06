@@ -191,3 +191,6 @@ Implement Phase 1 and Phase 2 first.
 This gives the project a practical way to learn from AnyTool-style retrieval
 and MCP aggregator ecosystems without taking on the full complexity of an
 external tool marketplace or runtime plugin host.
+
+For the internal scheduler hardening direction, see
+[`scheduler-hardening-roadmap.md`](scheduler-hardening-roadmap.md).
