@@ -59,9 +59,10 @@ Scenario router status:
 ```text
 router mode: scenario
 router type: deterministic
-scenario bundles: 9 trusted
+scenario bundles: 10 trusted
 sample website route: website-build-launch
 sample RAG route: rag-agent-knowledge-app
+sample skill-router route: skill-router-quality-review
 smart router mode: deterministic_mesh_router
 ```
 

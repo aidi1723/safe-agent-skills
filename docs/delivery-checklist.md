@@ -63,7 +63,7 @@ The local MVP is complete when the project can:
 - quarantined skills: 3
 - review-required skills: 2
 - top-level category coverage: 15 / 15
-- scenario bundles: 9
+- scenario bundles: 10
 - registry verification: ok
 
 Closure report:

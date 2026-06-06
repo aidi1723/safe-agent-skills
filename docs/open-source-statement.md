@@ -163,7 +163,7 @@ total skills: 105
 trusted skills: 100
 quarantined skills: 3
 review_required skills: 2
-scenario bundles: 9
+scenario bundles: 10
 top-level categories: 15 / 15
 minimum trusted coverage: 3 trusted skills per category
 tampered skills: 0

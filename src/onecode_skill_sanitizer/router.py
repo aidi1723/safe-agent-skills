@@ -44,6 +44,43 @@ SCENARIO_PROFILES = [
         "signals": ["prompt injection", "connector", "tool permission", "agent safety", "guardrail", "sandbox", "提示词注入", "连接器", "工具权限", "沙箱"],
     },
     {
+        "task_type": "skill_router_review",
+        "primary_domain": "ai",
+        "secondary_domains": ["engineering", "code", "security"],
+        "artifact_types": ["skill_pack", "catalog", "router_report"],
+        "risk_flags": ["tool_overload", "policy_fragmentation", "misrouting"],
+        "required_capabilities": [
+            "skill_selection_quality",
+            "bundle_quality",
+            "routing_contract",
+            "schema_contract",
+            "regression_test",
+            "failure_synthesis",
+            "ci_check",
+        ],
+        "signals": [
+            "safe-agent-skills",
+            "safe agent skills",
+            "skill router",
+            "smart skill",
+            "skill selection",
+            "skill pack",
+            "auto composition",
+            "automatic composition",
+            "router quality",
+            "tool overload",
+            "policy fragmentation",
+            "sikll",
+            "skill库",
+            "智能选择",
+            "自动搭配",
+            "自动选择",
+            "路由质量",
+            "工具过载",
+            "策略碎片化",
+        ],
+    },
+    {
         "task_type": "document_knowledge_base",
         "primary_domain": "data",
         "secondary_domains": ["office", "ai", "research"],
@@ -140,6 +177,8 @@ def build_task_profile(task: str) -> dict:
 
 
 def score_bundle_for_profile(bundle: dict, task_profile: dict) -> int:
+    if task_profile.get("task_type") == "general" or task_profile.get("matched_signal_score", 0) <= 0:
+        return 0
     text_parts = [
         bundle.get("id", ""),
         bundle.get("name", ""),

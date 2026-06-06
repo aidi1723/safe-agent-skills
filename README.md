@@ -82,7 +82,7 @@ Current public baseline:
 
 - 105 total skills
 - 100 trusted skills
-- 9 trusted scenario bundles
+- 10 trusted scenario bundles
 - 7 trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
@@ -244,6 +244,10 @@ onecode-skill-sanitizer smart \
 `smart` returns the same task-pack structure plus a mesh execution graph,
 invariant capability coverage, and overlap-pruned skill list. See
 [Smart Skill Router](docs/smart-skill-router.md).
+
+For vague or unsupported repository-maintenance tasks, `smart` is conservative:
+if the task does not match a trusted scenario signal, it leaves
+`selected_scenario.id` empty and returns only directly matched trusted skills.
 
 For more precise task-aware composition, use the deterministic scenario router:
 

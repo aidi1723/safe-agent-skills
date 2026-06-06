@@ -11,6 +11,8 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalo
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "build a landing page and prepare launch checks" \
   --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" >/dev/null
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标" >/dev/null
 python3 -m json.tool schemas/skill-manifest.schema.json >/dev/null
 python3 -m json.tool schemas/registry-index.schema.json >/dev/null
 python3 -m json.tool schemas/verify-report.schema.json >/dev/null

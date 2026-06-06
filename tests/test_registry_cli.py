@@ -1200,6 +1200,116 @@ class RegistryCliTest(unittest.TestCase):
             self.assertIn("design-responsive-viewport-check", names)
             self.assertTrue(task_pack["execution_graph"]["edges"])
 
+    def test_scenario_router_does_not_force_bundle_for_general_meta_review_task(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "帮我看一下这个事情是否合理",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        self.assertEqual(task_pack["task_profile"]["task_type"], "general")
+        self.assertEqual(task_pack["selected_scenario"]["id"], "")
+        self.assertEqual(task_pack["selected_scenario"]["match_score"], 0)
+        self.assertEqual(task_pack["bundle_count"], 0)
+        self.assertEqual(task_pack["bundles"], [])
+        self.assertNotIn("website-build-launch", task_pack["agent_instructions"])
+
+    def test_smart_router_does_not_force_bundle_for_general_meta_review_task(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "smart",
+                    "帮我看一下这个事情是否合理",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        self.assertEqual(task_pack["task_profile"]["task_type"], "general")
+        self.assertEqual(task_pack["selected_scenario"]["id"], "")
+        self.assertEqual(task_pack["selected_scenario"]["match_score"], 0)
+        self.assertEqual(task_pack["bundle_count"], 0)
+        self.assertEqual(task_pack["bundles"], [])
+        self.assertNotIn("website-build-launch", task_pack["agent_instructions"])
+
+    def test_real_catalog_scenario_router_selects_skill_router_quality_review_bundle(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        self.assertEqual(task_pack["task_profile"]["task_type"], "skill_router_review")
+        self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["bundle_count"], 1)
+        self.assertEqual(task_pack["bundles"][0]["id"], "skill-router-quality-review")
+        self.assertIn("ai-opensquilla-metaskill-workflow", names)
+        self.assertIn("ai-opensquilla-token-routing-pattern", names)
+        self.assertIn("code-test-regression", names)
+
+    def test_real_catalog_smart_router_selects_skill_router_quality_review_bundle(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "smart",
+                    "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        self.assertEqual(task_pack["task_profile"]["task_type"], "skill_router_review")
+        self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["bundle_count"], 1)
+        self.assertEqual(task_pack["bundles"][0]["id"], "skill-router-quality-review")
+        self.assertIn("ai-opensquilla-metaskill-workflow", names)
+        self.assertIn("ai-opensquilla-token-routing-pattern", names)
+        self.assertTrue(task_pack["execution_graph"]["acyclic"])
+
     def test_task_pack_simple_router_remains_backward_compatible(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

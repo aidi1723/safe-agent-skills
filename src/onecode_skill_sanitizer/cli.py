@@ -544,9 +544,10 @@ def build_task_pack(
             strategy=strategy,
         )
         skills = routed["skills"]
-        bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills) if include_bundles else []
+        bundles = []
         if include_bundles and routed["selected_scenario"].get("id"):
             scenario_id = routed["selected_scenario"]["id"]
+            bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills)
             bundles = [bundle for bundle in bundles if bundle["id"] == scenario_id] or bundles
         task_pack = {
             "schema_version": 1,
@@ -585,9 +586,10 @@ def build_task_pack(
             max_skills=max_skills or top,
         )
         skills = routed["skills"]
-        bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills) if include_bundles else []
+        bundles = []
         if include_bundles and routed["selected_scenario"].get("id"):
             scenario_id = routed["selected_scenario"]["id"]
+            bundles = select_bundles_for_task(registry_dir, bundle_index_path, task, skills)
             bundles = [bundle for bundle in bundles if bundle["id"] == scenario_id] or bundles
         task_pack = {
             "schema_version": 1,

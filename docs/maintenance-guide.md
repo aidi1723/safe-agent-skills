@@ -44,7 +44,7 @@ Current baseline:
 - quarantined skills: 3
 - review-required skills: 2
 - categories meeting 3 trusted skills: 15 / 15
-- scenario bundles: 9
+- scenario bundles: 10
 - phase status: Phase 002 scenario router closed for today's delivery
 
 Closure report:

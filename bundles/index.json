@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "bundle_count": 9,
+  "bundle_count": 10,
   "bundles": [
     {
       "id": "website-build-launch",
@@ -338,6 +338,54 @@
         "vector retrieval quality checks",
         "structured answer contract",
         "citation and prompt-injection review"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "skill-router-quality-review",
+      "name": "Skill Router Quality Review",
+      "scenario": "Review skill catalog routing, automatic skill selection, bundle composition, and router verification quality.",
+      "status": "trusted",
+      "task_signals": ["safe-agent-skills", "safe agent skills", "skill router", "smart skill", "skill selection", "auto composition", "automatic composition", "智能选择", "自动搭配", "自动选择"],
+      "required_capabilities": [
+        {"id": "skill_selection_quality", "required": true, "preferred_skills": ["ai-opensquilla-token-routing-pattern", "ai-langchain-agent-orchestration"]},
+        {"id": "bundle_quality", "required": true, "preferred_skills": ["ai-opensquilla-metaskill-workflow"]},
+        {"id": "routing_contract", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "ai-pydantic-schema-contract"]},
+        {"id": "output_schema_eval", "required": true, "preferred_skills": ["ai-output-schema-eval"]},
+        {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
+        {"id": "failure_synthesis", "required": false, "preferred_skills": ["ai-rule-failure-log-synthesis"]},
+        {"id": "ci_check", "required": false, "preferred_skills": ["engineering-ci-troubleshoot"]},
+        {"id": "supply_chain_review", "required": false, "preferred_skills": ["security-supply-chain-review"]}
+      ],
+      "execution_order": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "ai-langchain-agent-orchestration",
+        "ai-tool-schema-protocol-check",
+        "ai-output-schema-eval",
+        "ai-rule-failure-log-synthesis",
+        "code-test-regression",
+        "engineering-ci-troubleshoot",
+        "security-supply-chain-review"
+      ],
+      "skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "ai-langchain-agent-orchestration",
+        "ai-tool-schema-protocol-check",
+        "ai-output-schema-eval",
+        "ai-rule-failure-log-synthesis",
+        "code-test-regression",
+        "engineering-ci-troubleshoot",
+        "security-supply-chain-review"
+      ],
+      "expected_output": [
+        "router task profile and scenario selection findings",
+        "skill selection and overlap-pruning quality review",
+        "bundle composition and capability coverage review",
+        "schema and task-pack contract checks",
+        "regression test plan and verification results",
+        "remaining routing gaps and follow-up rules"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
     },

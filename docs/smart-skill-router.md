@@ -56,6 +56,20 @@ format: json
 more skills to cover mandatory gates, `smart` keeps those required skills
 instead of dropping a safety, verification, or release capability.
 
+## Low-Confidence Tasks
+
+`smart` and `task-pack --router scenario` do not force a scenario bundle when
+the task text does not contain a trusted scenario signal. In that case:
+
+- `task_profile.task_type` is `general`
+- `selected_scenario.id` is empty
+- `bundle_count` is `0`
+- only directly matched trusted skills are returned
+
+This is intentional. For vague or unsupported repository-maintenance tasks, the
+safer behavior is to return a smaller pack than to attach an unrelated workflow
+such as website launch or public publishing.
+
 Markdown output:
 
 ```bash
@@ -124,6 +138,7 @@ Use `smart` as the default command for normal tasks:
 - code review or release readiness
 - document-to-knowledge-base conversion
 - RAG planning
+- skill router, skill catalog, or automatic skill-composition review
 - data analysis
 - commerce listing or public content work
 

@@ -49,6 +49,113 @@ class RouterTest(unittest.TestCase):
             score_bundle_for_profile(website_bundle, profile),
         )
 
+    def test_general_task_profile_does_not_select_scenario_bundle(self):
+        profile = build_task_profile("帮我看一下这个事情是否合理")
+        bundle = {
+            "id": "website-build-launch",
+            "name": "Website Build Launch",
+            "scenario": "Build or polish a website and prepare it for release.",
+            "status": "trusted",
+            "task_signals": ["website", "launch"],
+            "skills": ["business-requirements-brief", "design-ui-review"],
+            "required_capabilities": [
+                {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+            ],
+            "execution_order": ["business-requirements-brief", "design-ui-review"],
+        }
+        selected = [
+            {"name": "business-requirements-brief", "match_score": 0},
+            {"name": "design-ui-review", "match_score": 0},
+            {"name": "ai-opensquilla-metaskill-workflow", "match_score": 13},
+        ]
+
+        routed = route_scenario_task(
+            task="帮我看一下这个事情是否合理",
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={"business-requirements-brief", "design-ui-review", "ai-opensquilla-metaskill-workflow"},
+            max_skills=8,
+        )
+
+        self.assertEqual(profile["task_type"], "general")
+        self.assertEqual(score_bundle_for_profile(bundle, profile), 0)
+        self.assertEqual(routed["selected_scenario"]["id"], "")
+        self.assertEqual(routed["selected_scenario"]["match_score"], 0)
+        self.assertEqual([skill["name"] for skill in routed["skills"]], ["ai-opensquilla-metaskill-workflow"])
+        self.assertEqual(routed["coverage"], [])
+
+    def test_build_task_profile_detects_skill_router_quality_review(self):
+        profile = build_task_profile("复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标")
+
+        self.assertEqual(profile["task_type"], "skill_router_review")
+        self.assertEqual(profile["primary_domain"], "ai")
+        self.assertIn("catalog", profile["artifact_types"])
+        self.assertIn("skill_selection_quality", profile["required_capabilities"])
+        self.assertIn("bundle_quality", profile["required_capabilities"])
+
+    def test_route_scenario_task_selects_skill_router_quality_review_bundle(self):
+        bundle = {
+            "id": "skill-router-quality-review",
+            "name": "Skill Router Quality Review",
+            "scenario": "Review skill router quality, automatic selection, and bundle composition behavior.",
+            "status": "trusted",
+            "task_signals": ["safe-agent-skills", "skill router", "smart skill", "智能选择", "自动搭配"],
+            "skills": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "ai-tool-schema-protocol-check",
+                "ai-output-schema-eval",
+                "ai-rule-failure-log-synthesis",
+                "code-test-regression",
+                "engineering-ci-troubleshoot",
+            ],
+            "required_capabilities": [
+                {
+                    "id": "skill_selection_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-token-routing-pattern"],
+                },
+                {
+                    "id": "bundle_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-metaskill-workflow"],
+                },
+                {
+                    "id": "schema_contract",
+                    "required": True,
+                    "preferred_skills": ["ai-tool-schema-protocol-check", "ai-output-schema-eval"],
+                },
+                {
+                    "id": "regression_test",
+                    "required": True,
+                    "preferred_skills": ["code-test-regression"],
+                },
+            ],
+            "execution_order": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "ai-tool-schema-protocol-check",
+                "ai-output-schema-eval",
+                "ai-rule-failure-log-synthesis",
+                "code-test-regression",
+                "engineering-ci-troubleshoot",
+            ],
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_scenario_task(
+            task="复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            max_skills=8,
+        )
+
+        self.assertEqual(routed["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertIn("skill_selection_quality", [item["capability"] for item in routed["coverage"]])
+        self.assertEqual(routed["skills"][0]["name"], "ai-opensquilla-metaskill-workflow")
+
     def test_build_capability_coverage_marks_covered_and_missing(self):
         bundle = {
             "required_capabilities": [
