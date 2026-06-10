@@ -1162,7 +1162,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 105)
+        self.assertEqual(result["skill_manifest_count"], 106)
         self.assertEqual(result["issues"], [])
 
     def test_task_pack_scenario_router_outputs_profile_plan_and_explanations(self):

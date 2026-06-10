@@ -1,0 +1,45 @@
+{
+  "allowed_tools": [],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "2aff31bceaa53953759b03e52ed4b91b527dfc7f274da739638f2785930c6019",
+    "source_sha256": "22411f183eb47a78124e12d42a12a7d913ac4513e0fe0a3f6b6ac635edd9fde7"
+  },
+  "name": "research-recent-social-signal-brief",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "high",
+  "schema_version": 1,
+  "source": {
+    "author": "mvanhorn",
+    "captured_at": "2026-06-10T02:40:27Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "skills/last30days",
+    "reference": "Community project reference: last30days-skill, AI agent skill for recent multi-platform public signal research",
+    "type": "github_reference",
+    "url": "https://github.com/mvanhorn/last30days-skill"
+  },
+  "status": "review_required",
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "research",
+    "collection_priority": "P0",
+    "subcategory": "research.recent_social",
+    "task_intent": "synthesize recent multi-source social and market signals"
+  },
+  "version": "0.1.0"
+}

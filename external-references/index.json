@@ -1,78 +1,126 @@
 {
-  "schema_version": 1,
-  "reference_count": 3,
+  "reference_count": 5,
   "references": [
     {
-      "name": "AnyTool",
-      "source_url": "https://github.com/HKUDS/AnyTool",
-      "source_type": "github_reference",
+      "adoption_status": "reference_only",
       "author": "HKUDS",
-      "license": "unknown",
       "captured_at": "2026-06-06",
-      "project_category": "tool_router",
       "claimed_capabilities": [
         "universal_tool_use_layer",
         "hierarchical_api_retrieval",
         "tool_selection",
         "tool_orchestration"
       ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "AnyTool",
+      "project_category": "tool_router",
+      "review_notes": "Architecture reference for pre-selecting a compact tool pack before agent execution. Any local adoption must be rewritten as catalog-bound metadata or a reviewed local skill.",
+      "runtime_permission_notes": "Reference only. Do not install, import, execute, or expose its runtime tools through default task packs.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/HKUDS/AnyTool",
       "taxonomy_categories": [
         "ai.routing",
         "ai.orchestration",
         "ai.tool-schema"
-      ],
-      "runtime_permission_notes": "Reference only. Do not install, import, execute, or expose its runtime tools through default task packs.",
-      "adoption_status": "reference_only",
-      "review_notes": "Architecture reference for pre-selecting a compact tool pack before agent execution. Any local adoption must be rewritten as catalog-bound metadata or a reviewed local skill.",
-      "metadata_only": true
+      ]
     },
     {
-      "name": "Awesome MCP Servers",
-      "source_url": "https://github.com/punkpeye/awesome-mcp-servers",
-      "source_type": "github_reference",
+      "adoption_status": "reference_only",
       "author": "punkpeye",
-      "license": "unknown",
       "captured_at": "2026-06-06",
-      "project_category": "mcp_directory",
       "claimed_capabilities": [
         "mcp_server_directory",
         "community_tool_discovery",
         "category_indexing",
         "mcp_ecosystem_mapping"
       ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "Awesome MCP Servers",
+      "project_category": "mcp_directory",
+      "review_notes": "Useful as a source-discovery pattern and candidate list. Each downstream MCP server still needs separate provenance, license, risk, and permission review.",
+      "runtime_permission_notes": "Reference only. Directory entries are not trusted skills and must not be auto-installed or auto-executed.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/punkpeye/awesome-mcp-servers",
       "taxonomy_categories": [
         "research.web",
         "ai.routing",
         "security.supply_chain"
-      ],
-      "runtime_permission_notes": "Reference only. Directory entries are not trusted skills and must not be auto-installed or auto-executed.",
-      "adoption_status": "reference_only",
-      "review_notes": "Useful as a source-discovery pattern and candidate list. Each downstream MCP server still needs separate provenance, license, risk, and permission review.",
-      "metadata_only": true
+      ]
     },
     {
-      "name": "AskBudi Roundtable MCP",
-      "source_url": "https://askbudi.ai/docs/mcp-server",
-      "source_type": "web_reference",
+      "adoption_status": "reference_only",
       "author": "AskBudi",
-      "license": "unknown",
       "captured_at": "2026-06-06",
-      "project_category": "meta_mcp_gateway",
       "claimed_capabilities": [
         "mcp_gateway",
         "assistant_discovery",
         "multi_assistant_unified_interface",
         "coding_tool_aggregation"
       ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "AskBudi Roundtable MCP",
+      "project_category": "meta_mcp_gateway",
+      "review_notes": "Useful as a reference for one-entry MCP ergonomics and auto-discovery patterns. License and exact repository provenance require follow-up review before any conversion.",
+      "runtime_permission_notes": "Reference only. Do not run as a gateway or expose external assistant tools without a separate connector approval path.",
+      "source_type": "web_reference",
+      "source_url": "https://askbudi.ai/docs/mcp-server",
       "taxonomy_categories": [
         "ai.orchestration",
         "ai.routing",
         "ai.tool-schema"
+      ]
+    },
+    {
+      "adoption_status": "candidate",
+      "author": "mvanhorn",
+      "captured_at": "2026-06-10",
+      "claimed_capabilities": [
+        "recent_multi_platform_research",
+        "social_signal_deduplication",
+        "source_cluster_synthesis",
+        "cited_brief_generation"
       ],
-      "runtime_permission_notes": "Reference only. Do not run as a gateway or expose external assistant tools without a separate connector approval path.",
+      "license": "MIT",
+      "metadata_only": true,
+      "name": "last30days-skill",
+      "project_category": "recent_social_research_skill",
+      "review_notes": "Real, public, MIT GitHub project with high community traction. Useful pattern for last-30-days social signal briefs, but runtime connectors, browser sessions, paid APIs, and live factual claims require separate operator approval and verification.",
+      "runtime_permission_notes": "Reference only. Do not auto-install, execute, scrape, or expose external accounts/API keys through default task packs. Local adoption is represented by review-required safe workflow metadata only.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/mvanhorn/last30days-skill",
+      "taxonomy_categories": [
+        "research.recent_social",
+        "research.source",
+        "content.freshness"
+      ]
+    },
+    {
       "adoption_status": "reference_only",
-      "review_notes": "Useful as a reference for one-entry MCP ergonomics and auto-discovery patterns. License and exact repository provenance require follow-up review before any conversion.",
-      "metadata_only": true
+      "author": "google-antigravity",
+      "captured_at": "2026-06-10",
+      "claimed_capabilities": [
+        "terminal_agent_interface",
+        "multi_file_editing",
+        "tool_calling",
+        "persistent_history"
+      ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "Antigravity CLI provenance watch",
+      "project_category": "agent_cli_runtime_reference",
+      "review_notes": "The user-supplied google/antigravity-cli path was not found. GitHub search found google-antigravity/antigravity-cli; keep only as a provenance-watch runtime reference until official ownership, license, and permission model are verified.",
+      "runtime_permission_notes": "Reference only. Do not install or run installer commands from README. The repository path is not google/antigravity-cli, so official provenance remains pending unless confirmed by official documentation.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/google-antigravity/antigravity-cli",
+      "taxonomy_categories": [
+        "ai.orchestration",
+        "execution.pipeline",
+        "security.review"
+      ]
     }
-  ]
+  ],
+  "schema_version": 1
 }

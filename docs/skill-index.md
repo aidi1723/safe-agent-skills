@@ -107,6 +107,7 @@ Each individual `SKILL.md` also contains:
 | research | `research-citation-evidence-map` | trusted | Use when mapping claims to citations, reviewing evidence coverage, checking source-backed summaries, or preparing citation-heavy research output. |
 | research | `research-competitor-brief` | trusted | Use when comparing competitors, products, pricing pages, positioning, features, and public market signals. |
 | research | `research-paper-synthesis` | trusted | Use when summarizing papers, technical reports, datasets, methods, limitations, and evidence across research sources. |
+| research | `research-recent-social-signal-brief` | review_required | Use when researching recent social, community, market, or creator signals from the last 30 days and turning noisy multi-source evidence into a cited brief. |
 | research | `research-source-check` | trusted | Use when verifying factual claims against primary or high-quality sources with explicit citations. |
 | research | `research-source-lineage-trace` | trusted | Use when tracing claims back to sources, checking citation lineage, reviewing summaries, or preventing unsupported research assertions. |
 | security | `security-command-risk-preflight` | trusted | Use when reviewing proposed terminal commands, file operations, scripts, dependency actions, or operational steps before execution. |

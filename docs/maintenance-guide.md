@@ -32,10 +32,10 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 105
+- total skills: 106
 - trusted skills: 100
 - quarantined skills: 3
-- review-required skills: 2
+- review-required skills: 3
 - categories meeting 3 trusted skills: 15 / 15
 - scenario bundles: 10
 - phase status: Phase 002 scenario router closed for today's delivery

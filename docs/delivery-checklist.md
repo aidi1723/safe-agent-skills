@@ -58,10 +58,10 @@ The local MVP is complete when the project can:
 
 ## Current Public Baseline
 
-- total skills: 105
+- total skills: 106
 - trusted skills: 100
 - quarantined skills: 3
-- review-required skills: 2
+- review-required skills: 3
 - top-level category coverage: 15 / 15
 - scenario bundles: 10
 - registry verification: ok

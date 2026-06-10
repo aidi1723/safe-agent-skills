@@ -2,8 +2,8 @@
 
 ## Summary
 
-The current public-safe catalog contains 105 sanitized skills across all
-top-level taxonomy categories, including 33 community project reference skills
+The current public-safe catalog contains 106 sanitized skills across all
+top-level taxonomy categories, including 34 community project reference skills
 and 30 local guardrail, governance, safety operations, code quality, AI runtime, and document evidence seed skills.
 It also records 7 trusted-only overlap groups for router and operator skill
 selection hints.
@@ -20,7 +20,7 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 105
+skill_count: 106
 trusted_count: 100
 tampered_count: 0
 unknown_provenance_count: 0
@@ -34,6 +34,7 @@ Every top-level category now has at least 3 trusted skills.
 Latest update statement:
 
 - [Smart Skill Router](updates/2026-06-06-smart-skill-router.md)
+- [Recent Social Signal Reference](updates/2026-06-10-recent-social-signal-reference.md)
 - [Skill Overlap Groups](skill-overlap-groups.md)
 - [Document Evidence Guardrails](updates/2026-06-05-document-evidence-guardrails.md)
 - [AI Runtime Guardrails](updates/2026-06-05-ai-runtime-guardrails.md)
@@ -198,6 +199,7 @@ smart router mode: deterministic_mesh_router
 | `research-citation-evidence-map` | research | trusted |
 | `research-competitor-brief` | research | trusted |
 | `research-paper-synthesis` | research | trusted |
+| `research-recent-social-signal-brief` | research | review_required |
 | `research-source-check` | research | trusted |
 | `research-source-lineage-trace` | research | trusted |
 | `security-command-risk-preflight` | security | trusted |

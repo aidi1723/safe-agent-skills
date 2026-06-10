@@ -65,7 +65,7 @@ internet.
 
 Current public baseline:
 
-- 105 total skills
+- 106 total skills
 - 100 trusted skills
 - 10 trusted scenario bundles
 - 7 trusted-only skill overlap groups
