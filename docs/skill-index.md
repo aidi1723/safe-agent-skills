@@ -80,8 +80,11 @@ Each individual `SKILL.md` also contains:
 | data | `data-unstructured-document-partition` | trusted | Use when transforming complex documents into clean chunks, structured records, or retrieval-ready text. |
 | data | `data-visualization-plan` | trusted | Use when choosing charts, dashboard views, metric summaries, visual encodings, and data storytelling structure. |
 | design | `design-accessibility-check` | trusted | Use when reviewing interface accessibility, labels, contrast, keyboard reachability, focus states, and responsive readability. |
+| design | `design-motion-interaction-polish` | trusted | Use when adding or reviewing UI micro-interactions, CSS animations, Motion for React transitions, hover and focus feedback, scroll reveals, loading states, or reduced-motion behavior in a web interface. |
+| design | `design-premium-landing-page` | trusted | Use when creating, polishing, or reviewing a premium marketing landing page, product launch page, SaaS homepage, brand showcase, or conversion page using modern visual references such as Awwwards, Godly, Lapa Ninja, Cruip, Magic UI, or Aceternity UI. |
 | design | `design-responsive-viewport-check` | trusted | Use when reviewing responsive UI layouts, viewport breakpoints, text overflow, mobile readability, or screenshot-based layout regressions. |
 | design | `design-system-consistency` | trusted | Use when checking UI tokens, components, spacing, typography, states, and visual consistency across screens. |
+| design | `design-tailwind-radix-system` | trusted | Use when building, reviewing, or refactoring a React UI design system based on Tailwind CSS, Radix UI primitives, shadcn/ui-style components, tokens, variants, and accessible interaction states. |
 | design | `design-ui-review` | trusted | Use when reviewing or polishing a UI screen, dashboard, or frontend view for layout, visual hierarchy, responsiveness, and accessibility. |
 | engineering | `engineering-build-release` | trusted | Use when preparing a local build, release readiness check, or engineering handoff with explicit smoke tests and rollback notes. |
 | engineering | `engineering-ci-troubleshoot` | trusted | Use when diagnosing CI failures, build jobs, test matrix problems, cache issues, and release pipeline breakage. |

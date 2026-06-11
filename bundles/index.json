@@ -13,6 +13,9 @@
         {"id": "engineering_release", "required": true, "preferred_skills": ["engineering-build-release"]},
         {"id": "ui_review", "required": true, "preferred_skills": ["design-ui-review"]},
         {"id": "design_consistency", "required": true, "preferred_skills": ["design-system-consistency"]},
+        {"id": "tailwind_radix_system", "required": false, "preferred_skills": ["design-tailwind-radix-system"]},
+        {"id": "premium_landing_design", "required": false, "preferred_skills": ["design-premium-landing-page"]},
+        {"id": "motion_polish", "required": false, "preferred_skills": ["design-motion-interaction-polish"]},
         {"id": "seo_copy", "required": true, "preferred_skills": ["content-seo-brief"]},
         {"id": "browser_verification", "required": true, "preferred_skills": ["execution-browser-check", "execution-playwright-browser-automation"]},
         {"id": "publish_check", "required": true, "preferred_skills": ["execution-publish-check"]},
@@ -28,6 +31,9 @@
         "execution-playwright-browser-automation",
         "execution-publish-check",
         "execution-browser-use-web-task",
+        "design-tailwind-radix-system",
+        "design-premium-landing-page",
+        "design-motion-interaction-polish",
         "content-social-post"
       ],
       "skills": [
@@ -35,6 +41,9 @@
         "engineering-build-release",
         "design-ui-review",
         "design-system-consistency",
+        "design-tailwind-radix-system",
+        "design-premium-landing-page",
+        "design-motion-interaction-polish",
         "content-seo-brief",
         "content-social-post",
         "execution-browser-check",
@@ -46,6 +55,8 @@
         "requirements and acceptance criteria",
         "build readiness notes",
         "UI and responsive review",
+        "design-system and premium landing notes",
+        "motion and interaction polish notes",
         "page copy and SEO notes",
         "browser verification evidence",
         "publish readiness checklist"

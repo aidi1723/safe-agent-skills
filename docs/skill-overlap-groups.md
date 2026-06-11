@@ -24,7 +24,7 @@ Current groups:
 | RAG Retrieval Boundaries | `ai-llamaindex-rag-knowledge-workflow` | Haystack pipeline, Qdrant retrieval, namespace boundaries |
 | Source, Fact, and Evidence | `research-source-check` | source lineage, citation maps, contradiction review |
 | Table and Numeric Evidence | `data-table-calculation-verify` | table analysis, office table reconciliation, spreadsheet cleanup |
-| UI Quality Review | `design-ui-review` | design system consistency, accessibility, responsive viewport checks |
+| UI Quality Review | `design-ui-review` | design system consistency, accessibility, responsive viewport, Tailwind/Radix system, motion, and premium landing checks |
 | Browser Execution Verification | `execution-playwright-browser-automation` | browser checks and web-task execution guidance |
 | Public Claims Compliance | `content-claims-compliance-filter` | public claim risk, terms review, freshness review |
 
@@ -39,6 +39,8 @@ Examples:
 - A quick UI review starts with `design-ui-review`.
 - A UI release with accessibility and mobile regressions adds
   `design-accessibility-check` and `design-responsive-viewport-check`.
+- A premium Tailwind/Radix landing page adds `design-tailwind-radix-system`,
+  `design-premium-landing-page`, and `design-motion-interaction-polish`.
 - A basic factual answer starts with `research-source-check`.
 - A public report with citations and inconsistency risk adds
   `research-citation-evidence-map` and

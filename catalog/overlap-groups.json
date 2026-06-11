@@ -60,12 +60,15 @@
     {
       "id": "ui-quality-review",
       "name": "UI Quality Review",
-      "intent": "Use the general UI review skill first, then add system consistency, accessibility, or responsive viewport checks for targeted UI risks.",
+      "intent": "Use the general UI review skill first, then add system consistency, accessibility, responsive viewport, Tailwind/Radix system, motion, or premium landing checks for targeted UI risks.",
       "primary_skill": "design-ui-review",
       "adjacent_skills": [
         "design-system-consistency",
         "design-accessibility-check",
-        "design-responsive-viewport-check"
+        "design-responsive-viewport-check",
+        "design-tailwind-radix-system",
+        "design-motion-interaction-polish",
+        "design-premium-landing-page"
       ],
       "use_before": [],
       "use_after": []

@@ -1,0 +1,47 @@
+{
+  "approved_at": "2026-06-11T06:36:20Z",
+  "files": [
+    "SKILL.md"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "0f92486465848c30e781baee8a1335289b6944212c39cfa02ee1c523544854b2",
+    "source_sha256": "b166f2248338d51162d3a1cb913d07f1044044d686abc9350a49058b467bc4a9"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [
+    "build check",
+    "desktop screenshot check",
+    "mobile screenshot check",
+    "accessibility spot check",
+    "public claim source check"
+  ],
+  "schema_version": 1,
+  "skill_name": "design-premium-landing-page",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-11T06:35:40Z",
+    "collected_by": "onecode-local-design-review",
+    "license": "Apache-2.0",
+    "path": "catalog/design/design-premium-landing-page",
+    "reference": "docs/skill-taxonomy.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-premium-landing-page"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "interface",
+    "category": "design",
+    "collection_priority": "P1",
+    "subcategory": "design.frontend",
+    "task_intent": "create or review premium landing pages without template drift"
+  }
+}

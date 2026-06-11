@@ -1,0 +1,53 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator after design-skill inclusion review.",
+  "approved_at": "2026-06-11T06:36:20Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "a1442ce4a5b0bba5a988ef854121551d29c154ffec7ab19f6d52322da75c8e17",
+    "source_sha256": "8529cd5a2b8415b80ccd21a6385d7cc17260024114828df28c5e5a5efe6fe7ee"
+  },
+  "name": "design-tailwind-radix-system",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [
+    "build check",
+    "responsive viewport check",
+    "keyboard focus check",
+    "accessibility spot check",
+    "component state review"
+  ],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-11T06:35:40Z",
+    "collected_by": "onecode-local-design-review",
+    "license": "Apache-2.0",
+    "path": "catalog/design/design-tailwind-radix-system",
+    "reference": "docs/skill-taxonomy.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-tailwind-radix-system"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "interface",
+    "category": "design",
+    "collection_priority": "P0",
+    "subcategory": "design.system",
+    "task_intent": "build or review Tailwind and Radix UI component systems"
+  },
+  "version": "0.1.0"
+}

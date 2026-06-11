@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 106 sanitized skills across all
+The current public-safe catalog contains 109 sanitized skills across all
 top-level taxonomy categories, including 34 community project reference skills
-and 30 local guardrail, governance, safety operations, code quality, AI runtime, and document evidence seed skills.
+and 33 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, and design seed skills.
 It also records 7 trusted-only overlap groups for router and operator skill
 selection hints.
 
@@ -20,8 +20,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 106
-trusted_count: 100
+skill_count: 109
+trusted_count: 103
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -33,6 +33,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Design Skill Expansion](updates/2026-06-11-design-skill-expansion.md)
 - [Smart Skill Router](updates/2026-06-06-smart-skill-router.md)
 - [Recent Social Signal Reference](updates/2026-06-10-recent-social-signal-reference.md)
 - [Skill Overlap Groups](skill-overlap-groups.md)
@@ -97,7 +98,7 @@ smart router mode: deterministic_mesh_router
 | compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 5 |
 | content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 8 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
-| design | `design-accessibility-check`, `design-responsive-viewport-check`, `design-system-consistency`, `design-ui-review` | 4 |
+| design | `design-accessibility-check`, `design-motion-interaction-polish`, `design-premium-landing-page`, `design-responsive-viewport-check`, `design-system-consistency`, `design-tailwind-radix-system`, `design-ui-review` | 7 |
 | engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-error-log-noise-triage`, `engineering-performance-profile` | 4 |
 | execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 7 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |

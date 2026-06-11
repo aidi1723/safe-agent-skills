@@ -1,0 +1,47 @@
+{
+  "approved_at": "2026-06-11T06:36:20Z",
+  "files": [
+    "SKILL.md"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "9e5d6471343581814b7e9d10f63e6185e8ac6fe285c193bd4784e43d4439290b",
+    "source_sha256": "c166662fd2ea04b63f370d46b5b4115f4333ae44255ed6dceff4b56d5afa1c17"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [
+    "build check",
+    "responsive viewport check",
+    "reduced motion check",
+    "keyboard focus check",
+    "performance spot check"
+  ],
+  "schema_version": 1,
+  "skill_name": "design-motion-interaction-polish",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-11T06:35:40Z",
+    "collected_by": "onecode-local-design-review",
+    "license": "Apache-2.0",
+    "path": "catalog/design/design-motion-interaction-polish",
+    "reference": "docs/skill-taxonomy.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-motion-interaction-polish"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "interface",
+    "category": "design",
+    "collection_priority": "P1",
+    "subcategory": "design.frontend",
+    "task_intent": "add or review accessible UI motion and micro-interactions"
+  }
+}
