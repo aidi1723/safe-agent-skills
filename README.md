@@ -1,8 +1,8 @@
 # OneCode Skill Sanitizer
 
-OneCode Skill Sanitizer is a standalone project for turning external or community skills into OneCode-governed skill instructions.
+OneCode Skill Sanitizer is a standalone project for turning external or community skill material, local seed workflows, and reference-derived guidance into OneCode-governed skill instructions.
 
-Its purpose is not to execute third-party skills directly. Its purpose is to preserve useful domain workflows while removing unsafe commands, privilege-escalation instructions, hidden dependencies, secret leakage, and content that conflicts with OneCode's execution rules.
+Its purpose is not to execute third-party skills directly. Its purpose is to preserve useful domain workflows while applying deterministic risk preflight checks, provenance records, review status, hash verification, and explicit execution boundaries. The scanner is a guardrail and review aid; it is not a complete malware detector or a substitute for host-runtime sandboxing.
 
 The CLI can also be used independently of OneCode. Users can bring their own
 `incoming/` skill folders, build a private or public `registry/`, approve their
@@ -56,17 +56,19 @@ This project is a public-safe skill catalog and sanitizer for AI agents. It is
 designed to turn scattered community skills into provenance-recorded,
 policy-bounded, hash-verifiable, and maintainable `trusted` skill assets.
 
-All published catalog skills have passed the OneCode safety validation and
-cleaning workflow: provenance recording, static risk scanning,
-unsafe-instruction cleanup, status review, sanitized hash recording, and
-registry verification. This makes the project safer and more reliable than
-copying unverified prompts or agent instructions directly from the open
-internet.
+All published catalog skills have passed the current OneCode governance
+workflow: provenance recording, deterministic static risk scanning, status
+review, sanitized hash recording, and registry verification. Many community
+entries are locally authored reference skills inspired by public projects, not
+verbatim imports from those repositories. This makes the project safer and more
+auditable than copying unverified prompts or agent instructions directly from
+the open internet, but it should not be treated as a standalone security
+sandbox.
 
 Current public baseline:
 
-- 106 total skills
-- 100 trusted skills
+- 109 total skills
+- 103 trusted skills
 - 10 trusted scenario bundles
 - 7 trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
@@ -78,10 +80,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Smart Skill Router](docs/updates/2026-06-06-smart-skill-router.md).
+[Scanner and Documentation Hardening](docs/updates/2026-06-12-scanner-docs-hardening.md).
 
 Previous update:
-[Skill Overlap Groups](docs/updates/2026-06-05-skill-overlap-groups.md).
+[Design Skill Expansion](docs/updates/2026-06-11-design-skill-expansion.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).
@@ -110,9 +112,9 @@ The sanitizer sits between untrusted skill sources and the OneCode skill registr
 ```text
 external skill
   -> source capture
-  -> static risk scan
+  -> deterministic risk preflight scan
   -> instruction distillation
-  -> policy rewrite
+  -> policy rewrite or bounded local synthesis
   -> verifier binding
   -> evidence manifest
   -> quarantined registry entry
@@ -124,10 +126,11 @@ external skill
 
 No imported skill is trusted by default.
 
-Every external skill starts in `quarantined` state. It can become `trusted` only after the sanitizer produces a manifest, a sanitization report, and a clean risk scan under OneCode policy.
+Every external skill starts in `quarantined` state. It can become `trusted` only after the sanitizer produces a manifest, a sanitization report, and a clean deterministic risk scan under OneCode policy.
 
 `trusted` means the skill has passed the current OneCode safety validation and
-cleaning process. It does not grant unrestricted runtime permissions:
+review process. It does not mean the source is perfectly safe, and it does not
+grant unrestricted runtime permissions:
 connectors, filesystem access, network access, and production actions still
 belong to the host runtime's approval and policy layer.
 
@@ -206,7 +209,7 @@ onecode-skill-sanitizer disable ./registry/office/old-skill
 `--include-review-required` only for review work, not normal execution.
 
 `task-pack` is the universal Agent-facing interface. It verifies the registry,
-selects matching trusted skills, loads their cleaned `SKILL.md` instructions,
+selects matching trusted skills, loads their sanitized `SKILL.md` instructions,
 and emits a JSON or Markdown instruction pack that any host Agent can place in
 its planning context. The pack provides method, verifier expectations, and
 provenance. It does not grant filesystem, network, connector, shell, or
@@ -216,9 +219,9 @@ production permissions; those remain controlled by the host runtime.
 bundles, so a host Agent receives both individual skill guidance and a larger
 task playbook when the task matches a known workflow.
 
-For the simplest default entry, use `smart`. It automatically uses the trusted
-catalog, scenario bundles, overlap groups, invariant hints, and deterministic
-mesh router:
+For the simplest default entry, use `smart`. It uses the trusted catalog,
+scenario bundles, overlap groups, invariant hints, and deterministic mesh
+router:
 
 ```bash
 onecode-skill-sanitizer smart \
@@ -263,7 +266,7 @@ layer for routers and operators, not a deletion or merge list.
 
 These skills and bundles are agent-compatible by design. Claude, Codex,
 OpenClaw, Cursor, local agents, MCP hosts, CI workers, and custom agent
-systems can consume the same cleaned Markdown or JSON task packs. The safety
+systems can consume the same sanitized Markdown or JSON task packs. The safety
 rule stays the same across all hosts: skill guidance is method, not execution
 authority. See [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md).
 

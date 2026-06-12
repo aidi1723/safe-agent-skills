@@ -33,6 +33,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Scanner and Documentation Hardening](updates/2026-06-12-scanner-docs-hardening.md)
 - [Design Skill Expansion](updates/2026-06-11-design-skill-expansion.md)
 - [Smart Skill Router](updates/2026-06-06-smart-skill-router.md)
 - [Recent Social Signal Reference](updates/2026-06-10-recent-social-signal-reference.md)

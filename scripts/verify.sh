@@ -4,6 +4,16 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+require_command() {
+  local command_name="$1"
+  if ! command -v "$command_name" >/dev/null 2>&1; then
+    echo "missing required command: $command_name" >&2
+    exit 1
+  fi
+}
+
+require_command rg
+
 PYTHONPATH=src python3 -m compileall src tests
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
@@ -37,8 +47,6 @@ python3 -m json.tool schemas/verify-report.schema.json >/dev/null
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null
-if command -v rg >/dev/null 2>&1; then
-  if rg -n "TODO|FIXME|PLACEHOLDER|TBD|待定" . --glob '!scripts/verify.sh'; then
-    exit 1
-  fi
+if rg -n "TODO|FIXME|PLACEHOLDER|TBD|待定" . --glob '!scripts/verify.sh'; then
+  exit 1
 fi

@@ -98,9 +98,9 @@ Each imported skill receives:
 
 ### 1. Scan
 
-Detects risky text patterns such as secrets, dangerous shell instructions,
-policy override language, broad filesystem assumptions, and unsafe execution
-phrasing.
+Detects deterministic risky text patterns such as secrets, dangerous shell
+instructions, inline interpreter execution, encoded payload execution, policy
+override language, broad filesystem assumptions, and unsafe execution phrasing.
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer scan ./incoming/my-skill
@@ -108,8 +108,9 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer scan ./incoming/my-skill
 
 ### 2. Sanitize
 
-Writes a cleaned skill folder and removes unsafe fragments that should not be
-given to an agent as instructions.
+Writes a sanitized skill folder and removes unsafe fragments that match current
+scanner rules. Human review is still required before trusting unvetted third
+party material.
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer sanitize ./incoming/my-skill \
@@ -256,7 +257,7 @@ engineering practice instead of a private prompt collection habit.
 Users are encouraged to:
 
 - build private skill catalogs
-- publish cleaned public catalogs
+- publish sanitized public catalogs
 - contribute new risk rules
 - improve taxonomy coverage
 - add verifier integrations

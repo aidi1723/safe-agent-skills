@@ -79,7 +79,7 @@ Every integration should record:
 The sanitizer may claim these properties when implemented and verified:
 
 - untrusted skills are not executed during import
-- unsafe fragments are detected and removed or rewritten
+- deterministic risk patterns are detected and removed or rewritten when covered by scanner rules
 - every sanitized skill has a manifest and report
 - every trusted skill has a recorded source hash and sanitized hash
 - runtime use is constrained by the host kernel permission model
@@ -87,6 +87,8 @@ The sanitizer may claim these properties when implemented and verified:
 The sanitizer must not claim:
 
 - that community skills are 100% clean
+- that deterministic regex scanning catches every obfuscated unsafe instruction
+- that `github_reference` means upstream project content was copied or sanitized
 - that local-first alone prevents all exfiltration
 - that popularity or repository stars imply trust
 - that connector or vault support exists without adapter verification

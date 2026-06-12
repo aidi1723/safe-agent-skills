@@ -32,8 +32,8 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 106
-- trusted skills: 100
+- total skills: 109
+- trusted skills: 103
 - quarantined skills: 3
 - review-required skills: 3
 - categories meeting 3 trusted skills: 15 / 15
@@ -47,7 +47,7 @@ Closure report:
 
 Latest update:
 
-- [Document Evidence Guardrails](updates/2026-06-05-document-evidence-guardrails.md)
+- [Scanner and Documentation Hardening](updates/2026-06-12-scanner-docs-hardening.md)
 
 ## Intake Rule
 

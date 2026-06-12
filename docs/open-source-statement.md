@@ -8,7 +8,7 @@ AI Agent 工程真正难的地方，往往不是没有工具，而是工具太�
 
 `OneCode Skill Sanitizer` 的目标，就是把这些碎片化的 Agent 技能资产，变成一个可审计、可追踪、可维护的安全目录。
 
-本仓库公开出来的 skill，不是未经验证的 prompt 合集。它们已经经过 OneCode 的安全验证和清洗流程：来源记录、静态风险扫描、危险指令清理、状态审查、哈希记录和 registry 完整性验证。因此，这个项目相比直接复制互联网上未经验证的提示词或 Agent 指令，更安全、更可靠，也更适合长期维护。
+本仓库公开出来的 skill，不是未经验证的 prompt 合集。它们已经经过 OneCode 的治理流程：来源记录、确定性静态风险预检、状态审查、哈希记录和 registry 完整性验证。部分社区项目条目是参考公开项目后本地撰写的 reference skill，不代表复制或清洗了上游仓库内容。因此，这个项目相比直接复制互联网上未经验证的提示词或 Agent 指令，更可审计、更适合长期维护；但它不应被当作独立安全沙箱或完整恶意内容检测器。
 
 ## 我们要解决什么
 
@@ -34,7 +34,7 @@ AI Agent 工程真正难的地方，往往不是没有工具，而是工具太�
 本次更新后，`task-pack` 不仅可以根据任务自动选择单个优秀 skill，也可以通过
 `--include-bundles` 自动匹配场景组合，例如建站、RAG 知识库、代码审查、
 Agent 安全、开源发布、内容 SEO 和贸易增长。也就是说，用户不需要自己到处
-找 prompt，Agent 可以从这个经过 OneCode 安全验证和清洗过的 skill 仓库中，
+找 prompt，Agent 可以从这个经过 OneCode 治理和验证过的 skill 仓库中，
 按任务自动搭配更合适的安全 skill 和场景 playbook。
 
 ### 2. 技能不可信
@@ -45,9 +45,9 @@ Agent 安全、开源发布、内容 SEO 和贸易增长。也就是说，用户
 
 > 没有经过记录、清洗、审查和验证的 skill，默认不可信。
 
-所有外部或社区来源的 skill 都必须先进入隔离状态，再经过静态风险扫描、内容清洗、来源记录、哈希校验和人工审批，才可以成为默认可选择的 `trusted` skill。
+所有外部或社区来源的 skill 都必须先进入隔离状态，再经过确定性风险预检、内容审查、来源记录、哈希校验和人工审批，才可以成为默认可选择的 `trusted` skill。
 
-`trusted` 的含义是：该 skill 已通过当前 OneCode 安全验证与清洗流程，可以进入默认选择范围。它不代表无边界执行权限；文件系统、网络、连接器、生产环境操作等能力仍必须由宿主运行时的策略和审批层控制。
+`trusted` 的含义是：该 skill 已通过当前 OneCode 审查与验证流程，可以进入默认选择范围。它不代表来源内容 100% 安全，也不代表无边界执行权限；文件系统、网络、连接器、生产环境操作等能力仍必须由宿主运行时的策略和审批层控制。
 
 ### 3. 技能难维护
 
@@ -83,9 +83,9 @@ Agent 安全、开源发布、内容 SEO 和贸易增长。也就是说，用户
 ```text
 untrusted community skill
   -> source capture
-  -> static risk scan
+  -> deterministic risk preflight scan
   -> instruction distillation
-  -> policy rewrite
+  -> policy rewrite or bounded local synthesis
   -> provenance record
   -> hash verification
   -> quarantined registry entry
@@ -101,7 +101,7 @@ OneCode provides boundary, execution control, verification, and evidence.
 
 这些 skill 不是 Claude 专属，也不是 Codex 专属。
 
-每个 skill 都是清洗后的 `SKILL.md` 说明书，场景组合则是由多个
+每个 skill 都是经过审查和哈希记录的 `SKILL.md` 说明书，场景组合则是由多个
 `trusted` skill 组成的任务 playbook。Claude、Codex、OpenClaw、
 Cursor、本地 Agent、MCP Host、CI Worker 和自研 Agent 都可以读取这些
 Markdown 或 JSON 说明，并把它们放进自己的规划上下文中。
@@ -136,8 +136,8 @@ OpenClaw、OneCode 或其他宿主运行时自己的安全策略控制。
 
 当前安全机制包括：
 
-- 静态风险扫描
-- 危险片段清洗
+- 确定性静态风险预检
+- 危险片段移除或本地安全重写
 - trusted / quarantined / review_required 状态分离
 - 默认只选择 `trusted` skill
 - 来源与许可证记录
@@ -159,8 +159,8 @@ OpenClaw、OneCode 或其他宿主运行时自己的安全策略控制。
 当前 catalog 状态：
 
 ```text
-total skills: 106
-trusted skills: 100
+total skills: 109
+trusted skills: 103
 quarantined skills: 3
 review_required skills: 3
 scenario bundles: 10

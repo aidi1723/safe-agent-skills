@@ -59,6 +59,24 @@ RULES = [
         re.compile(r"\brm\s+-[A-Za-z]*r[A-Za-z]*f[A-Za-z]*\s+(/|~|\$HOME|/tmp|/var|/usr|\.)?", re.IGNORECASE),
         "Found destructive recursive deletion guidance.",
     ),
+    (
+        "inline-script-execution",
+        "critical",
+        re.compile(r"\b(python(?:3)?|node|perl|ruby|bash|sh)\s+(-c|-e)\b", re.IGNORECASE),
+        "Found inline interpreter or shell execution guidance.",
+    ),
+    (
+        "encoded-payload-execution",
+        "critical",
+        re.compile(r"\b(base64|openssl\s+enc)\b[^\n|;]*(\||;|&&)\s*(sh|bash|python(?:3)?|node)\b", re.IGNORECASE),
+        "Found encoded payload decoding followed by execution.",
+    ),
+    (
+        "environment-exfiltration",
+        "high",
+        re.compile(r"\b(upload|send|post|exfiltrat\w*)\b[^\n]*(environment variables?|env vars?|env|credentials?|secrets?)", re.IGNORECASE),
+        "Found guidance to expose environment variables or credentials.",
+    ),
 ]
 
 SEVERITY_ORDER = {

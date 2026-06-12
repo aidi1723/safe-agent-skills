@@ -130,19 +130,20 @@ guessing.
 
 ### Risk Scanner
 
-Runs deterministic checks before any LLM rewrite.
+Runs deterministic preflight checks before any rewrite or approval decision.
+The scanner is intentionally conservative and auditable; it is a review
+guardrail, not a complete malware detector.
 
 It flags:
 
 - destructive shell commands
-- command substitution and shell pipelines
+- inline shell or interpreter execution
+- encoded payload execution
 - `curl | bash` and remote execution
 - secret-looking strings
 - instructions to bypass policies
 - unrestricted filesystem access
-- external network dependency
-- binary assets or executable payloads
-- suspicious persistence behavior
+- environment or credential exfiltration guidance
 
 Scanner output is evidence, not just a warning.
 
