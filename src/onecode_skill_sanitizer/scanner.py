@@ -74,7 +74,11 @@ RULES = [
     (
         "environment-exfiltration",
         "high",
-        re.compile(r"\b(upload|send|post|exfiltrat\w*)\b[^\n]*(environment variables?|env vars?|env|credentials?|secrets?)", re.IGNORECASE),
+        re.compile(
+            r"\b(upload|send|post|exfiltrat\w*)\b[^\n]*(environment variables?|env vars?|env|credentials?|secrets?)"
+            r"|\b(printenv|env)\b[^\n|;]*(\||;|&&)\s*(curl|wget)\b",
+            re.IGNORECASE,
+        ),
         "Found guidance to expose environment variables or credentials.",
     ),
 ]
@@ -111,19 +115,28 @@ def source_hash(files: list[tuple[str, str]]) -> str:
 
 
 def scan_text(text: str) -> list[Finding]:
+    normalized_text = normalize_scan_text(text)
     findings = []
     for finding_id, severity, pattern, summary in RULES:
-        if pattern.search(text):
+        if pattern.search(normalized_text):
             findings.append(Finding(finding_id, severity, "unresolved", summary))
     return findings
 
 
 def line_findings(line: str) -> list[Finding]:
+    normalized_line = normalize_scan_text(line)
     findings = []
     for finding_id, severity, pattern, summary in RULES:
-        if pattern.search(line):
+        if pattern.search(normalized_line):
             findings.append(Finding(finding_id, severity, "removed", summary))
     return findings
+
+
+def normalize_scan_text(text: str) -> str:
+    text = re.sub(r"\\\s*\n\s*", " ", text)
+    text = re.sub(r"[ \t]*\n[ \t]*([|;&])", r" \1", text)
+    text = re.sub(r"([|;&])[ \t]*\n[ \t]*", r"\1 ", text)
+    return text
 
 
 def highest_risk(findings: list[Finding]) -> str:

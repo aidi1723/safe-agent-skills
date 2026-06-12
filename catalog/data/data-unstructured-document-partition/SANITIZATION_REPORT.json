@@ -22,7 +22,8 @@
     "path": "batches/batch-006-community-infrastructure/data-unstructured-document-partition",
     "reference": "Community project reference: Unstructured, document transformation into structured formats for language models",
     "type": "github_reference",
-    "url": "https://github.com/Unstructured-IO/unstructured"
+    "url": "https://github.com/Unstructured-IO/unstructured",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

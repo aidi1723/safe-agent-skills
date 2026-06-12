@@ -22,7 +22,8 @@
     "path": "batches/batch-001-seed/execution-browser-check",
     "reference": "docs/batches/batch-001-seed.md",
     "type": "local_folder",
-    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/execution-browser-check"
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/execution-browser-check",
+    "usage": "local_authoring"
   },
   "summary": {
     "preserved_sections": [],

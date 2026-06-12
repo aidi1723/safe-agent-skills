@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/ai-langchain-agent-orchestration",
     "reference": "Community project reference: LangChain, the agent engineering platform",
     "type": "github_reference",
-    "url": "https://github.com/langchain-ai/langchain"
+    "url": "https://github.com/langchain-ai/langchain",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

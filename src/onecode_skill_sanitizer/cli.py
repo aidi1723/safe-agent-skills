@@ -1032,6 +1032,44 @@ def validate_verify_report_schema(payload: dict, path: Path, issues: list[dict])
         add_issue(issues, "schema-invalid-verify-issues", path, "issues must be an array")
 
 
+def validate_sanitization_report_schema(payload: dict, path: Path, manifest: dict, issues: list[dict]) -> None:
+    for field in [
+        "schema_version",
+        "skill_name",
+        "taxonomy",
+        "source",
+        "files",
+        "hashes",
+        "summary",
+        "findings",
+        "required_verifiers",
+        "recommendation",
+    ]:
+        if field not in payload:
+            add_issue(issues, "schema-missing-report-field", path, f"{field} is required")
+    if payload.get("schema_version") != 1:
+        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
+    if payload.get("skill_name") != manifest.get("name"):
+        add_issue(issues, "schema-report-name-mismatch", path, "report skill_name must match manifest name")
+    validate_taxonomy(payload, path, issues)
+    validate_source(payload, path, issues)
+    validate_hashes(payload, path, issues)
+    for field in ["files", "findings", "required_verifiers"]:
+        if not isinstance(payload.get(field), list):
+            add_issue(issues, "schema-invalid-report-list", path, f"{field} must be an array")
+    summary = payload.get("summary")
+    if not isinstance(summary, dict):
+        add_issue(issues, "schema-invalid-report-summary", path, "summary must be an object")
+    else:
+        for field in ["status", "risk_level", "removed_fragment_count", "rewritten_fragment_count", "unresolved_finding_count"]:
+            if field not in summary:
+                add_issue(issues, "schema-missing-report-summary-field", path, f"summary.{field} is required")
+
+    for field in ["source", "hashes", "taxonomy"]:
+        if payload.get(field) != manifest.get(field):
+            add_issue(issues, f"schema-report-{field}-mismatch", path, f"report {field} must match manifest {field}")
+
+
 def schema_check(registry_dir: Path) -> dict:
     issues: list[dict] = []
     skill_manifest_count = 0
@@ -1043,6 +1081,16 @@ def schema_check(registry_dir: Path) -> dict:
             add_issue(issues, "schema-invalid-json", manifest_path, str(exc), "critical")
             continue
         validate_manifest_schema(manifest, manifest_path, issues)
+        report_path = manifest_path.parent / "SANITIZATION_REPORT.json"
+        try:
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+        except FileNotFoundError:
+            add_issue(issues, "schema-report-missing", report_path, "sanitization report is missing", "critical")
+            continue
+        except json.JSONDecodeError as exc:
+            add_issue(issues, "schema-invalid-json", report_path, str(exc), "critical")
+            continue
+        validate_sanitization_report_schema(report, report_path, manifest, issues)
 
     index_path = registry_dir / "index.json"
     try:

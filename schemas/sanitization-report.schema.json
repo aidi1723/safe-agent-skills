@@ -1,0 +1,196 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/sanitization-report.schema.json",
+  "title": "OneCode Skill Sanitization Report",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "skill_name",
+    "taxonomy",
+    "source",
+    "files",
+    "hashes",
+    "summary",
+    "findings",
+    "required_verifiers",
+    "recommendation"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "integer",
+      "const": 1
+    },
+    "skill_name": {
+      "type": "string"
+    },
+    "taxonomy": {
+      "type": "object"
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "type",
+        "usage",
+        "path",
+        "url",
+        "author",
+        "license",
+        "reference",
+        "collected_by",
+        "captured_at"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "local_folder",
+            "archive",
+            "git",
+            "community_index",
+            "github_reference",
+            "web_reference"
+          ]
+        },
+        "usage": {
+          "type": "string",
+          "enum": [
+            "source_import",
+            "reference_only",
+            "local_authoring"
+          ]
+        },
+        "url": {
+          "type": "string"
+        },
+        "path": {
+          "type": "string"
+        },
+        "author": {
+          "type": "string"
+        },
+        "license": {
+          "type": "string"
+        },
+        "reference": {
+          "type": "string"
+        },
+        "collected_by": {
+          "type": "string"
+        },
+        "commit": {
+          "type": "string"
+        },
+        "captured_at": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "additionalProperties": false
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "hashes": {
+      "type": "object",
+      "required": [
+        "source_sha256",
+        "sanitized_sha256"
+      ],
+      "properties": {
+        "source_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "sanitized_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        },
+        "manifest_sha256": {
+          "type": "string",
+          "pattern": "^[0-9a-f]{64}$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "summary": {
+      "type": "object",
+      "required": [
+        "status",
+        "risk_level",
+        "preserved_sections",
+        "removed_fragment_count",
+        "rewritten_fragment_count",
+        "unresolved_finding_count"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "quarantined",
+            "review_required",
+            "trusted",
+            "rejected",
+            "disabled"
+          ]
+        },
+        "risk_level": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high",
+            "critical"
+          ]
+        },
+        "preserved_sections": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "removed_fragment_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "rewritten_fragment_count": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "unresolved_finding_count": {
+          "type": "integer",
+          "minimum": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "removed_fragments": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "required_verifiers": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "recommendation": {
+      "type": "string"
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "additionalProperties": false
+}

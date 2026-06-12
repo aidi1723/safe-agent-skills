@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/ai-openai-cookbook-api-patterns",
     "reference": "Community project reference: OpenAI Cookbook, examples and guides for using the OpenAI API",
     "type": "github_reference",
-    "url": "https://github.com/openai/openai-cookbook"
+    "url": "https://github.com/openai/openai-cookbook",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

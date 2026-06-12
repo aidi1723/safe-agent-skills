@@ -1262,6 +1262,50 @@ class RegistryCliTest(unittest.TestCase):
             issue_ids = {issue["id"] for issue in result["issues"]}
             self.assertIn("schema-invalid-source-usage", issue_ids)
 
+    def test_schema_check_validates_sanitization_report_source_consistency(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "incoming" / "design-dashboard"
+            registry = root / "registry"
+            source.mkdir(parents=True)
+            (source / "SKILL.md").write_text("Use when reviewing dashboard UI.", encoding="utf-8")
+
+            main(
+                [
+                    "import",
+                    str(root / "incoming"),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/skills/design-dashboard",
+                    "--source-usage",
+                    "source_import",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/skills",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            report_path = registry / "design" / "design-dashboard" / "SANITIZATION_REPORT.json"
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            report["source"]["url"] = "https://github.com/example/other-skill"
+            del report["source"]["usage"]
+            report_path.write_text(json.dumps(report), encoding="utf-8")
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-missing-source-field", issue_ids)
+            self.assertIn("schema-report-source-mismatch", issue_ids)
+
     def test_task_pack_scenario_router_outputs_profile_plan_and_explanations(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

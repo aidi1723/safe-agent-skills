@@ -22,7 +22,8 @@
     "path": "batches/batch-006-community-infrastructure/ai-guidance-constrained-generation",
     "reference": "Community project reference: Guidance, a language for controlling large language models",
     "type": "github_reference",
-    "url": "https://github.com/guidance-ai/guidance"
+    "url": "https://github.com/guidance-ai/guidance",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

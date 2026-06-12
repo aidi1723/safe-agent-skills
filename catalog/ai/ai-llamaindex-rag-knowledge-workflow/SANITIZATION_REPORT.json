@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/ai-llamaindex-rag-knowledge-workflow",
     "reference": "Community project reference: LlamaIndex, document agent and OCR platform",
     "type": "github_reference",
-    "url": "https://github.com/run-llama/llama_index"
+    "url": "https://github.com/run-llama/llama_index",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

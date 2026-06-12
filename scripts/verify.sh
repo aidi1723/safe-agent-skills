@@ -42,6 +42,7 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标" >/dev/null
 python3 -m json.tool schemas/skill-manifest.schema.json >/dev/null
+python3 -m json.tool schemas/sanitization-report.schema.json >/dev/null
 python3 -m json.tool schemas/registry-index.schema.json >/dev/null
 python3 -m json.tool schemas/verify-report.schema.json >/dev/null
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null

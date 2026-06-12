@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/data-qdrant-vector-retrieval",
     "reference": "Community project reference: Qdrant, vector database and vector search engine",
     "type": "github_reference",
-    "url": "https://github.com/qdrant/qdrant"
+    "url": "https://github.com/qdrant/qdrant",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

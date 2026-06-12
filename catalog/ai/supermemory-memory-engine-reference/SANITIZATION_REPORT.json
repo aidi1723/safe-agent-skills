@@ -21,7 +21,8 @@
     "path": "batches/batch-004-community-hot/supermemory-memory-engine-reference",
     "reference": "Community project reference: SuperMemory AI memory engine",
     "type": "github_reference",
-    "url": "https://github.com/supermemoryai/supermemory"
+    "url": "https://github.com/supermemoryai/supermemory",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

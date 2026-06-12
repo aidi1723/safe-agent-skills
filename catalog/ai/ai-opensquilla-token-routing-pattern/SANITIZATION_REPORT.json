@@ -22,7 +22,8 @@
     "path": "batches/batch-008-opensquilla-reference/ai-opensquilla-token-routing-pattern",
     "reference": "OpenSquilla public product reference: token-efficient agent intelligence, on-demand skills, and smart routing",
     "type": "web_reference",
-    "url": "https://opensquilla.ai/"
+    "url": "https://opensquilla.ai/",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

@@ -22,7 +22,8 @@
     "path": "batches/batch-004-community-hot/trivy-container-security-scan",
     "reference": "Community project reference: Trivy vulnerability, misconfiguration, secret, and SBOM scanner",
     "type": "github_reference",
-    "url": "https://github.com/aquasecurity/trivy"
+    "url": "https://github.com/aquasecurity/trivy",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

@@ -22,7 +22,8 @@
     "path": "batches/batch-006-community-infrastructure/ai-llama-cpp-local-inference-boundary",
     "reference": "Community project reference: llama.cpp, LLM inference in C and C++",
     "type": "github_reference",
-    "url": "https://github.com/ggml-org/llama.cpp"
+    "url": "https://github.com/ggml-org/llama.cpp",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

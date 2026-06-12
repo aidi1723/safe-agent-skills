@@ -22,7 +22,8 @@
     "path": "batches/batch-008-opensquilla-reference/security-opensquilla-sandbox-policy",
     "reference": "OpenSquilla public product reference: secure sandbox, policy tiers, and decision logging",
     "type": "web_reference",
-    "url": "https://opensquilla.ai/"
+    "url": "https://opensquilla.ai/",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/ai-qwen-agent-tool-workflow",
     "reference": "Community project reference: Qwen-Agent, function calling, MCP, code interpreter, RAG, and Chrome extension workflows",
     "type": "github_reference",
-    "url": "https://github.com/QwenLM/Qwen-Agent"
+    "url": "https://github.com/QwenLM/Qwen-Agent",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

@@ -22,7 +22,8 @@
     "path": "batches/batch-006-community-infrastructure/ai-pydantic-schema-contract",
     "reference": "Community project reference: Pydantic, data validation using Python type hints",
     "type": "github_reference",
-    "url": "https://github.com/pydantic/pydantic"
+    "url": "https://github.com/pydantic/pydantic",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

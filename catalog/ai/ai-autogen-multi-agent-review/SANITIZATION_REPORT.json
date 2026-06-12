@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/ai-autogen-multi-agent-review",
     "reference": "Community project reference: AutoGen, programming framework for agentic AI",
     "type": "github_reference",
-    "url": "https://github.com/microsoft/autogen"
+    "url": "https://github.com/microsoft/autogen",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/ai-crewai-role-workflow",
     "reference": "Community project reference: CrewAI, role-playing autonomous AI agents",
     "type": "github_reference",
-    "url": "https://github.com/crewAIInc/crewAI"
+    "url": "https://github.com/crewAIInc/crewAI",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

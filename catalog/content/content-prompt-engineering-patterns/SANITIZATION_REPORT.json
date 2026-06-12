@@ -22,7 +22,8 @@
     "path": "batches/batch-006-community-infrastructure/content-prompt-engineering-patterns",
     "reference": "Community project reference: Prompt Engineering Guide, resources for prompt engineering, context engineering, RAG, and AI agents",
     "type": "github_reference",
-    "url": "https://github.com/dair-ai/Prompt-Engineering-Guide"
+    "url": "https://github.com/dair-ai/Prompt-Engineering-Guide",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

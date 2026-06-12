@@ -22,7 +22,8 @@
     "path": "batches/batch-010-domain-governance-extensions/content-brand-voice-boundary",
     "reference": "docs/batches/batch-010-domain-governance-extensions.md",
     "type": "local_folder",
-    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/content-brand-voice-boundary"
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/content-brand-voice-boundary",
+    "usage": "local_authoring"
   },
   "summary": {
     "preserved_sections": [],

@@ -22,7 +22,8 @@
     "path": "batches/batch-007-community-agent-workflows/execution-browser-use-web-task",
     "reference": "Community project reference: browser-use, making websites accessible for AI agents",
     "type": "github_reference",
-    "url": "https://github.com/browser-use/browser-use"
+    "url": "https://github.com/browser-use/browser-use",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

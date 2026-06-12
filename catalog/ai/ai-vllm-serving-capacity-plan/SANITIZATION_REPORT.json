@@ -22,7 +22,8 @@
     "path": "batches/batch-006-community-infrastructure/ai-vllm-serving-capacity-plan",
     "reference": "Community project reference: vLLM, high-throughput and memory-efficient inference and serving engine for LLMs",
     "type": "github_reference",
-    "url": "https://github.com/vllm-project/vllm"
+    "url": "https://github.com/vllm-project/vllm",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

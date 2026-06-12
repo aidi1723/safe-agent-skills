@@ -21,7 +21,8 @@
     "path": "batches/batch-004-community-hot/vibe-trading-research-assistant",
     "reference": "Community project reference: Vibe-Trading AI-assisted trading research",
     "type": "github_reference",
-    "url": "https://github.com/HKUDS/Vibe-Trading"
+    "url": "https://github.com/HKUDS/Vibe-Trading",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],

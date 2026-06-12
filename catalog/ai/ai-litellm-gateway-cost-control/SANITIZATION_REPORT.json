@@ -50,7 +50,8 @@
     "path": "batches/batch-006-community-infrastructure/ai-litellm-gateway-cost-control",
     "reference": "Community project reference: LiteLLM, model gateway with cost tracking, guardrails, load balancing, and logging; license reported as Other by GitHub",
     "type": "github_reference",
-    "url": "https://github.com/BerriAI/litellm"
+    "url": "https://github.com/BerriAI/litellm",
+    "usage": "reference_only"
   },
   "summary": {
     "preserved_sections": [],
