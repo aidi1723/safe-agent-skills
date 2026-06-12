@@ -80,10 +80,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Consistency Rule Hardening](docs/updates/2026-06-12-consistency-rule-hardening.md).
+[Structural Scanner Hardening](docs/updates/2026-06-12-structural-scanner-hardening.md).
 
 Previous update:
-[Report Schema and Scanner Hardening](docs/updates/2026-06-12-report-schema-scanner-hardening.md).
+[Consistency Rule Hardening](docs/updates/2026-06-12-consistency-rule-hardening.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).

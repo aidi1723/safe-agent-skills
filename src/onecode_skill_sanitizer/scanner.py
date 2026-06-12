@@ -120,6 +120,42 @@ def scan_text(text: str) -> list[Finding]:
     for finding_id, severity, pattern, summary in RULES:
         if pattern.search(normalized_text):
             findings.append(Finding(finding_id, severity, "unresolved", summary))
+    findings.extend(structural_findings(normalized_text, "unresolved"))
+    return dedupe_findings(findings)
+
+
+def structural_findings(text: str, status: str) -> list[Finding]:
+    findings = []
+    downloaded_paths = {
+        match.group("path").strip("'\".,;:)")
+        for match in re.finditer(
+            r"\b(?:curl|wget)\b[^\n;|&]*(?:-o|-O|--output-document)\s+(?P<path>\S+)",
+            text,
+            re.IGNORECASE,
+        )
+    }
+    for path in downloaded_paths:
+        escaped_path = re.escape(path)
+        if re.search(rf"\b(?:sh|bash|python(?:3)?|node)\b\s+{escaped_path}\b", text, re.IGNORECASE):
+            findings.append(
+                Finding(
+                    "staged-download-execution",
+                    "critical",
+                    status,
+                    "Found downloaded file later executed by an interpreter or shell.",
+                )
+            )
+            break
+
+    if re.search(r"\b(?:python(?:3)?|node|perl|ruby|bash|sh)\b\s*<<\s*['\"]?\w+", text, re.IGNORECASE):
+        findings.append(
+            Finding(
+                "heredoc-interpreter-execution",
+                "critical",
+                status,
+                "Found heredoc content passed to an interpreter or shell.",
+            )
+        )
     return findings
 
 
@@ -129,7 +165,19 @@ def line_findings(line: str) -> list[Finding]:
     for finding_id, severity, pattern, summary in RULES:
         if pattern.search(normalized_line):
             findings.append(Finding(finding_id, severity, "removed", summary))
-    return findings
+    findings.extend(structural_findings(normalized_line, "removed"))
+    return dedupe_findings(findings)
+
+
+def dedupe_findings(findings: list[Finding]) -> list[Finding]:
+    seen = set()
+    deduped = []
+    for finding in findings:
+        if finding.id in seen:
+            continue
+        seen.add(finding.id)
+        deduped.append(finding)
+    return deduped
 
 
 def normalize_scan_text(text: str) -> str:
