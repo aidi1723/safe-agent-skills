@@ -91,6 +91,10 @@ Phase 001 is closed and ready for public maintenance. See
 Phase 002 scenario routing is closed for today's delivery. See
 [Phase 002 Scenario Router Closure Report](docs/phase-002-scenario-router-closure-report.md).
 
+The audit hardening cycle is closed. See
+[Audit Hardening Closure Report](docs/audit-hardening-closure-report.md) and
+[Next Development Plan](docs/next-development-plan.md).
+
 ## Core Position
 
 Skills provide method.
@@ -301,6 +305,8 @@ onecode skills approve pdf
 - [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
 - [Smart Skill Router](docs/smart-skill-router.md)
+- [Audit Hardening Closure Report](docs/audit-hardening-closure-report.md)
+- [Next Development Plan](docs/next-development-plan.md)
 - [External Reference Roadmap](docs/external-reference-roadmap.md)
 - [Scheduler Hardening Roadmap](docs/scheduler-hardening-roadmap.md)
 - [Latest Domain Guardrails Update](docs/updates/2026-06-05-domain-guardrails.md)

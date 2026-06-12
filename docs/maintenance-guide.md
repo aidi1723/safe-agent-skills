@@ -44,10 +44,15 @@ Closure report:
 
 - [Phase 001 Closure Report](phase-001-closure-report.md)
 - [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
+- [Audit Hardening Closure Report](audit-hardening-closure-report.md)
+
+Next development:
+
+- [Next Development Plan](next-development-plan.md)
 
 Latest update:
 
-- [Scanner and Documentation Hardening](updates/2026-06-12-scanner-docs-hardening.md)
+- [Structural Scanner Hardening](updates/2026-06-12-structural-scanner-hardening.md)
 
 ## Intake Rule
 

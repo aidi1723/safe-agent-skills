@@ -33,6 +33,12 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Audit Hardening Closure Report](audit-hardening-closure-report.md)
+- [Next Development Plan](next-development-plan.md)
+- [Structural Scanner Hardening](updates/2026-06-12-structural-scanner-hardening.md)
+- [Consistency Rule Hardening](updates/2026-06-12-consistency-rule-hardening.md)
+- [Report Schema and Scanner Hardening](updates/2026-06-12-report-schema-scanner-hardening.md)
+- [Provenance Usage Hardening](updates/2026-06-12-provenance-usage-hardening.md)
 - [Scanner and Documentation Hardening](updates/2026-06-12-scanner-docs-hardening.md)
 - [Design Skill Expansion](updates/2026-06-11-design-skill-expansion.md)
 - [Smart Skill Router](updates/2026-06-06-smart-skill-router.md)
