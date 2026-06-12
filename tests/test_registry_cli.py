@@ -1306,6 +1306,74 @@ class RegistryCliTest(unittest.TestCase):
             self.assertIn("schema-missing-source-field", issue_ids)
             self.assertIn("schema-report-source-mismatch", issue_ids)
 
+    def test_schema_check_rejects_incompatible_source_type_usage_pair(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry"
+            incoming = root / "incoming"
+            skill = incoming / "ai-reference-workflow"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing AI workflows.", encoding="utf-8")
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "ai",
+                            "subcategory": "ai.orchestration",
+                            "task_intent": "review AI workflows",
+                            "artifact_type": "workflow",
+                            "collection_priority": "P1",
+                        },
+                        "source": {
+                            "type": "github_reference",
+                            "usage": "source_import",
+                            "url": "https://github.com/example/framework",
+                            "author": "example-team",
+                            "license": "MIT",
+                            "reference": "https://github.com/example/framework",
+                            "collected_by": "onecode-test",
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            main(["import", str(incoming), "--registry", str(registry)])
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-invalid-source-usage-for-type", issue_ids)
+
+    def test_schema_check_validates_report_summary_and_verifier_consistency(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "incoming" / "design-dashboard"
+            registry = root / "registry"
+            source.mkdir(parents=True)
+            (source / "SKILL.md").write_text("Use when reviewing dashboard UI.", encoding="utf-8")
+
+            main(["import", str(root / "incoming"), "--registry", str(registry)])
+            report_path = registry / "design" / "design-dashboard" / "SANITIZATION_REPORT.json"
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            report["summary"]["status"] = "trusted"
+            report["summary"]["risk_level"] = "critical"
+            report["required_verifiers"] = ["manual-review"]
+            report_path.write_text(json.dumps(report), encoding="utf-8")
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-report-summary-mismatch", issue_ids)
+            self.assertIn("schema-report-required-verifiers-mismatch", issue_ids)
+
     def test_task_pack_scenario_router_outputs_profile_plan_and_explanations(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

@@ -47,6 +47,56 @@
           },
           "source": {
             "type": "object",
+            "allOf": [
+              {
+                "if": {
+                  "properties": {
+                    "type": {
+                      "const": "local_folder"
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "usage": {
+                      "const": "local_authoring"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "type": {
+                      "enum": ["github_reference", "web_reference"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "usage": {
+                      "const": "reference_only"
+                    }
+                  }
+                }
+              },
+              {
+                "if": {
+                  "properties": {
+                    "type": {
+                      "enum": ["archive", "git", "community_index"]
+                    }
+                  }
+                },
+                "then": {
+                  "properties": {
+                    "usage": {
+                      "const": "source_import"
+                    }
+                  }
+                }
+              }
+            ],
             "required": [
               "type",
               "usage",

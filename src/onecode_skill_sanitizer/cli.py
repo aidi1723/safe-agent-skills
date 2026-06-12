@@ -25,6 +25,14 @@ SOURCE_DEFAULT_USAGE_BY_TYPE = {
     "local_folder": "local_authoring",
     "web_reference": "reference_only",
 }
+SOURCE_USAGE_BY_TYPE = {
+    "archive": {"source_import"},
+    "community_index": {"source_import"},
+    "git": {"source_import"},
+    "github_reference": {"reference_only"},
+    "local_folder": {"local_authoring"},
+    "web_reference": {"reference_only"},
+}
 SOURCE_REQUIRED_FIELDS = ["type", "usage", "path", "url", "author", "license", "reference", "collected_by", "captured_at"]
 SOURCE_PROVENANCE_FIELDS = ["url", "author", "license", "reference", "collected_by"]
 HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
@@ -944,6 +952,16 @@ def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
     source_usage = source.get("usage")
     if isinstance(source_usage, str) and source_usage not in SOURCE_USAGE_VALUES:
         add_issue(issues, "schema-invalid-source-usage", path, f"source.usage {source_usage!r} is not supported")
+    if isinstance(source_type, str) and isinstance(source_usage, str):
+        expected_usages = SOURCE_USAGE_BY_TYPE.get(source_type)
+        if expected_usages is not None and source_usage not in expected_usages:
+            allowed = ", ".join(sorted(expected_usages))
+            add_issue(
+                issues,
+                "schema-invalid-source-usage-for-type",
+                path,
+                f"source.type {source_type!r} requires source.usage to be one of: {allowed}",
+            )
 
 
 def validate_taxonomy(payload: dict, path: Path, issues: list[dict]) -> None:
@@ -1064,10 +1082,19 @@ def validate_sanitization_report_schema(payload: dict, path: Path, manifest: dic
         for field in ["status", "risk_level", "removed_fragment_count", "rewritten_fragment_count", "unresolved_finding_count"]:
             if field not in summary:
                 add_issue(issues, "schema-missing-report-summary-field", path, f"summary.{field} is required")
+        if summary.get("status") != manifest.get("status") or summary.get("risk_level") != manifest.get("risk_level"):
+            add_issue(issues, "schema-report-summary-mismatch", path, "report summary status and risk_level must match manifest")
 
     for field in ["source", "hashes", "taxonomy"]:
         if payload.get(field) != manifest.get(field):
             add_issue(issues, f"schema-report-{field}-mismatch", path, f"report {field} must match manifest {field}")
+    if payload.get("required_verifiers") != manifest.get("required_verifiers"):
+        add_issue(
+            issues,
+            "schema-report-required-verifiers-mismatch",
+            path,
+            "report required_verifiers must match manifest required_verifiers",
+        )
 
 
 def schema_check(registry_dir: Path) -> dict:
