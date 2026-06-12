@@ -39,7 +39,8 @@
     "path": "catalog/design/design-premium-landing-page",
     "reference": "docs/skill-taxonomy.md",
     "type": "local_folder",
-    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-premium-landing-page"
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-premium-landing-page",
+    "usage": "local_authoring"
   },
   "status": "trusted",
   "taxonomy": {

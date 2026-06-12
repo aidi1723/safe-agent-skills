@@ -33,7 +33,8 @@
     "path": "batches/batch-006-community-infrastructure/security-llm-guard-io-scanning",
     "reference": "Community project reference: LLM Guard, security toolkit for LLM interactions",
     "type": "github_reference",
-    "url": "https://github.com/protectai/llm-guard"
+    "url": "https://github.com/protectai/llm-guard",
+    "usage": "reference_only"
   },
   "status": "trusted",
   "taxonomy": {

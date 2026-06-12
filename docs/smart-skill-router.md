@@ -3,11 +3,16 @@
 `smart` is the simple default entry for agents and operators who do not want to
 manually choose, combine, or order skills.
 
+The command name is a convenience label. Current selection is deterministic
+keyword, taxonomy, scenario-signal, invariant, and overlap-group routing; it is
+not an LLM planner and does not infer capability beyond recorded catalog
+metadata.
+
 It builds a verified task pack from:
 
 - the trusted skill catalog
 - trusted scenario bundles
-- task intent and capability matching
+- deterministic task intent and capability matching
 - optional natural-language invariants
 - overlap-group pruning
 - a deterministic mesh execution graph

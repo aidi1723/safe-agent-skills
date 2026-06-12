@@ -80,10 +80,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Scanner and Documentation Hardening](docs/updates/2026-06-12-scanner-docs-hardening.md).
+[Provenance Usage Hardening](docs/updates/2026-06-12-provenance-usage-hardening.md).
 
 Previous update:
-[Design Skill Expansion](docs/updates/2026-06-11-design-skill-expansion.md).
+[Scanner and Documentation Hardening](docs/updates/2026-06-12-scanner-docs-hardening.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).
@@ -170,6 +170,7 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer --help
 onecode-skill-sanitizer scan ./incoming/pdf-skill
 onecode-skill-sanitizer sanitize ./incoming/pdf-skill --out ./registry/pdf \
   --source-url https://github.com/example/skills/pdf \
+  --source-usage source_import \
   --author example-team \
   --license MIT \
   --reference https://github.com/example/skills \
@@ -178,8 +179,11 @@ onecode-skill-sanitizer audit ./registry/pdf
 onecode-skill-sanitizer approve ./registry/pdf
 ```
 
-Every scan and sanitize report records provenance. Missing values are written
-as `unknown`, not omitted.
+Every scan and sanitize report records provenance. `source.usage` records the
+relationship to the cited source: `source_import` for imported content,
+`reference_only` for external projects used only as inspiration or comparison,
+and `local_authoring` for local seed workflows. Missing provenance values are
+written as `unknown`, not omitted.
 
 Batch registry workflow:
 
@@ -219,9 +223,9 @@ production permissions; those remain controlled by the host runtime.
 bundles, so a host Agent receives both individual skill guidance and a larger
 task playbook when the task matches a known workflow.
 
-For the simplest default entry, use `smart`. It uses the trusted catalog,
-scenario bundles, overlap groups, invariant hints, and deterministic mesh
-router:
+For the simplest default entry, use `smart`. The name is a convenience label:
+selection is deterministic, non-LLM routing over trusted catalog metadata,
+scenario signals, overlap groups, and invariant hints:
 
 ```bash
 onecode-skill-sanitizer smart \

@@ -46,7 +46,65 @@
             "type": "object"
           },
           "source": {
-            "type": "object"
+            "type": "object",
+            "required": [
+              "type",
+              "usage",
+              "path",
+              "url",
+              "author",
+              "license",
+              "reference",
+              "collected_by",
+              "captured_at"
+            ],
+            "properties": {
+              "type": {
+                "type": "string",
+                "enum": [
+                  "local_folder",
+                  "archive",
+                  "git",
+                  "community_index",
+                  "github_reference",
+                  "web_reference"
+                ]
+              },
+              "usage": {
+                "type": "string",
+                "enum": [
+                  "source_import",
+                  "reference_only",
+                  "local_authoring"
+                ]
+              },
+              "url": {
+                "type": "string"
+              },
+              "path": {
+                "type": "string"
+              },
+              "author": {
+                "type": "string"
+              },
+              "license": {
+                "type": "string"
+              },
+              "reference": {
+                "type": "string"
+              },
+              "collected_by": {
+                "type": "string"
+              },
+              "commit": {
+                "type": "string"
+              },
+              "captured_at": {
+                "type": "string",
+                "format": "date-time"
+              }
+            },
+            "additionalProperties": false
           },
           "hashes": {
             "type": "object"

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-06-11T06:37:01Z",
+  "generated_at": "2026-06-12T01:21:47Z",
   "schema_version": 1,
   "skill_count": 109,
   "skills": [
@@ -19,7 +19,8 @@
         "path": "batches/batch-007-community-agent-workflows/ai-autogen-multi-agent-review",
         "reference": "Community project reference: AutoGen, programming framework for agentic AI",
         "type": "github_reference",
-        "url": "https://github.com/microsoft/autogen"
+        "url": "https://github.com/microsoft/autogen",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -46,7 +47,8 @@
         "path": "batches/batch-013-ai-runtime-guardrails/ai-context-compression-budget-plan",
         "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-context-compression-budget-plan"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-context-compression-budget-plan",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -73,7 +75,8 @@
         "path": "batches/batch-007-community-agent-workflows/ai-crewai-role-workflow",
         "reference": "Community project reference: CrewAI, role-playing autonomous AI agents",
         "type": "github_reference",
-        "url": "https://github.com/crewAIInc/crewAI"
+        "url": "https://github.com/crewAIInc/crewAI",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -100,7 +103,8 @@
         "path": "batches/batch-006-community-infrastructure/ai-guidance-constrained-generation",
         "reference": "Community project reference: Guidance, a language for controlling large language models",
         "type": "github_reference",
-        "url": "https://github.com/guidance-ai/guidance"
+        "url": "https://github.com/guidance-ai/guidance",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -127,7 +131,8 @@
         "path": "batches/batch-007-community-agent-workflows/ai-langchain-agent-orchestration",
         "reference": "Community project reference: LangChain, the agent engineering platform",
         "type": "github_reference",
-        "url": "https://github.com/langchain-ai/langchain"
+        "url": "https://github.com/langchain-ai/langchain",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -154,7 +159,8 @@
         "path": "batches/batch-006-community-infrastructure/ai-litellm-gateway-cost-control",
         "reference": "Community project reference: LiteLLM, model gateway with cost tracking, guardrails, load balancing, and logging; license reported as Other by GitHub",
         "type": "github_reference",
-        "url": "https://github.com/BerriAI/litellm"
+        "url": "https://github.com/BerriAI/litellm",
+        "usage": "reference_only"
       },
       "status": "review_required",
       "taxonomy": {
@@ -181,7 +187,8 @@
         "path": "batches/batch-006-community-infrastructure/ai-llama-cpp-local-inference-boundary",
         "reference": "Community project reference: llama.cpp, LLM inference in C and C++",
         "type": "github_reference",
-        "url": "https://github.com/ggml-org/llama.cpp"
+        "url": "https://github.com/ggml-org/llama.cpp",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -208,7 +215,8 @@
         "path": "batches/batch-007-community-agent-workflows/ai-llamaindex-rag-knowledge-workflow",
         "reference": "Community project reference: LlamaIndex, document agent and OCR platform",
         "type": "github_reference",
-        "url": "https://github.com/run-llama/llama_index"
+        "url": "https://github.com/run-llama/llama_index",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -235,7 +243,8 @@
         "path": "batches/batch-013-ai-runtime-guardrails/ai-model-route-fallback-review",
         "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-model-route-fallback-review"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-model-route-fallback-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -262,7 +271,8 @@
         "path": "batches/batch-007-community-agent-workflows/ai-openai-cookbook-api-patterns",
         "reference": "Community project reference: OpenAI Cookbook, examples and guides for using the OpenAI API",
         "type": "github_reference",
-        "url": "https://github.com/openai/openai-cookbook"
+        "url": "https://github.com/openai/openai-cookbook",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -289,7 +299,8 @@
         "path": "batches/batch-008-opensquilla-reference/ai-opensquilla-metaskill-workflow",
         "reference": "OpenSquilla public product reference: MetaSkills turn repeatable multi-step work into reusable workflows",
         "type": "web_reference",
-        "url": "https://opensquilla.ai/"
+        "url": "https://opensquilla.ai/",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -316,7 +327,8 @@
         "path": "batches/batch-008-opensquilla-reference/ai-opensquilla-token-routing-pattern",
         "reference": "OpenSquilla public product reference: token-efficient agent intelligence, on-demand skills, and smart routing",
         "type": "web_reference",
-        "url": "https://opensquilla.ai/"
+        "url": "https://opensquilla.ai/",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -343,7 +355,8 @@
         "path": "batches/batch-006-community-infrastructure/ai-outlines-structured-generation",
         "reference": "Community project reference: Outlines, structured outputs",
         "type": "github_reference",
-        "url": "https://github.com/dottxt-ai/outlines"
+        "url": "https://github.com/dottxt-ai/outlines",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -370,7 +383,8 @@
         "path": "batches/batch-002-p1-seed/ai-output-schema-eval",
         "reference": "docs/batches/batch-002-p1-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/ai-output-schema-eval"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/ai-output-schema-eval",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -397,7 +411,8 @@
         "path": "batches/batch-006-community-infrastructure/ai-pydantic-schema-contract",
         "reference": "Community project reference: Pydantic, data validation using Python type hints",
         "type": "github_reference",
-        "url": "https://github.com/pydantic/pydantic"
+        "url": "https://github.com/pydantic/pydantic",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -424,7 +439,8 @@
         "path": "batches/batch-007-community-agent-workflows/ai-qwen-agent-tool-workflow",
         "reference": "Community project reference: Qwen-Agent, function calling, MCP, code interpreter, RAG, and Chrome extension workflows",
         "type": "github_reference",
-        "url": "https://github.com/QwenLM/Qwen-Agent"
+        "url": "https://github.com/QwenLM/Qwen-Agent",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -451,7 +467,8 @@
         "path": "batches/batch-010-domain-governance-extensions/ai-rule-failure-log-synthesis",
         "reference": "docs/batches/batch-010-domain-governance-extensions.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/ai-rule-failure-log-synthesis"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/ai-rule-failure-log-synthesis",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -478,7 +495,8 @@
         "path": "batches/batch-013-ai-runtime-guardrails/ai-stream-json-boundary-review",
         "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-stream-json-boundary-review"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-stream-json-boundary-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -505,7 +523,8 @@
         "path": "batches/batch-011-safety-operations-guardrails/ai-token-rate-budget-guard",
         "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/ai-token-rate-budget-guard"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/ai-token-rate-budget-guard",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -532,7 +551,8 @@
         "path": "batches/batch-013-ai-runtime-guardrails/ai-tool-schema-protocol-check",
         "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-tool-schema-protocol-check"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/ai-tool-schema-protocol-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -559,7 +579,8 @@
         "path": "batches/batch-006-community-infrastructure/ai-vllm-serving-capacity-plan",
         "reference": "Community project reference: vLLM, high-throughput and memory-efficient inference and serving engine for LLMs",
         "type": "github_reference",
-        "url": "https://github.com/vllm-project/vllm"
+        "url": "https://github.com/vllm-project/vllm",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -586,7 +607,8 @@
         "path": "batches/batch-004-community-hot/ecc-agent-coding-safety",
         "reference": "Community project reference: ECC / Enhanced Context Engineering for AI coding assistants",
         "type": "github_reference",
-        "url": "https://github.com/affaan-m/ecc"
+        "url": "https://github.com/affaan-m/ecc",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -613,7 +635,8 @@
         "path": "batches/batch-004-community-hot/headroom-context-compression",
         "reference": "Community project reference: Headroom context compression and token reduction",
         "type": "github_reference",
-        "url": "https://github.com/chopratejas/headroom"
+        "url": "https://github.com/chopratejas/headroom",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -640,7 +663,8 @@
         "path": "batches/batch-004-community-hot/hermes-agent-memory-assistant",
         "reference": "Community project reference: Hermes Agent memory and assistant growth patterns",
         "type": "github_reference",
-        "url": "https://github.com/NousResearch/hermes-agent"
+        "url": "https://github.com/NousResearch/hermes-agent",
+        "usage": "reference_only"
       },
       "status": "quarantined",
       "taxonomy": {
@@ -667,7 +691,8 @@
         "path": "batches/batch-004-community-hot/supermemory-memory-engine-reference",
         "reference": "Community project reference: SuperMemory AI memory engine",
         "type": "github_reference",
-        "url": "https://github.com/supermemoryai/supermemory"
+        "url": "https://github.com/supermemoryai/supermemory",
+        "usage": "reference_only"
       },
       "status": "quarantined",
       "taxonomy": {
@@ -694,7 +719,8 @@
         "path": "batches/batch-005-minimum-three/business-process-sop",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/business-process-sop"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/business-process-sop",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -721,7 +747,8 @@
         "path": "batches/batch-005-minimum-three/business-requirements-brief",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/business-requirements-brief"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/business-requirements-brief",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -748,7 +775,8 @@
         "path": "batches/batch-003-coverage-seed/business-support-triage",
         "reference": "docs/batches/batch-003-coverage-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/business-support-triage"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/business-support-triage",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -775,7 +803,8 @@
         "path": "batches/batch-012-code-quality-guardrails/code-ast-refactor-safety",
         "reference": "docs/batches/batch-012-code-quality-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-ast-refactor-safety"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-ast-refactor-safety",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -802,7 +831,8 @@
         "path": "batches/batch-012-code-quality-guardrails/code-dead-path-cleanup-review",
         "reference": "docs/batches/batch-012-code-quality-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dead-path-cleanup-review"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dead-path-cleanup-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -829,7 +859,8 @@
         "path": "batches/batch-012-code-quality-guardrails/code-dependency-cycle-review",
         "reference": "docs/batches/batch-012-code-quality-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dependency-cycle-review"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/code-dependency-cycle-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -856,7 +887,8 @@
         "path": "batches/batch-001-seed/code-python-debug",
         "reference": "docs/batches/batch-001-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/code-python-debug"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/code-python-debug",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -883,7 +915,8 @@
         "path": "batches/batch-005-minimum-three/code-review-risk",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-review-risk"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-review-risk",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -910,7 +943,8 @@
         "path": "batches/batch-005-minimum-three/code-test-regression",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-test-regression"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-test-regression",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -937,7 +971,8 @@
         "path": "batches/batch-002-p1-seed/commerce-icbu-listing",
         "reference": "docs/batches/batch-002-p1-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/commerce-icbu-listing"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/commerce-icbu-listing",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -964,7 +999,8 @@
         "path": "batches/batch-005-minimum-three/commerce-inquiry-reply",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-inquiry-reply"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-inquiry-reply",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -991,7 +1027,8 @@
         "path": "batches/batch-010-domain-governance-extensions/commerce-link-tracking-audit",
         "reference": "docs/batches/batch-010-domain-governance-extensions.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/commerce-link-tracking-audit"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/commerce-link-tracking-audit",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1018,7 +1055,8 @@
         "path": "batches/batch-005-minimum-three/commerce-product-keyword-plan",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-product-keyword-plan"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/commerce-product-keyword-plan",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1045,7 +1083,8 @@
         "path": "batches/batch-005-minimum-three/compliance-accessibility-policy",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-accessibility-policy"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-accessibility-policy",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1072,7 +1111,8 @@
         "path": "batches/batch-011-safety-operations-guardrails/compliance-license-policy-gate",
         "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/compliance-license-policy-gate"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/compliance-license-policy-gate",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1099,7 +1139,8 @@
         "path": "batches/batch-003-coverage-seed/compliance-privacy-check",
         "reference": "docs/batches/batch-003-coverage-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/compliance-privacy-check"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/compliance-privacy-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1126,7 +1167,8 @@
         "path": "batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register",
         "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/compliance-public-claim-risk-register",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1153,7 +1195,8 @@
         "path": "batches/batch-005-minimum-three/compliance-terms-review",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-terms-review"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/compliance-terms-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1180,7 +1223,8 @@
         "path": "batches/batch-004-community-hot/vibe-trading-research-assistant",
         "reference": "Community project reference: Vibe-Trading AI-assisted trading research",
         "type": "github_reference",
-        "url": "https://github.com/HKUDS/Vibe-Trading"
+        "url": "https://github.com/HKUDS/Vibe-Trading",
+        "usage": "reference_only"
       },
       "status": "quarantined",
       "taxonomy": {
@@ -1207,7 +1251,8 @@
         "path": "batches/batch-010-domain-governance-extensions/content-brand-voice-boundary",
         "reference": "docs/batches/batch-010-domain-governance-extensions.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/content-brand-voice-boundary"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/content-brand-voice-boundary",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1234,7 +1279,8 @@
         "path": "batches/batch-009-domain-guardrails/content-claims-compliance-filter",
         "reference": "docs/batches/batch-009-domain-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-claims-compliance-filter"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-claims-compliance-filter",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1261,7 +1307,8 @@
         "path": "batches/batch-005-minimum-three/content-editorial-review",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/content-editorial-review"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/content-editorial-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1288,7 +1335,8 @@
         "path": "batches/batch-009-domain-guardrails/content-fact-contradiction-review",
         "reference": "docs/batches/batch-009-domain-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-fact-contradiction-review"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/content-fact-contradiction-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1315,7 +1363,8 @@
         "path": "batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review",
         "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/content-freshness-expiry-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1342,7 +1391,8 @@
         "path": "batches/batch-006-community-infrastructure/content-prompt-engineering-patterns",
         "reference": "Community project reference: Prompt Engineering Guide, resources for prompt engineering, context engineering, RAG, and AI agents",
         "type": "github_reference",
-        "url": "https://github.com/dair-ai/Prompt-Engineering-Guide"
+        "url": "https://github.com/dair-ai/Prompt-Engineering-Guide",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1369,7 +1419,8 @@
         "path": "batches/batch-002-p1-seed/content-seo-brief",
         "reference": "docs/batches/batch-002-p1-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/content-seo-brief"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/content-seo-brief",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1396,7 +1447,8 @@
         "path": "batches/batch-005-minimum-three/content-social-post",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/content-social-post"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/content-social-post",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1423,7 +1475,8 @@
         "path": "batches/batch-007-community-agent-workflows/data-haystack-rag-pipeline",
         "reference": "Community project reference: Haystack, AI orchestration framework for context-engineered LLM applications",
         "type": "github_reference",
-        "url": "https://github.com/deepset-ai/haystack"
+        "url": "https://github.com/deepset-ai/haystack",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1450,7 +1503,8 @@
         "path": "batches/batch-006-community-infrastructure/data-marker-pdf-markdown-review",
         "reference": "Community project reference: Marker, converting PDF to Markdown and JSON with high accuracy; reference workflow only, no code copied",
         "type": "github_reference",
-        "url": "https://github.com/datalab-to/marker"
+        "url": "https://github.com/datalab-to/marker",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1477,7 +1531,8 @@
         "path": "batches/batch-006-community-infrastructure/data-markitdown-file-to-markdown",
         "reference": "Community project reference: MarkItDown, converting files and office documents to Markdown",
         "type": "github_reference",
-        "url": "https://github.com/microsoft/markitdown"
+        "url": "https://github.com/microsoft/markitdown",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1504,7 +1559,8 @@
         "path": "batches/batch-007-community-agent-workflows/data-qdrant-vector-retrieval",
         "reference": "Community project reference: Qdrant, vector database and vector search engine",
         "type": "github_reference",
-        "url": "https://github.com/qdrant/qdrant"
+        "url": "https://github.com/qdrant/qdrant",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1531,7 +1587,8 @@
         "path": "batches/batch-005-minimum-three/data-quality-audit",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/data-quality-audit"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/data-quality-audit",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1558,7 +1615,8 @@
         "path": "batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check",
         "reference": "docs/batches/batch-013-ai-runtime-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-013-ai-runtime-guardrails/data-rag-namespace-boundary-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1585,7 +1643,8 @@
         "path": "batches/batch-012-code-quality-guardrails/data-schema-field-contract-check",
         "reference": "docs/batches/batch-012-code-quality-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/data-schema-field-contract-check"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/data-schema-field-contract-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1612,7 +1671,8 @@
         "path": "batches/batch-002-p1-seed/data-table-analysis",
         "reference": "docs/batches/batch-002-p1-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/data-table-analysis"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/data-table-analysis",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1639,7 +1699,8 @@
         "path": "batches/batch-009-domain-guardrails/data-table-calculation-verify",
         "reference": "docs/batches/batch-009-domain-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/data-table-calculation-verify"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/data-table-calculation-verify",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1666,7 +1727,8 @@
         "path": "batches/batch-006-community-infrastructure/data-unstructured-document-partition",
         "reference": "Community project reference: Unstructured, document transformation into structured formats for language models",
         "type": "github_reference",
-        "url": "https://github.com/Unstructured-IO/unstructured"
+        "url": "https://github.com/Unstructured-IO/unstructured",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1693,7 +1755,8 @@
         "path": "batches/batch-005-minimum-three/data-visualization-plan",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/data-visualization-plan"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/data-visualization-plan",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1720,7 +1783,8 @@
         "path": "batches/batch-005-minimum-three/design-accessibility-check",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/design-accessibility-check"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/design-accessibility-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1747,7 +1811,8 @@
         "path": "catalog/design/design-motion-interaction-polish",
         "reference": "docs/skill-taxonomy.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-motion-interaction-polish"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-motion-interaction-polish",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1774,7 +1839,8 @@
         "path": "catalog/design/design-premium-landing-page",
         "reference": "docs/skill-taxonomy.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-premium-landing-page"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-premium-landing-page",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1801,7 +1867,8 @@
         "path": "batches/batch-009-domain-guardrails/design-responsive-viewport-check",
         "reference": "docs/batches/batch-009-domain-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/design-responsive-viewport-check"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/design-responsive-viewport-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1828,7 +1895,8 @@
         "path": "batches/batch-005-minimum-three/design-system-consistency",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/design-system-consistency"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/design-system-consistency",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1855,7 +1923,8 @@
         "path": "catalog/design/design-tailwind-radix-system",
         "reference": "docs/skill-taxonomy.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-tailwind-radix-system"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-tailwind-radix-system",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1882,7 +1951,8 @@
         "path": "batches/batch-001-seed/design-ui-review",
         "reference": "docs/batches/batch-001-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/design-ui-review"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/design-ui-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1909,7 +1979,8 @@
         "path": "batches/batch-001-seed/engineering-build-release",
         "reference": "docs/batches/batch-001-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/engineering-build-release"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/engineering-build-release",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1936,7 +2007,8 @@
         "path": "batches/batch-005-minimum-three/engineering-ci-troubleshoot",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-ci-troubleshoot"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-ci-troubleshoot",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1963,7 +2035,8 @@
         "path": "batches/batch-012-code-quality-guardrails/engineering-error-log-noise-triage",
         "reference": "docs/batches/batch-012-code-quality-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/engineering-error-log-noise-triage"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-012-code-quality-guardrails/engineering-error-log-noise-triage",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -1990,7 +2063,8 @@
         "path": "batches/batch-005-minimum-three/engineering-performance-profile",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-performance-profile"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/engineering-performance-profile",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2017,7 +2091,8 @@
         "path": "batches/batch-001-seed/execution-browser-check",
         "reference": "docs/batches/batch-001-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/execution-browser-check"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/execution-browser-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2044,7 +2119,8 @@
         "path": "batches/batch-007-community-agent-workflows/execution-browser-use-web-task",
         "reference": "Community project reference: browser-use, making websites accessible for AI agents",
         "type": "github_reference",
-        "url": "https://github.com/browser-use/browser-use"
+        "url": "https://github.com/browser-use/browser-use",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2071,7 +2147,8 @@
         "path": "batches/batch-007-community-agent-workflows/execution-e2b-sandbox-boundary",
         "reference": "Community project reference: E2B, secure environment with real-world tools for agents",
         "type": "github_reference",
-        "url": "https://github.com/e2b-dev/E2B"
+        "url": "https://github.com/e2b-dev/E2B",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2098,7 +2175,8 @@
         "path": "batches/batch-005-minimum-three/execution-file-batch",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/execution-file-batch"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/execution-file-batch",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2125,7 +2203,8 @@
         "path": "batches/batch-007-community-agent-workflows/execution-mcp-tool-connector-review",
         "reference": "Community project reference: Model Context Protocol Servers; license reported as Other by GitHub",
         "type": "github_reference",
-        "url": "https://github.com/modelcontextprotocol/servers"
+        "url": "https://github.com/modelcontextprotocol/servers",
+        "usage": "reference_only"
       },
       "status": "review_required",
       "taxonomy": {
@@ -2152,7 +2231,8 @@
         "path": "batches/batch-007-community-agent-workflows/execution-playwright-browser-automation",
         "reference": "Community project reference: Playwright, web testing and automation framework",
         "type": "github_reference",
-        "url": "https://github.com/microsoft/playwright"
+        "url": "https://github.com/microsoft/playwright",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2179,7 +2259,8 @@
         "path": "batches/batch-005-minimum-three/execution-publish-check",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/execution-publish-check"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/execution-publish-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2206,7 +2287,8 @@
         "path": "batches/batch-011-safety-operations-guardrails/execution-rollback-checkpoint-plan",
         "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/execution-rollback-checkpoint-plan"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/execution-rollback-checkpoint-plan",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2233,7 +2315,8 @@
         "path": "batches/batch-003-coverage-seed/media-asset-review",
         "reference": "docs/batches/batch-003-coverage-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/media-asset-review"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/media-asset-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2260,7 +2343,8 @@
         "path": "batches/batch-005-minimum-three/media-brand-asset-pack",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-brand-asset-pack"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-brand-asset-pack",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2287,7 +2371,8 @@
         "path": "batches/batch-005-minimum-three/media-video-script-review",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-video-script-review"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/media-video-script-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2314,7 +2399,8 @@
         "path": "batches/batch-005-minimum-three/office-docx-brief",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-docx-brief"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-docx-brief",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2341,7 +2427,8 @@
         "path": "batches/batch-014-document-evidence-guardrails/office-link-reference-integrity",
         "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-link-reference-integrity"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-link-reference-integrity",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2368,7 +2455,8 @@
         "path": "batches/batch-009-domain-guardrails/office-markdown-structure-lint",
         "reference": "docs/batches/batch-009-domain-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/office-markdown-structure-lint"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-009-domain-guardrails/office-markdown-structure-lint",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2395,7 +2483,8 @@
         "path": "batches/batch-001-seed/office-pdf-report",
         "reference": "docs/batches/batch-001-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/office-pdf-report"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/office-pdf-report",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2422,7 +2511,8 @@
         "path": "batches/batch-005-minimum-three/office-spreadsheet-cleanup",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-spreadsheet-cleanup"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/office-spreadsheet-cleanup",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2449,7 +2539,8 @@
         "path": "batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation",
         "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/office-table-source-reconciliation",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2476,7 +2567,8 @@
         "path": "batches/batch-014-document-evidence-guardrails/research-citation-evidence-map",
         "reference": "docs/batches/batch-014-document-evidence-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/research-citation-evidence-map"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-014-document-evidence-guardrails/research-citation-evidence-map",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2503,7 +2595,8 @@
         "path": "batches/batch-005-minimum-three/research-competitor-brief",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-competitor-brief"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-competitor-brief",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2530,7 +2623,8 @@
         "path": "batches/batch-005-minimum-three/research-paper-synthesis",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-paper-synthesis"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/research-paper-synthesis",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2557,7 +2651,8 @@
         "path": "skills/last30days",
         "reference": "Community project reference: last30days-skill, AI agent skill for recent multi-platform public signal research",
         "type": "github_reference",
-        "url": "https://github.com/mvanhorn/last30days-skill"
+        "url": "https://github.com/mvanhorn/last30days-skill",
+        "usage": "reference_only"
       },
       "status": "review_required",
       "taxonomy": {
@@ -2584,7 +2679,8 @@
         "path": "batches/batch-002-p1-seed/research-source-check",
         "reference": "docs/batches/batch-002-p1-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/research-source-check"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/research-source-check",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2611,7 +2707,8 @@
         "path": "batches/batch-010-domain-governance-extensions/research-source-lineage-trace",
         "reference": "docs/batches/batch-010-domain-governance-extensions.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/research-source-lineage-trace"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/research-source-lineage-trace",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2638,7 +2735,8 @@
         "path": "batches/batch-011-safety-operations-guardrails/security-command-risk-preflight",
         "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-command-risk-preflight"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-command-risk-preflight",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2665,7 +2763,8 @@
         "path": "batches/batch-006-community-infrastructure/security-guardrails-output-validation",
         "reference": "Community project reference: Guardrails AI, adding guardrails to large language models",
         "type": "github_reference",
-        "url": "https://github.com/guardrails-ai/guardrails"
+        "url": "https://github.com/guardrails-ai/guardrails",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2692,7 +2791,8 @@
         "path": "batches/batch-006-community-infrastructure/security-llm-guard-io-scanning",
         "reference": "Community project reference: LLM Guard, security toolkit for LLM interactions",
         "type": "github_reference",
-        "url": "https://github.com/protectai/llm-guard"
+        "url": "https://github.com/protectai/llm-guard",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2719,7 +2819,8 @@
         "path": "batches/batch-008-opensquilla-reference/security-opensquilla-sandbox-policy",
         "reference": "OpenSquilla public product reference: secure sandbox, policy tiers, and decision logging",
         "type": "web_reference",
-        "url": "https://opensquilla.ai/"
+        "url": "https://opensquilla.ai/",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2746,7 +2847,8 @@
         "path": "batches/batch-001-seed/security-prompt-injection-review",
         "reference": "docs/batches/batch-001-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/security-prompt-injection-review"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-001-seed/security-prompt-injection-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2773,7 +2875,8 @@
         "path": "batches/batch-011-safety-operations-guardrails/security-secret-context-redaction",
         "reference": "docs/batches/batch-011-safety-operations-guardrails.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-secret-context-redaction"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-011-safety-operations-guardrails/security-secret-context-redaction",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2800,7 +2903,8 @@
         "path": "batches/batch-005-minimum-three/security-supply-chain-review",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/security-supply-chain-review"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/security-supply-chain-review",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2827,7 +2931,8 @@
         "path": "batches/batch-004-community-hot/trivy-container-security-scan",
         "reference": "Community project reference: Trivy vulnerability, misconfiguration, secret, and SBOM scanner",
         "type": "github_reference",
-        "url": "https://github.com/aquasecurity/trivy"
+        "url": "https://github.com/aquasecurity/trivy",
+        "usage": "reference_only"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2854,7 +2959,8 @@
         "path": "batches/batch-003-coverage-seed/vertical-education-plan",
         "reference": "docs/batches/batch-003-coverage-seed.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/vertical-education-plan"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-003-coverage-seed/vertical-education-plan",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2881,7 +2987,8 @@
         "path": "batches/batch-010-domain-governance-extensions/vertical-learning-memory-refresh",
         "reference": "docs/batches/batch-010-domain-governance-extensions.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/vertical-learning-memory-refresh"
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-010-domain-governance-extensions/vertical-learning-memory-refresh",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2908,7 +3015,8 @@
         "path": "batches/batch-005-minimum-three/vertical-manufacturing-qc",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-manufacturing-qc"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-manufacturing-qc",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {
@@ -2935,7 +3043,8 @@
         "path": "batches/batch-005-minimum-three/vertical-real-estate-listing",
         "reference": "docs/batches/batch-005-minimum-three.md",
         "type": "local_folder",
-        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-real-estate-listing"
+        "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/vertical-real-estate-listing",
+        "usage": "local_authoring"
       },
       "status": "trusted",
       "taxonomy": {

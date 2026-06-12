@@ -39,7 +39,8 @@
     "path": "catalog/design/design-motion-interaction-polish",
     "reference": "docs/skill-taxonomy.md",
     "type": "local_folder",
-    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-motion-interaction-polish"
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-motion-interaction-polish",
+    "usage": "local_authoring"
   },
   "status": "trusted",
   "taxonomy": {

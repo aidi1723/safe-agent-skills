@@ -31,7 +31,8 @@
     "path": "skills/last30days",
     "reference": "Community project reference: last30days-skill, AI agent skill for recent multi-platform public signal research",
     "type": "github_reference",
-    "url": "https://github.com/mvanhorn/last30days-skill"
+    "url": "https://github.com/mvanhorn/last30days-skill",
+    "usage": "reference_only"
   },
   "status": "review_required",
   "taxonomy": {

@@ -10,6 +10,7 @@
   },
   "source": {
     "type": "local_folder",
+    "usage": "local_authoring",
     "path": "./incoming/pdf",
     "url": "unknown",
     "author": "unknown",

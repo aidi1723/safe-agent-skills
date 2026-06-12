@@ -33,7 +33,8 @@
     "path": "batches/batch-005-minimum-three/code-review-risk",
     "reference": "docs/batches/batch-005-minimum-three.md",
     "type": "local_folder",
-    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-review-risk"
+    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-005-minimum-three/code-review-risk",
+    "usage": "local_authoring"
   },
   "status": "trusted",
   "taxonomy": {

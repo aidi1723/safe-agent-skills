@@ -38,7 +38,8 @@
     "path": "batches/batch-007-community-agent-workflows/execution-mcp-tool-connector-review",
     "reference": "Community project reference: Model Context Protocol Servers; license reported as Other by GitHub",
     "type": "github_reference",
-    "url": "https://github.com/modelcontextprotocol/servers"
+    "url": "https://github.com/modelcontextprotocol/servers",
+    "usage": "reference_only"
   },
   "status": "review_required",
   "taxonomy": {

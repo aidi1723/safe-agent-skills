@@ -218,6 +218,74 @@ class ScanCliTest(unittest.TestCase):
             self.assertEqual(source["license"], "MIT")
             self.assertEqual(source["reference"], "https://github.com/example/skills")
             self.assertEqual(source["collected_by"], "onecode-local")
+            self.assertEqual(source["usage"], "local_authoring")
+
+    def test_scan_preserves_explicit_source_usage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            skill_dir = root / "ai-reference-workflow"
+            out_path = root / "report.json"
+            skill_dir.mkdir()
+            (skill_dir / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "source": {
+                            "type": "github_reference",
+                            "usage": "reference_only",
+                            "url": "https://github.com/example/framework",
+                            "author": "example-team",
+                            "license": "MIT",
+                            "reference": "https://github.com/example/framework",
+                            "collected_by": "onecode-local",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (skill_dir / "SKILL.md").write_text(
+                "Use this workflow for AI orchestration review.",
+                encoding="utf-8",
+            )
+
+            exit_code = main(["scan", str(skill_dir), "--out", str(out_path)])
+
+            self.assertEqual(exit_code, 0)
+            source = json.loads(out_path.read_text(encoding="utf-8"))["source"]
+            self.assertEqual(source["type"], "github_reference")
+            self.assertEqual(source["usage"], "reference_only")
+
+    def test_scan_defaults_reference_source_usage_from_source_type(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            skill_dir = root / "ai-reference-workflow"
+            out_path = root / "report.json"
+            skill_dir.mkdir()
+            (skill_dir / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "source": {
+                            "type": "github_reference",
+                            "url": "https://github.com/example/framework",
+                            "author": "example-team",
+                            "license": "MIT",
+                            "reference": "https://github.com/example/framework",
+                            "collected_by": "onecode-local",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            (skill_dir / "SKILL.md").write_text(
+                "Use this workflow for AI orchestration review.",
+                encoding="utf-8",
+            )
+
+            exit_code = main(["scan", str(skill_dir), "--out", str(out_path)])
+
+            self.assertEqual(exit_code, 0)
+            source = json.loads(out_path.read_text(encoding="utf-8"))["source"]
+            self.assertEqual(source["type"], "github_reference")
+            self.assertEqual(source["usage"], "reference_only")
 
     def test_scan_records_unknown_provenance_when_source_metadata_is_missing(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -239,6 +307,7 @@ class ScanCliTest(unittest.TestCase):
             self.assertEqual(source["license"], "unknown")
             self.assertEqual(source["reference"], "unknown")
             self.assertEqual(source["collected_by"], "unknown")
+            self.assertEqual(source["usage"], "local_authoring")
 
 
 if __name__ == "__main__":

@@ -31,7 +31,8 @@
     "path": "batches/batch-004-community-hot/hermes-agent-memory-assistant",
     "reference": "Community project reference: Hermes Agent memory and assistant growth patterns",
     "type": "github_reference",
-    "url": "https://github.com/NousResearch/hermes-agent"
+    "url": "https://github.com/NousResearch/hermes-agent",
+    "usage": "reference_only"
   },
   "status": "quarantined",
   "taxonomy": {

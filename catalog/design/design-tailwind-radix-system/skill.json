@@ -39,7 +39,8 @@
     "path": "catalog/design/design-tailwind-radix-system",
     "reference": "docs/skill-taxonomy.md",
     "type": "local_folder",
-    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-tailwind-radix-system"
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/catalog/design/design-tailwind-radix-system",
+    "usage": "local_authoring"
   },
   "status": "trusted",
   "taxonomy": {

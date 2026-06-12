@@ -16,7 +16,16 @@ from .taxonomy import classify_skill, taxonomy_from_manifest
 STATUS_VALUES = {"quarantined", "review_required", "trusted", "rejected", "disabled"}
 RISK_LEVEL_VALUES = {"low", "medium", "high", "critical"}
 SOURCE_TYPE_VALUES = {"local_folder", "archive", "git", "community_index", "github_reference", "web_reference"}
-SOURCE_REQUIRED_FIELDS = ["type", "path", "url", "author", "license", "reference", "collected_by", "captured_at"]
+SOURCE_USAGE_VALUES = {"source_import", "reference_only", "local_authoring"}
+SOURCE_DEFAULT_USAGE_BY_TYPE = {
+    "archive": "source_import",
+    "community_index": "source_import",
+    "git": "source_import",
+    "github_reference": "reference_only",
+    "local_folder": "local_authoring",
+    "web_reference": "reference_only",
+}
+SOURCE_REQUIRED_FIELDS = ["type", "usage", "path", "url", "author", "license", "reference", "collected_by", "captured_at"]
 SOURCE_PROVENANCE_FIELDS = ["url", "author", "license", "reference", "collected_by"]
 HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 REFERENCE_REQUIRED_FIELDS = [
@@ -72,8 +81,14 @@ def build_source_record(source_dir: Path, args: argparse.Namespace | None = None
             return str(manifest_value)
         return "unknown"
 
+    source_type = str(manifest_source.get("type", "local_folder"))
+    source_usage = value("usage", "source_usage")
+    if source_usage == "unknown":
+        source_usage = SOURCE_DEFAULT_USAGE_BY_TYPE.get(source_type, "local_authoring")
+
     return {
-        "type": str(manifest_source.get("type", "local_folder")),
+        "type": source_type,
+        "usage": source_usage,
         "path": str(source_dir),
         "url": value("url", "source_url"),
         "author": value("author", "author"),
@@ -926,6 +941,9 @@ def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
     source_type = source.get("type")
     if isinstance(source_type, str) and source_type not in SOURCE_TYPE_VALUES:
         add_issue(issues, "schema-invalid-source-type", path, f"source.type {source_type!r} is not supported")
+    source_usage = source.get("usage")
+    if isinstance(source_usage, str) and source_usage not in SOURCE_USAGE_VALUES:
+        add_issue(issues, "schema-invalid-source-usage", path, f"source.usage {source_usage!r} is not supported")
 
 
 def validate_taxonomy(payload: dict, path: Path, issues: list[dict]) -> None:
@@ -1784,6 +1802,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def add_provenance_args(parser: argparse.ArgumentParser) -> None:
     parser.add_argument("--source-url")
+    parser.add_argument("--source-usage", choices=sorted(SOURCE_USAGE_VALUES))
     parser.add_argument("--author")
     parser.add_argument("--license")
     parser.add_argument("--reference")

@@ -1165,6 +1165,103 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(result["skill_manifest_count"], 109)
         self.assertEqual(result["issues"], [])
 
+    def test_schema_check_requires_source_usage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry"
+            skill_dir = registry / "design" / "design-dashboard"
+            skill_dir.mkdir(parents=True)
+            manifest = {
+                "schema_version": 1,
+                "name": "design-dashboard",
+                "version": "0.1.0",
+                "status": "trusted",
+                "risk_level": "low",
+                "taxonomy": {
+                    "category": "design",
+                    "subcategory": "design.dashboard",
+                    "task_intent": "polish dashboards",
+                    "artifact_type": "workflow",
+                    "collection_priority": "P0",
+                },
+                "source": {
+                    "type": "github_reference",
+                    "path": str(skill_dir),
+                    "url": "https://github.com/example/design-system",
+                    "author": "example-team",
+                    "license": "MIT",
+                    "reference": "https://github.com/example/design-system",
+                    "collected_by": "onecode-test",
+                    "captured_at": "2026-06-12T00:00:00Z",
+                },
+                "hashes": {
+                    "source_sha256": "0" * 64,
+                    "sanitized_sha256": "1" * 64,
+                },
+                "allowed_tools": [],
+                "required_verifiers": [],
+                "policy": {
+                    "filesystem": {"scope": "workspace_only"},
+                    "network": {"scope": "none"},
+                    "approval": {"required_for": ["trust", "execution"]},
+                },
+                "findings": [],
+            }
+            (skill_dir / "skill.json").write_text(json.dumps(manifest), encoding="utf-8")
+            (skill_dir / "SKILL.md").write_text("Use when reviewing dashboard UI.", encoding="utf-8")
+            write_code = main(["reindex", "--registry", str(registry)])
+            self.assertEqual(write_code, 0)
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-missing-source-field", issue_ids)
+
+    def test_schema_check_rejects_invalid_source_usage(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry"
+            incoming = root / "incoming"
+            skill = incoming / "design-dashboard"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing dashboard UI.", encoding="utf-8")
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "design",
+                            "subcategory": "design.dashboard",
+                            "task_intent": "polish dashboards",
+                            "artifact_type": "workflow",
+                            "collection_priority": "P0",
+                        },
+                        "source": {
+                            "usage": "upstream_copy",
+                            "url": "https://github.com/example/design-system",
+                            "author": "example-team",
+                            "license": "MIT",
+                            "reference": "https://github.com/example/design-system",
+                            "collected_by": "onecode-test",
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            main(["import", str(incoming), "--registry", str(registry)])
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-invalid-source-usage", issue_ids)
+
     def test_task_pack_scenario_router_outputs_profile_plan_and_explanations(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

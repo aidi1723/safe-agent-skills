@@ -16,6 +16,7 @@
       },
       "source": {
         "type": "local_folder",
+        "usage": "local_authoring",
         "path": "./incoming/office-pdf",
         "url": "https://github.com/example/skills/office-pdf",
         "author": "example-team",

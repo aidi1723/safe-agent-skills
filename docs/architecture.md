@@ -80,6 +80,7 @@ Accepts a skill source from:
 It records:
 
 - source type
+- source usage relationship
 - source URL or local path
 - source author or owner
 - source license
@@ -91,6 +92,10 @@ It records:
 - import timestamp
 
 Missing provenance values are recorded as `unknown`; they are never omitted.
+The source usage relationship is explicit: `source_import` means content was
+imported from the cited source, `reference_only` means the source is a
+reference or inspiration only, and `local_authoring` means the skill was
+locally authored or seeded from local material.
 
 ### Skill Parser
 

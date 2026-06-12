@@ -134,7 +134,8 @@ A sanitized skill can become `trusted` only when:
 
 - deterministic scanner passes or findings are waived
 - manifest exists
-- provenance fields exist for source URL, author, license, reference, and collector
+- provenance fields exist for source usage, URL, author, license, reference,
+  and collector
 - sanitized hash is recorded
 - required verifiers are attached or explicitly waived
 - review status is recorded
@@ -147,6 +148,7 @@ Required fields:
 
 - `source.url`
 - `source.path`
+- `source.usage`
 - `source.author`
 - `source.license`
 - `source.reference`
@@ -156,6 +158,15 @@ Required fields:
 If the source does not provide a value, write `unknown`. Do not omit the field.
 Unknown provenance should increase review pressure; it should not block local
 quarantine or scan reporting.
+
+`source.usage` must be one of:
+
+- `source_import`: skill content was imported from the cited source and then
+  sanitized.
+- `reference_only`: the cited source is an external reference or inspiration;
+  the local skill text is not represented as copied upstream content.
+- `local_authoring`: the skill is locally authored or seeded from a local
+  workflow.
 
 ## Runtime Rule
 

@@ -82,6 +82,7 @@
       "type": "object",
       "required": [
         "type",
+        "usage",
         "path",
         "url",
         "author",
@@ -100,6 +101,14 @@
             "community_index",
             "github_reference",
             "web_reference"
+          ]
+        },
+        "usage": {
+          "type": "string",
+          "enum": [
+            "source_import",
+            "reference_only",
+            "local_authoring"
           ]
         },
         "url": {

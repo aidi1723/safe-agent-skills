@@ -82,6 +82,8 @@ The sanitizer may claim these properties when implemented and verified:
 - deterministic risk patterns are detected and removed or rewritten when covered by scanner rules
 - every sanitized skill has a manifest and report
 - every trusted skill has a recorded source hash and sanitized hash
+- every skill records `source.usage` so external references are not confused
+  with verbatim upstream imports
 - runtime use is constrained by the host kernel permission model
 
 The sanitizer must not claim:
@@ -89,6 +91,8 @@ The sanitizer must not claim:
 - that community skills are 100% clean
 - that deterministic regex scanning catches every obfuscated unsafe instruction
 - that `github_reference` means upstream project content was copied or sanitized
+- that `reference_only` provenance means the referenced project endorsed,
+  reviewed, or supplied the local skill text
 - that local-first alone prevents all exfiltration
 - that popularity or repository stars imply trust
 - that connector or vault support exists without adapter verification
