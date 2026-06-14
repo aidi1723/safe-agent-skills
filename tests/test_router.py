@@ -2,6 +2,7 @@ import unittest
 
 from onecode_skill_sanitizer.router import (
     build_capability_coverage,
+    build_execution_graph,
     build_execution_plan,
     build_selection_explanations,
     build_task_profile,
@@ -317,6 +318,7 @@ class RouterTest(unittest.TestCase):
             "groups": [
                 {
                     "id": "ui-quality-review",
+                    "status": "trusted",
                     "primary_skill": "design-ui-review",
                     "adjacent_skills": ["design-system-consistency", "design-responsive-viewport-check"],
                     "use_before": [],
@@ -354,3 +356,101 @@ class RouterTest(unittest.TestCase):
         self.assertIn("design-system-consistency", routed["pruned_skills"])
         self.assertEqual(routed["execution_graph"]["nodes"][0]["skill"], "security-secret-context-redaction")
         self.assertTrue(routed["execution_graph"]["edges"])
+
+    def test_build_execution_graph_exposes_stage_gates_and_parallel_groups(self):
+        graph = build_execution_graph(
+            [
+                {"name": "security-secret-context-redaction"},
+                {"name": "research-source-check"},
+                {"name": "business-requirements-brief"},
+                {"name": "design-ui-review"},
+                {"name": "code-test-regression"},
+                {"name": "execution-publish-check"},
+            ]
+        )
+
+        nodes_by_skill = {node["skill"]: node for node in graph["nodes"]}
+        self.assertEqual(graph["schema_version"], 1)
+        self.assertTrue(graph["acyclic"])
+        self.assertEqual(nodes_by_skill["security-secret-context-redaction"]["gate"], "preflight")
+        self.assertEqual(nodes_by_skill["code-test-regression"]["gate"], "verification")
+        self.assertEqual(nodes_by_skill["research-source-check"]["parallel_group"], "source")
+        self.assertIn(
+            {"from": nodes_by_skill["business-requirements-brief"]["id"], "to": nodes_by_skill["design-ui-review"]["id"], "type": "stage_order"},
+            graph["edges"],
+        )
+        self.assertIn("parallel_groups", graph)
+        self.assertIn("source", graph["parallel_groups"])
+
+    def test_route_mesh_strategy_changes_optional_verification_depth(self):
+        bundles_index = {
+            "bundles": [
+                {
+                    "id": "website-build-launch",
+                    "name": "Website Build Launch",
+                    "scenario": "Build or polish a website and prepare it for release.",
+                    "status": "trusted",
+                    "task_signals": ["website", "landing page", "launch"],
+                    "skills": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "content-seo-brief",
+                        "execution-browser-check",
+                        "execution-playwright-browser-automation",
+                        "execution-publish-check",
+                    ],
+                    "required_capabilities": [
+                        {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                        {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                        {"id": "seo_copy", "required": True, "preferred_skills": ["content-seo-brief"]},
+                        {"id": "browser_verification", "required": True, "preferred_skills": ["execution-browser-check"]},
+                        {"id": "publish_check", "required": True, "preferred_skills": ["execution-publish-check"]},
+                    ],
+                    "execution_order": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "content-seo-brief",
+                        "execution-browser-check",
+                        "execution-playwright-browser-automation",
+                        "execution-publish-check",
+                    ],
+                }
+            ]
+        }
+        selected = [
+            {"name": "business-requirements-brief", "match_score": 8},
+            {"name": "design-ui-review", "match_score": 9},
+            {"name": "content-seo-brief", "match_score": 8},
+            {"name": "execution-browser-check", "match_score": 7},
+            {"name": "execution-playwright-browser-automation", "match_score": 6},
+            {"name": "execution-publish-check", "match_score": 7},
+            {"name": "design-system-consistency", "match_score": 6},
+        ]
+        trusted = {skill["name"] for skill in selected}
+
+        fast = route_mesh_task(
+            task="build a landing page and prepare launch checks",
+            invariants=None,
+            selected_skills=selected,
+            bundles_index=bundles_index,
+            trusted_skill_names=trusted,
+            overlap_groups=None,
+            max_skills=6,
+            strategy="fast",
+        )
+        deep = route_mesh_task(
+            task="build a landing page and prepare launch checks",
+            invariants=None,
+            selected_skills=selected,
+            bundles_index=bundles_index,
+            trusted_skill_names=trusted,
+            overlap_groups=None,
+            max_skills=6,
+            strategy="deep",
+        )
+
+        fast_names = [skill["name"] for skill in fast["skills"]]
+        deep_names = [skill["name"] for skill in deep["skills"]]
+        self.assertNotIn("execution-playwright-browser-automation", fast_names)
+        self.assertIn("execution-playwright-browser-automation", deep_names)
+        self.assertIn("design-system-consistency", deep_names)

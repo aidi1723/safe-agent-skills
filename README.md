@@ -70,7 +70,7 @@ Current public baseline:
 - 109 total skills
 - 103 trusted skills
 - 10 trusted scenario bundles
-- 7 trusted-only skill overlap groups
+- 7 status-backed trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
 - 0 tampered skills
@@ -237,8 +237,9 @@ onecode-skill-sanitizer smart \
   --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证"
 ```
 
-`smart` returns the same task-pack structure plus a mesh execution graph,
-invariant capability coverage, and overlap-pruned skill list. See
+`smart` returns the same task-pack structure plus a mesh execution graph with
+stage gates and parallel-group hints, invariant capability coverage, and an
+overlap-pruned skill list. See
 [Smart Skill Router](docs/smart-skill-router.md).
 
 For vague or unsupported repository-maintenance tasks, `smart` is conservative:
@@ -270,7 +271,9 @@ listing growth.
 Functional overlap between trusted skills is recorded in
 [`catalog/overlap-groups.json`](catalog/overlap-groups.json) and explained in
 [Skill Overlap Groups](docs/skill-overlap-groups.md). This is a selection hint
-layer for routers and operators, not a deletion or merge list.
+layer for routers and operators, not a deletion or merge list. Each overlap
+group now declares `status: trusted`, and `maintain-check` rejects missing or
+non-trusted group status.
 
 These skills and bundles are agent-compatible by design. Claude, Codex,
 OpenClaw, Cursor, local agents, MCP hosts, CI workers, and custom agent

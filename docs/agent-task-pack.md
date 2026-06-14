@@ -52,7 +52,9 @@ The JSON output includes:
 - `coverage`: optional capability coverage records for the selected scenario
 - `execution_plan`: optional ordered skill execution guidance
 - `selection_explanations`: optional reasons for selected bundles and skills
-- `execution_graph`: optional mesh DAG when `smart` or `--router mesh` is used
+- `execution_graph`: optional mesh DAG with `stage`, `gate`,
+  `parallel_group`, and `stage_order` edges when `smart` or `--router mesh` is
+  used
 - `invariant_capabilities`: optional capability mapping from user invariants
 - `pruned_skills`: optional overlap-pruned skill names
 - `agent_instructions`: ready-to-paste runtime instructions for the host agent

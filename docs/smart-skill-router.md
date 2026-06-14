@@ -88,9 +88,9 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
 
 | Strategy | Behavior |
 | --- | --- |
-| `fast` | Keeps the selected pack small for low-risk tasks. |
-| `balanced` | Default quality and cost balance. |
-| `deep` | Allows a larger pack for public, risky, or high-verification work. |
+| `fast` | Keeps required gates and directly useful non-verification matches; trims optional verification depth. |
+| `balanced` | Keeps required gates plus task-matched skills up to `max-skills`. |
+| `deep` | Prioritizes optional verification and review skills before other optional matches and may exceed the normal cap up to the deep limit. |
 
 ## Invariants
 
@@ -119,6 +119,7 @@ an invariant, the output marks the capability as `missing`.
 
 - `router.mode`: `deterministic_mesh_router`
 - `router.strategy`
+- `router.strategy_profile`
 - `invariant_capabilities`
 - `coverage`
 - `execution_plan`
@@ -126,11 +127,17 @@ an invariant, the output marks the capability as `missing`.
 - `selection_explanations`
 - `pruned_skills`
 
-The execution graph is a simple DAG:
+The execution graph is a deterministic DAG with node-level stage gates and
+parallel-group hints:
 
 ```text
 preflight -> source -> planning -> review -> execution -> verification
 ```
+
+Each node includes `stage`, `gate`, and `parallel_group`. Edges use
+`type: "stage_order"` to show ordering between stages; skills in the same
+parallel group can be considered independently by a host runtime unless its
+own policy requires stricter sequencing.
 
 The graph is guidance for the host agent. It does not execute anything by
 itself.

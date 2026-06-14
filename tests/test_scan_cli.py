@@ -40,6 +40,7 @@ class ScanCliTest(unittest.TestCase):
             self.assertEqual(report["summary"]["status"], "review_required")
             self.assertEqual(report["summary"]["risk_level"], "critical")
             self.assertRegex(report["hashes"]["source_sha256"], r"^[0-9a-f]{64}$")
+            self.assertIsNone(report["hashes"]["sanitized_sha256"])
             finding_ids = {finding["id"] for finding in report["findings"]}
             self.assertIn("shell-download-execute", finding_ids)
             self.assertIn("broad-filesystem-access", finding_ids)

@@ -123,7 +123,7 @@ def build_scan_report(source_dir: Path, args: argparse.Namespace | None = None) 
         "files": [relative_path for relative_path, _ in files],
         "hashes": {
             "source_sha256": source_hash(files),
-            "sanitized_sha256": "0" * 64,
+            "sanitized_sha256": None,
         },
         "summary": {
             "status": status,
@@ -1527,6 +1527,16 @@ def validate_overlap_groups(registry_dir: Path, overlap_path: Path) -> dict:
                 }
             )
         seen_group_ids.add(group_id)
+        if group.get("status") != "trusted":
+            issues.append(
+                {
+                    "id": "overlap-untrusted-group-status",
+                    "severity": "high",
+                    "group": group_id,
+                    "path": group_path,
+                    "status": group.get("status", "missing"),
+                }
+            )
 
         primary_skill = group.get("primary_skill")
         if not isinstance(primary_skill, str) or not primary_skill:

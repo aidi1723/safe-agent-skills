@@ -12,6 +12,7 @@ guardrail for broader workflows.
 
 ```text
 overlap groups: 7
+group status: all trusted
 referenced trusted skills: 29
 source file: catalog/overlap-groups.json
 ```
@@ -61,6 +62,7 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
 The gate fails when:
 
 - `group_count` does not match the number of groups
+- a group does not declare `status: trusted`
 - a group id is duplicated
 - a referenced skill is missing
 - a referenced skill is not `trusted`

@@ -360,7 +360,7 @@ CAPABILITY_SKILL_PREFERENCES = {
 
 
 SKILL_STAGE_HINTS = [
-    ("preflight", ["security-", "compliance-", "research-source-check", "content-claims-compliance-filter"]),
+    ("preflight", ["security-", "compliance-", "content-claims-compliance-filter"]),
     ("source", ["research-", "data-", "office-"]),
     ("planning", ["business-", "ai-", "commerce-"]),
     ("review", ["design-", "content-", "code-"]),
@@ -437,7 +437,19 @@ def prune_overlap_skill_names(ordered_names: list[str], overlap_groups: dict | N
     return keep, pruned
 
 
+STAGE_GATE_BY_STAGE = {
+    "preflight": "preflight",
+    "source": "source",
+    "planning": "planning",
+    "review": "review",
+    "execution": "execution",
+    "verification": "verification",
+}
+
+
 def skill_stage(skill_name: str) -> str:
+    if any(marker in skill_name for marker in ["test-regression", "verify", "audit"]):
+        return "verification"
     for stage, markers in SKILL_STAGE_HINTS:
         if any(marker in skill_name for marker in markers):
             return stage
@@ -445,22 +457,44 @@ def skill_stage(skill_name: str) -> str:
 
 
 def build_execution_graph(skills: list[dict]) -> dict:
-    nodes = [
-        {
-            "id": f"n{index}",
-            "skill": skill["name"],
-            "stage": skill_stage(skill["name"]),
-        }
-        for index, skill in enumerate(skills, start=1)
-    ]
-    edges = [
-        {
-            "from": nodes[index]["id"],
-            "to": nodes[index + 1]["id"],
-        }
-        for index in range(len(nodes) - 1)
-    ]
-    return {"schema_version": 1, "acyclic": True, "nodes": nodes, "edges": edges}
+    nodes = []
+    for index, skill in enumerate(skills, start=1):
+        stage = skill_stage(skill["name"])
+        nodes.append(
+            {
+                "id": f"n{index}",
+                "skill": skill["name"],
+                "stage": stage,
+                "gate": STAGE_GATE_BY_STAGE.get(stage, "review"),
+                "parallel_group": stage,
+            }
+        )
+
+    stage_rank = {"preflight": 0, "source": 1, "planning": 2, "review": 3, "execution": 4, "verification": 5}
+    edges = []
+    for source in nodes:
+        later_nodes = [
+            target
+            for target in nodes
+            if stage_rank.get(target["stage"], 3) > stage_rank.get(source["stage"], 3)
+        ]
+        if not later_nodes:
+            continue
+        first_later_rank = min(stage_rank.get(target["stage"], 3) for target in later_nodes)
+        for target in later_nodes:
+            if stage_rank.get(target["stage"], 3) == first_later_rank:
+                edges.append({"from": source["id"], "to": target["id"], "type": "stage_order"})
+
+    parallel_groups: dict[str, list[str]] = {}
+    for node in nodes:
+        parallel_groups.setdefault(node["parallel_group"], []).append(node["id"])
+    return {
+        "schema_version": 1,
+        "acyclic": True,
+        "nodes": nodes,
+        "edges": edges,
+        "parallel_groups": {group: ids for group, ids in parallel_groups.items() if len(ids) > 1 or group in {"source", "review", "verification"}},
+    }
 
 
 def sort_mesh_skill_names(ordered_names: list[str]) -> list[str]:
@@ -472,6 +506,21 @@ def sort_mesh_skill_names(ordered_names: list[str]) -> list[str]:
             key=lambda item: (stage_rank.get(skill_stage(item[1]), 3), item[0]),
         )
     ]
+
+
+def strategy_optional_skill_names(optional_names: list[str], strategy: str) -> list[str]:
+    if strategy == "fast":
+        return [name for name in optional_names if skill_stage(name) not in {"verification"}]
+    if strategy == "deep":
+        priority = {"verification": 0, "review": 1, "source": 2, "execution": 3, "planning": 4, "preflight": 5}
+        return [
+            name
+            for _, name in sorted(
+                enumerate(optional_names),
+                key=lambda item: (priority.get(skill_stage(item[1]), 3), item[0]),
+            )
+        ]
+    return optional_names
 
 
 def route_mesh_task(
@@ -516,7 +565,7 @@ def route_mesh_task(
     sorted_names = sort_mesh_skill_names(ordered_names)
     strategy_limits = {"fast": min(max_skills, 5), "balanced": max_skills, "deep": max(max_skills, 10)}
     required_sorted_names = [name for name in sorted_names if name in required_names]
-    optional_sorted_names = [name for name in sorted_names if name not in required_names]
+    optional_sorted_names = strategy_optional_skill_names([name for name in sorted_names if name not in required_names], strategy)
     limit = max(strategy_limits.get(strategy, max_skills), len(required_sorted_names))
     final_names = required_sorted_names + optional_sorted_names[: max(0, limit - len(required_sorted_names))]
     routed_skills = [selected_by_name[name] for name in final_names]
@@ -554,7 +603,16 @@ def route_mesh_task(
         }
     )
     return {
-        "router": {"mode": "deterministic_mesh_router", "version": ROUTER_VERSION, "strategy": strategy},
+        "router": {
+            "mode": "deterministic_mesh_router",
+            "version": ROUTER_VERSION,
+            "strategy": strategy,
+            "strategy_profile": {
+                "fast": "minimum required gates plus non-verification task matches",
+                "balanced": "required gates plus task-matched skills up to max_skills",
+                "deep": "required gates plus verification and review depth before other optional skills",
+            }.get(strategy, "required gates plus task-matched skills"),
+        },
         "task_profile": profile,
         "selected_scenario": {
             "id": selected_bundle.get("id", ""),

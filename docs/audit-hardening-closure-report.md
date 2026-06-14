@@ -32,7 +32,7 @@ tampered skills: 0
 unknown provenance records: 0
 schema-check: ok
 maintain-check: ok
-full verification: 66 tests passing
+full verification: 69 tests passing
 ```
 
 ## What Was Closed

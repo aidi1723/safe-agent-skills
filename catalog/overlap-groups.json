@@ -5,6 +5,7 @@
     {
       "id": "ai-routing-budget-context",
       "name": "AI Routing, Budget, and Context",
+      "status": "trusted",
       "intent": "Avoid selecting every AI runtime planning skill unless the task spans routing, token cost, protocol shape, and context compression.",
       "primary_skill": "ai-model-route-fallback-review",
       "adjacent_skills": [
@@ -21,6 +22,7 @@
     {
       "id": "rag-retrieval-boundaries",
       "name": "RAG Retrieval Boundaries",
+      "status": "trusted",
       "intent": "Separate end-to-end RAG workflow selection from storage, pipeline, and namespace boundary checks.",
       "primary_skill": "ai-llamaindex-rag-knowledge-workflow",
       "adjacent_skills": [
@@ -34,6 +36,7 @@
     {
       "id": "source-fact-evidence",
       "name": "Source, Fact, and Evidence",
+      "status": "trusted",
       "intent": "Start with source verification, then add lineage, citation maps, or contradiction review only when the output needs those extra guarantees.",
       "primary_skill": "research-source-check",
       "adjacent_skills": [
@@ -47,6 +50,7 @@
     {
       "id": "table-numeric-evidence",
       "name": "Table and Numeric Evidence",
+      "status": "trusted",
       "intent": "Use calculation verification as the default numeric guardrail and add analysis or office reconciliation only for richer document workflows.",
       "primary_skill": "data-table-calculation-verify",
       "adjacent_skills": [
@@ -60,6 +64,7 @@
     {
       "id": "ui-quality-review",
       "name": "UI Quality Review",
+      "status": "trusted",
       "intent": "Use the general UI review skill first, then add system consistency, accessibility, responsive viewport, Tailwind/Radix system, motion, or premium landing checks for targeted UI risks.",
       "primary_skill": "design-ui-review",
       "adjacent_skills": [
@@ -76,6 +81,7 @@
     {
       "id": "browser-execution-verification",
       "name": "Browser Execution Verification",
+      "status": "trusted",
       "intent": "Prefer Playwright automation for reproducible browser verification and add browser check or web-task guidance for narrower execution reviews.",
       "primary_skill": "execution-playwright-browser-automation",
       "adjacent_skills": [
@@ -88,6 +94,7 @@
     {
       "id": "public-claims-compliance",
       "name": "Public Claims Compliance",
+      "status": "trusted",
       "intent": "Use claims compliance filtering before publication and add legal, terms, or freshness checks when the claim has policy or time sensitivity.",
       "primary_skill": "content-claims-compliance-filter",
       "adjacent_skills": [

@@ -1125,6 +1125,7 @@ class RegistryCliTest(unittest.TestCase):
                             {
                                 "id": "research-source-overlap",
                                 "name": "Research Source Overlap",
+                                "status": "trusted",
                                 "intent": "Keep source verification skills from being over-selected.",
                                 "primary_skill": "research-source-check",
                                 "adjacent_skills": ["research-connector-review"],
@@ -1153,6 +1154,76 @@ class RegistryCliTest(unittest.TestCase):
             result = json.loads(check_out.getvalue())
             self.assertEqual(result["status"], "failed")
             self.assertEqual(result["issues"][0]["id"], "overlap-non-trusted-skill")
+
+    def test_maintain_check_requires_trusted_overlap_group_status(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            overlap_path = root / "overlap-groups.json"
+            primary = incoming / "research-source-check"
+            adjacent = incoming / "research-citation-evidence-map"
+            primary.mkdir(parents=True)
+            adjacent.mkdir(parents=True)
+            (primary / "SKILL.md").write_text("Use this workflow for source verification.", encoding="utf-8")
+            (adjacent / "SKILL.md").write_text("Use this workflow for citation evidence maps.", encoding="utf-8")
+            main(
+                [
+                    "import",
+                    str(incoming),
+                    "--registry",
+                    str(registry),
+                    "--source-url",
+                    "https://github.com/example/research",
+                    "--author",
+                    "example-team",
+                    "--license",
+                    "MIT",
+                    "--reference",
+                    "https://github.com/example/research",
+                    "--collected-by",
+                    "onecode-test",
+                ]
+            )
+            main(["approve", str(registry / "research" / "research-source-check")])
+            main(["approve", str(registry / "research" / "research-citation-evidence-map")])
+            overlap_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "group_count": 1,
+                        "groups": [
+                            {
+                                "id": "research-source-overlap",
+                                "name": "Research Source Overlap",
+                                "intent": "Keep source verification skills from being over-selected.",
+                                "primary_skill": "research-source-check",
+                                "adjacent_skills": ["research-citation-evidence-map"],
+                                "use_before": [],
+                                "use_after": [],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            check_out = io.StringIO()
+            with contextlib.redirect_stdout(check_out):
+                check_code = main(
+                    [
+                        "maintain-check",
+                        "--registry",
+                        str(registry),
+                        "--overlap-groups",
+                        str(overlap_path),
+                    ]
+                )
+
+            self.assertEqual(check_code, 2)
+            result = json.loads(check_out.getvalue())
+            self.assertEqual(result["status"], "failed")
+            self.assertEqual(result["issues"][0]["id"], "overlap-untrusted-group-status")
 
     def test_schema_check_validates_real_catalog(self):
         schema_out = io.StringIO()
@@ -1644,6 +1715,7 @@ class RegistryCliTest(unittest.TestCase):
                             {
                                 "id": "ui-quality-review",
                                 "name": "UI Quality Review",
+                                "status": "trusted",
                                 "intent": "Prefer primary UI review unless responsive checks are required.",
                                 "primary_skill": "design-ui-review",
                                 "adjacent_skills": ["design-responsive-viewport-check"],
