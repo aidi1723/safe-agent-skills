@@ -80,10 +80,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Structural Scanner Hardening](docs/updates/2026-06-12-structural-scanner-hardening.md).
+[Headroom Agent I/O Compression Closure Report](docs/headroom-agent-io-compression-closure-report.md).
 
 Previous update:
-[Consistency Rule Hardening](docs/updates/2026-06-12-consistency-rule-hardening.md).
+[CLAUDE.md Reference Closure Report](docs/claude-md-reference-closure-report.md).
 
 Phase 001 is closed and ready for public maintenance. See
 [Phase 001 Closure Report](docs/phase-001-closure-report.md).

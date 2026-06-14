@@ -52,7 +52,7 @@ Next development:
 
 Latest update:
 
-- [Structural Scanner Hardening](updates/2026-06-12-structural-scanner-hardening.md)
+- [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 
 ## Intake Rule
 
@@ -82,7 +82,8 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   --format markdown
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
   --registry catalog \
-  --bundles bundles/index.json
+  --bundles bundles/index.json \
+  --references external-references/index.json
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check \
   --registry catalog
 PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \

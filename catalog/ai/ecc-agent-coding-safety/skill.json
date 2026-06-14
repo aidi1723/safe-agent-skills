@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:35:45Z",
   "findings": [],
   "hashes": {
-    "sanitized_sha256": "badcc5058e375fa0e20dda9cb930b328fb455fa0446793629a92392de17df5c3",
+    "sanitized_sha256": "454e987bfa2f674bef8d3b3abc06259177e82985145e1047c04626e4586c39b4",
     "source_sha256": "47dfabdf228d71fe544a285d07a37749743ca08bf14a973c22b89e10c512ec7e"
   },
   "name": "ecc-agent-coding-safety",

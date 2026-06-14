@@ -14,6 +14,7 @@ Verification command:
 PYTHONPATH=src python3 -m onecode_skill_sanitizer verify --registry catalog
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalog
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check --registry catalog --bundles bundles/index.json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reference-check --references external-references/index.json
 ```
 
 Latest verified result:
@@ -26,6 +27,7 @@ tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
 maintain-check: ok
+reference-check: ok
 overlap groups: 7
 overlap group status: trusted
 ```
@@ -34,6 +36,10 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
+- [Headroom Agent I/O Compression Update](updates/2026-06-14-headroom-agent-io-compression.md)
+- [CLAUDE.md Reference Closure Report](claude-md-reference-closure-report.md)
+- [CLAUDE.md Reference Review](updates/2026-06-14-claude-md-reference.md)
 - [Audit Hardening Closure Report](audit-hardening-closure-report.md)
 - [Next Development Plan](next-development-plan.md)
 - [Structural Scanner Hardening](updates/2026-06-12-structural-scanner-hardening.md)

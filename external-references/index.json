@@ -1,6 +1,31 @@
 {
-  "reference_count": 5,
+  "reference_count": 6,
   "references": [
+    {
+      "adoption_status": "reference_only",
+      "author": "multica-ai",
+      "captured_at": "2026-06-14",
+      "claimed_capabilities": [
+        "ai_coding_behavior_guidelines",
+        "think_before_coding",
+        "simplicity_first",
+        "surgical_changes",
+        "goal_driven_execution"
+      ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "andrej-karpathy-skills CLAUDE.md",
+      "project_category": "agent_coding_instruction_reference",
+      "review_notes": "Public GitHub reference for compact AI coding behavior rules. Current GitHub API data on 2026-06-14 showed high public traction, but popularity is not treated as trust and the repository license was not declared. Useful as a market signal and behavioral-rule reference only.",
+      "runtime_permission_notes": "Reference only. Do not copy the file verbatim into trusted skills, install it automatically, execute repository content, or treat star counts as evidence of safety or correctness.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/multica-ai/andrej-karpathy-skills",
+      "taxonomy_categories": [
+        "ai.context-engineering",
+        "code.review",
+        "engineering.workflow"
+      ]
+    },
     {
       "adoption_status": "reference_only",
       "author": "HKUDS",

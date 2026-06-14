@@ -23,6 +23,9 @@ dependencies:
 - `https://github.com/HKUDS/AnyTool`
 - `https://github.com/punkpeye/awesome-mcp-servers`
 - `https://github.com/askbudi/roundtable`
+- `https://github.com/multica-ai/andrej-karpathy-skills`
+- `https://github.com/mvanhorn/last30days-skill`
+- `https://github.com/google-antigravity/antigravity-cli`
 
 Additional MCP aggregators, registries, and tool-routing projects can be added
 only after source, license, provenance, and maintenance status are recorded.
@@ -77,13 +80,17 @@ Acceptance criteria:
 - The index can be checked by `reference-check`.
 - The index can also be included in `maintain-check` with `--references`.
 
-Current seed references:
+Current references:
 
-- AnyTool
-- Awesome MCP Servers
-- AskBudi Roundtable MCP
+- AnyTool: `reference_only`
+- Awesome MCP Servers: `reference_only`
+- AskBudi Roundtable MCP: `reference_only`
+- andrej-karpathy-skills CLAUDE.md: `reference_only`
+- last30days-skill: `candidate`
+- Antigravity CLI provenance watch: `reference_only`
 
-All seed references are marked `reference_only` and `metadata_only: true`.
+All current references are `metadata_only: true`; none grants runtime
+permission or trusted skill status.
 
 ### Phase 2: Capability Mapping
 
