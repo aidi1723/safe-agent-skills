@@ -103,6 +103,29 @@ Recommended next work:
    patterns before considering any external scanner runtime.
 4. Keep `reference-check` and `maintain-check --references` as release gates.
 
+## Maintenance Path
+
+Use this document for future reference maintenance:
+
+```text
+docs/community-reference-maintenance-path.md
+```
+
+It records the maintained files, intake checklist, conversion path,
+verification path, publish path, and current external reference list.
+
+Normal reference updates should touch only:
+
+- `external-references/index.json`
+- `docs/external-reference-roadmap.md`
+- `docs/catalog-status.md`
+- `docs/maintenance-guide.md`
+- a dated update note under `docs/updates/`
+- a closure report when a review cycle is closed
+
+Do not update historical closure reports just to refresh old baseline counts.
+They are dated evidence records.
+
 ## Verification Evidence
 
 Commands run:

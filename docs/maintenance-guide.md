@@ -55,12 +55,19 @@ Latest update:
 - [Community Skill Reference Closure Report](community-skill-reference-closure-report.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 
+Community reference maintenance:
+
+- [Community Reference Maintenance Path](community-reference-maintenance-path.md)
+
 ## Intake Rule
 
 Do not execute third-party skills during intake.
 
 New community entries should be added as reference-style workflows unless the
 license and reuse rights are clear. Runtime connectors require separate review.
+External reference-only entries are maintained in
+`external-references/index.json` and must remain `metadata_only: true` until
+they are converted through the sanitization and approval path.
 
 ## Review States
 
@@ -115,6 +122,7 @@ Confirm:
 - `status: ok`
 - `unknown_provenance_count: 0`
 - `tampered_count: 0`
+- `reference-check` reports the expected `reference_count`
 - each category has at least 3 trusted skills
 - task-pack output contains only trusted skills unless review mode is explicitly
   requested

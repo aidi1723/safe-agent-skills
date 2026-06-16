@@ -38,6 +38,7 @@ Every top-level category now has at least 3 trusted skills.
 Latest update statement:
 
 - [Community Skill Reference Closure Report](community-skill-reference-closure-report.md)
+- [Community Reference Maintenance Path](community-reference-maintenance-path.md)
 - [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 - [Headroom Agent I/O Compression Update](updates/2026-06-14-headroom-agent-io-compression.md)
