@@ -52,12 +52,8 @@ Next development:
 
 Latest update:
 
-- [Community Skill Reference Closure Report](community-skill-reference-closure-report.md)
+- [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
-
-Community reference maintenance:
-
-- [Community Reference Maintenance Path](community-reference-maintenance-path.md)
 
 ## Intake Rule
 
@@ -68,6 +64,8 @@ license and reuse rights are clear. Runtime connectors require separate review.
 External reference-only entries are maintained in
 `external-references/index.json` and must remain `metadata_only: true` until
 they are converted through the sanitization and approval path.
+Operator-specific maintenance notes, local paths, account details, and private
+handoff information must stay in ignored local files, not public docs.
 
 ## Review States
 

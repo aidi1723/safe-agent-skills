@@ -8,3 +8,5 @@ build/
 *.egg-info/
 registry/
 incoming/
+.local-maintenance/
+.superpowers/

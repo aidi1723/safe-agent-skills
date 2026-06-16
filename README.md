@@ -80,7 +80,7 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Community Skill Reference Closure Report](docs/community-skill-reference-closure-report.md).
+[Community Skill Reference Review](docs/updates/2026-06-16-community-skill-reference-review.md).
 
 Previous update:
 [Headroom Agent I/O Compression Closure Report](docs/headroom-agent-io-compression-closure-report.md).
@@ -337,7 +337,6 @@ onecode skills approve pdf
 - [Operator Guide](docs/operator-guide.md)
 - [Catalog Status](docs/catalog-status.md)
 - [Maintenance Guide](docs/maintenance-guide.md)
-- [Community Reference Maintenance Path](docs/community-reference-maintenance-path.md)
 - [Open Source Statement](docs/open-source-statement.md)
 - [Skill Manifest Schema](schemas/skill-manifest.schema.json)
 - [Registry Index Schema](schemas/registry-index.schema.json)
