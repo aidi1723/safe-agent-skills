@@ -21,6 +21,9 @@ These projects are useful as architecture references, not trusted runtime
 dependencies:
 
 - `https://github.com/HKUDS/AnyTool`
+- `https://github.com/openai/skills`
+- `https://github.com/agentskills/agentskills`
+- `https://github.com/snyk/agent-scan`
 - `https://github.com/punkpeye/awesome-mcp-servers`
 - `https://github.com/askbudi/roundtable`
 - `https://github.com/multica-ai/andrej-karpathy-skills`
@@ -82,6 +85,9 @@ Acceptance criteria:
 
 Current references:
 
+- OpenAI Skills Catalog for Codex: `reference_only`
+- Agent Skills Specification: `reference_only`
+- Snyk Agent Scan: `reference_only`
 - AnyTool: `reference_only`
 - Awesome MCP Servers: `reference_only`
 - AskBudi Roundtable MCP: `reference_only`
@@ -103,6 +109,12 @@ Examples:
 - MCP server directories map to candidate source discovery, not automatic
   execution.
 - Unified MCP gateways map to future bundle and routing-contract design.
+- Official skill catalogs map to candidate discovery, packaging comparison,
+  and per-skill source review, not bulk import.
+- Agent skill specifications map to local schema, frontmatter, and evaluation
+  alignment.
+- Agent skill scanners map to scanner-rule inspiration until their runtime
+  command behavior is reviewed.
 
 Acceptance criteria:
 

@@ -80,9 +80,12 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Headroom Agent I/O Compression Closure Report](docs/headroom-agent-io-compression-closure-report.md).
+[Community Skill Reference Closure Report](docs/community-skill-reference-closure-report.md).
 
 Previous update:
+[Headroom Agent I/O Compression Closure Report](docs/headroom-agent-io-compression-closure-report.md).
+
+Earlier update:
 [CLAUDE.md Reference Closure Report](docs/claude-md-reference-closure-report.md).
 
 Phase 001 is closed and ready for public maintenance. See

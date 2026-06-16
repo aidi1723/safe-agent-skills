@@ -52,6 +52,7 @@ Next development:
 
 Latest update:
 
+- [Community Skill Reference Closure Report](community-skill-reference-closure-report.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 
 ## Intake Rule

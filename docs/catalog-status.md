@@ -28,6 +28,7 @@ unknown_provenance_count: 0
 schema-check: ok
 maintain-check: ok
 reference-check: ok
+external references: 9
 overlap groups: 7
 overlap group status: trusted
 ```
@@ -36,6 +37,8 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Community Skill Reference Closure Report](community-skill-reference-closure-report.md)
+- [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 - [Headroom Agent I/O Compression Update](updates/2026-06-14-headroom-agent-io-compression.md)
 - [CLAUDE.md Reference Closure Report](claude-md-reference-closure-report.md)

@@ -1,6 +1,78 @@
 {
-  "reference_count": 6,
+  "reference_count": 9,
   "references": [
+    {
+      "adoption_status": "reference_only",
+      "author": "OpenAI",
+      "captured_at": "2026-06-16",
+      "claimed_capabilities": [
+        "codex_skill_catalog",
+        "curated_skill_examples",
+        "skill_packaging_patterns",
+        "agent_workflow_guidance"
+      ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "OpenAI Skills Catalog for Codex",
+      "project_category": "official_codex_skill_catalog",
+      "review_notes": "Official public OpenAI GitHub catalog for Codex skills. GitHub API data on 2026-06-16 showed active maintenance and a curated skills directory, but the repository-level license was not declared, so this should be used as a format and ecosystem reference only until per-skill license and provenance are reviewed.",
+      "runtime_permission_notes": "Reference only. Do not auto-install, copy, execute, or promote any OpenAI catalog skill into trusted status without per-skill license review, sanitization, hash recording, and operator approval.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/openai/skills",
+      "taxonomy_categories": [
+        "ai.context-engineering",
+        "engineering.workflow",
+        "security.supply_chain"
+      ]
+    },
+    {
+      "adoption_status": "reference_only",
+      "author": "agentskills",
+      "captured_at": "2026-06-16",
+      "claimed_capabilities": [
+        "agent_skill_specification",
+        "skill_frontmatter_contract",
+        "progressive_disclosure",
+        "skill_evaluation_guidance"
+      ],
+      "license": "Apache-2.0",
+      "metadata_only": true,
+      "name": "Agent Skills Specification",
+      "project_category": "agent_skill_specification",
+      "review_notes": "Public Apache-2.0 specification and documentation for Agent Skills. Useful as a compatibility and quality baseline for SKILL.md structure, metadata, progressive disclosure, and skill evaluation, not as a trusted runtime skill source.",
+      "runtime_permission_notes": "Reference only. Use for schema and evaluation alignment. Do not treat the specification site or repository as granting permission to install third-party skill content.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/agentskills/agentskills",
+      "taxonomy_categories": [
+        "ai.context-engineering",
+        "ai.output-eval",
+        "engineering.workflow"
+      ]
+    },
+    {
+      "adoption_status": "reference_only",
+      "author": "Snyk",
+      "captured_at": "2026-06-16",
+      "claimed_capabilities": [
+        "agent_security_scanning",
+        "mcp_server_scanning",
+        "agent_skill_scanning",
+        "supply_chain_risk_detection"
+      ],
+      "license": "Apache-2.0",
+      "metadata_only": true,
+      "name": "Snyk Agent Scan",
+      "project_category": "agent_security_scanner",
+      "review_notes": "Public Apache-2.0 security scanner for AI agents, MCP servers, and agent skills. Useful as a supply-chain and prompt-injection threat-model reference for future scanner rules, but external scanner execution must remain a separate operator-approved workflow.",
+      "runtime_permission_notes": "Reference only. Do not execute scanner code or make it a required verifier until install path, inputs, outputs, network behavior, and CI permissions are reviewed.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/snyk/agent-scan",
+      "taxonomy_categories": [
+        "security.supply_chain",
+        "security.prompt_injection",
+        "ai.tool-schema"
+      ]
+    },
     {
       "adoption_status": "reference_only",
       "author": "multica-ai",
