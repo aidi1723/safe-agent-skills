@@ -1,0 +1,43 @@
+{
+  "approved_at": "2026-06-16T09:36:29Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "a68da730e8a78fd5d2146c0cd98c485b0523619e8ace55da1ac12c134426b5ff",
+    "source_sha256": "e049a5272641affba8e55ced31f419afe8eb038bf73de2c5a5c0f6c7bc810634"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "media-remotion-video-production-boundary",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-16T09:36:18Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-015-scenario-capability-expansion/media-remotion-video-production-boundary",
+    "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "media",
+    "category": "media",
+    "collection_priority": "P1",
+    "subcategory": "media.video",
+    "task_intent": "plan Remotion-style programmatic video production boundaries"
+  }
+}

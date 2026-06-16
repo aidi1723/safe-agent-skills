@@ -1233,7 +1233,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 109)
+        self.assertEqual(result["skill_manifest_count"], 114)
         self.assertEqual(result["issues"], [])
 
     def test_schema_check_requires_source_usage(self):

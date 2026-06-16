@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-14T03:09:48Z",
+  "generated_at": "2026-06-16T09:38:40Z",
   "schema_version": 1,
-  "skill_count": 109,
+  "skill_count": 114,
   "skills": [
     {
       "hashes": {
@@ -929,6 +929,34 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "ed9fea6688aa3a2231518daa527fd653527724d23e25ac0d3ab696ecf951277d",
+        "source_sha256": "a2dd7ff863a7df02084f0e20ef39681aba8cd8db8731ec71e7aee8e9d8df2017"
+      },
+      "name": "code-simplify-refactor-plan",
+      "registry_path": "code/code-simplify-refactor-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-16T09:36:18Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-015-scenario-capability-expansion/code-simplify-refactor-plan",
+        "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.refactor",
+        "task_intent": "plan behavior-preserving code simplification"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "60e9c0237617a047c487b233da9cb5eaad87a0ae26db1bcedcb73d8b2616ae6e",
         "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
       },
@@ -953,6 +981,34 @@
         "collection_priority": "P0",
         "subcategory": "code.test",
         "task_intent": "create and review regression tests for code changes"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "8db14ae97ba5d8fe2bbd733232ba7c3f2167b17b90e1ce30eb45c52a3c17e679",
+        "source_sha256": "dd7d7e077a8e1dd3226538fa363ff4d54a90b1f66a9db94dbd94f4d567a030ea"
+      },
+      "name": "codebase-explore-map",
+      "registry_path": "code/codebase-explore-map",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-16T09:36:18Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-015-scenario-capability-expansion/codebase-explore-map",
+        "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.explore",
+        "task_intent": "map an unfamiliar repository before code changes"
       }
     },
     {
@@ -1461,6 +1517,34 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "2c3100f65ba767fa9f3c104a89a1140e4ec8d1a53157886e8f8d1a4a763c56d9",
+        "source_sha256": "f80163a7d40ab4bb945403fe02286783581f062f92cd11e589b63c13792e656c"
+      },
+      "name": "content-strategy-matrix",
+      "registry_path": "content/content-strategy-matrix",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-16T09:36:18Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-015-scenario-capability-expansion/content-strategy-matrix",
+        "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "content",
+        "category": "content",
+        "collection_priority": "P1",
+        "subcategory": "content.strategy",
+        "task_intent": "plan a content matrix and multi-format content system"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
         "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
       },
@@ -1965,6 +2049,34 @@
     },
     {
       "hashes": {
+        "sanitized_sha256": "a12fb2d03e7c3df96d5069a2f4231459d45046127334c20410b68d148d5b638a",
+        "source_sha256": "865e08fee3b2450b713ef572b949363ff842bfee9c693849f87e00994cdd801e"
+      },
+      "name": "design-visual-quality-review",
+      "registry_path": "design/design-visual-quality-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-16T09:36:18Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-015-scenario-capability-expansion/design-visual-quality-review",
+        "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "interface",
+        "category": "design",
+        "collection_priority": "P0",
+        "subcategory": "design.visual",
+        "task_intent": "review frontend visual quality and AI-generated UI polish"
+      }
+    },
+    {
+      "hashes": {
         "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
         "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
       },
@@ -2353,6 +2465,34 @@
         "collection_priority": "P2",
         "subcategory": "media.brand",
         "task_intent": "organize and review brand media asset packs"
+      }
+    },
+    {
+      "hashes": {
+        "sanitized_sha256": "a68da730e8a78fd5d2146c0cd98c485b0523619e8ace55da1ac12c134426b5ff",
+        "source_sha256": "e049a5272641affba8e55ced31f419afe8eb038bf73de2c5a5c0f6c7bc810634"
+      },
+      "name": "media-remotion-video-production-boundary",
+      "registry_path": "media/media-remotion-video-production-boundary",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-06-16T09:36:18Z",
+        "collected_by": "onecode-local-seed",
+        "license": "Apache-2.0",
+        "path": "batches/batch-015-scenario-capability-expansion/media-remotion-video-production-boundary",
+        "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "media",
+        "category": "media",
+        "collection_priority": "P1",
+        "subcategory": "media.video",
+        "task_intent": "plan Remotion-style programmatic video production boundaries"
       }
     },
     {

@@ -38,7 +38,7 @@ Each individual `SKILL.md` also contains:
 | ai | `ai-tool-schema-protocol-check` | trusted | Use when reviewing tool calling schemas, JSON arguments, function contracts, MCP-style protocol boundaries, or cross-model tool compatibility. |
 | ai | `ai-vllm-serving-capacity-plan` | trusted | Use when reviewing high-throughput LLM serving, batching, memory planning, latency targets, or inference capacity. |
 | ai | `ecc-agent-coding-safety` | trusted | Use when adapting community context-engineering ideas for AI coding assistants, memory, safety checks, and bounded code work. |
-| ai | `headroom-context-compression` | trusted | Use when compressing long task context, chat history, notes, or documents before an AI workflow while preserving key facts. |
+| ai | `headroom-context-compression` | trusted | Use when compressing long task context, tool outputs, logs, retrieval chunks, chat history, notes, or documents before an AI workflow while preserving key facts. |
 | ai | `hermes-agent-memory-assistant` | quarantined | Use when evaluating agent memory, preference learning, task continuity, and assistant personalization boundaries. |
 | ai | `supermemory-memory-engine-reference` | quarantined | Use when designing, evaluating, or integrating persistent AI memory retrieval without exposing private data or secrets. |
 | business | `business-process-sop` | trusted | Use when documenting repeatable business operations, handoffs, checklists, roles, and standard operating procedures. |
@@ -49,7 +49,9 @@ Each individual `SKILL.md` also contains:
 | code | `code-dependency-cycle-review` | trusted | Use when reviewing imports, module boundaries, package references, circular dependencies, layering violations, or architecture drift. |
 | code | `code-python-debug` | trusted | Use when diagnosing and fixing Python bugs with focused tests, minimal changes, and explicit verification. |
 | code | `code-review-risk` | trusted | Use when reviewing code changes for bugs, regressions, missing tests, unsafe assumptions, and maintainability risks. |
+| code | `code-simplify-refactor-plan` | trusted | Use when simplifying code, reducing unnecessary abstraction, clarifying control flow, shrinking duplicate logic, or planning a low-risk refactor after behavior is understood. |
 | code | `code-test-regression` | trusted | Use when adding or reviewing regression tests, failure cases, fixtures, and verification commands for code changes. |
+| code | `codebase-explore-map` | trusted | Use when first exploring an unfamiliar repository, mapping architecture, finding entry points, identifying ownership boundaries, or preparing a codebase context brief before implementation or review. |
 | commerce | `commerce-icbu-listing` | trusted | Use when preparing Alibaba International Station product listing structure, attributes, keywords, and inquiry-oriented copy. |
 | commerce | `commerce-inquiry-reply` | trusted | Use when drafting buyer inquiry replies, quotation responses, product clarification, and trade follow-up messages. |
 | commerce | `commerce-link-tracking-audit` | trusted | Use when checking campaign links, UTM parameters, commerce landing pages, inquiry funnels, tracking events, or marketing handoff URLs. |
@@ -68,6 +70,7 @@ Each individual `SKILL.md` also contains:
 | content | `content-prompt-engineering-patterns` | trusted | Use when designing prompts, context instructions, RAG workflows, agent behavior specs, or prompt review checklists. |
 | content | `content-seo-brief` | trusted | Use when preparing an SEO, GEO, article, or product content brief with factual claims and source boundaries. |
 | content | `content-social-post` | trusted | Use when preparing social posts, short announcements, community updates, launch notes, and channel-specific copy. |
+| content | `content-strategy-matrix` | trusted | Use when planning a content matrix, campaign content system, topic pillars, channel mapping, audience stages, editorial cadence, or multi-format content strategy before writing. |
 | data | `data-haystack-rag-pipeline` | trusted | Use when reviewing modular RAG pipelines, retrieval routing, semantic search, memory, or production LLM application flows. |
 | data | `data-marker-pdf-markdown-review` | trusted | Use when reviewing PDF-to-Markdown extraction quality, layout preservation, table handling, or OCR uncertainty. |
 | data | `data-markitdown-file-to-markdown` | trusted | Use when converting mixed office files, documents, or local assets into clean Markdown for agent workflows. |
@@ -86,6 +89,7 @@ Each individual `SKILL.md` also contains:
 | design | `design-system-consistency` | trusted | Use when checking UI tokens, components, spacing, typography, states, and visual consistency across screens. |
 | design | `design-tailwind-radix-system` | trusted | Use when building, reviewing, or refactoring a React UI design system based on Tailwind CSS, Radix UI primitives, shadcn/ui-style components, tokens, variants, and accessible interaction states. |
 | design | `design-ui-review` | trusted | Use when reviewing or polishing a UI screen, dashboard, or frontend view for layout, visual hierarchy, responsiveness, and accessibility. |
+| design | `design-visual-quality-review` | trusted | Use when reviewing frontend visual quality, visual hierarchy, typography, spacing, color balance, density, polish, or whether an AI-generated interface looks generic or unfinished. |
 | engineering | `engineering-build-release` | trusted | Use when preparing a local build, release readiness check, or engineering handoff with explicit smoke tests and rollback notes. |
 | engineering | `engineering-ci-troubleshoot` | trusted | Use when diagnosing CI failures, build jobs, test matrix problems, cache issues, and release pipeline breakage. |
 | engineering | `engineering-error-log-noise-triage` | trusted | Use when triaging stack traces, CI logs, runtime errors, noisy logs, repeated failures, or framework noise before debugging. |
@@ -100,6 +104,7 @@ Each individual `SKILL.md` also contains:
 | execution | `execution-rollback-checkpoint-plan` | trusted | Use when planning reversible changes, repository checkpoints, migration safety, release rollback, or recovery notes before risky work. |
 | media | `media-asset-review` | trusted | Use when checking image, video, audio, or presentation assets for readiness, format, rights, and output quality. |
 | media | `media-brand-asset-pack` | trusted | Use when organizing brand assets, image sets, logo files, usage notes, and publication-ready media packs. |
+| media | `media-remotion-video-production-boundary` | trusted | Use when planning or reviewing Remotion-style programmatic video production, React-based video composition, render boundaries, asset inputs, captions, timing, and approval gates before generating video. |
 | media | `media-video-script-review` | trusted | Use when reviewing short video scripts, narration, shot plans, product demos, and edit briefs for clarity and risk. |
 | office | `office-docx-brief` | trusted | Use when drafting, editing, structuring, or reviewing Word-style documents, briefs, memos, and formatted reports. |
 | office | `office-link-reference-integrity` | trusted | Use when reviewing document links, Markdown references, footnotes, anchors, cross-references, bibliography entries, or broken reference risk. |

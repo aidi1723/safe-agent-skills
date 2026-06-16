@@ -1,17 +1,18 @@
 {
   "schema_version": 1,
-  "bundle_count": 10,
+  "bundle_count": 13,
   "bundles": [
     {
       "id": "website-build-launch",
       "name": "Website Build Launch",
       "scenario": "Build or polish a website, landing page, dashboard, or product page and prepare it for release.",
       "status": "trusted",
-      "task_signals": ["website", "landing page", "official site", "dashboard", "launch", "publish"],
+      "task_signals": ["website", "landing page", "official site", "dashboard", "launch", "publish", "ui ux pro max", "visual designer", "css animation", "ai interface", "design system", "设计系统", "视觉", "css 动画", "ai 界面", "界面质感"],
       "required_capabilities": [
         {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
         {"id": "engineering_release", "required": true, "preferred_skills": ["engineering-build-release"]},
         {"id": "ui_review", "required": true, "preferred_skills": ["design-ui-review"]},
+        {"id": "visual_quality", "required": false, "preferred_skills": ["design-visual-quality-review"]},
         {"id": "design_consistency", "required": true, "preferred_skills": ["design-system-consistency"]},
         {"id": "tailwind_radix_system", "required": false, "preferred_skills": ["design-tailwind-radix-system"]},
         {"id": "premium_landing_design", "required": false, "preferred_skills": ["design-premium-landing-page"]},
@@ -25,21 +26,23 @@
         "business-requirements-brief",
         "engineering-build-release",
         "design-ui-review",
+        "design-visual-quality-review",
         "design-system-consistency",
+        "design-motion-interaction-polish",
         "content-seo-brief",
+        "execution-publish-check",
         "execution-browser-check",
         "execution-playwright-browser-automation",
-        "execution-publish-check",
         "execution-browser-use-web-task",
         "design-tailwind-radix-system",
         "design-premium-landing-page",
-        "design-motion-interaction-polish",
         "content-social-post"
       ],
       "skills": [
         "business-requirements-brief",
         "engineering-build-release",
         "design-ui-review",
+        "design-visual-quality-review",
         "design-system-consistency",
         "design-tailwind-radix-system",
         "design-premium-landing-page",
@@ -106,6 +109,56 @@
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
     },
     {
+      "id": "codebase-change-lifecycle",
+      "name": "Codebase Change Lifecycle",
+      "scenario": "Explore a codebase, implement or debug changes, simplify the result, test it, and review before handoff.",
+      "status": "trusted",
+      "task_signals": ["explore", "debugger", "test engineer", "simplify", "code lifecycle", "codebase change", "project map", "项目地图", "疑难 bug", "工程全流程", "摸清项目", "把关质量"],
+      "required_capabilities": [
+        {"id": "project_context", "required": true, "preferred_skills": ["codebase-explore-map", "ecc-agent-coding-safety"]},
+        {"id": "debugging", "required": true, "preferred_skills": ["code-python-debug"]},
+        {"id": "code_review", "required": true, "preferred_skills": ["code-review-risk"]},
+        {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
+        {"id": "refactor_safety", "required": false, "preferred_skills": ["code-ast-refactor-safety"]},
+        {"id": "simplification", "required": false, "preferred_skills": ["code-simplify-refactor-plan", "code-dead-path-cleanup-review"]},
+        {"id": "engineering_release", "required": true, "preferred_skills": ["engineering-build-release"]},
+        {"id": "ci_check", "required": false, "preferred_skills": ["engineering-ci-troubleshoot"]}
+      ],
+      "execution_order": [
+        "codebase-explore-map",
+        "ecc-agent-coding-safety",
+        "code-python-debug",
+        "code-ast-refactor-safety",
+        "code-simplify-refactor-plan",
+        "code-dead-path-cleanup-review",
+        "code-test-regression",
+        "code-review-risk",
+        "engineering-build-release",
+        "engineering-ci-troubleshoot"
+      ],
+      "skills": [
+        "codebase-explore-map",
+        "ecc-agent-coding-safety",
+        "code-python-debug",
+        "code-review-risk",
+        "code-test-regression",
+        "code-ast-refactor-safety",
+        "code-simplify-refactor-plan",
+        "code-dead-path-cleanup-review",
+        "engineering-build-release",
+        "engineering-ci-troubleshoot"
+      ],
+      "expected_output": [
+        "project context map",
+        "debugging or implementation notes",
+        "simplification and refactor-safety notes",
+        "regression test evidence",
+        "review findings",
+        "build or CI readiness notes"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
       "id": "security-agent-guardrails",
       "name": "Security Agent Guardrails",
       "scenario": "Review an AI agent, connector, prompt, or workflow for safety boundaries.",
@@ -140,6 +193,49 @@
         "validation contract",
         "supply-chain notes",
         "privacy and escalation notes"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "agent-planning-orchestration",
+      "name": "Agent Planning Orchestration",
+      "scenario": "Clarify fuzzy requirements, break down the plan, and coordinate multi-agent execution boundaries.",
+      "status": "trusted",
+      "task_signals": ["deep interview", "ralplan", "multi agent", "team", "agent team", "plan decomposition", "fuzzy requirements", "模糊需求", "方案拆解", "多 agent", "多agent", "厘清", "协同"],
+      "required_capabilities": [
+        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
+        {"id": "workflow_decomposition", "required": true, "preferred_skills": ["ai-opensquilla-metaskill-workflow"]},
+        {"id": "agent_orchestration", "required": true, "preferred_skills": ["ai-langchain-agent-orchestration"]},
+        {"id": "role_workflow", "required": true, "preferred_skills": ["ai-crewai-role-workflow"]},
+        {"id": "multi_agent_review", "required": true, "preferred_skills": ["ai-autogen-multi-agent-review"]},
+        {"id": "routing_contract", "required": false, "preferred_skills": ["ai-tool-schema-protocol-check"]},
+        {"id": "output_schema_eval", "required": false, "preferred_skills": ["ai-output-schema-eval"]}
+      ],
+      "execution_order": [
+        "business-requirements-brief",
+        "ai-opensquilla-metaskill-workflow",
+        "ai-langchain-agent-orchestration",
+        "ai-crewai-role-workflow",
+        "ai-autogen-multi-agent-review",
+        "ai-tool-schema-protocol-check",
+        "ai-output-schema-eval"
+      ],
+      "skills": [
+        "business-requirements-brief",
+        "ai-opensquilla-metaskill-workflow",
+        "ai-langchain-agent-orchestration",
+        "ai-crewai-role-workflow",
+        "ai-autogen-multi-agent-review",
+        "ai-tool-schema-protocol-check",
+        "ai-output-schema-eval"
+      ],
+      "expected_output": [
+        "requirements and ambiguity summary",
+        "workflow decomposition",
+        "agent orchestration map",
+        "role and authority boundaries",
+        "handoff and termination criteria",
+        "schema and output validation notes"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
     },
@@ -189,6 +285,53 @@
         "extraction uncertainty list"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "content-video-production",
+      "name": "Content Video Production",
+      "scenario": "Plan copy, content matrix, video script, and media handoff for short-form or programmatic video production.",
+      "status": "trusted",
+      "task_signals": ["copywriting", "content strategy", "remotion", "video production", "content matrix", "short video", "写文案", "内容矩阵", "一句话灵感", "成片", "短视频"],
+      "required_capabilities": [
+        {"id": "content_strategy", "required": true, "preferred_skills": ["content-strategy-matrix", "content-seo-brief"]},
+        {"id": "copywriting", "required": true, "preferred_skills": ["content-editorial-review", "content-brand-voice-boundary"]},
+        {"id": "claims_compliance", "required": true, "preferred_skills": ["content-claims-compliance-filter"]},
+        {"id": "video_script", "required": true, "preferred_skills": ["media-video-script-review"]},
+        {"id": "programmatic_video_boundary", "required": true, "preferred_skills": ["media-remotion-video-production-boundary"]},
+        {"id": "asset_review", "required": true, "preferred_skills": ["media-asset-review"]},
+        {"id": "publish_check", "required": false, "preferred_skills": ["execution-publish-check"]}
+      ],
+      "execution_order": [
+        "content-strategy-matrix",
+        "content-seo-brief",
+        "content-brand-voice-boundary",
+        "content-editorial-review",
+        "content-claims-compliance-filter",
+        "media-video-script-review",
+        "media-remotion-video-production-boundary",
+        "media-asset-review",
+        "execution-publish-check"
+      ],
+      "skills": [
+        "content-strategy-matrix",
+        "content-seo-brief",
+        "content-brand-voice-boundary",
+        "content-editorial-review",
+        "content-claims-compliance-filter",
+        "media-video-script-review",
+        "media-remotion-video-production-boundary",
+        "media-asset-review",
+        "execution-publish-check"
+      ],
+      "expected_output": [
+        "audience and content matrix notes",
+        "copy and brand voice review",
+        "claims compliance notes",
+        "video script or edit brief",
+        "asset readiness notes",
+        "publication readiness boundary"
+      ],
+      "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent. Programmatic video execution needs separate runtime and license review."
     },
     {
       "id": "data-analysis-report",

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 10,
+  "case_count": 14,
   "cases": [
     {
       "id": "website-launch",
@@ -23,6 +23,54 @@
       "expected_skills": [
         "code-review-risk",
         "code-test-regression"
+      ]
+    },
+    {
+      "id": "ai-interface-design-polish",
+      "task": "用 UI-UX-Pro-Max 定设计系统，Visual Designer 把控视觉，CSS 动画工具提升 AI 界面质感",
+      "router": "scenario",
+      "expected_scenario": "website-build-launch",
+      "expected_task_type": "website_build",
+      "expected_skills": [
+        "design-ui-review",
+        "design-system-consistency",
+        "design-motion-interaction-polish"
+      ]
+    },
+    {
+      "id": "codebase-change-lifecycle",
+      "task": "Explore 摸清项目地图，Code Review 把关质量，Debugger 定位疑难 bug，Test Engineer 和 Simplify 完善工程全流程",
+      "router": "scenario",
+      "expected_scenario": "codebase-change-lifecycle",
+      "expected_task_type": "codebase_change_lifecycle",
+      "expected_skills": [
+        "ecc-agent-coding-safety",
+        "code-python-debug",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "agent-planning-orchestration",
+      "task": "Deep Interview 厘清模糊需求，Plan 和 RALPlan 做方案拆解，Team 实现多 Agent 协同",
+      "router": "scenario",
+      "expected_scenario": "agent-planning-orchestration",
+      "expected_task_type": "agent_planning_orchestration",
+      "expected_skills": [
+        "business-requirements-brief",
+        "ai-opensquilla-metaskill-workflow",
+        "ai-autogen-multi-agent-review"
+      ]
+    },
+    {
+      "id": "content-video-production",
+      "task": "Copywriting 写文案，Content Strategy 规划内容矩阵，Remotion 实现一句话灵感到成片",
+      "router": "scenario",
+      "expected_scenario": "content-video-production",
+      "expected_task_type": "content_video_production",
+      "expected_skills": [
+        "content-strategy-matrix",
+        "media-remotion-video-production-boundary",
+        "media-video-script-review"
       ]
     },
     {

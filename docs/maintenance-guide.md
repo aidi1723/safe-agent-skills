@@ -32,16 +32,17 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 109
-- trusted skills: 103
+- total skills: 114
+- trusted skills: 108
 - quarantined skills: 3
 - review-required skills: 3
 - categories meeting 3 trusted skills: 15 / 15
-- scenario bundles: 10
+- scenario bundles: 13 trusted
 - phase status: Phase 002 scenario router closed for today's delivery
 
 Closure report:
 
+- [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
 - [Phase 001 Closure Report](phase-001-closure-report.md)
 - [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
 - [Audit Hardening Closure Report](audit-hardening-closure-report.md)
@@ -52,6 +53,7 @@ Next development:
 
 Latest update:
 
+- [Scenario System Expansion](updates/2026-06-16-scenario-system-expansion.md)
 - [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 

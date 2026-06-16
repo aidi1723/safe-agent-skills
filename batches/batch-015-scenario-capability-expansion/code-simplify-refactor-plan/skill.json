@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P0",
+    "subcategory": "code.refactor",
+    "task_intent": "plan behavior-preserving code simplification"
+  }
+}

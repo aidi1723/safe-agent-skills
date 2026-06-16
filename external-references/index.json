@@ -1,6 +1,30 @@
 {
-  "reference_count": 9,
+  "reference_count": 10,
   "references": [
+    {
+      "adoption_status": "converted",
+      "author": "remotion-dev",
+      "captured_at": "2026-06-16",
+      "claimed_capabilities": [
+        "programmatic_video_generation",
+        "react_video_composition",
+        "timeline_rendering",
+        "caption_and_asset_workflows"
+      ],
+      "license": "Remotion License",
+      "metadata_only": true,
+      "name": "Remotion Programmatic Video Reference",
+      "project_category": "programmatic_video_runtime_reference",
+      "review_notes": "Public GitHub project for making videos programmatically with React. The upstream license uses a two-tier model with free eligibility for individuals, small companies, nonprofits, and evaluation, while larger for-profit organizations need a company license. Local adoption is a method-only boundary skill, not copied runtime code.",
+      "runtime_permission_notes": "Reference only. Do not install, render, upload, use cloud rendering, or publish Remotion videos from default task packs. Runtime use requires separate dependency, account, license, asset-rights, and approval review.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/remotion-dev/remotion",
+      "taxonomy_categories": [
+        "media.video",
+        "content.strategy",
+        "execution.pipeline"
+      ]
+    },
     {
       "adoption_status": "reference_only",
       "author": "OpenAI",

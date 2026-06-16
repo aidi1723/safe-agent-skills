@@ -67,9 +67,9 @@ sandbox.
 
 Current public baseline:
 
-- 109 total skills
-- 103 trusted skills
-- 10 trusted scenario bundles
+- 114 total skills
+- 108 trusted skills
+- 13 trusted scenario bundles
 - 7 status-backed trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
@@ -80,9 +80,15 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Community Skill Reference Review](docs/updates/2026-06-16-community-skill-reference-review.md).
+[Scenario System Expansion](docs/updates/2026-06-16-scenario-system-expansion.md).
+
+Latest closure report:
+[Scenario Capability Expansion Closure Report](docs/scenario-capability-expansion-closure-report.md).
 
 Previous update:
+[Community Skill Reference Review](docs/updates/2026-06-16-community-skill-reference-review.md).
+
+Prior closure:
 [Headroom Agent I/O Compression Closure Report](docs/headroom-agent-io-compression-closure-report.md).
 
 Earlier update:

@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "interface",
+    "category": "design",
+    "collection_priority": "P0",
+    "subcategory": "design.visual",
+    "task_intent": "review frontend visual quality and AI-generated UI polish"
+  }
+}

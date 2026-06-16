@@ -1,0 +1,48 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-16T09:36:29Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "2c3100f65ba767fa9f3c104a89a1140e4ec8d1a53157886e8f8d1a4a763c56d9",
+    "source_sha256": "f80163a7d40ab4bb945403fe02286783581f062f92cd11e589b63c13792e656c"
+  },
+  "name": "content-strategy-matrix",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-16T09:36:18Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-015-scenario-capability-expansion/content-strategy-matrix",
+    "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "content",
+    "category": "content",
+    "collection_priority": "P1",
+    "subcategory": "content.strategy",
+    "task_intent": "plan a content matrix and multi-format content system"
+  },
+  "version": "0.1.0"
+}

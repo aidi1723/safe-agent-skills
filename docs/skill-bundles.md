@@ -30,11 +30,14 @@ account, or production permissions.
 | --- | --- |
 | `website-build-launch` | Build or polish a website and prepare release checks |
 | `code-review-hardening` | Review code, tests, schema contracts, and dependency risk |
+| `codebase-change-lifecycle` | Explore a codebase, implement or debug, simplify, test, and review |
 | `security-agent-guardrails` | Review agent guardrails, I/O scanning, and prompt injection |
+| `agent-planning-orchestration` | Clarify fuzzy requirements, decompose plans, and coordinate multi-agent roles |
 | `document-to-knowledge-base` | Convert documents into Markdown, chunks, summaries, and notes |
 | `data-analysis-report` | Clean data, analyze tables, plan visuals, and write reports |
 | `open-source-release` | Prepare a public repository or artifact for release |
 | `content-seo-publication` | Draft and review SEO/GEO content for publication |
+| `content-video-production` | Plan copy, content matrix, video script, and media handoff for short-form or programmatic video production |
 | `rag-agent-knowledge-app` | Design a source-grounded RAG or knowledge-base agent |
 | `commerce-listing-growth` | Prepare marketplace listings and buyer communication |
 

@@ -79,13 +79,20 @@ Current default bundles:
 | --- | --- |
 | `website-build-launch` | Build or polish a website, add content and SEO checks, verify in browser, and prepare release. |
 | `code-review-hardening` | Review generated code, tests, schema contracts, dependency risk, sandbox boundaries, and CI readiness. |
+| `codebase-change-lifecycle` | Explore a codebase, implement or debug changes, simplify, test, review, and prepare handoff. |
 | `security-agent-guardrails` | Review an agent, connector, prompt, or workflow for prompt injection, I/O scanning, and safety boundaries. |
+| `agent-planning-orchestration` | Clarify fuzzy requirements, decompose plans, and coordinate multi-agent roles and handoffs. |
 | `document-to-knowledge-base` | Convert PDFs, office files, and mixed documents into Markdown, chunks, summaries, and retrieval-ready notes. |
 | `rag-agent-knowledge-app` | Design a source-grounded RAG or knowledge-base agent with retrieval, citations, structured outputs, and safety checks. |
 | `data-analysis-report` | Clean data, analyze tables, plan visuals, and write a decision report. |
 | `open-source-release` | Prepare a public repository, docs, safety statement, and release handoff. |
 | `content-seo-publication` | Draft, fact-check, optimize, and publish public content. |
+| `content-video-production` | Plan copy, content matrix, video script, media assets, and Remotion-style programmatic video boundaries. |
 | `commerce-listing-growth` | Prepare marketplace listings, keyword plans, buyer replies, and trade communication. |
+
+`content-video-production` is trusted as a method bundle only. Dependency
+install, rendering, cloud render, upload, publication, asset use, and Remotion
+license questions still require separate host-runtime approval and review.
 
 Bundle definitions live in:
 

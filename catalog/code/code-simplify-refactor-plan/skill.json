@@ -1,0 +1,48 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-16T09:36:29Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "ed9fea6688aa3a2231518daa527fd653527724d23e25ac0d3ab696ecf951277d",
+    "source_sha256": "a2dd7ff863a7df02084f0e20ef39681aba8cd8db8731ec71e7aee8e9d8df2017"
+  },
+  "name": "code-simplify-refactor-plan",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-16T09:36:18Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-015-scenario-capability-expansion/code-simplify-refactor-plan",
+    "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P0",
+    "subcategory": "code.refactor",
+    "task_intent": "plan behavior-preserving code simplification"
+  },
+  "version": "0.1.0"
+}

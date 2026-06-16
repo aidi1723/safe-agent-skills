@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P0",
+    "subcategory": "code.explore",
+    "task_intent": "map an unfamiliar repository before code changes"
+  }
+}

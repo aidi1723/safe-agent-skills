@@ -22,11 +22,14 @@ host agent choose a stronger starting plan.
 | --- | --- | --- |
 | `website-build-launch` | Build or polish a website and prepare it for release | architecture, UI, content, SEO, browser check, publish check |
 | `code-review-hardening` | Review code, tests, schema contracts, and security risk | code review, regression tests, structured output, supply-chain review |
+| `codebase-change-lifecycle` | Explore a codebase, implement or debug changes, simplify, test, and review | context, debugging, refactor safety, tests, review, release |
 | `security-agent-guardrails` | Review an agent workflow for prompt injection, guardrails, and I/O scanning | prompt injection, output validation, I/O scanning, supply-chain review |
+| `agent-planning-orchestration` | Clarify fuzzy requirements, decompose a plan, and coordinate multi-agent execution | requirements, metaskill workflow, orchestration, role workflow, multi-agent review |
 | `document-to-knowledge-base` | Convert documents into Markdown, chunks, summaries, and source-backed notes | PDF review, Markdown conversion, document partitioning, source check |
 | `data-analysis-report` | Clean data, analyze tables, plan visuals, and write a decision report | table analysis, data quality, visualization, office brief |
 | `open-source-release` | Prepare a public repository, docs, safety statement, and release handoff | publish check, supply-chain review, editorial review, social post |
 | `content-seo-publication` | Draft and review SEO/GEO content for publication | SEO brief, editorial review, source check, prompt patterns |
+| `content-video-production` | Plan copy, content matrix, video script, and media handoff for short-form or programmatic video production | content strategy, brand voice, claims review, video script, Remotion boundary, media asset review |
 | `rag-agent-knowledge-app` | Design a source-grounded RAG or knowledge-base agent | orchestration, RAG workflow, retrieval, schema, source check, prompt-injection review |
 | `commerce-listing-growth` | Prepare marketplace product listings and buyer communication | listing, keyword plan, inquiry reply, content review |
 
@@ -81,6 +84,31 @@ Expected output:
 - sandbox and execution boundary notes
 - verification commands and results
 
+## Codebase Change Lifecycle
+
+Use when a coding task needs project exploration, debugging or implementation,
+simplification, regression testing, review, and engineering handoff.
+
+Recommended skills:
+
+1. `ecc-agent-coding-safety`
+2. `code-python-debug`
+3. `code-ast-refactor-safety`
+4. `code-dead-path-cleanup-review`
+5. `code-test-regression`
+6. `code-review-risk`
+7. `engineering-build-release`
+8. `engineering-ci-troubleshoot`
+
+Expected output:
+
+- project context map
+- debugging or implementation notes
+- simplification and refactor-safety notes
+- regression test evidence
+- review findings
+- build or CI readiness notes
+
 ## Security Agent Guardrails
 
 Use when reviewing an AI agent, connector, prompt, or workflow for safety
@@ -102,6 +130,31 @@ Expected output:
 - validation contract
 - supply-chain notes
 - privacy and escalation notes
+
+## Agent Planning Orchestration
+
+Use when a vague or multi-agent task needs requirements clarification,
+workflow decomposition, role boundaries, handoff rules, and output validation
+before execution.
+
+Recommended skills:
+
+1. `business-requirements-brief`
+2. `ai-opensquilla-metaskill-workflow`
+3. `ai-langchain-agent-orchestration`
+4. `ai-crewai-role-workflow`
+5. `ai-autogen-multi-agent-review`
+6. `ai-tool-schema-protocol-check`
+7. `ai-output-schema-eval`
+
+Expected output:
+
+- requirements and ambiguity summary
+- workflow decomposition
+- agent orchestration map
+- role and authority boundaries
+- handoff and termination criteria
+- schema and output validation notes
 
 ## Document To Knowledge Base
 
@@ -194,6 +247,38 @@ Expected output:
 - source-backed claims
 - edited copy
 - social distribution copy
+
+## Content Video Production
+
+Use when a workflow combines copywriting, content
+matrix planning, video scripts, media assets, and programmatic video production
+ideas such as Remotion.
+
+Recommended skills:
+
+1. `content-strategy-matrix`
+2. `content-seo-brief`
+3. `content-brand-voice-boundary`
+4. `content-editorial-review`
+5. `content-claims-compliance-filter`
+6. `media-video-script-review`
+7. `media-remotion-video-production-boundary`
+8. `media-asset-review`
+9. `execution-publish-check`
+
+Expected output:
+
+- audience and content matrix notes
+- copy and brand voice review
+- claims compliance notes
+- video script or edit brief
+- programmatic video boundary notes
+- asset readiness notes
+- publication readiness boundary
+
+Programmatic video execution, dependency install, rendering, cloud render,
+upload, or publication still requires separate runtime, asset-rights, account,
+and license review.
 
 ## RAG Agent Knowledge App
 

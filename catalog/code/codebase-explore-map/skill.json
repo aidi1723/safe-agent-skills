@@ -1,0 +1,48 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-06-16T09:36:29Z",
+  "findings": [],
+  "hashes": {
+    "sanitized_sha256": "8db14ae97ba5d8fe2bbd733232ba7c3f2167b17b90e1ce30eb45c52a3c17e679",
+    "source_sha256": "dd7d7e077a8e1dd3226538fa363ff4d54a90b1f66a9db94dbd94f4d567a030ea"
+  },
+  "name": "codebase-explore-map",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-06-16T09:36:18Z",
+    "collected_by": "onecode-local-seed",
+    "license": "Apache-2.0",
+    "path": "batches/batch-015-scenario-capability-expansion/codebase-explore-map",
+    "reference": "docs/updates/2026-06-16-scenario-system-expansion.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-015-scenario-capability-expansion",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P0",
+    "subcategory": "code.explore",
+    "task_intent": "map an unfamiliar repository before code changes"
+  },
+  "version": "0.1.0"
+}

@@ -2,7 +2,7 @@
 
 ## Summary
 
-The current public-safe catalog contains 109 sanitized skills across all
+The current public-safe catalog contains 114 sanitized skills across all
 top-level taxonomy categories, including 34 community project reference skills
 and 33 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, and design seed skills.
 It also records 7 status-backed trusted-only overlap groups for router and
@@ -21,14 +21,14 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 109
-trusted_count: 103
+skill_count: 114
+trusted_count: 108
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
 maintain-check: ok
 reference-check: ok
-external references: 9
+external references: 10
 overlap groups: 7
 overlap group status: trusted
 ```
@@ -37,6 +37,8 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
+- [Scenario System Expansion](updates/2026-06-16-scenario-system-expansion.md)
 - [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 - [Headroom Agent I/O Compression Update](updates/2026-06-14-headroom-agent-io-compression.md)
@@ -72,12 +74,16 @@ Phase 002 closure:
 
 - [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
 
+Scenario capability expansion closure:
+
+- [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
+
 Scenario router status:
 
 ```text
 router mode: scenario
 router type: deterministic
-scenario bundles: 10 trusted
+scenario bundles: 13 trusted
 sample website route: website-build-launch
 sample RAG route: rag-agent-knowledge-app
 sample skill-router route: skill-router-quality-review
@@ -102,6 +108,7 @@ smart router mode: deterministic_mesh_router
 | `batch-012-code-quality-guardrails` | 5 | 5 | Code quality guardrails for AST refactors, dependency cycles, dead paths, schema contracts, and log triage |
 | `batch-013-ai-runtime-guardrails` | 5 | 5 | AI runtime guardrails for model routing, tool schemas, streamed JSON, RAG namespaces, and context compression |
 | `batch-014-document-evidence-guardrails` | 5 | 5 | Document evidence guardrails for citation maps, link integrity, table source reconciliation, freshness, and public claims |
+| `batch-015-scenario-capability-expansion` | 5 | 5 | Scenario capability expansion for visual review, codebase exploration, simplification, content strategy, and programmatic video boundaries |
 
 ## Trusted Category Coverage
 
@@ -109,15 +116,15 @@ smart router mode: deterministic_mesh_router
 | --- | --- | ---: |
 | ai | `ai-autogen-multi-agent-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 22 |
 | business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
-| code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-test-regression` | 6 |
+| code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 8 |
 | commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-product-keyword-plan` | 4 |
 | compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 5 |
-| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post` | 8 |
+| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 9 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
-| design | `design-accessibility-check`, `design-motion-interaction-polish`, `design-premium-landing-page`, `design-responsive-viewport-check`, `design-system-consistency`, `design-tailwind-radix-system`, `design-ui-review` | 7 |
+| design | `design-accessibility-check`, `design-motion-interaction-polish`, `design-premium-landing-page`, `design-responsive-viewport-check`, `design-system-consistency`, `design-tailwind-radix-system`, `design-ui-review`, `design-visual-quality-review` | 8 |
 | engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-error-log-noise-triage`, `engineering-performance-profile` | 4 |
 | execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 7 |
-| media | `media-asset-review`, `media-brand-asset-pack`, `media-video-script-review` | 3 |
+| media | `media-asset-review`, `media-brand-asset-pack`, `media-remotion-video-production-boundary`, `media-video-script-review` | 4 |
 | office | `office-docx-brief`, `office-link-reference-integrity`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup`, `office-table-source-reconciliation` | 6 |
 | research | `research-citation-evidence-map`, `research-competitor-brief`, `research-paper-synthesis`, `research-source-check`, `research-source-lineage-trace` | 5 |
 | security | `security-command-risk-preflight`, `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-secret-context-redaction`, `security-supply-chain-review`, `trivy-container-security-scan` | 8 |
@@ -156,7 +163,9 @@ smart router mode: deterministic_mesh_router
 | `code-dependency-cycle-review` | code | trusted |
 | `code-python-debug` | code | trusted |
 | `code-review-risk` | code | trusted |
+| `code-simplify-refactor-plan` | code | trusted |
 | `code-test-regression` | code | trusted |
+| `codebase-explore-map` | code | trusted |
 | `commerce-icbu-listing` | commerce | trusted |
 | `commerce-inquiry-reply` | commerce | trusted |
 | `commerce-link-tracking-audit` | commerce | trusted |
@@ -174,6 +183,7 @@ smart router mode: deterministic_mesh_router
 | `content-prompt-engineering-patterns` | content | trusted |
 | `content-seo-brief` | content | trusted |
 | `content-social-post` | content | trusted |
+| `content-strategy-matrix` | content | trusted |
 | `data-haystack-rag-pipeline` | data | trusted |
 | `data-marker-pdf-markdown-review` | data | trusted |
 | `data-markitdown-file-to-markdown` | data | trusted |
@@ -186,9 +196,13 @@ smart router mode: deterministic_mesh_router
 | `data-unstructured-document-partition` | data | trusted |
 | `data-visualization-plan` | data | trusted |
 | `design-accessibility-check` | design | trusted |
+| `design-motion-interaction-polish` | design | trusted |
+| `design-premium-landing-page` | design | trusted |
 | `design-responsive-viewport-check` | design | trusted |
 | `design-system-consistency` | design | trusted |
+| `design-tailwind-radix-system` | design | trusted |
 | `design-ui-review` | design | trusted |
+| `design-visual-quality-review` | design | trusted |
 | `ecc-agent-coding-safety` | ai | trusted |
 | `engineering-build-release` | engineering | trusted |
 | `engineering-ci-troubleshoot` | engineering | trusted |
@@ -206,6 +220,7 @@ smart router mode: deterministic_mesh_router
 | `hermes-agent-memory-assistant` | ai | quarantined |
 | `media-asset-review` | media | trusted |
 | `media-brand-asset-pack` | media | trusted |
+| `media-remotion-video-production-boundary` | media | trusted |
 | `media-video-script-review` | media | trusted |
 | `office-docx-brief` | office | trusted |
 | `office-link-reference-integrity` | office | trusted |
@@ -238,6 +253,6 @@ smart router mode: deterministic_mesh_router
 
 Recommended next waves:
 
-- `batch-015-community-depth`: additional popular community skills with clear licenses
-- `batch-016-domain-depth`: deeper skills for design, code, security, and office
-- `batch-017-connectors`: connector-aware skills after host adapter verification
+- `batch-016-community-depth`: additional popular community skills with clear licenses
+- `batch-017-domain-depth`: deeper skills for design, code, security, and office
+- `batch-018-connectors`: connector-aware skills after host adapter verification

@@ -32,6 +32,40 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(profile["primary_domain"], "web")
         self.assertIn("publish_check", profile["required_capabilities"])
 
+    def test_build_task_profile_detects_ai_interface_design_polish(self):
+        profile = build_task_profile("用 UI-UX-Pro-Max 定设计系统，Visual Designer 把控视觉，CSS 动画工具提升 AI 界面质感")
+
+        self.assertEqual(profile["task_type"], "website_build")
+        self.assertEqual(profile["primary_domain"], "web")
+        self.assertIn("design_consistency", profile["required_capabilities"])
+        self.assertIn("ui_review", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_codebase_change_lifecycle(self):
+        profile = build_task_profile(
+            "Explore 摸清项目地图，Code Review 把关质量，Debugger 定位疑难 bug，Test Engineer 和 Simplify 完善工程全流程"
+        )
+
+        self.assertEqual(profile["task_type"], "codebase_change_lifecycle")
+        self.assertEqual(profile["primary_domain"], "code")
+        self.assertIn("project_context", profile["required_capabilities"])
+        self.assertIn("regression_test", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_content_video_production(self):
+        profile = build_task_profile("Copywriting 写文案，Content Strategy 规划内容矩阵，Remotion 实现一句话灵感到成片")
+
+        self.assertEqual(profile["task_type"], "content_video_production")
+        self.assertEqual(profile["primary_domain"], "content")
+        self.assertIn("video_script", profile["required_capabilities"])
+        self.assertIn("asset_review", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_agent_planning_orchestration(self):
+        profile = build_task_profile("Deep Interview 厘清模糊需求，Plan 和 RALPlan 做方案拆解，Team 实现多 Agent 协同")
+
+        self.assertEqual(profile["task_type"], "agent_planning_orchestration")
+        self.assertEqual(profile["primary_domain"], "ai")
+        self.assertIn("requirements", profile["required_capabilities"])
+        self.assertIn("multi_agent_review", profile["required_capabilities"])
+
     def test_score_bundle_prefers_matching_scenario(self):
         profile = build_task_profile("review generated code and harden tests before accepting the PR")
         code_bundle = {
@@ -156,6 +190,100 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(routed["selected_scenario"]["id"], "skill-router-quality-review")
         self.assertIn("skill_selection_quality", [item["capability"] for item in routed["coverage"]])
         self.assertEqual(routed["skills"][0]["name"], "ai-opensquilla-metaskill-workflow")
+
+    def test_route_scenario_task_selects_codebase_change_lifecycle_bundle(self):
+        bundle = {
+            "id": "codebase-change-lifecycle",
+            "name": "Codebase Change Lifecycle",
+            "scenario": "Explore a codebase, implement or debug changes, simplify the result, test it, and review before handoff.",
+            "status": "trusted",
+            "task_signals": ["explore", "debugger", "test engineer", "simplify", "项目地图", "疑难 bug", "工程全流程"],
+            "skills": [
+                "ecc-agent-coding-safety",
+                "code-python-debug",
+                "code-review-risk",
+                "code-test-regression",
+                "code-ast-refactor-safety",
+                "code-dead-path-cleanup-review",
+                "engineering-build-release",
+                "engineering-ci-troubleshoot",
+            ],
+            "required_capabilities": [
+                {"id": "project_context", "required": True, "preferred_skills": ["ecc-agent-coding-safety"]},
+                {"id": "debugging", "required": True, "preferred_skills": ["code-python-debug"]},
+                {"id": "code_review", "required": True, "preferred_skills": ["code-review-risk"]},
+                {"id": "regression_test", "required": True, "preferred_skills": ["code-test-regression"]},
+                {"id": "simplification", "required": False, "preferred_skills": ["code-dead-path-cleanup-review"]},
+            ],
+            "execution_order": [
+                "ecc-agent-coding-safety",
+                "code-python-debug",
+                "code-ast-refactor-safety",
+                "code-dead-path-cleanup-review",
+                "code-test-regression",
+                "code-review-risk",
+                "engineering-build-release",
+                "engineering-ci-troubleshoot",
+            ],
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_scenario_task(
+            task="Explore 摸清项目地图，Code Review 把关质量，Debugger 定位疑难 bug，Test Engineer 和 Simplify 完善工程全流程",
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            max_skills=8,
+        )
+
+        self.assertEqual(routed["selected_scenario"]["id"], "codebase-change-lifecycle")
+        self.assertEqual(routed["skills"][0]["name"], "ecc-agent-coding-safety")
+
+    def test_route_scenario_task_selects_agent_planning_orchestration_bundle(self):
+        bundle = {
+            "id": "agent-planning-orchestration",
+            "name": "Agent Planning Orchestration",
+            "scenario": "Clarify fuzzy requirements, break down the plan, and coordinate multi-agent execution boundaries.",
+            "status": "trusted",
+            "task_signals": ["deep interview", "ralplan", "multi agent", "team", "模糊需求", "方案拆解", "多 agent"],
+            "skills": [
+                "business-requirements-brief",
+                "ai-opensquilla-metaskill-workflow",
+                "ai-langchain-agent-orchestration",
+                "ai-crewai-role-workflow",
+                "ai-autogen-multi-agent-review",
+                "ai-tool-schema-protocol-check",
+                "ai-output-schema-eval",
+            ],
+            "required_capabilities": [
+                {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                {"id": "workflow_decomposition", "required": True, "preferred_skills": ["ai-opensquilla-metaskill-workflow"]},
+                {"id": "agent_orchestration", "required": True, "preferred_skills": ["ai-langchain-agent-orchestration"]},
+                {"id": "role_workflow", "required": True, "preferred_skills": ["ai-crewai-role-workflow"]},
+                {"id": "multi_agent_review", "required": True, "preferred_skills": ["ai-autogen-multi-agent-review"]},
+            ],
+            "execution_order": [
+                "business-requirements-brief",
+                "ai-opensquilla-metaskill-workflow",
+                "ai-langchain-agent-orchestration",
+                "ai-crewai-role-workflow",
+                "ai-autogen-multi-agent-review",
+                "ai-tool-schema-protocol-check",
+                "ai-output-schema-eval",
+            ],
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_scenario_task(
+            task="Deep Interview 厘清模糊需求，Plan 和 RALPlan 做方案拆解，Team 实现多 Agent 协同",
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            max_skills=8,
+        )
+
+        self.assertEqual(routed["selected_scenario"]["id"], "agent-planning-orchestration")
+        self.assertEqual(routed["skills"][0]["name"], "business-requirements-brief")
 
     def test_build_capability_coverage_marks_covered_and_missing(self):
         bundle = {
