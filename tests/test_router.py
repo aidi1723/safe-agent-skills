@@ -2,6 +2,7 @@ import unittest
 
 from onecode_skill_sanitizer.router import (
     build_capability_coverage,
+    build_contract_graph,
     build_execution_graph,
     build_execution_plan,
     build_selection_explanations,
@@ -509,6 +510,156 @@ class RouterTest(unittest.TestCase):
         )
         self.assertIn("parallel_groups", graph)
         self.assertIn("source", graph["parallel_groups"])
+
+    def test_build_contract_graph_uses_artifact_dependencies_and_parallel_layers(self):
+        graph = build_contract_graph(
+            [
+                {
+                    "name": "business-requirements-brief",
+                    "contract": {
+                        "produces_artifacts": ["requirements_brief"],
+                        "requires_context": ["task_brief"],
+                        "capability_vector": ["business.requirements"],
+                    },
+                },
+                {
+                    "name": "design-ui-review",
+                    "contract": {
+                        "produces_evidence": ["ui_review_report"],
+                        "requires_context": ["requirements_brief", "build_artifact"],
+                        "capability_vector": ["design.ui_review"],
+                    },
+                },
+                {
+                    "name": "content-seo-brief",
+                    "contract": {
+                        "produces_artifacts": ["seo_copy"],
+                        "requires_context": ["requirements_brief"],
+                        "capability_vector": ["content.seo"],
+                    },
+                },
+            ]
+        )
+
+        nodes_by_skill = {node["skill"]: node for node in graph["nodes"]}
+        self.assertEqual(graph["mode"], "contract")
+        self.assertTrue(graph["acyclic"])
+        self.assertIn(
+            {
+                "from": nodes_by_skill["business-requirements-brief"]["id"],
+                "to": nodes_by_skill["design-ui-review"]["id"],
+                "type": "contract_dependency",
+                "artifacts": ["requirements_brief"],
+            },
+            graph["edges"],
+        )
+        self.assertEqual(nodes_by_skill["business-requirements-brief"]["topology_layer"], 0)
+        self.assertEqual(nodes_by_skill["design-ui-review"]["topology_layer"], 1)
+        self.assertEqual(nodes_by_skill["content-seo-brief"]["topology_layer"], 1)
+        self.assertIn("layer_1", graph["parallel_groups"])
+
+    def test_build_contract_graph_falls_back_when_contracts_are_missing(self):
+        graph = build_contract_graph(
+            [
+                {"name": "business-requirements-brief"},
+                {
+                    "name": "design-ui-review",
+                    "contract": {
+                        "requires_context": ["requirements_brief"],
+                        "produces_evidence": ["ui_review_report"],
+                        "capability_vector": ["design.ui_review"],
+                    },
+                },
+            ]
+        )
+
+        self.assertEqual(graph["mode"], "stage_fallback")
+        self.assertEqual(graph["fallback_reason"], "missing_contract")
+
+    def test_route_mesh_task_uses_contract_graph_when_complete(self):
+        bundles_index = {
+            "bundles": [
+                {
+                    "id": "website-build-launch",
+                    "name": "Website Build Launch",
+                    "scenario": "Build a website.",
+                    "status": "trusted",
+                    "task_signals": ["website"],
+                    "skills": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "engineering-build-release",
+                        "content-social-post",
+                    ],
+                    "required_capabilities": [
+                        {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                        {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                        {"id": "engineering_release", "required": True, "preferred_skills": ["engineering-build-release"]},
+                    ],
+                    "execution_order": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "engineering-build-release",
+                        "content-social-post",
+                    ],
+                }
+            ]
+        }
+        selected = [
+            {
+                "name": "design-ui-review",
+                "match_score": 9,
+                "contract": {
+                    "requires_context": ["requirements_brief"],
+                    "produces_evidence": ["ui_review_report"],
+                    "capability_vector": ["design.ui_review"],
+                },
+            },
+            {
+                "name": "engineering-build-release",
+                "match_score": 7,
+                "contract": {
+                    "requires_context": ["requirements_brief"],
+                    "produces_artifacts": ["build_artifact"],
+                    "capability_vector": ["engineering.build_release"],
+                },
+            },
+            {
+                "name": "business-requirements-brief",
+                "match_score": 8,
+                "contract": {
+                    "requires_context": ["task_brief"],
+                    "produces_artifacts": ["requirements_brief"],
+                    "capability_vector": ["business.requirements"],
+                },
+            },
+            {
+                "name": "content-social-post",
+                "match_score": 7,
+                "contract": {
+                    "requires_context": ["requirements_brief"],
+                    "produces_artifacts": ["social_post_copy"],
+                    "capability_vector": ["content.social"],
+                },
+            },
+        ]
+
+        routed = route_mesh_task(
+            task="build a website",
+            invariants=None,
+            selected_skills=selected,
+            bundles_index=bundles_index,
+            trusted_skill_names={skill["name"] for skill in selected},
+            overlap_groups=None,
+            max_skills=4,
+        )
+
+        self.assertEqual(routed["execution_graph"]["mode"], "contract")
+        self.assertEqual([skill["name"] for skill in routed["skills"]][0], "business-requirements-brief")
+        self.assertEqual(
+            [node["skill"] for node in routed["execution_graph"]["nodes"]],
+            [skill["name"] for skill in routed["skills"]],
+        )
 
     def test_route_mesh_strategy_changes_optional_verification_depth(self):
         bundles_index = {

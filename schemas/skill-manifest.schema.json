@@ -191,7 +191,7 @@
     },
     "hashes": {
       "type": "object",
-      "required": ["source_sha256", "sanitized_sha256"],
+      "required": ["source_sha256", "sanitized_sha256", "manifest_sha256"],
       "properties": {
         "source_sha256": {
           "type": "string",
@@ -295,6 +295,60 @@
         },
         "additionalProperties": false
       }
+    },
+    "contract": {
+      "type": "object",
+      "properties": {
+        "requires_context": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,80}$"
+          },
+          "uniqueItems": true
+        },
+        "produces_artifacts": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,80}$"
+          },
+          "uniqueItems": true
+        },
+        "produces_evidence": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,80}$"
+          },
+          "uniqueItems": true
+        },
+        "capability_vector": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+          },
+          "uniqueItems": true
+        },
+        "stage_hint": {
+          "type": "string",
+          "enum": ["preflight", "source", "planning", "review", "execution", "verification"]
+        },
+        "conflicts_with": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "cost_weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        }
+      },
+      "additionalProperties": false
     },
     "approved_at": {
       "type": "string",

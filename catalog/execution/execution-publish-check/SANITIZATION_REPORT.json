@@ -6,6 +6,7 @@
   ],
   "findings": [],
   "hashes": {
+    "manifest_sha256": "0378d14ebd851e5c2ce5b9b6b67274dff26abc42734e842491f00c1604c9f4f5",
     "sanitized_sha256": "e1600c4868599dfd83b65fcec7f3d8095ebe89fea416b4308faf41432624e1e8",
     "source_sha256": "55c003e53bc282b1ab8bb92064a351b1982e28c2c7449c8465812aa357f63c18"
   },

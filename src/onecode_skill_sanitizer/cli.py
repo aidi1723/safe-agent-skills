@@ -52,6 +52,20 @@ REFERENCE_REQUIRED_FIELDS = [
     "metadata_only",
 ]
 REFERENCE_ADOPTION_STATUSES = {"reference_only", "candidate", "rejected", "converted"}
+FILESYSTEM_SCOPE_VALUES = {"workspace_only", "read_only_workspace", "none"}
+NETWORK_SCOPE_VALUES = {"none", "approved_hosts", "onecode_api_only"}
+CONTRACT_STAGE_VALUES = {"preflight", "source", "planning", "review", "execution", "verification"}
+CONTRACT_CAPABILITY_PATTERN = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
+CONTRACT_ARTIFACT_PATTERN = re.compile(r"^[a-z][a-z0-9_]{1,80}$")
+DISALLOWED_TOOL_VALUES = {
+    "account",
+    "browser",
+    "connector",
+    "filesystem",
+    "network",
+    "production",
+    "shell",
+}
 
 
 def utc_now() -> str:
@@ -60,6 +74,31 @@ def utc_now() -> str:
 
 def text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
+
+
+def write_json(path: Path, payload: dict) -> None:
+    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+def canonical_json_sha256(payload: dict) -> str:
+    return text_sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False))
+
+
+def manifest_payload_for_hash(manifest: dict) -> dict:
+    payload = json.loads(json.dumps(manifest, sort_keys=True))
+    hashes = payload.get("hashes")
+    if isinstance(hashes, dict):
+        hashes.pop("manifest_sha256", None)
+    return payload
+
+
+def manifest_sha256(manifest: dict) -> str:
+    return canonical_json_sha256(manifest_payload_for_hash(manifest))
+
+
+def seal_manifest(manifest: dict) -> dict:
+    manifest.setdefault("hashes", {})["manifest_sha256"] = manifest_sha256(manifest)
+    return manifest
 
 
 def load_optional_skill_json(source_dir: Path) -> dict:
@@ -155,27 +194,29 @@ def sanitize_skill_text(text: str) -> tuple[str, list[dict[str, str]]]:
 
 
 def build_manifest(scan_report: dict, sanitized_text: str) -> dict:
-    return {
-        "schema_version": 1,
-        "name": scan_report["skill_name"],
-        "version": "0.1.0",
-        "status": scan_report["summary"]["status"],
-        "risk_level": scan_report["summary"]["risk_level"],
-        "taxonomy": scan_report["taxonomy"],
-        "source": scan_report["source"],
-        "hashes": {
-            "source_sha256": scan_report["hashes"]["source_sha256"],
-            "sanitized_sha256": text_sha256(sanitized_text),
-        },
-        "allowed_tools": [],
-        "required_verifiers": scan_report["required_verifiers"],
-        "policy": {
-            "filesystem": {"scope": "workspace_only"},
-            "network": {"scope": "none"},
-            "approval": {"required_for": ["trust", "execution"]},
-        },
-        "findings": scan_report["findings"],
-    }
+    return seal_manifest(
+        {
+            "schema_version": 1,
+            "name": scan_report["skill_name"],
+            "version": "0.1.0",
+            "status": scan_report["summary"]["status"],
+            "risk_level": scan_report["summary"]["risk_level"],
+            "taxonomy": scan_report["taxonomy"],
+            "source": scan_report["source"],
+            "hashes": {
+                "source_sha256": scan_report["hashes"]["source_sha256"],
+                "sanitized_sha256": text_sha256(sanitized_text),
+            },
+            "allowed_tools": [],
+            "required_verifiers": scan_report["required_verifiers"],
+            "policy": {
+                "filesystem": {"scope": "workspace_only"},
+                "network": {"scope": "none"},
+                "approval": {"required_for": ["trust", "execution"]},
+            },
+            "findings": scan_report["findings"],
+        }
+    )
 
 
 def sanitize_to_dir(source_dir: Path, out_dir: Path, args: argparse.Namespace) -> dict:
@@ -193,13 +234,14 @@ def sanitize_to_dir(source_dir: Path, out_dir: Path, args: argparse.Namespace) -
     report = dict(scan_report)
     report["hashes"] = dict(scan_report["hashes"])
     report["hashes"]["sanitized_sha256"] = manifest["hashes"]["sanitized_sha256"]
+    report["hashes"]["manifest_sha256"] = manifest["hashes"]["manifest_sha256"]
     report["summary"] = dict(scan_report["summary"])
     report["summary"]["removed_fragment_count"] = len(removed)
     report["removed_fragments"] = removed
 
     (out_dir / "SKILL.md").write_text(sanitized_text, encoding="utf-8")
-    (out_dir / "skill.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-    (out_dir / "SANITIZATION_REPORT.json").write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    write_json(out_dir / "skill.json", manifest)
+    write_json(out_dir / "SANITIZATION_REPORT.json", report)
     return manifest
 
 
@@ -219,7 +261,7 @@ def load_manifest(skill_dir: Path) -> dict:
 
 
 def manifest_index_entry(manifest: dict, registry_path: Path) -> dict:
-    return {
+    entry = {
         "name": manifest["name"],
         "status": manifest["status"],
         "risk_level": manifest["risk_level"],
@@ -228,12 +270,40 @@ def manifest_index_entry(manifest: dict, registry_path: Path) -> dict:
         "hashes": manifest["hashes"],
         "registry_path": registry_path.as_posix(),
     }
+    if isinstance(manifest.get("contract"), dict):
+        entry["contract"] = manifest["contract"]
+    return entry
 
 
-def write_registry_index(registry_dir: Path) -> dict:
+def seal_manifest_file(manifest_path: Path) -> dict:
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    seal_manifest(manifest)
+    write_json(manifest_path, manifest)
+    return manifest
+
+
+def seal_registry_manifests(registry_dir: Path) -> None:
+    for manifest_path in sorted(registry_dir.glob("*/*/skill.json")):
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+        issues: list[dict] = []
+        validate_manifest_schema(manifest, manifest_path, issues)
+        sealable_issue_ids = {"schema-missing-manifest-hash", "schema-manifest-hash-mismatch"}
+        if all(issue["id"] in sealable_issue_ids for issue in issues):
+            seal_manifest(manifest)
+            write_json(manifest_path, manifest)
+            report_path = manifest_path.parent / "SANITIZATION_REPORT.json"
+            if report_path.exists():
+                report = json.loads(report_path.read_text(encoding="utf-8"))
+                report.setdefault("hashes", {})["manifest_sha256"] = manifest["hashes"]["manifest_sha256"]
+                write_json(report_path, report)
+
+
+def write_registry_index(registry_dir: Path, seal_manifests: bool = False) -> dict:
+    if seal_manifests:
+        seal_registry_manifests(registry_dir)
     index = build_registry_index(registry_dir)
     registry_dir.mkdir(parents=True, exist_ok=True)
-    (registry_dir / "index.json").write_text(json.dumps(index, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    write_json(registry_dir / "index.json", index)
     return index
 
 
@@ -371,7 +441,7 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
     skill_text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
     sections = extract_markdown_sections(skill_text)
     manifest = json.loads((skill_dir / "skill.json").read_text(encoding="utf-8"))
-    return {
+    item = {
         "name": entry["name"],
         "status": entry["status"],
         "risk_level": entry["risk_level"],
@@ -388,6 +458,9 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
         "failure_handling": sections.get("Failure Handling", ""),
         "policy": manifest.get("policy", {}),
     }
+    if isinstance(manifest.get("contract"), dict):
+        item["contract"] = manifest["contract"]
+    return item
 
 
 def load_trusted_skill_pack_items(registry_dir: Path) -> list[dict]:
@@ -829,6 +902,19 @@ def verify_registry(registry_dir: Path) -> dict:
         if manifest.get("status") == "trusted":
             trusted_count += 1
 
+        expected_manifest_hash = manifest.get("hashes", {}).get("manifest_sha256")
+        actual_manifest_hash = manifest_sha256(manifest)
+        if expected_manifest_hash != actual_manifest_hash:
+            tampered_count += 1
+            issues.append(
+                {
+                    "id": "manifest-hash-mismatch",
+                    "severity": "critical",
+                    "skill": name,
+                    "path": manifest_path.as_posix(),
+                }
+            )
+
         skill_path = skill_dir / "SKILL.md"
         expected_hash = manifest.get("hashes", {}).get("sanitized_sha256")
         if not skill_path.exists():
@@ -935,6 +1021,23 @@ def validate_hashes(payload: dict, path: Path, issues: list[dict]) -> None:
         value = hashes.get(key)
         if not isinstance(value, str) or not HASH_PATTERN.fullmatch(value):
             add_issue(issues, "schema-invalid-hash", path, f"{key} must be a 64 character lowercase sha256 hex string")
+    manifest_hash = hashes.get("manifest_sha256")
+    if manifest_hash is None:
+        add_issue(issues, "schema-missing-manifest-hash", path, "hashes.manifest_sha256 is required")
+    elif not isinstance(manifest_hash, str) or not HASH_PATTERN.fullmatch(manifest_hash):
+        add_issue(issues, "schema-invalid-hash", path, "manifest_sha256 must be a 64 character lowercase sha256 hex string")
+
+
+def validate_manifest_integrity(payload: dict, path: Path, issues: list[dict]) -> None:
+    hashes = payload.get("hashes")
+    if not isinstance(hashes, dict):
+        return
+    expected = hashes.get("manifest_sha256")
+    if not isinstance(expected, str) or not HASH_PATTERN.fullmatch(expected):
+        return
+    actual = manifest_sha256(payload)
+    if actual != expected:
+        add_issue(issues, "schema-manifest-hash-mismatch", path, "hashes.manifest_sha256 does not match manifest content", "critical")
 
 
 def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
@@ -974,6 +1077,128 @@ def validate_taxonomy(payload: dict, path: Path, issues: list[dict]) -> None:
             add_issue(issues, "schema-missing-taxonomy-field", path, f"taxonomy.{field} is required")
 
 
+def validate_policy(payload: dict, path: Path, issues: list[dict]) -> None:
+    policy = payload.get("policy")
+    if not isinstance(policy, dict):
+        add_issue(issues, "schema-invalid-policy", path, "policy must be an object")
+        return
+    filesystem = policy.get("filesystem")
+    if not isinstance(filesystem, dict):
+        add_issue(issues, "schema-invalid-policy-filesystem", path, "policy.filesystem must be an object")
+    else:
+        scope = filesystem.get("scope")
+        if scope not in FILESYSTEM_SCOPE_VALUES:
+            add_issue(issues, "schema-invalid-policy-filesystem-scope", path, "policy.filesystem.scope is not supported")
+    network = policy.get("network")
+    if not isinstance(network, dict):
+        add_issue(issues, "schema-invalid-policy-network", path, "policy.network must be an object")
+    else:
+        scope = network.get("scope")
+        if scope not in NETWORK_SCOPE_VALUES:
+            add_issue(issues, "schema-invalid-policy-network-scope", path, "policy.network.scope is not supported")
+        approved_hosts = network.get("approved_hosts")
+        if approved_hosts is not None and (
+            not isinstance(approved_hosts, list) or not all(isinstance(item, str) and item for item in approved_hosts)
+        ):
+            add_issue(issues, "schema-invalid-policy-approved-hosts", path, "policy.network.approved_hosts must be a string array")
+    approval = policy.get("approval")
+    if not isinstance(approval, dict):
+        add_issue(issues, "schema-invalid-policy-approval", path, "policy.approval must be an object")
+    else:
+        required_for = approval.get("required_for")
+        if not isinstance(required_for, list) or not all(isinstance(item, str) and item for item in required_for):
+            add_issue(issues, "schema-invalid-policy-approval-required-for", path, "policy.approval.required_for must be a string array")
+
+
+def validate_allowed_tools(payload: dict, path: Path, issues: list[dict]) -> None:
+    allowed_tools = payload.get("allowed_tools")
+    if not isinstance(allowed_tools, list):
+        add_issue(issues, "schema-invalid-allowed-tools", path, "allowed_tools must be an array")
+        return
+    seen = set()
+    for tool in allowed_tools:
+        if not isinstance(tool, str) or not tool:
+            add_issue(issues, "schema-invalid-allowed-tool", path, "allowed_tools entries must be non-empty strings")
+            continue
+        normalized = tool.lower()
+        if normalized in seen:
+            add_issue(issues, "schema-duplicate-allowed-tool", path, f"allowed_tools contains duplicate value {tool!r}", "medium")
+        seen.add(normalized)
+        if normalized in DISALLOWED_TOOL_VALUES:
+            add_issue(issues, "schema-disallowed-tool", path, f"allowed_tools cannot grant runtime permission {tool!r}", "critical")
+
+
+def validate_string_list(
+    value: object,
+    path: Path,
+    issues: list[dict],
+    field: str,
+    issue_id: str,
+    pattern: re.Pattern[str] | None = None,
+) -> list[str]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        add_issue(issues, issue_id, path, f"contract.{field} must be an array")
+        return []
+    values = []
+    seen = set()
+    for item in value:
+        if not isinstance(item, str) or not item:
+            add_issue(issues, issue_id, path, f"contract.{field} entries must be non-empty strings")
+            continue
+        if pattern is not None and not pattern.fullmatch(item):
+            add_issue(issues, issue_id, path, f"contract.{field} entry {item!r} is not supported")
+        if item in seen:
+            add_issue(issues, issue_id, path, f"contract.{field} contains duplicate entry {item!r}", "medium")
+        seen.add(item)
+        values.append(item)
+    return values
+
+
+def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
+    contract = payload.get("contract")
+    if contract is None:
+        return
+    if not isinstance(contract, dict):
+        add_issue(issues, "schema-invalid-contract", path, "contract must be an object")
+        return
+    allowed_fields = {
+        "requires_context",
+        "produces_artifacts",
+        "produces_evidence",
+        "capability_vector",
+        "stage_hint",
+        "conflicts_with",
+        "cost_weight",
+    }
+    for field in contract:
+        if field not in allowed_fields:
+            add_issue(issues, "schema-invalid-contract-field", path, f"contract.{field} is not supported")
+    validate_string_list(contract.get("requires_context"), path, issues, "requires_context", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
+    validate_string_list(contract.get("produces_artifacts"), path, issues, "produces_artifacts", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
+    validate_string_list(contract.get("produces_evidence"), path, issues, "produces_evidence", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
+    capabilities = validate_string_list(
+        contract.get("capability_vector"),
+        path,
+        issues,
+        "capability_vector",
+        "schema-invalid-contract-capability",
+        CONTRACT_CAPABILITY_PATTERN,
+    )
+    if contract.get("capability_vector") is not None and not capabilities:
+        add_issue(issues, "schema-invalid-contract-capability", path, "contract.capability_vector cannot be empty")
+    stage_hint = contract.get("stage_hint")
+    if stage_hint is not None and stage_hint not in CONTRACT_STAGE_VALUES:
+        add_issue(issues, "schema-invalid-contract-stage", path, "contract.stage_hint is not supported")
+    conflicts = validate_string_list(contract.get("conflicts_with"), path, issues, "conflicts_with", "schema-invalid-contract-conflict")
+    if payload.get("name") in conflicts:
+        add_issue(issues, "schema-invalid-contract-conflict", path, "contract.conflicts_with cannot include the skill itself")
+    cost_weight = contract.get("cost_weight")
+    if cost_weight is not None and (not isinstance(cost_weight, int) or cost_weight < 1 or cost_weight > 10):
+        add_issue(issues, "schema-invalid-contract-cost", path, "contract.cost_weight must be an integer from 1 to 10")
+
+
 def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> None:
     required = [
         "schema_version",
@@ -997,15 +1222,15 @@ def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> N
         add_issue(issues, "schema-invalid-status", path, "status is not a supported registry state")
     if payload.get("risk_level") not in RISK_LEVEL_VALUES:
         add_issue(issues, "schema-invalid-risk-level", path, "risk_level is not supported")
-    if not isinstance(payload.get("allowed_tools"), list):
-        add_issue(issues, "schema-invalid-allowed-tools", path, "allowed_tools must be an array")
     if not isinstance(payload.get("required_verifiers"), list):
         add_issue(issues, "schema-invalid-required-verifiers", path, "required_verifiers must be an array")
-    if not isinstance(payload.get("policy"), dict):
-        add_issue(issues, "schema-invalid-policy", path, "policy must be an object")
+    validate_allowed_tools(payload, path, issues)
+    validate_policy(payload, path, issues)
+    validate_contract(payload, path, issues)
     validate_taxonomy(payload, path, issues)
     validate_source(payload, path, issues)
     validate_hashes(payload, path, issues)
+    validate_manifest_integrity(payload, path, issues)
 
 
 def validate_registry_index_schema(payload: dict, path: Path, issues: list[dict]) -> None:
@@ -1687,7 +1912,7 @@ def maintain_check_command(args: argparse.Namespace) -> int:
 
 
 def reindex_command(args: argparse.Namespace) -> int:
-    write_registry_index(Path(args.registry))
+    write_registry_index(Path(args.registry), seal_manifests=True)
     return 0
 
 
@@ -1731,18 +1956,20 @@ def set_status_command(args: argparse.Namespace, status: str) -> int:
     elif status == "disabled":
         manifest["disabled_at"] = now
         manifest["disable_note"] = "Disabled by local operator."
-    (skill_dir / "skill.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    seal_manifest(manifest)
+    write_json(skill_dir / "skill.json", manifest)
     report_path = skill_dir / "SANITIZATION_REPORT.json"
     if report_path.exists():
         report = json.loads(report_path.read_text(encoding="utf-8"))
         report["summary"]["status"] = status
+        report.setdefault("hashes", {})["manifest_sha256"] = manifest["hashes"]["manifest_sha256"]
         if status == "trusted":
             report["approved_at"] = manifest["approved_at"]
         elif status == "rejected":
             report["rejected_at"] = manifest["rejected_at"]
         elif status == "disabled":
             report["disabled_at"] = manifest["disabled_at"]
-        report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+        write_json(report_path, report)
     registry_dir = registry_root_for_skill_dir(skill_dir)
     if registry_dir is not None:
         write_registry_index(registry_dir)

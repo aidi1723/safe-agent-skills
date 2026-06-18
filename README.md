@@ -80,13 +80,13 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Scenario System Expansion](docs/updates/2026-06-16-scenario-system-expansion.md).
+[Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md).
 
 Latest closure report:
 [Scenario Capability Expansion Closure Report](docs/scenario-capability-expansion-closure-report.md).
 
 Previous update:
-[Community Skill Reference Review](docs/updates/2026-06-16-community-skill-reference-review.md).
+[Scenario System Expansion](docs/updates/2026-06-16-scenario-system-expansion.md).
 
 Prior closure:
 [Headroom Agent I/O Compression Closure Report](docs/headroom-agent-io-compression-closure-report.md).
@@ -317,6 +317,7 @@ onecode skills approve pdf
 - [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
 - [Smart Skill Router](docs/smart-skill-router.md)
+- [Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md)
 - [Audit Hardening Closure Report](docs/audit-hardening-closure-report.md)
 - [Next Development Plan](docs/next-development-plan.md)
 - [External Reference Roadmap](docs/external-reference-roadmap.md)

@@ -4,6 +4,7 @@
   "approved_at": "2026-06-05T13:08:25Z",
   "findings": [],
   "hashes": {
+    "manifest_sha256": "e84400f2df3ce01251ee1a7677829a75152a6526ee964ce435a712fdc9736474",
     "sanitized_sha256": "11ffddd2771e63c1b92173a6dd89cc150c719e03f9dad06dd3f7fe56df38634d",
     "source_sha256": "95b76045d4d2a45b4f7c68f280eea265431424cc566eda5ef6f6643e8b3fe72c"
   },

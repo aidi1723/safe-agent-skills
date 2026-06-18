@@ -81,6 +81,36 @@ RULES = [
         ),
         "Found guidance to expose environment variables or credentials.",
     ),
+    (
+        "dynamic-code-execution",
+        "critical",
+        re.compile(r"\b(eval|exec)\s*\(\s*(compile|__import__|\w+\()", re.IGNORECASE),
+        "Found dynamic code execution through eval or exec.",
+    ),
+    (
+        "chinese-secret-exfiltration",
+        "high",
+        re.compile(r"(密钥|凭证|令牌|token|密码)[^\n]*(发到|发送到|传到|上传到|发给|发送给)[^\n]*(服务器|接口|网址|webhook)", re.IGNORECASE),
+        "Found Chinese-language guidance to send secrets or credentials to an external destination.",
+    ),
+    (
+        "ssh-key-exfiltration",
+        "critical",
+        re.compile(r"\bscp\b[^\n]*(~/\.ssh/id_rsa|/\.ssh/id_rsa|\bid_rsa\b|ssh keys?|credentials?|secrets?)", re.IGNORECASE),
+        "Found SSH key or credential copy through scp.",
+    ),
+    (
+        "netcat-shell",
+        "critical",
+        re.compile(r"\b(nc|netcat)\b[^\n]*\s-e\s+(?:/bin/)?(?:sh|bash)\b", re.IGNORECASE),
+        "Found netcat shell execution guidance.",
+    ),
+    (
+        "powershell-encoded-command",
+        "critical",
+        re.compile(r"\b(?:powershell|pwsh)\b[^\n]*(?:-EncodedCommand|-enc)\b", re.IGNORECASE),
+        "Found PowerShell encoded command execution guidance.",
+    ),
 ]
 
 SEVERITY_ORDER = {
@@ -126,6 +156,29 @@ def scan_text(text: str) -> list[Finding]:
 
 def structural_findings(text: str, status: str) -> list[Finding]:
     findings = []
+    rm_variables = {
+        match.group("name")
+        for match in re.finditer(
+            r"(?m)^\s*(?:export\s+)?(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*=\s*['\"]?rm['\"]?\s*$",
+            text,
+        )
+    }
+    for name in rm_variables:
+        if re.search(rf"\${{{re.escape(name)}}}|\${re.escape(name)}", text) and re.search(
+            rf"(?:\${{{re.escape(name)}}}|\${re.escape(name)})\s+-[A-Za-z]*r[A-Za-z]*f[A-Za-z]*\s+(/|~|\$HOME|/tmp|/var|/usr|\.)?",
+            text,
+            re.IGNORECASE,
+        ):
+            findings.append(
+                Finding(
+                    "indirect-destructive-shell",
+                    "critical",
+                    status,
+                    "Found variable-indirected destructive recursive deletion guidance.",
+                )
+            )
+            break
+
     downloaded_paths = {
         match.group("path").strip("'\".,;:)")
         for match in re.finditer(

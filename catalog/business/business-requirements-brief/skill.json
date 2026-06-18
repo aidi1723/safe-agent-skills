@@ -2,8 +2,22 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:36Z",
+  "contract": {
+    "capability_vector": [
+      "business.requirements"
+    ],
+    "cost_weight": 1,
+    "produces_artifacts": [
+      "requirements_brief"
+    ],
+    "requires_context": [
+      "task_brief"
+    ],
+    "stage_hint": "planning"
+  },
   "findings": [],
   "hashes": {
+    "manifest_sha256": "a46f05b84eb6e5e2078e8d0de352a4ffb6e5613508b79dee47a4e5ef64de1aa1",
     "sanitized_sha256": "2e802eb01d54ce6569692116c98662f5e019696023ccf187bbec7f293901018a",
     "source_sha256": "d012b81bda16b8d5ff0535b685806196a870436dbbfee6e1fd1b6c888e06f28b"
   },

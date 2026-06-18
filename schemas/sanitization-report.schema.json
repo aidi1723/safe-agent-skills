@@ -147,7 +147,8 @@
       "type": "object",
       "required": [
         "source_sha256",
-        "sanitized_sha256"
+        "sanitized_sha256",
+        "manifest_sha256"
       ],
       "properties": {
         "source_sha256": {

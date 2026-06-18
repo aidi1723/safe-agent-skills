@@ -2,6 +2,7 @@
   "allowed_tools": [],
   "findings": [],
   "hashes": {
+    "manifest_sha256": "5889ceef91f5bc568bbed9f9d296a971f015e346600dc43b14bf05d6b0cfc092",
     "sanitized_sha256": "2aff31bceaa53953759b03e52ed4b91b527dfc7f274da739638f2785930c6019",
     "source_sha256": "22411f183eb47a78124e12d42a12a7d913ac4513e0fe0a3f6b6ac635edd9fde7"
   },

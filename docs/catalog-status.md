@@ -37,6 +37,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Manifest Integrity and Contract Router Hardening](updates/2026-06-18-manifest-contract-router-hardening.md)
 - [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
 - [Scenario System Expansion](updates/2026-06-16-scenario-system-expansion.md)
 - [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)

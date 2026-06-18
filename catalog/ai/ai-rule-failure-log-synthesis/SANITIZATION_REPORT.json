@@ -13,6 +13,7 @@
     }
   ],
   "hashes": {
+    "manifest_sha256": "144dc0f4e4577ea1b658fbda195ebec1dbb75a8ddebea54eca8cbacdd5a4ea8b",
     "sanitized_sha256": "047c8a8b3bc056cdd65df33fd4311372975b78fd0c80c37937d7ee92e200370a",
     "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
   },

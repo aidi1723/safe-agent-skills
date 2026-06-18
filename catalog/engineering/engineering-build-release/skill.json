@@ -2,8 +2,25 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:01:58Z",
+  "contract": {
+    "capability_vector": [
+      "engineering.build_release"
+    ],
+    "cost_weight": 2,
+    "produces_artifacts": [
+      "build_artifact"
+    ],
+    "produces_evidence": [
+      "build_readiness_report"
+    ],
+    "requires_context": [
+      "requirements_brief"
+    ],
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
+    "manifest_sha256": "124940912570f7cba5b1892f23fdca603696b802ecb2fbc06aa1786695e7f75d",
     "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
     "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
   },

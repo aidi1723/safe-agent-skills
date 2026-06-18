@@ -1236,6 +1236,200 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(result["skill_manifest_count"], 114)
         self.assertEqual(result["issues"], [])
 
+    def test_verify_registry_detects_manifest_policy_tampering(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "code-regression"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing regression tests.", encoding="utf-8")
+            self.assertEqual(
+                main(
+                    [
+                        "import",
+                        str(incoming),
+                        "--registry",
+                        str(registry),
+                        "--source-url",
+                        "https://github.com/example/skills/code-regression",
+                        "--author",
+                        "example-team",
+                        "--license",
+                        "MIT",
+                        "--reference",
+                        "https://github.com/example/skills",
+                        "--collected-by",
+                        "onecode-test",
+                    ]
+                ),
+                0,
+            )
+            self.assertEqual(main(["approve", str(registry / "code" / "code-regression")]), 0)
+
+            manifest_path = registry / "code" / "code-regression" / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["policy"]["network"] = {"scope": "unrestricted"}
+            manifest["allowed_tools"] = ["shell", "network"]
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+            verify_out = io.StringIO()
+            with contextlib.redirect_stdout(verify_out):
+                verify_code = main(["verify", "--registry", str(registry)])
+
+            self.assertEqual(verify_code, 2)
+            result = json.loads(verify_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("manifest-hash-mismatch", issue_ids)
+
+    def test_list_does_not_reseal_tampered_manifest_when_index_is_missing(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "code-regression"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing regression tests.", encoding="utf-8")
+            self.assertEqual(main(["import", str(incoming), "--registry", str(registry)]), 0)
+            self.assertEqual(main(["approve", str(registry / "code" / "code-regression")]), 0)
+
+            manifest_path = registry / "code" / "code-regression" / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["version"] = "9.9.9"
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            (registry / "index.json").unlink()
+
+            with contextlib.redirect_stdout(io.StringIO()):
+                self.assertEqual(main(["list", "--registry", str(registry)]), 0)
+
+            verify_out = io.StringIO()
+            with contextlib.redirect_stdout(verify_out):
+                verify_code = main(["verify", "--registry", str(registry)])
+
+            self.assertEqual(verify_code, 2)
+            result = json.loads(verify_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("manifest-hash-mismatch", issue_ids)
+
+    def test_schema_check_rejects_unbounded_manifest_policy_and_tools(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "execution-tool-policy"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing execution policy.", encoding="utf-8")
+            self.assertEqual(main(["import", str(incoming), "--registry", str(registry)]), 0)
+
+            manifest_path = registry / "execution" / "execution-tool-policy" / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["policy"]["network"] = {"scope": "unrestricted"}
+            manifest["allowed_tools"] = ["shell", "network"]
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            self.assertEqual(main(["reindex", "--registry", str(registry)]), 0)
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-invalid-policy-network-scope", issue_ids)
+            self.assertIn("schema-disallowed-tool", issue_ids)
+
+    def test_schema_check_validates_optional_contract_shape(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "design-contract-review"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing design contracts.", encoding="utf-8")
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "design",
+                            "subcategory": "design.review",
+                            "task_intent": "review design contracts",
+                            "artifact_type": "interface",
+                            "collection_priority": "P0",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(main(["import", str(incoming), "--registry", str(registry)]), 0)
+
+            manifest_path = registry / "design" / "design-contract-review" / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["contract"] = {
+                "requires_context": ["requirements_brief"],
+                "produces_evidence": ["ui_review_report"],
+                "capability_vector": ["design.ui_review"],
+                "cost_weight": 2,
+            }
+            manifest["hashes"].pop("manifest_sha256", None)
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            self.assertEqual(main(["reindex", "--registry", str(registry)]), 0)
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 0)
+            result = json.loads(schema_out.getvalue())
+            self.assertEqual(result["status"], "ok")
+
+    def test_schema_check_rejects_invalid_contract_values(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            skill = incoming / "design-contract-review"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing design contracts.", encoding="utf-8")
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "design",
+                            "subcategory": "design.review",
+                            "task_intent": "review design contracts",
+                            "artifact_type": "interface",
+                            "collection_priority": "P0",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            self.assertEqual(main(["import", str(incoming), "--registry", str(registry)]), 0)
+
+            manifest_path = registry / "design" / "design-contract-review" / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["contract"] = {
+                "requires_context": ["requirements_brief"],
+                "produces_evidence": ["ui_review_report"],
+                "capability_vector": ["design ui review"],
+                "conflicts_with": ["design-contract-review"],
+                "cost_weight": 0,
+            }
+            manifest["hashes"].pop("manifest_sha256", None)
+            manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            self.assertEqual(main(["reindex", "--registry", str(registry)]), 0)
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-invalid-contract-capability", issue_ids)
+            self.assertIn("schema-invalid-contract-cost", issue_ids)
+            self.assertIn("schema-invalid-contract-conflict", issue_ids)
+
     def test_schema_check_requires_source_usage(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

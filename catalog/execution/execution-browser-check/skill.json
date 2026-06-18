@@ -2,8 +2,23 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:01:58Z",
+  "contract": {
+    "capability_vector": [
+      "execution.browser_check"
+    ],
+    "cost_weight": 2,
+    "produces_evidence": [
+      "browser_check_report"
+    ],
+    "requires_context": [
+      "build_artifact",
+      "ui_review_report"
+    ],
+    "stage_hint": "verification"
+  },
   "findings": [],
   "hashes": {
+    "manifest_sha256": "b5a20a15161e334d276cea08d65c5c779fd8592c939fa64d41cc3f6b3f27ed84",
     "sanitized_sha256": "460bc4fba7f2006fe2081127351f503ef8f5985c37a20d81a07a5e291b2c5c2f",
     "source_sha256": "ea0eb409a616a037176ddcbffc396f1ec8547f93945cd558806470595b04d1d9"
   },

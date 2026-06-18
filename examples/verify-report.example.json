@@ -4,7 +4,7 @@
   "status": "failed",
   "skill_count": 1,
   "trusted_count": 1,
-  "tampered_count": 1,
+  "tampered_count": 2,
   "unknown_provenance_count": 0,
   "issues": [
     {
@@ -12,6 +12,12 @@
       "severity": "critical",
       "skill": "office-pdf",
       "path": "./registry/office/office-pdf/SKILL.md"
+    },
+    {
+      "id": "manifest-hash-mismatch",
+      "severity": "critical",
+      "skill": "office-pdf",
+      "path": "./registry/office/office-pdf/skill.json"
     }
   ]
 }

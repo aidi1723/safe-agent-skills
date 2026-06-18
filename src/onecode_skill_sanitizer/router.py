@@ -568,10 +568,16 @@ def skill_stage(skill_name: str) -> str:
     return "review"
 
 
+def skill_stage_for_item(skill: dict) -> str:
+    contract = skill_contract(skill)
+    stage_hint = contract.get("stage_hint")
+    return stage_hint if isinstance(stage_hint, str) else skill_stage(skill["name"])
+
+
 def build_execution_graph(skills: list[dict]) -> dict:
     nodes = []
     for index, skill in enumerate(skills, start=1):
-        stage = skill_stage(skill["name"])
+        stage = skill_stage_for_item(skill)
         nodes.append(
             {
                 "id": f"n{index}",
@@ -609,6 +615,137 @@ def build_execution_graph(skills: list[dict]) -> dict:
     }
 
 
+def contract_artifacts(contract: dict) -> set[str]:
+    artifacts = set()
+    for field in ["produces_artifacts", "produces_evidence"]:
+        values = contract.get(field, [])
+        if isinstance(values, list):
+            artifacts.update(value for value in values if isinstance(value, str) and value)
+    return artifacts
+
+
+def skill_contract(skill: dict) -> dict:
+    contract = skill.get("contract")
+    return contract if isinstance(contract, dict) else {}
+
+
+def build_contract_edges(skills: list[dict], node_ids: dict[str, str]) -> list[dict]:
+    edges = []
+    for source in skills:
+        source_contract = skill_contract(source)
+        produced = contract_artifacts(source_contract)
+        if not produced:
+            continue
+        for target in skills:
+            if source["name"] == target["name"]:
+                continue
+            target_contract = skill_contract(target)
+            required = {
+                value
+                for value in target_contract.get("requires_context", [])
+                if isinstance(value, str) and value
+            }
+            artifacts = sorted(produced & required)
+            if artifacts:
+                edges.append(
+                    {
+                        "from": node_ids[source["name"]],
+                        "to": node_ids[target["name"]],
+                        "type": "contract_dependency",
+                        "artifacts": artifacts,
+                    }
+                )
+    return edges
+
+
+def topology_layers(nodes: list[dict], edges: list[dict]) -> tuple[bool, dict[str, int]]:
+    incoming = {node["id"]: set() for node in nodes}
+    outgoing = {node["id"]: set() for node in nodes}
+    for edge in edges:
+        outgoing[edge["from"]].add(edge["to"])
+        incoming[edge["to"]].add(edge["from"])
+
+    layers: dict[str, int] = {}
+    ready = sorted(node_id for node_id, sources in incoming.items() if not sources)
+    layer = 0
+    while ready:
+        current = ready
+        next_ready = []
+        for node_id in current:
+            layers[node_id] = layer
+            for target in sorted(outgoing[node_id]):
+                incoming[target].discard(node_id)
+                if not incoming[target] and target not in layers and target not in next_ready:
+                    next_ready.append(target)
+        ready = sorted(next_ready)
+        layer += 1
+    return len(layers) == len(nodes), layers
+
+
+def build_contract_graph(skills: list[dict]) -> dict:
+    if not skills:
+        return {
+            "schema_version": 1,
+            "mode": "contract",
+            "acyclic": True,
+            "nodes": [],
+            "edges": [],
+            "parallel_groups": {},
+            "fallback_reason": "",
+        }
+    if any(not skill_contract(skill) for skill in skills):
+        graph = build_execution_graph(skills)
+        graph["mode"] = "stage_fallback"
+        graph["fallback_reason"] = "missing_contract"
+        return graph
+
+    nodes = []
+    for index, skill in enumerate(skills, start=1):
+        contract = skill_contract(skill)
+        stage = contract.get("stage_hint") if isinstance(contract.get("stage_hint"), str) else skill_stage(skill["name"])
+        nodes.append(
+            {
+                "id": f"n{index}",
+                "skill": skill["name"],
+                "stage": stage,
+                "gate": STAGE_GATE_BY_STAGE.get(stage, "review"),
+                "parallel_group": "",
+                "topology_layer": 0,
+            }
+        )
+    node_ids = {node["skill"]: node["id"] for node in nodes}
+    edges = build_contract_edges(skills, node_ids)
+    acyclic, layers = topology_layers(nodes, edges)
+    if not acyclic:
+        return {
+            "schema_version": 1,
+            "mode": "contract",
+            "acyclic": False,
+            "nodes": nodes,
+            "edges": edges,
+            "parallel_groups": {},
+            "fallback_reason": "contract_cycle",
+        }
+
+    parallel_groups: dict[str, list[str]] = {}
+    for node in nodes:
+        layer = layers.get(node["id"], 0)
+        node["topology_layer"] = layer
+        node["parallel_group"] = f"layer_{layer}"
+        parallel_groups.setdefault(node["parallel_group"], []).append(node["id"])
+    original_position = {node["id"]: index for index, node in enumerate(nodes)}
+    nodes = sorted(nodes, key=lambda node: (node.get("topology_layer", 0), original_position[node["id"]]))
+    return {
+        "schema_version": 1,
+        "mode": "contract",
+        "acyclic": True,
+        "nodes": nodes,
+        "edges": edges,
+        "parallel_groups": {group: ids for group, ids in parallel_groups.items() if len(ids) > 1},
+        "fallback_reason": "",
+    }
+
+
 def sort_mesh_skill_names(ordered_names: list[str]) -> list[str]:
     stage_rank = {"preflight": 0, "source": 1, "planning": 2, "review": 3, "execution": 4, "verification": 5}
     return [
@@ -633,6 +770,16 @@ def strategy_optional_skill_names(optional_names: list[str], strategy: str) -> l
             )
         ]
     return optional_names
+
+
+def contract_sorted_skill_names(skills_by_name: dict[str, dict], ordered_names: list[str]) -> tuple[list[str], dict]:
+    skills = [skills_by_name[name] for name in ordered_names]
+    graph = build_contract_graph(skills)
+    if graph.get("mode") != "contract" or not graph.get("acyclic", True):
+        return sort_mesh_skill_names(ordered_names), graph
+    layer_by_skill = {node["skill"]: node.get("topology_layer", 0) for node in graph["nodes"]}
+    position = {name: index for index, name in enumerate(ordered_names)}
+    return sorted(ordered_names, key=lambda name: (layer_by_skill.get(name, 0), position[name])), graph
 
 
 def route_mesh_task(
@@ -674,12 +821,13 @@ def route_mesh_task(
     for skill in selected_skills:
         if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
             ordered_names.append(skill["name"])
-    sorted_names = sort_mesh_skill_names(ordered_names)
+    sorted_names, prelimit_graph = contract_sorted_skill_names(selected_by_name, ordered_names)
     strategy_limits = {"fast": min(max_skills, 5), "balanced": max_skills, "deep": max(max_skills, 10)}
     required_sorted_names = [name for name in sorted_names if name in required_names]
     optional_sorted_names = strategy_optional_skill_names([name for name in sorted_names if name not in required_names], strategy)
     limit = max(strategy_limits.get(strategy, max_skills), len(required_sorted_names))
     final_names = required_sorted_names + optional_sorted_names[: max(0, limit - len(required_sorted_names))]
+    final_names, final_graph = contract_sorted_skill_names(selected_by_name, final_names)
     routed_skills = [selected_by_name[name] for name in final_names]
     selected_names = {skill["name"] for skill in routed_skills}
     coverage = build_capability_coverage(selected_bundle, selected_names) if selected_bundle else []
@@ -699,7 +847,7 @@ def route_mesh_task(
         {
             "order": index,
             "skill": skill["name"],
-            "instruction": f"Apply `{skill['name']}` during the `{skill_stage(skill['name'])}` stage, then record evidence and unresolved assumptions.",
+            "instruction": f"Apply `{skill['name']}` during the `{skill_stage_for_item(skill)}` stage, then record evidence and unresolved assumptions.",
         }
         for index, skill in enumerate(routed_skills, start=1)
     ]
@@ -736,7 +884,9 @@ def route_mesh_task(
         "coverage": coverage,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
-        "execution_graph": build_execution_graph(routed_skills),
+        "execution_graph": final_graph
+        if final_graph.get("mode") == "contract" and final_graph.get("acyclic", True)
+        else build_execution_graph(routed_skills),
         "invariant_capabilities": invariant_capabilities,
         "pruned_skills": pruned_names,
     }
