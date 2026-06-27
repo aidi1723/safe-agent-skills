@@ -2025,6 +2025,10 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
         self.assertEqual(task_pack["bundle_count"], 1)
         self.assertEqual(task_pack["bundles"][0]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["pipeline_plan"]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["pipeline_plan"]["mode"], "method_only")
+        self.assertEqual(task_pack["pipeline_plan"]["source"], "trusted_scenario_bundle")
+        self.assertTrue(task_pack["pipeline_plan"]["stages"])
         self.assertIn("ai-opensquilla-metaskill-workflow", names)
         self.assertIn("ai-opensquilla-token-routing-pattern", names)
         self.assertIn("code-test-regression", names)
@@ -2052,9 +2056,37 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
         self.assertEqual(task_pack["bundle_count"], 1)
         self.assertEqual(task_pack["bundles"][0]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["pipeline_plan"]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["pipeline_plan"]["mode"], "method_only")
+        self.assertTrue(task_pack["pipeline_plan"]["stages"])
         self.assertIn("ai-opensquilla-metaskill-workflow", names)
         self.assertIn("ai-opensquilla-token-routing-pattern", names)
         self.assertTrue(task_pack["execution_graph"]["acyclic"])
+
+    def test_smart_markdown_renders_pipeline_plan(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "smart",
+                    "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--max-skills",
+                    "8",
+                    "--format",
+                    "markdown",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        markdown = task_pack_out.getvalue()
+        self.assertIn("## Pipeline Plan", markdown)
+        self.assertIn("- id: `skill-router-quality-review`", markdown)
+        self.assertIn("### Preflight", markdown)
+        self.assertIn("method-only", markdown.lower())
 
     def test_task_pack_simple_router_remains_backward_compatible(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -2117,6 +2149,7 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(task_pack_code, 0)
             task_pack = json.loads(task_pack_out.getvalue())
             self.assertNotIn("router", task_pack)
+            self.assertNotIn("pipeline_plan", task_pack)
             self.assertEqual(task_pack["skills"][0]["name"], "design-dashboard")
 
     def test_real_catalog_scenario_router_selects_website_bundle(self):

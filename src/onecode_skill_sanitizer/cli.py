@@ -568,6 +568,30 @@ def build_agent_instructions(
             skill = item.get("skill") or "missing"
             lines.append(f"- {item['capability']}: {item['status']} by {skill}")
         lines.append("")
+    if router_context and router_context.get("pipeline_plan"):
+        plan = router_context["pipeline_plan"]
+        mode = str(plan.get("mode", "method_only")).replace("_", "-")
+        lines.extend(
+            [
+                "Pipeline plan:",
+                f"- id: {plan.get('id', 'general')}",
+                f"- mode: {mode}",
+                f"- boundary: {plan.get('runtime_boundary', 'Skills provide method only; host runtime controls permissions.')}",
+            ]
+        )
+        for stage in plan.get("stages", []):
+            gate = stage.get("gate", {})
+            skills_text = ", ".join(stage.get("skills", [])) or "none"
+            lines.extend(
+                [
+                    f"- stage {stage.get('name', stage.get('id', ''))}:",
+                    f"  purpose: {stage.get('purpose', 'Not specified.')}",
+                    f"  skills: {skills_text}",
+                    f"  gate: {gate.get('condition', 'Not specified.')} "
+                    f"(failure action: {gate.get('failure_action', 'not_specified')})",
+                ]
+            )
+        lines.append("")
     lines.append("Selected skills:")
     for skill in skills:
         lines.extend(
@@ -679,6 +703,7 @@ def build_task_pack(
             "execution_plan": routed["execution_plan"],
             "selection_explanations": routed["selection_explanations"],
             "execution_graph": routed["execution_graph"],
+            "pipeline_plan": routed["pipeline_plan"],
             "invariant_capabilities": routed["invariant_capabilities"],
             "pruned_skills": routed["pruned_skills"],
         }
@@ -719,6 +744,7 @@ def build_task_pack(
             "selected_scenario": routed["selected_scenario"],
             "coverage": routed["coverage"],
             "execution_plan": routed["execution_plan"],
+            "pipeline_plan": routed["pipeline_plan"],
             "selection_explanations": routed["selection_explanations"],
         }
         task_pack["agent_instructions"] = build_agent_instructions(task, skills, bundles, task_pack)
@@ -788,6 +814,41 @@ def render_task_pack_markdown(task_pack: dict) -> str:
                 lines.append(f"- `{node['id']}` `{node['stage']}` -> `{node['skill']}`")
             for edge in task_pack["execution_graph"].get("edges", []):
                 lines.append(f"- edge `{edge['from']}` -> `{edge['to']}`")
+        if task_pack.get("pipeline_plan"):
+            plan = task_pack["pipeline_plan"]
+            lines.extend(
+                [
+                    "",
+                    "## Pipeline Plan",
+                    "",
+                    f"- id: `{plan.get('id', 'general')}`",
+                    f"- mode: `{str(plan.get('mode', 'method_only')).replace('_', '-')}`",
+                    f"- source: `{plan.get('source', '')}`",
+                    f"- boundary: {plan.get('runtime_boundary', 'Skills provide method only; host runtime controls permissions.')}",
+                ]
+            )
+            for stage in plan.get("stages", []):
+                gate = stage.get("gate", {})
+                lines.extend(
+                    [
+                        "",
+                        f"### {stage.get('name', stage.get('id', ''))}",
+                        "",
+                        f"- id: `{stage.get('id', '')}`",
+                        f"- purpose: {stage.get('purpose', 'Not specified.')}",
+                        f"- skills: {', '.join(f'`{skill}`' for skill in stage.get('skills', [])) or 'none'}",
+                        f"- gate: {gate.get('condition', 'Not specified.')}",
+                        f"- failure action: `{gate.get('failure_action', 'not_specified')}`",
+                    ]
+                )
+            if plan.get("approval_gates"):
+                lines.extend(["", "### Approval Gates", ""])
+                for gate in plan["approval_gates"]:
+                    required_for = ", ".join(gate.get("required_for", [])) or "not specified"
+                    lines.append(
+                        f"- stage `{gate.get('stage', '')}` requires approval for {required_for} "
+                        f"by `{gate.get('owner', 'host_runtime_or_operator')}`"
+                    )
         lines.extend(["", "## Selection Explanations", ""])
         for item in task_pack.get("selection_explanations", []):
             lines.append(f"- `{item['name']}` ({item['type']}, {item['role']}): {item['selection_reason']}")
