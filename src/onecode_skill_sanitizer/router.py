@@ -472,6 +472,15 @@ def route_scenario_task(
     coverage = build_capability_coverage(selected_bundle, {skill["name"] for skill in routed_skills}) if selected_bundle else []
     execution_plan = build_execution_plan(selected_bundle, routed_skills) if selected_bundle else build_execution_plan({}, routed_skills)
     explanations = build_selection_explanations(selected_bundle, routed_skills, coverage) if selected_bundle else []
+    pipeline_plan = build_pipeline_plan(
+        task=task,
+        task_profile=profile,
+        selected_bundle=selected_bundle,
+        selected_skills=routed_skills,
+        coverage=coverage,
+        execution_graph=None,
+        invariants=None,
+    )
     return {
         "router": {"mode": "deterministic_scenario_router", "version": ROUTER_VERSION},
         "task_profile": profile,
@@ -485,6 +494,7 @@ def route_scenario_task(
         "coverage": coverage,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
+        "pipeline_plan": pipeline_plan,
     }
 
 
@@ -1147,6 +1157,20 @@ def route_mesh_task(
             "selection_reason": "Selected skills from task profile, trusted scenario bundle, invariants, and overlap-group pruning.",
         }
     )
+    execution_graph = (
+        final_graph
+        if final_graph.get("mode") == "contract" and final_graph.get("acyclic", True)
+        else build_execution_graph(routed_skills)
+    )
+    pipeline_plan = build_pipeline_plan(
+        task=task,
+        task_profile=profile,
+        selected_bundle=selected_bundle,
+        selected_skills=routed_skills,
+        coverage=coverage,
+        execution_graph=execution_graph,
+        invariants=invariants,
+    )
     return {
         "router": {
             "mode": "deterministic_mesh_router",
@@ -1169,9 +1193,8 @@ def route_mesh_task(
         "coverage": coverage,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
-        "execution_graph": final_graph
-        if final_graph.get("mode") == "contract" and final_graph.get("acyclic", True)
-        else build_execution_graph(routed_skills),
+        "execution_graph": execution_graph,
+        "pipeline_plan": pipeline_plan,
         "invariant_capabilities": invariant_capabilities,
         "pruned_skills": pruned_names,
     }

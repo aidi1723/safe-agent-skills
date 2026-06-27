@@ -121,6 +121,8 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(routed["selected_scenario"]["match_score"], 0)
         self.assertEqual([skill["name"] for skill in routed["skills"]], ["ai-opensquilla-metaskill-workflow"])
         self.assertEqual(routed["coverage"], [])
+        self.assertEqual(routed["pipeline_plan"]["id"], "general")
+        self.assertEqual(routed["pipeline_plan"]["source"], "direct_skill_selection")
 
     def test_build_task_profile_detects_skill_router_quality_review(self):
         profile = build_task_profile("复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标")
@@ -192,6 +194,9 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(routed["selected_scenario"]["id"], "skill-router-quality-review")
         self.assertIn("skill_selection_quality", [item["capability"] for item in routed["coverage"]])
         self.assertEqual(routed["skills"][0]["name"], "ai-opensquilla-metaskill-workflow")
+        self.assertEqual(routed["pipeline_plan"]["id"], "skill-router-quality-review")
+        self.assertEqual(routed["pipeline_plan"]["mode"], "method_only")
+        self.assertEqual(routed["pipeline_plan"]["source"], "trusted_scenario_bundle")
 
     def test_build_pipeline_plan_for_skill_router_quality_review(self):
         profile = build_task_profile("复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标")
@@ -607,6 +612,66 @@ class RouterTest(unittest.TestCase):
         self.assertIn("design-system-consistency", routed["pruned_skills"])
         self.assertEqual(routed["execution_graph"]["nodes"][0]["skill"], "security-secret-context-redaction")
         self.assertTrue(routed["execution_graph"]["edges"])
+
+    def test_route_mesh_task_includes_pipeline_plan(self):
+        bundle = {
+            "id": "skill-router-quality-review",
+            "name": "Skill Router Quality Review",
+            "scenario": "Review skill router quality, automatic selection, and bundle composition behavior.",
+            "status": "trusted",
+            "task_signals": ["safe-agent-skills", "skill router", "smart skill", "智能选择", "自动搭配"],
+            "skills": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "ai-tool-schema-protocol-check",
+                "code-test-regression",
+            ],
+            "required_capabilities": [
+                {
+                    "id": "skill_selection_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-token-routing-pattern"],
+                },
+                {
+                    "id": "bundle_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-metaskill-workflow"],
+                },
+                {
+                    "id": "routing_contract",
+                    "required": True,
+                    "preferred_skills": ["ai-tool-schema-protocol-check"],
+                },
+                {
+                    "id": "regression_test",
+                    "required": True,
+                    "preferred_skills": ["code-test-regression"],
+                },
+            ],
+            "execution_order": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "ai-tool-schema-protocol-check",
+                "code-test-regression",
+            ],
+            "safety_boundary": "method-only",
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_mesh_task(
+            task="复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+            invariants=None,
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            overlap_groups=None,
+            max_skills=8,
+            strategy="balanced",
+        )
+
+        self.assertEqual(routed["pipeline_plan"]["id"], "skill-router-quality-review")
+        self.assertEqual(routed["pipeline_plan"]["mode"], "method_only")
+        self.assertEqual(routed["pipeline_plan"]["source"], "trusted_scenario_bundle")
 
     def test_build_execution_graph_exposes_stage_gates_and_parallel_groups(self):
         graph = build_execution_graph(
