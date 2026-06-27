@@ -736,7 +736,7 @@ RUNTIME_APPROVAL_RULES = [
     },
     {
         "required_for": "paid model or provider call",
-        "signals": ["paid", "provider", "openai", "anthropic", "elevenlabs", "fal", "model", "copywriting", "content strategy", "付费", "模型"],
+        "signals": ["paid", "paid provider", "provider call", "openai", "anthropic", "elevenlabs", "fal", "remotion", "付费"],
     },
     {
         "required_for": "destructive filesystem or git action",
@@ -793,11 +793,24 @@ def approval_gate_text(task: str, bundle: dict, skills: list[dict]) -> str:
     return normalize_task_text(" ".join(parts))
 
 
+def signal_matches_approval_text(signal: str, text: str) -> bool:
+    normalized_signal = normalize_task_text(signal)
+    if not normalized_signal:
+        return False
+    if not normalized_signal.isascii():
+        return normalized_signal in text
+    if " " in normalized_signal:
+        pattern = rf"(?<![a-z0-9]){re.escape(normalized_signal)}(?![a-z0-9])"
+        return re.search(pattern, text) is not None
+    pattern = rf"(?<![a-z0-9]){re.escape(normalized_signal)}(?![a-z0-9])"
+    return re.search(pattern, text) is not None
+
+
 def build_approval_gates(task: str, bundle: dict, skills: list[dict]) -> list[dict]:
     text = approval_gate_text(task, bundle, skills)
     required_for = []
     for rule in RUNTIME_APPROVAL_RULES:
-        if any(normalize_task_text(signal) in text for signal in rule["signals"]):
+        if any(signal_matches_approval_text(signal, text) for signal in rule["signals"]):
             required_for.append(rule["required_for"])
     if not required_for:
         return []
