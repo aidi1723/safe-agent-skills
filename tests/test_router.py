@@ -5,6 +5,7 @@ from onecode_skill_sanitizer.router import (
     build_contract_graph,
     build_execution_graph,
     build_execution_plan,
+    build_pipeline_plan,
     build_selection_explanations,
     build_task_profile,
     parse_invariant_capabilities,
@@ -191,6 +192,127 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(routed["selected_scenario"]["id"], "skill-router-quality-review")
         self.assertIn("skill_selection_quality", [item["capability"] for item in routed["coverage"]])
         self.assertEqual(routed["skills"][0]["name"], "ai-opensquilla-metaskill-workflow")
+
+    def test_build_pipeline_plan_for_skill_router_quality_review(self):
+        profile = build_task_profile("复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标")
+        bundle = {
+            "id": "skill-router-quality-review",
+            "name": "Skill Router Quality Review",
+            "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent.",
+        }
+        skills = [
+            {"name": "ai-opensquilla-metaskill-workflow", "match_score": 0},
+            {"name": "ai-opensquilla-token-routing-pattern", "match_score": 0},
+            {"name": "ai-tool-schema-protocol-check", "match_score": 0},
+            {"name": "ai-output-schema-eval", "match_score": 0},
+            {"name": "code-test-regression", "match_score": 0},
+            {"name": "engineering-ci-troubleshoot", "match_score": 0},
+        ]
+        coverage = [
+            {
+                "capability": "skill_selection_quality",
+                "required": True,
+                "status": "covered",
+                "skill": "ai-opensquilla-token-routing-pattern",
+                "preferred_skills": ["ai-opensquilla-token-routing-pattern"],
+            }
+        ]
+
+        plan = build_pipeline_plan(
+            task="复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+            task_profile=profile,
+            selected_bundle=bundle,
+            selected_skills=skills,
+            coverage=coverage,
+            execution_graph={},
+            invariants=None,
+        )
+
+        self.assertEqual(plan["id"], "skill-router-quality-review")
+        self.assertEqual(plan["mode"], "method_only")
+        self.assertEqual(plan["source"], "trusted_scenario_bundle")
+        self.assertIn("runtime permissions", plan["runtime_boundary"])
+        self.assertEqual(
+            [stage["id"] for stage in plan["stages"]],
+            ["preflight", "planning", "review", "verification", "handoff"],
+        )
+        self.assertIn("ai-opensquilla-metaskill-workflow", plan["stages"][0]["skills"])
+        self.assertIn("ai-tool-schema-protocol-check", plan["stages"][2]["skills"])
+        self.assertIn("code-test-regression", plan["stages"][3]["skills"])
+        for stage in plan["stages"]:
+            self.assertIn("id", stage)
+            self.assertIn("name", stage)
+            self.assertIn("purpose", stage)
+            self.assertIn("skills", stage)
+            self.assertIn("inputs", stage)
+            self.assertIn("outputs", stage)
+            self.assertIn("gate", stage)
+            self.assertIn("verification", stage)
+            self.assertIn("condition", stage["gate"])
+            self.assertIn("failure_action", stage["gate"])
+
+    def test_build_pipeline_plan_general_fallback_does_not_invent_scenario(self):
+        profile = build_task_profile("帮我看一下这个事情是否合理")
+        skills = [
+            {"name": "ai-opensquilla-metaskill-workflow", "match_score": 12},
+            {"name": "research-source-check", "match_score": 4},
+        ]
+
+        plan = build_pipeline_plan(
+            task="帮我看一下这个事情是否合理",
+            task_profile=profile,
+            selected_bundle={},
+            selected_skills=skills,
+            coverage=[],
+            execution_graph={},
+            invariants=None,
+        )
+
+        self.assertEqual(plan["id"], "general")
+        self.assertEqual(plan["name"], "General")
+        self.assertEqual(plan["source"], "direct_skill_selection")
+        self.assertEqual(plan["mode"], "method_only")
+        self.assertEqual(plan["low_confidence_note"], "No trusted scenario matched; use direct selected skills only.")
+        self.assertEqual([stage["id"] for stage in plan["stages"]], ["source", "planning", "handoff"])
+        self.assertIn("research-source-check", plan["stages"][0]["skills"])
+        self.assertIn("ai-opensquilla-metaskill-workflow", plan["stages"][1]["skills"])
+        self.assertEqual(plan["approval_gates"], [])
+
+    def test_build_pipeline_plan_marks_video_runtime_approval_gates(self):
+        profile = build_task_profile("Copywriting 写文案，Content Strategy 规划内容矩阵，Remotion 实现一句话灵感到成片")
+        bundle = {
+            "id": "content-video-production",
+            "name": "Content Video Production",
+            "safety_boundary": "Programmatic video execution needs separate runtime and license review.",
+        }
+        skills = [
+            {"name": "content-strategy-matrix", "match_score": 0},
+            {"name": "media-video-script-review", "match_score": 0},
+            {"name": "media-remotion-video-production-boundary", "match_score": 0},
+            {"name": "media-asset-review", "match_score": 0},
+            {"name": "execution-publish-check", "match_score": 0},
+        ]
+
+        plan = build_pipeline_plan(
+            task="Copywriting 写文案，Content Strategy 规划内容矩阵，Remotion 实现一句话灵感到成片",
+            task_profile=profile,
+            selected_bundle=bundle,
+            selected_skills=skills,
+            coverage=[],
+            execution_graph={},
+            invariants=None,
+        )
+
+        approval_required = {
+            item
+            for gate in plan["approval_gates"]
+            for item in gate["required_for"]
+        }
+        self.assertIn("media rendering", approval_required)
+        self.assertIn("file upload or publication", approval_required)
+        self.assertIn("dependency install", approval_required)
+        self.assertIn("paid model or provider call", approval_required)
+        self.assertIn("media-remotion-video-production-boundary", [skill for stage in plan["stages"] for skill in stage["skills"]])
 
     def test_route_scenario_task_selects_codebase_change_lifecycle_bundle(self):
         bundle = {
