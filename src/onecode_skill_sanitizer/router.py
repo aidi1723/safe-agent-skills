@@ -384,6 +384,56 @@ def build_selection_explanations(bundle: dict, selected_skills: list[dict], cove
     return explanations
 
 
+def build_pipeline_plan(
+    task: str,
+    task_profile: dict,
+    selected_bundle: dict,
+    selected_skills: list[dict],
+    coverage: list[dict],
+    execution_graph: dict | None = None,
+    invariants: list[str] | str | None = None,
+) -> dict:
+    skill_names = selected_skill_names(selected_skills)
+    bundle_id = selected_bundle.get("id", "")
+    source = "trusted_scenario_bundle" if bundle_id else "direct_skill_selection"
+    plan_id = bundle_id or "general"
+    plan_name = selected_bundle.get("name") or (selected_bundle.get("id") if bundle_id else "General")
+    runtime_boundary = selected_bundle.get("safety_boundary") or "Skills provide method only; host runtime controls permissions."
+    stage_skill_map = scenario_stage_skill_map(bundle_id, skill_names)
+    missing_required = [
+        item["capability"]
+        for item in coverage
+        if item.get("required", True) and item.get("status") == "missing"
+    ]
+    handoff_risks = []
+    if missing_required:
+        handoff_risks.append("Missing required capabilities: " + ", ".join(missing_required))
+    if not bundle_id:
+        handoff_risks.append("No trusted scenario matched; use direct selected skills only.")
+
+    stages = [
+        build_pipeline_stage(stage, skills)
+        for stage, skills in stage_skill_map.items()
+        if stage != "handoff" and skills
+    ]
+    stages.sort(key=lambda stage: PIPELINE_STAGE_ORDER.index(stage["id"]))
+    stages.append(build_pipeline_stage("handoff", stage_skill_map.get("handoff", []), handoff_risks or None))
+
+    plan = {
+        "schema_version": 1,
+        "id": plan_id,
+        "name": plan_name,
+        "mode": "method_only",
+        "source": source,
+        "runtime_boundary": runtime_boundary,
+        "stages": stages,
+        "approval_gates": build_approval_gates(task, selected_bundle, selected_skills),
+    }
+    if not bundle_id:
+        plan["low_confidence_note"] = "No trusted scenario matched; use direct selected skills only."
+    return plan
+
+
 def route_scenario_task(
     task: str,
     selected_skills: list[dict],
@@ -557,6 +607,228 @@ STAGE_GATE_BY_STAGE = {
     "execution": "execution",
     "verification": "verification",
 }
+
+
+PIPELINE_STAGE_ORDER = ["preflight", "source", "planning", "production", "review", "verification", "handoff"]
+
+
+PIPELINE_STAGE_INFO = {
+    "preflight": {
+        "name": "Preflight",
+        "purpose": "Confirm task scope, safety boundary, required inputs, and missing information.",
+        "inputs": ["user_task", "task_profile", "invariants"],
+        "outputs": ["scope_summary", "missing_inputs", "runtime_boundary"],
+        "condition": "Required inputs are known or explicitly marked missing.",
+        "failure_action": "stop_and_request_missing_inputs",
+        "verification": ["trusted skill status checked", "runtime boundary recorded"],
+    },
+    "source": {
+        "name": "Source",
+        "purpose": "Inventory source material, provenance, citations, and retrieved context.",
+        "inputs": ["user_task", "task_profile"],
+        "outputs": ["source_inventory", "provenance_notes", "source_risks"],
+        "condition": "Required sources are identified or source gaps are recorded.",
+        "failure_action": "record_source_gap_and_stop_if_source_is_required",
+        "verification": ["source provenance checked", "citation or evidence gaps recorded"],
+    },
+    "planning": {
+        "name": "Planning",
+        "purpose": "Decompose the task, choose the method, and define the output contract.",
+        "inputs": ["task_profile", "coverage", "selected_skills"],
+        "outputs": ["work_plan", "output_contract", "unresolved_assumptions"],
+        "condition": "Plan covers required capabilities or missing capabilities are recorded.",
+        "failure_action": "revise_plan_or_mark_missing_capability",
+        "verification": ["required capability coverage reviewed", "selected skill rationale recorded"],
+    },
+    "production": {
+        "name": "Production",
+        "purpose": "Apply method-only execution guidance under host-controlled permissions.",
+        "inputs": ["work_plan", "selected_skills"],
+        "outputs": ["draft_artifact_or_method_notes", "execution_boundary_notes"],
+        "condition": "Host approval boundaries are respected before any runtime action.",
+        "failure_action": "stop_before_runtime_action_and_request_approval",
+        "verification": ["runtime boundary checked", "approval-sensitive actions identified"],
+    },
+    "review": {
+        "name": "Review",
+        "purpose": "Check safety, quality, compliance, schema, rights, and review risks.",
+        "inputs": ["draft_artifact_or_method_notes", "coverage"],
+        "outputs": ["review_findings", "risk_notes", "correction_targets"],
+        "condition": "Required review risks are recorded with correction targets.",
+        "failure_action": "return_to_planning_or_production_with_findings",
+        "verification": ["review findings are specific", "safety and compliance boundaries preserved"],
+    },
+    "verification": {
+        "name": "Verification",
+        "purpose": "Run or plan tests, checks, schema validation, and evidence capture.",
+        "inputs": ["review_findings", "selected_skills"],
+        "outputs": ["verification_evidence", "failed_checks", "residual_risks"],
+        "condition": "Verification evidence is recorded or unavailable checks are explained.",
+        "failure_action": "record_failed_check_and_stop_before_success_claim",
+        "verification": ["test or check command recorded when available", "residual risk stated"],
+    },
+    "handoff": {
+        "name": "Handoff",
+        "purpose": "Summarize outputs, unresolved risks, and next approval boundary.",
+        "inputs": ["verification_evidence", "review_findings", "runtime_boundary"],
+        "outputs": ["final_summary", "unresolved_risks", "next_approval_boundary"],
+        "condition": "Handoff includes evidence, risks, and method-only boundary.",
+        "failure_action": "revise_handoff_until_boundary_and_risks_are_explicit",
+        "verification": ["unresolved risks listed", "method-only boundary repeated"],
+    },
+}
+
+
+SCENARIO_STAGE_SKILLS = {
+    "content-video-production": {
+        "preflight": ["content-strategy-matrix", "content-seo-brief"],
+        "planning": ["content-brand-voice-boundary", "media-video-script-review"],
+        "production": ["media-remotion-video-production-boundary"],
+        "review": ["content-editorial-review", "content-claims-compliance-filter", "media-asset-review"],
+        "verification": ["execution-publish-check"],
+    },
+    "skill-router-quality-review": {
+        "preflight": ["ai-opensquilla-metaskill-workflow"],
+        "planning": ["ai-opensquilla-token-routing-pattern", "ai-langchain-agent-orchestration"],
+        "review": ["ai-tool-schema-protocol-check", "ai-pydantic-schema-contract", "ai-output-schema-eval"],
+        "verification": ["code-test-regression", "engineering-ci-troubleshoot"],
+        "handoff": ["ai-rule-failure-log-synthesis", "security-supply-chain-review"],
+    },
+}
+
+
+RUNTIME_APPROVAL_RULES = [
+    {
+        "required_for": "dependency install",
+        "signals": ["install", "dependency", "npm", "pip", "package", "remotion", "ffmpeg", "安装", "依赖"],
+    },
+    {
+        "required_for": "shell command execution",
+        "signals": ["shell", "command", "execute", "script", "bash", "命令", "脚本", "执行"],
+    },
+    {
+        "required_for": "browser automation",
+        "signals": ["browser", "playwright", "screenshot", "浏览器", "截图"],
+    },
+    {
+        "required_for": "network access",
+        "signals": ["network", "web", "crawl", "download", "upload", "api", "联网", "下载", "上传"],
+    },
+    {
+        "required_for": "MCP server exposure",
+        "signals": ["mcp"],
+    },
+    {
+        "required_for": "proxy/wrapper startup",
+        "signals": ["proxy", "wrapper", "wrap", "代理"],
+    },
+    {
+        "required_for": "account or API-key use",
+        "signals": ["api key", "account", "credential", "token", "apikey", "密钥", "账号", "凭证"],
+    },
+    {
+        "required_for": "file upload or publication",
+        "signals": ["publish", "upload", "release", "上线", "发布", "上传"],
+    },
+    {
+        "required_for": "media rendering",
+        "signals": ["render", "video", "media", "remotion", "ffmpeg", "成片", "视频", "渲染"],
+    },
+    {
+        "required_for": "paid model or provider call",
+        "signals": ["paid", "provider", "openai", "anthropic", "elevenlabs", "fal", "model", "copywriting", "content strategy", "付费", "模型"],
+    },
+    {
+        "required_for": "destructive filesystem or git action",
+        "signals": ["delete", "remove", "reset", "overwrite", "rm", "删除", "重置", "覆盖"],
+    },
+]
+
+
+def pipeline_stage_for_skill(skill_name: str) -> str:
+    if skill_name.startswith(("research-", "data-", "office-")):
+        return "source"
+    if any(marker in skill_name for marker in ["test", "check", "verify", "ci-troubleshoot", "publish-check"]):
+        return "verification"
+    if skill_name.startswith(("business-", "ai-", "commerce-")):
+        return "planning"
+    if skill_name.startswith(("security-", "compliance-", "content-claims")):
+        return "review"
+    if skill_name.startswith(("design-", "content-", "code-", "media-asset")):
+        return "review"
+    if skill_name.startswith(("execution-", "engineering-", "media-remotion")):
+        return "production"
+    return "production"
+
+
+def selected_skill_names(selected_skills: list[dict]) -> list[str]:
+    names = []
+    for skill in selected_skills:
+        name = skill.get("name", "")
+        if name and name not in names:
+            names.append(name)
+    return names
+
+
+def scenario_stage_skill_map(bundle_id: str, skill_names: list[str]) -> dict[str, list[str]]:
+    stage_map = {stage: [] for stage in PIPELINE_STAGE_ORDER}
+    explicit = SCENARIO_STAGE_SKILLS.get(bundle_id, {})
+    assigned = set()
+    for stage in PIPELINE_STAGE_ORDER:
+        for name in explicit.get(stage, []):
+            if name in skill_names and name not in assigned:
+                stage_map[stage].append(name)
+                assigned.add(name)
+    for name in skill_names:
+        if name in assigned:
+            continue
+        stage_map[pipeline_stage_for_skill(name)].append(name)
+    return {stage: names for stage, names in stage_map.items() if names}
+
+
+def approval_gate_text(task: str, bundle: dict, skills: list[dict]) -> str:
+    parts = [task, bundle.get("id", ""), bundle.get("name", ""), bundle.get("scenario", ""), bundle.get("safety_boundary", "")]
+    parts.extend(skill.get("name", "") for skill in skills)
+    parts.extend(skill.get("description", "") for skill in skills)
+    return normalize_task_text(" ".join(parts))
+
+
+def build_approval_gates(task: str, bundle: dict, skills: list[dict]) -> list[dict]:
+    text = approval_gate_text(task, bundle, skills)
+    required_for = []
+    for rule in RUNTIME_APPROVAL_RULES:
+        if any(normalize_task_text(signal) in text for signal in rule["signals"]):
+            required_for.append(rule["required_for"])
+    if not required_for:
+        return []
+    return [
+        {
+            "stage": "production",
+            "required_for": required_for,
+            "owner": "host_runtime_or_operator",
+        }
+    ]
+
+
+def build_pipeline_stage(stage_id: str, skills: list[str], unresolved_risks: list[str] | None = None) -> dict:
+    info = PIPELINE_STAGE_INFO[stage_id]
+    stage = {
+        "id": stage_id,
+        "name": info["name"],
+        "purpose": info["purpose"],
+        "skills": skills,
+        "inputs": list(info["inputs"]),
+        "outputs": list(info["outputs"]),
+        "gate": {
+            "id": f"{stage_id}_complete",
+            "condition": info["condition"],
+            "failure_action": info["failure_action"],
+        },
+        "verification": list(info["verification"]),
+    }
+    if unresolved_risks:
+        stage["unresolved_risks"] = unresolved_risks
+    return stage
 
 
 def skill_stage(skill_name: str) -> str:
