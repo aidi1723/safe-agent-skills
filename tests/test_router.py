@@ -237,6 +237,7 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(plan["mode"], "method_only")
         self.assertEqual(plan["source"], "trusted_scenario_bundle")
         self.assertIn("runtime permissions", plan["runtime_boundary"])
+        self.assertEqual(plan["approval_gates"], [])
         self.assertEqual(
             [stage["id"] for stage in plan["stages"]],
             ["preflight", "planning", "review", "verification", "handoff"],

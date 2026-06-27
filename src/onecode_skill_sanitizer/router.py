@@ -710,31 +710,31 @@ SCENARIO_STAGE_SKILLS = {
 RUNTIME_APPROVAL_RULES = [
     {
         "required_for": "dependency install",
-        "signals": ["install", "dependency", "npm", "pip", "package", "remotion", "ffmpeg", "安装", "依赖"],
+        "signals": ["install dependency", "install dependencies", "npm install", "pip install", "make setup", "安装依赖"],
     },
     {
         "required_for": "shell command execution",
-        "signals": ["shell", "command", "execute", "script", "bash", "命令", "脚本", "执行"],
+        "signals": ["shell command", "run command", "execute command", "run script", "bash script", "执行命令", "运行脚本"],
     },
     {
         "required_for": "browser automation",
-        "signals": ["browser", "playwright", "screenshot", "浏览器", "截图"],
+        "signals": ["browser automation", "run browser", "playwright", "take screenshot", "浏览器自动化", "截图"],
     },
     {
         "required_for": "network access",
-        "signals": ["network", "web", "crawl", "download", "upload", "api", "联网", "下载", "上传"],
+        "signals": ["network access", "web search", "crawl web", "download file", "upload file", "call api", "api call", "联网", "下载", "上传"],
     },
     {
         "required_for": "MCP server exposure",
-        "signals": ["mcp"],
+        "signals": ["start mcp", "mcp server", "expose mcp", "运行 mcp"],
     },
     {
         "required_for": "proxy/wrapper startup",
-        "signals": ["proxy", "wrapper", "wrap", "代理"],
+        "signals": ["start proxy", "proxy server", "wrapper startup", "wrap agent", "启动代理"],
     },
     {
         "required_for": "account or API-key use",
-        "signals": ["api key", "account", "credential", "token", "apikey", "密钥", "账号", "凭证"],
+        "signals": ["use api key", "api key", "use credential", "oauth token", "use token", "密钥", "账号", "凭证"],
     },
     {
         "required_for": "file upload or publication",
@@ -742,17 +742,30 @@ RUNTIME_APPROVAL_RULES = [
     },
     {
         "required_for": "media rendering",
-        "signals": ["render", "video", "media", "remotion", "ffmpeg", "成片", "视频", "渲染"],
+        "signals": ["render video", "media rendering", "remotion render", "ffmpeg", "成片", "视频渲染", "渲染"],
     },
     {
         "required_for": "paid model or provider call",
-        "signals": ["paid", "paid provider", "provider call", "openai", "anthropic", "elevenlabs", "fal", "remotion", "付费"],
+        "signals": ["paid provider", "provider call", "call openai", "openai api", "anthropic api", "elevenlabs", "fal.ai", "付费调用"],
     },
     {
         "required_for": "destructive filesystem or git action",
-        "signals": ["delete", "remove", "reset", "overwrite", "rm", "删除", "重置", "覆盖"],
+        "signals": ["delete file", "remove file", "git reset", "rm -rf", "rm file", "删除文件", "重置 git"],
     },
 ]
+
+
+SKILL_APPROVAL_REQUIREMENTS = {
+    "execution-browser-check": ["browser automation"],
+    "execution-browser-use-web-task": ["browser automation", "network access"],
+    "execution-playwright-browser-automation": ["browser automation"],
+    "execution-publish-check": ["file upload or publication"],
+    "media-remotion-video-production-boundary": [
+        "dependency install",
+        "media rendering",
+        "paid model or provider call",
+    ],
+}
 
 
 def pipeline_stage_for_skill(skill_name: str) -> str:
@@ -798,8 +811,6 @@ def scenario_stage_skill_map(bundle_id: str, skill_names: list[str]) -> dict[str
 
 def approval_gate_text(task: str, bundle: dict, skills: list[dict]) -> str:
     parts = [task, bundle.get("id", ""), bundle.get("name", ""), bundle.get("scenario", ""), bundle.get("safety_boundary", "")]
-    parts.extend(skill.get("name", "") for skill in skills)
-    parts.extend(skill.get("description", "") for skill in skills)
     return normalize_task_text(" ".join(parts))
 
 
@@ -822,6 +833,10 @@ def build_approval_gates(task: str, bundle: dict, skills: list[dict]) -> list[di
     for rule in RUNTIME_APPROVAL_RULES:
         if any(signal_matches_approval_text(signal, text) for signal in rule["signals"]):
             required_for.append(rule["required_for"])
+    for skill_name in selected_skill_names(skills):
+        for approval in SKILL_APPROVAL_REQUIREMENTS.get(skill_name, []):
+            if approval not in required_for:
+                required_for.append(approval)
     if not required_for:
         return []
     return [
