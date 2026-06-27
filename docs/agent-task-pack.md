@@ -55,6 +55,8 @@ The JSON output includes:
 - `execution_graph`: optional mesh DAG with `stage`, `gate`,
   `parallel_group`, and `stage_order` edges when `smart` or `--router mesh` is
   used
+- `pipeline_plan`: optional method-only stage contract when `smart`,
+  `--router scenario`, or `--router mesh` is used
 - `invariant_capabilities`: optional capability mapping from user invariants
 - `pruned_skills`: optional overlap-pruned skill names
 - `agent_instructions`: ready-to-paste runtime instructions for the host agent
@@ -124,12 +126,25 @@ Scenario router output adds:
 - `selected_scenario`
 - `coverage`
 - `execution_plan`
+- `pipeline_plan`
 - `selection_explanations`
 
 The router is deterministic. It does not call an external model, does not
 execute selected skills, and does not grant runtime permissions. It chooses a
 trusted scenario, maps required capabilities to trusted skills, and emits an
 ordered plan that the host agent can follow under its own permission policy.
+
+## Pipeline Plan
+
+Scenario and smart router task packs include `pipeline_plan`, a method-only
+stage contract for host agents. Hosts can use it to decide what to do first,
+what evidence to collect before moving to the next stage, and which actions
+require operator or host-runtime approval.
+
+The field does not grant permissions. Dependency installation, shell commands,
+browser automation, network access, MCP/proxy startup, account or API-key use,
+file upload, media rendering, paid provider calls, and destructive filesystem
+or git actions remain controlled by the host runtime and operator policy.
 
 ## Smart Router
 

@@ -124,6 +124,7 @@ an invariant, the output marks the capability as `missing`.
 - `coverage`
 - `execution_plan`
 - `execution_graph`
+- `pipeline_plan`
 - `selection_explanations`
 - `pruned_skills`
 
@@ -141,6 +142,13 @@ own policy requires stricter sequencing.
 
 The graph is guidance for the host agent. It does not execute anything by
 itself.
+
+`pipeline_plan` is a method-only orchestration contract layered on top of the
+selected trusted skills. It groups selected skills into stages such as
+`preflight`, `source`, `planning`, `production`, `review`, `verification`, and
+`handoff`; each stage includes inputs, outputs, a gate condition, verification
+notes, and failure handling guidance. The plan is advisory: it does not execute
+tools or grant runtime permissions.
 
 ## When To Use
 
