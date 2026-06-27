@@ -37,6 +37,8 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Auto Orchestration Pipeline Plan](updates/2026-06-27-auto-orchestration-pipeline-plan.md)
+- [Auto Orchestration Pipeline Plan Closure Report](auto-orchestration-pipeline-plan-closure-report.md)
 - [Manifest Integrity and Contract Router Hardening](updates/2026-06-18-manifest-contract-router-hardening.md)
 - [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
 - [Scenario System Expansion](updates/2026-06-16-scenario-system-expansion.md)

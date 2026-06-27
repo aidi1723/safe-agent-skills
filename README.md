@@ -80,12 +80,15 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md).
+[Auto Orchestration Pipeline Plan](docs/updates/2026-06-27-auto-orchestration-pipeline-plan.md).
 
 Latest closure report:
-[Scenario Capability Expansion Closure Report](docs/scenario-capability-expansion-closure-report.md).
+[Auto Orchestration Pipeline Plan Closure Report](docs/auto-orchestration-pipeline-plan-closure-report.md).
 
 Previous update:
+[Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md).
+
+Earlier update:
 [Scenario System Expansion](docs/updates/2026-06-16-scenario-system-expansion.md).
 
 Prior closure:
@@ -317,6 +320,8 @@ onecode skills approve pdf
 - [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
 - [Smart Skill Router](docs/smart-skill-router.md)
+- [Auto Orchestration Pipeline Plan](docs/updates/2026-06-27-auto-orchestration-pipeline-plan.md)
+- [Auto Orchestration Pipeline Plan Closure Report](docs/auto-orchestration-pipeline-plan-closure-report.md)
 - [Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md)
 - [Audit Hardening Closure Report](docs/audit-hardening-closure-report.md)
 - [Next Development Plan](docs/next-development-plan.md)

@@ -42,6 +42,7 @@ Current baseline:
 
 Closure report:
 
+- [Auto Orchestration Pipeline Plan Closure Report](auto-orchestration-pipeline-plan-closure-report.md)
 - [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
 - [Phase 001 Closure Report](phase-001-closure-report.md)
 - [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
@@ -53,6 +54,7 @@ Next development:
 
 Latest update:
 
+- [Auto Orchestration Pipeline Plan](updates/2026-06-27-auto-orchestration-pipeline-plan.md)
 - [Scenario System Expansion](updates/2026-06-16-scenario-system-expansion.md)
 - [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
