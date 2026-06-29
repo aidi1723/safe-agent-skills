@@ -2,8 +2,8 @@
 
 ## Summary
 
-The current public-safe catalog contains 172 sanitized skills across all
-top-level taxonomy categories, including 39 community project reference skills
+The current public-safe catalog contains 173 sanitized skills across all
+top-level taxonomy categories, including 40 community project reference skills
 and 133 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, content, research, claude-skills backlog cluster, vertical industry orchestration, and agentic reference-pattern skills.
 It also records 7 status-backed trusted-only overlap groups for router and
 operator skill selection hints.
@@ -21,8 +21,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 172
-trusted_count: 166
+skill_count: 173
+trusted_count: 167
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -152,12 +152,13 @@ smart router mode: deterministic_mesh_router
 | `batch-030-industry-application-orchestration` | 3 | 3 | Industry intake, regulated boundary review, and solution packaging for multi-vertical AI application plans |
 | `batch-031-agentic-reference-patterns` | 3 | 3 | Agentic media production, long-term memory governance, and code graph intelligence reference patterns |
 | `batch-032-reference-pattern-expansion` | 5 | 5 | Multi-platform research, investment diligence, agent role-library governance, DESIGN.md governance, and private communication boundaries |
+| `batch-033-community-social-agent-workflows` | 1 | 1 | Read-first social research and approval-gated account action workflow reference |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
-| ai | `ai-agent-role-library-governance`, `ai-autogen-multi-agent-review`, `ai-claude-skills-meta-workflow-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-graph-memory-contract`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 25 |
+| ai | `ai-agent-role-library-governance`, `ai-autogen-multi-agent-review`, `ai-claude-skills-meta-workflow-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-graph-memory-contract`, `ai-guidance-constrained-generation`, `ai-hermes-tweet-workflow`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 26 |
 | business | `business-atlassian-admin-governance-review`, `business-atlassian-template-governance-review`, `business-capacity-planning-review`, `business-claude-skills-backlog-orchestration`, `business-confluence-knowledge-review`, `business-contract-proposal-review`, `business-customer-success-health-review`, `business-finance-operations-review`, `business-financial-analysis-review`, `business-growth-operations-review`, `business-internal-comms-review`, `business-investment-memo-review`, `business-jira-workflow-review`, `business-knowledge-operations-review`, `business-meeting-analysis-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-product-management-review`, `business-project-management-operations-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-sales-engineering-review`, `business-scrum-project-review`, `business-support-triage`, `business-team-communications-review`, `business-value-investment-research-framework`, `business-vendor-management-review` | 29 |
 | code | `code-ast-refactor-safety`, `code-claude-skills-engineering-role-review`, `code-codebase-graph-index-boundary`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 10 |
 | commerce | `commerce-channel-economics-review`, `commerce-commercial-forecast-review`, `commerce-commercial-operations-review`, `commerce-commercial-policy-review`, `commerce-deal-desk-review`, `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-partnerships-strategy-review`, `commerce-pricing-strategy-review`, `commerce-product-keyword-plan`, `commerce-rfp-response-review` | 12 |
@@ -184,6 +185,7 @@ smart router mode: deterministic_mesh_router
 | `ai-crewai-role-workflow` | ai | trusted |
 | `ai-graph-memory-contract` | ai | trusted |
 | `ai-guidance-constrained-generation` | ai | trusted |
+| `ai-hermes-tweet-workflow` | ai | trusted |
 | `ai-langchain-agent-orchestration` | ai | trusted |
 | `ai-litellm-gateway-cost-control` | ai | review_required |
 | `ai-llama-cpp-local-inference-boundary` | ai | trusted |

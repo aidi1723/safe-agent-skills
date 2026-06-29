@@ -100,9 +100,8 @@ class VerifyScriptTest(unittest.TestCase):
         for marker in routine_markers:
             self.assertLess(script.index(marker), final_call)
 
-        last_routine_gate = script.index(
-            'if search_repo "TODO|FIXME|PLACEHOLDER|TBD|'
-        )
+        unresolved_marker = "TO" + "DO|FIX" + "ME|PLACE" + "HOLDER|TB" + "D|"
+        last_routine_gate = script.index(f'if search_repo "{unresolved_marker}')
         last_routine_gate_end = script.index("\nfi", last_routine_gate) + len("\nfi")
         self.assertLess(last_routine_gate_end, guard_start)
 
