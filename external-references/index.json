@@ -1,5 +1,5 @@
 {
-  "reference_count": 10,
+  "reference_count": 11,
   "references": [
     {
       "adoption_status": "converted",
@@ -240,6 +240,32 @@
         "ai.orchestration",
         "execution.pipeline",
         "security.review"
+      ]
+    },
+    {
+      "adoption_status": "reference_only",
+      "author": "alirezarezvani",
+      "captured_at": "2026-07-02",
+      "claimed_capabilities": [
+        "large_skill_template_library",
+        "multi_agent_distribution",
+        "domain_packaging",
+        "companion_cli_scripts",
+        "persona_and_command_patterns"
+      ],
+      "license": "MIT",
+      "metadata_only": true,
+      "name": "claude-skills",
+      "project_category": "multi_agent_skill_library_reference",
+      "review_notes": "Public GitHub skill library with README claims of 354 skills across many domains and support for 13 coding agents. Useful as a product-packaging, coverage-gap, and distribution-pattern reference. Popularity and upstream skill count are not treated as trust evidence.",
+      "runtime_permission_notes": "Reference only. Do not install, copy, execute, convert, or promote upstream skills into trusted status without per-skill license review, sanitization, hash recording, schema validation, and operator approval.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/alirezarezvani/claude-skills",
+      "taxonomy_categories": [
+        "ai.context-engineering",
+        "engineering.workflow",
+        "business.operations",
+        "security.supply_chain"
       ]
     }
   ],

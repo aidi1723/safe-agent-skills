@@ -262,6 +262,23 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["reference_count"], 1)
             self.assertEqual(result["issues"], [])
 
+    def test_real_external_references_include_claude_skills_metadata_only(self):
+        reference_out = io.StringIO()
+        with contextlib.redirect_stdout(reference_out):
+            reference_code = main(["reference-check", "--references", "external-references/index.json"])
+
+        self.assertEqual(reference_code, 0)
+        result = json.loads(reference_out.getvalue())
+        self.assertEqual(result["status"], "ok")
+        references = json.loads(Path("external-references/index.json").read_text(encoding="utf-8"))["references"]
+        claude_skills = next((item for item in references if item["name"] == "claude-skills"), None)
+
+        self.assertIsNotNone(claude_skills)
+        self.assertEqual(claude_skills["adoption_status"], "reference_only")
+        self.assertTrue(claude_skills["metadata_only"])
+        self.assertIn("multi_agent_distribution", claude_skills["claimed_capabilities"])
+        self.assertIn("Do not install", claude_skills["runtime_permission_notes"])
+
     def test_reference_check_rejects_incomplete_or_executable_references(self):
         with tempfile.TemporaryDirectory() as tmp:
             references = Path(tmp) / "external-references" / "index.json"
