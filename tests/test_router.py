@@ -6,8 +6,10 @@ from onecode_skill_sanitizer.router import (
     build_execution_graph,
     build_execution_plan,
     build_pipeline_plan,
+    build_selection_quality,
     build_selection_explanations,
     build_task_profile,
+    execution_role_for_stage,
     parse_invariant_capabilities,
     route_mesh_task,
     route_scenario_task,
@@ -474,6 +476,105 @@ class RouterTest(unittest.TestCase):
         skill_explanations = [item for item in explanations if item["type"] == "skill"]
         self.assertEqual({item["name"] for item in skill_explanations}, {"design-ui-review", "content-seo-brief"})
         self.assertTrue(all(item["confidence"] > 0 for item in skill_explanations))
+
+    def test_build_selection_quality_reports_required_coverage_and_warnings(self):
+        bundle = {"id": "code-review-hardening", "name": "Code Review Hardening"}
+        coverage = [
+            {
+                "capability": "code_review",
+                "required": True,
+                "status": "covered",
+                "skill": "code-review-risk",
+                "preferred_skills": ["code-review-risk"],
+            },
+            {
+                "capability": "supply_chain_review",
+                "required": True,
+                "status": "missing",
+                "skill": "",
+                "preferred_skills": ["security-supply-chain-review"],
+            },
+            {
+                "capability": "schema_contract",
+                "required": False,
+                "status": "missing",
+                "skill": "",
+                "preferred_skills": ["ai-output-schema-eval"],
+            },
+        ]
+
+        quality = build_selection_quality(
+            task_profile={"task_type": "code_review", "matched_signal_score": 8},
+            selected_bundle=bundle,
+            selected_scenario={"id": "code-review-hardening", "match_score": 12},
+            coverage=coverage,
+            pruned_skills=["code-dead-path-cleanup-review"],
+        )
+
+        self.assertEqual(quality["confidence"], "medium")
+        self.assertEqual(quality["covered_required_count"], 1)
+        self.assertEqual(quality["missing_required_count"], 1)
+        self.assertEqual(quality["required_count"], 2)
+        self.assertAlmostEqual(quality["coverage_ratio"], 0.5)
+        self.assertFalse(quality["low_confidence"])
+        self.assertIn("Missing required capability: supply_chain_review", quality["warnings"])
+        self.assertEqual(quality["pruned_skills"], ["code-dead-path-cleanup-review"])
+
+    def test_build_selection_quality_marks_general_fallback_low_confidence(self):
+        quality = build_selection_quality(
+            task_profile={"task_type": "general", "matched_signal_score": 0},
+            selected_bundle={},
+            selected_scenario={"id": "", "match_score": 0},
+            coverage=[],
+            pruned_skills=[],
+        )
+
+        self.assertEqual(quality["confidence"], "low")
+        self.assertTrue(quality["low_confidence"])
+        self.assertEqual(quality["coverage_ratio"], 0)
+        self.assertIn("No trusted scenario matched; using direct selected skills only.", quality["warnings"])
+
+    def test_selection_explanations_include_execution_roles(self):
+        bundle = {
+            "id": "skill-router-quality-review",
+            "name": "Skill Router Quality Review",
+        }
+        skills = [
+            {"name": "ai-opensquilla-metaskill-workflow", "match_score": 0},
+            {"name": "ai-tool-schema-protocol-check", "match_score": 0},
+            {"name": "code-test-regression", "match_score": 0},
+        ]
+        coverage = [
+            {
+                "capability": "bundle_quality",
+                "required": True,
+                "status": "covered",
+                "skill": "ai-opensquilla-metaskill-workflow",
+                "preferred_skills": ["ai-opensquilla-metaskill-workflow"],
+            },
+            {
+                "capability": "routing_contract",
+                "required": True,
+                "status": "covered",
+                "skill": "ai-tool-schema-protocol-check",
+                "preferred_skills": ["ai-tool-schema-protocol-check"],
+            },
+            {
+                "capability": "regression_test",
+                "required": True,
+                "status": "covered",
+                "skill": "code-test-regression",
+                "preferred_skills": ["code-test-regression"],
+            },
+        ]
+
+        explanations = build_selection_explanations(bundle, skills, coverage)
+        by_name = {item["name"]: item for item in explanations}
+
+        self.assertEqual(by_name["ai-opensquilla-metaskill-workflow"]["execution_role"], "preflight")
+        self.assertEqual(by_name["ai-tool-schema-protocol-check"]["execution_role"], "reviewer")
+        self.assertEqual(by_name["code-test-regression"]["execution_role"], "verifier")
+        self.assertEqual(execution_role_for_stage("production"), "producer")
 
     def test_route_scenario_task_selects_bundle_skills_first(self):
         bundles_index = {
