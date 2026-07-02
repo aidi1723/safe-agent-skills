@@ -13,7 +13,9 @@ catalog, or marked trusted.
 - raw `SKILL.md` files observed: 772
 - canonical deduped candidates: 336
 - priority distribution: P0 27, P1 12, P2 19, P3 278
-- converted skills: 38 local OneCode-authored skills across six batches
+- converted or covered upstream candidates: 53
+- distinct local OneCode-authored catalog skills from this expansion: 38 across
+  six batches
 
 Top source domains by canonical candidates:
 
@@ -73,6 +75,21 @@ Top source domains by canonical candidates:
 | `business-growth-skills` | `business-growth-operations-review` | business |
 | `pm-skills` | `business-project-management-operations-review` | business |
 | `research-ops-skills` | `research-operations-governance-review` | research |
+| `business-operations-skills` | `business-finance-operations-review` | business |
+| `landing-page-generator` | `design-premium-landing-page` | design |
+| `marketing-strategy-pmm` | `content-marketing-pricing-strategy-review` | content |
+| `review` | `code-review-risk` | code |
+| `ui-design-system` | `design-system-consistency` | design |
+| `content-strategy` | `content-strategy-matrix` | content |
+| `social-content` | `content-social-post` | content |
+| `eval` | `ai-output-schema-eval` | ai |
+| `report` | `office-pdf-report` | office |
+| `research` | `research-citation-evidence-map` | research |
+| `browser-automation` | `execution-playwright-browser-automation` | execution |
+| `data-quality-auditor` | `data-quality-audit` | data |
+| `design-system` | `design-system-consistency` | design |
+| `landing` | `design-premium-landing-page` | design |
+| `brief` | `business-requirements-brief` | business |
 
 ## Ranking Method
 
@@ -125,14 +142,15 @@ router or platform mirror. The resulting candidate map is stored at
     --registry catalog
   ```
 
-  Current assessment after the authoring wave: 15 `merge_existing`,
-  283 `keep_reference_only`, and 38 `already_converted`. The command only
-  reviews metadata-only drafts; it does not approve or trust them.
+  Current assessment after the coverage pass: 283 `keep_reference_only` and
+  53 `already_converted`. The command only reviews metadata-only drafts; it
+  does not approve or trust them.
 - Connector-aware skills should wait for host adapter verification.
 
 ## Governance Notes
 
-The converted skills use `local_authoring` provenance and are trusted only
-after the OneCode import, approval, reindex, schema, maintain, and verification
-checks. Upstream `claude-skills` remains an external reference, not a trusted
-runtime dependency.
+Distinct converted catalog skills use `local_authoring` provenance and are
+trusted only after the OneCode import, approval, reindex, schema, maintain, and
+verification checks. Coverage-only mappings reuse existing trusted catalog
+skills and do not add duplicate runtime skills. Upstream `claude-skills`
+remains an external reference, not a trusted runtime dependency.

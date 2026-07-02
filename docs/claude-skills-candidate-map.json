@@ -435,9 +435,10 @@
       "source_path": "business-growth/skills/business-growth-skills"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "router-index",
+      "local_skill": "business-finance-operations-review",
       "mapped_category": "business",
       "name": "business-operations-skills",
       "priority": "P1",
@@ -569,9 +570,10 @@
       "source_path": "marketing-skill/skills/churn-prevention"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "design-premium-landing-page",
       "mapped_category": "business",
       "name": "landing-page-generator",
       "priority": "P2",
@@ -778,9 +780,10 @@
       "source_path": "marketing-skill/skills/marketing-context"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "content-marketing-pricing-strategy-review",
       "mapped_category": "content",
       "name": "marketing-strategy-pmm",
       "priority": "P3",
@@ -1097,9 +1100,10 @@
       "source_path": "marketing-skill/skills/youtube-full"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "code-review-risk",
       "mapped_category": "code",
       "name": "review",
       "priority": "P3",
@@ -1207,9 +1211,10 @@
       "source_path": "engineering-team/skills/senior-ml-engineer"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "design-system-consistency",
       "mapped_category": "business",
       "name": "ui-design-system",
       "priority": "P3",
@@ -2032,9 +2037,10 @@
       "source_path": "marketing-skill/skills/content-production"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "content-strategy-matrix",
       "mapped_category": "content",
       "name": "content-strategy",
       "priority": "P3",
@@ -2065,9 +2071,10 @@
       "source_path": "marketing-skill/skills/prompt-engineer-toolkit"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "content-social-post",
       "mapped_category": "content",
       "name": "social-content",
       "priority": "P3",
@@ -2219,9 +2226,10 @@
       "source_path": "engineering/demo-video/skills/demo-video"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "ai-output-schema-eval",
       "mapped_category": "engineering",
       "name": "eval",
       "priority": "P3",
@@ -2527,9 +2535,10 @@
       "source_path": "engineering-team/playwright-pro/skills/pw"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "office-pdf-report",
       "mapped_category": "code",
       "name": "report",
       "priority": "P3",
@@ -2582,9 +2591,10 @@
       "source_path": "research/deep-research/skills/deep-research"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "research-citation-evidence-map",
       "mapped_category": "research",
       "name": "research",
       "priority": "P3",
@@ -2681,9 +2691,10 @@
       "source_path": "ra-qm-team/skills/soc2-compliance"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "execution-playwright-browser-automation",
       "mapped_category": "engineering",
       "name": "browser-automation",
       "priority": "P3",
@@ -2692,9 +2703,10 @@
       "source_path": "engineering/skills/browser-automation"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "data-quality-audit",
       "mapped_category": "engineering",
       "name": "data-quality-auditor",
       "priority": "P3",
@@ -2901,9 +2913,10 @@
       "source_path": "ra-qm-team/skills/quality-documentation-manager"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "design-system-consistency",
       "mapped_category": "office",
       "name": "design-system",
       "priority": "P3",
@@ -3033,9 +3046,10 @@
       "source_path": "c-level-advisor/c-level-agents/skills/cro-review"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "design-premium-landing-page",
       "mapped_category": "content",
       "name": "landing",
       "priority": "P3",
@@ -3132,9 +3146,10 @@
       "source_path": "c-level-advisor/c-level-agents/skills/freeze"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-requirements-brief",
       "mapped_category": "business",
       "name": "brief",
       "priority": "P3",
@@ -3737,11 +3752,23 @@
       "source_path": "c-level-advisor/skills/c-level-skills"
     }
   ],
-  "converted_skill_count": 38,
+  "converted_skill_count": 53,
   "converted_skills": [
     {
       "local_skill": "business-atlassian-admin-governance-review",
       "source_candidate": "atlassian-admin"
+    },
+    {
+      "local_skill": "business-requirements-brief",
+      "source_candidate": "brief"
+    },
+    {
+      "local_skill": "execution-playwright-browser-automation",
+      "source_candidate": "browser-automation"
+    },
+    {
+      "local_skill": "business-finance-operations-review",
+      "source_candidate": "business-operations-skills"
     },
     {
       "local_skill": "business-atlassian-template-governance-review",
@@ -3792,8 +3819,20 @@
       "source_candidate": "customer-success-manager"
     },
     {
+      "local_skill": "data-quality-audit",
+      "source_candidate": "data-quality-auditor"
+    },
+    {
       "local_skill": "commerce-deal-desk-review",
       "source_candidate": "deal-desk"
+    },
+    {
+      "local_skill": "design-system-consistency",
+      "source_candidate": "design-system"
+    },
+    {
+      "local_skill": "ai-output-schema-eval",
+      "source_candidate": "eval"
     },
     {
       "local_skill": "business-financial-analysis-review",
@@ -3816,8 +3855,20 @@
       "source_candidate": "knowledge-ops"
     },
     {
+      "local_skill": "design-premium-landing-page",
+      "source_candidate": "landing"
+    },
+    {
+      "local_skill": "design-premium-landing-page",
+      "source_candidate": "landing-page-generator"
+    },
+    {
       "local_skill": "research-market-analysis-review",
       "source_candidate": "market-research"
+    },
+    {
+      "local_skill": "content-marketing-pricing-strategy-review",
+      "source_candidate": "marketing-strategy-pmm"
     },
     {
       "local_skill": "business-meeting-analysis-review",
@@ -3860,6 +3911,14 @@
       "source_candidate": "research-ops-skills"
     },
     {
+      "local_skill": "research-citation-evidence-map",
+      "source_candidate": "research"
+    },
+    {
+      "local_skill": "code-review-risk",
+      "source_candidate": "review"
+    },
+    {
       "local_skill": "business-revenue-operations-review",
       "source_candidate": "revenue-operations"
     },
@@ -3886,6 +3945,22 @@
     {
       "local_skill": "business-team-communications-review",
       "source_candidate": "team-communications"
+    },
+    {
+      "local_skill": "content-social-post",
+      "source_candidate": "social-content"
+    },
+    {
+      "local_skill": "content-strategy-matrix",
+      "source_candidate": "content-strategy"
+    },
+    {
+      "local_skill": "office-pdf-report",
+      "source_candidate": "report"
+    },
+    {
+      "local_skill": "design-system-consistency",
+      "source_candidate": "ui-design-system"
     },
     {
       "local_skill": "business-vendor-management-review",

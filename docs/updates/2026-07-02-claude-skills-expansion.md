@@ -24,11 +24,14 @@ reference source and adds six locally authored OneCode-safe expansion batches.
   local draft folders from the ranked bulk review plan. The 7 bulk draft
   batches now cover all 303 actionable `reference_only` candidates.
 - Added `claude-skills-bulk-assess` to rank the full draft pool before
-  promotion. The current assessment identifies 15 candidates for merge review,
-  283 to keep reference-only, and 38 already converted; no
-  `author_local_skill` candidates remain after the authoring wave.
+  promotion. The current assessment identifies 283 candidates to keep
+  reference-only and 53 already converted or covered by existing trusted
+  skills; no `author_local_skill` or `merge_existing` candidates remain after
+  the coverage pass.
 - Added `batch-028-claude-skills-authoring-wave` with 5 locally authored
   trusted skills from the bulk assessment shortlist.
+- Recorded 15 overlap candidates as covered by existing trusted skills instead
+  of adding duplicate catalog entries.
 - Imported and approved 38 new trusted catalog entries, including:
   `business-saas-metrics-review`,
   `commerce-rfp-response-review`,

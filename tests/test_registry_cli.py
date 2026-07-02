@@ -371,6 +371,21 @@ class RegistryCliTest(unittest.TestCase):
                 "business-growth-skills",
                 "pm-skills",
                 "research-ops-skills",
+                "business-operations-skills",
+                "landing-page-generator",
+                "marketing-strategy-pmm",
+                "review",
+                "ui-design-system",
+                "content-strategy",
+                "social-content",
+                "eval",
+                "report",
+                "research",
+                "browser-automation",
+                "data-quality-auditor",
+                "design-system",
+                "landing",
+                "brief",
             },
             converted,
         )
@@ -671,6 +686,33 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(by_name["low-noise"]["recommendation"], "keep_reference_only")
             self.assertEqual(by_name["done-skill"]["recommendation"], "already_converted")
             self.assertIn("does not approve or trust drafts", result["safety_boundary"])
+
+    def test_real_claude_skills_bulk_assess_has_no_merge_backlog(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "claude-skills-bulk-assess",
+                    "--candidate-map",
+                    "docs/claude-skills-candidate-map.json",
+                    "--draft-root",
+                    "batches",
+                    "--registry",
+                    "catalog",
+                ]
+            )
+
+        self.assertEqual(exit_code, 0)
+        result = json.loads(out.getvalue())
+        self.assertEqual(
+            result["recommendation_counts"],
+            {
+                "already_converted": 53,
+                "keep_reference_only": 283,
+            },
+        )
+        self.assertNotIn("author_local_skill", result["recommendation_counts"])
+        self.assertNotIn("merge_existing", result["recommendation_counts"])
 
     def test_catalog_includes_first_sanitized_claude_skills_expansion_batch(self):
         index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))

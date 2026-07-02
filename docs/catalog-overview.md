@@ -29,7 +29,8 @@ skill, not manual installation of every catalog skill.
 ## Maintenance Priorities
 
 The `claude-skills` expansion audit evaluated 336 canonical upstream candidates
-and converted 38 local safe skills across SaaS metrics, RFP responses,
+and records 53 upstream candidate conversion or coverage mappings. These are
+represented by 38 distinct local safe catalog skills across SaaS metrics, RFP responses,
 procurement, pricing, customer success, clinical study design, vendor
 management, commercial forecasting, revenue operations, deal desk, finance
 analysis, Scrum project review, knowledge operations, process mapping,
@@ -73,9 +74,10 @@ onecode-skill-sanitizer claude-skills-bulk-assess \
   --registry catalog
 ```
 
-The current assessment classifies 15 candidates for overlap merge review, 283
-to keep reference-only, and 38 as already converted. There are no remaining
-`author_local_skill` candidates after the authoring wave.
+The current assessment classifies 283 candidates to keep reference-only and
+53 as already converted or covered by existing trusted skills. There are no
+remaining `author_local_skill` or `merge_existing` candidates after the
+coverage pass.
 The assessment command does not approve or trust drafts.
 
 External libraries such as `claude-skills` are reference-only. Do not install,
