@@ -89,6 +89,9 @@ The current assessment classifies 283 candidates to keep reference-only and
 53 as already converted or covered by existing trusted skills. There are no
 remaining `author_local_skill` or `merge_existing` candidates after the
 coverage pass.
+See [Claude Skills Reference-Only Backlog](claude-skills-reference-only-backlog.md)
+for the detailed category breakdown, non-promotion reasons, and next promotion
+waves.
 The assessment command does not approve or trust drafts. Converted candidates
 must still map to existing trusted local catalog skills or they are reported as
 `invalid_converted_mapping`.

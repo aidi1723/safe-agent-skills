@@ -94,6 +94,10 @@ conditions applied:
 - connector-aware or runtime-dependent assumptions require separate host
   adapter review.
 
+Detailed grouping, category counts, non-promotion reasons, and recommended
+next promotion waves are tracked in
+[Claude Skills Reference-Only Backlog](claude-skills-reference-only-backlog.md).
+
 Promotion rule:
 
 ```text
