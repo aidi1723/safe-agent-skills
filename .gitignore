@@ -10,3 +10,4 @@ registry/
 incoming/
 .local-maintenance/
 .superpowers/
+.worktrees/
