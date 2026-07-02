@@ -220,6 +220,7 @@ SCENARIO_PROFILES = [
             "auto composition",
             "automatic composition",
             "router quality",
+            "misrouting",
             "tool overload",
             "policy fragmentation",
             "sikll",
@@ -299,6 +300,13 @@ NORMALIZATION_ALIASES = [
     ("自动推荐", "skill selection 自动选择"),
     ("任务编排", "auto composition automatic composition"),
     ("编排能力", "auto composition"),
+    ("技能庫", "skill pack catalog"),
+    ("自動推薦", "skill selection 自动选择"),
+    ("任務編排", "auto composition automatic composition"),
+    ("skill 選擇", "skill selection 智能选择"),
+    ("執行編排", "auto composition automatic composition"),
+    ("錯誤調用", "misrouting router quality"),
+    ("不相關技能", "skill selection"),
     ("更聪明", "smart skill"),
 ]
 

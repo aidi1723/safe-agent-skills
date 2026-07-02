@@ -2919,6 +2919,120 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("engineering-claude-skills-operations-review", names)
         self.assertIn("compliance-claude-skills-regulated-review", names)
 
+    def test_real_catalog_scenario_router_handles_real_world_regression_set(self):
+        cases = [
+            (
+                "把剩余 claude-skills reference-only backlog 候选 skill 优化编排并纳入体系",
+                "claude-skills-backlog-coverage",
+            ),
+            (
+                "评估 claude skills candidate map 是否全部覆盖到 trusted 本地技能",
+                "claude-skills-backlog-coverage",
+            ),
+            (
+                "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+                "skill-router-quality-review",
+            ),
+            (
+                "优化技能库的自动推荐和任务编排能力",
+                "skill-router-quality-review",
+            ),
+            (
+                "優化技能庫的自動推薦和任務編排能力",
+                "skill-router-quality-review",
+            ),
+            (
+                "完善 skill 選擇與執行編排，避免錯誤調用不相關技能",
+                "skill-router-quality-review",
+            ),
+            (
+                "skill router quality review for bundle selection and task pack schema",
+                "skill-router-quality-review",
+            ),
+            (
+                "build a product website and prepare launch checks",
+                "website-build-launch",
+            ),
+            (
+                "构建产品官网并准备上线发布检查",
+                "website-build-launch",
+            ),
+            (
+                "design a RAG document agent with vector retrieval and citation checks",
+                "rag-agent-knowledge-app",
+            ),
+            (
+                "设计一个带向量检索和引用检查的 RAG 知识代理",
+                "rag-agent-knowledge-app",
+            ),
+            (
+                "把 PDF 文档转成知识库并做引用检查",
+                "document-to-knowledge-base",
+            ),
+            (
+                "convert office documents into markdown chunks for a searchable knowledge base",
+                "document-to-knowledge-base",
+            ),
+            (
+                "review generated code and harden tests before accepting the PR",
+                "code-review-hardening",
+            ),
+            (
+                "代码审查生成代码，补强测试后再合并 PR",
+                "code-review-hardening",
+            ),
+            (
+                "Explore 摸清项目地图，Debugger 定位疑难 bug，Test Engineer 完善回归测试",
+                "codebase-change-lifecycle",
+            ),
+            (
+                "Deep Interview 厘清模糊需求，Plan 拆解，多 agent 协同执行",
+                "agent-planning-orchestration",
+            ),
+            (
+                "Prepare marketplace listing keywords and buyer inquiry replies",
+                "commerce-listing-growth",
+            ),
+            (
+                "优化商品 listing 关键词，并准备买家询盘回复",
+                "commerce-listing-growth",
+            ),
+            (
+                "帮我看一下这个事情是否合理",
+                "",
+            ),
+        ]
+
+        for task, expected_scenario in cases:
+            with self.subTest(task=task):
+                task_pack_out = io.StringIO()
+                with contextlib.redirect_stdout(task_pack_out):
+                    task_pack_code = main(
+                        [
+                            "task-pack",
+                            task,
+                            "--registry",
+                            "catalog",
+                            "--include-bundles",
+                            "--bundles",
+                            "bundles/index.json",
+                            "--router",
+                            "scenario",
+                            "--max-skills",
+                            "10",
+                        ]
+                    )
+
+                self.assertEqual(task_pack_code, 0)
+                task_pack = json.loads(task_pack_out.getvalue())
+                self.assertEqual(task_pack["selected_scenario"]["id"], expected_scenario)
+                if expected_scenario:
+                    self.assertEqual(task_pack["bundles"][0]["id"], expected_scenario)
+                    self.assertEqual(task_pack["pipeline_plan"]["id"], expected_scenario)
+                else:
+                    self.assertEqual(task_pack["bundle_count"], 0)
+                    self.assertEqual(task_pack["bundles"], [])
+
     def test_real_catalog_smart_router_selects_skill_router_quality_review_bundle(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):
