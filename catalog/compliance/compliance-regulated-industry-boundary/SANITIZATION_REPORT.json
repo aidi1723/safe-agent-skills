@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T16:48:20Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "a531fdaec23f3fc818248640148939c9a4cb800900fe812a0744a7101c59a51e",
+    "sanitized_sha256": "23abc4901f2a65158be01246d4b9edac9d6bcb12ed16522b8a2987652a874279",
+    "source_sha256": "0e6a9c24a658530bee94d37b513e24f290124895e0e78f3dc782f79bd81ee6ee"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "compliance-regulated-industry-boundary",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:48:11Z",
+    "collected_by": "onecode-industry-orchestration",
+    "license": "Apache-2.0",
+    "path": "batches/batch-030-industry-application-orchestration/compliance-regulated-industry-boundary",
+    "reference": "docs/batches/batch-030-industry-application-orchestration.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "compliance",
+    "collection_priority": "P1",
+    "subcategory": "compliance.regulated_industry",
+    "task_intent": "review regulated-industry boundaries for multi-industry AI workflows"
+  }
+}

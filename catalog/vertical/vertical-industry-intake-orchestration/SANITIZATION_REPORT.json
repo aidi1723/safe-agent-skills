@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T16:48:20Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "c9f2d4649dafcf3943a95d67458130373458e9878074439a763e7d06dbfbb4ec",
+    "sanitized_sha256": "70d636747c250ce2fc7597b9cb5a4bf51571aaba48e3b233a311361b75cf1e8b",
+    "source_sha256": "d310059dd3923f8d4b4e1c53359816c048a5b50787ea304c191a40a0e4bdc190"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "vertical-industry-intake-orchestration",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:48:11Z",
+    "collected_by": "onecode-industry-orchestration",
+    "license": "Apache-2.0",
+    "path": "batches/batch-030-industry-application-orchestration/vertical-industry-intake-orchestration",
+    "reference": "docs/batches/batch-030-industry-application-orchestration.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "vertical",
+    "collection_priority": "P1",
+    "subcategory": "vertical.industry_intake",
+    "task_intent": "profile multi-industry user needs and route them to trusted domain workflows"
+  }
+}

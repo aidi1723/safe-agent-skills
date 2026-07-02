@@ -6,9 +6,9 @@ skill, not manual installation of every catalog skill.
 
 ## Current Baseline
 
-- 161 catalog skills
-- 155 trusted skills
-- 14 trusted scenario bundles
+- 164 catalog skills
+- 158 trusted skills
+- 15 trusted scenario bundles
 - 15 top-level categories
 - trusted-only default routing
 - provenance, hash, schema, and maintain checks before publication
@@ -25,6 +25,7 @@ skill, not manual installation of every catalog skill.
 | `data` | data quality, table analysis, document-to-knowledge workflows | `onecode-skill-sanitizer task-pack "clean spreadsheet data and prepare chart notes" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
 | `commerce` | marketplace listings, keyword plans, buyer replies, RFP responses, pricing strategy | `onecode-skill-sanitizer task-pack "review this RFP response and pricing assumptions" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
 | `research` | source checks, citation maps, paper synthesis, freshness review, clinical study design review | `onecode-skill-sanitizer task-pack "review a clinical study protocol design" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
+| `vertical` | industry solution intake, education, manufacturing, real estate, multi-industry AI application packaging | `onecode-skill-sanitizer task-pack "build an industry solution pack for healthcare, legal, finance, education, manufacturing, and SaaS users" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
 
 ## Maintenance Priorities
 

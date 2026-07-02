@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "name": "vertical-industry-intake-orchestration",
+  "taxonomy": {
+    "category": "vertical",
+    "subcategory": "vertical.industry_intake",
+    "artifact_type": "workflow",
+    "task_intent": "profile multi-industry user needs and route them to trusted domain workflows",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "usage": "local_authoring",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-030-industry-application-orchestration.md",
+    "collected_by": "onecode-industry-orchestration"
+  }
+}

@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 161 sanitized skills across all
+The current public-safe catalog contains 164 sanitized skills across all
 top-level taxonomy categories, including 34 community project reference skills
-and 127 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, content, research, and claude-skills backlog cluster skills.
+and 130 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, content, research, claude-skills backlog cluster, and vertical industry orchestration skills.
 It also records 7 status-backed trusted-only overlap groups for router and
 operator skill selection hints.
 
@@ -21,8 +21,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 161
-trusted_count: 155
+skill_count: 164
+trusted_count: 158
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -90,7 +90,7 @@ Scenario router status:
 ```text
 router mode: scenario
 router type: deterministic
-scenario bundles: 14 trusted
+scenario bundles: 15 trusted
 sample website route: website-build-launch
 sample RAG route: rag-agent-knowledge-app
 sample skill-router route: skill-router-quality-review

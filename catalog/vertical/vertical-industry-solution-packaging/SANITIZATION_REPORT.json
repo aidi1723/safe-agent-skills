@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T16:48:20Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "056c6fc67e08cedc9b29f7e3d1ce6643267ce8373a82a01e8cc66b190838f06e",
+    "sanitized_sha256": "73dcee7d7c10135019ede108ea9973f42d38763df66e3481d7faa27699e9fcdc",
+    "source_sha256": "f703ea144a4d3cd6775acb9a4b65e31788bb76a8ba3fb844d253c515fefc2321"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "vertical-industry-solution-packaging",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:48:11Z",
+    "collected_by": "onecode-industry-orchestration",
+    "license": "Apache-2.0",
+    "path": "batches/batch-030-industry-application-orchestration/vertical-industry-solution-packaging",
+    "reference": "docs/batches/batch-030-industry-application-orchestration.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "vertical",
+    "collection_priority": "P1",
+    "subcategory": "vertical.solution_packaging",
+    "task_intent": "package industry AI workflows into reusable solution plans and handoff artifacts"
+  }
+}

@@ -838,6 +838,24 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
             self.assertIn("claude-skills", by_name[name]["source"]["reference"])
 
+    def test_catalog_includes_industry_application_orchestration_skills(self):
+        index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
+        by_name = {entry["name"]: entry for entry in index["skills"]}
+
+        expected = {
+            "vertical-industry-intake-orchestration": "vertical",
+            "compliance-regulated-industry-boundary": "compliance",
+            "vertical-industry-solution-packaging": "vertical",
+        }
+        for name, category in expected.items():
+            self.assertIn(name, by_name)
+            self.assertEqual(by_name[name]["status"], "trusted")
+            self.assertEqual(by_name[name]["risk_level"], "low")
+            self.assertEqual(by_name[name]["taxonomy"]["category"], category)
+            self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
+            self.assertEqual(by_name[name]["source"]["collected_by"], "onecode-industry-orchestration")
+            self.assertIn("industry-application-orchestration", by_name[name]["source"]["reference"])
+
     def test_catalog_includes_first_sanitized_claude_skills_expansion_batch(self):
         index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
         by_name = {entry["name"]: entry for entry in index["skills"]}
@@ -1315,6 +1333,8 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("website-cn-launch", case_ids)
         self.assertIn("rag-cn-agent", case_ids)
         self.assertIn("commerce-cn-growth", case_ids)
+        self.assertIn("industry-cn-solution-pack", case_ids)
+        self.assertIn("industry-en-solution-pack", case_ids)
 
         eval_out = io.StringIO()
         with contextlib.redirect_stdout(eval_out):
@@ -2098,7 +2118,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 161)
+        self.assertEqual(result["skill_manifest_count"], 164)
         self.assertEqual(result["issues"], [])
 
     def test_verify_registry_detects_manifest_policy_tampering(self):
@@ -3034,6 +3054,14 @@ class RegistryCliTest(unittest.TestCase):
                 "commerce-listing-growth",
             ),
             (
+                "为医疗、金融、教育、制造和房地产客户设计一套行业 AI 应用方案，包含合规边界、数据质量和交付计划",
+                "industry-application-orchestration",
+            ),
+            (
+                "build an industry solution pack for healthcare, legal, finance, education, manufacturing, and SaaS users",
+                "industry-application-orchestration",
+            ),
+            (
                 "帮我看一下这个事情是否合理",
                 "",
             ),
@@ -3278,6 +3306,38 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(task_pack["bundles"][0]["id"], "rag-agent-knowledge-app")
         self.assertIn("data-qdrant-vector-retrieval", [skill["name"] for skill in task_pack["skills"]])
         self.assertIn("citation_check", [item["capability"] for item in task_pack["coverage"]])
+
+    def test_real_catalog_scenario_router_selects_industry_application_bundle(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "为医疗、金融、教育、制造和房地产客户设计一套行业 AI 应用方案，包含合规边界、数据质量和交付计划",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "12",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        coverage = {item["capability"]: item for item in task_pack["coverage"]}
+        self.assertEqual(task_pack["selected_scenario"]["id"], "industry-application-orchestration")
+        self.assertEqual(task_pack["bundles"][0]["id"], "industry-application-orchestration")
+        self.assertIn("vertical-industry-intake-orchestration", names)
+        self.assertIn("compliance-regulated-industry-boundary", names)
+        self.assertIn("vertical-industry-solution-packaging", names)
+        self.assertEqual(coverage["industry_intake"]["status"], "covered")
+        self.assertEqual(coverage["regulated_boundary"]["status"], "covered")
+        self.assertEqual(coverage["solution_packaging"]["status"], "covered")
 
 
 if __name__ == "__main__":

@@ -159,11 +159,11 @@ OpenClaw、OneCode 或其他宿主运行时自己的安全策略控制。
 当前 catalog 状态：
 
 ```text
-total skills: 161
-trusted skills: 155
+total skills: 164
+trusted skills: 158
 quarantined skills: 3
 review_required skills: 3
-scenario bundles: 14 trusted
+scenario bundles: 15 trusted
 top-level categories: 15 / 15
 minimum trusted coverage: 3 trusted skills per category
 tampered skills: 0

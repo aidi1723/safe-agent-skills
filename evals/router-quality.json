@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 24,
+  "case_count": 26,
   "cases": [
     {
       "id": "website-launch",
@@ -271,6 +271,30 @@
         "commerce-icbu-listing",
         "commerce-product-keyword-plan",
         "commerce-inquiry-reply"
+      ]
+    },
+    {
+      "id": "industry-cn-solution-pack",
+      "task": "为医疗、金融、教育、制造和房地产客户设计一套行业 AI 应用方案，包含合规边界、数据质量和交付计划",
+      "router": "scenario",
+      "expected_scenario": "industry-application-orchestration",
+      "expected_task_type": "industry_application_orchestration",
+      "expected_skills": [
+        "vertical-industry-intake-orchestration",
+        "compliance-regulated-industry-boundary",
+        "vertical-industry-solution-packaging"
+      ]
+    },
+    {
+      "id": "industry-en-solution-pack",
+      "task": "build an industry solution pack for healthcare, legal, finance, education, manufacturing, and SaaS users",
+      "router": "scenario",
+      "expected_scenario": "industry-application-orchestration",
+      "expected_task_type": "industry_application_orchestration",
+      "expected_skills": [
+        "vertical-industry-intake-orchestration",
+        "compliance-regulated-industry-boundary",
+        "vertical-industry-solution-packaging"
       ]
     },
     {

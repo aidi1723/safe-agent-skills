@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "bundle_count": 14,
+  "bundle_count": 15,
   "bundles": [
     {
       "id": "website-build-launch",
@@ -594,6 +594,73 @@
         "remaining routing gaps and follow-up rules"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "industry-application-orchestration",
+      "name": "Industry Application Orchestration",
+      "scenario": "Profile multi-industry users, select trusted domain skills, review regulated boundaries, and package an industry AI application plan.",
+      "status": "trusted",
+      "task_signals": ["industry solution", "industry application", "vertical solution", "vertical workflow", "solution pack", "healthcare", "clinical", "legal", "finance", "education", "manufacturing", "real estate", "saas users", "public sector", "multi industry", "行业", "垂直行业", "行业应用", "行业方案", "行业 ai", "医疗", "临床", "法务", "金融", "教育", "制造", "房地产", "多行业", "应用方案"],
+      "required_capabilities": [
+        {"id": "industry_intake", "required": true, "preferred_skills": ["vertical-industry-intake-orchestration"]},
+        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
+        {"id": "regulated_boundary", "required": true, "preferred_skills": ["compliance-regulated-industry-boundary", "compliance-privacy-check"]},
+        {"id": "domain_evidence", "required": true, "preferred_skills": ["research-source-check", "research-clinical-study-design-review", "research-finance-analysis-review"]},
+        {"id": "data_quality", "required": true, "preferred_skills": ["data-quality-audit"]},
+        {"id": "solution_packaging", "required": true, "preferred_skills": ["vertical-industry-solution-packaging"]},
+        {"id": "content_review", "required": false, "preferred_skills": ["content-editorial-review"]},
+        {"id": "saas_metrics", "required": false, "preferred_skills": ["business-saas-metrics-review"]},
+        {"id": "finance_operations", "required": false, "preferred_skills": ["business-finance-operations-review"]},
+        {"id": "education_plan", "required": false, "preferred_skills": ["vertical-education-plan"]},
+        {"id": "manufacturing_qc", "required": false, "preferred_skills": ["vertical-manufacturing-qc"]},
+        {"id": "real_estate_listing", "required": false, "preferred_skills": ["vertical-real-estate-listing"]},
+        {"id": "commerce_listing", "required": false, "preferred_skills": ["commerce-icbu-listing"]}
+      ],
+      "execution_order": [
+        "vertical-industry-intake-orchestration",
+        "business-requirements-brief",
+        "compliance-regulated-industry-boundary",
+        "compliance-privacy-check",
+        "research-source-check",
+        "research-clinical-study-design-review",
+        "research-finance-analysis-review",
+        "data-quality-audit",
+        "vertical-industry-solution-packaging",
+        "content-editorial-review",
+        "business-saas-metrics-review",
+        "business-finance-operations-review",
+        "vertical-education-plan",
+        "vertical-manufacturing-qc",
+        "vertical-real-estate-listing",
+        "commerce-icbu-listing"
+      ],
+      "skills": [
+        "vertical-industry-intake-orchestration",
+        "business-requirements-brief",
+        "compliance-regulated-industry-boundary",
+        "compliance-privacy-check",
+        "research-source-check",
+        "research-clinical-study-design-review",
+        "research-finance-analysis-review",
+        "data-quality-audit",
+        "vertical-industry-solution-packaging",
+        "content-editorial-review",
+        "business-saas-metrics-review",
+        "business-finance-operations-review",
+        "vertical-education-plan",
+        "vertical-manufacturing-qc",
+        "vertical-real-estate-listing",
+        "commerce-icbu-listing"
+      ],
+      "expected_output": [
+        "industry and user-role intake map",
+        "trusted domain skill routing table",
+        "regulated boundary and human-review gates",
+        "domain evidence and data-quality notes",
+        "industry solution blueprint and handoff plan",
+        "residual capability gaps and next-step backlog"
+      ],
+      "safety_boundary": "Skills provide method only; regulated industry conclusions require qualified specialist review and runtime permissions remain controlled by the host agent."
     },
     {
       "id": "commerce-listing-growth",

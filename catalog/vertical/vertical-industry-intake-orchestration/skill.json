@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T16:48:20Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "c9f2d4649dafcf3943a95d67458130373458e9878074439a763e7d06dbfbb4ec",
+    "sanitized_sha256": "70d636747c250ce2fc7597b9cb5a4bf51571aaba48e3b233a311361b75cf1e8b",
+    "source_sha256": "d310059dd3923f8d4b4e1c53359816c048a5b50787ea304c191a40a0e4bdc190"
+  },
+  "name": "vertical-industry-intake-orchestration",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:48:11Z",
+    "collected_by": "onecode-industry-orchestration",
+    "license": "Apache-2.0",
+    "path": "batches/batch-030-industry-application-orchestration/vertical-industry-intake-orchestration",
+    "reference": "docs/batches/batch-030-industry-application-orchestration.md",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "vertical",
+    "collection_priority": "P1",
+    "subcategory": "vertical.industry_intake",
+    "task_intent": "profile multi-industry user needs and route them to trusted domain workflows"
+  },
+  "version": "0.1.0"
+}
