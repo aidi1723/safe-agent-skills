@@ -241,7 +241,8 @@ The local MVP exposes:
 - `verify`: check sanitized hashes and provenance across the registry
 - `maintain-check`: verify the registry and ensure trusted bundles reference
   only existing trusted skills; also validates trusted-only overlap groups
-  when `overlap-groups.json` exists under the registry
+  when `overlap-groups.json` exists under the registry, plus optional
+  `claude-skills` converted-candidate coverage maps
 - `reindex`: rebuild `index.json` from manifests
 - `approve`, `reject`, `disable`: update review state and refresh the index
 

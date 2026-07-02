@@ -2462,6 +2462,125 @@ def validate_overlap_skill_reference(
         )
 
 
+def validate_claude_skills_candidate_map(registry_dir: Path, candidate_map_path: Path) -> dict:
+    issues = []
+    candidate_map = json.loads(candidate_map_path.read_text(encoding="utf-8"))
+    candidates = candidate_map.get("candidates", [])
+    if not isinstance(candidates, list):
+        issues.append(
+            {
+                "id": "claude-skills-invalid-candidates",
+                "severity": "high",
+                "path": candidate_map_path.as_posix(),
+            }
+        )
+        candidates = []
+
+    declared_candidate_count = candidate_map.get("candidate_count")
+    if declared_candidate_count is not None and declared_candidate_count != len(candidates):
+        issues.append(
+            {
+                "id": "claude-skills-candidate-count-mismatch",
+                "severity": "medium",
+                "path": candidate_map_path.as_posix(),
+                "expected": len(candidates),
+                "actual": declared_candidate_count,
+            }
+        )
+
+    index = load_registry_index(registry_dir)
+    statuses = {entry["name"]: entry.get("status") for entry in index["skills"]}
+    converted_candidates = [candidate for candidate in candidates if candidate.get("adoption") == "converted"]
+    declared_converted_count = candidate_map.get("converted_skill_count")
+    if declared_converted_count is not None and declared_converted_count != len(converted_candidates):
+        issues.append(
+            {
+                "id": "claude-skills-converted-count-mismatch",
+                "severity": "medium",
+                "path": candidate_map_path.as_posix(),
+                "expected": len(converted_candidates),
+                "actual": declared_converted_count,
+            }
+        )
+
+    actual_pairs = set()
+    for candidate_index, candidate in enumerate(candidates):
+        if candidate.get("adoption") != "converted":
+            continue
+        candidate_name = str(candidate.get("name", ""))
+        candidate_path = f"{candidate_map_path.as_posix()}#/candidates/{candidate_index}"
+        local_skill = candidate.get("local_skill")
+        if not isinstance(local_skill, str) or not local_skill:
+            issues.append(
+                {
+                    "id": "claude-skills-missing-local-skill",
+                    "severity": "high",
+                    "path": candidate_path,
+                    "candidate": candidate_name,
+                }
+            )
+            continue
+        actual_pairs.add((candidate_name, local_skill))
+        status = statuses.get(local_skill)
+        if status is None:
+            issues.append(
+                {
+                    "id": "claude-skills-missing-registry-skill",
+                    "severity": "high",
+                    "path": candidate_path,
+                    "candidate": candidate_name,
+                    "skill": local_skill,
+                }
+            )
+        elif status != "trusted":
+            issues.append(
+                {
+                    "id": "claude-skills-non-trusted-local-skill",
+                    "severity": "high",
+                    "path": candidate_path,
+                    "candidate": candidate_name,
+                    "skill": local_skill,
+                    "status": status,
+                }
+            )
+
+    declared_converted_skills = candidate_map.get("converted_skills", [])
+    if not isinstance(declared_converted_skills, list):
+        declared_converted_skills = []
+        issues.append(
+            {
+                "id": "claude-skills-invalid-converted-skills",
+                "severity": "high",
+                "path": candidate_map_path.as_posix(),
+            }
+        )
+    declared_pairs = {
+        (str(item.get("source_candidate", "")), str(item.get("local_skill", "")))
+        for item in declared_converted_skills
+        if isinstance(item, dict) and item.get("source_candidate") and item.get("local_skill")
+    }
+    if declared_pairs != actual_pairs:
+        issues.append(
+            {
+                "id": "claude-skills-converted-skills-mismatch",
+                "severity": "medium",
+                "path": candidate_map_path.as_posix(),
+                "expected": len(actual_pairs),
+                "actual": len(declared_pairs),
+            }
+        )
+
+    return {
+        "schema_version": 1,
+        "status": "failed" if issues else "ok",
+        "path": candidate_map_path.as_posix(),
+        "candidate_count": len(candidates),
+        "converted_count": len(converted_candidates),
+        "converted_skill_mapping_count": len(actual_pairs),
+        "issues": issues,
+    }
+
+
 def resolve_overlap_groups_path(registry_dir: Path, overlap_path: Path | None) -> Path | None:
     if overlap_path is not None:
         return overlap_path
@@ -2474,6 +2593,7 @@ def maintain_check(
     bundles_path: Path | None = None,
     overlap_groups_path: Path | None = None,
     references_path: Path | None = None,
+    claude_skills_candidate_map_path: Path | None = None,
 ) -> dict:
     registry_verification = verify_registry(registry_dir)
     issues = list(registry_verification["issues"])
@@ -2491,6 +2611,13 @@ def maintain_check(
     if references_path is not None:
         reference_validation = validate_external_references(references_path)
         issues.extend(reference_validation["issues"])
+    claude_skills_candidate_map_validation = None
+    if claude_skills_candidate_map_path is not None:
+        claude_skills_candidate_map_validation = validate_claude_skills_candidate_map(
+            registry_dir,
+            claude_skills_candidate_map_path,
+        )
+        issues.extend(claude_skills_candidate_map_validation["issues"])
     return {
         "schema_version": 1,
         "generated_at": utc_now(),
@@ -2499,6 +2626,7 @@ def maintain_check(
         "bundle_validation": bundle_validation,
         "overlap_validation": overlap_validation,
         "reference_validation": reference_validation,
+        "claude_skills_candidate_map_validation": claude_skills_candidate_map_validation,
         "issues": issues,
     }
 
@@ -2509,6 +2637,7 @@ def maintain_check_command(args: argparse.Namespace) -> int:
         Path(args.bundles) if args.bundles else None,
         Path(args.overlap_groups) if args.overlap_groups else None,
         Path(args.references) if getattr(args, "references", None) else None,
+        Path(args.claude_skills_candidate_map) if getattr(args, "claude_skills_candidate_map", None) else None,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
@@ -2690,6 +2819,7 @@ def build_parser() -> argparse.ArgumentParser:
     maintain_check_parser.add_argument("--bundles")
     maintain_check_parser.add_argument("--overlap-groups")
     maintain_check_parser.add_argument("--references")
+    maintain_check_parser.add_argument("--claude-skills-candidate-map")
     maintain_check_parser.set_defaults(func=maintain_check_command)
 
     schema_check_parser = subparsers.add_parser("schema-check")

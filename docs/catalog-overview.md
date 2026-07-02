@@ -74,6 +74,17 @@ onecode-skill-sanitizer claude-skills-bulk-assess \
   --registry catalog
 ```
 
+Include the candidate map in the release maintenance gate so converted
+coverage mappings continue to point at existing trusted catalog skills:
+
+```bash
+onecode-skill-sanitizer maintain-check \
+  --registry catalog \
+  --bundles bundles/index.json \
+  --references external-references/index.json \
+  --claude-skills-candidate-map docs/claude-skills-candidate-map.json
+```
+
 The current assessment classifies 283 candidates to keep reference-only and
 53 as already converted or covered by existing trusted skills. There are no
 remaining `author_local_skill` or `merge_existing` candidates after the

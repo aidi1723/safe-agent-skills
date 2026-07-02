@@ -974,6 +974,111 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["reference_validation"]["status"], "ok")
             self.assertEqual(result["reference_validation"]["reference_count"], 1)
 
+    def test_maintain_check_validates_claude_skills_coverage_map(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            incoming = root / "incoming"
+            registry = root / "registry"
+            candidate_map = root / "claude-skills-candidate-map.json"
+            skill = incoming / "business-covered-review"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text(
+                "Use this workflow for business coverage review.",
+                encoding="utf-8",
+            )
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "business",
+                            "subcategory": "business.coverage",
+                            "task_intent": "review business coverage",
+                            "artifact_type": "review",
+                            "collection_priority": "P1",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            main(["import", str(incoming), "--registry", str(registry), "--collected-by", "onecode-test"])
+            main(["approve", str(registry / "business" / "business-covered-review")])
+            candidate_map.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "candidate_count": 99,
+                        "converted_skill_count": 1,
+                        "candidates": [
+                            {
+                                "name": "covered",
+                                "adoption": "converted",
+                                "local_skill": "business-covered-review",
+                            },
+                            {
+                                "name": "missing-local-skill",
+                                "adoption": "converted",
+                            },
+                            {
+                                "name": "missing-registry-skill",
+                                "adoption": "converted",
+                                "local_skill": "business-missing-review",
+                            },
+                        ],
+                        "converted_skills": [
+                            {
+                                "source_candidate": "covered",
+                                "local_skill": "business-covered-review",
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            maintain_out = io.StringIO()
+            with contextlib.redirect_stdout(maintain_out):
+                maintain_code = main(
+                    [
+                        "maintain-check",
+                        "--registry",
+                        str(registry),
+                        "--claude-skills-candidate-map",
+                        str(candidate_map),
+                    ]
+                )
+
+            self.assertEqual(maintain_code, 2)
+            result = json.loads(maintain_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("claude-skills-candidate-count-mismatch", issue_ids)
+            self.assertIn("claude-skills-converted-count-mismatch", issue_ids)
+            self.assertIn("claude-skills-missing-local-skill", issue_ids)
+            self.assertIn("claude-skills-missing-registry-skill", issue_ids)
+            self.assertIn("claude-skills-converted-skills-mismatch", issue_ids)
+
+    def test_real_maintain_check_includes_claude_skills_coverage_map(self):
+        maintain_out = io.StringIO()
+        with contextlib.redirect_stdout(maintain_out):
+            maintain_code = main(
+                [
+                    "maintain-check",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--references",
+                    "external-references/index.json",
+                    "--claude-skills-candidate-map",
+                    "docs/claude-skills-candidate-map.json",
+                ]
+            )
+
+        self.assertEqual(maintain_code, 0)
+        result = json.loads(maintain_out.getvalue())
+        self.assertEqual(result["claude_skills_candidate_map_validation"]["status"], "ok")
+        self.assertEqual(result["claude_skills_candidate_map_validation"]["converted_count"], 53)
+
     def test_router_eval_passes_expected_scenario_cases(self):
         with tempfile.TemporaryDirectory() as tmp:
             eval_path = Path(tmp) / "router-eval.json"

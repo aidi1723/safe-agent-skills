@@ -19,7 +19,8 @@ PYTHONPATH=src python3 -m unittest discover -s tests -v
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
   --registry catalog \
   --bundles bundles/index.json \
-  --references external-references/index.json >/dev/null
+  --references external-references/index.json \
+  --claude-skills-candidate-map docs/claude-skills-candidate-map.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reference-check --references external-references/index.json >/dev/null
 private_path_patterns=(
   '/[U]sers/'

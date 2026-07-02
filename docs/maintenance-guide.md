@@ -93,7 +93,8 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
   --registry catalog \
   --bundles bundles/index.json \
-  --references external-references/index.json
+  --references external-references/index.json \
+  --claude-skills-candidate-map docs/claude-skills-candidate-map.json
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check \
   --registry catalog
 PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
