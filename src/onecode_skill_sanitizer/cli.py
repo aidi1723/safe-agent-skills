@@ -592,6 +592,18 @@ def build_agent_instructions(
                 ]
             )
         lines.append("")
+    if router_context and router_context.get("acceptance_criteria"):
+        lines.extend(["Acceptance criteria:"])
+        for criterion in router_context["acceptance_criteria"]:
+            lines.append(f"- {criterion}")
+        lines.append("")
+    if router_context and router_context.get("completion_contract"):
+        contract = router_context["completion_contract"]
+        lines.extend(["Completion contract:"])
+        lines.append("- final response must include: " + ", ".join(contract.get("final_response_must_include", [])))
+        lines.append("- stop conditions: " + ", ".join(contract.get("stop_conditions", [])))
+        lines.append("- evidence requirements: " + ", ".join(contract.get("evidence_requirements", [])))
+        lines.append("")
     lines.append("Selected skills:")
     for skill in skills:
         lines.extend(
@@ -635,6 +647,56 @@ def build_agent_instructions(
                 ]
             )
     return "\n".join(lines).strip()
+
+
+def build_acceptance_criteria(task_pack_context: dict) -> list[str]:
+    criteria = [
+        "Record selected trusted skills before execution.",
+        "Preserve the method-only safety boundary for all runtime actions.",
+    ]
+    if task_pack_context.get("selected_scenario", {}).get("id"):
+        criteria.append("Record selected scenario and why it matched the task.")
+    if task_pack_context.get("pipeline_plan"):
+        criteria.append("Complete every pipeline stage gate or record the failed gate.")
+    if task_pack_context.get("coverage"):
+        criteria.append("Record required capability coverage and missing required capabilities.")
+    if task_pack_context.get("invariant_capabilities"):
+        criteria.append("Preserve invariant capabilities throughout execution.")
+    if task_pack_context.get("pipeline_plan", {}).get("approval_gates"):
+        criteria.append("Stop before approval-required runtime actions until the host runtime or operator approves them.")
+    criteria.append("Record verification evidence before claiming completion.")
+    criteria.append("List unresolved assumptions and residual risks in the handoff.")
+    return list(dict.fromkeys(criteria))
+
+
+def build_completion_contract(task_pack_context: dict) -> dict:
+    stop_conditions = [
+        "required input missing",
+        "registry verification failed",
+        "approval-required runtime action blocked",
+        "required capability missing and no fallback exists",
+    ]
+    quality = task_pack_context.get("selection_quality", {})
+    if quality.get("low_confidence"):
+        stop_conditions.append("low-confidence route requires explicit residual-risk handoff")
+    if quality.get("missing_required_count", 0):
+        stop_conditions.append("missing required capabilities must be reported before completion")
+    return {
+        "final_response_must_include": [
+            "selected_scenario",
+            "selected_skills",
+            "verification_performed",
+            "unresolved_assumptions",
+            "residual_risks",
+        ],
+        "stop_conditions": list(dict.fromkeys(stop_conditions)),
+        "evidence_requirements": [
+            "commands or checks run",
+            "schema or format checks",
+            "source or provenance checks when relevant",
+            "failed or unavailable checks",
+        ],
+    }
 
 
 def build_task_pack(
@@ -706,7 +768,10 @@ def build_task_pack(
             "pipeline_plan": routed["pipeline_plan"],
             "invariant_capabilities": routed["invariant_capabilities"],
             "pruned_skills": routed["pruned_skills"],
+            "selection_quality": routed["selection_quality"],
         }
+        task_pack["acceptance_criteria"] = build_acceptance_criteria(task_pack)
+        task_pack["completion_contract"] = build_completion_contract(task_pack)
         task_pack["agent_instructions"] = build_agent_instructions(task, skills, bundles, task_pack)
         return task_pack
     if router_mode == "scenario":
@@ -746,10 +811,13 @@ def build_task_pack(
             "execution_plan": routed["execution_plan"],
             "pipeline_plan": routed["pipeline_plan"],
             "selection_explanations": routed["selection_explanations"],
+            "selection_quality": routed["selection_quality"],
         }
+        task_pack["acceptance_criteria"] = build_acceptance_criteria(task_pack)
+        task_pack["completion_contract"] = build_completion_contract(task_pack)
         task_pack["agent_instructions"] = build_agent_instructions(task, skills, bundles, task_pack)
         return task_pack
-    return {
+    task_pack = {
         "schema_version": 1,
         "generated_at": utc_now(),
         "task": task,
@@ -760,8 +828,11 @@ def build_task_pack(
         "registry_verification": verification,
         "skills": skills,
         "bundles": bundles,
-        "agent_instructions": build_agent_instructions(task, skills, bundles),
     }
+    task_pack["acceptance_criteria"] = build_acceptance_criteria(task_pack)
+    task_pack["completion_contract"] = build_completion_contract(task_pack)
+    task_pack["agent_instructions"] = build_agent_instructions(task, skills, bundles, task_pack)
+    return task_pack
 
 
 def render_task_pack_markdown(task_pack: dict) -> str:
@@ -852,6 +923,31 @@ def render_task_pack_markdown(task_pack: dict) -> str:
         lines.extend(["", "## Selection Explanations", ""])
         for item in task_pack.get("selection_explanations", []):
             lines.append(f"- `{item['name']}` ({item['type']}, {item['role']}): {item['selection_reason']}")
+    if task_pack.get("selection_quality"):
+        quality = task_pack["selection_quality"]
+        lines.extend(
+            [
+                "",
+                "## Selection Quality",
+                "",
+                f"- confidence: `{quality.get('confidence', 'low')}`",
+                f"- score: `{quality.get('score', 0)}`",
+                f"- coverage ratio: `{quality.get('coverage_ratio', 0)}`",
+                f"- low confidence: `{quality.get('low_confidence', False)}`",
+            ]
+        )
+        for warning in quality.get("warnings", []):
+            lines.append(f"- warning: {warning}")
+    if task_pack.get("acceptance_criteria"):
+        lines.extend(["", "## Acceptance Criteria", ""])
+        for criterion in task_pack["acceptance_criteria"]:
+            lines.append(f"- {criterion}")
+    if task_pack.get("completion_contract"):
+        contract = task_pack["completion_contract"]
+        lines.extend(["", "## Completion Contract", ""])
+        lines.append("- final response must include: " + ", ".join(contract.get("final_response_must_include", [])))
+        lines.append("- stop conditions: " + ", ".join(contract.get("stop_conditions", [])))
+        lines.append("- evidence requirements: " + ", ".join(contract.get("evidence_requirements", [])))
     lines.extend(["", "## Selected Skills"])
     for skill in task_pack["skills"]:
         lines.extend(
