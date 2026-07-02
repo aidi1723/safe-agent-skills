@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T13:57:17Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "a399ce1c1b910714c7cbf7fe0e62c577254b50b686b9bd7005b2c36b85c74ebc",
+    "sanitized_sha256": "4e97f69abc803d6e128a0ff9b6d908a9372ac765665bfba836422a62cd7bf59b",
+    "source_sha256": "735306a1f8531b58d565f6ba1c8fd633006a14a59405eff1c16708e6e97c6ccb"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-growth-operations-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T13:57:00Z",
+    "collected_by": "onecode-claude-skills-authoring-wave",
+    "license": "Apache-2.0",
+    "path": "batches/batch-028-claude-skills-authoring-wave/business-growth-operations-review",
+    "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.growth_ops",
+    "task_intent": "review growth operations, acquisition funnels, activation loops, experiments, conversion bottlenecks, and retention initiatives"
+  }
+}

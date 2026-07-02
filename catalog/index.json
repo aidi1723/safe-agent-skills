@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-02T13:01:56Z",
+  "generated_at": "2026-07-02T13:57:28Z",
   "schema_version": 1,
-  "skill_count": 147,
+  "skill_count": 152,
   "skills": [
     {
       "hashes": {
@@ -904,6 +904,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "3a8e362647a706854a7f26a818c5a41de0ba3a64c763ee23217d32c3286a7fe3",
+        "sanitized_sha256": "da5381ccb82c241ece15cbc6739a937ee7aecbe046e5c5bf0214ae2222595d2f",
+        "source_sha256": "14a3d94309f8c582e7c0b6a73984f2d7e6ef5ab800ede24fe51627d59ff90224"
+      },
+      "name": "business-finance-operations-review",
+      "registry_path": "business/business-finance-operations-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T13:57:00Z",
+        "collected_by": "onecode-claude-skills-authoring-wave",
+        "license": "Apache-2.0",
+        "path": "batches/batch-028-claude-skills-authoring-wave/business-finance-operations-review",
+        "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.finance_ops",
+        "task_intent": "review finance operations, budget control, forecast cadence, spend approvals, cash planning, and variance governance"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "2e3e9ae402a190dc8f17258adabf32d67961cae433ba02290f471f128dd7f185",
         "sanitized_sha256": "a7aa611bd1a94b607e70b65ee1e1db37ee458da5e2e5fcb4d1bab8f238e9924c",
         "source_sha256": "fcb3fef508b575773a285e4a6cdadadc30ba9e6ced598f06b5986ff80264e252"
@@ -929,6 +958,35 @@
         "collection_priority": "P0",
         "subcategory": "business.finance",
         "task_intent": "review business financial analysis, variance, unit economics, and cash planning evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "a399ce1c1b910714c7cbf7fe0e62c577254b50b686b9bd7005b2c36b85c74ebc",
+        "sanitized_sha256": "4e97f69abc803d6e128a0ff9b6d908a9372ac765665bfba836422a62cd7bf59b",
+        "source_sha256": "735306a1f8531b58d565f6ba1c8fd633006a14a59405eff1c16708e6e97c6ccb"
+      },
+      "name": "business-growth-operations-review",
+      "registry_path": "business/business-growth-operations-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T13:57:00Z",
+        "collected_by": "onecode-claude-skills-authoring-wave",
+        "license": "Apache-2.0",
+        "path": "batches/batch-028-claude-skills-authoring-wave/business-growth-operations-review",
+        "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.growth_ops",
+        "task_intent": "review growth operations, acquisition funnels, activation loops, experiments, conversion bottlenecks, and retention initiatives"
       }
     },
     {
@@ -1190,6 +1248,35 @@
         "collection_priority": "P0",
         "subcategory": "business.product_management",
         "task_intent": "review product strategy, roadmap tradeoffs, PMF evidence, and prioritization assumptions"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "875eb4cfb7cf3c1cc8b8748f4f935154840f036b18d9e360462eeec2df44942d",
+        "sanitized_sha256": "f88868985ca2943c805b37b6f3abe963c0ce0969cd9b4594a5088b4c7b84b905",
+        "source_sha256": "0e610933dff9c12ad17b00414c84e78b089ee56c23689b4a122463a5f431dbdb"
+      },
+      "name": "business-project-management-operations-review",
+      "registry_path": "business/business-project-management-operations-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T13:57:00Z",
+        "collected_by": "onecode-claude-skills-authoring-wave",
+        "license": "Apache-2.0",
+        "path": "batches/batch-028-claude-skills-authoring-wave/business-project-management-operations-review",
+        "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.project_ops",
+        "task_intent": "review project management operations, delivery cadence, scope control, stakeholder alignment, dependencies, and execution governance"
       }
     },
     {
@@ -1725,6 +1812,35 @@
         "collection_priority": "P0",
         "subcategory": "commerce.forecast",
         "task_intent": "review commercial forecasts, pipeline assumptions, and revenue scenario evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "bd2c998ea410498bd6427488b33a2da9b3aaf86e90a8a0fc8712d8d995162ac9",
+        "sanitized_sha256": "75285cd0a3c0a046d29455861fd32e470e533608ece6210c906fe7ef445a44bf",
+        "source_sha256": "6b24b37ea6e513056cab3e3dfc21633736a611eb4d4490fd97e18cc050f7762b"
+      },
+      "name": "commerce-commercial-operations-review",
+      "registry_path": "commerce/commerce-commercial-operations-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T13:57:00Z",
+        "collected_by": "onecode-claude-skills-authoring-wave",
+        "license": "Apache-2.0",
+        "path": "batches/batch-028-claude-skills-authoring-wave/commerce-commercial-operations-review",
+        "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "commerce",
+        "collection_priority": "P0",
+        "subcategory": "commerce.operations",
+        "task_intent": "review commercial operations workflows, deal governance, buyer qualification, pricing coordination, and revenue handoffs"
       }
     },
     {
@@ -3883,6 +3999,35 @@
         "collection_priority": "P1",
         "subcategory": "research.market",
         "task_intent": "review market research, opportunity sizing, competitor signals, buyer evidence, and market assumptions"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "f49a6a6729c2d5af790afbe576883eda19564967707d86085c4b70c9a0647921",
+        "sanitized_sha256": "6f79d8f82fe6aa2bbf73aa429af376c21ba273d4ddf4c5239b9259a66e4c5277",
+        "source_sha256": "2b731fe863df8f356b3bad373826abfb5f1d5012afcded4944d1555047106ef8"
+      },
+      "name": "research-operations-governance-review",
+      "registry_path": "research/research-operations-governance-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T13:57:00Z",
+        "collected_by": "onecode-claude-skills-authoring-wave",
+        "license": "Apache-2.0",
+        "path": "batches/batch-028-claude-skills-authoring-wave/research-operations-governance-review",
+        "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.operations",
+        "task_intent": "review research operations governance, study intake, participant handling, evidence lineage, repository hygiene, and insight delivery workflows"
       }
     },
     {

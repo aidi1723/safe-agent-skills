@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.project_ops",
+    "task_intent": "review project management operations, delivery cadence, scope control, stakeholder alignment, dependencies, and execution governance"
+  }
+}

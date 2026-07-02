@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T13:57:28Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "f49a6a6729c2d5af790afbe576883eda19564967707d86085c4b70c9a0647921",
+    "sanitized_sha256": "6f79d8f82fe6aa2bbf73aa429af376c21ba273d4ddf4c5239b9259a66e4c5277",
+    "source_sha256": "2b731fe863df8f356b3bad373826abfb5f1d5012afcded4944d1555047106ef8"
+  },
+  "name": "research-operations-governance-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T13:57:00Z",
+    "collected_by": "onecode-claude-skills-authoring-wave",
+    "license": "Apache-2.0",
+    "path": "batches/batch-028-claude-skills-authoring-wave/research-operations-governance-review",
+    "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.operations",
+    "task_intent": "review research operations governance, study intake, participant handling, evidence lineage, repository hygiene, and insight delivery workflows"
+  },
+  "version": "0.1.0"
+}

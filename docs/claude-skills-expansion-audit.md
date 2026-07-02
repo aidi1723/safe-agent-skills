@@ -13,7 +13,7 @@ catalog, or marked trusted.
 - raw `SKILL.md` files observed: 772
 - canonical deduped candidates: 336
 - priority distribution: P0 27, P1 12, P2 19, P3 278
-- converted skills: 33 local OneCode-authored skills across five batches
+- converted skills: 38 local OneCode-authored skills across six batches
 
 Top source domains by canonical candidates:
 
@@ -68,6 +68,11 @@ Top source domains by canonical candidates:
 | `atlassian-admin` | `business-atlassian-admin-governance-review` | business |
 | `atlassian-templates` | `business-atlassian-template-governance-review` | business |
 | `pricing-strategy` | `content-marketing-pricing-strategy-review` | content |
+| `commercial-skills` | `commerce-commercial-operations-review` | commerce |
+| `finance-skills` | `business-finance-operations-review` | business |
+| `business-growth-skills` | `business-growth-operations-review` | business |
+| `pm-skills` | `business-project-management-operations-review` | business |
+| `research-ops-skills` | `research-operations-governance-review` | research |
 
 ## Ranking Method
 
@@ -120,8 +125,8 @@ router or platform mirror. The resulting candidate map is stored at
     --registry catalog
   ```
 
-  Current assessment: 5 `author_local_skill`, 15 `merge_existing`,
-  283 `keep_reference_only`, and 33 `already_converted`. The command only
+  Current assessment after the authoring wave: 15 `merge_existing`,
+  283 `keep_reference_only`, and 38 `already_converted`. The command only
   reviews metadata-only drafts; it does not approve or trust them.
 - Connector-aware skills should wait for host adapter verification.
 

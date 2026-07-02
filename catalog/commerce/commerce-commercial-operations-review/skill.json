@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T13:57:07Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "bd2c998ea410498bd6427488b33a2da9b3aaf86e90a8a0fc8712d8d995162ac9",
+    "sanitized_sha256": "75285cd0a3c0a046d29455861fd32e470e533608ece6210c906fe7ef445a44bf",
+    "source_sha256": "6b24b37ea6e513056cab3e3dfc21633736a611eb4d4490fd97e18cc050f7762b"
+  },
+  "name": "commerce-commercial-operations-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T13:57:00Z",
+    "collected_by": "onecode-claude-skills-authoring-wave",
+    "license": "Apache-2.0",
+    "path": "batches/batch-028-claude-skills-authoring-wave/commerce-commercial-operations-review",
+    "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "commerce",
+    "collection_priority": "P0",
+    "subcategory": "commerce.operations",
+    "task_intent": "review commercial operations workflows, deal governance, buyer qualification, pricing coordination, and revenue handoffs"
+  },
+  "version": "0.1.0"
+}

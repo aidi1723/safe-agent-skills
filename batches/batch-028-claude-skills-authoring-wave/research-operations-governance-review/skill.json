@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.operations",
+    "task_intent": "review research operations governance, study intake, participant handling, evidence lineage, repository hygiene, and insight delivery workflows"
+  }
+}

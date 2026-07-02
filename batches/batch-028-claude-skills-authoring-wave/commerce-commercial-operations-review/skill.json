@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "commerce",
+    "collection_priority": "P0",
+    "subcategory": "commerce.operations",
+    "task_intent": "review commercial operations workflows, deal governance, buyer qualification, pricing coordination, and revenue handoffs"
+  }
+}

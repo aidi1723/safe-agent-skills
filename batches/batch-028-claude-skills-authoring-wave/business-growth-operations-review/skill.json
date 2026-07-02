@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.growth_ops",
+    "task_intent": "review growth operations, acquisition funnels, activation loops, experiments, conversion bottlenecks, and retention initiatives"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T13:57:12Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "3a8e362647a706854a7f26a818c5a41de0ba3a64c763ee23217d32c3286a7fe3",
+    "sanitized_sha256": "da5381ccb82c241ece15cbc6739a937ee7aecbe046e5c5bf0214ae2222595d2f",
+    "source_sha256": "14a3d94309f8c582e7c0b6a73984f2d7e6ef5ab800ede24fe51627d59ff90224"
+  },
+  "name": "business-finance-operations-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T13:57:00Z",
+    "collected_by": "onecode-claude-skills-authoring-wave",
+    "license": "Apache-2.0",
+    "path": "batches/batch-028-claude-skills-authoring-wave/business-finance-operations-review",
+    "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.finance_ops",
+    "task_intent": "review finance operations, budget control, forecast cadence, spend approvals, cash planning, and variance governance"
+  },
+  "version": "0.1.0"
+}

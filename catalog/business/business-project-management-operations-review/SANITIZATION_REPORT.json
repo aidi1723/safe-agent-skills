@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T13:57:22Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "875eb4cfb7cf3c1cc8b8748f4f935154840f036b18d9e360462eeec2df44942d",
+    "sanitized_sha256": "f88868985ca2943c805b37b6f3abe963c0ce0969cd9b4594a5088b4c7b84b905",
+    "source_sha256": "0e610933dff9c12ad17b00414c84e78b089ee56c23689b4a122463a5f431dbdb"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-project-management-operations-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T13:57:00Z",
+    "collected_by": "onecode-claude-skills-authoring-wave",
+    "license": "Apache-2.0",
+    "path": "batches/batch-028-claude-skills-authoring-wave/business-project-management-operations-review",
+    "reference": "docs/batches/batch-028-claude-skills-authoring-wave.md; metadata-only claude-skills authoring wave",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.project_ops",
+    "task_intent": "review project management operations, delivery cadence, scope control, stakeholder alignment, dependencies, and execution governance"
+  }
+}

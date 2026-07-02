@@ -1,0 +1,9 @@
+{
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.finance_ops",
+    "task_intent": "review finance operations, budget control, forecast cadence, spend approvals, cash planning, and variance governance"
+  }
+}

@@ -159,9 +159,10 @@
       "local_skill": "commerce-commercial-policy-review"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "router-index",
+      "local_skill": "commerce-commercial-operations-review",
       "mapped_category": "commerce",
       "name": "commercial-skills",
       "priority": "P0",
@@ -278,9 +279,10 @@
       "local_skill": "business-jira-workflow-review"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "router-index",
+      "local_skill": "business-finance-operations-review",
       "mapped_category": "business",
       "name": "finance-skills",
       "priority": "P0",
@@ -421,9 +423,10 @@
       "local_skill": "research-finance-analysis-review"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "router-index",
+      "local_skill": "business-growth-operations-review",
       "mapped_category": "business",
       "name": "business-growth-skills",
       "priority": "P1",
@@ -443,9 +446,10 @@
       "source_path": "business-operations/skills/business-operations-skills"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "router-index",
+      "local_skill": "business-project-management-operations-review",
       "mapped_category": "business",
       "name": "pm-skills",
       "priority": "P1",
@@ -454,9 +458,10 @@
       "source_path": "project-management/skills/pm-skills"
     },
     {
-      "adoption": "reference_only",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "router-index",
+      "local_skill": "research-operations-governance-review",
       "mapped_category": "research",
       "name": "research-ops-skills",
       "priority": "P1",
@@ -3732,7 +3737,7 @@
       "source_path": "c-level-advisor/skills/c-level-skills"
     }
   ],
-  "converted_skill_count": 33,
+  "converted_skill_count": 38,
   "converted_skills": [
     {
       "local_skill": "business-atlassian-admin-governance-review",
@@ -3741,6 +3746,10 @@
     {
       "local_skill": "business-atlassian-template-governance-review",
       "source_candidate": "atlassian-templates"
+    },
+    {
+      "local_skill": "business-growth-operations-review",
+      "source_candidate": "business-growth-skills"
     },
     {
       "local_skill": "business-investment-memo-review",
@@ -3767,6 +3776,10 @@
       "source_candidate": "commercial-policy"
     },
     {
+      "local_skill": "commerce-commercial-operations-review",
+      "source_candidate": "commercial-skills"
+    },
+    {
       "local_skill": "business-confluence-knowledge-review",
       "source_candidate": "confluence-expert"
     },
@@ -3785,6 +3798,10 @@
     {
       "local_skill": "business-financial-analysis-review",
       "source_candidate": "financial-analyst"
+    },
+    {
+      "local_skill": "business-finance-operations-review",
+      "source_candidate": "finance-skills"
     },
     {
       "local_skill": "business-internal-comms-review",
@@ -3819,6 +3836,10 @@
       "source_candidate": "pricing-strategy"
     },
     {
+      "local_skill": "business-project-management-operations-review",
+      "source_candidate": "pm-skills"
+    },
+    {
       "local_skill": "business-process-mapping-review",
       "source_candidate": "process-mapper"
     },
@@ -3833,6 +3854,10 @@
     {
       "local_skill": "research-finance-analysis-review",
       "source_candidate": "research-finance"
+    },
+    {
+      "local_skill": "research-operations-governance-review",
+      "source_candidate": "research-ops-skills"
     },
     {
       "local_skill": "business-revenue-operations-review",

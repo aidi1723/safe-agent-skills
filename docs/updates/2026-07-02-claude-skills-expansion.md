@@ -3,7 +3,7 @@
 Date: 2026-07-02
 
 This update evaluates the public `claude-skills` repository as a metadata-only
-reference source and adds five locally authored OneCode-safe expansion batches.
+reference source and adds six locally authored OneCode-safe expansion batches.
 
 ## What Changed
 
@@ -24,10 +24,12 @@ reference source and adds five locally authored OneCode-safe expansion batches.
   local draft folders from the ranked bulk review plan. The 7 bulk draft
   batches now cover all 303 actionable `reference_only` candidates.
 - Added `claude-skills-bulk-assess` to rank the full draft pool before
-  promotion. Current assessment keeps the catalog boundary unchanged while
-  identifying 5 candidates for local authoring, 15 for merge review, and 283
-  to keep reference-only.
-- Imported and approved 33 new trusted catalog entries, including:
+  promotion. The current assessment identifies 15 candidates for merge review,
+  283 to keep reference-only, and 38 already converted; no
+  `author_local_skill` candidates remain after the authoring wave.
+- Added `batch-028-claude-skills-authoring-wave` with 5 locally authored
+  trusted skills from the bulk assessment shortlist.
+- Imported and approved 38 new trusted catalog entries, including:
   `business-saas-metrics-review`,
   `commerce-rfp-response-review`,
   `business-procurement-optimization-review`,
@@ -60,7 +62,12 @@ reference source and adds five locally authored OneCode-safe expansion batches.
   `business-investment-memo-review`,
   `business-atlassian-admin-governance-review`,
   `business-atlassian-template-governance-review`, and
-  `content-marketing-pricing-strategy-review`.
+  `content-marketing-pricing-strategy-review`,
+  `commerce-commercial-operations-review`,
+  `business-finance-operations-review`,
+  `business-growth-operations-review`,
+  `business-project-management-operations-review`, and
+  `research-operations-governance-review`.
 
 ## Boundary
 

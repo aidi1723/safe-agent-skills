@@ -6,8 +6,8 @@ skill, not manual installation of every catalog skill.
 
 ## Current Baseline
 
-- 147 catalog skills
-- 141 trusted skills
+- 152 catalog skills
+- 146 trusted skills
 - 13 trusted scenario bundles
 - 15 top-level categories
 - trusted-only default routing
@@ -29,7 +29,7 @@ skill, not manual installation of every catalog skill.
 ## Maintenance Priorities
 
 The `claude-skills` expansion audit evaluated 336 canonical upstream candidates
-and converted 33 local safe skills across SaaS metrics, RFP responses,
+and converted 38 local safe skills across SaaS metrics, RFP responses,
 procurement, pricing, customer success, clinical study design, vendor
 management, commercial forecasting, revenue operations, deal desk, finance
 analysis, Scrum project review, knowledge operations, process mapping,
@@ -38,7 +38,9 @@ Jira workflow review, Confluence knowledge review, internal communications,
 capacity planning, meeting analysis, team communications, contract proposal
 review, sales engineering, market research, product research, research finance,
 investment memo review, Atlassian administration governance, Atlassian template
-governance, and marketing pricing strategy review. The ranked candidate queue
+governance, marketing pricing strategy review, commercial operations, finance
+operations, growth operations, project management operations, and research
+operations governance. The ranked candidate queue
 now has no remaining `candidate` entries; future expansion should mine
 reference-only clusters for deeper engineering, product, marketing, compliance,
 RA/QM, and connector-aware workflows.
@@ -71,8 +73,9 @@ onecode-skill-sanitizer claude-skills-bulk-assess \
   --registry catalog
 ```
 
-The current assessment classifies 5 candidates for local authoring, 15 for
-overlap merge review, 283 to keep reference-only, and 33 as already converted.
+The current assessment classifies 15 candidates for overlap merge review, 283
+to keep reference-only, and 38 as already converted. There are no remaining
+`author_local_skill` candidates after the authoring wave.
 The assessment command does not approve or trust drafts.
 
 External libraries such as `claude-skills` are reference-only. Do not install,

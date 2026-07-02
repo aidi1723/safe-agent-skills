@@ -320,6 +320,11 @@ class RegistryCliTest(unittest.TestCase):
             "atlassian-admin",
             "atlassian-templates",
             "pricing-strategy",
+            "commercial-skills",
+            "finance-skills",
+            "business-growth-skills",
+            "pm-skills",
+            "research-ops-skills",
         ]:
             self.assertIn(name, names)
             self.assertIn(names[name]["priority"], {"P0", "P1"})
@@ -361,6 +366,11 @@ class RegistryCliTest(unittest.TestCase):
                 "atlassian-admin",
                 "atlassian-templates",
                 "pricing-strategy",
+                "commercial-skills",
+                "finance-skills",
+                "business-growth-skills",
+                "pm-skills",
+                "research-ops-skills",
             },
             converted,
         )
@@ -768,6 +778,26 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(by_name[name]["taxonomy"]["category"], category)
             self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
             self.assertEqual(by_name[name]["source"]["collected_by"], "onecode-claude-skills-overlap-depth")
+            self.assertIn("claude-skills", by_name[name]["source"]["reference"])
+
+    def test_catalog_includes_claude_skills_authoring_wave(self):
+        index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
+        by_name = {entry["name"]: entry for entry in index["skills"]}
+
+        expected = {
+            "commerce-commercial-operations-review": "commerce",
+            "business-finance-operations-review": "business",
+            "business-growth-operations-review": "business",
+            "business-project-management-operations-review": "business",
+            "research-operations-governance-review": "research",
+        }
+        for name, category in expected.items():
+            self.assertIn(name, by_name)
+            self.assertEqual(by_name[name]["status"], "trusted")
+            self.assertEqual(by_name[name]["risk_level"], "low")
+            self.assertEqual(by_name[name]["taxonomy"]["category"], category)
+            self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
+            self.assertEqual(by_name[name]["source"]["collected_by"], "onecode-claude-skills-authoring-wave")
             self.assertIn("claude-skills", by_name[name]["source"]["reference"])
 
     def test_reference_check_rejects_incomplete_or_executable_references(self):
@@ -1761,7 +1791,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 147)
+        self.assertEqual(result["skill_manifest_count"], 152)
         self.assertEqual(result["issues"], [])
 
     def test_verify_registry_detects_manifest_policy_tampering(self):
