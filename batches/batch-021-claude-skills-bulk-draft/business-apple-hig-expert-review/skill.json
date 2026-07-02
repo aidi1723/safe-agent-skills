@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 55,
+    "source_domain": "product-team",
+    "source_path": "product-team/apple-hig-expert/skills/apple-hig-expert",
+    "upstream_candidate": "apple-hig-expert",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "business-apple-hig-expert-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate apple-hig-expert",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "business",
+    "collection_priority": "P2",
+    "subcategory": "business.apple_hig_expert",
+    "task_intent": "review apple hig expert metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

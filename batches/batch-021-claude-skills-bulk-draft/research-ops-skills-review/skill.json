@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 78,
+    "source_domain": "research-ops",
+    "source_path": "research-ops/skills/research-ops-skills",
+    "upstream_candidate": "research-ops-skills",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "research-ops-skills-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate research-ops-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.research_ops_skills",
+    "task_intent": "review research ops skills metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

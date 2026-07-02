@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 85,
+    "source_domain": "business-growth",
+    "source_path": "business-growth/skills/business-growth-skills",
+    "upstream_candidate": "business-growth-skills",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "business-growth-skills-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate business-growth-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.business_growth_skills",
+    "task_intent": "review business growth skills metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

@@ -104,6 +104,9 @@ router or platform mirror. The resulting candidate map is stored at
 
   Drafts are not catalog entries and are not trusted. They must be edited,
   imported, approved serially, and verified before any catalog inclusion.
+- `batch-021-claude-skills-bulk-draft` materializes the first 50-item bulk
+  review wave as local draft folders. Catalog counts and trusted counts are
+  unchanged by this draft batch.
 - Connector-aware skills should wait for host adapter verification.
 
 ## Governance Notes

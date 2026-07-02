@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 71,
+    "source_domain": "product-team",
+    "source_path": "product-team/skills/competitive-teardown",
+    "upstream_candidate": "competitive-teardown",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "business-competitive-teardown-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate competitive-teardown",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "business",
+    "collection_priority": "P2",
+    "subcategory": "business.competitive_teardown",
+    "task_intent": "review competitive teardown metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

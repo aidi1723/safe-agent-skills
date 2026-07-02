@@ -16,6 +16,9 @@ reference source and adds five locally authored OneCode-safe expansion batches.
 - Added `batch-018-claude-skills-ops` with 8 locally authored skills.
 - Added `batch-019-claude-skills-research-comms` with 8 locally authored skills.
 - Added `batch-020-claude-skills-overlap-depth` with 3 locally authored skills.
+- Added `batch-021-claude-skills-bulk-draft` with 50 metadata-only local
+  draft folders for bulk review. These drafts are not catalog entries and are
+  not trusted.
 - Imported and approved 33 new trusted catalog entries, including:
   `business-saas-metrics-review`,
   `commerce-rfp-response-review`,

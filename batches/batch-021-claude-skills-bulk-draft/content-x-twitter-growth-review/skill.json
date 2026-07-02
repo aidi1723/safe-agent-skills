@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 56,
+    "source_domain": "marketing-skill",
+    "source_path": "marketing-skill/skills/x-twitter-growth",
+    "upstream_candidate": "x-twitter-growth",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "content-x-twitter-growth-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate x-twitter-growth",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "content",
+    "collection_priority": "P2",
+    "subcategory": "content.x_twitter_growth",
+    "task_intent": "review x twitter growth metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}
