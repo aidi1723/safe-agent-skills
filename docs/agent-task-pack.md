@@ -50,6 +50,9 @@ The JSON output includes:
 - `task_profile`: optional deterministic task profile for scenario routing
 - `selected_scenario`: optional best matching trusted scenario bundle
 - `coverage`: optional capability coverage records for the selected scenario
+  with `covered`, `missing`, or `omitted_by_limit` status. `omitted_by_limit`
+  means the preferred trusted skill exists but was left out of the current
+  `max-skills` execution pack.
 - `execution_plan`: optional ordered skill execution guidance
 - `selection_explanations`: optional reasons for selected bundles and skills
 - `execution_graph`: optional mesh DAG with `stage`, `gate`,

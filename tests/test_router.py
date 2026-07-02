@@ -521,6 +521,88 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(coverage[1]["status"], "missing")
         self.assertEqual(coverage[1]["skill"], "")
 
+    def test_build_capability_coverage_marks_available_unselected_skills_as_omitted(self):
+        bundle = {
+            "required_capabilities": [
+                {
+                    "id": "ui_review",
+                    "required": True,
+                    "preferred_skills": ["design-ui-review"],
+                },
+                {
+                    "id": "premium_landing_design",
+                    "required": False,
+                    "preferred_skills": ["design-premium-landing-page"],
+                },
+            ]
+        }
+
+        coverage = build_capability_coverage(
+            bundle,
+            selected_skill_names={"design-ui-review"},
+            available_skill_names={"design-ui-review", "design-premium-landing-page"},
+        )
+
+        self.assertEqual(coverage[0]["status"], "covered")
+        self.assertEqual(coverage[1]["status"], "omitted_by_limit")
+        self.assertEqual(coverage[1]["skill"], "design-premium-landing-page")
+        self.assertEqual(coverage[1]["omission_reason"], "available_not_selected")
+
+    def test_route_mesh_task_marks_optional_bundle_capabilities_omitted_by_limit(self):
+        bundles_index = {
+            "bundles": [
+                {
+                    "id": "website-build-launch",
+                    "name": "Website Build Launch",
+                    "scenario": "Build or polish a website, landing page, dashboard, or product page.",
+                    "status": "trusted",
+                    "task_signals": ["website", "landing page", "launch"],
+                    "skills": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "design-premium-landing-page",
+                    ],
+                    "required_capabilities": [
+                        {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                        {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                        {
+                            "id": "premium_landing_design",
+                            "required": False,
+                            "preferred_skills": ["design-premium-landing-page"],
+                        },
+                    ],
+                    "execution_order": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "design-premium-landing-page",
+                    ],
+                }
+            ]
+        }
+        selected = [
+            {"name": "business-requirements-brief", "match_score": 5},
+            {"name": "design-ui-review", "match_score": 5},
+            {"name": "design-premium-landing-page", "match_score": 0},
+        ]
+
+        routed = route_mesh_task(
+            task="build a landing page and prepare launch checks",
+            invariants=None,
+            selected_skills=selected,
+            bundles_index=bundles_index,
+            trusted_skill_names={skill["name"] for skill in selected},
+            overlap_groups=None,
+            max_skills=2,
+            strategy="balanced",
+        )
+
+        coverage = {item["capability"]: item for item in routed["coverage"]}
+        self.assertEqual(coverage["requirements"]["status"], "covered")
+        self.assertEqual(coverage["ui_review"]["status"], "covered")
+        self.assertEqual(coverage["premium_landing_design"]["status"], "omitted_by_limit")
+        self.assertEqual(coverage["premium_landing_design"]["skill"], "design-premium-landing-page")
+        self.assertEqual(routed["selection_quality"]["missing_required_count"], 0)
+
     def test_build_execution_plan_uses_bundle_order_and_selected_skills(self):
         bundle = {
             "execution_order": [

@@ -317,21 +317,30 @@ def score_bundle_for_profile(bundle: dict, task_profile: dict) -> int:
     return score
 
 
-def build_capability_coverage(bundle: dict, selected_skill_names: set[str]) -> list[dict]:
+def build_capability_coverage(
+    bundle: dict,
+    selected_skill_names: set[str],
+    available_skill_names: set[str] | None = None,
+) -> list[dict]:
+    available_skill_names = available_skill_names or selected_skill_names
     coverage = []
     for capability in bundle.get("required_capabilities", []):
         capability_id = capability.get("id", "")
         preferred = capability.get("preferred_skills", [])
         selected = next((skill_name for skill_name in preferred if skill_name in selected_skill_names), "")
-        coverage.append(
-            {
-                "capability": capability_id,
-                "required": bool(capability.get("required", True)),
-                "status": "covered" if selected else "missing",
-                "skill": selected,
-                "preferred_skills": preferred,
-            }
-        )
+        available = next((skill_name for skill_name in preferred if skill_name in available_skill_names), "")
+        item = {
+            "capability": capability_id,
+            "required": bool(capability.get("required", True)),
+            "status": "covered" if selected else "missing",
+            "skill": selected,
+            "preferred_skills": preferred,
+        }
+        if not selected and available:
+            item["status"] = "omitted_by_limit"
+            item["skill"] = available
+            item["omission_reason"] = "available_not_selected"
+        coverage.append(item)
     return coverage
 
 
@@ -547,7 +556,15 @@ def route_scenario_task(
         if name not in routed_names:
             routed_names.append(name)
     routed_skills = [selected_by_name[name] for name in routed_names]
-    coverage = build_capability_coverage(selected_bundle, {skill["name"] for skill in routed_skills}) if selected_bundle else []
+    coverage = (
+        build_capability_coverage(
+            selected_bundle,
+            {skill["name"] for skill in routed_skills},
+            set(selected_by_name),
+        )
+        if selected_bundle
+        else []
+    )
     selected_scenario = {
         "id": selected_bundle.get("id", ""),
         "name": selected_bundle.get("name", selected_bundle.get("id", "")),
@@ -1253,7 +1270,11 @@ def route_mesh_task(
     final_names, final_graph = contract_sorted_skill_names(selected_by_name, final_names)
     routed_skills = [selected_by_name[name] for name in final_names]
     selected_names = {skill["name"] for skill in routed_skills}
-    coverage = build_capability_coverage(selected_bundle, selected_names) if selected_bundle else []
+    coverage = (
+        build_capability_coverage(selected_bundle, selected_names, set(selected_by_name))
+        if selected_bundle
+        else []
+    )
     for capability in invariant_capabilities:
         preferred = CAPABILITY_SKILL_PREFERENCES.get(capability, [])
         selected = next((name for name in preferred if name in selected_names), "")
