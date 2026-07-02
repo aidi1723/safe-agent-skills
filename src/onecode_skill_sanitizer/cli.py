@@ -2130,6 +2130,17 @@ def trusted_registry_skill_names(registry_dir: Path) -> list[str]:
     ]
 
 
+def registry_skill_statuses(registry_dir: Path) -> dict[str, str]:
+    if not registry_dir.exists():
+        return {}
+    index = load_registry_index(registry_dir)
+    return {
+        str(entry.get("name", "")): str(entry.get("status", ""))
+        for entry in index.get("skills", [])
+        if entry.get("name")
+    }
+
+
 def find_claude_skills_overlap(candidate: dict, trusted_names: list[str]) -> str:
     candidate_name = str(candidate.get("name", ""))
     candidate_slug = slugify_skill_part(candidate_name)
@@ -2144,7 +2155,12 @@ def find_claude_skills_overlap(candidate: dict, trusted_names: list[str]) -> str
     return ""
 
 
-def assess_claude_skills_candidate(candidate: dict, draft_names: set[str], trusted_names: list[str]) -> dict:
+def assess_claude_skills_candidate(
+    candidate: dict,
+    draft_names: set[str],
+    trusted_names: list[str],
+    skill_statuses: dict[str, str],
+) -> dict:
     name = str(candidate.get("name", ""))
     draft_name = local_draft_skill_name(candidate)
     adoption = str(candidate.get("adoption", "reference_only"))
@@ -2161,12 +2177,50 @@ def assess_claude_skills_candidate(candidate: dict, draft_names: set[str], trust
         "source_path": candidate.get("source_path", ""),
     }
     if adoption == "converted":
+        local_skill = candidate.get("local_skill", "")
+        if not isinstance(local_skill, str) or not local_skill:
+            item.update(
+                {
+                    "recommendation": "invalid_converted_mapping",
+                    "next_gate": "candidate-map-fix",
+                    "reason": "converted candidate is missing a local_skill mapping",
+                    "mapping_status": "missing_local_skill",
+                    "local_skill": "",
+                }
+            )
+            return item
+        local_skill_status = skill_statuses.get(local_skill)
+        if local_skill_status is None:
+            item.update(
+                {
+                    "recommendation": "invalid_converted_mapping",
+                    "next_gate": "candidate-map-fix",
+                    "reason": "converted candidate points to a local skill that is missing from the registry",
+                    "mapping_status": "missing_registry_skill",
+                    "local_skill": local_skill,
+                }
+            )
+            return item
+        if local_skill_status != "trusted":
+            item.update(
+                {
+                    "recommendation": "invalid_converted_mapping",
+                    "next_gate": "candidate-map-fix",
+                    "reason": "converted candidate points to a local skill that is not trusted",
+                    "mapping_status": "non_trusted_local_skill",
+                    "local_skill": local_skill,
+                    "local_skill_status": local_skill_status,
+                }
+            )
+            return item
         item.update(
             {
                 "recommendation": "already_converted",
                 "next_gate": "none",
-                "reason": "candidate map already records a converted local skill",
-                "local_skill": candidate.get("local_skill", ""),
+                "reason": "candidate map records a converted trusted local skill",
+                "mapping_status": "trusted_local_skill",
+                "local_skill": local_skill,
+                "local_skill_status": local_skill_status,
             }
         )
         return item
@@ -2220,8 +2274,9 @@ def build_claude_skills_bulk_assessment(candidate_map_path: Path, draft_root: Pa
 
     draft_names = load_draft_skill_names(draft_root)
     trusted_names = trusted_registry_skill_names(registry_dir)
+    skill_statuses = registry_skill_statuses(registry_dir)
     items = [
-        assess_claude_skills_candidate(candidate, draft_names, trusted_names)
+        assess_claude_skills_candidate(candidate, draft_names, trusted_names, skill_statuses)
         for candidate in sorted(candidates, key=claude_skills_candidate_sort_key)
     ]
     recommendation_counts: dict[str, int] = {}

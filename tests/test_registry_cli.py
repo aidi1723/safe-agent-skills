@@ -572,15 +572,23 @@ class RegistryCliTest(unittest.TestCase):
             registry = root / "registry"
             existing = root / "existing"
             existing_skill = existing / "content-seo-audit-review"
+            done_skill = existing / "business-done-skill-review"
             existing_skill.mkdir(parents=True)
+            done_skill.mkdir(parents=True)
             (existing_skill / "SKILL.md").write_text(
                 "Use when reviewing SEO audit quality, metadata, content structure, and search visibility.",
+                encoding="utf-8",
+            )
+            (done_skill / "SKILL.md").write_text(
+                "Use when reviewing completed business skill coverage.",
                 encoding="utf-8",
             )
             main(["import", str(existing), "--registry", str(registry), "--collected-by", "onecode-test"])
             registry_index = json.loads((registry / "index.json").read_text(encoding="utf-8"))
             existing_path = next(entry["registry_path"] for entry in registry_index["skills"] if entry["name"] == "content-seo-audit-review")
+            done_path = next(entry["registry_path"] for entry in registry_index["skills"] if entry["name"] == "business-done-skill-review")
             main(["approve", str(registry / existing_path)])
+            main(["approve", str(registry / done_path)])
 
             candidate_map.write_text(
                 json.dumps(
@@ -686,6 +694,95 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(by_name["low-noise"]["recommendation"], "keep_reference_only")
             self.assertEqual(by_name["done-skill"]["recommendation"], "already_converted")
             self.assertIn("does not approve or trust drafts", result["safety_boundary"])
+
+    def test_claude_skills_bulk_assess_flags_invalid_converted_mappings(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidate_map = root / "candidate-map.json"
+            draft_root = root / "drafts"
+            registry = root / "registry"
+            incoming = root / "incoming"
+            untrusted_skill = incoming / "business-untrusted-review"
+            untrusted_skill.mkdir(parents=True)
+            (untrusted_skill / "SKILL.md").write_text(
+                "Use when reviewing untrusted business coverage.",
+                encoding="utf-8",
+            )
+            (untrusted_skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "business",
+                            "subcategory": "business.coverage",
+                            "task_intent": "review business coverage",
+                            "artifact_type": "review",
+                            "collection_priority": "P1",
+                        }
+                    }
+                ),
+                encoding="utf-8",
+            )
+            main(["import", str(incoming), "--registry", str(registry), "--collected-by", "onecode-test"])
+            candidate_map.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "source": "https://github.com/alirezarezvani/claude-skills",
+                        "candidate_count": 3,
+                        "candidates": [
+                            {
+                                "name": "missing-local",
+                                "adoption": "converted",
+                                "priority": "P1",
+                                "score": 90,
+                                "mapped_category": "business",
+                            },
+                            {
+                                "name": "missing-registry",
+                                "adoption": "converted",
+                                "priority": "P1",
+                                "score": 88,
+                                "mapped_category": "business",
+                                "local_skill": "business-missing-review",
+                            },
+                            {
+                                "name": "untrusted",
+                                "adoption": "converted",
+                                "priority": "P1",
+                                "score": 86,
+                                "mapped_category": "business",
+                                "local_skill": "business-untrusted-review",
+                            },
+                        ],
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    [
+                        "claude-skills-bulk-assess",
+                        "--candidate-map",
+                        str(candidate_map),
+                        "--draft-root",
+                        str(draft_root),
+                        "--registry",
+                        str(registry),
+                    ]
+                )
+
+            self.assertEqual(exit_code, 0)
+            result = json.loads(out.getvalue())
+            self.assertEqual(result["recommendation_counts"], {"invalid_converted_mapping": 3})
+            by_name = {item["candidate"]: item for item in result["items"]}
+            self.assertEqual(by_name["missing-local"]["mapping_status"], "missing_local_skill")
+            self.assertEqual(by_name["missing-registry"]["mapping_status"], "missing_registry_skill")
+            self.assertEqual(by_name["untrusted"]["mapping_status"], "non_trusted_local_skill")
+            self.assertEqual(by_name["untrusted"]["local_skill_status"], "quarantined")
+            self.assertEqual(by_name["untrusted"]["next_gate"], "candidate-map-fix")
 
     def test_real_claude_skills_bulk_assess_has_no_merge_backlog(self):
         out = io.StringIO()

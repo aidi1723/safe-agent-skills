@@ -89,7 +89,9 @@ The current assessment classifies 283 candidates to keep reference-only and
 53 as already converted or covered by existing trusted skills. There are no
 remaining `author_local_skill` or `merge_existing` candidates after the
 coverage pass.
-The assessment command does not approve or trust drafts.
+The assessment command does not approve or trust drafts. Converted candidates
+must still map to existing trusted local catalog skills or they are reported as
+`invalid_converted_mapping`.
 
 External libraries such as `claude-skills` are reference-only. Do not install,
 copy, execute, or trust upstream skills without per-skill review.
