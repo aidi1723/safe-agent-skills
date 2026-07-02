@@ -25,12 +25,28 @@ Safe-Agent-Skills catalog.
 - Expanded router normalization for Traditional Chinese and conversational
   routing-quality phrases such as skill selection, execution orchestration,
   wrong skill invocation, and unrelated skill selection.
+- Expanded `evals/router-quality.json` from 16 to 24 cases so the same real
+  tasks are also covered by the reusable `router-eval` scorer.
+- Kept `scripts/verify.sh` running `router-eval` against the real catalog and
+  bundle index, so routing quality is part of the normal verification gate.
 
 ## Verification Focus
 
 The regression set checks the scenario id, selected bundle id, and pipeline
 plan id for each matched task. Generic tasks must keep an empty scenario and no
 selected bundles.
+
+The reusable router quality eval checks scenario id, task type, and selected
+skill expectations for the current catalog. It now includes:
+
+- `claude-skills-backlog-coverage`
+- `claude-skills-candidate-map-coverage`
+- `skill-router-traditional-orchestration`
+- `website-cn-launch`
+- `rag-cn-agent`
+- `document-cn-knowledge-base`
+- `code-review-cn-hardening`
+- `commerce-cn-growth`
 
 The first red run exposed two missing Traditional Chinese routing cases:
 

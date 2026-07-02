@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 16,
+  "case_count": 24,
   "cases": [
     {
       "id": "website-launch",
@@ -178,6 +178,99 @@
         "ai-opensquilla-metaskill-workflow",
         "ai-opensquilla-token-routing-pattern",
         "code-test-regression"
+      ]
+    },
+    {
+      "id": "claude-skills-backlog-coverage",
+      "task": "把剩余 claude-skills reference-only backlog 候选 skill 优化编排并纳入体系",
+      "router": "scenario",
+      "expected_scenario": "claude-skills-backlog-coverage",
+      "expected_task_type": "claude_skills_backlog_coverage",
+      "expected_skills": [
+        "business-claude-skills-backlog-orchestration",
+        "engineering-claude-skills-operations-review",
+        "compliance-claude-skills-regulated-review"
+      ]
+    },
+    {
+      "id": "claude-skills-candidate-map-coverage",
+      "task": "评估 claude skills candidate map 是否全部覆盖到 trusted 本地技能",
+      "router": "scenario",
+      "expected_scenario": "claude-skills-backlog-coverage",
+      "expected_task_type": "claude_skills_backlog_coverage",
+      "expected_skills": [
+        "ai-claude-skills-meta-workflow-review",
+        "security-supply-chain-review"
+      ]
+    },
+    {
+      "id": "skill-router-traditional-orchestration",
+      "task": "完善 skill 選擇與執行編排，避免錯誤調用不相關技能",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "website-cn-launch",
+      "task": "构建产品官网并准备上线发布检查",
+      "router": "scenario",
+      "expected_scenario": "website-build-launch",
+      "expected_task_type": "website_build",
+      "expected_skills": [
+        "business-requirements-brief",
+        "design-ui-review",
+        "execution-publish-check"
+      ]
+    },
+    {
+      "id": "rag-cn-agent",
+      "task": "设计一个带向量检索和引用检查的 RAG 知识代理",
+      "router": "scenario",
+      "expected_scenario": "rag-agent-knowledge-app",
+      "expected_task_type": "rag_agent",
+      "expected_skills": [
+        "ai-langchain-agent-orchestration",
+        "data-qdrant-vector-retrieval",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "document-cn-knowledge-base",
+      "task": "把 PDF 文档转成知识库并做引用检查",
+      "router": "scenario",
+      "expected_scenario": "document-to-knowledge-base",
+      "expected_task_type": "document_knowledge_base",
+      "expected_skills": [
+        "data-markitdown-file-to-markdown",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "code-review-cn-hardening",
+      "task": "代码审查生成代码，补强测试后再合并 PR",
+      "router": "scenario",
+      "expected_scenario": "code-review-hardening",
+      "expected_task_type": "code_review",
+      "expected_skills": [
+        "code-review-risk",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "commerce-cn-growth",
+      "task": "优化商品 listing 关键词，并准备买家询盘回复",
+      "router": "scenario",
+      "expected_scenario": "commerce-listing-growth",
+      "expected_task_type": "commerce_growth",
+      "expected_skills": [
+        "commerce-icbu-listing",
+        "commerce-product-keyword-plan",
+        "commerce-inquiry-reply"
       ]
     },
     {

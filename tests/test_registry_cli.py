@@ -1301,6 +1301,42 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["failed_count"], 1)
             self.assertEqual(result["cases"][0]["status"], "failed")
 
+    def test_real_router_eval_file_covers_current_catalog_scenarios(self):
+        eval_path = Path("evals/router-quality.json")
+        payload = json.loads(eval_path.read_text(encoding="utf-8"))
+        case_ids = {case["id"] for case in payload["cases"]}
+
+        self.assertEqual(payload["schema_version"], 1)
+        self.assertEqual(payload["case_count"], len(payload["cases"]))
+        self.assertGreaterEqual(payload["case_count"], 24)
+        self.assertIn("claude-skills-backlog-coverage", case_ids)
+        self.assertIn("claude-skills-candidate-map-coverage", case_ids)
+        self.assertIn("skill-router-traditional-orchestration", case_ids)
+        self.assertIn("website-cn-launch", case_ids)
+        self.assertIn("rag-cn-agent", case_ids)
+        self.assertIn("commerce-cn-growth", case_ids)
+
+        eval_out = io.StringIO()
+        with contextlib.redirect_stdout(eval_out):
+            eval_code = main(
+                [
+                    "router-eval",
+                    "--eval",
+                    str(eval_path),
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--max-skills",
+                    "10",
+                ]
+            )
+
+        self.assertEqual(eval_code, 0)
+        result = json.loads(eval_out.getvalue())
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["failed_count"], 0)
+
     def test_verify_registry_reports_tamper_and_unknown_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
