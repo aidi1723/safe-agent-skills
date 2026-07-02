@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T13:01:46Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "66e0e3c4874877e116fe32c7dafa6e68ee0d5de86c71028a5bc957be4ad5a48a",
+    "sanitized_sha256": "e04a900febe851e4e21606d8c1250de577676e135444ff33786644f90c779c55",
+    "source_sha256": "2fe38ea2e4fef0beb4145c83f20dca71e647fc7ab23c72b34c452a8ddbb919c4"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-atlassian-template-governance-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T13:01:27Z",
+    "collected_by": "onecode-claude-skills-overlap-depth",
+    "license": "Apache-2.0",
+    "path": "batches/batch-020-claude-skills-overlap-depth/business-atlassian-template-governance-review",
+    "reference": "docs/batches/batch-020-claude-skills-overlap-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-020-claude-skills-overlap-depth",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.atlassian_templates",
+    "task_intent": "review Jira and Confluence templates, project blueprints, workflow checklists, naming conventions, and template governance"
+  }
+}

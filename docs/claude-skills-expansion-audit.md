@@ -13,7 +13,7 @@ catalog, or marked trusted.
 - raw `SKILL.md` files observed: 772
 - canonical deduped candidates: 336
 - priority distribution: P0 27, P1 12, P2 19, P3 278
-- converted skills: 30 local OneCode-authored skills across four batches
+- converted skills: 33 local OneCode-authored skills across five batches
 
 Top source domains by canonical candidates:
 
@@ -65,6 +65,9 @@ Top source domains by canonical candidates:
 | `product-research` | `research-product-analysis-review` | research |
 | `research-finance` | `research-finance-analysis-review` | research |
 | `business-investment-advisor` | `business-investment-memo-review` | business |
+| `atlassian-admin` | `business-atlassian-admin-governance-review` | business |
+| `atlassian-templates` | `business-atlassian-template-governance-review` | business |
+| `pricing-strategy` | `content-marketing-pricing-strategy-review` | content |
 
 ## Ranking Method
 
@@ -73,12 +76,12 @@ the existing catalog, and whether the item was a real skill rather than a
 router or platform mirror. The resulting candidate map is stored at
 `docs/claude-skills-candidate-map.json`.
 
-## Remaining High-Value Gaps
+## Remaining Expansion Direction
 
-- Atlassian administration and template governance after overlap review
-- duplicate marketing pricing strategy evaluation against existing pricing skill
-- deeper engineering, product, marketing, compliance, and RA/QM domain depth
-- connector-aware skills after host adapter verification
+- No ranked `candidate` entries remain in the current candidate map.
+- Future waves should mine `reference_only` clusters for deeper engineering,
+  product, marketing, compliance, and RA/QM domain depth.
+- Connector-aware skills should wait for host adapter verification.
 
 ## Governance Notes
 

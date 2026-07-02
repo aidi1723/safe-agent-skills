@@ -230,7 +230,7 @@
       "local_skill": "commerce-partnerships-strategy-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -238,10 +238,11 @@
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/atlassian-admin"
+      "source_path": "project-management/skills/atlassian-admin",
+      "local_skill": "business-atlassian-admin-governance-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -249,7 +250,8 @@
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/atlassian-templates"
+      "source_path": "project-management/skills/atlassian-templates",
+      "local_skill": "business-atlassian-template-governance-review"
     },
     {
       "adoption": "converted",
@@ -311,7 +313,7 @@
       "local_skill": "business-internal-comms-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "content",
@@ -319,7 +321,8 @@
       "priority": "P0",
       "score": 92,
       "source_domain": "marketing-skill",
-      "source_path": "marketing-skill/skills/pricing-strategy"
+      "source_path": "marketing-skill/skills/pricing-strategy",
+      "local_skill": "content-marketing-pricing-strategy-review"
     },
     {
       "adoption": "converted",
@@ -3729,8 +3732,16 @@
       "source_path": "c-level-advisor/skills/c-level-skills"
     }
   ],
-  "converted_skill_count": 30,
+  "converted_skill_count": 33,
   "converted_skills": [
+    {
+      "local_skill": "business-atlassian-admin-governance-review",
+      "source_candidate": "atlassian-admin"
+    },
+    {
+      "local_skill": "business-atlassian-template-governance-review",
+      "source_candidate": "atlassian-templates"
+    },
     {
       "local_skill": "business-investment-memo-review",
       "source_candidate": "business-investment-advisor"
@@ -3802,6 +3813,10 @@
     {
       "local_skill": "commerce-pricing-strategy-review",
       "source_candidate": "pricing-strategist"
+    },
+    {
+      "local_skill": "content-marketing-pricing-strategy-review",
+      "source_candidate": "pricing-strategy"
     },
     {
       "local_skill": "business-process-mapping-review",

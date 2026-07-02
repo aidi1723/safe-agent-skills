@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 144 sanitized skills across all
+The current public-safe catalog contains 147 sanitized skills across all
 top-level taxonomy categories, including 34 community project reference skills
-and 63 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, and research seed skills.
+and 66 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, content, and research seed skills.
 It also records 7 status-backed trusted-only overlap groups for router and
 operator skill selection hints.
 
@@ -21,8 +21,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 144
-trusted_count: 138
+skill_count: 147
+trusted_count: 141
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -118,17 +118,18 @@ smart router mode: deterministic_mesh_router
 | `batch-017-claude-skills-depth` | 8 | 8 | Second local claude-skills depth batch for vendor, forecast, RevOps, deal desk, finance, Scrum, knowledge ops, and process mapping |
 | `batch-018-claude-skills-ops` | 8 | 8 | Third local claude-skills operations batch for commercial policy, partnerships, channel economics, product management, Jira, Confluence, internal communications, and capacity planning |
 | `batch-019-claude-skills-research-comms` | 8 | 8 | Fourth local claude-skills research and communications batch for meeting analysis, team communications, contract proposals, sales engineering, market research, product research, research finance, and investment memo review |
+| `batch-020-claude-skills-overlap-depth` | 3 | 3 | Fifth local claude-skills overlap-depth batch for Atlassian admin governance, Atlassian template governance, and marketing pricing strategy review |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
 | ai | `ai-autogen-multi-agent-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 22 |
-| business | `business-capacity-planning-review`, `business-confluence-knowledge-review`, `business-contract-proposal-review`, `business-customer-success-health-review`, `business-financial-analysis-review`, `business-internal-comms-review`, `business-investment-memo-review`, `business-jira-workflow-review`, `business-knowledge-operations-review`, `business-meeting-analysis-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-product-management-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-sales-engineering-review`, `business-scrum-project-review`, `business-support-triage`, `business-team-communications-review`, `business-vendor-management-review` | 22 |
+| business | `business-atlassian-admin-governance-review`, `business-atlassian-template-governance-review`, `business-capacity-planning-review`, `business-confluence-knowledge-review`, `business-contract-proposal-review`, `business-customer-success-health-review`, `business-financial-analysis-review`, `business-internal-comms-review`, `business-investment-memo-review`, `business-jira-workflow-review`, `business-knowledge-operations-review`, `business-meeting-analysis-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-product-management-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-sales-engineering-review`, `business-scrum-project-review`, `business-support-triage`, `business-team-communications-review`, `business-vendor-management-review` | 24 |
 | code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 8 |
 | commerce | `commerce-channel-economics-review`, `commerce-commercial-forecast-review`, `commerce-commercial-policy-review`, `commerce-deal-desk-review`, `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-partnerships-strategy-review`, `commerce-pricing-strategy-review`, `commerce-product-keyword-plan`, `commerce-rfp-response-review` | 11 |
 | compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 5 |
-| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 9 |
+| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-marketing-pricing-strategy-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 10 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
 | design | `design-accessibility-check`, `design-motion-interaction-polish`, `design-premium-landing-page`, `design-responsive-viewport-check`, `design-system-consistency`, `design-tailwind-radix-system`, `design-ui-review`, `design-visual-quality-review` | 8 |
 | engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-error-log-noise-triage`, `engineering-performance-profile` | 4 |
@@ -164,6 +165,8 @@ smart router mode: deterministic_mesh_router
 | `ai-token-rate-budget-guard` | ai | trusted |
 | `ai-tool-schema-protocol-check` | ai | trusted |
 | `ai-vllm-serving-capacity-plan` | ai | trusted |
+| `business-atlassian-admin-governance-review` | business | trusted |
+| `business-atlassian-template-governance-review` | business | trusted |
 | `business-capacity-planning-review` | business | trusted |
 | `business-confluence-knowledge-review` | business | trusted |
 | `business-contract-proposal-review` | business | trusted |
@@ -215,6 +218,7 @@ smart router mode: deterministic_mesh_router
 | `content-editorial-review` | content | trusted |
 | `content-fact-contradiction-review` | content | trusted |
 | `content-freshness-expiry-review` | content | trusted |
+| `content-marketing-pricing-strategy-review` | content | trusted |
 | `content-prompt-engineering-patterns` | content | trusted |
 | `content-seo-brief` | content | trusted |
 | `content-social-post` | content | trusted |
@@ -292,6 +296,6 @@ smart router mode: deterministic_mesh_router
 
 Recommended next waves:
 
-- `batch-020-claude-skills-overlap-review`: remaining P0/P1 candidates with heavy overlap, especially Atlassian administration/templates and duplicate marketing pricing strategy
-- `batch-021-domain-depth`: deeper skills for engineering, product, marketing, compliance, RA/QM, design, code, security, and office
+- `batch-021-domain-depth`: mine reference-only clusters for deeper engineering, product, marketing, compliance, RA/QM, design, code, security, and office workflows
 - `batch-022-connectors`: connector-aware skills after host adapter verification
+- `batch-023-bundle-tuning`: scenario bundle and overlap-group refinements after the converted catalog settles

@@ -3,7 +3,7 @@
 Date: 2026-07-02
 
 This update evaluates the public `claude-skills` repository as a metadata-only
-reference source and adds four locally authored OneCode-safe expansion batches.
+reference source and adds five locally authored OneCode-safe expansion batches.
 
 ## What Changed
 
@@ -15,7 +15,8 @@ reference source and adds four locally authored OneCode-safe expansion batches.
 - Added `batch-017-claude-skills-depth` with 8 locally authored skills.
 - Added `batch-018-claude-skills-ops` with 8 locally authored skills.
 - Added `batch-019-claude-skills-research-comms` with 8 locally authored skills.
-- Imported and approved 30 new trusted catalog entries, including:
+- Added `batch-020-claude-skills-overlap-depth` with 3 locally authored skills.
+- Imported and approved 33 new trusted catalog entries, including:
   `business-saas-metrics-review`,
   `commerce-rfp-response-review`,
   `business-procurement-optimization-review`,
@@ -45,7 +46,10 @@ reference source and adds four locally authored OneCode-safe expansion batches.
   `research-market-analysis-review`,
   `research-product-analysis-review`,
   `research-finance-analysis-review`, and
-  `business-investment-memo-review`.
+  `business-investment-memo-review`,
+  `business-atlassian-admin-governance-review`,
+  `business-atlassian-template-governance-review`, and
+  `content-marketing-pricing-strategy-review`.
 
 ## Boundary
 

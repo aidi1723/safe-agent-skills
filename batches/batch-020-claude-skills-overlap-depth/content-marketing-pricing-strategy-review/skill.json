@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "content",
+    "subcategory": "content.marketing_pricing",
+    "task_intent": "review marketing pricing narratives, offer framing, packaging copy, pricing-page claims, and price-test communication",
+    "artifact_type": "review",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-020-claude-skills-overlap-depth/content-marketing-pricing-strategy-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: pricing-strategy.",
+    "collected_by": "onecode-claude-skills-overlap-depth"
+  }
+}
