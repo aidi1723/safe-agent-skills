@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-02T12:39:08Z",
+  "generated_at": "2026-07-02T12:51:57Z",
   "schema_version": 1,
-  "skill_count": 136,
+  "skill_count": 144,
   "skills": [
     {
       "hashes": {
@@ -788,6 +788,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "ec56485bddb1aa7626bca9d360f9cfdf874dd842bb38034675ebfd44069c7b96",
+        "sanitized_sha256": "213d165c705799bc4f2a10c802d114dc20fa7ef4336b9e1c8ff5369c8833d4c3",
+        "source_sha256": "b85548e66e83d43ab6b8db9fb5232ad7ed81baa0d06239387eec75d427324eba"
+      },
+      "name": "business-contract-proposal-review",
+      "registry_path": "business/business-contract-proposal-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/business-contract-proposal-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "review",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.contract_proposal",
+        "task_intent": "review proposals, contract drafts, scope terms, acceptance criteria, and customer commitments"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "8e6c0bf9e3863d32613472c413a57bee92a955340ccfd49f6f440bc4182a3468",
         "sanitized_sha256": "321d262d892a43f0398541065a6dd01b6192fc9d039d062015a953f4670255be",
         "source_sha256": "fac04e46f187f33e3d64d3bd9b739cbd16e31031461b9c30c112afb112c664b5"
@@ -875,6 +904,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "2c559650a79392be4dda491fd31d86bcdbb62326dc5d9bcb7798d95985aa337a",
+        "sanitized_sha256": "f775b983fb899e32fb9c33d37b904ac961673d6e226a69da0e3c2078f01b4412",
+        "source_sha256": "3fecd039a66fd1a6a9dd2254fed958b3221a39ac081fb00e3740c750f51fc4dc"
+      },
+      "name": "business-investment-memo-review",
+      "registry_path": "business/business-investment-memo-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/business-investment-memo-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "review",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.investment_memo",
+        "task_intent": "review investment memos, business cases, capital allocation rationale, diligence evidence, and decision readiness"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "c307114de2d1a40279e16e167e0051086c3322ea143aa4ab92833053330c7168",
         "sanitized_sha256": "b7ddf22d14befb38fa9199bfe8545612b92eeba00478198271bb8f404f4e65c7",
         "source_sha256": "344b286fe20d61615cd75a6b8a033d05b1245c1db6b07a41ee3af5719d37ed09"
@@ -929,6 +987,35 @@
         "collection_priority": "P0",
         "subcategory": "business.knowledge_ops",
         "task_intent": "review internal knowledge operations, documentation ownership, freshness, and discoverability"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "7e2cf522e0cf82015cb9da748c63deaf815ce4fff49c5159e8620be6db4735c4",
+        "sanitized_sha256": "c35e213fda0f08e2dcae3bd6703c54c52e3ea370bed79c8d618cab64cd7b86ac",
+        "source_sha256": "00dcc488d20d47a5e1d1fb6e7bdf0971a015bcdf5894eab1279998514a1d6b28"
+      },
+      "name": "business-meeting-analysis-review",
+      "registry_path": "business/business-meeting-analysis-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/business-meeting-analysis-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "review",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.meeting_analysis",
+        "task_intent": "review meeting decisions, action items, risks, owners, and follow-up evidence"
       }
     },
     {
@@ -1149,6 +1236,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "3929f32802a7db743f0a6ed0be872d2e224b78f2a838b00b565f3429c887c1f3",
+        "sanitized_sha256": "df09b68247f804f2856d570334f5c765586911e5cad02faffbff46d7a8812e2b",
+        "source_sha256": "4c734269127613ce27d88caa81eb548c18ae630c5fcd3c27061712f02fdcf20d"
+      },
+      "name": "business-sales-engineering-review",
+      "registry_path": "business/business-sales-engineering-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/business-sales-engineering-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "review",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.sales_engineering",
+        "task_intent": "review sales engineering discovery, solution fit, demo scope, and pre-sales handoff readiness"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "91e5ca5594bcbf046cd2ed223a9069fe4929447489d77b0a4c57c258a8f67bc7",
         "sanitized_sha256": "fe238fe9f2e499609623d5db081f8f684c21c4f12b6754d441685051f28e1493",
         "source_sha256": "518675c9ca274f6fe6a071a1bc650c471fdf20f4ca12da7baa3b15f280cdb97f"
@@ -1203,6 +1319,35 @@
         "collection_priority": "P2",
         "subcategory": "business.support",
         "task_intent": "triage customer support requests safely"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "d1d0b589fe779137f7719d185a11fefe3e089be3c45bbb327e1fd3470fb922ee",
+        "sanitized_sha256": "2a0e59ce84a3644911814fcb86e778a4251756e2ceb30d1cf4bef300a364884b",
+        "source_sha256": "c183170c9d8a709fe7eb8ef014d8be34d27de44e3f4cb0082a294e90fb6b10a2"
+      },
+      "name": "business-team-communications-review",
+      "registry_path": "business/business-team-communications-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/business-team-communications-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "review",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.team_communications",
+        "task_intent": "review internal communications, stakeholder updates, escalation notes, and cross-functional alignment"
       }
     },
     {
@@ -3597,6 +3742,64 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "d68932b14fe7d97b1f33ac1ac509aaa1095c03f37dbe479851f045726d9cc328",
+        "sanitized_sha256": "cbf59a3598ca75c9c64466a71d186c20a3f3df134142ca6d0d31ff499e0bc589",
+        "source_sha256": "1e813c32d3a7f60f562d0d83f632fd8212e2677762b04b77dabd246ecc03a8cf"
+      },
+      "name": "research-finance-analysis-review",
+      "registry_path": "research/research-finance-analysis-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/research-finance-analysis-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.finance",
+        "task_intent": "review finance assumptions, funding evidence, unit economics, grant budgets, and research operating costs"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "94e3d3da69147ab1f1965445b2d5b85d90e7be92ea0cc47230a4bdd830267877",
+        "sanitized_sha256": "c98cf966135595df589a63a5e2709b2b87484d85d59d9e7771789c4055774f7f",
+        "source_sha256": "d5034226a085ae439b8793e48e681c9168562637c1f646ff7a1b9dd4663f2abe"
+      },
+      "name": "research-market-analysis-review",
+      "registry_path": "research/research-market-analysis-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/research-market-analysis-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.market",
+        "task_intent": "review market research, opportunity sizing, competitor signals, buyer evidence, and market assumptions"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "2eddac1d2c6ca51834f15476873cc2468649a9fb1bd42cb5671e8539060e3cc4",
         "sanitized_sha256": "4a2f86c9d55536c2c1e201d86518c9e8668601096e721d619688efb8b225d14c",
         "source_sha256": "8d651ca2e8e2515c5bef961e26d14ab96b81b5f83acdbcec85d59c24e0e20d23"
@@ -3622,6 +3825,35 @@
         "collection_priority": "P1",
         "subcategory": "research.academic",
         "task_intent": "summarize and compare research papers and technical evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "4acaeaea4b5229ca1fc28eb088f832ad072e3e4f312a1a890719f1835154135e",
+        "sanitized_sha256": "22d522af483e7f059bfac1f8d94f6fcc116b53bf80866ee89ef29faa265130f6",
+        "source_sha256": "e09112463d0be1fbe55ba0963fafa097920ed07d71789358d2b1c85d3865e8e0"
+      },
+      "name": "research-product-analysis-review",
+      "registry_path": "research/research-product-analysis-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:51:40Z",
+        "collected_by": "onecode-claude-skills-research-comms",
+        "license": "Apache-2.0",
+        "path": "batches/batch-019-claude-skills-research-comms/research-product-analysis-review",
+        "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.product",
+        "task_intent": "review product research, user evidence, feature demand, usability findings, and roadmap assumptions"
       }
     },
     {

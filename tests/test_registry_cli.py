@@ -309,6 +309,14 @@ class RegistryCliTest(unittest.TestCase):
             "confluence-expert",
             "internal-comms",
             "capacity-planner",
+            "meeting-analyzer",
+            "team-communications",
+            "contract-and-proposal-writer",
+            "sales-engineer",
+            "market-research",
+            "product-research",
+            "research-finance",
+            "business-investment-advisor",
         ]:
             self.assertIn(name, names)
             self.assertIn(names[name]["priority"], {"P0", "P1"})
@@ -339,6 +347,14 @@ class RegistryCliTest(unittest.TestCase):
                 "confluence-expert",
                 "internal-comms",
                 "capacity-planner",
+                "meeting-analyzer",
+                "team-communications",
+                "contract-and-proposal-writer",
+                "sales-engineer",
+                "market-research",
+                "product-research",
+                "research-finance",
+                "business-investment-advisor",
             },
             converted,
         )
@@ -408,6 +424,29 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(by_name[name]["taxonomy"]["category"], category)
             self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
             self.assertEqual(by_name[name]["source"]["collected_by"], "onecode-claude-skills-ops")
+            self.assertIn("claude-skills", by_name[name]["source"]["reference"])
+
+    def test_catalog_includes_fourth_sanitized_claude_skills_research_comms_batch(self):
+        index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
+        by_name = {entry["name"]: entry for entry in index["skills"]}
+
+        expected = {
+            "business-meeting-analysis-review": "business",
+            "business-team-communications-review": "business",
+            "business-contract-proposal-review": "business",
+            "business-sales-engineering-review": "business",
+            "research-market-analysis-review": "research",
+            "research-product-analysis-review": "research",
+            "research-finance-analysis-review": "research",
+            "business-investment-memo-review": "business",
+        }
+        for name, category in expected.items():
+            self.assertIn(name, by_name)
+            self.assertEqual(by_name[name]["status"], "trusted")
+            self.assertEqual(by_name[name]["risk_level"], "low")
+            self.assertEqual(by_name[name]["taxonomy"]["category"], category)
+            self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
+            self.assertEqual(by_name[name]["source"]["collected_by"], "onecode-claude-skills-research-comms")
             self.assertIn("claude-skills", by_name[name]["source"]["reference"])
 
     def test_reference_check_rejects_incomplete_or_executable_references(self):
@@ -1401,7 +1440,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 136)
+        self.assertEqual(result["skill_manifest_count"], 144)
         self.assertEqual(result["issues"], [])
 
     def test_verify_registry_detects_manifest_policy_tampering(self):

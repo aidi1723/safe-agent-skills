@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "research",
+    "subcategory": "research.market",
+    "task_intent": "review market research, opportunity sizing, competitor signals, buyer evidence, and market assumptions",
+    "artifact_type": "report",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms/research-market-analysis-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: market-research.",
+    "collected_by": "onecode-claude-skills-research-comms"
+  }
+}

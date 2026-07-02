@@ -194,7 +194,7 @@
       "source_path": "research-ops/skills/clinical-research"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -202,7 +202,8 @@
       "priority": "P0",
       "score": 101,
       "source_domain": "finance",
-      "source_path": "finance/business-investment-advisor/skills/business-investment-advisor"
+      "source_path": "finance/business-investment-advisor/skills/business-investment-advisor",
+      "local_skill": "business-investment-memo-review"
     },
     {
       "adoption": "converted",
@@ -321,7 +322,7 @@
       "source_path": "marketing-skill/skills/pricing-strategy"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -329,10 +330,11 @@
       "priority": "P1",
       "score": 90,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/meeting-analyzer"
+      "source_path": "project-management/skills/meeting-analyzer",
+      "local_skill": "business-meeting-analysis-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -340,7 +342,8 @@
       "priority": "P1",
       "score": 90,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/team-communications"
+      "source_path": "project-management/skills/team-communications",
+      "local_skill": "business-team-communications-review"
     },
     {
       "adoption": "converted",
@@ -355,7 +358,7 @@
       "local_skill": "business-capacity-planning-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -363,10 +366,11 @@
       "priority": "P1",
       "score": 87,
       "source_domain": "business-growth",
-      "source_path": "business-growth/skills/contract-and-proposal-writer"
+      "source_path": "business-growth/skills/contract-and-proposal-writer",
+      "local_skill": "business-contract-proposal-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -374,10 +378,11 @@
       "priority": "P1",
       "score": 86,
       "source_domain": "business-growth",
-      "source_path": "business-growth/skills/sales-engineer"
+      "source_path": "business-growth/skills/sales-engineer",
+      "local_skill": "business-sales-engineering-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "research",
@@ -385,10 +390,11 @@
       "priority": "P1",
       "score": 86,
       "source_domain": "research-ops",
-      "source_path": "research-ops/skills/market-research"
+      "source_path": "research-ops/skills/market-research",
+      "local_skill": "research-market-analysis-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "research",
@@ -396,10 +402,11 @@
       "priority": "P1",
       "score": 86,
       "source_domain": "research-ops",
-      "source_path": "research-ops/skills/product-research"
+      "source_path": "research-ops/skills/product-research",
+      "local_skill": "research-product-analysis-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "research",
@@ -407,7 +414,8 @@
       "priority": "P1",
       "score": 86,
       "source_domain": "research-ops",
-      "source_path": "research-ops/skills/research-finance"
+      "source_path": "research-ops/skills/research-finance",
+      "local_skill": "research-finance-analysis-review"
     },
     {
       "adoption": "reference_only",
@@ -3721,8 +3729,12 @@
       "source_path": "c-level-advisor/skills/c-level-skills"
     }
   ],
-  "converted_skill_count": 22,
+  "converted_skill_count": 30,
   "converted_skills": [
+    {
+      "local_skill": "business-investment-memo-review",
+      "source_candidate": "business-investment-advisor"
+    },
     {
       "local_skill": "business-capacity-planning-review",
       "source_candidate": "capacity-planner"
@@ -3746,6 +3758,10 @@
     {
       "local_skill": "business-confluence-knowledge-review",
       "source_candidate": "confluence-expert"
+    },
+    {
+      "local_skill": "business-contract-proposal-review",
+      "source_candidate": "contract-and-proposal-writer"
     },
     {
       "local_skill": "business-customer-success-health-review",
@@ -3772,6 +3788,14 @@
       "source_candidate": "knowledge-ops"
     },
     {
+      "local_skill": "research-market-analysis-review",
+      "source_candidate": "market-research"
+    },
+    {
+      "local_skill": "business-meeting-analysis-review",
+      "source_candidate": "meeting-analyzer"
+    },
+    {
       "local_skill": "commerce-partnerships-strategy-review",
       "source_candidate": "partnerships-architect"
     },
@@ -3788,6 +3812,14 @@
       "source_candidate": "procurement-optimizer"
     },
     {
+      "local_skill": "research-product-analysis-review",
+      "source_candidate": "product-research"
+    },
+    {
+      "local_skill": "research-finance-analysis-review",
+      "source_candidate": "research-finance"
+    },
+    {
       "local_skill": "business-revenue-operations-review",
       "source_candidate": "revenue-operations"
     },
@@ -3800,12 +3832,20 @@
       "source_candidate": "saas-metrics-coach"
     },
     {
+      "local_skill": "business-sales-engineering-review",
+      "source_candidate": "sales-engineer"
+    },
+    {
       "local_skill": "business-scrum-project-review",
       "source_candidate": "scrum-master"
     },
     {
       "local_skill": "business-product-management-review",
       "source_candidate": "senior-pm"
+    },
+    {
+      "local_skill": "business-team-communications-review",
+      "source_candidate": "team-communications"
     },
     {
       "local_skill": "business-vendor-management-review",

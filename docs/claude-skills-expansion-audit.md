@@ -13,7 +13,7 @@ catalog, or marked trusted.
 - raw `SKILL.md` files observed: 772
 - canonical deduped candidates: 336
 - priority distribution: P0 27, P1 12, P2 19, P3 278
-- converted skills: 22 local OneCode-authored skills across three batches
+- converted skills: 30 local OneCode-authored skills across four batches
 
 Top source domains by canonical candidates:
 
@@ -57,6 +57,14 @@ Top source domains by canonical candidates:
 | `confluence-expert` | `business-confluence-knowledge-review` | business |
 | `internal-comms` | `business-internal-comms-review` | business |
 | `capacity-planner` | `business-capacity-planning-review` | business |
+| `meeting-analyzer` | `business-meeting-analysis-review` | business |
+| `team-communications` | `business-team-communications-review` | business |
+| `contract-and-proposal-writer` | `business-contract-proposal-review` | business |
+| `sales-engineer` | `business-sales-engineering-review` | business |
+| `market-research` | `research-market-analysis-review` | research |
+| `product-research` | `research-product-analysis-review` | research |
+| `research-finance` | `research-finance-analysis-review` | research |
+| `business-investment-advisor` | `business-investment-memo-review` | business |
 
 ## Ranking Method
 
@@ -67,11 +75,10 @@ router or platform mirror. The resulting candidate map is stored at
 
 ## Remaining High-Value Gaps
 
-- research operations beyond clinical study design
-- meeting and team communication review
-- sales engineering and solution consulting review
-- contract and proposal writing review
-- deeper market, product, research, and finance analysis
+- Atlassian administration and template governance after overlap review
+- duplicate marketing pricing strategy evaluation against existing pricing skill
+- deeper engineering, product, marketing, compliance, and RA/QM domain depth
+- connector-aware skills after host adapter verification
 
 ## Governance Notes
 

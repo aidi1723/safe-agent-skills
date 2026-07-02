@@ -67,8 +67,8 @@ sandbox.
 
 Current public baseline:
 
-- 136 total skills
-- 130 trusted skills
+- 144 total skills
+- 138 trusted skills
 - 13 trusted scenario bundles
 - 7 status-backed trusted-only skill overlap groups
 - 15 / 15 top-level categories covered

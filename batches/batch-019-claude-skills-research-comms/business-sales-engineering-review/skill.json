@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.sales_engineering",
+    "task_intent": "review sales engineering discovery, solution fit, demo scope, and pre-sales handoff readiness",
+    "artifact_type": "review",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms/business-sales-engineering-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: sales-engineer.",
+    "collected_by": "onecode-claude-skills-research-comms"
+  }
+}

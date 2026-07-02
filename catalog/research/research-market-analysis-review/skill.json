@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T12:51:57Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "94e3d3da69147ab1f1965445b2d5b85d90e7be92ea0cc47230a4bdd830267877",
+    "sanitized_sha256": "c98cf966135595df589a63a5e2709b2b87484d85d59d9e7771789c4055774f7f",
+    "source_sha256": "d5034226a085ae439b8793e48e681c9168562637c1f646ff7a1b9dd4663f2abe"
+  },
+  "name": "research-market-analysis-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:51:40Z",
+    "collected_by": "onecode-claude-skills-research-comms",
+    "license": "Apache-2.0",
+    "path": "batches/batch-019-claude-skills-research-comms/research-market-analysis-review",
+    "reference": "docs/batches/batch-019-claude-skills-research-comms.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.market",
+    "task_intent": "review market research, opportunity sizing, competitor signals, buyer evidence, and market assumptions"
+  },
+  "version": "0.1.0"
+}

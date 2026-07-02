@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "research",
+    "subcategory": "research.product",
+    "task_intent": "review product research, user evidence, feature demand, usability findings, and roadmap assumptions",
+    "artifact_type": "report",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-019-claude-skills-research-comms/research-product-analysis-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: product-research.",
+    "collected_by": "onecode-claude-skills-research-comms"
+  }
+}
