@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T16:17:52Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "e70bbd2a653f6d3504476a573a67d451670e29943515f288c180174bfd5e4e08",
+    "sanitized_sha256": "3092f0083e32fae41fffa65614dfd6923a613d045fbdd1881646049478e3f7a4",
+    "source_sha256": "a96a40aa4a6ffa4f19779b011485b8cc3b4fa528c733c9ff4bc02482deebbbc2"
+  },
+  "name": "ai-claude-skills-meta-workflow-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:17:32Z",
+    "collected_by": "onecode-claude-skills-backlog-clusters",
+    "license": "Apache-2.0",
+    "path": "batches/batch-029-claude-skills-backlog-clusters/ai-claude-skills-meta-workflow-review",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P2",
+    "subcategory": "ai.claude_skills_meta_workflow",
+    "task_intent": "review claude-skills meta workflow and loop-library references for trusted local orchestration coverage"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T16:17:52Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "9de595f0d513ff52e3456dc3c0807d3964ee3d2c40469cd9b2c908c6a5b12610",
+    "sanitized_sha256": "ae7b9da3636164d7bc92b9791f6fc86c3cb1d2511225a549c96e1587795768d7",
+    "source_sha256": "98124b0b44b2154dab44943b576d4a6dd8eabcc207eb3278c5f35c6b352e0e7c"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "execution-claude-skills-productivity-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:17:32Z",
+    "collected_by": "onecode-claude-skills-backlog-clusters",
+    "license": "Apache-2.0",
+    "path": "batches/batch-029-claude-skills-backlog-clusters/execution-claude-skills-productivity-review",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "execution",
+    "collection_priority": "P3",
+    "subcategory": "execution.claude_skills_productivity",
+    "task_intent": "review claude-skills inbox, capture, triage, reflection, critique, and personal productivity references with privacy boundaries"
+  }
+}

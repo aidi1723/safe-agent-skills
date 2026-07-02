@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "name": "business-claude-skills-backlog-orchestration",
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.claude_skills_backlog",
+    "artifact_type": "workflow",
+    "task_intent": "orchestrate claude-skills business, product, SaaS, UX, and executive backlog references through trusted local coverage",
+    "collection_priority": "P2"
+  },
+  "source": {
+    "type": "local_folder",
+    "usage": "local_authoring",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "collected_by": "onecode-claude-skills-backlog-clusters"
+  }
+}

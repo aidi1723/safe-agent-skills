@@ -22,15 +22,14 @@ reference source and adds six locally authored OneCode-safe expansion batches.
 - Added `batch-022-claude-skills-bulk-draft` through
   `batch-027-claude-skills-bulk-draft` with the remaining 253 metadata-only
   local draft folders from the ranked bulk review plan. The 7 bulk draft
-  batches preserve 303 metadata-only review inputs; after the coverage pass,
-  the current candidate map has 283 remaining `reference_only` candidates.
+  batches preserve 303 metadata-only review inputs.
 - Added `claude-skills-bulk-assess` to rank the full draft pool before
-  promotion. The current assessment identifies 283 candidates to keep
-  reference-only and 53 already converted or covered by existing trusted
-  skills; no `author_local_skill` or `merge_existing` candidates remain after
-  the coverage pass.
+  promotion.
 - Added `batch-028-claude-skills-authoring-wave` with 5 locally authored
   trusted skills from the bulk assessment shortlist.
+- Added `batch-029-claude-skills-backlog-clusters` with 9 locally authored
+  trusted cluster skills that cover the former 283 reference-only candidates by
+  category.
 - Recorded 15 overlap candidates as covered by existing trusted skills instead
   of adding duplicate catalog entries.
 - Imported and approved 38 new trusted catalog entries, including:
@@ -72,6 +71,9 @@ reference source and adds six locally authored OneCode-safe expansion batches.
   `business-growth-operations-review`,
   `business-project-management-operations-review`, and
   `research-operations-governance-review`.
+- The current candidate map records all 336 canonical candidates as converted
+  or covered by trusted local skills; `claude-skills-bulk-assess` reports 336
+  `already_converted`.
 
 ## Boundary
 

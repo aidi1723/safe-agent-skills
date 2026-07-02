@@ -6,9 +6,9 @@ skill, not manual installation of every catalog skill.
 
 ## Current Baseline
 
-- 152 catalog skills
-- 146 trusted skills
-- 13 trusted scenario bundles
+- 161 catalog skills
+- 155 trusted skills
+- 14 trusted scenario bundles
 - 15 top-level categories
 - trusted-only default routing
 - provenance, hash, schema, and maintain checks before publication
@@ -29,8 +29,8 @@ skill, not manual installation of every catalog skill.
 ## Maintenance Priorities
 
 The `claude-skills` expansion audit evaluated 336 canonical upstream candidates
-and records 53 upstream candidate conversion or coverage mappings. These are
-represented by 38 distinct local safe catalog skills across SaaS metrics, RFP responses,
+and records 336 upstream candidate conversion or coverage mappings. These are
+represented by 58 distinct trusted local catalog skills across SaaS metrics, RFP responses,
 procurement, pricing, customer success, clinical study design, vendor
 management, commercial forecasting, revenue operations, deal desk, finance
 analysis, Scrum project review, knowledge operations, process mapping,
@@ -41,10 +41,11 @@ review, sales engineering, market research, product research, research finance,
 investment memo review, Atlassian administration governance, Atlassian template
 governance, marketing pricing strategy review, commercial operations, finance
 operations, growth operations, project management operations, and research
-operations governance. The ranked candidate queue
-now has no remaining `candidate` entries; future expansion should mine
-reference-only clusters for deeper engineering, product, marketing, compliance,
-RA/QM, and connector-aware workflows.
+operations governance, plus nine local category-cluster skills for the former
+reference-only backlog. The ranked candidate queue now has no remaining
+`candidate` or `reference_only` entries; future expansion should focus on new
+upstream deltas, connector-aware workflows, and deeper per-domain local
+authoring only when a cluster proves too broad.
 
 For faster expansion planning, use the bulk planner to group all remaining
 metadata-only items into large review waves:
@@ -85,13 +86,12 @@ onecode-skill-sanitizer maintain-check \
   --claude-skills-candidate-map docs/claude-skills-candidate-map.json
 ```
 
-The current assessment classifies 283 candidates to keep reference-only and
-53 as already converted or covered by existing trusted skills. There are no
-remaining `author_local_skill` or `merge_existing` candidates after the
-coverage pass.
+The current assessment classifies all 336 candidates as already converted or
+covered by trusted local skills. There are no remaining `reference_only`,
+`author_local_skill`, or `merge_existing` candidates after the cluster coverage
+pass.
 See [Claude Skills Reference-Only Backlog](claude-skills-reference-only-backlog.md)
-for the detailed category breakdown, non-promotion reasons, and next promotion
-waves.
+for the historical category breakdown and the cluster coverage closure.
 The assessment command does not approve or trust drafts. Converted candidates
 must still map to existing trusted local catalog skills or they are reported as
 `invalid_converted_mapping`.

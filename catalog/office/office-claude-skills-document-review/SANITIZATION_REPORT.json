@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T16:17:52Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "48a2ffdf83400eb90ef438b7ab1278a65804c294643d4a48cf120d7772f64f2b",
+    "sanitized_sha256": "0a6525c038daee26bf08a5ee0cca4b49f62b69108d507bff60f7214f85fd88f6",
+    "source_sha256": "2736d14a57a2c21722928ce8f96c0cfd244480ad0b6517b76fd74403eb876b1b"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "office-claude-skills-document-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:17:32Z",
+    "collected_by": "onecode-claude-skills-backlog-clusters",
+    "license": "Apache-2.0",
+    "path": "batches/batch-029-claude-skills-backlog-clusters/office-claude-skills-document-review",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "document",
+    "category": "office",
+    "collection_priority": "P3",
+    "subcategory": "office.claude_skills_document",
+    "task_intent": "review claude-skills Markdown, HTML, document, slide, report, and office-format references through trusted document workflows"
+  }
+}

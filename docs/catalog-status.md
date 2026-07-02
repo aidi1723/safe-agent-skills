@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 152 sanitized skills across all
+The current public-safe catalog contains 161 sanitized skills across all
 top-level taxonomy categories, including 34 community project reference skills
-and 71 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, content, and research seed skills.
+and 127 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, content, research, and claude-skills backlog cluster skills.
 It also records 7 status-backed trusted-only overlap groups for router and
 operator skill selection hints.
 
@@ -21,8 +21,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 152
-trusted_count: 146
+skill_count: 161
+trusted_count: 155
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -37,6 +37,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Claude Skills Backlog Cluster Coverage](updates/2026-07-03-claude-skills-backlog-cluster-coverage.md)
 - [Smart Router And Claude Skills Closure](updates/2026-07-02-smart-router-claude-skills-closure.md)
 - [Auto Orchestration Pipeline Plan](updates/2026-06-27-auto-orchestration-pipeline-plan.md)
 - [Claude Skills Expansion](updates/2026-07-02-claude-skills-expansion.md)
@@ -89,7 +90,7 @@ Scenario router status:
 ```text
 router mode: scenario
 router type: deterministic
-scenario bundles: 13 trusted
+scenario bundles: 14 trusted
 sample website route: website-build-launch
 sample RAG route: rag-agent-knowledge-app
 sample skill-router route: skill-router-quality-review
@@ -121,24 +122,25 @@ smart router mode: deterministic_mesh_router
 | `batch-019-claude-skills-research-comms` | 8 | 8 | Fourth local claude-skills research and communications batch for meeting analysis, team communications, contract proposals, sales engineering, market research, product research, research finance, and investment memo review |
 | `batch-020-claude-skills-overlap-depth` | 3 | 3 | Fifth local claude-skills overlap-depth batch for Atlassian admin governance, Atlassian template governance, and marketing pricing strategy review |
 | `batch-028-claude-skills-authoring-wave` | 5 | 5 | Local claude-skills authoring wave for commercial operations, finance operations, growth operations, project management operations, and research operations governance |
+| `batch-029-claude-skills-backlog-clusters` | 9 | 9 | Local cluster coverage for the former claude-skills reference-only backlog |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
-| ai | `ai-autogen-multi-agent-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 22 |
-| business | `business-atlassian-admin-governance-review`, `business-atlassian-template-governance-review`, `business-capacity-planning-review`, `business-confluence-knowledge-review`, `business-contract-proposal-review`, `business-customer-success-health-review`, `business-finance-operations-review`, `business-financial-analysis-review`, `business-growth-operations-review`, `business-internal-comms-review`, `business-investment-memo-review`, `business-jira-workflow-review`, `business-knowledge-operations-review`, `business-meeting-analysis-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-product-management-review`, `business-project-management-operations-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-sales-engineering-review`, `business-scrum-project-review`, `business-support-triage`, `business-team-communications-review`, `business-vendor-management-review` | 27 |
-| code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 8 |
+| ai | `ai-autogen-multi-agent-review`, `ai-claude-skills-meta-workflow-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 23 |
+| business | `business-atlassian-admin-governance-review`, `business-atlassian-template-governance-review`, `business-capacity-planning-review`, `business-claude-skills-backlog-orchestration`, `business-confluence-knowledge-review`, `business-contract-proposal-review`, `business-customer-success-health-review`, `business-finance-operations-review`, `business-financial-analysis-review`, `business-growth-operations-review`, `business-internal-comms-review`, `business-investment-memo-review`, `business-jira-workflow-review`, `business-knowledge-operations-review`, `business-meeting-analysis-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-product-management-review`, `business-project-management-operations-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-sales-engineering-review`, `business-scrum-project-review`, `business-support-triage`, `business-team-communications-review`, `business-vendor-management-review` | 28 |
+| code | `code-ast-refactor-safety`, `code-claude-skills-engineering-role-review`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 9 |
 | commerce | `commerce-channel-economics-review`, `commerce-commercial-forecast-review`, `commerce-commercial-operations-review`, `commerce-commercial-policy-review`, `commerce-deal-desk-review`, `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-partnerships-strategy-review`, `commerce-pricing-strategy-review`, `commerce-product-keyword-plan`, `commerce-rfp-response-review` | 12 |
-| compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 5 |
-| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-marketing-pricing-strategy-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 10 |
+| compliance | `compliance-accessibility-policy`, `compliance-claude-skills-regulated-review`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 6 |
+| content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-claude-skills-growth-review`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-marketing-pricing-strategy-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 11 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
 | design | `design-accessibility-check`, `design-motion-interaction-polish`, `design-premium-landing-page`, `design-responsive-viewport-check`, `design-system-consistency`, `design-tailwind-radix-system`, `design-ui-review`, `design-visual-quality-review` | 8 |
-| engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-error-log-noise-triage`, `engineering-performance-profile` | 4 |
-| execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 7 |
+| engineering | `engineering-build-release`, `engineering-ci-troubleshoot`, `engineering-claude-skills-operations-review`, `engineering-error-log-noise-triage`, `engineering-performance-profile` | 5 |
+| execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-claude-skills-productivity-review`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 8 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-remotion-video-production-boundary`, `media-video-script-review` | 4 |
-| office | `office-docx-brief`, `office-link-reference-integrity`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup`, `office-table-source-reconciliation` | 6 |
-| research | `research-citation-evidence-map`, `research-clinical-study-design-review`, `research-competitor-brief`, `research-finance-analysis-review`, `research-market-analysis-review`, `research-operations-governance-review`, `research-paper-synthesis`, `research-product-analysis-review`, `research-source-check`, `research-source-lineage-trace` | 10 |
+| office | `office-claude-skills-document-review`, `office-docx-brief`, `office-link-reference-integrity`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup`, `office-table-source-reconciliation` | 7 |
+| research | `research-citation-evidence-map`, `research-claude-skills-evidence-review`, `research-clinical-study-design-review`, `research-competitor-brief`, `research-finance-analysis-review`, `research-market-analysis-review`, `research-operations-governance-review`, `research-paper-synthesis`, `research-product-analysis-review`, `research-source-check`, `research-source-lineage-trace` | 11 |
 | security | `security-command-risk-preflight`, `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-secret-context-redaction`, `security-supply-chain-review`, `trivy-container-security-scan` | 8 |
 | vertical | `vertical-education-plan`, `vertical-learning-memory-refresh`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 4 |
 
@@ -147,6 +149,7 @@ smart router mode: deterministic_mesh_router
 | Skill | Category | Status |
 | --- | --- | --- |
 | `ai-autogen-multi-agent-review` | ai | trusted |
+| `ai-claude-skills-meta-workflow-review` | ai | trusted |
 | `ai-context-compression-budget-plan` | ai | trusted |
 | `ai-crewai-role-workflow` | ai | trusted |
 | `ai-guidance-constrained-generation` | ai | trusted |
@@ -167,9 +170,14 @@ smart router mode: deterministic_mesh_router
 | `ai-token-rate-budget-guard` | ai | trusted |
 | `ai-tool-schema-protocol-check` | ai | trusted |
 | `ai-vllm-serving-capacity-plan` | ai | trusted |
+| `ecc-agent-coding-safety` | ai | trusted |
+| `headroom-context-compression` | ai | trusted |
+| `hermes-agent-memory-assistant` | ai | quarantined |
+| `supermemory-memory-engine-reference` | ai | quarantined |
 | `business-atlassian-admin-governance-review` | business | trusted |
 | `business-atlassian-template-governance-review` | business | trusted |
 | `business-capacity-planning-review` | business | trusted |
+| `business-claude-skills-backlog-orchestration` | business | trusted |
 | `business-confluence-knowledge-review` | business | trusted |
 | `business-contract-proposal-review` | business | trusted |
 | `business-customer-success-health-review` | business | trusted |
@@ -195,6 +203,7 @@ smart router mode: deterministic_mesh_router
 | `business-team-communications-review` | business | trusted |
 | `business-vendor-management-review` | business | trusted |
 | `code-ast-refactor-safety` | code | trusted |
+| `code-claude-skills-engineering-role-review` | code | trusted |
 | `code-dead-path-cleanup-review` | code | trusted |
 | `code-dependency-cycle-review` | code | trusted |
 | `code-python-debug` | code | trusted |
@@ -215,12 +224,15 @@ smart router mode: deterministic_mesh_router
 | `commerce-product-keyword-plan` | commerce | trusted |
 | `commerce-rfp-response-review` | commerce | trusted |
 | `compliance-accessibility-policy` | compliance | trusted |
+| `compliance-claude-skills-regulated-review` | compliance | trusted |
 | `compliance-license-policy-gate` | compliance | trusted |
 | `compliance-privacy-check` | compliance | trusted |
 | `compliance-public-claim-risk-register` | compliance | trusted |
 | `compliance-terms-review` | compliance | trusted |
+| `vibe-trading-research-assistant` | compliance | quarantined |
 | `content-brand-voice-boundary` | content | trusted |
 | `content-claims-compliance-filter` | content | trusted |
+| `content-claude-skills-growth-review` | content | trusted |
 | `content-editorial-review` | content | trusted |
 | `content-fact-contradiction-review` | content | trusted |
 | `content-freshness-expiry-review` | content | trusted |
@@ -248,25 +260,25 @@ smart router mode: deterministic_mesh_router
 | `design-tailwind-radix-system` | design | trusted |
 | `design-ui-review` | design | trusted |
 | `design-visual-quality-review` | design | trusted |
-| `ecc-agent-coding-safety` | ai | trusted |
 | `engineering-build-release` | engineering | trusted |
 | `engineering-ci-troubleshoot` | engineering | trusted |
+| `engineering-claude-skills-operations-review` | engineering | trusted |
 | `engineering-error-log-noise-triage` | engineering | trusted |
 | `engineering-performance-profile` | engineering | trusted |
 | `execution-browser-check` | execution | trusted |
 | `execution-browser-use-web-task` | execution | trusted |
+| `execution-claude-skills-productivity-review` | execution | trusted |
 | `execution-e2b-sandbox-boundary` | execution | trusted |
 | `execution-file-batch` | execution | trusted |
 | `execution-mcp-tool-connector-review` | execution | review_required |
 | `execution-playwright-browser-automation` | execution | trusted |
 | `execution-publish-check` | execution | trusted |
 | `execution-rollback-checkpoint-plan` | execution | trusted |
-| `headroom-context-compression` | ai | trusted |
-| `hermes-agent-memory-assistant` | ai | quarantined |
 | `media-asset-review` | media | trusted |
 | `media-brand-asset-pack` | media | trusted |
 | `media-remotion-video-production-boundary` | media | trusted |
 | `media-video-script-review` | media | trusted |
+| `office-claude-skills-document-review` | office | trusted |
 | `office-docx-brief` | office | trusted |
 | `office-link-reference-integrity` | office | trusted |
 | `office-markdown-structure-lint` | office | trusted |
@@ -274,6 +286,7 @@ smart router mode: deterministic_mesh_router
 | `office-spreadsheet-cleanup` | office | trusted |
 | `office-table-source-reconciliation` | office | trusted |
 | `research-citation-evidence-map` | research | trusted |
+| `research-claude-skills-evidence-review` | research | trusted |
 | `research-clinical-study-design-review` | research | trusted |
 | `research-competitor-brief` | research | trusted |
 | `research-finance-analysis-review` | research | trusted |
@@ -291,18 +304,17 @@ smart router mode: deterministic_mesh_router
 | `security-prompt-injection-review` | security | trusted |
 | `security-secret-context-redaction` | security | trusted |
 | `security-supply-chain-review` | security | trusted |
-| `supermemory-memory-engine-reference` | ai | quarantined |
 | `trivy-container-security-scan` | security | trusted |
 | `vertical-education-plan` | vertical | trusted |
 | `vertical-learning-memory-refresh` | vertical | trusted |
 | `vertical-manufacturing-qc` | vertical | trusted |
 | `vertical-real-estate-listing` | vertical | trusted |
-| `vibe-trading-research-assistant` | compliance | quarantined |
+
 
 ## Next Collection Waves
 
 Recommended next waves:
 
-- `batch-021-domain-depth`: mine reference-only clusters for deeper engineering, product, marketing, compliance, RA/QM, design, code, security, and office workflows
+- `batch-030-domain-depth`: split cluster-covered claude-skills candidates into dedicated local skills only when repeated demand proves a cluster is too broad
 - `batch-022-connectors`: connector-aware skills after host adapter verification
 - `batch-023-bundle-tuning`: scenario bundle and overlap-group refinements after the converted catalog settles

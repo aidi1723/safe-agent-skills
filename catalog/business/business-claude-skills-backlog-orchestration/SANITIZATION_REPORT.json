@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T16:17:52Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "1b55d604a2a8378ec9ee0674c0b6367dd2d9e8faf5a584aef7f05322b38e8fe2",
+    "sanitized_sha256": "be41a459ef25dd542ebe1527c271de1f08f9176de5cadc066797b1facdc6d700",
+    "source_sha256": "9868d584deae3e6757e014eda620b1e5406d37afa5ee753693924418e85aa169"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-claude-skills-backlog-orchestration",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:17:32Z",
+    "collected_by": "onecode-claude-skills-backlog-clusters",
+    "license": "Apache-2.0",
+    "path": "batches/batch-029-claude-skills-backlog-clusters/business-claude-skills-backlog-orchestration",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P2",
+    "subcategory": "business.claude_skills_backlog",
+    "task_intent": "orchestrate claude-skills business, product, SaaS, UX, and executive backlog references through trusted local coverage"
+  }
+}

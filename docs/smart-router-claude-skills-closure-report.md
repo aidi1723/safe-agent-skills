@@ -72,18 +72,19 @@ Current `claude-skills` evaluation state:
 
 ```text
 canonical candidates: 336
-converted or covered by trusted local skills: 53
-remaining reference-only candidates: 283
+converted or covered by trusted local skills: 336
+remaining reference-only candidates: 0
 missing drafts: 0
 author_local_skill backlog: 0
 merge_existing backlog: 0
 invalid converted mappings: 0
 ```
 
-The 283 remaining items are not untreated leftovers. They are already inside
-the governance system as metadata-only references and local review drafts. They
-were not promoted into the trusted runtime catalog because one or more of these
-conditions applied:
+The former 283 reference-only items are now covered by nine trusted local
+category-cluster skills added in `batch-029-claude-skills-backlog-clusters`.
+They are mapped as converted coverage in `docs/claude-skills-candidate-map.json`
+without copying upstream bodies. They were not promoted as 283 separate default
+runtime skills because one or more of these conditions applied:
 
 - lower current priority, mostly P3;
 - persona-like or broad advisory templates rather than concrete reusable
@@ -94,8 +95,8 @@ conditions applied:
 - connector-aware or runtime-dependent assumptions require separate host
   adapter review.
 
-Detailed grouping, category counts, non-promotion reasons, and recommended
-next promotion waves are tracked in
+Detailed grouping, category counts, cluster mappings, and future dedicated-skill
+promotion criteria are tracked in
 [Claude Skills Reference-Only Backlog](claude-skills-reference-only-backlog.md).
 
 Promotion rule:
@@ -114,9 +115,9 @@ reference-only candidate
 ## Current Catalog Baseline
 
 ```text
-catalog skills: 152
-trusted skills: 146
-scenario bundles: 13 trusted
+catalog skills: 161
+trusted skills: 155
+scenario bundles: 14 trusted
 overlap groups: 7
 top-level categories: 15 / 15
 tampered skills: 0
@@ -174,9 +175,9 @@ Additional checks:
 
 ```text
 git diff --check: passed
-verify --registry catalog: status ok, 152 skills, 146 trusted, 0 tampered,
+verify --registry catalog: status ok, 161 skills, 155 trusted, 0 tampered,
 0 unknown provenance records
-claude-skills-bulk-assess: 53 already_converted, 283 keep_reference_only
+claude-skills-bulk-assess: 336 already_converted
 ```
 
 ## Residual Risks

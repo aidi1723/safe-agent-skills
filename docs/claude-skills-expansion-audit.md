@@ -13,9 +13,9 @@ catalog, or marked trusted.
 - raw `SKILL.md` files observed: 772
 - canonical deduped candidates: 336
 - priority distribution: P0 27, P1 12, P2 19, P3 278
-- converted or covered upstream candidates: 53
-- distinct local OneCode-authored catalog skills from this expansion: 38 across
-  six batches
+- converted or covered upstream candidates: 336
+- distinct trusted local skills used for conversion or coverage: 58, including
+  nine category-cluster skills for the former reference-only backlog
 
 Top source domains by canonical candidates:
 
@@ -101,8 +101,10 @@ router or platform mirror. The resulting candidate map is stored at
 ## Remaining Expansion Direction
 
 - No ranked `candidate` entries remain in the current candidate map.
-- Future waves should mine `reference_only` clusters for deeper engineering,
-  product, marketing, compliance, and RA/QM domain depth.
+- No `reference_only` entries remain after the backlog cluster coverage pass.
+- Future waves should mine new upstream deltas or split cluster-covered
+  candidates into dedicated local skills only when repeated demand proves the
+  cluster is too broad.
 - Use the bulk planner instead of manual small waves:
 
   ```bash
@@ -111,10 +113,9 @@ router or platform mirror. The resulting candidate map is stored at
     --batch-size 50
   ```
 
-  The current map produces 283 actionable `reference_only` items across 6
-  large review batches when using `--batch-size 50`. The existing historical
-  draft pool still contains 303 metadata-only folders from the earlier bulk
-  materialization pass.
+  The current map produces no actionable `reference_only` items. The existing
+  historical draft pool still contains 303 metadata-only folders from the
+  earlier bulk materialization pass.
 
 - To materialize one large review wave as local draft folders, use:
 
@@ -130,12 +131,15 @@ router or platform mirror. The resulting candidate map is stored at
   imported, approved serially, and verified before any catalog inclusion.
 - `batch-021-claude-skills-bulk-draft` through
   `batch-027-claude-skills-bulk-draft` materialized the original 303
-  metadata-only review inputs as local draft folders. After the coverage pass,
-  53 candidates are converted or covered by trusted local skills and 283 remain
-  reference-only. Catalog counts and trusted counts are unchanged by these
-  draft batches.
+  metadata-only review inputs as local draft folders. After the final cluster
+  coverage pass, all 336 candidates are converted or covered by trusted local
+  skills. The draft batches remain review inputs, not trusted runtime skills.
 - The bulk draft pool now contains 303 draft skill folders and 606 draft files
   across 7 batches. These are review inputs, not trusted runtime skills.
+- `batch-029-claude-skills-backlog-clusters` adds nine trusted local cluster
+  skills that cover the former 283 reference-only candidates by category:
+  business, engineering, code, content, compliance, research, execution, office,
+  and ai.
 - Use `claude-skills-bulk-assess` after draft generation to rank promotion
   work before any import or approval:
 
@@ -146,9 +150,8 @@ router or platform mirror. The resulting candidate map is stored at
     --registry catalog
   ```
 
-  Current assessment after the coverage pass: 283 `keep_reference_only` and
-  53 `already_converted`. The command only reviews metadata-only drafts; it
-  does not approve or trust them.
+  Current assessment after the cluster coverage pass: 336
+  `already_converted`.
 - Connector-aware skills should wait for host adapter verification.
 
 ## Governance Notes

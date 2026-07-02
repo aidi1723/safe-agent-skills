@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "name": "office-claude-skills-document-review",
+  "taxonomy": {
+    "category": "office",
+    "subcategory": "office.claude_skills_document",
+    "artifact_type": "document",
+    "task_intent": "review claude-skills Markdown, HTML, document, slide, report, and office-format references through trusted document workflows",
+    "collection_priority": "P3"
+  },
+  "source": {
+    "type": "local_folder",
+    "usage": "local_authoring",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "collected_by": "onecode-claude-skills-backlog-clusters"
+  }
+}

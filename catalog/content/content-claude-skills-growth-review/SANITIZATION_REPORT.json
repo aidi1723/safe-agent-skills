@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T16:17:52Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "75ae2b9c226f4ab3c572c6c7d92bbec2764273617aa9203b748955ae3f3f109a",
+    "sanitized_sha256": "235297ea8e368b07c45456c7be6f8386e5e451e73c62aa9ecdf3799d15a44720",
+    "source_sha256": "878eb209da01b0b3203b39f4ffb5f283c7b4d6b74baf4a37c0a842cee17abf6a"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "content-claude-skills-growth-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:17:32Z",
+    "collected_by": "onecode-claude-skills-backlog-clusters",
+    "license": "Apache-2.0",
+    "path": "batches/batch-029-claude-skills-backlog-clusters/content-claude-skills-growth-review",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "brief",
+    "category": "content",
+    "collection_priority": "P2",
+    "subcategory": "content.claude_skills_growth",
+    "task_intent": "review claude-skills marketing, copywriting, CRO, lifecycle, ASO, and growth references through trusted content workflows"
+  }
+}

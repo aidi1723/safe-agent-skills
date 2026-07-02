@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "bundle_count": 13,
+  "bundle_count": 14,
   "bundles": [
     {
       "id": "website-build-launch",
@@ -494,6 +494,58 @@
         "citation and prompt-injection review"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "claude-skills-backlog-coverage",
+      "name": "Claude Skills Backlog Coverage",
+      "scenario": "Review, optimize, cluster, and safely cover remaining claude-skills candidate or reference-only backlog items in the trusted local skill catalog.",
+      "status": "trusted",
+      "task_signals": ["claude-skills", "claude skills", "reference-only", "reference only", "backlog", "candidate map", "candidate skill", "remaining skills", "skill backlog", "候选 skill", "候选技能", "剩余 skill", "剩余技能", "纳入体系", "补充到我们的", "skill库", "sikll"],
+      "required_capabilities": [
+        {"id": "business_backlog", "required": true, "preferred_skills": ["business-claude-skills-backlog-orchestration"]},
+        {"id": "engineering_backlog", "required": true, "preferred_skills": ["engineering-claude-skills-operations-review"]},
+        {"id": "code_backlog", "required": true, "preferred_skills": ["code-claude-skills-engineering-role-review"]},
+        {"id": "content_backlog", "required": true, "preferred_skills": ["content-claude-skills-growth-review"]},
+        {"id": "compliance_backlog", "required": true, "preferred_skills": ["compliance-claude-skills-regulated-review"]},
+        {"id": "research_backlog", "required": true, "preferred_skills": ["research-claude-skills-evidence-review"]},
+        {"id": "execution_backlog", "required": false, "preferred_skills": ["execution-claude-skills-productivity-review"]},
+        {"id": "office_backlog", "required": false, "preferred_skills": ["office-claude-skills-document-review"]},
+        {"id": "ai_meta_backlog", "required": false, "preferred_skills": ["ai-claude-skills-meta-workflow-review"]},
+        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]}
+      ],
+      "execution_order": [
+        "business-claude-skills-backlog-orchestration",
+        "engineering-claude-skills-operations-review",
+        "code-claude-skills-engineering-role-review",
+        "content-claude-skills-growth-review",
+        "compliance-claude-skills-regulated-review",
+        "research-claude-skills-evidence-review",
+        "execution-claude-skills-productivity-review",
+        "office-claude-skills-document-review",
+        "ai-claude-skills-meta-workflow-review",
+        "security-supply-chain-review"
+      ],
+      "skills": [
+        "business-claude-skills-backlog-orchestration",
+        "engineering-claude-skills-operations-review",
+        "code-claude-skills-engineering-role-review",
+        "content-claude-skills-growth-review",
+        "compliance-claude-skills-regulated-review",
+        "research-claude-skills-evidence-review",
+        "execution-claude-skills-productivity-review",
+        "office-claude-skills-document-review",
+        "ai-claude-skills-meta-workflow-review",
+        "security-supply-chain-review"
+      ],
+      "expected_output": [
+        "candidate-map coverage status",
+        "category cluster adoption notes",
+        "duplicate and routing-noise review",
+        "regulated-domain and connector boundary notes",
+        "trusted local skill mapping table",
+        "verification and residual-risk summary"
+      ],
+      "safety_boundary": "Skills provide method only; upstream claude-skills bodies remain metadata-only and runtime permissions remain controlled by the host agent."
     },
     {
       "id": "skill-router-quality-review",

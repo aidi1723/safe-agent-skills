@@ -332,8 +332,7 @@ class RegistryCliTest(unittest.TestCase):
             self.assertIn(names[name]["adoption"], {"candidate", "converted"})
 
         converted = {candidate["name"] for candidate in candidate_map["candidates"] if candidate["adoption"] == "converted"}
-        self.assertEqual(
-            {
+        required_converted = {
                 "saas-metrics-coach",
                 "rfp-responder",
                 "procurement-optimizer",
@@ -387,9 +386,9 @@ class RegistryCliTest(unittest.TestCase):
                 "design-system",
                 "landing",
                 "brief",
-            },
-            converted,
-        )
+        }
+        self.assertTrue(required_converted.issubset(converted))
+        self.assertEqual(candidate_map["candidate_count"], len(converted))
 
     def test_claude_skills_candidate_map_is_sorted_by_evaluation_priority(self):
         candidate_map = json.loads(Path("docs/claude-skills-candidate-map.json").read_text(encoding="utf-8"))
@@ -398,7 +397,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(candidates, sorted(candidates, key=claude_skills_candidate_sort_key))
         self.assertEqual(
             {candidate["adoption"] for candidate in candidates},
-            {"converted", "reference_only"},
+            {"converted"},
         )
 
     def test_claude_skills_bulk_plan_batches_all_non_converted_candidates(self):
@@ -812,15 +811,32 @@ class RegistryCliTest(unittest.TestCase):
 
         self.assertEqual(exit_code, 0)
         result = json.loads(out.getvalue())
-        self.assertEqual(
-            result["recommendation_counts"],
-            {
-                "already_converted": 53,
-                "keep_reference_only": 283,
-            },
-        )
+        self.assertEqual(result["recommendation_counts"], {"already_converted": 336})
         self.assertNotIn("author_local_skill", result["recommendation_counts"])
         self.assertNotIn("merge_existing", result["recommendation_counts"])
+        self.assertNotIn("keep_reference_only", result["recommendation_counts"])
+
+    def test_catalog_includes_claude_skills_backlog_cluster_skills(self):
+        index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
+        by_name = {entry["name"]: entry for entry in index["skills"]}
+
+        expected = {
+            "ai-claude-skills-meta-workflow-review": "ai",
+            "business-claude-skills-backlog-orchestration": "business",
+            "code-claude-skills-engineering-role-review": "code",
+            "compliance-claude-skills-regulated-review": "compliance",
+            "content-claude-skills-growth-review": "content",
+            "engineering-claude-skills-operations-review": "engineering",
+            "execution-claude-skills-productivity-review": "execution",
+            "office-claude-skills-document-review": "office",
+            "research-claude-skills-evidence-review": "research",
+        }
+        for name, category in expected.items():
+            self.assertIn(name, by_name)
+            self.assertEqual(by_name[name]["status"], "trusted")
+            self.assertEqual(by_name[name]["taxonomy"]["category"], category)
+            self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
+            self.assertIn("claude-skills", by_name[name]["source"]["reference"])
 
     def test_catalog_includes_first_sanitized_claude_skills_expansion_batch(self):
         index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
@@ -1185,7 +1201,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(maintain_code, 0)
         result = json.loads(maintain_out.getvalue())
         self.assertEqual(result["claude_skills_candidate_map_validation"]["status"], "ok")
-        self.assertEqual(result["claude_skills_candidate_map_validation"]["converted_count"], 53)
+        self.assertEqual(result["claude_skills_candidate_map_validation"]["converted_count"], 336)
 
     def test_router_eval_passes_expected_scenario_cases(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -2046,7 +2062,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 152)
+        self.assertEqual(result["skill_manifest_count"], 161)
         self.assertEqual(result["issues"], [])
 
     def test_verify_registry_detects_manifest_policy_tampering(self):
@@ -2874,6 +2890,34 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("ai-opensquilla-metaskill-workflow", names)
         self.assertIn("ai-opensquilla-token-routing-pattern", names)
         self.assertNotEqual(task_pack["selected_scenario"]["id"], "data-analysis-report")
+
+    def test_real_catalog_scenario_router_selects_claude_skills_backlog_coverage_bundle(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "把剩余 claude-skills reference-only backlog 候选 skill 优化编排并纳入体系",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "10",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        self.assertEqual(task_pack["selected_scenario"]["id"], "claude-skills-backlog-coverage")
+        self.assertEqual(task_pack["pipeline_plan"]["id"], "claude-skills-backlog-coverage")
+        self.assertIn("business-claude-skills-backlog-orchestration", names)
+        self.assertIn("engineering-claude-skills-operations-review", names)
+        self.assertIn("compliance-claude-skills-regulated-review", names)
 
     def test_real_catalog_smart_router_selects_skill_router_quality_review_bundle(self):
         task_pack_out = io.StringIO()

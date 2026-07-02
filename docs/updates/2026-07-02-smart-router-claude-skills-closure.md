@@ -34,26 +34,25 @@ The current `claude-skills` evaluation state is:
 
 ```text
 canonical candidates: 336
-converted or covered by trusted local skills: 53
-remaining reference-only candidates: 283
+converted or covered by trusted local skills: 336
+remaining reference-only candidates: 0
 missing drafts: 0
 author_local_skill backlog: 0
 merge_existing backlog: 0
 invalid converted mappings: 0
 ```
 
-The 283 remaining candidates are already recorded as metadata-only references
-and local review drafts. They were not promoted into the trusted runtime
-catalog because they are lower priority, persona-like, partially overlapping,
-not currently needed by default routing, connector-dependent, or unsafe to copy
-and trust directly from upstream.
+The former 283 reference-only candidates are covered by nine trusted local
+category-cluster skills from `batch-029-claude-skills-backlog-clusters`.
+Candidate-map conversion means covered by local OneCode-authored guidance; it
+does not mean upstream skill bodies were copied or executed.
 
 ## Current Baseline
 
 ```text
-catalog skills: 152
-trusted skills: 146
-scenario bundles: 13 trusted
+catalog skills: 161
+trusted skills: 155
+scenario bundles: 14 trusted
 overlap groups: 7
 top-level categories: 15 / 15
 tampered skills: 0
@@ -84,7 +83,7 @@ bash scripts/verify.sh: passed
 116 unittest tests passed
 git diff --check: passed
 verify --registry catalog: status ok
-claude-skills-bulk-assess: 53 already_converted, 283 keep_reference_only
+claude-skills-bulk-assess: 336 already_converted
 ```
 
 ## Safety Boundary

@@ -1,18 +1,17 @@
-# Claude Skills Reference-Only Backlog
+# Claude Skills Reference-Only Backlog Closure
 
 Date: 2026-07-02
 
 ## Scope
 
-This document summarizes the `claude-skills` candidates that are recorded in
-the Safe-Agent-Skills governance system but are not included in the trusted
-runtime catalog.
+This document summarizes the former `claude-skills` reference-only backlog and
+the cluster coverage path used to include it in the Safe-Agent-Skills trusted
+local catalog.
 
-These items are not ignored. They are tracked as metadata-only references in
-`docs/claude-skills-candidate-map.json` and, where materialized, as local
-review drafts. They are intentionally excluded from normal routing until a
-local OneCode-authored version passes scan, schema validation, approval,
-manifest sealing, and registry verification.
+The backlog items were not copied from upstream. They are now covered by local
+OneCode-authored trusted skills that passed scan, approval, manifest sealing,
+and registry verification. Upstream content remains metadata-only reference
+material.
 
 ## Current Counts
 
@@ -20,11 +19,11 @@ Current candidate-map state:
 
 ```text
 canonical candidates: 336
-converted or covered by trusted local skills: 53
-remaining reference-only candidates: 283
+converted or covered by trusted local skills: 336
+remaining reference-only candidates: 0
 ```
 
-Reference-only candidates by category:
+Former reference-only candidates covered by the cluster pass:
 
 | Category | Count | Main Next-Step Use |
 | --- | ---: | --- |
@@ -38,7 +37,7 @@ Reference-only candidates by category:
 | `office` | 4 | Markdown, HTML, document, slide, and review helpers |
 | `ai` | 1 | Loop-library style meta workflow reference |
 
-Reference-only candidates by source domain:
+Former reference-only candidates by source domain:
 
 | Source Domain | Count |
 | --- | ---: |
@@ -68,9 +67,26 @@ Kind distribution:
 | `skill` | 277 |
 | `router-index` | 6 |
 
+## Cluster Coverage
+
+The 283 former reference-only items are now mapped to nine trusted local
+cluster skills:
+
+| Former Category | Count | Trusted Local Cluster Skill |
+| --- | ---: | --- |
+| `business` | 76 | `business-claude-skills-backlog-orchestration` |
+| `engineering` | 71 | `engineering-claude-skills-operations-review` |
+| `code` | 47 | `code-claude-skills-engineering-role-review` |
+| `content` | 44 | `content-claude-skills-growth-review` |
+| `compliance` | 26 | `compliance-claude-skills-regulated-review` |
+| `research` | 8 | `research-claude-skills-evidence-review` |
+| `execution` | 6 | `execution-claude-skills-productivity-review` |
+| `office` | 4 | `office-claude-skills-document-review` |
+| `ai` | 1 | `ai-claude-skills-meta-workflow-review` |
+
 ## Are These Duplicates?
 
-Not exactly. The 283 reference-only items fall into several groups:
+Not exactly. The 283 former reference-only items fell into several groups:
 
 - Some overlap existing trusted skills and should stay as coverage references
   unless they add a materially better workflow.
@@ -82,15 +98,16 @@ Not exactly. The 283 reference-only items fall into several groups:
 - Some are upstream router indexes or platform mirrors rather than standalone
   reusable method skills.
 
-So the backlog is mixed: partially duplicate, partially low priority, partially
-useful future depth, and partially blocked by governance or runtime-boundary
-review.
+So the backlog was mixed: partially duplicate, partially low priority,
+partially useful future depth, and partially blocked by governance or
+runtime-boundary review. Cluster coverage keeps them available to the router
+through trusted local skills without adding 283 noisy default entries.
 
-## Why They Are Not Trusted Yet
+## Why They Were Not Trusted Individually
 
-The common non-promotion reasons are:
+The common non-promotion reasons were:
 
-- `reference_only` provenance means upstream content is inspiration only. It
+- `reference_only` provenance meant upstream content was inspiration only. It
   must not be copied, installed, executed, or trusted directly.
 - Many candidates are P3 and would increase routing noise more than task
   quality if added by default.
@@ -105,7 +122,7 @@ The common non-promotion reasons are:
   skill gives review guidance rather than legal, medical, or regulatory
   authority.
 
-Promotion remains:
+Individual future promotion remains:
 
 ```text
 reference-only candidate
@@ -135,7 +152,9 @@ High-value examples:
 - `experiment-designer`
 - `roadmap-communicator`
 
-Main reason not promoted: this group mixes concrete product workflows with many
+Cluster action: covered by `business-claude-skills-backlog-orchestration`.
+
+Main reason not promoted individually: this group mixes concrete product workflows with many
 broad advisor/persona templates. The next pass should promote only workflows
 with clear artifacts such as PRDs, experiments, roadmaps, competitive teardown
 tables, UX research plans, or SaaS launch checklists.
@@ -157,7 +176,9 @@ High-value examples:
 - `run`
 - `status`
 
-Main reason not promoted: this group includes real operational gaps but many
+Cluster action: covered by `engineering-claude-skills-operations-review`.
+
+Main reason not promoted individually: this group includes real operational gaps but many
 items are runtime-adjacent. They need host permission boundaries, tool
 contracts, and concrete verification gates before trusted routing.
 
@@ -179,7 +200,9 @@ High-value examples:
 - `coverage`
 - `fix`
 
-Main reason not promoted: many entries are developer-role personas rather than
+Cluster action: covered by `code-claude-skills-engineering-role-review`.
+
+Main reason not promoted individually: many entries are developer-role personas rather than
 bounded skills. Promotion should convert them into narrow review or execution
 workflows such as prompt eval, cloud architecture review, regression coverage,
 or adversarial code review.
@@ -199,7 +222,9 @@ High-value examples:
 - `page-cro`
 - `x-twitter-growth`
 
-Main reason not promoted: several are useful marketing workflows, but default
+Cluster action: covered by `content-claude-skills-growth-review`.
+
+Main reason not promoted individually: several are useful marketing workflows, but default
 routing already has content and claims-compliance coverage. Promotion should
 focus on measurable output formats: acquisition brief, CRO audit, lifecycle
 message set, ASO checklist, or campaign analytics review.
@@ -221,7 +246,9 @@ High-value examples:
 - `qms-audit-expert`
 - `quality-manager-qms-iso13485`
 
-Main reason not promoted: these are high-risk domains. They should be promoted
+Cluster action: covered by `compliance-claude-skills-regulated-review`.
+
+Main reason not promoted individually: these are high-risk domains. They should be promoted
 only as review and evidence-collection workflows with clear disclaimers,
 jurisdiction limits, and artifact requirements. They must not imply legal,
 medical, regulatory, or certification authority.
@@ -241,7 +268,9 @@ High-value examples:
 - `syllabus`
 - `deep-research`
 
-Main reason not promoted: existing research skills already cover citation and
+Cluster action: covered by `research-claude-skills-evidence-review`.
+
+Main reason not promoted individually: existing research skills already cover citation and
 evidence workflows. Promotion should focus on differentiated artifacts such as
 grant fit matrices, literature-review extraction schemas, patent landscape
 maps, and source freshness checks.
@@ -259,7 +288,9 @@ Examples:
 - `reflect`
 - `roast`
 
-Main reason not promoted: these are mostly personal productivity or style
+Cluster action: covered by `execution-claude-skills-productivity-review`.
+
+Main reason not promoted individually: these are mostly personal productivity or style
 templates. They may be useful as optional workflows but are not strong default
 catalog candidates unless converted into bounded task-intake, triage, or
 retrospective protocols.
@@ -275,7 +306,9 @@ Examples:
 - `md-document`
 - `md-review`
 
-Main reason not promoted: these overlap existing office/document guidance and
+Cluster action: covered by `office-claude-skills-document-review`.
+
+Main reason not promoted individually: these overlap existing office/document guidance and
 need clearer file-type contracts, renderer expectations, and visual
 verification gates before adding more runtime surface.
 
@@ -287,12 +320,14 @@ Example:
 
 - `loop-library`
 
-Main reason not promoted: this is best treated as a meta-workflow reference.
+Cluster action: covered by `ai-claude-skills-meta-workflow-review`.
+
+Main reason not promoted individually: this is best treated as a meta-workflow reference.
 It should become a trusted catalog skill only if it produces a concrete,
 auditable agent workflow pattern that does not depend on hidden runtime
 permissions.
 
-## Recommended Promotion Waves
+## Recommended Individual Promotion Waves
 
 ### Wave 1: P2 Product, Content, And Business Gaps
 
@@ -308,8 +343,8 @@ Target candidates:
 - `app-store-optimization`
 - `grants`
 
-Reason: these have relatively high scores and can be rewritten into concrete,
-artifact-driven workflows without requiring privileged connectors.
+Reason: these are already cluster-covered, but they are good candidates for
+future dedicated local skills if repeated demand appears.
 
 ### Wave 2: Engineering Operational Depth
 
@@ -372,7 +407,8 @@ criteria.
 
 ## Promotion Criteria
 
-A reference-only candidate should be promoted only when all criteria are true:
+A cluster-covered candidate should become a separate dedicated skill only when
+all criteria are true:
 
 - It fills a real catalog gap or materially improves an existing trusted skill.
 - It can be rewritten locally without copying upstream bodies.
@@ -430,9 +466,9 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
 
 - This backlog is based on the current local candidate map, not a live upstream
   sync.
-- Upstream content remains metadata-only and must not be executed or trusted
-  directly.
+- Upstream content remains metadata-only and must not be copied, executed, or
+  trusted directly.
 - Promotion work is intentionally slower than copying prompts because each
   trusted skill must preserve provenance, safety boundaries, and verification.
-- Router quality can decrease if broad persona templates are promoted without
-  narrow triggers and overlap controls.
+- Router quality can decrease if broad persona templates are later promoted as
+  separate skills without narrow triggers and overlap controls.

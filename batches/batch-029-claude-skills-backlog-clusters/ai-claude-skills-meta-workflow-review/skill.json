@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "name": "ai-claude-skills-meta-workflow-review",
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.claude_skills_meta_workflow",
+    "artifact_type": "workflow",
+    "task_intent": "review claude-skills meta workflow and loop-library references for trusted local orchestration coverage",
+    "collection_priority": "P2"
+  },
+  "source": {
+    "type": "local_folder",
+    "usage": "local_authoring",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "collected_by": "onecode-claude-skills-backlog-clusters"
+  }
+}

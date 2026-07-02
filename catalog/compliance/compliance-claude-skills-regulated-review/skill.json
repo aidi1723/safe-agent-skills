@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T16:17:52Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "86ce65567ef9becec3be43fb4c4987ac87859acbf3c981237fd097325242b45d",
+    "sanitized_sha256": "dbabb54e06fb7ce369b87d0b727423fa823c6cff7ea6d23a59462701d87c12e6",
+    "source_sha256": "cc289dbbaeb32dd8f16f1e45904936f7e36e8d53952c2350ffef4b7004eef621"
+  },
+  "name": "compliance-claude-skills-regulated-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T16:17:32Z",
+    "collected_by": "onecode-claude-skills-backlog-clusters",
+    "license": "Apache-2.0",
+    "path": "batches/batch-029-claude-skills-backlog-clusters/compliance-claude-skills-regulated-review",
+    "reference": "docs/batches/batch-029-claude-skills-backlog-clusters.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "audit",
+    "category": "compliance",
+    "collection_priority": "P2",
+    "subcategory": "compliance.claude_skills_regulated",
+    "task_intent": "review claude-skills regulated-domain, privacy, AI governance, RA/QM, QMS, ISMS, and audit references with authority boundaries"
+  },
+  "version": "0.1.0"
+}
