@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 45,
+    "source_domain": "engineering-team",
+    "source_path": "engineering-team/playwright-pro/skills/testrail",
+    "upstream_candidate": "testrail",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "code-testrail-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate testrail",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "code",
+    "collection_priority": "P3",
+    "subcategory": "code.testrail",
+    "task_intent": "review testrail metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

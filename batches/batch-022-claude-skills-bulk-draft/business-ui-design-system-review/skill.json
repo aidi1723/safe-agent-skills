@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 47,
+    "source_domain": "product-team",
+    "source_path": "product-team/skills/ui-design-system",
+    "upstream_candidate": "ui-design-system",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "business-ui-design-system-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate ui-design-system",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "business",
+    "collection_priority": "P3",
+    "subcategory": "business.ui_design_system",
+    "task_intent": "review ui design system metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

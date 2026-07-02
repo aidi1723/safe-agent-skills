@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 35,
+    "source_domain": "markdown-html",
+    "source_path": "markdown-html/skills/md-slides",
+    "upstream_candidate": "md-slides",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "office-md-slides-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate md-slides",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "office",
+    "collection_priority": "P3",
+    "subcategory": "office.md_slides",
+    "task_intent": "review md slides metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

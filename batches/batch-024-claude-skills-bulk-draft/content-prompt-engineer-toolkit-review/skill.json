@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 42,
+    "source_domain": "marketing-skill",
+    "source_path": "marketing-skill/skills/prompt-engineer-toolkit",
+    "upstream_candidate": "prompt-engineer-toolkit",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "content-prompt-engineer-toolkit-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate prompt-engineer-toolkit",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "content",
+    "collection_priority": "P3",
+    "subcategory": "content.prompt_engineer_toolkit",
+    "task_intent": "review prompt engineer toolkit metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

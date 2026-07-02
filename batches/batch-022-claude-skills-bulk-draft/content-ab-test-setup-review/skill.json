@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 46,
+    "source_domain": "marketing-skill",
+    "source_path": "marketing-skill/skills/ab-test-setup",
+    "upstream_candidate": "ab-test-setup",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "content-ab-test-setup-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate ab-test-setup",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "content",
+    "collection_priority": "P3",
+    "subcategory": "content.ab_test_setup",
+    "task_intent": "review ab test setup metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

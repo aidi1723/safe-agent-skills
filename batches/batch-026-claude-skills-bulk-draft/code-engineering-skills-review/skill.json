@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 17,
+    "source_domain": "engineering-team",
+    "source_path": "engineering-team/skills/engineering-skills",
+    "upstream_candidate": "engineering-skills",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "code-engineering-skills-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate engineering-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "code",
+    "collection_priority": "P3",
+    "subcategory": "code.engineering_skills",
+    "task_intent": "review engineering skills metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 42,
+    "source_domain": "marketing-skill",
+    "source_path": "marketing-skill/video-content-strategist/skills/video-content-strategist",
+    "upstream_candidate": "video-content-strategist",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "content-video-content-strategist-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate video-content-strategist",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "content",
+    "collection_priority": "P3",
+    "subcategory": "content.video_content_strategist",
+    "task_intent": "review video content strategist metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

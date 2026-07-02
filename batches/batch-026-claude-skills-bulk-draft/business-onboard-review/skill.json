@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 15,
+    "source_domain": "c-level-advisor",
+    "source_path": "c-level-advisor/c-level-agents/skills/onboard",
+    "upstream_candidate": "onboard",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "business-onboard-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate onboard",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "business",
+    "collection_priority": "P3",
+    "subcategory": "business.onboard",
+    "task_intent": "review onboard metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

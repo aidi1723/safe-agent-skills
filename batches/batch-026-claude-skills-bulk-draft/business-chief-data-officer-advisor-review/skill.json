@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 11,
+    "source_domain": "c-level-advisor",
+    "source_path": "c-level-advisor/skills/chief-data-officer-advisor",
+    "upstream_candidate": "chief-data-officer-advisor",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "business-chief-data-officer-advisor-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate chief-data-officer-advisor",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "business",
+    "collection_priority": "P3",
+    "subcategory": "business.chief_data_officer_advisor",
+    "task_intent": "review chief data officer advisor metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

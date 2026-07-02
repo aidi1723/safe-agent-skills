@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 38,
+    "source_domain": "ra-qm-team",
+    "source_path": "ra-qm-team/skills/qms-audit-expert",
+    "upstream_candidate": "qms-audit-expert",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "compliance-qms-audit-expert-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate qms-audit-expert",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "compliance",
+    "collection_priority": "P3",
+    "subcategory": "compliance.qms_audit_expert",
+    "task_intent": "review qms audit expert metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

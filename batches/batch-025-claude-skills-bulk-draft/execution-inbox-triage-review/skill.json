@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 37,
+    "source_domain": "productivity",
+    "source_path": "productivity/email/skills/inbox-triage",
+    "upstream_candidate": "inbox-triage",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "execution-inbox-triage-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate inbox-triage",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "execution",
+    "collection_priority": "P3",
+    "subcategory": "execution.inbox_triage",
+    "task_intent": "review inbox triage metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

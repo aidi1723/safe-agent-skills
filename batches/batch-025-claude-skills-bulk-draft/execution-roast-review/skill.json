@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 35,
+    "source_domain": "productivity",
+    "source_path": "productivity/roast/skills/roast",
+    "upstream_candidate": "roast",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "execution-roast-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate roast",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "execution",
+    "collection_priority": "P3",
+    "subcategory": "execution.roast",
+    "task_intent": "review roast metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}

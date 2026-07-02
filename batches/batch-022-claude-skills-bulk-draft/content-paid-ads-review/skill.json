@@ -1,0 +1,32 @@
+{
+  "draft": {
+    "adoption": "reference_only",
+    "metadata_only": true,
+    "score": 50,
+    "source_domain": "marketing-skill",
+    "source_path": "marketing-skill/skills/paid-ads",
+    "upstream_candidate": "paid-ads",
+    "upstream_source": "https://github.com/alirezarezvani/claude-skills"
+  },
+  "name": "content-paid-ads-review",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-claude-skills-bulk-draft",
+    "license": "Apache-2.0",
+    "path": "",
+    "reference": "docs/claude-skills-candidate-map.json; metadata-only claude-skills candidate paid-ads",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills",
+    "usage": "local_authoring"
+  },
+  "status": "draft",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "content",
+    "collection_priority": "P3",
+    "subcategory": "content.paid_ads",
+    "task_intent": "review paid ads metadata-only candidate before local skill adoption"
+  },
+  "version": "0.1.0"
+}
