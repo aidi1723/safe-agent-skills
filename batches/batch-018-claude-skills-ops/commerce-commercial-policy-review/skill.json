@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "commerce",
+    "subcategory": "commerce.policy",
+    "task_intent": "review commercial policy, approval rules, exceptions, and revenue governance boundaries",
+    "artifact_type": "policy",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops/commerce-commercial-policy-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: commercial-policy.",
+    "collected_by": "onecode-claude-skills-ops"
+  }
+}

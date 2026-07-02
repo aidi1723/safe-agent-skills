@@ -147,7 +147,7 @@
       "source_path": "finance/skills/financial-analyst"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "commerce",
@@ -155,7 +155,8 @@
       "priority": "P0",
       "score": 104,
       "source_domain": "commercial",
-      "source_path": "commercial/skills/commercial-policy"
+      "source_path": "commercial/skills/commercial-policy",
+      "local_skill": "commerce-commercial-policy-review"
     },
     {
       "adoption": "reference_only",
@@ -169,7 +170,7 @@
       "source_path": "commercial/skills/commercial-skills"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -177,7 +178,8 @@
       "priority": "P0",
       "score": 102,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/senior-pm"
+      "source_path": "project-management/skills/senior-pm",
+      "local_skill": "business-product-management-review"
     },
     {
       "adoption": "converted",
@@ -215,7 +217,7 @@
       "source_path": "business-operations/skills/process-mapper"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "commerce",
@@ -223,7 +225,8 @@
       "priority": "P0",
       "score": 98,
       "source_domain": "commercial",
-      "source_path": "commercial/skills/partnerships-architect"
+      "source_path": "commercial/skills/partnerships-architect",
+      "local_skill": "commerce-partnerships-strategy-review"
     },
     {
       "adoption": "candidate",
@@ -248,7 +251,7 @@
       "source_path": "project-management/skills/atlassian-templates"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -256,10 +259,11 @@
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/confluence-expert"
+      "source_path": "project-management/skills/confluence-expert",
+      "local_skill": "business-confluence-knowledge-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -267,7 +271,8 @@
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/jira-expert"
+      "source_path": "project-management/skills/jira-expert",
+      "local_skill": "business-jira-workflow-review"
     },
     {
       "adoption": "reference_only",
@@ -281,7 +286,7 @@
       "source_path": "finance/skills/finance-skills"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "commerce",
@@ -289,10 +294,11 @@
       "priority": "P0",
       "score": 94,
       "source_domain": "commercial",
-      "source_path": "commercial/skills/channel-economics"
+      "source_path": "commercial/skills/channel-economics",
+      "local_skill": "commerce-channel-economics-review"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -300,7 +306,8 @@
       "priority": "P0",
       "score": 92,
       "source_domain": "business-operations",
-      "source_path": "business-operations/skills/internal-comms"
+      "source_path": "business-operations/skills/internal-comms",
+      "local_skill": "business-internal-comms-review"
     },
     {
       "adoption": "candidate",
@@ -336,7 +343,7 @@
       "source_path": "project-management/skills/team-communications"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "business",
@@ -344,7 +351,8 @@
       "priority": "P1",
       "score": 88,
       "source_domain": "business-operations",
-      "source_path": "business-operations/skills/capacity-planner"
+      "source_path": "business-operations/skills/capacity-planner",
+      "local_skill": "business-capacity-planning-review"
     },
     {
       "adoption": "candidate",
@@ -3713,8 +3721,16 @@
       "source_path": "c-level-advisor/skills/c-level-skills"
     }
   ],
-  "converted_skill_count": 14,
+  "converted_skill_count": 22,
   "converted_skills": [
+    {
+      "local_skill": "business-capacity-planning-review",
+      "source_candidate": "capacity-planner"
+    },
+    {
+      "local_skill": "commerce-channel-economics-review",
+      "source_candidate": "channel-economics"
+    },
     {
       "local_skill": "research-clinical-study-design-review",
       "source_candidate": "clinical-research"
@@ -3722,6 +3738,14 @@
     {
       "local_skill": "commerce-commercial-forecast-review",
       "source_candidate": "commercial-forecaster"
+    },
+    {
+      "local_skill": "commerce-commercial-policy-review",
+      "source_candidate": "commercial-policy"
+    },
+    {
+      "local_skill": "business-confluence-knowledge-review",
+      "source_candidate": "confluence-expert"
     },
     {
       "local_skill": "business-customer-success-health-review",
@@ -3736,8 +3760,20 @@
       "source_candidate": "financial-analyst"
     },
     {
+      "local_skill": "business-internal-comms-review",
+      "source_candidate": "internal-comms"
+    },
+    {
+      "local_skill": "business-jira-workflow-review",
+      "source_candidate": "jira-expert"
+    },
+    {
       "local_skill": "business-knowledge-operations-review",
       "source_candidate": "knowledge-ops"
+    },
+    {
+      "local_skill": "commerce-partnerships-strategy-review",
+      "source_candidate": "partnerships-architect"
     },
     {
       "local_skill": "commerce-pricing-strategy-review",
@@ -3766,6 +3802,10 @@
     {
       "local_skill": "business-scrum-project-review",
       "source_candidate": "scrum-master"
+    },
+    {
+      "local_skill": "business-product-management-review",
+      "source_candidate": "senior-pm"
     },
     {
       "local_skill": "business-vendor-management-review",

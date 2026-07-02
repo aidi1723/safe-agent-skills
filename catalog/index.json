@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-02T12:30:00Z",
+  "generated_at": "2026-07-02T12:39:08Z",
   "schema_version": 1,
-  "skill_count": 128,
+  "skill_count": 136,
   "skills": [
     {
       "hashes": {
@@ -730,6 +730,64 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "10ac0268050481c1a7c7fa3b59d831a36ec445332efba526066ab90d34d6ee4d",
+        "sanitized_sha256": "111d5cc45f8128aa925c2a26bb8db6ee17f80b3a97670b91505eb7d43f9433e0",
+        "source_sha256": "7b733d6949d6bd17170dd34dc78fcd386a9d4a773f2abd009f60faff9335d3b5"
+      },
+      "name": "business-capacity-planning-review",
+      "registry_path": "business/business-capacity-planning-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/business-capacity-planning-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "plan",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.capacity",
+        "task_intent": "review team capacity, workload planning, resource constraints, and delivery tradeoffs"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "2bc93f9850d627dbe6e578833c35c688415f72bf59562d036846e7cdf5f3253b",
+        "sanitized_sha256": "6225fbe0573e3bc9b56af87390da1a201b24022b2734d2ca1feaebec604ab493",
+        "source_sha256": "cb86a0e96662cef3762781ca3a1adc26404b8ed04e7360dae2132612025ad5ab"
+      },
+      "name": "business-confluence-knowledge-review",
+      "registry_path": "business/business-confluence-knowledge-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/business-confluence-knowledge-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.knowledge_ops",
+        "task_intent": "review Confluence knowledge structure, ownership, freshness, permissions, and wiki governance"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "8e6c0bf9e3863d32613472c413a57bee92a955340ccfd49f6f440bc4182a3468",
         "sanitized_sha256": "321d262d892a43f0398541065a6dd01b6192fc9d039d062015a953f4670255be",
         "source_sha256": "fac04e46f187f33e3d64d3bd9b739cbd16e31031461b9c30c112afb112c664b5"
@@ -784,6 +842,64 @@
         "collection_priority": "P0",
         "subcategory": "business.finance",
         "task_intent": "review business financial analysis, variance, unit economics, and cash planning evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "2a323a3272c28096595b77eb643392b6bc6ee81e3ec4171059e9306f7972a4ef",
+        "sanitized_sha256": "14c992ca6163820db7b7bd218b860757a169e97ae2e419c0df44061877ca475c",
+        "source_sha256": "76a2208e3be071968fb1d0c52b2be74a06d08b375c706694ea0ab50065590ff9"
+      },
+      "name": "business-internal-comms-review",
+      "registry_path": "business/business-internal-comms-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/business-internal-comms-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "message",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.communications",
+        "task_intent": "review internal communications, change announcements, alignment notes, and approval boundaries"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "c307114de2d1a40279e16e167e0051086c3322ea143aa4ab92833053330c7168",
+        "sanitized_sha256": "b7ddf22d14befb38fa9199bfe8545612b92eeba00478198271bb8f404f4e65c7",
+        "source_sha256": "344b286fe20d61615cd75a6b8a033d05b1245c1db6b07a41ee3af5719d37ed09"
+      },
+      "name": "business-jira-workflow-review",
+      "registry_path": "business/business-jira-workflow-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/business-jira-workflow-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.project_management",
+        "task_intent": "review Jira workflows, issue taxonomies, board hygiene, and delivery reporting boundaries"
       }
     },
     {
@@ -900,6 +1016,35 @@
         "collection_priority": "P0",
         "subcategory": "business.procurement",
         "task_intent": "review procurement spend, supplier risk, sourcing tradeoffs, and savings evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "8786092f06d62947a0ab3b225531adc59d590ed18194e249adb663cf203e9916",
+        "sanitized_sha256": "83e2e3897de1c9744b8f8b7b684115aa8a19b03a1a20225b4270e831079e4afe",
+        "source_sha256": "31508bee68a56ed5b0e45a117868f65a0f0e51129e24d20761417d1f6128e755"
+      },
+      "name": "business-product-management-review",
+      "registry_path": "business/business-product-management-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/business-product-management-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "strategy",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.product_management",
+        "task_intent": "review product strategy, roadmap tradeoffs, PMF evidence, and prioritization assumptions"
       }
     },
     {
@@ -1323,6 +1468,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "864021665c168f57a42e225c581fc594738f43ef9a57a13913defab8c8dae270",
+        "sanitized_sha256": "fa2269c1f297f8a11b396dcbfcc7c54ea0e3208136b4919e5b40cc229b50932f",
+        "source_sha256": "d0db7f06dafd17df172e043bb66c453a516e8fbcbe9fb6f5ccb5deeb91d9353f"
+      },
+      "name": "commerce-channel-economics-review",
+      "registry_path": "commerce/commerce-channel-economics-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/commerce-channel-economics-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "commerce",
+        "collection_priority": "P0",
+        "subcategory": "commerce.channel_economics",
+        "task_intent": "review channel economics, partner margins, incentives, and GTM unit economics evidence"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "441302813094c6cfa2d577e4441e58a5e9bcf4f7d8f92478adbd9f0e19b714c9",
         "sanitized_sha256": "945df33cfe5eacbe1f919d943c673ec1de115d43593b1fb83e88c63c40a4e520",
         "source_sha256": "7f0e8bd154d05a2663693babe111ecea55958333902a2ca909fe0821ffb18d6a"
@@ -1348,6 +1522,35 @@
         "collection_priority": "P0",
         "subcategory": "commerce.forecast",
         "task_intent": "review commercial forecasts, pipeline assumptions, and revenue scenario evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "eafd976b295ead039b2a20f8d6382f78d43206649e07bccbe7e31e1c5115535f",
+        "sanitized_sha256": "553997d8bf67490f90b28e4ca0f8b9f285d9ed18c4ccbe42a90dea564d17949e",
+        "source_sha256": "d779f51c774b0951a4210a1c6eda22a552ea6ff30373595fb3909998fbcad604"
+      },
+      "name": "commerce-commercial-policy-review",
+      "registry_path": "commerce/commerce-commercial-policy-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/commerce-commercial-policy-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "commerce",
+        "collection_priority": "P0",
+        "subcategory": "commerce.policy",
+        "task_intent": "review commercial policy, approval rules, exceptions, and revenue governance boundaries"
       }
     },
     {
@@ -1464,6 +1667,35 @@
         "collection_priority": "P1",
         "subcategory": "commerce.tracking",
         "task_intent": "audit commerce campaign links and tracking parameters"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "079930f8adfc40cc2b2e8fdc8571311912fcfe0529b4ed763cad55bab47fefe1",
+        "sanitized_sha256": "117d5280cbb549734bf8774ce68b8096312d86ec7a9b93581388684fb1f392fe",
+        "source_sha256": "117d20e755dee06d85186baa72cc7cd19c955a455592fe18013aacc268860efb"
+      },
+      "name": "commerce-partnerships-strategy-review",
+      "registry_path": "commerce/commerce-partnerships-strategy-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:38:52Z",
+        "collected_by": "onecode-claude-skills-ops",
+        "license": "Apache-2.0",
+        "path": "batches/batch-018-claude-skills-ops/commerce-partnerships-strategy-review",
+        "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "strategy",
+        "category": "commerce",
+        "collection_priority": "P0",
+        "subcategory": "commerce.partnerships",
+        "task_intent": "review partnerships, channel strategy, alliance tradeoffs, and pilot evidence"
       }
     },
     {

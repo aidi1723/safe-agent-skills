@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.product_management",
+    "task_intent": "review product strategy, roadmap tradeoffs, PMF evidence, and prioritization assumptions",
+    "artifact_type": "strategy",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops/business-product-management-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: senior-pm.",
+    "collected_by": "onecode-claude-skills-ops"
+  }
+}

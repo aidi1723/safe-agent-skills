@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 128 sanitized skills across all
+The current public-safe catalog contains 136 sanitized skills across all
 top-level taxonomy categories, including 34 community project reference skills
-and 47 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, and research seed skills.
+and 55 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, and research seed skills.
 It also records 7 status-backed trusted-only overlap groups for router and
 operator skill selection hints.
 
@@ -21,8 +21,8 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 128
-trusted_count: 122
+skill_count: 136
+trusted_count: 130
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
@@ -116,15 +116,16 @@ smart router mode: deterministic_mesh_router
 | `batch-015-scenario-capability-expansion` | 5 | 5 | Scenario capability expansion for visual review, codebase exploration, simplification, content strategy, and programmatic video boundaries |
 | `batch-016-claude-skills-expansion` | 6 | 6 | Locally authored business, commerce, and clinical research skills from the metadata-only claude-skills audit |
 | `batch-017-claude-skills-depth` | 8 | 8 | Second local claude-skills depth batch for vendor, forecast, RevOps, deal desk, finance, Scrum, knowledge ops, and process mapping |
+| `batch-018-claude-skills-ops` | 8 | 8 | Third local claude-skills operations batch for commercial policy, partnerships, channel economics, product management, Jira, Confluence, internal communications, and capacity planning |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
 | ai | `ai-autogen-multi-agent-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 22 |
-| business | `business-customer-success-health-review`, `business-financial-analysis-review`, `business-knowledge-operations-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-scrum-project-review`, `business-support-triage`, `business-vendor-management-review` | 12 |
+| business | `business-capacity-planning-review`, `business-confluence-knowledge-review`, `business-customer-success-health-review`, `business-financial-analysis-review`, `business-internal-comms-review`, `business-jira-workflow-review`, `business-knowledge-operations-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-product-management-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-scrum-project-review`, `business-support-triage`, `business-vendor-management-review` | 17 |
 | code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 8 |
-| commerce | `commerce-commercial-forecast-review`, `commerce-deal-desk-review`, `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-pricing-strategy-review`, `commerce-product-keyword-plan`, `commerce-rfp-response-review` | 8 |
+| commerce | `commerce-channel-economics-review`, `commerce-commercial-forecast-review`, `commerce-commercial-policy-review`, `commerce-deal-desk-review`, `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-partnerships-strategy-review`, `commerce-pricing-strategy-review`, `commerce-product-keyword-plan`, `commerce-rfp-response-review` | 11 |
 | compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 5 |
 | content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 9 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
@@ -162,12 +163,17 @@ smart router mode: deterministic_mesh_router
 | `ai-token-rate-budget-guard` | ai | trusted |
 | `ai-tool-schema-protocol-check` | ai | trusted |
 | `ai-vllm-serving-capacity-plan` | ai | trusted |
-| `business-process-sop` | business | trusted |
+| `business-capacity-planning-review` | business | trusted |
+| `business-confluence-knowledge-review` | business | trusted |
 | `business-customer-success-health-review` | business | trusted |
 | `business-financial-analysis-review` | business | trusted |
+| `business-internal-comms-review` | business | trusted |
+| `business-jira-workflow-review` | business | trusted |
 | `business-knowledge-operations-review` | business | trusted |
 | `business-process-mapping-review` | business | trusted |
+| `business-process-sop` | business | trusted |
 | `business-procurement-optimization-review` | business | trusted |
+| `business-product-management-review` | business | trusted |
 | `business-requirements-brief` | business | trusted |
 | `business-revenue-operations-review` | business | trusted |
 | `business-saas-metrics-review` | business | trusted |
@@ -182,11 +188,14 @@ smart router mode: deterministic_mesh_router
 | `code-simplify-refactor-plan` | code | trusted |
 | `code-test-regression` | code | trusted |
 | `codebase-explore-map` | code | trusted |
-| `commerce-icbu-listing` | commerce | trusted |
+| `commerce-channel-economics-review` | commerce | trusted |
 | `commerce-commercial-forecast-review` | commerce | trusted |
+| `commerce-commercial-policy-review` | commerce | trusted |
 | `commerce-deal-desk-review` | commerce | trusted |
+| `commerce-icbu-listing` | commerce | trusted |
 | `commerce-inquiry-reply` | commerce | trusted |
 | `commerce-link-tracking-audit` | commerce | trusted |
+| `commerce-partnerships-strategy-review` | commerce | trusted |
 | `commerce-pricing-strategy-review` | commerce | trusted |
 | `commerce-product-keyword-plan` | commerce | trusted |
 | `commerce-rfp-response-review` | commerce | trusted |
@@ -274,6 +283,6 @@ smart router mode: deterministic_mesh_router
 
 Recommended next waves:
 
-- `batch-018-claude-skills-ops`: remaining metadata-only candidates with strong gaps, especially commercial policy, partnerships, Jira administration review, and deeper research operations
-- `batch-019-domain-depth`: deeper skills for design, code, security, and office
-- `batch-018-connectors`: connector-aware skills after host adapter verification
+- `batch-019-claude-skills-research-comms`: remaining metadata-only candidates with strong gaps in research operations, meeting and team communication review, sales engineering, and proposal writing
+- `batch-020-domain-depth`: deeper skills for design, code, security, and office
+- `batch-021-connectors`: connector-aware skills after host adapter verification

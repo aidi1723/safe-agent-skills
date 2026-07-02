@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:39:08Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "079930f8adfc40cc2b2e8fdc8571311912fcfe0529b4ed763cad55bab47fefe1",
+    "sanitized_sha256": "117d5280cbb549734bf8774ce68b8096312d86ec7a9b93581388684fb1f392fe",
+    "source_sha256": "117d20e755dee06d85186baa72cc7cd19c955a455592fe18013aacc268860efb"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "commerce-partnerships-strategy-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:38:52Z",
+    "collected_by": "onecode-claude-skills-ops",
+    "license": "Apache-2.0",
+    "path": "batches/batch-018-claude-skills-ops/commerce-partnerships-strategy-review",
+    "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "strategy",
+    "category": "commerce",
+    "collection_priority": "P0",
+    "subcategory": "commerce.partnerships",
+    "task_intent": "review partnerships, channel strategy, alliance tradeoffs, and pilot evidence"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T12:39:08Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "8786092f06d62947a0ab3b225531adc59d590ed18194e249adb663cf203e9916",
+    "sanitized_sha256": "83e2e3897de1c9744b8f8b7b684115aa8a19b03a1a20225b4270e831079e4afe",
+    "source_sha256": "31508bee68a56ed5b0e45a117868f65a0f0e51129e24d20761417d1f6128e755"
+  },
+  "name": "business-product-management-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:38:52Z",
+    "collected_by": "onecode-claude-skills-ops",
+    "license": "Apache-2.0",
+    "path": "batches/batch-018-claude-skills-ops/business-product-management-review",
+    "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "strategy",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.product_management",
+    "task_intent": "review product strategy, roadmap tradeoffs, PMF evidence, and prioritization assumptions"
+  },
+  "version": "0.1.0"
+}

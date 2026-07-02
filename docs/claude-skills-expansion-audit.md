@@ -13,7 +13,7 @@ catalog, or marked trusted.
 - raw `SKILL.md` files observed: 772
 - canonical deduped candidates: 336
 - priority distribution: P0 27, P1 12, P2 19, P3 278
-- converted skills: 14 local OneCode-authored skills across two batches
+- converted skills: 22 local OneCode-authored skills across three batches
 
 Top source domains by canonical candidates:
 
@@ -49,6 +49,14 @@ Top source domains by canonical candidates:
 | `scrum-master` | `business-scrum-project-review` | business |
 | `knowledge-ops` | `business-knowledge-operations-review` | business |
 | `process-mapper` | `business-process-mapping-review` | business |
+| `commercial-policy` | `commerce-commercial-policy-review` | commerce |
+| `partnerships-architect` | `commerce-partnerships-strategy-review` | commerce |
+| `channel-economics` | `commerce-channel-economics-review` | commerce |
+| `senior-pm` | `business-product-management-review` | business |
+| `jira-expert` | `business-jira-workflow-review` | business |
+| `confluence-expert` | `business-confluence-knowledge-review` | business |
+| `internal-comms` | `business-internal-comms-review` | business |
+| `capacity-planner` | `business-capacity-planning-review` | business |
 
 ## Ranking Method
 
@@ -59,10 +67,11 @@ router or platform mirror. The resulting candidate map is stored at
 
 ## Remaining High-Value Gaps
 
-- commercial policy review
-- partnerships and channel strategy review
-- Jira and Atlassian administration review
 - research operations beyond clinical study design
+- meeting and team communication review
+- sales engineering and solution consulting review
+- contract and proposal writing review
+- deeper market, product, research, and finance analysis
 
 ## Governance Notes
 

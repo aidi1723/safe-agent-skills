@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:39:08Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "2bc93f9850d627dbe6e578833c35c688415f72bf59562d036846e7cdf5f3253b",
+    "sanitized_sha256": "6225fbe0573e3bc9b56af87390da1a201b24022b2734d2ca1feaebec604ab493",
+    "source_sha256": "cb86a0e96662cef3762781ca3a1adc26404b8ed04e7360dae2132612025ad5ab"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-confluence-knowledge-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:38:52Z",
+    "collected_by": "onecode-claude-skills-ops",
+    "license": "Apache-2.0",
+    "path": "batches/batch-018-claude-skills-ops/business-confluence-knowledge-review",
+    "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.knowledge_ops",
+    "task_intent": "review Confluence knowledge structure, ownership, freshness, permissions, and wiki governance"
+  }
+}

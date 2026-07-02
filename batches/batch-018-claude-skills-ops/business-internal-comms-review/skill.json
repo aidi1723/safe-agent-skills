@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.communications",
+    "task_intent": "review internal communications, change announcements, alignment notes, and approval boundaries",
+    "artifact_type": "message",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops/business-internal-comms-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: internal-comms.",
+    "collected_by": "onecode-claude-skills-ops"
+  }
+}

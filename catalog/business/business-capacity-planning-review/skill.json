@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T12:39:08Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "10ac0268050481c1a7c7fa3b59d831a36ec445332efba526066ab90d34d6ee4d",
+    "sanitized_sha256": "111d5cc45f8128aa925c2a26bb8db6ee17f80b3a97670b91505eb7d43f9433e0",
+    "source_sha256": "7b733d6949d6bd17170dd34dc78fcd386a9d4a773f2abd009f60faff9335d3b5"
+  },
+  "name": "business-capacity-planning-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:38:52Z",
+    "collected_by": "onecode-claude-skills-ops",
+    "license": "Apache-2.0",
+    "path": "batches/batch-018-claude-skills-ops/business-capacity-planning-review",
+    "reference": "docs/batches/batch-018-claude-skills-ops.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "plan",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.capacity",
+    "task_intent": "review team capacity, workload planning, resource constraints, and delivery tradeoffs"
+  },
+  "version": "0.1.0"
+}

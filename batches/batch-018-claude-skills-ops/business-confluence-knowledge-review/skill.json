@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.knowledge_ops",
+    "task_intent": "review Confluence knowledge structure, ownership, freshness, permissions, and wiki governance",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-018-claude-skills-ops/business-confluence-knowledge-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: confluence-expert.",
+    "collected_by": "onecode-claude-skills-ops"
+  }
+}
