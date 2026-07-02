@@ -169,6 +169,7 @@ SCENARIO_PROFILES = [
             "regression_test",
             "failure_synthesis",
             "ci_check",
+            "supply_chain_review",
         ],
         "signals": [
             "safe-agent-skills",
@@ -530,7 +531,22 @@ def route_scenario_task(
     for skill in selected_skills:
         if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
             ordered_names.append(skill["name"])
-    routed_skills = [selected_by_name[name] for name in ordered_names[:max_skills]]
+    required_skill_names: list[str] = []
+    if selected_bundle:
+        for capability in selected_bundle.get("required_capabilities", []):
+            if not capability.get("required", True):
+                continue
+            selected_name = next(
+                (name for name in capability.get("preferred_skills", []) if name in selected_by_name),
+                "",
+            )
+            if selected_name and selected_name not in required_skill_names:
+                required_skill_names.append(selected_name)
+    routed_names = ordered_names[:max_skills]
+    for name in required_skill_names:
+        if name not in routed_names:
+            routed_names.append(name)
+    routed_skills = [selected_by_name[name] for name in routed_names]
     coverage = build_capability_coverage(selected_bundle, {skill["name"] for skill in routed_skills}) if selected_bundle else []
     selected_scenario = {
         "id": selected_bundle.get("id", ""),

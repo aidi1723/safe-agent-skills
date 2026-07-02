@@ -134,6 +134,7 @@ class RouterTest(unittest.TestCase):
         self.assertIn("catalog", profile["artifact_types"])
         self.assertIn("skill_selection_quality", profile["required_capabilities"])
         self.assertIn("bundle_quality", profile["required_capabilities"])
+        self.assertIn("supply_chain_review", profile["required_capabilities"])
 
     def test_route_scenario_task_selects_skill_router_quality_review_bundle(self):
         bundle = {
@@ -199,6 +200,84 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(routed["pipeline_plan"]["id"], "skill-router-quality-review")
         self.assertEqual(routed["pipeline_plan"]["mode"], "method_only")
         self.assertEqual(routed["pipeline_plan"]["source"], "trusted_scenario_bundle")
+
+    def test_route_scenario_task_keeps_required_capability_skills_beyond_max(self):
+        bundle = {
+            "id": "skill-router-quality-review",
+            "name": "Skill Router Quality Review",
+            "scenario": "Review skill catalog routing, automatic skill selection, bundle composition, and supply-chain risk.",
+            "status": "trusted",
+            "task_signals": ["safe-agent-skills", "skill router", "smart skill", "智能选择"],
+            "skills": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "ai-langchain-agent-orchestration",
+                "ai-tool-schema-protocol-check",
+                "ai-output-schema-eval",
+                "ai-rule-failure-log-synthesis",
+                "code-test-regression",
+                "engineering-ci-troubleshoot",
+                "security-supply-chain-review",
+            ],
+            "required_capabilities": [
+                {
+                    "id": "skill_selection_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-token-routing-pattern"],
+                },
+                {
+                    "id": "bundle_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-metaskill-workflow"],
+                },
+                {
+                    "id": "routing_contract",
+                    "required": True,
+                    "preferred_skills": ["ai-tool-schema-protocol-check"],
+                },
+                {
+                    "id": "output_schema_eval",
+                    "required": True,
+                    "preferred_skills": ["ai-output-schema-eval"],
+                },
+                {
+                    "id": "regression_test",
+                    "required": True,
+                    "preferred_skills": ["code-test-regression"],
+                },
+                {
+                    "id": "supply_chain_review",
+                    "required": True,
+                    "preferred_skills": ["security-supply-chain-review"],
+                },
+            ],
+            "execution_order": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "ai-langchain-agent-orchestration",
+                "ai-tool-schema-protocol-check",
+                "ai-output-schema-eval",
+                "ai-rule-failure-log-synthesis",
+                "code-test-regression",
+                "engineering-ci-troubleshoot",
+                "security-supply-chain-review",
+            ],
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_scenario_task(
+            task="继续补充维护 safe-agent-skills，使 skill 选择和执行更智能",
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            max_skills=8,
+        )
+
+        skill_names = [skill["name"] for skill in routed["skills"]]
+        coverage_by_capability = {item["capability"]: item for item in routed["coverage"]}
+        self.assertIn("security-supply-chain-review", skill_names)
+        self.assertEqual(coverage_by_capability["supply_chain_review"]["status"], "covered")
+        self.assertEqual(routed["selection_quality"]["missing_required_count"], 0)
 
     def test_build_pipeline_plan_for_skill_router_quality_review(self):
         profile = build_task_profile("复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标")

@@ -509,7 +509,7 @@
         {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
         {"id": "failure_synthesis", "required": false, "preferred_skills": ["ai-rule-failure-log-synthesis"]},
         {"id": "ci_check", "required": false, "preferred_skills": ["engineering-ci-troubleshoot"]},
-        {"id": "supply_chain_review", "required": false, "preferred_skills": ["security-supply-chain-review"]}
+        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]}
       ],
       "execution_order": [
         "ai-opensquilla-metaskill-workflow",
