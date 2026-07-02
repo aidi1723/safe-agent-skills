@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.project_management",
+    "task_intent": "review Scrum execution, backlog health, sprint risk, and project delivery evidence",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth/business-scrum-project-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: scrum-master.",
+    "collected_by": "onecode-claude-skills-depth"
+  }
+}

@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:30:00Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "8c2ff2c5101863fd91f190d476042ce644e9de665065612e761d585315cb0dc4",
+    "sanitized_sha256": "03edc53a1a5a8e720c4428d5f3e8a47be0bb99d35de5c975ea83b5727ef323c4",
+    "source_sha256": "4eda9d4559b55f63868fcc8283bc04a89f26af0dddbda1c2d8280c8c9fe747b2"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-vendor-management-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:29:30Z",
+    "collected_by": "onecode-claude-skills-depth",
+    "license": "Apache-2.0",
+    "path": "batches/batch-017-claude-skills-depth/business-vendor-management-review",
+    "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.vendor_management",
+    "task_intent": "review vendor performance, third-party risk, SLA evidence, and renewal readiness"
+  }
+}

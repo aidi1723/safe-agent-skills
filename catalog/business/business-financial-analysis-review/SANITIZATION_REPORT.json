@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:30:00Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "2e3e9ae402a190dc8f17258adabf32d67961cae433ba02290f471f128dd7f185",
+    "sanitized_sha256": "a7aa611bd1a94b607e70b65ee1e1db37ee458da5e2e5fcb4d1bab8f238e9924c",
+    "source_sha256": "fcb3fef508b575773a285e4a6cdadadc30ba9e6ced598f06b5986ff80264e252"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-financial-analysis-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:29:30Z",
+    "collected_by": "onecode-claude-skills-depth",
+    "license": "Apache-2.0",
+    "path": "batches/batch-017-claude-skills-depth/business-financial-analysis-review",
+    "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.finance",
+    "task_intent": "review business financial analysis, variance, unit economics, and cash planning evidence"
+  }
+}

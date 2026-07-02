@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "commerce",
+    "subcategory": "commerce.forecast",
+    "task_intent": "review commercial forecasts, pipeline assumptions, and revenue scenario evidence",
+    "artifact_type": "report",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth/commerce-commercial-forecast-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: commercial-forecaster.",
+    "collected_by": "onecode-claude-skills-depth"
+  }
+}

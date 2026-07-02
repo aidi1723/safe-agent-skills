@@ -6,8 +6,8 @@ skill, not manual installation of every catalog skill.
 
 ## Current Baseline
 
-- 120 catalog skills
-- 114 trusted skills
+- 128 catalog skills
+- 122 trusted skills
 - 13 trusted scenario bundles
 - 15 top-level categories
 - trusted-only default routing
@@ -29,10 +29,12 @@ skill, not manual installation of every catalog skill.
 ## Maintenance Priorities
 
 The `claude-skills` expansion audit evaluated 336 canonical upstream candidates
-and converted the first local safe batch for SaaS metrics, RFP responses,
-procurement, pricing, customer success, and clinical study design. Remaining
-priority gaps are vendor management, commercial forecasting, revenue
-operations, project management, finance analysis, and research operations.
+and converted 14 local safe skills across SaaS metrics, RFP responses,
+procurement, pricing, customer success, clinical study design, vendor
+management, commercial forecasting, revenue operations, deal desk, finance
+analysis, Scrum project review, knowledge operations, and process mapping.
+Remaining priority gaps are commercial policy, partnerships, Atlassian/Jira
+administration review, and deeper research operations.
 
 External libraries such as `claude-skills` are reference-only. Do not install,
 copy, execute, or trust upstream skills without per-skill review.

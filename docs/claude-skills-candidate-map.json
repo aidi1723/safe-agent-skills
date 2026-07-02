@@ -39,9 +39,10 @@
       "source_path": "business-operations/skills/procurement-optimizer"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-vendor-management-review",
       "mapped_category": "business",
       "name": "vendor-management",
       "priority": "P0",
@@ -50,9 +51,10 @@
       "source_path": "business-operations/skills/vendor-management"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "commerce-commercial-forecast-review",
       "mapped_category": "commerce",
       "name": "commercial-forecaster",
       "priority": "P0",
@@ -73,9 +75,10 @@
       "source_path": "business-growth/skills/customer-success-manager"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-revenue-operations-review",
       "mapped_category": "business",
       "name": "revenue-operations",
       "priority": "P0",
@@ -84,9 +87,10 @@
       "source_path": "business-growth/skills/revenue-operations"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-knowledge-operations-review",
       "mapped_category": "business",
       "name": "knowledge-ops",
       "priority": "P0",
@@ -95,9 +99,10 @@
       "source_path": "business-operations/skills/knowledge-ops"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-scrum-project-review",
       "mapped_category": "business",
       "name": "scrum-master",
       "priority": "P0",
@@ -118,9 +123,10 @@
       "source_path": "commercial/skills/pricing-strategist"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "commerce-deal-desk-review",
       "mapped_category": "commerce",
       "name": "deal-desk",
       "priority": "P0",
@@ -129,9 +135,10 @@
       "source_path": "commercial/skills/deal-desk"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-financial-analysis-review",
       "mapped_category": "business",
       "name": "financial-analyst",
       "priority": "P0",
@@ -196,9 +203,10 @@
       "source_path": "finance/business-investment-advisor/skills/business-investment-advisor"
     },
     {
-      "adoption": "candidate",
+      "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-process-mapping-review",
       "mapped_category": "business",
       "name": "process-mapper",
       "priority": "P0",
@@ -3705,31 +3713,63 @@
       "source_path": "c-level-advisor/skills/c-level-skills"
     }
   ],
-  "converted_skill_count": 6,
+  "converted_skill_count": 14,
   "converted_skills": [
     {
-      "local_skill": "business-saas-metrics-review",
-      "source_candidate": "saas-metrics-coach"
+      "local_skill": "research-clinical-study-design-review",
+      "source_candidate": "clinical-research"
     },
     {
-      "local_skill": "commerce-rfp-response-review",
-      "source_candidate": "rfp-responder"
-    },
-    {
-      "local_skill": "business-procurement-optimization-review",
-      "source_candidate": "procurement-optimizer"
-    },
-    {
-      "local_skill": "commerce-pricing-strategy-review",
-      "source_candidate": "pricing-strategist"
+      "local_skill": "commerce-commercial-forecast-review",
+      "source_candidate": "commercial-forecaster"
     },
     {
       "local_skill": "business-customer-success-health-review",
       "source_candidate": "customer-success-manager"
     },
     {
-      "local_skill": "research-clinical-study-design-review",
-      "source_candidate": "clinical-research"
+      "local_skill": "commerce-deal-desk-review",
+      "source_candidate": "deal-desk"
+    },
+    {
+      "local_skill": "business-financial-analysis-review",
+      "source_candidate": "financial-analyst"
+    },
+    {
+      "local_skill": "business-knowledge-operations-review",
+      "source_candidate": "knowledge-ops"
+    },
+    {
+      "local_skill": "commerce-pricing-strategy-review",
+      "source_candidate": "pricing-strategist"
+    },
+    {
+      "local_skill": "business-process-mapping-review",
+      "source_candidate": "process-mapper"
+    },
+    {
+      "local_skill": "business-procurement-optimization-review",
+      "source_candidate": "procurement-optimizer"
+    },
+    {
+      "local_skill": "business-revenue-operations-review",
+      "source_candidate": "revenue-operations"
+    },
+    {
+      "local_skill": "commerce-rfp-response-review",
+      "source_candidate": "rfp-responder"
+    },
+    {
+      "local_skill": "business-saas-metrics-review",
+      "source_candidate": "saas-metrics-coach"
+    },
+    {
+      "local_skill": "business-scrum-project-review",
+      "source_candidate": "scrum-master"
+    },
+    {
+      "local_skill": "business-vendor-management-review",
+      "source_candidate": "vendor-management"
     }
   ],
   "evaluation_method": {

@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:30:00Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "068eddf5e8fd6b11865832b41bdd2a8a6e5d500e5ce7d3eb8f04abb2fdb8aa48",
+    "sanitized_sha256": "0c596f0df0a6a45f2ebdbbd27c809d7607169ffde0e00733e339802ca55158be",
+    "source_sha256": "a3472c43c5074a579c05e33632ed0320e2503cba28e40bd26e7112f32c84b325"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-process-mapping-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:29:30Z",
+    "collected_by": "onecode-claude-skills-depth",
+    "license": "Apache-2.0",
+    "path": "batches/batch-017-claude-skills-depth/business-process-mapping-review",
+    "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.process",
+    "task_intent": "review process maps, handoffs, bottlenecks, controls, and workflow improvement evidence"
+  }
+}

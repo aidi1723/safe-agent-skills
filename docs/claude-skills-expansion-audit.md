@@ -13,7 +13,7 @@ catalog, or marked trusted.
 - raw `SKILL.md` files observed: 772
 - canonical deduped candidates: 336
 - priority distribution: P0 27, P1 12, P2 19, P3 278
-- first converted batch: 6 local OneCode-authored skills
+- converted skills: 14 local OneCode-authored skills across two batches
 
 Top source domains by canonical candidates:
 
@@ -41,6 +41,14 @@ Top source domains by canonical candidates:
 | `pricing-strategist` | `commerce-pricing-strategy-review` | commerce |
 | `customer-success-manager` | `business-customer-success-health-review` | business |
 | `clinical-research` | `research-clinical-study-design-review` | research |
+| `vendor-management` | `business-vendor-management-review` | business |
+| `commercial-forecaster` | `commerce-commercial-forecast-review` | commerce |
+| `revenue-operations` | `business-revenue-operations-review` | business |
+| `deal-desk` | `commerce-deal-desk-review` | commerce |
+| `financial-analyst` | `business-financial-analysis-review` | business |
+| `scrum-master` | `business-scrum-project-review` | business |
+| `knowledge-ops` | `business-knowledge-operations-review` | business |
+| `process-mapper` | `business-process-mapping-review` | business |
 
 ## Ranking Method
 
@@ -51,11 +59,9 @@ router or platform mirror. The resulting candidate map is stored at
 
 ## Remaining High-Value Gaps
 
-- vendor management and third-party risk review
-- commercial forecasting and revenue operations
-- deal desk and commercial policy review
-- project management, Scrum, Jira, and knowledge operations
-- financial analysis and finance operating review
+- commercial policy review
+- partnerships and channel strategy review
+- Jira and Atlassian administration review
 - research operations beyond clinical study design
 
 ## Governance Notes

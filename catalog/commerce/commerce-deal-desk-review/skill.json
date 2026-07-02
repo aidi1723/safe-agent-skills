@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-02T12:30:00Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "f81483ac50f41d6eba390b749532565d0d83dbcd8f3c74eb7d374e57d79a84ee",
+    "sanitized_sha256": "1dc046c5e66c4eaae7b94b986bd41fe4abfc092992753aa45c48d8977490a1b6",
+    "source_sha256": "40cb5eece1a439ba9bd964eaae5669e691cc8a258d04ec8b0d6904a9b1e22361"
+  },
+  "name": "commerce-deal-desk-review",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:29:30Z",
+    "collected_by": "onecode-claude-skills-depth",
+    "license": "Apache-2.0",
+    "path": "batches/batch-017-claude-skills-depth/commerce-deal-desk-review",
+    "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "review",
+    "category": "commerce",
+    "collection_priority": "P0",
+    "subcategory": "commerce.deal_desk",
+    "task_intent": "review deal desk approvals, discounts, exceptions, and quote evidence"
+  },
+  "version": "0.1.0"
+}

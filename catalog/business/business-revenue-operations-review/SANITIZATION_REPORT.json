@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:30:00Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "7fa7da124c1835a9b8e78ba4424f660cf6bfd66bb08d607317d8b7c16a20b48b",
+    "sanitized_sha256": "e75ff37e6f9847bce37d29d737d38b6a9c6a7d1f7ee5397b511fb2ff9ef283d5",
+    "source_sha256": "c8d8af6e8846b5a47543f88fa36a127e7322457dfc11931648c209bd73fb15fc"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-revenue-operations-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:29:30Z",
+    "collected_by": "onecode-claude-skills-depth",
+    "license": "Apache-2.0",
+    "path": "batches/batch-017-claude-skills-depth/business-revenue-operations-review",
+    "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.revenue_operations",
+    "task_intent": "review revenue operations, pipeline hygiene, funnel metrics, and GTM efficiency"
+  }
+}

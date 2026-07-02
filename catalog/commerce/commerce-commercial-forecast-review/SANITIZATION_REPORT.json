@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:30:00Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "441302813094c6cfa2d577e4441e58a5e9bcf4f7d8f92478adbd9f0e19b714c9",
+    "sanitized_sha256": "945df33cfe5eacbe1f919d943c673ec1de115d43593b1fb83e88c63c40a4e520",
+    "source_sha256": "7f0e8bd154d05a2663693babe111ecea55958333902a2ca909fe0821ffb18d6a"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "commerce-commercial-forecast-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:29:30Z",
+    "collected_by": "onecode-claude-skills-depth",
+    "license": "Apache-2.0",
+    "path": "batches/batch-017-claude-skills-depth/commerce-commercial-forecast-review",
+    "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "commerce",
+    "collection_priority": "P0",
+    "subcategory": "commerce.forecast",
+    "task_intent": "review commercial forecasts, pipeline assumptions, and revenue scenario evidence"
+  }
+}

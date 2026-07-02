@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.revenue_operations",
+    "task_intent": "review revenue operations, pipeline hygiene, funnel metrics, and GTM efficiency",
+    "artifact_type": "report",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth/business-revenue-operations-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: revenue-operations.",
+    "collected_by": "onecode-claude-skills-depth"
+  }
+}

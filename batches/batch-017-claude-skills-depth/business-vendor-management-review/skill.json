@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.vendor_management",
+    "task_intent": "review vendor performance, third-party risk, SLA evidence, and renewal readiness",
+    "artifact_type": "report",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth/business-vendor-management-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: vendor-management.",
+    "collected_by": "onecode-claude-skills-depth"
+  }
+}

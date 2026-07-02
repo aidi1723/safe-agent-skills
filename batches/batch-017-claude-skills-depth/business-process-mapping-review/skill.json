@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.process",
+    "task_intent": "review process maps, handoffs, bottlenecks, controls, and workflow improvement evidence",
+    "artifact_type": "workflow",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth/business-process-mapping-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: process-mapper.",
+    "collected_by": "onecode-claude-skills-depth"
+  }
+}

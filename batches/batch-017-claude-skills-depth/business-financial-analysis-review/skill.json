@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.finance",
+    "task_intent": "review business financial analysis, variance, unit economics, and cash planning evidence",
+    "artifact_type": "report",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth/business-financial-analysis-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: financial-analyst.",
+    "collected_by": "onecode-claude-skills-depth"
+  }
+}

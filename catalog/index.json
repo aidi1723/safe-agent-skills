@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-02T12:20:41Z",
+  "generated_at": "2026-07-02T12:30:00Z",
   "schema_version": 1,
-  "skill_count": 120,
+  "skill_count": 128,
   "skills": [
     {
       "hashes": {
@@ -759,6 +759,93 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "2e3e9ae402a190dc8f17258adabf32d67961cae433ba02290f471f128dd7f185",
+        "sanitized_sha256": "a7aa611bd1a94b607e70b65ee1e1db37ee458da5e2e5fcb4d1bab8f238e9924c",
+        "source_sha256": "fcb3fef508b575773a285e4a6cdadadc30ba9e6ced598f06b5986ff80264e252"
+      },
+      "name": "business-financial-analysis-review",
+      "registry_path": "business/business-financial-analysis-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/business-financial-analysis-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.finance",
+        "task_intent": "review business financial analysis, variance, unit economics, and cash planning evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "1e09be712cbc725f180a64110a12250b082f39b9f5bceb70586e54ada7d1dca2",
+        "sanitized_sha256": "bb96a466daee2523a8a8719065589e141f41d8beae346ba87a0cf472947f2b29",
+        "source_sha256": "22f000b6a4c877e7a049f18a02aee8f07857f50e1d9b1ba1ee6bde1fe65ac287"
+      },
+      "name": "business-knowledge-operations-review",
+      "registry_path": "business/business-knowledge-operations-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/business-knowledge-operations-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.knowledge_ops",
+        "task_intent": "review internal knowledge operations, documentation ownership, freshness, and discoverability"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "068eddf5e8fd6b11865832b41bdd2a8a6e5d500e5ce7d3eb8f04abb2fdb8aa48",
+        "sanitized_sha256": "0c596f0df0a6a45f2ebdbbd27c809d7607169ffde0e00733e339802ca55158be",
+        "source_sha256": "a3472c43c5074a579c05e33632ed0320e2503cba28e40bd26e7112f32c84b325"
+      },
+      "name": "business-process-mapping-review",
+      "registry_path": "business/business-process-mapping-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/business-process-mapping-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.process",
+        "task_intent": "review process maps, handoffs, bottlenecks, controls, and workflow improvement evidence"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "1e654db7604eff403a95da0ca08cdf2171d789a0f9ff367517cf991d2f8f73e8",
         "sanitized_sha256": "e305f8081c2fc4a1051c8ef4b9271a43d5bcb942306af242a00e563ffaff6eda",
         "source_sha256": "fe13372bb83ac4f497b293f1a656aa136d1ea00520ce07e4fd579fd1e78ad243"
@@ -859,6 +946,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "7fa7da124c1835a9b8e78ba4424f660cf6bfd66bb08d607317d8b7c16a20b48b",
+        "sanitized_sha256": "e75ff37e6f9847bce37d29d737d38b6a9c6a7d1f7ee5397b511fb2ff9ef283d5",
+        "source_sha256": "c8d8af6e8846b5a47543f88fa36a127e7322457dfc11931648c209bd73fb15fc"
+      },
+      "name": "business-revenue-operations-review",
+      "registry_path": "business/business-revenue-operations-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/business-revenue-operations-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.revenue_operations",
+        "task_intent": "review revenue operations, pipeline hygiene, funnel metrics, and GTM efficiency"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "a631938fe7e66b4ae2853f2ec8e0fde9b009525aaf070644a8cc06ac684c3451",
         "sanitized_sha256": "1332eb8fe166f052053f09f2f4d594b2fc57f8c31b566318b255ea20e330dd31",
         "source_sha256": "937dcb7e6a1e336cfaaa3777f250d77c558e1826fecfd342eedd466dd4c0a80a"
@@ -888,6 +1004,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "91e5ca5594bcbf046cd2ed223a9069fe4929447489d77b0a4c57c258a8f67bc7",
+        "sanitized_sha256": "fe238fe9f2e499609623d5db081f8f684c21c4f12b6754d441685051f28e1493",
+        "source_sha256": "518675c9ca274f6fe6a071a1bc650c471fdf20f4ca12da7baa3b15f280cdb97f"
+      },
+      "name": "business-scrum-project-review",
+      "registry_path": "business/business-scrum-project-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/business-scrum-project-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.project_management",
+        "task_intent": "review Scrum execution, backlog health, sprint risk, and project delivery evidence"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "f01647ae2e129e3f42917b2142b755d99f47d252687dd8960bf22e645317b2fe",
         "sanitized_sha256": "d91e3855b9ed4eeb797c720766aa979429f49feb804f368a609f8cbbc2776b14",
         "source_sha256": "4320b8aacfa5d7a12d89bd648d337ca18b2eecc53fe8baf34ba1772752b68999"
@@ -913,6 +1058,35 @@
         "collection_priority": "P2",
         "subcategory": "business.support",
         "task_intent": "triage customer support requests safely"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "8c2ff2c5101863fd91f190d476042ce644e9de665065612e761d585315cb0dc4",
+        "sanitized_sha256": "03edc53a1a5a8e720c4428d5f3e8a47be0bb99d35de5c975ea83b5727ef323c4",
+        "source_sha256": "4eda9d4559b55f63868fcc8283bc04a89f26af0dddbda1c2d8280c8c9fe747b2"
+      },
+      "name": "business-vendor-management-review",
+      "registry_path": "business/business-vendor-management-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/business-vendor-management-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.vendor_management",
+        "task_intent": "review vendor performance, third-party risk, SLA evidence, and renewal readiness"
       }
     },
     {
@@ -1145,6 +1319,64 @@
         "collection_priority": "P0",
         "subcategory": "code.explore",
         "task_intent": "map an unfamiliar repository before code changes"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "441302813094c6cfa2d577e4441e58a5e9bcf4f7d8f92478adbd9f0e19b714c9",
+        "sanitized_sha256": "945df33cfe5eacbe1f919d943c673ec1de115d43593b1fb83e88c63c40a4e520",
+        "source_sha256": "7f0e8bd154d05a2663693babe111ecea55958333902a2ca909fe0821ffb18d6a"
+      },
+      "name": "commerce-commercial-forecast-review",
+      "registry_path": "commerce/commerce-commercial-forecast-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/commerce-commercial-forecast-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "commerce",
+        "collection_priority": "P0",
+        "subcategory": "commerce.forecast",
+        "task_intent": "review commercial forecasts, pipeline assumptions, and revenue scenario evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "f81483ac50f41d6eba390b749532565d0d83dbcd8f3c74eb7d374e57d79a84ee",
+        "sanitized_sha256": "1dc046c5e66c4eaae7b94b986bd41fe4abfc092992753aa45c48d8977490a1b6",
+        "source_sha256": "40cb5eece1a439ba9bd964eaae5669e691cc8a258d04ec8b0d6904a9b1e22361"
+      },
+      "name": "commerce-deal-desk-review",
+      "registry_path": "commerce/commerce-deal-desk-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:29:30Z",
+        "collected_by": "onecode-claude-skills-depth",
+        "license": "Apache-2.0",
+        "path": "batches/batch-017-claude-skills-depth/commerce-deal-desk-review",
+        "reference": "docs/batches/batch-017-claude-skills-depth.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-017-claude-skills-depth",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "review",
+        "category": "commerce",
+        "collection_priority": "P0",
+        "subcategory": "commerce.deal_desk",
+        "task_intent": "review deal desk approvals, discounts, exceptions, and quote evidence"
       }
     },
     {

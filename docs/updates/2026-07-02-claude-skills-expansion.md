@@ -3,8 +3,7 @@
 Date: 2026-07-02
 
 This update evaluates the public `claude-skills` repository as a metadata-only
-reference source and adds the first locally authored OneCode-safe expansion
-batch.
+reference source and adds two locally authored OneCode-safe expansion batches.
 
 ## What Changed
 
@@ -13,13 +12,22 @@ batch.
 - Added `docs/claude-skills-expansion-audit.md` summarizing ranking,
   conversion, and remaining gaps.
 - Added `batch-016-claude-skills-expansion` with 6 locally authored skills.
-- Imported and approved 6 new trusted catalog entries:
+- Added `batch-017-claude-skills-depth` with 8 locally authored skills.
+- Imported and approved 14 new trusted catalog entries, including:
   `business-saas-metrics-review`,
   `commerce-rfp-response-review`,
   `business-procurement-optimization-review`,
   `commerce-pricing-strategy-review`,
-  `business-customer-success-health-review`, and
-  `research-clinical-study-design-review`.
+  `business-customer-success-health-review`,
+  `research-clinical-study-design-review`,
+  `business-vendor-management-review`,
+  `commerce-commercial-forecast-review`,
+  `business-revenue-operations-review`,
+  `commerce-deal-desk-review`,
+  `business-financial-analysis-review`,
+  `business-scrum-project-review`,
+  `business-knowledge-operations-review`, and
+  `business-process-mapping-review`.
 
 ## Boundary
 
