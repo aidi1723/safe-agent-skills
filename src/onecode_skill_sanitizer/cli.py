@@ -1808,6 +1808,114 @@ def router_eval_command(args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 2
 
 
+def claude_skills_candidate_action(candidate: dict) -> str:
+    adoption = candidate.get("adoption", "reference_only")
+    if adoption == "converted":
+        return "already_converted"
+    if adoption == "candidate":
+        return "draft_local_sanitized_skill"
+    if adoption == "reference_only":
+        return "mine_reference_cluster_or_merge_existing"
+    return "review_before_action"
+
+
+def claude_skills_candidate_sort_key(candidate: dict) -> tuple[int, int, int, str]:
+    adoption_rank = {"candidate": 0, "reference_only": 1, "rejected": 2, "converted": 3}
+    priority_rank = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
+    return (
+        adoption_rank.get(str(candidate.get("adoption", "reference_only")), 9),
+        -int(candidate.get("score", 0) or 0),
+        priority_rank.get(str(candidate.get("priority", "P3")), 9),
+        str(candidate.get("name", "")),
+    )
+
+
+def compact_claude_skills_candidate(candidate: dict) -> dict:
+    item = {
+        "name": candidate.get("name", ""),
+        "adoption": candidate.get("adoption", "reference_only"),
+        "priority": candidate.get("priority", ""),
+        "score": candidate.get("score", 0),
+        "mapped_category": candidate.get("mapped_category", ""),
+        "source_domain": candidate.get("source_domain", ""),
+        "source_path": candidate.get("source_path", ""),
+        "recommended_action": claude_skills_candidate_action(candidate),
+    }
+    if candidate.get("local_skill"):
+        item["local_skill"] = candidate["local_skill"]
+    return item
+
+
+def most_common(values: list[str]) -> str:
+    counts: dict[str, int] = {}
+    for value in values:
+        if not value:
+            continue
+        counts[value] = counts.get(value, 0) + 1
+    if not counts:
+        return ""
+    return sorted(counts.items(), key=lambda item: (-item[1], item[0]))[0][0]
+
+
+def build_claude_skills_bulk_plan(candidate_map_path: Path, batch_size: int) -> dict:
+    if batch_size <= 0:
+        raise SystemExit("batch-size must be greater than 0")
+    candidate_map = json.loads(candidate_map_path.read_text(encoding="utf-8"))
+    candidates = candidate_map.get("candidates", [])
+    if not isinstance(candidates, list):
+        raise SystemExit(f"invalid candidate map: {candidate_map_path}")
+
+    adoption_counts: dict[str, int] = {}
+    for candidate in candidates:
+        adoption = str(candidate.get("adoption", "reference_only"))
+        adoption_counts[adoption] = adoption_counts.get(adoption, 0) + 1
+    adoption_counts = dict(sorted(adoption_counts.items()))
+
+    actionable = [
+        candidate
+        for candidate in candidates
+        if candidate.get("adoption") != "converted"
+    ]
+    actionable.sort(key=claude_skills_candidate_sort_key)
+
+    batches = []
+    for index in range(0, len(actionable), batch_size):
+        batch_candidates = actionable[index : index + batch_size]
+        items = [compact_claude_skills_candidate(candidate) for candidate in batch_candidates]
+        batches.append(
+            {
+                "id": f"claude-skills-bulk-{len(batches) + 1:03d}",
+                "item_count": len(items),
+                "dominant_category": most_common([item["mapped_category"] for item in items]),
+                "dominant_source_domain": most_common([item["source_domain"] for item in items]),
+                "items": items,
+            }
+        )
+
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "mode": "metadata_only_bulk_review",
+        "source": candidate_map.get("source", ""),
+        "candidate_count": len(candidates),
+        "declared_candidate_count": candidate_map.get("candidate_count"),
+        "converted_count": adoption_counts.get("converted", 0),
+        "actionable_count": len(actionable),
+        "adoption_counts": adoption_counts,
+        "batch_size": batch_size,
+        "batch_count": len(batches),
+        "safety_boundary": "Do not copy, install, execute, or trust upstream skill bodies. Use metadata-only planning, local authoring, sanitization, serial approval, and verification.",
+        "recommended_next_action": "Generate local sanitized batch drafts from the highest-priority batch, then import, approve serially, and verify.",
+        "batches": batches,
+    }
+
+
+def claude_skills_bulk_plan_command(args: argparse.Namespace) -> int:
+    result = build_claude_skills_bulk_plan(Path(args.candidate_map), args.batch_size)
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []
     bundles_index = load_bundles_index(bundles_path)
@@ -2261,6 +2369,11 @@ def build_parser() -> argparse.ArgumentParser:
     router_eval_parser.add_argument("--overlap-groups")
     router_eval_parser.add_argument("--max-skills", type=int, default=8)
     router_eval_parser.set_defaults(func=router_eval_command)
+
+    claude_skills_bulk_plan_parser = subparsers.add_parser("claude-skills-bulk-plan")
+    claude_skills_bulk_plan_parser.add_argument("--candidate-map", required=True)
+    claude_skills_bulk_plan_parser.add_argument("--batch-size", type=int, default=50)
+    claude_skills_bulk_plan_parser.set_defaults(func=claude_skills_bulk_plan_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

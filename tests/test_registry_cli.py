@@ -365,6 +365,97 @@ class RegistryCliTest(unittest.TestCase):
             converted,
         )
 
+    def test_claude_skills_bulk_plan_batches_all_non_converted_candidates(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            candidate_map = Path(tmp) / "candidate-map.json"
+            candidate_map.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "source": "https://github.com/alirezarezvani/claude-skills",
+                        "candidate_count": 5,
+                        "converted_skill_count": 1,
+                        "candidates": [
+                            {
+                                "name": "alpha",
+                                "adoption": "converted",
+                                "priority": "P0",
+                                "score": 90,
+                                "mapped_category": "business",
+                                "source_domain": "operations",
+                                "source_path": "operations/skills/alpha",
+                                "local_skill": "business-alpha-review",
+                            },
+                            {
+                                "name": "beta",
+                                "adoption": "reference_only",
+                                "priority": "P1",
+                                "score": 80,
+                                "mapped_category": "code",
+                                "source_domain": "engineering",
+                                "source_path": "engineering/skills/beta",
+                            },
+                            {
+                                "name": "gamma",
+                                "adoption": "candidate",
+                                "priority": "P0",
+                                "score": 100,
+                                "mapped_category": "security",
+                                "source_domain": "security",
+                                "source_path": "security/skills/gamma",
+                            },
+                            {
+                                "name": "delta",
+                                "adoption": "reference_only",
+                                "priority": "P2",
+                                "score": 70,
+                                "mapped_category": "content",
+                                "source_domain": "marketing",
+                                "source_path": "marketing/skills/delta",
+                            },
+                            {
+                                "name": "epsilon",
+                                "adoption": "reference_only",
+                                "priority": "P1",
+                                "score": 60,
+                                "mapped_category": "business",
+                                "source_domain": "operations",
+                                "source_path": "operations/skills/epsilon",
+                            },
+                        ],
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    [
+                        "claude-skills-bulk-plan",
+                        "--candidate-map",
+                        str(candidate_map),
+                        "--batch-size",
+                        "2",
+                    ]
+                )
+
+            self.assertEqual(exit_code, 0)
+            plan = json.loads(out.getvalue())
+            self.assertEqual(plan["schema_version"], 1)
+            self.assertEqual(plan["mode"], "metadata_only_bulk_review")
+            self.assertEqual(plan["candidate_count"], 5)
+            self.assertEqual(plan["converted_count"], 1)
+            self.assertEqual(plan["actionable_count"], 4)
+            self.assertEqual(plan["adoption_counts"], {"candidate": 1, "converted": 1, "reference_only": 3})
+            self.assertEqual(plan["batch_size"], 2)
+            self.assertEqual(plan["batch_count"], 2)
+            self.assertIn("Do not copy, install, execute, or trust upstream skill bodies.", plan["safety_boundary"])
+            self.assertEqual([item["name"] for item in plan["batches"][0]["items"]], ["gamma", "beta"])
+            self.assertEqual([item["name"] for item in plan["batches"][1]["items"]], ["delta", "epsilon"])
+            self.assertEqual(plan["recommended_next_action"], "Generate local sanitized batch drafts from the highest-priority batch, then import, approve serially, and verify.")
+
     def test_catalog_includes_first_sanitized_claude_skills_expansion_batch(self):
         index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
         by_name = {entry["name"]: entry for entry in index["skills"]}

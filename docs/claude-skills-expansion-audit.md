@@ -81,6 +81,16 @@ router or platform mirror. The resulting candidate map is stored at
 - No ranked `candidate` entries remain in the current candidate map.
 - Future waves should mine `reference_only` clusters for deeper engineering,
   product, marketing, compliance, and RA/QM domain depth.
+- Use the bulk planner instead of manual small waves:
+
+  ```bash
+  onecode-skill-sanitizer claude-skills-bulk-plan \
+    --candidate-map docs/claude-skills-candidate-map.json \
+    --batch-size 50
+  ```
+
+  The current map produces 303 actionable `reference_only` items across 7
+  large review batches when using `--batch-size 50`.
 - Connector-aware skills should wait for host adapter verification.
 
 ## Governance Notes

@@ -43,5 +43,14 @@ now has no remaining `candidate` entries; future expansion should mine
 reference-only clusters for deeper engineering, product, marketing, compliance,
 RA/QM, and connector-aware workflows.
 
+For faster expansion planning, use the bulk planner to group all remaining
+metadata-only items into large review waves:
+
+```bash
+onecode-skill-sanitizer claude-skills-bulk-plan \
+  --candidate-map docs/claude-skills-candidate-map.json \
+  --batch-size 50
+```
+
 External libraries such as `claude-skills` are reference-only. Do not install,
 copy, execute, or trust upstream skills without per-skill review.
