@@ -91,6 +91,19 @@ router or platform mirror. The resulting candidate map is stored at
 
   The current map produces 303 actionable `reference_only` items across 7
   large review batches when using `--batch-size 50`.
+
+- To materialize one large review wave as local draft folders, use:
+
+  ```bash
+  onecode-skill-sanitizer claude-skills-bulk-draft \
+    --candidate-map docs/claude-skills-candidate-map.json \
+    --out batches/batch-XXX-claude-skills-bulk-draft \
+    --batch-size 50 \
+    --batch-index 1
+  ```
+
+  Drafts are not catalog entries and are not trusted. They must be edited,
+  imported, approved serially, and verified before any catalog inclusion.
 - Connector-aware skills should wait for host adapter verification.
 
 ## Governance Notes

@@ -1916,6 +1916,171 @@ def claude_skills_bulk_plan_command(args: argparse.Namespace) -> int:
     return 0
 
 
+def slugify_skill_part(value: str) -> str:
+    slug = re.sub(r"[^a-z0-9]+", "-", value.lower()).strip("-")
+    return slug or "skill"
+
+
+def humanize_candidate_name(value: str) -> str:
+    return " ".join(part for part in re.split(r"[-_\s]+", value.strip()) if part) or "skill"
+
+
+def local_draft_skill_name(candidate: dict) -> str:
+    category = slugify_skill_part(str(candidate.get("mapped_category") or "general"))
+    name = slugify_skill_part(str(candidate.get("name") or "skill"))
+    if name.startswith(f"{category}-"):
+        return f"{name}-review"
+    return f"{category}-{name}-review"
+
+
+def build_claude_skills_draft_skill_text(candidate: dict, skill_name: str) -> str:
+    label = humanize_candidate_name(str(candidate.get("name", skill_name)))
+    category = str(candidate.get("mapped_category") or "general")
+    source_domain = str(candidate.get("source_domain") or "unknown")
+    return f"""---
+name: {skill_name}
+description: Use when reviewing {label} workflows, metadata-only skill candidates, upstream reference clusters, or local adoption drafts before catalog inclusion.
+---
+
+# {label.title()} Review
+
+## When To Use
+
+Use this draft when reviewing the `{candidate.get("name", "")}` metadata-only
+candidate from `claude-skills` before deciding whether to author a local
+OneCode skill, merge it into an existing skill, or keep it reference-only.
+
+## Safe Workflow
+
+1. Identify the task, audience, owner, source domain, target catalog category,
+   and expected artifact.
+2. Compare the candidate with existing trusted Safe-Agent-Skills to avoid
+   duplicate or overlapping guidance.
+3. Draft local OneCode guidance from project requirements and operator review;
+   do not copy upstream skill bodies.
+4. Check provenance, license notes, runtime permissions, and connector
+   assumptions before import.
+5. Produce an adoption recommendation only; Do not execute upstream content or
+   mark this draft trusted.
+
+## Expected Output
+
+- metadata-only candidate summary
+- overlap and merge recommendation
+- local authoring notes
+- required verifier checklist
+- adoption decision: convert, merge, keep reference-only, or reject
+
+## Verifier Expectations
+
+- metadata-only boundary check
+- duplicate skill check
+- provenance and license check
+- import, serial approval, schema-check, maintain-check, and verify before trust
+
+## Draft Metadata
+
+- upstream candidate: `{candidate.get("name", "")}`
+- source domain: `{source_domain}`
+- source path: `{candidate.get("source_path", "")}`
+- mapped category: `{category}`
+- score: `{candidate.get("score", 0)}`
+- priority: `{candidate.get("priority", "")}`
+- adoption before draft: `{candidate.get("adoption", "reference_only")}`
+"""
+
+
+def build_claude_skills_draft_manifest(candidate: dict, skill_name: str, candidate_map_source: str) -> dict:
+    category = str(candidate.get("mapped_category") or "general")
+    return {
+        "schema_version": 1,
+        "name": skill_name,
+        "version": "0.1.0",
+        "status": "draft",
+        "taxonomy": {
+            "category": category,
+            "subcategory": f"{slugify_skill_part(category)}.{slugify_skill_part(str(candidate.get('name') or 'skill')).replace('-', '_')}",
+            "artifact_type": "review",
+            "task_intent": f"review {humanize_candidate_name(str(candidate.get('name', skill_name)))} metadata-only candidate before local skill adoption",
+            "collection_priority": str(candidate.get("priority") or "P3"),
+        },
+        "source": {
+            "type": "local_folder",
+            "usage": "local_authoring",
+            "path": "",
+            "url": "https://github.com/aidi1723/safe-agent-skills",
+            "author": "OneCode Project",
+            "license": "Apache-2.0",
+            "reference": f"{candidate_map_source}; metadata-only claude-skills candidate {candidate.get('name', '')}",
+            "collected_by": "onecode-claude-skills-bulk-draft",
+        },
+        "draft": {
+            "upstream_source": "https://github.com/alirezarezvani/claude-skills",
+            "upstream_candidate": candidate.get("name", ""),
+            "source_domain": candidate.get("source_domain", ""),
+            "source_path": candidate.get("source_path", ""),
+            "score": candidate.get("score", 0),
+            "adoption": candidate.get("adoption", "reference_only"),
+            "metadata_only": True,
+        },
+    }
+
+
+def build_claude_skills_bulk_drafts(candidate_map_path: Path, out_dir: Path, batch_size: int, batch_index: int) -> dict:
+    if batch_index <= 0:
+        raise SystemExit("batch-index must be greater than 0")
+    plan = build_claude_skills_bulk_plan(candidate_map_path, batch_size)
+    batches = plan["batches"]
+    if batch_index > len(batches):
+        raise SystemExit(f"batch-index out of range: {batch_index}")
+
+    batch = batches[batch_index - 1]
+    out_dir.mkdir(parents=True, exist_ok=True)
+    draft_names = []
+    for item in batch["items"]:
+        skill_name = local_draft_skill_name(item)
+        draft_names.append(skill_name)
+        skill_dir = out_dir / skill_name
+        skill_dir.mkdir(parents=True, exist_ok=True)
+        (skill_dir / "SKILL.md").write_text(
+            build_claude_skills_draft_skill_text(item, skill_name),
+            encoding="utf-8",
+        )
+        write_json(
+            skill_dir / "skill.json",
+            build_claude_skills_draft_manifest(item, skill_name, candidate_map_path.as_posix()),
+        )
+
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "mode": "metadata_only_local_draft",
+        "batch_id": batch["id"],
+        "batch_index": batch_index,
+        "batch_size": batch_size,
+        "draft_count": len(draft_names),
+        "out": out_dir.as_posix(),
+        "draft_names": draft_names,
+        "safety_boundary": plan["safety_boundary"],
+        "next_steps": [
+            "Drafts are not trusted and are not in the catalog.",
+            "Review and edit local guidance before import.",
+            "Run import, approve serially, schema-check, maintain-check, and verify before trust.",
+        ],
+    }
+
+
+def claude_skills_bulk_draft_command(args: argparse.Namespace) -> int:
+    result = build_claude_skills_bulk_drafts(
+        candidate_map_path=Path(args.candidate_map),
+        out_dir=Path(args.out),
+        batch_size=args.batch_size,
+        batch_index=args.batch_index,
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []
     bundles_index = load_bundles_index(bundles_path)
@@ -2374,6 +2539,13 @@ def build_parser() -> argparse.ArgumentParser:
     claude_skills_bulk_plan_parser.add_argument("--candidate-map", required=True)
     claude_skills_bulk_plan_parser.add_argument("--batch-size", type=int, default=50)
     claude_skills_bulk_plan_parser.set_defaults(func=claude_skills_bulk_plan_command)
+
+    claude_skills_bulk_draft_parser = subparsers.add_parser("claude-skills-bulk-draft")
+    claude_skills_bulk_draft_parser.add_argument("--candidate-map", required=True)
+    claude_skills_bulk_draft_parser.add_argument("--out", required=True)
+    claude_skills_bulk_draft_parser.add_argument("--batch-size", type=int, default=50)
+    claude_skills_bulk_draft_parser.add_argument("--batch-index", type=int, default=1)
+    claude_skills_bulk_draft_parser.set_defaults(func=claude_skills_bulk_draft_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

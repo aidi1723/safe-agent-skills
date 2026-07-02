@@ -456,6 +456,90 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual([item["name"] for item in plan["batches"][1]["items"]], ["delta", "epsilon"])
             self.assertEqual(plan["recommended_next_action"], "Generate local sanitized batch drafts from the highest-priority batch, then import, approve serially, and verify.")
 
+    def test_claude_skills_bulk_draft_generates_local_review_drafts_for_batch(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidate_map = root / "candidate-map.json"
+            out_dir = root / "batch-999-claude-skills-bulk-draft"
+            candidate_map.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "source": "https://github.com/alirezarezvani/claude-skills",
+                        "candidate_count": 3,
+                        "converted_skill_count": 1,
+                        "candidates": [
+                            {
+                                "name": "alpha",
+                                "adoption": "converted",
+                                "priority": "P0",
+                                "score": 90,
+                                "mapped_category": "business",
+                                "source_domain": "operations",
+                                "source_path": "operations/skills/alpha",
+                                "local_skill": "business-alpha-review",
+                            },
+                            {
+                                "name": "beta-toolkit",
+                                "adoption": "reference_only",
+                                "priority": "P1",
+                                "score": 80,
+                                "mapped_category": "code",
+                                "source_domain": "engineering",
+                                "source_path": "engineering/skills/beta-toolkit",
+                            },
+                            {
+                                "name": "gamma-risk",
+                                "adoption": "candidate",
+                                "priority": "P0",
+                                "score": 100,
+                                "mapped_category": "security",
+                                "source_domain": "security",
+                                "source_path": "security/skills/gamma-risk",
+                            },
+                        ],
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    [
+                        "claude-skills-bulk-draft",
+                        "--candidate-map",
+                        str(candidate_map),
+                        "--out",
+                        str(out_dir),
+                        "--batch-size",
+                        "2",
+                        "--batch-index",
+                        "1",
+                    ]
+                )
+
+            self.assertEqual(exit_code, 0)
+            result = json.loads(out.getvalue())
+            self.assertEqual(result["schema_version"], 1)
+            self.assertEqual(result["mode"], "metadata_only_local_draft")
+            self.assertEqual(result["draft_count"], 2)
+            self.assertEqual(result["draft_names"], ["security-gamma-risk-review", "code-beta-toolkit-review"])
+            self.assertIn("not trusted", result["next_steps"][0])
+
+            for name in result["draft_names"]:
+                skill_dir = out_dir / name
+                skill_text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
+                manifest = json.loads((skill_dir / "skill.json").read_text(encoding="utf-8"))
+                self.assertIn("metadata-only", skill_text)
+                self.assertIn("Do not execute upstream", skill_text)
+                self.assertEqual(manifest["name"], name)
+                self.assertEqual(manifest["status"], "draft")
+                self.assertEqual(manifest["source"]["usage"], "local_authoring")
+                self.assertEqual(manifest["source"]["type"], "local_folder")
+                self.assertIn("metadata-only", manifest["source"]["reference"])
+
     def test_catalog_includes_first_sanitized_claude_skills_expansion_batch(self):
         index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
         by_name = {entry["name"]: entry for entry in index["skills"]}

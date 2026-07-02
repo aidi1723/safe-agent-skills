@@ -52,5 +52,15 @@ onecode-skill-sanitizer claude-skills-bulk-plan \
   --batch-size 50
 ```
 
+Then materialize a selected wave as local drafts:
+
+```bash
+onecode-skill-sanitizer claude-skills-bulk-draft \
+  --candidate-map docs/claude-skills-candidate-map.json \
+  --out batches/batch-XXX-claude-skills-bulk-draft \
+  --batch-size 50 \
+  --batch-index 1
+```
+
 External libraries such as `claude-skills` are reference-only. Do not install,
 copy, execute, or trust upstream skills without per-skill review.
