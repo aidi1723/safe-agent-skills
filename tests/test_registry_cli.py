@@ -704,6 +704,21 @@ class RegistryCliTest(unittest.TestCase):
             self.assertIn("Inspect the target route.", task_pack["agent_instructions"])
             self.assertIn("responsive screenshot check", task_pack["agent_instructions"])
             self.assertIn("Only use trusted skills", task_pack["safety_boundary"])
+            self.assertIn("acceptance_criteria", task_pack)
+            self.assertIn("completion_contract", task_pack)
+            self.assertIn(
+                "Record selected trusted skills before execution.",
+                task_pack["acceptance_criteria"],
+            )
+            self.assertIn(
+                "selected_skills",
+                task_pack["completion_contract"]["final_response_must_include"],
+            )
+            self.assertIn(
+                "verification_performed",
+                task_pack["completion_contract"]["final_response_must_include"],
+            )
+            self.assertIn("Completion contract:", task_pack["agent_instructions"])
 
     def test_task_pack_outputs_markdown(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -775,6 +790,11 @@ class RegistryCliTest(unittest.TestCase):
             self.assertIn("security-review", markdown)
             self.assertIn("Review permissions.", markdown)
             self.assertIn("policy check", markdown)
+            self.assertIn("## Acceptance Criteria", markdown)
+            self.assertIn("## Completion Contract", markdown)
+            self.assertIn("Record selected trusted skills before execution.", markdown)
+            self.assertIn("selected_skills", markdown)
+            self.assertIn("verification_performed", markdown)
 
     def test_task_pack_never_selects_rejected_or_disabled_skills(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -2178,6 +2198,11 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("design-ui-review", [skill["name"] for skill in task_pack["skills"]])
         self.assertIn("execution-publish-check", [skill["name"] for skill in task_pack["skills"]])
         self.assertIn("ui_review", [item["capability"] for item in task_pack["coverage"]])
+        self.assertIn("selection_quality", task_pack)
+        self.assertIn(task_pack["selection_quality"]["confidence"], {"high", "medium"})
+        self.assertGreater(task_pack["selection_quality"]["coverage_ratio"], 0)
+        self.assertIn("acceptance_criteria", task_pack)
+        self.assertIn("completion_contract", task_pack)
 
     def test_real_catalog_smart_router_covers_task_and_invariant_skills(self):
         task_pack_out = io.StringIO()
