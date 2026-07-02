@@ -2081,6 +2081,179 @@ def claude_skills_bulk_draft_command(args: argparse.Namespace) -> int:
     return 0
 
 
+STOPWORD_SKILL_TOKENS = {
+    "advisor",
+    "builder",
+    "candidate",
+    "candidates",
+    "expert",
+    "manager",
+    "review",
+    "skill",
+    "skills",
+    "toolkit",
+    "workflow",
+    "workflows",
+}
+
+
+def skill_name_tokens(value: str) -> set[str]:
+    return {
+        part
+        for part in re.split(r"[^a-z0-9]+", value.lower())
+        if len(part) > 2 and part not in STOPWORD_SKILL_TOKENS
+    }
+
+
+def load_draft_skill_names(draft_root: Path) -> set[str]:
+    names: set[str] = set()
+    if not draft_root.exists():
+        return names
+    for manifest_path in sorted(draft_root.glob("**/skill.json")):
+        manifest = load_optional_skill_json(manifest_path.parent)
+        if manifest.get("status") != "draft":
+            continue
+        name = manifest.get("name") or manifest_path.parent.name
+        if isinstance(name, str) and name:
+            names.add(name)
+    return names
+
+
+def trusted_registry_skill_names(registry_dir: Path) -> list[str]:
+    if not registry_dir.exists():
+        return []
+    index = load_registry_index(registry_dir)
+    return [
+        str(entry.get("name", ""))
+        for entry in index.get("skills", [])
+        if entry.get("status") == "trusted" and entry.get("name")
+    ]
+
+
+def find_claude_skills_overlap(candidate: dict, trusted_names: list[str]) -> str:
+    candidate_name = str(candidate.get("name", ""))
+    candidate_slug = slugify_skill_part(candidate_name)
+    candidate_tokens = skill_name_tokens(candidate_name)
+    for trusted_name in trusted_names:
+        trusted_slug = slugify_skill_part(trusted_name)
+        trusted_tokens = skill_name_tokens(trusted_name)
+        if candidate_slug and candidate_slug in trusted_slug:
+            return trusted_name
+        if len(candidate_tokens & trusted_tokens) >= 2:
+            return trusted_name
+    return ""
+
+
+def assess_claude_skills_candidate(candidate: dict, draft_names: set[str], trusted_names: list[str]) -> dict:
+    name = str(candidate.get("name", ""))
+    draft_name = local_draft_skill_name(candidate)
+    adoption = str(candidate.get("adoption", "reference_only"))
+    score = int(candidate.get("score", 0) or 0)
+    priority = str(candidate.get("priority", "P3"))
+    item = {
+        "candidate": name,
+        "draft_name": draft_name,
+        "draft_present": draft_name in draft_names,
+        "priority": priority,
+        "score": score,
+        "mapped_category": candidate.get("mapped_category", ""),
+        "source_domain": candidate.get("source_domain", ""),
+        "source_path": candidate.get("source_path", ""),
+    }
+    if adoption == "converted":
+        item.update(
+            {
+                "recommendation": "already_converted",
+                "next_gate": "none",
+                "reason": "candidate map already records a converted local skill",
+                "local_skill": candidate.get("local_skill", ""),
+            }
+        )
+        return item
+    if not item["draft_present"]:
+        item.update(
+            {
+                "recommendation": "missing_draft",
+                "next_gate": "draft-generation",
+                "reason": "candidate has no matching local metadata-only draft folder",
+            }
+        )
+        return item
+
+    overlap_skill = find_claude_skills_overlap(candidate, trusted_names)
+    if overlap_skill:
+        item.update(
+            {
+                "recommendation": "merge_existing",
+                "next_gate": "overlap-merge-review",
+                "reason": "candidate overlaps an existing trusted catalog skill",
+                "overlap_skill": overlap_skill,
+            }
+        )
+        return item
+
+    if priority in {"P0", "P1"} or score >= 75:
+        item.update(
+            {
+                "recommendation": "author_local_skill",
+                "next_gate": "local-authoring-review",
+                "reason": "high-priority or high-score candidate with no trusted overlap",
+            }
+        )
+        return item
+
+    item.update(
+        {
+            "recommendation": "keep_reference_only",
+            "next_gate": "defer-or-cluster-review",
+            "reason": "lower-priority metadata-only candidate should remain reference-only until a concrete local need appears",
+        }
+    )
+    return item
+
+
+def build_claude_skills_bulk_assessment(candidate_map_path: Path, draft_root: Path, registry_dir: Path) -> dict:
+    candidate_map = json.loads(candidate_map_path.read_text(encoding="utf-8"))
+    candidates = candidate_map.get("candidates", [])
+    if not isinstance(candidates, list):
+        raise SystemExit(f"invalid candidate map: {candidate_map_path}")
+
+    draft_names = load_draft_skill_names(draft_root)
+    trusted_names = trusted_registry_skill_names(registry_dir)
+    items = [
+        assess_claude_skills_candidate(candidate, draft_names, trusted_names)
+        for candidate in sorted(candidates, key=claude_skills_candidate_sort_key)
+    ]
+    recommendation_counts: dict[str, int] = {}
+    for item in items:
+        recommendation = str(item["recommendation"])
+        recommendation_counts[recommendation] = recommendation_counts.get(recommendation, 0) + 1
+
+    return {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "mode": "metadata_only_bulk_assessment",
+        "source": candidate_map.get("source", ""),
+        "candidate_count": len(candidates),
+        "draft_root": draft_root.as_posix(),
+        "draft_count": len(draft_names),
+        "trusted_skill_count": len(trusted_names),
+        "recommendation_counts": dict(sorted(recommendation_counts.items())),
+        "safety_boundary": "This command reviews metadata-only drafts only; it does not approve or trust drafts, execute upstream content, or bypass import, serial approval, schema-check, maintain-check, and verify.",
+        "items": items,
+    }
+
+
+def claude_skills_bulk_assess_command(args: argparse.Namespace) -> int:
+    result = build_claude_skills_bulk_assessment(
+        Path(args.candidate_map),
+        Path(args.draft_root),
+        Path(args.registry),
+    )
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0
+
+
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []
     bundles_index = load_bundles_index(bundles_path)
@@ -2546,6 +2719,12 @@ def build_parser() -> argparse.ArgumentParser:
     claude_skills_bulk_draft_parser.add_argument("--batch-size", type=int, default=50)
     claude_skills_bulk_draft_parser.add_argument("--batch-index", type=int, default=1)
     claude_skills_bulk_draft_parser.set_defaults(func=claude_skills_bulk_draft_command)
+
+    claude_skills_bulk_assess_parser = subparsers.add_parser("claude-skills-bulk-assess")
+    claude_skills_bulk_assess_parser.add_argument("--candidate-map", required=True)
+    claude_skills_bulk_assess_parser.add_argument("--draft-root", required=True)
+    claude_skills_bulk_assess_parser.add_argument("--registry", required=True)
+    claude_skills_bulk_assess_parser.set_defaults(func=claude_skills_bulk_assess_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

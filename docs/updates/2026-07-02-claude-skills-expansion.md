@@ -23,6 +23,10 @@ reference source and adds five locally authored OneCode-safe expansion batches.
   `batch-027-claude-skills-bulk-draft` with the remaining 253 metadata-only
   local draft folders from the ranked bulk review plan. The 7 bulk draft
   batches now cover all 303 actionable `reference_only` candidates.
+- Added `claude-skills-bulk-assess` to rank the full draft pool before
+  promotion. Current assessment keeps the catalog boundary unchanged while
+  identifying 5 candidates for local authoring, 15 for merge review, and 283
+  to keep reference-only.
 - Imported and approved 33 new trusted catalog entries, including:
   `business-saas-metrics-review`,
   `commerce-rfp-response-review`,

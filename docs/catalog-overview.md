@@ -62,5 +62,18 @@ onecode-skill-sanitizer claude-skills-bulk-draft \
   --batch-index 1
 ```
 
+After draft materialization, assess the whole draft pool before local authoring or import:
+
+```bash
+onecode-skill-sanitizer claude-skills-bulk-assess \
+  --candidate-map docs/claude-skills-candidate-map.json \
+  --draft-root batches \
+  --registry catalog
+```
+
+The current assessment classifies 5 candidates for local authoring, 15 for
+overlap merge review, 283 to keep reference-only, and 33 as already converted.
+The assessment command does not approve or trust drafts.
+
 External libraries such as `claude-skills` are reference-only. Do not install,
 copy, execute, or trust upstream skills without per-skill review.

@@ -538,7 +538,129 @@ class RegistryCliTest(unittest.TestCase):
                 self.assertEqual(manifest["status"], "draft")
                 self.assertEqual(manifest["source"]["usage"], "local_authoring")
                 self.assertEqual(manifest["source"]["type"], "local_folder")
-                self.assertIn("metadata-only", manifest["source"]["reference"])
+
+    def test_claude_skills_bulk_assess_ranks_drafts_before_catalog_promotion(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            candidate_map = root / "candidate-map.json"
+            draft_root = root / "drafts"
+            registry = root / "registry"
+            existing = root / "existing"
+            existing_skill = existing / "content-seo-audit-review"
+            existing_skill.mkdir(parents=True)
+            (existing_skill / "SKILL.md").write_text(
+                "Use when reviewing SEO audit quality, metadata, content structure, and search visibility.",
+                encoding="utf-8",
+            )
+            main(["import", str(existing), "--registry", str(registry), "--collected-by", "onecode-test"])
+            registry_index = json.loads((registry / "index.json").read_text(encoding="utf-8"))
+            existing_path = next(entry["registry_path"] for entry in registry_index["skills"] if entry["name"] == "content-seo-audit-review")
+            main(["approve", str(registry / existing_path)])
+
+            candidate_map.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "source": "https://github.com/alirezarezvani/claude-skills",
+                        "candidate_count": 4,
+                        "candidates": [
+                            {
+                                "name": "done-skill",
+                                "adoption": "converted",
+                                "priority": "P0",
+                                "score": 100,
+                                "mapped_category": "business",
+                                "source_domain": "operations",
+                                "source_path": "operations/skills/done-skill",
+                                "local_skill": "business-done-skill-review",
+                            },
+                            {
+                                "name": "growth-playbook",
+                                "adoption": "reference_only",
+                                "priority": "P1",
+                                "score": 88,
+                                "mapped_category": "business",
+                                "source_domain": "product-team",
+                                "source_path": "product-team/skills/growth-playbook",
+                            },
+                            {
+                                "name": "seo-audit",
+                                "adoption": "reference_only",
+                                "priority": "P2",
+                                "score": 70,
+                                "mapped_category": "content",
+                                "source_domain": "marketing-skill",
+                                "source_path": "marketing-skill/skills/seo-audit",
+                            },
+                            {
+                                "name": "low-noise",
+                                "adoption": "reference_only",
+                                "priority": "P3",
+                                "score": 12,
+                                "mapped_category": "business",
+                                "source_domain": "c-level-advisor",
+                                "source_path": "c-level-advisor/skills/low-noise",
+                            },
+                        ],
+                    },
+                    indent=2,
+                ),
+                encoding="utf-8",
+            )
+
+            for skill_name in [
+                "business-growth-playbook-review",
+                "content-seo-audit-review",
+                "business-low-noise-review",
+            ]:
+                skill_dir = draft_root / skill_name
+                skill_dir.mkdir(parents=True)
+                (skill_dir / "SKILL.md").write_text(
+                    f"Use when reviewing {skill_name} metadata-only candidates before catalog inclusion.",
+                    encoding="utf-8",
+                )
+                (skill_dir / "skill.json").write_text(
+                    json.dumps({"name": skill_name, "status": "draft"}, indent=2),
+                    encoding="utf-8",
+                )
+
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    [
+                        "claude-skills-bulk-assess",
+                        "--candidate-map",
+                        str(candidate_map),
+                        "--draft-root",
+                        str(draft_root),
+                        "--registry",
+                        str(registry),
+                    ]
+                )
+
+            self.assertEqual(exit_code, 0)
+            result = json.loads(out.getvalue())
+            self.assertEqual(result["schema_version"], 1)
+            self.assertEqual(result["mode"], "metadata_only_bulk_assessment")
+            self.assertEqual(result["candidate_count"], 4)
+            self.assertEqual(result["draft_count"], 3)
+            self.assertEqual(
+                result["recommendation_counts"],
+                {
+                    "already_converted": 1,
+                    "author_local_skill": 1,
+                    "keep_reference_only": 1,
+                    "merge_existing": 1,
+                },
+            )
+            by_name = {item["candidate"]: item for item in result["items"]}
+            self.assertEqual(by_name["growth-playbook"]["recommendation"], "author_local_skill")
+            self.assertEqual(by_name["growth-playbook"]["next_gate"], "local-authoring-review")
+            self.assertEqual(by_name["seo-audit"]["recommendation"], "merge_existing")
+            self.assertEqual(by_name["seo-audit"]["overlap_skill"], "content-seo-audit-review")
+            self.assertEqual(by_name["low-noise"]["recommendation"], "keep_reference_only")
+            self.assertEqual(by_name["done-skill"]["recommendation"], "already_converted")
+            self.assertIn("does not approve or trust drafts", result["safety_boundary"])
 
     def test_catalog_includes_first_sanitized_claude_skills_expansion_batch(self):
         index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))

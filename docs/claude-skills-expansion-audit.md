@@ -110,6 +110,19 @@ router or platform mirror. The resulting candidate map is stored at
   and trusted counts are unchanged by these draft batches.
 - The bulk draft pool now contains 303 draft skill folders and 606 draft files
   across 7 batches. These are review inputs, not trusted runtime skills.
+- Use `claude-skills-bulk-assess` after draft generation to rank promotion
+  work before any import or approval:
+
+  ```bash
+  onecode-skill-sanitizer claude-skills-bulk-assess \
+    --candidate-map docs/claude-skills-candidate-map.json \
+    --draft-root batches \
+    --registry catalog
+  ```
+
+  Current assessment: 5 `author_local_skill`, 15 `merge_existing`,
+  283 `keep_reference_only`, and 33 `already_converted`. The command only
+  reviews metadata-only drafts; it does not approve or trust them.
 - Connector-aware skills should wait for host adapter verification.
 
 ## Governance Notes
