@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-06-18T03:11:03Z",
+  "generated_at": "2026-07-02T12:20:41Z",
   "schema_version": 1,
-  "skill_count": 114,
+  "skill_count": 120,
   "skills": [
     {
       "hashes": {
@@ -730,6 +730,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "8e6c0bf9e3863d32613472c413a57bee92a955340ccfd49f6f440bc4182a3468",
+        "sanitized_sha256": "321d262d892a43f0398541065a6dd01b6192fc9d039d062015a953f4670255be",
+        "source_sha256": "fac04e46f187f33e3d64d3bd9b739cbd16e31031461b9c30c112afb112c664b5"
+      },
+      "name": "business-customer-success-health-review",
+      "registry_path": "business/business-customer-success-health-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:20:23Z",
+        "collected_by": "onecode-claude-skills-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-016-claude-skills-expansion/business-customer-success-health-review",
+        "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.customer_success",
+        "task_intent": "review customer health, churn risk, renewal readiness, and adoption gaps"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "1e654db7604eff403a95da0ca08cdf2171d789a0f9ff367517cf991d2f8f73e8",
         "sanitized_sha256": "e305f8081c2fc4a1051c8ef4b9271a43d5bcb942306af242a00e563ffaff6eda",
         "source_sha256": "fe13372bb83ac4f497b293f1a656aa136d1ea00520ce07e4fd579fd1e78ad243"
@@ -755,6 +784,35 @@
         "collection_priority": "P2",
         "subcategory": "business.process",
         "task_intent": "document repeatable business operations and SOPs"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "2bebbb39e199a26405d98f9b3c0cdf1e26db9a85b9814a5050f1e5e359b1bf76",
+        "sanitized_sha256": "eea06d74c3e0a1635dad5052b563efeaa244dcc561978fccdcae16845b153a63",
+        "source_sha256": "3c40b70b76eda1ea3c798c780787281284a205428a59f97c2786c8f09ad09c30"
+      },
+      "name": "business-procurement-optimization-review",
+      "registry_path": "business/business-procurement-optimization-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:20:23Z",
+        "collected_by": "onecode-claude-skills-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-016-claude-skills-expansion/business-procurement-optimization-review",
+        "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.procurement",
+        "task_intent": "review procurement spend, supplier risk, sourcing tradeoffs, and savings evidence"
       }
     },
     {
@@ -797,6 +855,35 @@
         "collection_priority": "P2",
         "subcategory": "business.requirements",
         "task_intent": "turn business goals into clear requirements and acceptance criteria"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "a631938fe7e66b4ae2853f2ec8e0fde9b009525aaf070644a8cc06ac684c3451",
+        "sanitized_sha256": "1332eb8fe166f052053f09f2f4d594b2fc57f8c31b566318b255ea20e330dd31",
+        "source_sha256": "937dcb7e6a1e336cfaaa3777f250d77c558e1826fecfd342eedd466dd4c0a80a"
+      },
+      "name": "business-saas-metrics-review",
+      "registry_path": "business/business-saas-metrics-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:20:23Z",
+        "collected_by": "onecode-claude-skills-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-016-claude-skills-expansion/business-saas-metrics-review",
+        "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "report",
+        "category": "business",
+        "collection_priority": "P0",
+        "subcategory": "business.metrics",
+        "task_intent": "review SaaS recurring revenue, retention, churn, and efficiency metrics"
       }
     },
     {
@@ -1149,6 +1236,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "a57db7a1123a4f75f19c5cbbee1e34369342cbb9b2c5eec2aeebffd5519f79c5",
+        "sanitized_sha256": "8e1f92af733f54341c6a9e8fc01cd52cd05fd7a5016db89684e49c26b0f56a70",
+        "source_sha256": "4e4d913e1816afff4d7b32e9994c2dcccd31664af5d636531a5051ef4745417c"
+      },
+      "name": "commerce-pricing-strategy-review",
+      "registry_path": "commerce/commerce-pricing-strategy-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:20:23Z",
+        "collected_by": "onecode-claude-skills-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-016-claude-skills-expansion/commerce-pricing-strategy-review",
+        "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "strategy",
+        "category": "commerce",
+        "collection_priority": "P1",
+        "subcategory": "commerce.pricing",
+        "task_intent": "review pricing, packaging, discounting, and margin tradeoffs"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "1b73001ab6e63f9d46a2025f262bb96adfdf153d223b83cabf1be2633dc2a48b",
         "sanitized_sha256": "95df65b5566334a3955894736aea1ce9a6299d93cce2a2ddcda8b003599f4b58",
         "source_sha256": "120ae43bb74e01e6384fcb84afc225ca3ce5b0769f0ec3f51631eab9d4e3c0a2"
@@ -1174,6 +1290,35 @@
         "collection_priority": "P1",
         "subcategory": "commerce.keyword",
         "task_intent": "plan product listing keywords and marketplace search structure"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "7c49acad555d270fa435ef74f6cc7cb4ef0e94f68fa3cbcf11d2d4c88efc6086",
+        "sanitized_sha256": "055068c2f07f39c8c3300c3663f2270c3636d53cfb947454eea970137b9a2dca",
+        "source_sha256": "4df953e3f79a2f9fa4d66cf4ed4437c4022be66da669427469f66d4b926f792d"
+      },
+      "name": "commerce-rfp-response-review",
+      "registry_path": "commerce/commerce-rfp-response-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:20:23Z",
+        "collected_by": "onecode-claude-skills-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-016-claude-skills-expansion/commerce-rfp-response-review",
+        "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "proposal",
+        "category": "commerce",
+        "collection_priority": "P0",
+        "subcategory": "commerce.rfp",
+        "task_intent": "review RFP and tender response readiness with compliance mapping"
       }
     },
     {
@@ -2926,6 +3071,35 @@
         "collection_priority": "P0",
         "subcategory": "research.evidence",
         "task_intent": "map claims to citation evidence"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "1ecc1c531925347ebb96442d6b99fc655b6180aaeb61eaacfdf3b4cf06778385",
+        "sanitized_sha256": "20201ddf592aa883d1e0713a19095f43adbf5320f0f3425fd415b34860017ee1",
+        "source_sha256": "e0afcd3216b96d9c19e8e164f7dd25ae47ba9e08585b4f888040b728e79ab079"
+      },
+      "name": "research-clinical-study-design-review",
+      "registry_path": "research/research-clinical-study-design-review",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-02T12:20:23Z",
+        "collected_by": "onecode-claude-skills-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-016-claude-skills-expansion/research-clinical-study-design-review",
+        "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "review",
+        "category": "research",
+        "collection_priority": "P0",
+        "subcategory": "research.clinical",
+        "task_intent": "review clinical study design, protocol readiness, endpoints, and safety boundaries"
       }
     },
     {

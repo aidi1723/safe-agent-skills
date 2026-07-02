@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:20:41Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "8e6c0bf9e3863d32613472c413a57bee92a955340ccfd49f6f440bc4182a3468",
+    "sanitized_sha256": "321d262d892a43f0398541065a6dd01b6192fc9d039d062015a953f4670255be",
+    "source_sha256": "fac04e46f187f33e3d64d3bd9b739cbd16e31031461b9c30c112afb112c664b5"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-customer-success-health-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:20:23Z",
+    "collected_by": "onecode-claude-skills-expansion",
+    "license": "Apache-2.0",
+    "path": "batches/batch-016-claude-skills-expansion/business-customer-success-health-review",
+    "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.customer_success",
+    "task_intent": "review customer health, churn risk, renewal readiness, and adoption gaps"
+  }
+}

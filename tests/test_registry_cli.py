@@ -279,6 +279,59 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("multi_agent_distribution", claude_skills["claimed_capabilities"])
         self.assertIn("Do not install", claude_skills["runtime_permission_notes"])
 
+    def test_claude_skills_candidate_map_records_ranked_evaluation(self):
+        candidate_map = json.loads(Path("docs/claude-skills-candidate-map.json").read_text(encoding="utf-8"))
+
+        self.assertEqual(candidate_map["schema_version"], 1)
+        self.assertEqual(candidate_map["source"], "https://github.com/alirezarezvani/claude-skills")
+        self.assertGreaterEqual(candidate_map["candidate_count"], 300)
+        self.assertEqual(candidate_map["candidate_count"], len(candidate_map["candidates"]))
+        self.assertIn("sanitized_local_authoring_only", candidate_map["adoption_policy"])
+        names = {candidate["name"]: candidate for candidate in candidate_map["candidates"]}
+        for name in [
+            "saas-metrics-coach",
+            "rfp-responder",
+            "procurement-optimizer",
+            "clinical-research",
+        ]:
+            self.assertIn(name, names)
+            self.assertIn(names[name]["priority"], {"P0", "P1"})
+            self.assertIn(names[name]["adoption"], {"candidate", "converted"})
+
+        converted = {candidate["name"] for candidate in candidate_map["candidates"] if candidate["adoption"] == "converted"}
+        self.assertEqual(
+            {
+                "saas-metrics-coach",
+                "rfp-responder",
+                "procurement-optimizer",
+                "pricing-strategist",
+                "customer-success-manager",
+                "clinical-research",
+            },
+            converted,
+        )
+
+    def test_catalog_includes_first_sanitized_claude_skills_expansion_batch(self):
+        index = json.loads(Path("catalog/index.json").read_text(encoding="utf-8"))
+        by_name = {entry["name"]: entry for entry in index["skills"]}
+
+        expected = {
+            "business-saas-metrics-review": "business",
+            "commerce-rfp-response-review": "commerce",
+            "business-procurement-optimization-review": "business",
+            "commerce-pricing-strategy-review": "commerce",
+            "business-customer-success-health-review": "business",
+            "research-clinical-study-design-review": "research",
+        }
+        for name, category in expected.items():
+            self.assertIn(name, by_name)
+            self.assertEqual(by_name[name]["status"], "trusted")
+            self.assertEqual(by_name[name]["risk_level"], "low")
+            self.assertEqual(by_name[name]["taxonomy"]["category"], category)
+            self.assertEqual(by_name[name]["source"]["usage"], "local_authoring")
+            self.assertEqual(by_name[name]["source"]["collected_by"], "onecode-claude-skills-expansion")
+            self.assertIn("claude-skills", by_name[name]["source"]["reference"])
+
     def test_reference_check_rejects_incomplete_or_executable_references(self):
         with tempfile.TemporaryDirectory() as tmp:
             references = Path(tmp) / "external-references" / "index.json"
@@ -1270,7 +1323,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 114)
+        self.assertEqual(result["skill_manifest_count"], 120)
         self.assertEqual(result["issues"], [])
 
     def test_verify_registry_detects_manifest_policy_tampering(self):

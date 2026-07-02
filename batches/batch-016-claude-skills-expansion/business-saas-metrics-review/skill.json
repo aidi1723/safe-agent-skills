@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "business",
+    "subcategory": "business.metrics",
+    "task_intent": "review SaaS recurring revenue, retention, churn, and efficiency metrics",
+    "artifact_type": "report",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion/business-saas-metrics-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: saas-metrics-coach.",
+    "collected_by": "onecode-claude-skills-expansion"
+  }
+}

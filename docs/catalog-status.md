@@ -2,9 +2,9 @@
 
 ## Summary
 
-The current public-safe catalog contains 114 sanitized skills across all
+The current public-safe catalog contains 120 sanitized skills across all
 top-level taxonomy categories, including 34 community project reference skills
-and 33 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, and design seed skills.
+and 39 local guardrail, governance, safety operations, code quality, AI runtime, document evidence, design, business, commerce, and research seed skills.
 It also records 7 status-backed trusted-only overlap groups for router and
 operator skill selection hints.
 
@@ -21,14 +21,14 @@ Latest verified result:
 
 ```text
 status: ok
-skill_count: 114
-trusted_count: 108
+skill_count: 120
+trusted_count: 114
 tampered_count: 0
 unknown_provenance_count: 0
 schema-check: ok
 maintain-check: ok
 reference-check: ok
-external references: 10
+external references: 11
 overlap groups: 7
 overlap group status: trusted
 ```
@@ -38,6 +38,8 @@ Every top-level category now has at least 3 trusted skills.
 Latest update statement:
 
 - [Auto Orchestration Pipeline Plan](updates/2026-06-27-auto-orchestration-pipeline-plan.md)
+- [Claude Skills Expansion](updates/2026-07-02-claude-skills-expansion.md)
+- [Claude Skills Expansion Audit](claude-skills-expansion-audit.md)
 - [Auto Orchestration Pipeline Plan Closure Report](auto-orchestration-pipeline-plan-closure-report.md)
 - [Manifest Integrity and Contract Router Hardening](updates/2026-06-18-manifest-contract-router-hardening.md)
 - [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
@@ -112,15 +114,16 @@ smart router mode: deterministic_mesh_router
 | `batch-013-ai-runtime-guardrails` | 5 | 5 | AI runtime guardrails for model routing, tool schemas, streamed JSON, RAG namespaces, and context compression |
 | `batch-014-document-evidence-guardrails` | 5 | 5 | Document evidence guardrails for citation maps, link integrity, table source reconciliation, freshness, and public claims |
 | `batch-015-scenario-capability-expansion` | 5 | 5 | Scenario capability expansion for visual review, codebase exploration, simplification, content strategy, and programmatic video boundaries |
+| `batch-016-claude-skills-expansion` | 6 | 6 | Locally authored business, commerce, and clinical research skills from the metadata-only claude-skills audit |
 
 ## Trusted Category Coverage
 
 | Category | Trusted skills | Count |
 | --- | --- | ---: |
 | ai | `ai-autogen-multi-agent-review`, `ai-context-compression-budget-plan`, `ai-crewai-role-workflow`, `ai-guidance-constrained-generation`, `ai-langchain-agent-orchestration`, `ai-llama-cpp-local-inference-boundary`, `ai-llamaindex-rag-knowledge-workflow`, `ai-model-route-fallback-review`, `ai-openai-cookbook-api-patterns`, `ai-opensquilla-metaskill-workflow`, `ai-opensquilla-token-routing-pattern`, `ai-outlines-structured-generation`, `ai-output-schema-eval`, `ai-pydantic-schema-contract`, `ai-qwen-agent-tool-workflow`, `ai-rule-failure-log-synthesis`, `ai-stream-json-boundary-review`, `ai-token-rate-budget-guard`, `ai-tool-schema-protocol-check`, `ai-vllm-serving-capacity-plan`, `ecc-agent-coding-safety`, `headroom-context-compression` | 22 |
-| business | `business-process-sop`, `business-requirements-brief`, `business-support-triage` | 3 |
+| business | `business-customer-success-health-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-requirements-brief`, `business-saas-metrics-review`, `business-support-triage` | 6 |
 | code | `code-ast-refactor-safety`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 8 |
-| commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-product-keyword-plan` | 4 |
+| commerce | `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-pricing-strategy-review`, `commerce-product-keyword-plan`, `commerce-rfp-response-review` | 6 |
 | compliance | `compliance-accessibility-policy`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 5 |
 | content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 9 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
@@ -129,7 +132,7 @@ smart router mode: deterministic_mesh_router
 | execution | `execution-browser-check`, `execution-browser-use-web-task`, `execution-e2b-sandbox-boundary`, `execution-file-batch`, `execution-playwright-browser-automation`, `execution-publish-check`, `execution-rollback-checkpoint-plan` | 7 |
 | media | `media-asset-review`, `media-brand-asset-pack`, `media-remotion-video-production-boundary`, `media-video-script-review` | 4 |
 | office | `office-docx-brief`, `office-link-reference-integrity`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup`, `office-table-source-reconciliation` | 6 |
-| research | `research-citation-evidence-map`, `research-competitor-brief`, `research-paper-synthesis`, `research-source-check`, `research-source-lineage-trace` | 5 |
+| research | `research-citation-evidence-map`, `research-clinical-study-design-review`, `research-competitor-brief`, `research-paper-synthesis`, `research-source-check`, `research-source-lineage-trace` | 6 |
 | security | `security-command-risk-preflight`, `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-secret-context-redaction`, `security-supply-chain-review`, `trivy-container-security-scan` | 8 |
 | vertical | `vertical-education-plan`, `vertical-learning-memory-refresh`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 4 |
 
@@ -159,7 +162,10 @@ smart router mode: deterministic_mesh_router
 | `ai-tool-schema-protocol-check` | ai | trusted |
 | `ai-vllm-serving-capacity-plan` | ai | trusted |
 | `business-process-sop` | business | trusted |
+| `business-customer-success-health-review` | business | trusted |
+| `business-procurement-optimization-review` | business | trusted |
 | `business-requirements-brief` | business | trusted |
+| `business-saas-metrics-review` | business | trusted |
 | `business-support-triage` | business | trusted |
 | `code-ast-refactor-safety` | code | trusted |
 | `code-dead-path-cleanup-review` | code | trusted |
@@ -172,7 +178,9 @@ smart router mode: deterministic_mesh_router
 | `commerce-icbu-listing` | commerce | trusted |
 | `commerce-inquiry-reply` | commerce | trusted |
 | `commerce-link-tracking-audit` | commerce | trusted |
+| `commerce-pricing-strategy-review` | commerce | trusted |
 | `commerce-product-keyword-plan` | commerce | trusted |
+| `commerce-rfp-response-review` | commerce | trusted |
 | `compliance-accessibility-policy` | compliance | trusted |
 | `compliance-license-policy-gate` | compliance | trusted |
 | `compliance-privacy-check` | compliance | trusted |
@@ -232,6 +240,7 @@ smart router mode: deterministic_mesh_router
 | `office-spreadsheet-cleanup` | office | trusted |
 | `office-table-source-reconciliation` | office | trusted |
 | `research-citation-evidence-map` | research | trusted |
+| `research-clinical-study-design-review` | research | trusted |
 | `research-competitor-brief` | research | trusted |
 | `research-paper-synthesis` | research | trusted |
 | `research-recent-social-signal-brief` | research | review_required |
@@ -256,6 +265,6 @@ smart router mode: deterministic_mesh_router
 
 Recommended next waves:
 
-- `batch-016-community-depth`: additional popular community skills with clear licenses
-- `batch-017-domain-depth`: deeper skills for design, code, security, and office
+- `batch-017-claude-skills-depth`: remaining metadata-only candidates with strong gaps, especially vendor management, commercial forecasting, revenue operations, project management, and finance analysis
+- `batch-018-domain-depth`: deeper skills for design, code, security, and office
 - `batch-018-connectors`: connector-aware skills after host adapter verification

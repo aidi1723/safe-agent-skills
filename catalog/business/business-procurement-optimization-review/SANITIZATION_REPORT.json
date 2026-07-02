@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:20:41Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "2bebbb39e199a26405d98f9b3c0cdf1e26db9a85b9814a5050f1e5e359b1bf76",
+    "sanitized_sha256": "eea06d74c3e0a1635dad5052b563efeaa244dcc561978fccdcae16845b153a63",
+    "source_sha256": "3c40b70b76eda1ea3c798c780787281284a205428a59f97c2786c8f09ad09c30"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "business-procurement-optimization-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:20:23Z",
+    "collected_by": "onecode-claude-skills-expansion",
+    "license": "Apache-2.0",
+    "path": "batches/batch-016-claude-skills-expansion/business-procurement-optimization-review",
+    "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "report",
+    "category": "business",
+    "collection_priority": "P0",
+    "subcategory": "business.procurement",
+    "task_intent": "review procurement spend, supplier risk, sourcing tradeoffs, and savings evidence"
+  }
+}

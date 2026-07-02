@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-07-02T12:20:41Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "a57db7a1123a4f75f19c5cbbee1e34369342cbb9b2c5eec2aeebffd5519f79c5",
+    "sanitized_sha256": "8e1f92af733f54341c6a9e8fc01cd52cd05fd7a5016db89684e49c26b0f56a70",
+    "source_sha256": "4e4d913e1816afff4d7b32e9994c2dcccd31664af5d636531a5051ef4745417c"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "commerce-pricing-strategy-review",
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-02T12:20:23Z",
+    "collected_by": "onecode-claude-skills-expansion",
+    "license": "Apache-2.0",
+    "path": "batches/batch-016-claude-skills-expansion/commerce-pricing-strategy-review",
+    "reference": "docs/batches/batch-016-claude-skills-expansion.md; metadata-only audit of https://github.com/alirezarezvani/claude-skills",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion",
+    "usage": "local_authoring"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "strategy",
+    "category": "commerce",
+    "collection_priority": "P1",
+    "subcategory": "commerce.pricing",
+    "task_intent": "review pricing, packaging, discounting, and margin tradeoffs"
+  }
+}

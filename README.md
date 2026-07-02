@@ -67,8 +67,8 @@ sandbox.
 
 Current public baseline:
 
-- 114 total skills
-- 108 trusted skills
+- 120 total skills
+- 114 trusted skills
 - 13 trusted scenario bundles
 - 7 status-backed trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
@@ -83,12 +83,15 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Auto Orchestration Pipeline Plan](docs/updates/2026-06-27-auto-orchestration-pipeline-plan.md).
+[Claude Skills Expansion](docs/updates/2026-07-02-claude-skills-expansion.md).
 
 Latest closure report:
-[Auto Orchestration Pipeline Plan Closure Report](docs/auto-orchestration-pipeline-plan-closure-report.md).
+[Claude Skills Expansion Audit](docs/claude-skills-expansion-audit.md).
 
 Previous update:
+[Auto Orchestration Pipeline Plan](docs/updates/2026-06-27-auto-orchestration-pipeline-plan.md).
+
+Earlier update:
 [Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md).
 
 Earlier update:

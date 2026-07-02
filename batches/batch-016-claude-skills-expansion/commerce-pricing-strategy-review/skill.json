@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "commerce",
+    "subcategory": "commerce.pricing",
+    "task_intent": "review pricing, packaging, discounting, and margin tradeoffs",
+    "artifact_type": "strategy",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion/commerce-pricing-strategy-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: pricing-strategist.",
+    "collected_by": "onecode-claude-skills-expansion"
+  }
+}

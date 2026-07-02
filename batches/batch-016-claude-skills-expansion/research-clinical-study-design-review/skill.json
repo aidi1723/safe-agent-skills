@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "research",
+    "subcategory": "research.clinical",
+    "task_intent": "review clinical study design, protocol readiness, endpoints, and safety boundaries",
+    "artifact_type": "review",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion/research-clinical-study-design-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: clinical-research.",
+    "collected_by": "onecode-claude-skills-expansion"
+  }
+}

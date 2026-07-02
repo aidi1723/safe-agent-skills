@@ -6,8 +6,8 @@ skill, not manual installation of every catalog skill.
 
 ## Current Baseline
 
-- 114 catalog skills
-- 108 trusted skills
+- 120 catalog skills
+- 114 trusted skills
 - 13 trusted scenario bundles
 - 15 top-level categories
 - trusted-only default routing
@@ -23,14 +23,16 @@ skill, not manual installation of every catalog skill.
 | `security` | prompt injection, supply chain, guardrails, secret redaction | `onecode-skill-sanitizer task-pack "review an agent workflow for connector permissions" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
 | `content` | SEO briefs, editorial checks, claims compliance, social posts | `onecode-skill-sanitizer task-pack "draft and fact check an SEO blog post" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
 | `data` | data quality, table analysis, document-to-knowledge workflows | `onecode-skill-sanitizer task-pack "clean spreadsheet data and prepare chart notes" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `commerce` | marketplace listings, keyword plans, buyer replies | `onecode-skill-sanitizer task-pack "prepare marketplace listing keywords" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `research` | source checks, citation maps, paper synthesis, freshness review | `onecode-skill-sanitizer task-pack "synthesize a paper with source checks" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
+| `commerce` | marketplace listings, keyword plans, buyer replies, RFP responses, pricing strategy | `onecode-skill-sanitizer task-pack "review this RFP response and pricing assumptions" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
+| `research` | source checks, citation maps, paper synthesis, freshness review, clinical study design review | `onecode-skill-sanitizer task-pack "review a clinical study protocol design" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
 
 ## Maintenance Priorities
 
-The next catalog expansion should happen after router and task-pack contract
-improvements are verified. Priority gaps are finance, project management,
-business operations, commercial workflows, and research operations.
+The `claude-skills` expansion audit evaluated 336 canonical upstream candidates
+and converted the first local safe batch for SaaS metrics, RFP responses,
+procurement, pricing, customer success, and clinical study design. Remaining
+priority gaps are vendor management, commercial forecasting, revenue
+operations, project management, finance analysis, and research operations.
 
 External libraries such as `claude-skills` are reference-only. Do not install,
 copy, execute, or trust upstream skills without per-skill review.

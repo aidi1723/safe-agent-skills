@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "commerce",
+    "subcategory": "commerce.rfp",
+    "task_intent": "review RFP and tender response readiness with compliance mapping",
+    "artifact_type": "proposal",
+    "collection_priority": "P0"
+  },
+  "source": {
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-016-claude-skills-expansion/commerce-rfp-response-review",
+    "author": "OneCode Project",
+    "license": "Apache-2.0",
+    "reference": "Local OneCode-authored skill informed by metadata-only claude-skills audit candidates: rfp-responder.",
+    "collected_by": "onecode-claude-skills-expansion"
+  }
+}
