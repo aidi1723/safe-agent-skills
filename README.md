@@ -76,6 +76,9 @@ Current public baseline:
 - 0 tampered skills
 - 0 unknown provenance records
 
+For a domain-oriented map of the catalog and example router commands, see
+[Catalog Overview](docs/catalog-overview.md).
+
 See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
