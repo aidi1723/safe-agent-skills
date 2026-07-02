@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 14,
+  "case_count": 16,
   "cases": [
     {
       "id": "website-launch",
@@ -148,6 +148,30 @@
       "id": "skill-router-review",
       "task": "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
       "router": "mesh",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-audit-followup",
+      "task": "继续，按照步骤，完成全部任务，以及审计报告给出的，更智能的解决方法",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-chinese-synonyms",
+      "task": "优化技能库的自动推荐和任务编排能力",
+      "router": "scenario",
       "expected_scenario": "skill-router-quality-review",
       "expected_task_type": "skill_router_review",
       "expected_skills": [

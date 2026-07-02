@@ -83,12 +83,15 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Claude Skills Expansion](docs/updates/2026-07-02-claude-skills-expansion.md).
+[Smart Router And Claude Skills Closure](docs/updates/2026-07-02-smart-router-claude-skills-closure.md).
 
 Latest closure report:
 [Claude Skills Expansion Audit](docs/claude-skills-expansion-audit.md).
 
 Previous update:
+[Claude Skills Expansion](docs/updates/2026-07-02-claude-skills-expansion.md).
+
+Earlier update:
 [Auto Orchestration Pipeline Plan](docs/updates/2026-06-27-auto-orchestration-pipeline-plan.md).
 
 Earlier update:

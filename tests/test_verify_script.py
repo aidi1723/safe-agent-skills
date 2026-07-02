@@ -3,11 +3,12 @@ from pathlib import Path
 
 
 class VerifyScriptTest(unittest.TestCase):
-    def test_verify_script_requires_ripgrep_before_scans(self):
+    def test_verify_script_falls_back_to_grep_when_ripgrep_is_missing(self):
         script = Path("scripts/verify.sh").read_text(encoding="utf-8")
 
-        self.assertIn("require_command rg", script)
-        self.assertNotIn("if command -v rg", script)
+        self.assertNotIn("require_command rg", script)
+        self.assertIn("if command -v rg", script)
+        self.assertIn("grep -RInE", script)
 
 
 if __name__ == "__main__":

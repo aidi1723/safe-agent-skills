@@ -32,18 +32,20 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 114
-- trusted skills: 108
+- total skills: 152
+- trusted skills: 146
 - quarantined skills: 3
 - review-required skills: 3
 - categories meeting 3 trusted skills: 15 / 15
 - scenario bundles: 13 trusted
-- phase status: Phase 002 scenario router closed for today's delivery
+- phase status: Claude Skills expansion and smart router hardening closed for
+  today's delivery
 
 Closure report:
 
 - [Auto Orchestration Pipeline Plan Closure Report](auto-orchestration-pipeline-plan-closure-report.md)
 - [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
+- [Smart Router And Claude Skills Closure Report](smart-router-claude-skills-closure-report.md)
 - [Phase 001 Closure Report](phase-001-closure-report.md)
 - [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
 - [Audit Hardening Closure Report](audit-hardening-closure-report.md)
@@ -54,6 +56,9 @@ Next development:
 
 Latest update:
 
+- [Smart Router And Claude Skills Closure](updates/2026-07-02-smart-router-claude-skills-closure.md)
+- [Claude Skills Expansion](updates/2026-07-02-claude-skills-expansion.md)
+- [Claude Skills Expansion Audit](claude-skills-expansion-audit.md)
 - [Auto Orchestration Pipeline Plan](updates/2026-06-27-auto-orchestration-pipeline-plan.md)
 - [Scenario System Expansion](updates/2026-06-16-scenario-system-expansion.md)
 - [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)

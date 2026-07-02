@@ -111,6 +111,12 @@ RULES = [
         re.compile(r"\b(?:powershell|pwsh)\b[^\n]*(?:-EncodedCommand|-enc)\b", re.IGNORECASE),
         "Found PowerShell encoded command execution guidance.",
     ),
+    (
+        "javascript-fetch-eval",
+        "critical",
+        re.compile(r"\bfetch\s*\([^\n]{0,300}\)[^\n]{0,500}\b(?:eval|Function)\s*\(", re.IGNORECASE),
+        "Found JavaScript fetch followed by dynamic code execution.",
+    ),
 ]
 
 SEVERITY_ORDER = {

@@ -111,8 +111,10 @@ router or platform mirror. The resulting candidate map is stored at
     --batch-size 50
   ```
 
-  The current map produces 303 actionable `reference_only` items across 7
-  large review batches when using `--batch-size 50`.
+  The current map produces 283 actionable `reference_only` items across 6
+  large review batches when using `--batch-size 50`. The existing historical
+  draft pool still contains 303 metadata-only folders from the earlier bulk
+  materialization pass.
 
 - To materialize one large review wave as local draft folders, use:
 
@@ -127,9 +129,11 @@ router or platform mirror. The resulting candidate map is stored at
   Drafts are not catalog entries and are not trusted. They must be edited,
   imported, approved serially, and verified before any catalog inclusion.
 - `batch-021-claude-skills-bulk-draft` through
-  `batch-027-claude-skills-bulk-draft` materialize all 303 actionable
-  `reference_only` items as local metadata-only draft folders. Catalog counts
-  and trusted counts are unchanged by these draft batches.
+  `batch-027-claude-skills-bulk-draft` materialized the original 303
+  metadata-only review inputs as local draft folders. After the coverage pass,
+  53 candidates are converted or covered by trusted local skills and 283 remain
+  reference-only. Catalog counts and trusted counts are unchanged by these
+  draft batches.
 - The bulk draft pool now contains 303 draft skill folders and 606 draft files
   across 7 batches. These are review inputs, not trusted runtime skills.
 - Use `claude-skills-bulk-assess` after draft generation to rank promotion

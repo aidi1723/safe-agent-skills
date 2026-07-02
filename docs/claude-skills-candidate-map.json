@@ -42,18 +42,6 @@
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "local_skill": "business-vendor-management-review",
-      "mapped_category": "business",
-      "name": "vendor-management",
-      "priority": "P0",
-      "score": 114,
-      "source_domain": "business-operations",
-      "source_path": "business-operations/skills/vendor-management"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "local_skill": "commerce-commercial-forecast-review",
       "mapped_category": "commerce",
       "name": "commercial-forecaster",
@@ -61,6 +49,18 @@
       "score": 114,
       "source_domain": "commercial",
       "source_path": "commercial/skills/commercial-forecaster"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "business-vendor-management-review",
+      "mapped_category": "business",
+      "name": "vendor-management",
+      "priority": "P0",
+      "score": 114,
+      "source_domain": "business-operations",
+      "source_path": "business-operations/skills/vendor-management"
     },
     {
       "adoption": "converted",
@@ -78,18 +78,6 @@
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "local_skill": "business-revenue-operations-review",
-      "mapped_category": "business",
-      "name": "revenue-operations",
-      "priority": "P0",
-      "score": 110,
-      "source_domain": "business-growth",
-      "source_path": "business-growth/skills/revenue-operations"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "local_skill": "business-knowledge-operations-review",
       "mapped_category": "business",
       "name": "knowledge-ops",
@@ -97,6 +85,18 @@
       "score": 110,
       "source_domain": "business-operations",
       "source_path": "business-operations/skills/knowledge-ops"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "business-revenue-operations-review",
+      "mapped_category": "business",
+      "name": "revenue-operations",
+      "priority": "P0",
+      "score": 110,
+      "source_domain": "business-growth",
+      "source_path": "business-growth/skills/revenue-operations"
     },
     {
       "adoption": "converted",
@@ -150,13 +150,13 @@
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "commerce-commercial-policy-review",
       "mapped_category": "commerce",
       "name": "commercial-policy",
       "priority": "P0",
       "score": 104,
       "source_domain": "commercial",
-      "source_path": "commercial/skills/commercial-policy",
-      "local_skill": "commerce-commercial-policy-review"
+      "source_path": "commercial/skills/commercial-policy"
     },
     {
       "adoption": "converted",
@@ -174,18 +174,6 @@
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "business",
-      "name": "senior-pm",
-      "priority": "P0",
-      "score": 102,
-      "source_domain": "project-management",
-      "source_path": "project-management/skills/senior-pm",
-      "local_skill": "business-product-management-review"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "local_skill": "research-clinical-study-design-review",
       "mapped_category": "research",
       "name": "clinical-research",
@@ -198,13 +186,25 @@
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-product-management-review",
+      "mapped_category": "business",
+      "name": "senior-pm",
+      "priority": "P0",
+      "score": 102,
+      "source_domain": "project-management",
+      "source_path": "project-management/skills/senior-pm"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "business-investment-memo-review",
       "mapped_category": "business",
       "name": "business-investment-advisor",
       "priority": "P0",
       "score": 101,
       "source_domain": "finance",
-      "source_path": "finance/business-investment-advisor/skills/business-investment-advisor",
-      "local_skill": "business-investment-memo-review"
+      "source_path": "finance/business-investment-advisor/skills/business-investment-advisor"
     },
     {
       "adoption": "converted",
@@ -222,61 +222,61 @@
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "commerce-partnerships-strategy-review",
       "mapped_category": "commerce",
       "name": "partnerships-architect",
       "priority": "P0",
       "score": 98,
       "source_domain": "commercial",
-      "source_path": "commercial/skills/partnerships-architect",
-      "local_skill": "commerce-partnerships-strategy-review"
+      "source_path": "commercial/skills/partnerships-architect"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-atlassian-admin-governance-review",
       "mapped_category": "business",
       "name": "atlassian-admin",
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/atlassian-admin",
-      "local_skill": "business-atlassian-admin-governance-review"
+      "source_path": "project-management/skills/atlassian-admin"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-atlassian-template-governance-review",
       "mapped_category": "business",
       "name": "atlassian-templates",
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/atlassian-templates",
-      "local_skill": "business-atlassian-template-governance-review"
+      "source_path": "project-management/skills/atlassian-templates"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-confluence-knowledge-review",
       "mapped_category": "business",
       "name": "confluence-expert",
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/confluence-expert",
-      "local_skill": "business-confluence-knowledge-review"
+      "source_path": "project-management/skills/confluence-expert"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-jira-workflow-review",
       "mapped_category": "business",
       "name": "jira-expert",
       "priority": "P0",
       "score": 96,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/jira-expert",
-      "local_skill": "business-jira-workflow-review"
+      "source_path": "project-management/skills/jira-expert"
     },
     {
       "adoption": "converted",
@@ -294,133 +294,133 @@
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "commerce-channel-economics-review",
       "mapped_category": "commerce",
       "name": "channel-economics",
       "priority": "P0",
       "score": 94,
       "source_domain": "commercial",
-      "source_path": "commercial/skills/channel-economics",
-      "local_skill": "commerce-channel-economics-review"
+      "source_path": "commercial/skills/channel-economics"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-internal-comms-review",
       "mapped_category": "business",
       "name": "internal-comms",
       "priority": "P0",
       "score": 92,
       "source_domain": "business-operations",
-      "source_path": "business-operations/skills/internal-comms",
-      "local_skill": "business-internal-comms-review"
+      "source_path": "business-operations/skills/internal-comms"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "content-marketing-pricing-strategy-review",
       "mapped_category": "content",
       "name": "pricing-strategy",
       "priority": "P0",
       "score": 92,
       "source_domain": "marketing-skill",
-      "source_path": "marketing-skill/skills/pricing-strategy",
-      "local_skill": "content-marketing-pricing-strategy-review"
+      "source_path": "marketing-skill/skills/pricing-strategy"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-meeting-analysis-review",
       "mapped_category": "business",
       "name": "meeting-analyzer",
       "priority": "P1",
       "score": 90,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/meeting-analyzer",
-      "local_skill": "business-meeting-analysis-review"
+      "source_path": "project-management/skills/meeting-analyzer"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-team-communications-review",
       "mapped_category": "business",
       "name": "team-communications",
       "priority": "P1",
       "score": 90,
       "source_domain": "project-management",
-      "source_path": "project-management/skills/team-communications",
-      "local_skill": "business-team-communications-review"
+      "source_path": "project-management/skills/team-communications"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-capacity-planning-review",
       "mapped_category": "business",
       "name": "capacity-planner",
       "priority": "P1",
       "score": 88,
       "source_domain": "business-operations",
-      "source_path": "business-operations/skills/capacity-planner",
-      "local_skill": "business-capacity-planning-review"
+      "source_path": "business-operations/skills/capacity-planner"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "business-contract-proposal-review",
       "mapped_category": "business",
       "name": "contract-and-proposal-writer",
       "priority": "P1",
       "score": 87,
       "source_domain": "business-growth",
-      "source_path": "business-growth/skills/contract-and-proposal-writer",
-      "local_skill": "business-contract-proposal-review"
+      "source_path": "business-growth/skills/contract-and-proposal-writer"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "business",
-      "name": "sales-engineer",
-      "priority": "P1",
-      "score": 86,
-      "source_domain": "business-growth",
-      "source_path": "business-growth/skills/sales-engineer",
-      "local_skill": "business-sales-engineering-review"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
+      "local_skill": "research-market-analysis-review",
       "mapped_category": "research",
       "name": "market-research",
       "priority": "P1",
       "score": 86,
       "source_domain": "research-ops",
-      "source_path": "research-ops/skills/market-research",
-      "local_skill": "research-market-analysis-review"
+      "source_path": "research-ops/skills/market-research"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "research-product-analysis-review",
       "mapped_category": "research",
       "name": "product-research",
       "priority": "P1",
       "score": 86,
       "source_domain": "research-ops",
-      "source_path": "research-ops/skills/product-research",
-      "local_skill": "research-product-analysis-review"
+      "source_path": "research-ops/skills/product-research"
     },
     {
       "adoption": "converted",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "local_skill": "research-finance-analysis-review",
       "mapped_category": "research",
       "name": "research-finance",
       "priority": "P1",
       "score": 86,
       "source_domain": "research-ops",
-      "source_path": "research-ops/skills/research-finance",
-      "local_skill": "research-finance-analysis-review"
+      "source_path": "research-ops/skills/research-finance"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "business-sales-engineering-review",
+      "mapped_category": "business",
+      "name": "sales-engineer",
+      "priority": "P1",
+      "score": 86,
+      "source_domain": "business-growth",
+      "source_path": "business-growth/skills/sales-engineer"
     },
     {
       "adoption": "converted",
@@ -469,6 +469,174 @@
       "score": 78,
       "source_domain": "research-ops",
       "source_path": "research-ops/skills/research-ops-skills"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "design-premium-landing-page",
+      "mapped_category": "business",
+      "name": "landing-page-generator",
+      "priority": "P2",
+      "score": 57,
+      "source_domain": "product-team",
+      "source_path": "product-team/skills/landing-page-generator"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "content-marketing-pricing-strategy-review",
+      "mapped_category": "content",
+      "name": "marketing-strategy-pmm",
+      "priority": "P3",
+      "score": 52,
+      "source_domain": "marketing-skill",
+      "source_path": "marketing-skill/skills/marketing-strategy-pmm"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "code-review-risk",
+      "mapped_category": "code",
+      "name": "review",
+      "priority": "P3",
+      "score": 49,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/self-improving-agent/skills/review"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "design-system-consistency",
+      "mapped_category": "business",
+      "name": "ui-design-system",
+      "priority": "P3",
+      "score": 47,
+      "source_domain": "product-team",
+      "source_path": "product-team/skills/ui-design-system"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "content-strategy-matrix",
+      "mapped_category": "content",
+      "name": "content-strategy",
+      "priority": "P3",
+      "score": 42,
+      "source_domain": "marketing-skill",
+      "source_path": "marketing-skill/skills/content-strategy"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "content-social-post",
+      "mapped_category": "content",
+      "name": "social-content",
+      "priority": "P3",
+      "score": 42,
+      "source_domain": "marketing-skill",
+      "source_path": "marketing-skill/skills/social-content"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "ai-output-schema-eval",
+      "mapped_category": "engineering",
+      "name": "eval",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering",
+      "source_path": "engineering/agenthub/skills/eval"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "office-pdf-report",
+      "mapped_category": "code",
+      "name": "report",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/playwright-pro/skills/report"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "research-citation-evidence-map",
+      "mapped_category": "research",
+      "name": "research",
+      "priority": "P3",
+      "score": 40,
+      "source_domain": "research",
+      "source_path": "research/research/skills/research"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "execution-playwright-browser-automation",
+      "mapped_category": "engineering",
+      "name": "browser-automation",
+      "priority": "P3",
+      "score": 37,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/browser-automation"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "data-quality-audit",
+      "mapped_category": "engineering",
+      "name": "data-quality-auditor",
+      "priority": "P3",
+      "score": 37,
+      "source_domain": "engineering",
+      "source_path": "engineering/data-quality-auditor/skills/data-quality-auditor"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "design-system-consistency",
+      "mapped_category": "office",
+      "name": "design-system",
+      "priority": "P3",
+      "score": 33,
+      "source_domain": "markdown-html",
+      "source_path": "markdown-html/skills/design-system"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "design-premium-landing-page",
+      "mapped_category": "content",
+      "name": "landing",
+      "priority": "P3",
+      "score": 26,
+      "source_domain": "marketing",
+      "source_path": "marketing/landing/skills/landing"
+    },
+    {
+      "adoption": "converted",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "local_skill": "business-requirements-brief",
+      "mapped_category": "business",
+      "name": "brief",
+      "priority": "P3",
+      "score": 21,
+      "source_domain": "c-level-advisor",
+      "source_path": "c-level-advisor/c-level-agents/skills/brief"
     },
     {
       "adoption": "reference_only",
@@ -551,17 +719,6 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "mcp-server-builder",
-      "priority": "P2",
-      "score": 58,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/mcp-server-builder"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "mapped_category": "content",
       "name": "churn-prevention",
       "priority": "P2",
@@ -570,16 +727,15 @@
       "source_path": "marketing-skill/skills/churn-prevention"
     },
     {
-      "adoption": "converted",
+      "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "local_skill": "design-premium-landing-page",
-      "mapped_category": "business",
-      "name": "landing-page-generator",
+      "mapped_category": "engineering",
+      "name": "mcp-server-builder",
       "priority": "P2",
-      "score": 57,
-      "source_domain": "product-team",
-      "source_path": "product-team/skills/landing-page-generator"
+      "score": 58,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/mcp-server-builder"
     },
     {
       "adoption": "reference_only",
@@ -618,6 +774,17 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "research",
+      "name": "grants",
+      "priority": "P2",
+      "score": 56,
+      "source_domain": "research",
+      "source_path": "research/grants/skills/grants"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "content",
       "name": "page-cro",
       "priority": "P2",
@@ -635,17 +802,6 @@
       "score": 56,
       "source_domain": "marketing-skill",
       "source_path": "marketing-skill/skills/x-twitter-growth"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "research",
-      "name": "grants",
-      "priority": "P2",
-      "score": 56,
-      "source_domain": "research",
-      "source_path": "research/grants/skills/grants"
     },
     {
       "adoption": "reference_only",
@@ -684,23 +840,23 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "codebase-onboarding",
-      "priority": "P3",
-      "score": 54,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/codebase-onboarding"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "mapped_category": "content",
       "name": "campaign-analytics",
       "priority": "P3",
       "score": 54,
       "source_domain": "marketing-skill",
       "source_path": "marketing-skill/skills/campaign-analytics"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "codebase-onboarding",
+      "priority": "P3",
+      "score": 54,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/codebase-onboarding"
     },
     {
       "adoption": "reference_only",
@@ -750,17 +906,6 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "code",
-      "name": "senior-prompt-engineer",
-      "priority": "P3",
-      "score": 52,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/senior-prompt-engineer"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "mapped_category": "content",
       "name": "competitor-alternatives",
       "priority": "P3",
@@ -780,18 +925,6 @@
       "source_path": "marketing-skill/skills/marketing-context"
     },
     {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "content-marketing-pricing-strategy-review",
-      "mapped_category": "content",
-      "name": "marketing-strategy-pmm",
-      "priority": "P3",
-      "score": 52,
-      "source_domain": "marketing-skill",
-      "source_path": "marketing-skill/skills/marketing-strategy-pmm"
-    },
-    {
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
@@ -806,12 +939,45 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "code",
+      "name": "senior-prompt-engineer",
+      "priority": "P3",
+      "score": 52,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/senior-prompt-engineer"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "engineering",
       "name": "agenthub",
       "priority": "P3",
       "score": 51,
       "source_domain": "engineering",
       "source_path": "engineering/agenthub/skills/agenthub"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "business",
+      "name": "agile-product-owner",
+      "priority": "P3",
+      "score": 51,
+      "source_domain": "product-team",
+      "source_path": "product-team/agile-product-owner/skills/agile-product-owner"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "business",
+      "name": "code-to-prd",
+      "priority": "P3",
+      "score": 51,
+      "source_domain": "product-team",
+      "source_path": "product-team/code-to-prd/skills/code-to-prd"
     },
     {
       "adoption": "reference_only",
@@ -850,83 +1016,6 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "resume",
-      "priority": "P3",
-      "score": 51,
-      "source_domain": "engineering",
-      "source_path": "engineering/autoresearch-agent/skills/resume"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "run",
-      "priority": "P3",
-      "score": 51,
-      "source_domain": "engineering",
-      "source_path": "engineering/autoresearch-agent/skills/run"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "setup",
-      "priority": "P3",
-      "score": 51,
-      "source_domain": "engineering",
-      "source_path": "engineering/autoresearch-agent/skills/setup"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "status",
-      "priority": "P3",
-      "score": 51,
-      "source_domain": "engineering",
-      "source_path": "engineering/autoresearch-agent/skills/status"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "senior-fullstack",
-      "priority": "P3",
-      "score": 51,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/senior-fullstack"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "business",
-      "name": "agile-product-owner",
-      "priority": "P3",
-      "score": 51,
-      "source_domain": "product-team",
-      "source_path": "product-team/agile-product-owner/skills/agile-product-owner"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "business",
-      "name": "code-to-prd",
-      "priority": "P3",
-      "score": 51,
-      "source_domain": "product-team",
-      "source_path": "product-team/code-to-prd/skills/code-to-prd"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "mapped_category": "business",
       "name": "product-analytics",
       "priority": "P3",
@@ -955,6 +1044,61 @@
       "score": 51,
       "source_domain": "product-team",
       "source_path": "product-team/skills/product-strategist"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "resume",
+      "priority": "P3",
+      "score": 51,
+      "source_domain": "engineering",
+      "source_path": "engineering/autoresearch-agent/skills/resume"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "run",
+      "priority": "P3",
+      "score": 51,
+      "source_domain": "engineering",
+      "source_path": "engineering/autoresearch-agent/skills/run"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "senior-fullstack",
+      "priority": "P3",
+      "score": 51,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/senior-fullstack"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "setup",
+      "priority": "P3",
+      "score": 51,
+      "source_domain": "engineering",
+      "source_path": "engineering/autoresearch-agent/skills/setup"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "status",
+      "priority": "P3",
+      "score": 51,
+      "source_domain": "engineering",
+      "source_path": "engineering/autoresearch-agent/skills/status"
     },
     {
       "adoption": "reference_only",
@@ -1100,18 +1244,6 @@
       "source_path": "marketing-skill/skills/youtube-full"
     },
     {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "code-review-risk",
-      "mapped_category": "code",
-      "name": "review",
-      "priority": "P3",
-      "score": 49,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/self-improving-agent/skills/review"
-    },
-    {
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
@@ -1211,18 +1343,6 @@
       "source_path": "engineering-team/skills/senior-ml-engineer"
     },
     {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "design-system-consistency",
-      "mapped_category": "business",
-      "name": "ui-design-system",
-      "priority": "P3",
-      "score": 47,
-      "source_domain": "product-team",
-      "source_path": "product-team/skills/ui-design-system"
-    },
-    {
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
@@ -1254,6 +1374,17 @@
       "score": 46,
       "source_domain": "marketing-skill",
       "source_path": "marketing-skill/skills/brand-guidelines"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "compliance",
+      "name": "capa-officer",
+      "priority": "P3",
+      "score": 46,
+      "source_domain": "ra-qm-team",
+      "source_path": "ra-qm-team/skills/capa-officer"
     },
     {
       "adoption": "reference_only",
@@ -1380,12 +1511,34 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "compliance",
-      "name": "capa-officer",
+      "mapped_category": "code",
+      "name": "adversarial-reviewer",
       "priority": "P3",
-      "score": 46,
-      "source_domain": "ra-qm-team",
-      "source_path": "ra-qm-team/skills/capa-officer"
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/adversarial-reviewer"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "aws-solution-architect",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/aws-solution-architect"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "azure-cloud-architect",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/azure-cloud-architect"
     },
     {
       "adoption": "reference_only",
@@ -1397,6 +1550,17 @@
       "score": 45,
       "source_domain": "engineering",
       "source_path": "engineering/behuman/skills/behuman"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "browserstack",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/playwright-pro/skills/browserstack"
     },
     {
       "adoption": "reference_only",
@@ -1435,6 +1599,17 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "code",
+      "name": "coverage",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/playwright-pro/skills/coverage"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "engineering",
       "name": "database-designer",
       "priority": "P3",
@@ -1468,12 +1643,34 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "code",
+      "name": "fix",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/playwright-pro/skills/fix"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "engineering",
       "name": "focused-fix",
       "priority": "P3",
       "score": 45,
       "source_domain": "engineering",
       "source_path": "engineering/skills/focused-fix"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "gcp-cloud-architect",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/gcp-cloud-architect"
     },
     {
       "adoption": "reference_only",
@@ -1496,6 +1693,39 @@
       "score": 45,
       "source_domain": "engineering",
       "source_path": "engineering/grill-me/skills/grill-me"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "execution",
+      "name": "inbox-setup",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "productivity",
+      "source_path": "productivity/email/skills/inbox-setup"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "incident-commander",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/incident-commander"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "incident-response",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/incident-response"
     },
     {
       "adoption": "reference_only",
@@ -1545,6 +1775,17 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "code",
+      "name": "migrate",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/playwright-pro/skills/migrate"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "engineering",
       "name": "migration-architect",
       "priority": "P3",
@@ -1567,221 +1808,23 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "rag-architect",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/rag-architect"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "runbook-generator",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/runbook-generator"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "secrets-vault-manager",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/secrets-vault-manager"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "slo-architect",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/slo-architect"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "spawn",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/agenthub/skills/spawn"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "statistical-analyst",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/statistical-analyst/skills/statistical-analyst"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "tc-tracker",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/tc-tracker"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "universal-scraping-architect",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/universal-scraping-architect/skills/universal-scraping-architect"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "engineering",
-      "name": "zero-hallucination-coder",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering",
-      "source_path": "engineering/zero-hallucination-coder/skills/zero-hallucination-coder"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "adversarial-reviewer",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/adversarial-reviewer"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "aws-solution-architect",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/aws-solution-architect"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "azure-cloud-architect",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/azure-cloud-architect"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "browserstack",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/playwright-pro/skills/browserstack"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "coverage",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/playwright-pro/skills/coverage"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "fix",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/playwright-pro/skills/fix"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "gcp-cloud-architect",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/gcp-cloud-architect"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "incident-commander",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/incident-commander"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "incident-response",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/incident-response"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "migrate",
-      "priority": "P3",
-      "score": 45,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/playwright-pro/skills/migrate"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "mapped_category": "code",
       "name": "ms365-tenant-manager",
       "priority": "P3",
       "score": 45,
       "source_domain": "engineering-team",
       "source_path": "engineering-team/skills/ms365-tenant-manager"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "router-index",
+      "mapped_category": "business",
+      "name": "product-skills",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "product-team",
+      "source_path": "product-team/skills/product-skills"
     },
     {
       "adoption": "reference_only",
@@ -1793,6 +1836,17 @@
       "score": 45,
       "source_domain": "engineering-team",
       "source_path": "engineering-team/self-improving-agent/skills/promote"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "rag-architect",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/rag-architect"
     },
     {
       "adoption": "reference_only",
@@ -1815,6 +1869,28 @@
       "score": 45,
       "source_domain": "engineering-team",
       "source_path": "engineering-team/self-improving-agent/skills/remember"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "runbook-generator",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/runbook-generator"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "secrets-vault-manager",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/secrets-vault-manager"
     },
     {
       "adoption": "reference_only",
@@ -1886,6 +1962,17 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "slo-architect",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/slo-architect"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "code",
       "name": "snowflake-development",
       "priority": "P3",
@@ -1897,12 +1984,45 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "spawn",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering",
+      "source_path": "engineering/agenthub/skills/spawn"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "statistical-analyst",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering",
+      "source_path": "engineering/statistical-analyst/skills/statistical-analyst"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "code",
       "name": "stripe-integration-expert",
       "priority": "P3",
       "score": 45,
       "source_domain": "engineering-team",
       "source_path": "engineering-team/skills/stripe-integration-expert"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "tc-tracker",
+      "priority": "P3",
+      "score": 45,
+      "source_domain": "engineering",
+      "source_path": "engineering/skills/tc-tracker"
     },
     {
       "adoption": "reference_only",
@@ -1940,24 +2060,24 @@
     {
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "router-index",
-      "mapped_category": "business",
-      "name": "product-skills",
+      "kind": "skill",
+      "mapped_category": "engineering",
+      "name": "universal-scraping-architect",
       "priority": "P3",
       "score": 45,
-      "source_domain": "product-team",
-      "source_path": "product-team/skills/product-skills"
+      "source_domain": "engineering",
+      "source_path": "engineering/universal-scraping-architect/skills/universal-scraping-architect"
     },
     {
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "execution",
-      "name": "inbox-setup",
+      "mapped_category": "engineering",
+      "name": "zero-hallucination-coder",
       "priority": "P3",
       "score": 45,
-      "source_domain": "productivity",
-      "source_path": "productivity/email/skills/inbox-setup"
+      "source_domain": "engineering",
+      "source_path": "engineering/zero-hallucination-coder/skills/zero-hallucination-coder"
     },
     {
       "adoption": "reference_only",
@@ -2037,16 +2157,26 @@
       "source_path": "marketing-skill/skills/content-production"
     },
     {
-      "adoption": "converted",
+      "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "local_skill": "content-strategy-matrix",
-      "mapped_category": "content",
-      "name": "content-strategy",
+      "mapped_category": "compliance",
+      "name": "eu-ai-act-specialist",
       "priority": "P3",
       "score": 42,
-      "source_domain": "marketing-skill",
-      "source_path": "marketing-skill/skills/content-strategy"
+      "source_domain": "ra-qm-team",
+      "source_path": "ra-qm-team/skills/eu-ai-act-specialist"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "compliance",
+      "name": "fda-consultant-specialist",
+      "priority": "P3",
+      "score": 42,
+      "source_domain": "ra-qm-team",
+      "source_path": "ra-qm-team/skills/fda-consultant-specialist"
     },
     {
       "adoption": "reference_only",
@@ -2063,24 +2193,34 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "compliance",
+      "name": "gdpr-dsgvo-expert",
+      "priority": "P3",
+      "score": 42,
+      "source_domain": "ra-qm-team",
+      "source_path": "ra-qm-team/skills/gdpr-dsgvo-expert"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "compliance",
+      "name": "iso42001-specialist",
+      "priority": "P3",
+      "score": 42,
+      "source_domain": "ra-qm-team",
+      "source_path": "ra-qm-team/skills/iso42001-specialist"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "content",
       "name": "prompt-engineer-toolkit",
       "priority": "P3",
       "score": 42,
       "source_domain": "marketing-skill",
       "source_path": "marketing-skill/skills/prompt-engineer-toolkit"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "content-social-post",
-      "mapped_category": "content",
-      "name": "social-content",
-      "priority": "P3",
-      "score": 42,
-      "source_domain": "marketing-skill",
-      "source_path": "marketing-skill/skills/social-content"
     },
     {
       "adoption": "reference_only",
@@ -2108,45 +2248,23 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "compliance",
-      "name": "eu-ai-act-specialist",
+      "mapped_category": "code",
+      "name": "a11y-audit",
       "priority": "P3",
-      "score": 42,
-      "source_domain": "ra-qm-team",
-      "source_path": "ra-qm-team/skills/eu-ai-act-specialist"
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/a11y-audit/skills/a11y-audit"
     },
     {
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "compliance",
-      "name": "fda-consultant-specialist",
+      "mapped_category": "code",
+      "name": "ai-security",
       "priority": "P3",
-      "score": 42,
-      "source_domain": "ra-qm-team",
-      "source_path": "ra-qm-team/skills/fda-consultant-specialist"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "compliance",
-      "name": "gdpr-dsgvo-expert",
-      "priority": "P3",
-      "score": 42,
-      "source_domain": "ra-qm-team",
-      "source_path": "ra-qm-team/skills/gdpr-dsgvo-expert"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "compliance",
-      "name": "iso42001-specialist",
-      "priority": "P3",
-      "score": 42,
-      "source_domain": "ra-qm-team",
-      "source_path": "ra-qm-team/skills/iso42001-specialist"
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/ai-security"
     },
     {
       "adoption": "reference_only",
@@ -2180,6 +2298,28 @@
       "score": 41,
       "source_domain": "engineering",
       "source_path": "engineering/skills/chaos-engineering"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "cloud-security",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/cloud-security"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "code-reviewer",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/code-reviewer"
     },
     {
       "adoption": "reference_only",
@@ -2226,16 +2366,37 @@
       "source_path": "engineering/demo-video/skills/demo-video"
     },
     {
-      "adoption": "converted",
+      "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "local_skill": "ai-output-schema-eval",
-      "mapped_category": "engineering",
-      "name": "eval",
+      "mapped_category": "code",
+      "name": "email-template-builder",
       "priority": "P3",
       "score": 41,
-      "source_domain": "engineering",
-      "source_path": "engineering/agenthub/skills/eval"
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/email-template-builder"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "epic-design",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/epic-design"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "extract",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/self-improving-agent/skills/extract"
     },
     {
       "adoption": "reference_only",
@@ -2247,6 +2408,28 @@
       "score": 41,
       "source_domain": "engineering",
       "source_path": "engineering/skills/full-page-screenshot"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "generate",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/playwright-pro/skills/generate"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "google-workspace-cli",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/google-workspace-cli/skills/google-workspace-cli"
     },
     {
       "adoption": "reference_only",
@@ -2307,6 +2490,17 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "code",
+      "name": "playwright-pro",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/playwright-pro/skills/pw"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "engineering",
       "name": "pr-review-expert",
       "priority": "P3",
@@ -2340,12 +2534,45 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "code",
+      "name": "security-pen-testing",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/security-pen-testing"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "engineering",
       "name": "self-eval",
       "priority": "P3",
       "score": 41,
       "source_domain": "engineering",
       "source_path": "engineering/skills/self-eval"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "senior-data-scientist",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/senior-data-scientist"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "senior-security",
+      "priority": "P3",
+      "score": 41,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/senior-security"
     },
     {
       "adoption": "reference_only",
@@ -2428,179 +2655,12 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "code",
-      "name": "a11y-audit",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/a11y-audit/skills/a11y-audit"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "ai-security",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/ai-security"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "cloud-security",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/cloud-security"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "code-reviewer",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/code-reviewer"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "email-template-builder",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/email-template-builder"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "epic-design",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/epic-design"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "extract",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/self-improving-agent/skills/extract"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "generate",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/playwright-pro/skills/generate"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "google-workspace-cli",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/google-workspace-cli/skills/google-workspace-cli"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "playwright-pro",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/playwright-pro/skills/pw"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "office-pdf-report",
-      "mapped_category": "code",
-      "name": "report",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/playwright-pro/skills/report"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "security-pen-testing",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/security-pen-testing"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "senior-data-scientist",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/senior-data-scientist"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "senior-security",
-      "priority": "P3",
-      "score": 41,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/senior-security"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "mapped_category": "research",
       "name": "deep-research",
       "priority": "P3",
       "score": 40,
       "source_domain": "research",
       "source_path": "research/deep-research/skills/deep-research"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "research-citation-evidence-map",
-      "mapped_category": "research",
-      "name": "research",
-      "priority": "P3",
-      "score": 40,
-      "source_domain": "research",
-      "source_path": "research/research/skills/research"
     },
     {
       "adoption": "reference_only",
@@ -2691,28 +2751,48 @@
       "source_path": "ra-qm-team/skills/soc2-compliance"
     },
     {
-      "adoption": "converted",
+      "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "local_skill": "execution-playwright-browser-automation",
-      "mapped_category": "engineering",
-      "name": "browser-automation",
+      "mapped_category": "execution",
+      "name": "capture",
       "priority": "P3",
       "score": 37,
-      "source_domain": "engineering",
-      "source_path": "engineering/skills/browser-automation"
+      "source_domain": "productivity",
+      "source_path": "productivity/capture/skills/capture"
     },
     {
-      "adoption": "converted",
+      "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "local_skill": "data-quality-audit",
-      "mapped_category": "engineering",
-      "name": "data-quality-auditor",
+      "mapped_category": "execution",
+      "name": "inbox-triage",
       "priority": "P3",
       "score": 37,
-      "source_domain": "engineering",
-      "source_path": "engineering/data-quality-auditor/skills/data-quality-auditor"
+      "source_domain": "productivity",
+      "source_path": "productivity/email/skills/inbox-triage"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "office",
+      "name": "markdown-html-orchestrator",
+      "priority": "P3",
+      "score": 37,
+      "source_domain": "markdown-html",
+      "source_path": "markdown-html/skills/markdown-html-orchestrator"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "named-persona-adversarial-review",
+      "priority": "P3",
+      "score": 37,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/named-persona-adversarial-review"
     },
     {
       "adoption": "reference_only",
@@ -2724,6 +2804,17 @@
       "score": 37,
       "source_domain": "engineering",
       "source_path": "engineering/security-guidance/skills/security-guidance"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "code",
+      "name": "senior-data-engineer",
+      "priority": "P3",
+      "score": 37,
+      "source_domain": "engineering-team",
+      "source_path": "engineering-team/skills/senior-data-engineer"
     },
     {
       "adoption": "reference_only",
@@ -2752,66 +2843,11 @@
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "code",
-      "name": "named-persona-adversarial-review",
-      "priority": "P3",
-      "score": 37,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/named-persona-adversarial-review"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
-      "name": "senior-data-engineer",
-      "priority": "P3",
-      "score": 37,
-      "source_domain": "engineering-team",
-      "source_path": "engineering-team/skills/senior-data-engineer"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "code",
       "name": "tech-stack-evaluator",
       "priority": "P3",
       "score": 37,
       "source_domain": "engineering-team",
       "source_path": "engineering-team/skills/tech-stack-evaluator"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "office",
-      "name": "markdown-html-orchestrator",
-      "priority": "P3",
-      "score": 37,
-      "source_domain": "markdown-html",
-      "source_path": "markdown-html/skills/markdown-html-orchestrator"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "execution",
-      "name": "capture",
-      "priority": "P3",
-      "score": 37,
-      "source_domain": "productivity",
-      "source_path": "productivity/capture/skills/capture"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "execution",
-      "name": "inbox-triage",
-      "priority": "P3",
-      "score": 37,
-      "source_domain": "productivity",
-      "source_path": "productivity/email/skills/inbox-triage"
     },
     {
       "adoption": "reference_only",
@@ -2839,23 +2875,23 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
-      "mapped_category": "office",
-      "name": "md-slides",
-      "priority": "P3",
-      "score": 35,
-      "source_domain": "markdown-html",
-      "source_path": "markdown-html/skills/md-slides"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
       "mapped_category": "execution",
       "name": "andreessen",
       "priority": "P3",
       "score": 35,
       "source_domain": "productivity",
       "source_path": "productivity/andreessen/skills/andreessen"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
+      "mapped_category": "office",
+      "name": "md-slides",
+      "priority": "P3",
+      "score": 35,
+      "source_domain": "markdown-html",
+      "source_path": "markdown-html/skills/md-slides"
     },
     {
       "adoption": "reference_only",
@@ -2883,6 +2919,17 @@
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
+      "mapped_category": "compliance",
+      "name": "agent-decision-receipts",
+      "priority": "P3",
+      "score": 34,
+      "source_domain": "ra-qm-team",
+      "source_path": "ra-qm-team/skills/agent-decision-receipts"
+    },
+    {
+      "adoption": "reference_only",
+      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
+      "kind": "skill",
       "mapped_category": "business",
       "name": "general-counsel-advisor",
       "priority": "P3",
@@ -2895,34 +2942,11 @@
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "skill",
       "mapped_category": "compliance",
-      "name": "agent-decision-receipts",
-      "priority": "P3",
-      "score": 34,
-      "source_domain": "ra-qm-team",
-      "source_path": "ra-qm-team/skills/agent-decision-receipts"
-    },
-    {
-      "adoption": "reference_only",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "mapped_category": "compliance",
       "name": "quality-documentation-manager",
       "priority": "P3",
       "score": 34,
       "source_domain": "ra-qm-team",
       "source_path": "ra-qm-team/skills/quality-documentation-manager"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "design-system-consistency",
-      "mapped_category": "office",
-      "name": "design-system",
-      "priority": "P3",
-      "score": 33,
-      "source_domain": "markdown-html",
-      "source_path": "markdown-html/skills/design-system"
     },
     {
       "adoption": "reference_only",
@@ -3046,18 +3070,6 @@
       "source_path": "c-level-advisor/c-level-agents/skills/cro-review"
     },
     {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "design-premium-landing-page",
-      "mapped_category": "content",
-      "name": "landing",
-      "priority": "P3",
-      "score": 26,
-      "source_domain": "marketing",
-      "source_path": "marketing/landing/skills/landing"
-    },
-    {
       "adoption": "reference_only",
       "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
       "kind": "router-index",
@@ -3144,18 +3156,6 @@
       "score": 22,
       "source_domain": "c-level-advisor",
       "source_path": "c-level-advisor/c-level-agents/skills/freeze"
-    },
-    {
-      "adoption": "converted",
-      "description": "Metadata-only upstream description omitted; evaluate local OneCode-authored conversion before adoption.",
-      "kind": "skill",
-      "local_skill": "business-requirements-brief",
-      "mapped_category": "business",
-      "name": "brief",
-      "priority": "P3",
-      "score": 21,
-      "source_domain": "c-level-advisor",
-      "source_path": "c-level-advisor/c-level-agents/skills/brief"
     },
     {
       "adoption": "reference_only",

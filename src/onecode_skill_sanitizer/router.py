@@ -185,6 +185,9 @@ SCENARIO_PROFILES = [
             "policy fragmentation",
             "sikll",
             "skill库",
+            "审计报告",
+            "更智能的解决方法",
+            "智能解决方法",
             "智能选择",
             "自动搭配",
             "自动选择",
@@ -250,17 +253,44 @@ SCENARIO_PROFILES = [
 ]
 
 
+NORMALIZATION_ALIASES = [
+    ("sikll", "skill"),
+    ("技能库", "skill库 skill pack catalog"),
+    ("技能选择", "skill selection 智能选择"),
+    ("自动推荐", "skill selection 自动选择"),
+    ("任务编排", "auto composition automatic composition"),
+    ("编排能力", "auto composition"),
+    ("更聪明", "smart skill"),
+]
+
+
 def normalize_task_text(task: str) -> str:
     text = task.lower().replace("-", " ").replace("_", " ")
+    expansions = []
+    for source, target in NORMALIZATION_ALIASES:
+        if source in text:
+            text = text.replace(source, target)
+            expansions.append(target)
+    if expansions:
+        text = " ".join([text, *expansions])
     return re.sub(r"\s+", " ", text).strip()
+
+
+AMBIGUOUS_PROFILE_SIGNALS = {"report", "报告"}
 
 
 def _signal_score(text: str, signals: Iterable[str]) -> int:
     score = 0
+    distinctive_score = 0
     for signal in signals:
         normalized_signal = normalize_task_text(signal)
         if normalized_signal and normalized_signal in text:
-            score += 4 if " " in normalized_signal else 2
+            signal_score = 4 if " " in normalized_signal else 2
+            score += signal_score
+            if normalized_signal not in AMBIGUOUS_PROFILE_SIGNALS:
+                distinctive_score += signal_score
+    if score and not distinctive_score:
+        return 0
     return score
 
 
@@ -321,17 +351,20 @@ def build_capability_coverage(
     bundle: dict,
     selected_skill_names: set[str],
     available_skill_names: set[str] | None = None,
+    task_required_capabilities: set[str] | None = None,
 ) -> list[dict]:
     available_skill_names = available_skill_names or selected_skill_names
+    task_required_capabilities = task_required_capabilities or set()
     coverage = []
     for capability in bundle.get("required_capabilities", []):
         capability_id = capability.get("id", "")
         preferred = capability.get("preferred_skills", [])
         selected = next((skill_name for skill_name in preferred if skill_name in selected_skill_names), "")
         available = next((skill_name for skill_name in preferred if skill_name in available_skill_names), "")
+        required = bool(capability.get("required", True)) or capability_id in task_required_capabilities
         item = {
             "capability": capability_id,
-            "required": bool(capability.get("required", True)),
+            "required": required,
             "status": "covered" if selected else "missing",
             "skill": selected,
             "preferred_skills": preferred,
@@ -542,8 +575,10 @@ def route_scenario_task(
             ordered_names.append(skill["name"])
     required_skill_names: list[str] = []
     if selected_bundle:
+        task_required_capabilities = set(profile.get("required_capabilities", []))
         for capability in selected_bundle.get("required_capabilities", []):
-            if not capability.get("required", True):
+            capability_id = capability.get("id", "")
+            if not capability.get("required", True) and capability_id not in task_required_capabilities:
                 continue
             selected_name = next(
                 (name for name in capability.get("preferred_skills", []) if name in selected_by_name),
@@ -561,6 +596,7 @@ def route_scenario_task(
             selected_bundle,
             {skill["name"] for skill in routed_skills},
             set(selected_by_name),
+            set(profile.get("required_capabilities", [])),
         )
         if selected_bundle
         else []
@@ -683,10 +719,16 @@ def select_trusted_bundle_for_profile(bundles_index: dict, profile: dict, truste
     return selected_bundle
 
 
-def selected_bundle_required_skill_names(bundle: dict, selected_by_name: dict[str, dict]) -> set[str]:
+def selected_bundle_required_skill_names(
+    bundle: dict,
+    selected_by_name: dict[str, dict],
+    task_required_capabilities: set[str] | None = None,
+) -> set[str]:
+    task_required_capabilities = task_required_capabilities or set()
     required = set()
     for capability in bundle.get("required_capabilities", []):
-        if not capability.get("required", True):
+        capability_id = capability.get("id", "")
+        if not capability.get("required", True) and capability_id not in task_required_capabilities:
             continue
         selected = next((name for name in capability.get("preferred_skills", []) if name in selected_by_name), "")
         if selected:
@@ -991,6 +1033,16 @@ def build_pipeline_stage(stage_id: str, skills: list[str], unresolved_risks: lis
             "id": f"{stage_id}_complete",
             "condition": info["condition"],
             "failure_action": info["failure_action"],
+            "evidence_template": {
+                "status_values": ["pending", "passed", "failed", "blocked", "skipped"],
+                "required_fields": [
+                    "status",
+                    "evidence",
+                    "failed_checks",
+                    "unresolved_assumptions",
+                    "residual_risks",
+                ],
+            },
         },
         "verification": list(info["verification"]),
     }
@@ -1256,7 +1308,8 @@ def route_mesh_task(
             ordered_names.append(skill["name"])
 
     required_names = set(capability_skill_names(invariant_capabilities, trusted_skill_names))
-    required_names.update(selected_bundle_required_skill_names(selected_bundle, selected_by_name))
+    task_required_capabilities = set(profile.get("required_capabilities", []))
+    required_names.update(selected_bundle_required_skill_names(selected_bundle, selected_by_name, task_required_capabilities))
     ordered_names, pruned_names = prune_overlap_skill_names(ordered_names, overlap_groups, required_names)
     for skill in selected_skills:
         if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
@@ -1271,7 +1324,7 @@ def route_mesh_task(
     routed_skills = [selected_by_name[name] for name in final_names]
     selected_names = {skill["name"] for skill in routed_skills}
     coverage = (
-        build_capability_coverage(selected_bundle, selected_names, set(selected_by_name))
+        build_capability_coverage(selected_bundle, selected_names, set(selected_by_name), task_required_capabilities)
         if selected_bundle
         else []
     )

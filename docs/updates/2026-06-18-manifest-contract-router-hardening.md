@@ -34,6 +34,7 @@ The deterministic scanner now covers the bypass samples from the review:
 - SSH key copying through `scp`
 - netcat reverse shell execution through `nc -e`
 - PowerShell encoded commands
+- JavaScript `fetch(...)` followed by dynamic execution through `eval(...)`
 
 This remains deterministic preflight scanning, not complete malware or prompt
 injection detection. Human approval and host runtime permission controls remain

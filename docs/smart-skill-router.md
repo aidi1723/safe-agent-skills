@@ -13,6 +13,7 @@ It builds a verified task pack from:
 - the trusted skill catalog
 - trusted scenario bundles
 - deterministic task intent and capability matching
+- deterministic alias expansion for common Chinese and English task phrasing
 - optional natural-language invariants
 - overlap-group pruning
 - a deterministic mesh execution graph
@@ -60,6 +61,10 @@ format: json
 `max-skills` is a target cap. If the selected scenario and invariants require
 more skills to cover mandatory gates, `smart` keeps those required skills
 instead of dropping a safety, verification, or release capability.
+When the task profile itself explicitly requires a capability, that capability
+is promoted for the current route even if the reusable scenario bundle marks it
+optional; this prevents important checks such as CI review from being reported
+as merely omitted by the skill limit.
 
 ## Low-Confidence Tasks
 
@@ -113,6 +118,14 @@ The current deterministic mapper recognizes these capability families:
 Each capability maps to existing trusted skills. If no trusted skill can cover
 an invariant, the output marks the capability as `missing`.
 
+## Alias Expansion
+
+Before scenario scoring, task text is normalized with a small audited alias
+table. This catches common operator phrasing such as `技能库`, `技能选择`,
+`自动推荐`, `任务编排`, `更聪明`, and typo variants such as `sikll`.
+Alias expansion is deterministic and recorded in code; it is not semantic LLM
+inference.
+
 ## Output
 
 `smart` emits the normal task-pack fields plus:
@@ -147,8 +160,11 @@ itself.
 selected trusted skills. It groups selected skills into stages such as
 `preflight`, `source`, `planning`, `production`, `review`, `verification`, and
 `handoff`; each stage includes inputs, outputs, a gate condition, verification
-notes, and failure handling guidance. The plan is advisory: it does not execute
-tools or grant runtime permissions.
+notes, failure handling guidance, and a gate evidence template. The evidence
+template asks host agents to record `status`, `evidence`, `failed_checks`,
+`unresolved_assumptions`, and `residual_risks` before treating a stage as
+complete. The plan is advisory: it does not execute tools or grant runtime
+permissions.
 
 ## When To Use
 

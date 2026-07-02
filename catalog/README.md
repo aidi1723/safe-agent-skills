@@ -12,8 +12,8 @@ directly from the open internet.
 
 ## Current Catalog Status
 
-- total skills: 114
-- trusted skills: 108
+- total skills: 152
+- trusted skills: 146
 - quarantined skills: 3
 - review-required skills: 3
 - tampered skills: 0

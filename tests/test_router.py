@@ -136,6 +136,30 @@ class RouterTest(unittest.TestCase):
         self.assertIn("bundle_quality", profile["required_capabilities"])
         self.assertIn("supply_chain_review", profile["required_capabilities"])
 
+    def test_build_task_profile_routes_current_audit_followup_to_skill_router_review(self):
+        profile = build_task_profile("继续，按照步骤，完成全部任务，以及审计报告给出的，更智能的解决方法")
+
+        self.assertEqual(profile["task_type"], "skill_router_review")
+        self.assertEqual(profile["primary_domain"], "ai")
+        self.assertIn("skill_selection_quality", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_chinese_skill_router_synonyms(self):
+        for task in [
+            "优化技能库的自动推荐和编排能力",
+            "让技能选择和任务编排更聪明",
+        ]:
+            with self.subTest(task=task):
+                profile = build_task_profile(task)
+
+                self.assertEqual(profile["task_type"], "skill_router_review")
+                self.assertEqual(profile["primary_domain"], "ai")
+                self.assertGreater(profile["matched_signal_score"], 0)
+
+    def test_build_task_profile_does_not_treat_report_alone_as_data_analysis(self):
+        profile = build_task_profile("根据审计报告继续优化项目")
+
+        self.assertNotEqual(profile["task_type"], "data_analysis")
+
     def test_route_scenario_task_selects_skill_router_quality_review_bundle(self):
         bundle = {
             "id": "skill-router-quality-review",
@@ -337,6 +361,13 @@ class RouterTest(unittest.TestCase):
             self.assertIn("verification", stage)
             self.assertIn("condition", stage["gate"])
             self.assertIn("failure_action", stage["gate"])
+            self.assertIn("evidence_template", stage["gate"])
+            self.assertEqual(
+                stage["gate"]["evidence_template"]["status_values"],
+                ["pending", "passed", "failed", "blocked", "skipped"],
+            )
+            self.assertIn("evidence", stage["gate"]["evidence_template"]["required_fields"])
+            self.assertIn("residual_risks", stage["gate"]["evidence_template"]["required_fields"])
 
     def test_build_pipeline_plan_general_fallback_does_not_invent_scenario(self):
         profile = build_task_profile("帮我看一下这个事情是否合理")
@@ -602,6 +633,64 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(coverage["premium_landing_design"]["status"], "omitted_by_limit")
         self.assertEqual(coverage["premium_landing_design"]["skill"], "design-premium-landing-page")
         self.assertEqual(routed["selection_quality"]["missing_required_count"], 0)
+
+    def test_route_mesh_task_promotes_profile_required_capability_over_limit(self):
+        skill_names = [
+            "ai-opensquilla-metaskill-workflow",
+            "ai-opensquilla-token-routing-pattern",
+            "ai-langchain-agent-orchestration",
+            "ai-tool-schema-protocol-check",
+            "ai-output-schema-eval",
+            "ai-rule-failure-log-synthesis",
+            "code-test-regression",
+            "engineering-ci-troubleshoot",
+            "security-supply-chain-review",
+        ]
+        bundles_index = {
+            "bundles": [
+                {
+                    "id": "skill-router-quality-review",
+                    "name": "Skill Router Quality Review",
+                    "scenario": "Review skill catalog routing and automatic skill selection.",
+                    "status": "trusted",
+                    "task_signals": ["skill router", "skill selection", "自动推荐", "任务编排"],
+                    "skills": skill_names,
+                    "execution_order": skill_names,
+                    "required_capabilities": [
+                        {
+                            "id": "skill_selection_quality",
+                            "required": True,
+                            "preferred_skills": ["ai-opensquilla-token-routing-pattern"],
+                        },
+                        {"id": "bundle_quality", "required": True, "preferred_skills": ["ai-opensquilla-metaskill-workflow"]},
+                        {"id": "routing_contract", "required": True, "preferred_skills": ["ai-tool-schema-protocol-check"]},
+                        {"id": "output_schema_eval", "required": True, "preferred_skills": ["ai-output-schema-eval"]},
+                        {"id": "regression_test", "required": True, "preferred_skills": ["code-test-regression"]},
+                        {"id": "failure_synthesis", "required": False, "preferred_skills": ["ai-rule-failure-log-synthesis"]},
+                        {"id": "ci_check", "required": False, "preferred_skills": ["engineering-ci-troubleshoot"]},
+                        {"id": "supply_chain_review", "required": True, "preferred_skills": ["security-supply-chain-review"]},
+                    ],
+                }
+            ]
+        }
+        selected = [{"name": name, "match_score": 0} for name in skill_names]
+
+        routed = route_mesh_task(
+            task="优化技能库的自动推荐和任务编排能力",
+            invariants=None,
+            selected_skills=selected,
+            bundles_index=bundles_index,
+            trusted_skill_names=set(skill_names),
+            overlap_groups=None,
+            max_skills=8,
+            strategy="balanced",
+        )
+
+        selected_names = {skill["name"] for skill in routed["skills"]}
+        coverage = {item["capability"]: item for item in routed["coverage"]}
+        self.assertIn("engineering-ci-troubleshoot", selected_names)
+        self.assertEqual(coverage["ci_check"]["status"], "covered")
+        self.assertTrue(coverage["ci_check"]["required"])
 
     def test_build_execution_plan_uses_bundle_order_and_selected_skills(self):
         bundle = {

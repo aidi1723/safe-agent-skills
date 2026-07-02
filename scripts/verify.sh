@@ -4,15 +4,23 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
-require_command() {
-  local command_name="$1"
-  if ! command -v "$command_name" >/dev/null 2>&1; then
-    echo "missing required command: $command_name" >&2
-    exit 1
+search_repo() {
+  local pattern="$1"
+  local exclude_path="${2:-}"
+  if command -v rg >/dev/null 2>&1; then
+    if [[ -n "$exclude_path" ]]; then
+      rg -n "$pattern" . --glob '!.git/**' --glob "!$exclude_path"
+    else
+      rg -n "$pattern" . --glob '!.git/**'
+    fi
+    return
+  fi
+  if [[ -n "$exclude_path" ]]; then
+    grep -RInE --exclude-dir=.git --exclude="$(basename "$exclude_path")" -- "$pattern" .
+  else
+    grep -RInE --exclude-dir=.git -- "$pattern" .
   fi
 }
-
-require_command rg
 
 PYTHONPATH=src python3 -m compileall src tests
 PYTHONPATH=src python3 -m unittest discover -s tests -v
@@ -28,7 +36,7 @@ private_path_patterns=(
   '/one[ ]code/'
 )
 for private_path_pattern in "${private_path_patterns[@]}"; do
-  if rg -n "$private_path_pattern" . --glob '!.git/**'; then
+  if search_repo "$private_path_pattern"; then
     exit 1
   fi
 done
@@ -49,6 +57,6 @@ python3 -m json.tool schemas/verify-report.schema.json >/dev/null
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null
-if rg -n "TODO|FIXME|PLACEHOLDER|TBD|待定" . --glob '!scripts/verify.sh'; then
+if search_repo "TODO|FIXME|PLACEHOLDER|TBD|待定" "scripts/verify.sh"; then
   exit 1
 fi

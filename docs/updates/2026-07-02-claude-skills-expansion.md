@@ -22,7 +22,8 @@ reference source and adds six locally authored OneCode-safe expansion batches.
 - Added `batch-022-claude-skills-bulk-draft` through
   `batch-027-claude-skills-bulk-draft` with the remaining 253 metadata-only
   local draft folders from the ranked bulk review plan. The 7 bulk draft
-  batches now cover all 303 actionable `reference_only` candidates.
+  batches preserve 303 metadata-only review inputs; after the coverage pass,
+  the current candidate map has 283 remaining `reference_only` candidates.
 - Added `claude-skills-bulk-assess` to rank the full draft pool before
   promotion. The current assessment identifies 283 candidates to keep
   reference-only and 53 already converted or covered by existing trusted

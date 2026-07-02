@@ -581,6 +581,8 @@ def build_agent_instructions(
         )
         for stage in plan.get("stages", []):
             gate = stage.get("gate", {})
+            evidence_template = gate.get("evidence_template", {})
+            evidence_fields = ", ".join(evidence_template.get("required_fields", []))
             skills_text = ", ".join(stage.get("skills", [])) or "none"
             lines.extend(
                 [
@@ -591,6 +593,8 @@ def build_agent_instructions(
                     f"(failure action: {gate.get('failure_action', 'not_specified')})",
                 ]
             )
+            if evidence_fields:
+                lines.append(f"  evidence fields: {evidence_fields}")
         lines.append("")
     if router_context and router_context.get("acceptance_criteria"):
         lines.extend(["Acceptance criteria:"])
@@ -912,6 +916,10 @@ def render_task_pack_markdown(task_pack: dict) -> str:
                         f"- failure action: `{gate.get('failure_action', 'not_specified')}`",
                     ]
                 )
+                evidence_template = gate.get("evidence_template", {})
+                evidence_fields = evidence_template.get("required_fields", [])
+                if evidence_fields:
+                    lines.append("- evidence fields: " + ", ".join(f"`{field}`" for field in evidence_fields))
             if plan.get("approval_gates"):
                 lines.extend(["", "### Approval Gates", ""])
                 for gate in plan["approval_gates"]:
@@ -1820,7 +1828,7 @@ def claude_skills_candidate_action(candidate: dict) -> str:
 
 
 def claude_skills_candidate_sort_key(candidate: dict) -> tuple[int, int, int, str]:
-    adoption_rank = {"candidate": 0, "reference_only": 1, "rejected": 2, "converted": 3}
+    adoption_rank = {"converted": 0, "candidate": 1, "reference_only": 2, "rejected": 3}
     priority_rank = {"P0": 0, "P1": 1, "P2": 2, "P3": 3}
     return (
         adoption_rank.get(str(candidate.get("adoption", "reference_only")), 9),

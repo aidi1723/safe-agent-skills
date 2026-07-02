@@ -37,6 +37,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Smart Router And Claude Skills Closure](updates/2026-07-02-smart-router-claude-skills-closure.md)
 - [Auto Orchestration Pipeline Plan](updates/2026-06-27-auto-orchestration-pipeline-plan.md)
 - [Claude Skills Expansion](updates/2026-07-02-claude-skills-expansion.md)
 - [Claude Skills Expansion Audit](claude-skills-expansion-audit.md)

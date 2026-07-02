@@ -5,6 +5,7 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from onecode_skill_sanitizer.cli import claude_skills_candidate_sort_key
 from onecode_skill_sanitizer.cli import main
 
 
@@ -388,6 +389,16 @@ class RegistryCliTest(unittest.TestCase):
                 "brief",
             },
             converted,
+        )
+
+    def test_claude_skills_candidate_map_is_sorted_by_evaluation_priority(self):
+        candidate_map = json.loads(Path("docs/claude-skills-candidate-map.json").read_text(encoding="utf-8"))
+        candidates = candidate_map["candidates"]
+
+        self.assertEqual(candidates, sorted(candidates, key=claude_skills_candidate_sort_key))
+        self.assertEqual(
+            {candidate["adoption"] for candidate in candidates},
+            {"converted", "reference_only"},
         )
 
     def test_claude_skills_bulk_plan_batches_all_non_converted_candidates(self):
@@ -2835,6 +2846,35 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("ai-opensquilla-token-routing-pattern", names)
         self.assertIn("code-test-regression", names)
 
+    def test_real_catalog_scenario_router_routes_audit_followup_to_skill_router_bundle(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "继续，按照步骤，完成全部任务，以及审计报告给出的，更智能的解决方法",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        self.assertEqual(task_pack["task_profile"]["task_type"], "skill_router_review")
+        self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["pipeline_plan"]["id"], "skill-router-quality-review")
+        self.assertIn("ai-opensquilla-metaskill-workflow", names)
+        self.assertIn("ai-opensquilla-token-routing-pattern", names)
+        self.assertNotEqual(task_pack["selected_scenario"]["id"], "data-analysis-report")
+
     def test_real_catalog_smart_router_selects_skill_router_quality_review_bundle(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):
@@ -2888,6 +2928,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("## Pipeline Plan", markdown)
         self.assertIn("- id: `skill-router-quality-review`", markdown)
         self.assertIn("### Preflight", markdown)
+        self.assertIn("- evidence fields: `status`, `evidence`, `failed_checks`, `unresolved_assumptions`, `residual_risks`", markdown)
         self.assertIn("method-only", markdown.lower())
 
     def test_task_pack_simple_router_remains_backward_compatible(self):
