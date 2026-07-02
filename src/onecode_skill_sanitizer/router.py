@@ -351,11 +351,14 @@ def build_execution_plan(bundle: dict, selected_skills: list[dict]) -> list[dict
 
 
 def build_selection_explanations(bundle: dict, selected_skills: list[dict], coverage: list[dict]) -> list[dict]:
+    bundle_id = bundle.get("id", "")
+    skill_names = selected_skill_names(selected_skills)
     explanations = [
         {
             "type": "bundle",
             "name": bundle.get("id", ""),
             "role": "scenario",
+            "execution_role": "planner",
             "confidence": 0.9,
             "matched_capabilities": [item["capability"] for item in coverage if item["status"] == "covered"],
             "selection_reason": f"Selected `{bundle.get('name', bundle.get('id', ''))}` as the closest trusted scenario bundle.",
@@ -367,21 +370,80 @@ def build_selection_explanations(bundle: dict, selected_skills: list[dict], cove
             coverage_by_skill.setdefault(item["skill"], []).append(item["capability"])
     for skill in selected_skills:
         matched = coverage_by_skill.get(skill["name"], [])
+        execution_role = execution_role_for_skill(skill["name"], bundle_id, skill_names)
         explanations.append(
             {
                 "type": "skill",
                 "name": skill["name"],
                 "role": "core" if matched else "supplemental",
+                "execution_role": execution_role,
                 "confidence": 0.85 if matched else 0.6,
                 "matched_capabilities": matched,
                 "selection_reason": (
-                    f"Selected `{skill['name']}` to cover {', '.join(matched)}."
+                    f"Selected `{skill['name']}` as {execution_role} guidance to cover {', '.join(matched)}."
                     if matched
                     else f"Selected `{skill['name']}` as supplemental trusted guidance."
                 ),
             }
         )
     return explanations
+
+
+def build_selection_quality(
+    task_profile: dict,
+    selected_bundle: dict,
+    selected_scenario: dict,
+    coverage: list[dict],
+    pruned_skills: list[str] | None = None,
+) -> dict:
+    required_items = [item for item in coverage if item.get("required", True)]
+    covered_required = [item for item in required_items if item.get("status") == "covered"]
+    missing_required = [item for item in required_items if item.get("status") == "missing"]
+    required_count = len(required_items)
+    coverage_ratio = round(len(covered_required) / required_count, 2) if required_count else 0
+    warnings = []
+    if not selected_bundle:
+        warnings.append("No trusted scenario matched; using direct selected skills only.")
+    for item in missing_required:
+        warnings.append(f"Missing required capability: {item.get('capability', '')}")
+
+    route_score = int(selected_scenario.get("match_score", 0) or 0)
+    matched_signal_score = int(task_profile.get("matched_signal_score", 0) or 0)
+    low_confidence = not selected_bundle or matched_signal_score <= 0
+    if not selected_bundle or matched_signal_score <= 0:
+        confidence = "low"
+    elif missing_required or coverage_ratio < 0.8 or route_score < 8:
+        confidence = "medium"
+    else:
+        confidence = "high"
+
+    score = round(
+        min(
+            1.0,
+            (coverage_ratio * 0.7)
+            + (min(route_score, 20) / 20 * 0.2)
+            + (min(matched_signal_score, 20) / 20 * 0.1),
+        ),
+        2,
+    )
+    if confidence == "low":
+        score = min(score, 0.49)
+    elif confidence == "medium":
+        score = min(max(score, 0.5), 0.79)
+    else:
+        score = max(score, 0.8)
+
+    return {
+        "confidence": confidence,
+        "score": score,
+        "required_count": required_count,
+        "covered_required_count": len(covered_required),
+        "missing_required_count": len(missing_required),
+        "coverage_ratio": coverage_ratio,
+        "low_confidence": low_confidence,
+        "warnings": warnings,
+        "pruned_skills": list(pruned_skills or []),
+    }
 
 
 def build_pipeline_plan(
@@ -470,6 +532,18 @@ def route_scenario_task(
             ordered_names.append(skill["name"])
     routed_skills = [selected_by_name[name] for name in ordered_names[:max_skills]]
     coverage = build_capability_coverage(selected_bundle, {skill["name"] for skill in routed_skills}) if selected_bundle else []
+    selected_scenario = {
+        "id": selected_bundle.get("id", ""),
+        "name": selected_bundle.get("name", selected_bundle.get("id", "")),
+        "match_score": score_bundle_for_profile(selected_bundle, profile) if selected_bundle else 0,
+    }
+    selection_quality = build_selection_quality(
+        task_profile=profile,
+        selected_bundle=selected_bundle,
+        selected_scenario=selected_scenario,
+        coverage=coverage,
+        pruned_skills=[],
+    )
     execution_plan = build_execution_plan(selected_bundle, routed_skills) if selected_bundle else build_execution_plan({}, routed_skills)
     explanations = build_selection_explanations(selected_bundle, routed_skills, coverage) if selected_bundle else []
     pipeline_plan = build_pipeline_plan(
@@ -484,14 +558,11 @@ def route_scenario_task(
     return {
         "router": {"mode": "deterministic_scenario_router", "version": ROUTER_VERSION},
         "task_profile": profile,
-        "selected_scenario": {
-            "id": selected_bundle.get("id", ""),
-            "name": selected_bundle.get("name", selected_bundle.get("id", "")),
-            "match_score": score_bundle_for_profile(selected_bundle, profile) if selected_bundle else 0,
-        },
+        "selected_scenario": selected_scenario,
         "skills": routed_skills,
         "bundles": [selected_bundle] if selected_bundle else [],
         "coverage": coverage,
+        "selection_quality": selection_quality,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
         "pipeline_plan": pipeline_plan,
@@ -687,6 +758,32 @@ PIPELINE_STAGE_INFO = {
         "verification": ["unresolved risks listed", "method-only boundary repeated"],
     },
 }
+
+
+EXECUTION_ROLE_BY_STAGE = {
+    "preflight": "preflight",
+    "source": "reviewer",
+    "planning": "planner",
+    "production": "producer",
+    "execution": "producer",
+    "review": "reviewer",
+    "verification": "verifier",
+    "handoff": "handoff",
+}
+
+
+def execution_role_for_stage(stage: str) -> str:
+    return EXECUTION_ROLE_BY_STAGE.get(stage, "supplemental")
+
+
+def execution_role_for_skill(skill_name: str, bundle_id: str = "", skill_names: list[str] | None = None) -> str:
+    if skill_names is None:
+        skill_names = [skill_name]
+    stage_map = scenario_stage_skill_map(bundle_id, skill_names)
+    for stage, names in stage_map.items():
+        if skill_name in names:
+            return execution_role_for_stage(stage)
+    return execution_role_for_stage(pipeline_stage_for_skill(skill_name))
 
 
 SCENARIO_STAGE_SKILLS = {
@@ -1153,6 +1250,18 @@ def route_mesh_task(
                 "preferred_skills": preferred,
             }
         )
+    selected_scenario = {
+        "id": selected_bundle.get("id", ""),
+        "name": selected_bundle.get("name", selected_bundle.get("id", "")),
+        "match_score": score_bundle_for_profile(selected_bundle, profile) if selected_bundle else 0,
+    }
+    selection_quality = build_selection_quality(
+        task_profile=profile,
+        selected_bundle=selected_bundle,
+        selected_scenario=selected_scenario,
+        coverage=coverage,
+        pruned_skills=pruned_names,
+    )
     execution_plan = [
         {
             "order": index,
@@ -1198,14 +1307,11 @@ def route_mesh_task(
             }.get(strategy, "required gates plus task-matched skills"),
         },
         "task_profile": profile,
-        "selected_scenario": {
-            "id": selected_bundle.get("id", ""),
-            "name": selected_bundle.get("name", selected_bundle.get("id", "")),
-            "match_score": score_bundle_for_profile(selected_bundle, profile) if selected_bundle else 0,
-        },
+        "selected_scenario": selected_scenario,
         "skills": routed_skills,
         "bundles": [selected_bundle] if selected_bundle else [],
         "coverage": coverage,
+        "selection_quality": selection_quality,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
         "execution_graph": execution_graph,
