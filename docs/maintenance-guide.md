@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Scanner Variable Path Hardening](updates/2026-07-03-scanner-variable-path-hardening.md)
 - [Scanner Substitution Download Hardening](updates/2026-07-03-scanner-substitution-download-hardening.md)
 - [Scanner Variable Download Hardening](updates/2026-07-03-scanner-variable-download-hardening.md)
 - [Project-Wide Review Follow-Up](updates/2026-07-03-project-wide-review-follow-up.md)

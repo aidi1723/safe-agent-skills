@@ -169,6 +169,7 @@ def scan_text(text: str) -> list[Finding]:
 
 def structural_findings(text: str, status: str) -> list[Finding]:
     findings = []
+    variable_assignments = iter_shell_variable_assignments(text)
     rm_variables = {
         match.group("name")
         for match in re.finditer(
@@ -194,7 +195,7 @@ def structural_findings(text: str, status: str) -> list[Finding]:
 
     download_command_variables = {
         name: tokens
-        for name, tokens in iter_shell_variable_assignments(text).items()
+        for name, tokens in variable_assignments.items()
         if tokens and tokens[0].lower() in {"curl", "wget"}
     }
     for name in download_command_variables:
@@ -206,6 +207,24 @@ def structural_findings(text: str, status: str) -> list[Finding]:
                     "critical",
                     status,
                     "Found variable-indirected remote download followed by shell execution.",
+                )
+            )
+            break
+
+    path_variables = {name for name, tokens in variable_assignments.items() if tokens and looks_like_path(tokens[0])}
+    downloaded_path_variables = {
+        variable_name
+        for variable_name in path_variables
+        if has_download_to_variable_path(text, variable_name)
+    }
+    for variable_name in downloaded_path_variables:
+        if has_interpreter_execution_of_variable(text, variable_name):
+            findings.append(
+                Finding(
+                    "variable-path-download-execution",
+                    "critical",
+                    status,
+                    "Found downloaded file path stored in a variable and later executed by an interpreter or shell.",
                 )
             )
             break
@@ -286,6 +305,37 @@ def shell_words(value: str) -> list[str]:
         except ValueError:
             return words[0].split()
     return words
+
+
+def has_download_to_variable_path(text: str, variable_name: str) -> bool:
+    expansion = variable_expansion_pattern(variable_name)
+    return bool(
+        re.search(
+            rf"\b(?:curl|wget)\b[^\n;|&]*(?:-o|-O|--output-document(?:=|\s+))\s*['\"]?{expansion}['\"]?",
+            text,
+            re.IGNORECASE,
+        )
+    )
+
+
+def has_interpreter_execution_of_variable(text: str, variable_name: str) -> bool:
+    expansion = variable_expansion_pattern(variable_name)
+    return bool(
+        re.search(
+            rf"\b(?:sh|bash|python(?:3)?|node)\b\s+['\"]?{expansion}['\"]?",
+            text,
+            re.IGNORECASE,
+        )
+    )
+
+
+def variable_expansion_pattern(variable_name: str) -> str:
+    escaped_name = re.escape(variable_name)
+    return rf"(?:\${{{escaped_name}}}|\${escaped_name})"
+
+
+def looks_like_path(value: str) -> bool:
+    return value.startswith(("/", "./", "../", "~")) or "/" in value
 
 
 def line_findings(line: str) -> list[Finding]:

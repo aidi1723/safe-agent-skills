@@ -17,6 +17,28 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Scanner Variable Path Hardening
+
+Continued Phase 1 scanner engine hardening with downloaded-file path data-flow
+coverage.
+
+The scanner now detects path variables used as remote download output targets
+and later executed by an interpreter or shell, reporting
+`variable-path-download-execution`.
+
+Added regression coverage for:
+
+- `PAYLOAD=/tmp/payload.sh`, `curl ... -o "$PAYLOAD"`, `bash "$PAYLOAD"`;
+- `SECOND=/tmp/setup.py`, `wget ... --output-document=${SECOND}`,
+  `python3 ${SECOND}`.
+
+Boundary: the scanner remains deterministic preflight analysis. It does not
+execute shell content, fetch URLs, resolve filesystem paths, or perform runtime
+variable expansion beyond simple static variable-name matching.
+
+Update note:
+[Scanner Variable Path Hardening](updates/2026-07-03-scanner-variable-path-hardening.md).
+
 ## 2026-07-03 Scanner Substitution Download Hardening
 
 Continued Phase 1 scanner engine hardening with substitution-focused bypass
