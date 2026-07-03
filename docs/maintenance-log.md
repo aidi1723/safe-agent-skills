@@ -17,6 +17,35 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Project-Wide Review Follow-Up
+
+Reviewed the full project against earlier audit, closure, roadmap, and
+release-follow-up reports.
+
+Current verification remains clean:
+
+- `bash scripts/verify.sh`: 138 tests OK.
+- `router-eval`: 39 / 39 cases OK.
+- `maintain-check`: OK with 23 trusted bundles, 19 references, and 336 / 336
+  claude-skills mappings.
+- `verify --registry catalog`: 172 skills, 166 trusted, 0 tampered, 0 unknown
+  provenance.
+
+Remaining next-phase optimization tracks:
+
+- scanner engine hardening with tokenized command extraction and bypass
+  fixtures;
+- bounded source-import capture metadata and schema;
+- router quality summary metrics beyond case pass/fail;
+- skill precondition, exclusion, and collision diagnostics;
+- semantic gateway and context-record host integration, kept separate from
+  trusted skill content;
+- documentation consolidation so current baselines are not confused with dated
+  closure-report baselines.
+
+Update note:
+[Project-Wide Review Follow-Up](updates/2026-07-03-project-wide-review-follow-up.md).
+
 ## 2026-07-03 Router Eval Constraint Schema
 
 Hardened `router-eval` so malformed control, expectation, and constraint
