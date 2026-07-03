@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T12:40:44Z",
+  "generated_at": "2026-07-03T13:07:14Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -556,8 +556,8 @@
     },
     {
       "hashes": {
-        "manifest_sha256": "144dc0f4e4577ea1b658fbda195ebec1dbb75a8ddebea54eca8cbacdd5a4ea8b",
-        "sanitized_sha256": "047c8a8b3bc056cdd65df33fd4311372975b78fd0c80c37937d7ee92e200370a",
+        "manifest_sha256": "08c1995e50d01a21e73543080879c2fb56365d3e9db573ef866de6f763e31502",
+        "sanitized_sha256": "4ffdf950718a0623bbafacd0decdb672d23e6515f155dd884a8b7cd4a144c7a1",
         "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
       },
       "name": "ai-rule-failure-log-synthesis",
@@ -3843,8 +3843,8 @@
     },
     {
       "hashes": {
-        "manifest_sha256": "703b55967accd7b481dbe96ee9baf3002f419ba0bfce5730d61e255e32dfa095",
-        "sanitized_sha256": "2d4d957adc42a1098c1a6abd8dff4e7d7e4b68eb26a723f941a7b92d8542b4e5",
+        "manifest_sha256": "f8d93c8be4f5742d6fec9e13e09d79878d68ada114c2a133444af159035ec5e0",
+        "sanitized_sha256": "ff65d53511db0be100b80bb84f8610d35d8fc4f8bc68ab7e2b08b4bd7bdbd9ca",
         "source_sha256": "3e0cbcd05833e8bb9c9f3871f3758eb93626f551f23e25646ebee74e453ab67e"
       },
       "name": "execution-mcp-tool-connector-review",

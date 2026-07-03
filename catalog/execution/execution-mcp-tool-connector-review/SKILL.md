@@ -16,6 +16,7 @@ APIs, databases, browsers, or local services.
    approval policy.
 2. Separate read-only tools from write, account, production, and external
    network actions.
+3. Check whether the connector exposes private files, secrets, credentials, or
    broad workspace access.
 4. Require explicit approval for high-impact or irreversible operations.
 5. Record connector limits, test evidence, and residual risk.

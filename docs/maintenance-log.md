@@ -17,6 +17,24 @@ router eval cases: 34
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Project Check Follow-Up
+
+Full project check found that sanitizer line-level removal could strip
+protective sensitive-data guidance from catalog skills when the line mentioned
+credentials, private files, or broad workspace access in a defensive context.
+
+Fixed the scanner to preserve protective boundary wording that starts with
+verbs such as remove, check, review, avoid, or do not, while still removing
+dangerous instructions such as searching the whole machine for credentials.
+
+Regenerated affected catalog entries:
+
+- `ai-rule-failure-log-synthesis`
+- `execution-mcp-tool-connector-review`
+
+Added regression coverage for protective sensitive-data guidance and contiguous
+`Safe Workflow` numbering across catalog skills.
+
 ## 2026-07-03 Reference Pattern Expansion
 
 Added five trusted, locally authored method skills based on external reference
@@ -107,7 +125,7 @@ Expected current results:
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
 router-eval: ok, 34 / 34 cases
-full script: 127 tests OK
+full script: 129 tests OK
 ```
 
 ## Routine Maintenance Checklist

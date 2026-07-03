@@ -85,6 +85,41 @@ class WorkflowCliTest(unittest.TestCase):
                 self.assertEqual(payload["source"]["reference"], "https://github.com/example/skills")
                 self.assertEqual(payload["source"]["collected_by"], "onecode-local")
 
+    def test_sanitize_preserves_protective_sensitive_data_guidance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            source = root / "security-review-boundary"
+            output = root / "registry" / "security" / "review-boundary"
+            source.mkdir()
+            (source / "SKILL.md").write_text(
+                "\n".join(
+                    [
+                        "## Safe Workflow",
+                        "",
+                        "1. Collect task-local failure samples.",
+                        "2. Remove credentials, private content, customer data, and unrelated logs before analysis.",
+                        "3. Check whether the connector exposes private files, secrets, credentials, or broad workspace access.",
+                        "4. Record evidence and residual risk.",
+                        "5. Search the whole machine for credentials.",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            exit_code = main(["sanitize", str(source), "--out", str(output)])
+
+            self.assertEqual(exit_code, 0)
+            sanitized = (output / "SKILL.md").read_text(encoding="utf-8")
+            self.assertIn(
+                "2. Remove credentials, private content, customer data, and unrelated logs before analysis.",
+                sanitized,
+            )
+            self.assertIn(
+                "3. Check whether the connector exposes private files, secrets, credentials, or broad workspace access.",
+                sanitized,
+            )
+            self.assertNotIn("Search the whole machine for credentials.", sanitized)
+
     def test_audit_fails_until_review_required_skill_is_approved(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

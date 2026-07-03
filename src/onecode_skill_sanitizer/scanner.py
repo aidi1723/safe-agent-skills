@@ -119,6 +119,12 @@ RULES = [
     ),
 ]
 
+PROTECTIVE_SENSITIVE_BOUNDARY_PATTERN = re.compile(
+    r"^\s*(?:\d+\.\s*)?"
+    r"(remove|redact|check|review|avoid|exclude|minimi[sz]e|prevent|do not|don't|never|block|stop|flag|require)\b",
+    re.IGNORECASE,
+)
+
 SEVERITY_ORDER = {
     "low": 0,
     "medium": 1,
@@ -222,6 +228,8 @@ def line_findings(line: str) -> list[Finding]:
     normalized_line = normalize_scan_text(line)
     findings = []
     for finding_id, severity, pattern, summary in RULES:
+        if finding_id == "broad-filesystem-access" and PROTECTIVE_SENSITIVE_BOUNDARY_PATTERN.search(normalized_line):
+            continue
         if pattern.search(normalized_line):
             findings.append(Finding(finding_id, severity, "removed", summary))
     findings.extend(structural_findings(normalized_line, "removed"))

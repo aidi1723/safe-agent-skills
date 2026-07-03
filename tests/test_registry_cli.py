@@ -1,6 +1,7 @@
 import contextlib
 import io
 import json
+import re
 import tempfile
 import unittest
 from pathlib import Path
@@ -2120,6 +2121,19 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["skill_manifest_count"], 172)
         self.assertEqual(result["issues"], [])
+
+    def test_real_catalog_safe_workflow_numbering_is_contiguous(self):
+        issues = []
+        for skill_path in sorted(Path("catalog").glob("*/*/SKILL.md")):
+            text = skill_path.read_text(encoding="utf-8")
+            match = re.search(r"^## Safe Workflow\n(?P<body>.*?)(?:\n## |\Z)", text, re.MULTILINE | re.DOTALL)
+            if not match:
+                continue
+            numbers = [int(item) for item in re.findall(r"^(\d+)\.\s", match.group("body"), re.MULTILINE)]
+            if numbers and numbers != list(range(1, len(numbers) + 1)):
+                issues.append(f"{skill_path}: {numbers}")
+
+        self.assertEqual(issues, [])
 
     def test_verify_registry_detects_manifest_policy_tampering(self):
         with tempfile.TemporaryDirectory() as tmp:

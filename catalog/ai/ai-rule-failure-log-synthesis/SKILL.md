@@ -14,6 +14,7 @@ or repeated review findings need to be turned into safer deterministic rules.
 
 1. Collect only task-local failure samples, reviewer notes, verifier output,
    command summaries, and affected artifact names.
+2. Remove credentials, private content, customer data, and unrelated logs before
    analysis.
 3. Group failures by invariant violated: source gap, permission boundary,
    schema mismatch, unsafe wording, missing verification, or stale assumption.
