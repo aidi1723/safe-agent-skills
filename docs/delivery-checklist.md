@@ -40,6 +40,8 @@ The local MVP is complete when the project can:
 - [x] Scenario router execution plan
 - [x] Scenario router selection explanations
 - [x] Maintenance check for registry and trusted bundle references
+- [x] Source-import capture metadata schema gate
+- [x] Router quality summary metrics
 - [x] Registry verification
 - [x] Reindex
 - [x] Module entrypoint
@@ -66,6 +68,12 @@ The local MVP is complete when the project can:
 - scenario bundles: 23 trusted
 - external references: 19
 - registry verification: ok
+- router eval cases: 39
+- full verification tests: 144
+
+Latest delivery readiness:
+
+- [Delivery Readiness Report](delivery-readiness-report.md)
 
 Closure report:
 

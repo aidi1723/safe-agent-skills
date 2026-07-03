@@ -35,6 +35,17 @@ SOURCE_USAGE_BY_TYPE = {
 }
 SOURCE_REQUIRED_FIELDS = ["type", "usage", "path", "url", "author", "license", "reference", "collected_by", "captured_at"]
 SOURCE_PROVENANCE_FIELDS = ["url", "author", "license", "reference", "collected_by"]
+SOURCE_IMPORT_CAPTURE_FIELDS = [
+    "upstream_url",
+    "upstream_ref_type",
+    "upstream_ref",
+    "captured_at",
+    "license_snapshot",
+    "upstream_sha256",
+    "content_path",
+    "capture_method",
+]
+SOURCE_IMPORT_REF_TYPE_VALUES = {"archive", "branch", "commit", "release", "tag"}
 HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
 REFERENCE_REQUIRED_FIELDS = [
     "name",
@@ -1229,6 +1240,50 @@ def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
                 "schema-invalid-source-usage-for-type",
                 path,
                 f"source.type {source_type!r} requires source.usage to be one of: {allowed}",
+            )
+    if source_usage == "source_import":
+        capture = source.get("capture")
+        if not isinstance(capture, dict):
+            add_issue(
+                issues,
+                "schema-missing-source-import-capture",
+                path,
+                "source.capture is required when source.usage is source_import",
+            )
+            return
+        for field in SOURCE_IMPORT_CAPTURE_FIELDS:
+            value = capture.get(field)
+            if not isinstance(value, str) or not value:
+                add_issue(
+                    issues,
+                    "schema-invalid-source-import-capture",
+                    path,
+                    f"source.capture.{field} is required for source_import",
+                )
+        upstream_url = capture.get("upstream_url")
+        if isinstance(upstream_url, str) and upstream_url and not upstream_url.startswith(("https://", "http://")):
+            add_issue(
+                issues,
+                "schema-invalid-source-import-capture",
+                path,
+                "source.capture.upstream_url must be an http or https URL",
+            )
+        ref_type = capture.get("upstream_ref_type")
+        if isinstance(ref_type, str) and ref_type and ref_type not in SOURCE_IMPORT_REF_TYPE_VALUES:
+            allowed = ", ".join(sorted(SOURCE_IMPORT_REF_TYPE_VALUES))
+            add_issue(
+                issues,
+                "schema-invalid-source-import-capture",
+                path,
+                f"source.capture.upstream_ref_type must be one of: {allowed}",
+            )
+        upstream_sha = capture.get("upstream_sha256")
+        if isinstance(upstream_sha, str) and upstream_sha and not HASH_PATTERN.fullmatch(upstream_sha):
+            add_issue(
+                issues,
+                "schema-invalid-source-import-capture",
+                path,
+                "source.capture.upstream_sha256 must be a 64 character lowercase sha256 hex string",
             )
 
 

@@ -37,6 +37,8 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Source Import Capture Gate](updates/2026-07-03-source-import-capture-gate.md)
+- [Delivery Readiness Report](delivery-readiness-report.md)
 - [Router Quality Summary](updates/2026-07-03-router-quality-summary.md)
 - [Scanner Variable Path Hardening](updates/2026-07-03-scanner-variable-path-hardening.md)
 - [Scanner Substitution Download Hardening](updates/2026-07-03-scanner-substitution-download-hardening.md)

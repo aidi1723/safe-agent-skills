@@ -2789,6 +2789,113 @@ class RegistryCliTest(unittest.TestCase):
             issue_ids = {issue["id"] for issue in result["issues"]}
             self.assertIn("schema-invalid-source-usage-for-type", issue_ids)
 
+    def test_schema_check_rejects_source_import_without_capture_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry"
+            incoming = root / "incoming"
+            skill = incoming / "ai-imported-workflow"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing imported AI workflows.", encoding="utf-8")
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "ai",
+                            "subcategory": "ai.imported_workflow",
+                            "task_intent": "review imported AI workflows",
+                            "artifact_type": "workflow",
+                            "collection_priority": "P1",
+                        },
+                        "source": {
+                            "type": "git",
+                            "usage": "source_import",
+                            "url": "https://github.com/example/imported-skills",
+                            "author": "example-team",
+                            "license": "MIT",
+                            "reference": "https://github.com/example/imported-skills/tree/v1.0.0",
+                            "collected_by": "onecode-test",
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            main(["import", str(incoming), "--registry", str(registry)])
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 2)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertIn("schema-missing-source-import-capture", issue_ids)
+
+    def test_schema_check_accepts_source_import_with_capture_metadata(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "registry"
+            incoming = root / "incoming"
+            skill = incoming / "ai-imported-workflow"
+            skill.mkdir(parents=True)
+            (skill / "SKILL.md").write_text("Use when reviewing imported AI workflows.", encoding="utf-8")
+            (skill / "skill.json").write_text(
+                json.dumps(
+                    {
+                        "taxonomy": {
+                            "category": "ai",
+                            "subcategory": "ai.imported_workflow",
+                            "task_intent": "review imported AI workflows",
+                            "artifact_type": "workflow",
+                            "collection_priority": "P1",
+                        },
+                        "source": {
+                            "type": "git",
+                            "usage": "source_import",
+                            "url": "https://github.com/example/imported-skills",
+                            "author": "example-team",
+                            "license": "MIT",
+                            "reference": "https://github.com/example/imported-skills/tree/v1.0.0",
+                            "collected_by": "onecode-test",
+                        },
+                    }
+                ),
+                encoding="utf-8",
+            )
+            main(["import", str(incoming), "--registry", str(registry)])
+            skill_dir = registry / "ai" / "ai-imported-workflow"
+            manifest_path = skill_dir / "skill.json"
+            report_path = skill_dir / "SANITIZATION_REPORT.json"
+            capture = {
+                "upstream_url": "https://github.com/example/imported-skills",
+                "upstream_ref_type": "tag",
+                "upstream_ref": "v1.0.0",
+                "captured_at": "2026-07-03T00:00:00Z",
+                "license_snapshot": "MIT",
+                "upstream_sha256": "a" * 64,
+                "content_path": "skills/ai-imported-workflow",
+                "capture_method": "offline_fixture",
+            }
+            for path in [manifest_path, report_path]:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+                payload["source"]["capture"] = capture
+                path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            main(["reindex", "--registry", str(registry)])
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            report["hashes"]["manifest_sha256"] = manifest["hashes"]["manifest_sha256"]
+            report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+            schema_out = io.StringIO()
+            with contextlib.redirect_stdout(schema_out):
+                schema_code = main(["schema-check", "--registry", str(registry)])
+
+            self.assertEqual(schema_code, 0)
+            result = json.loads(schema_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["issues"]}
+            self.assertNotIn("schema-missing-source-import-capture", issue_ids)
+            self.assertNotIn("schema-invalid-source-import-capture", issue_ids)
+
     def test_schema_check_validates_report_summary_and_verifier_consistency(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

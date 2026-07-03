@@ -19,7 +19,7 @@ trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
 router eval cases: 39
-full verification tests: 138
+full verification tests: 144
 ```
 
 ## Review Inputs
@@ -58,14 +58,15 @@ scanner engine upgrade from `docs/next-development-plan.md`:
 This remains the highest-value next implementation slice because it improves
 intake safety without changing runtime permissions.
 
-### P1: Source Import Pipeline Is Still Deliberately Missing
+### P1: Source Import Command Is Still Deliberately Missing
 
 The repository has strong `reference_only` and `local_authoring` semantics.
-It still does not have a bounded source-import command that records upstream
-commit or release, upstream content hashes, license snapshots, and capture
-metadata.
+It now also rejects `source_import` records that do not include upstream
+capture metadata. The remaining missing piece is a bounded source-import
+command that records upstream commit or release, upstream content hashes,
+license snapshots, and capture metadata directly.
 
-Until that exists, `source.usage = source_import` should remain tightly
+Until that command exists, `source.usage = source_import` remains tightly
 restricted and schema-checked.
 
 ### P2: Router Quality Is Stronger, But Metrics Are Still Mostly Case-Based
@@ -128,6 +129,7 @@ follow-up note, and treat old closure baselines as dated evidence.
   control, expectation, and constraint fields.
 - Router-eval now includes compact quality-summary metrics by scenario,
   task type, and issue id.
+- Source-import usage now requires auditable `source.capture` metadata.
 - Current verification, maintain-check, reference-check, registry verify, and
   router-eval pass.
 
@@ -138,8 +140,8 @@ follow-up note, and treat old closure baselines as dated evidence.
 2. Continue router quality metrics after the compact summary output with
    false-positive / false-negative classification and low-confidence trend
    tracking.
-3. Add source-import metadata schema only after deciding the exact import
-   command contract.
+3. Add networked source-import automation only after preserving the current
+   capture-metadata schema gate.
 4. Add skill precondition/exclusion metadata after router quality summaries
    make collision behavior measurable.
 5. Keep semantic gateway and context-record work as host-integration design,

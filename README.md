@@ -87,7 +87,10 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Project Check Follow-Up](docs/updates/2026-07-03-project-check-follow-up.md).
+[Source Import Capture Gate](docs/updates/2026-07-03-source-import-capture-gate.md).
+
+Latest delivery readiness:
+[Delivery Readiness Report](docs/delivery-readiness-report.md).
 
 Previous update statement:
 [Reference Pattern Expansion](docs/updates/2026-07-03-reference-pattern-expansion.md).

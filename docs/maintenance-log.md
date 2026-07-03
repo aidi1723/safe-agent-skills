@@ -17,6 +17,26 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Source Import Capture Gate
+
+Closed the source-import metadata delivery gap with a schema gate.
+
+Records that declare `source.usage = source_import` now require
+`source.capture` metadata with upstream URL, ref type, ref value, capture time,
+license snapshot, upstream content hash, content path, and capture method.
+Malformed capture metadata produces structured schema issues:
+`schema-missing-source-import-capture` or
+`schema-invalid-source-import-capture`.
+
+This does not add a networked import command. It prevents unaudited
+`source_import` records from passing schema validation while keeping real Git
+or archive import automation as future non-blocking work.
+
+Update notes:
+
+- [Source Import Capture Gate](updates/2026-07-03-source-import-capture-gate.md)
+- [Delivery Readiness Report](delivery-readiness-report.md)
+
 ## 2026-07-03 Router Quality Summary
 
 Added deterministic aggregate metrics to `router-eval` output.
@@ -107,7 +127,7 @@ release-follow-up reports.
 
 Current verification remains clean:
 
-- `bash scripts/verify.sh`: 138 tests OK.
+- `bash scripts/verify.sh`: 144 tests OK.
 - `router-eval`: 39 / 39 cases OK.
 - `maintain-check`: OK with 23 trusted bundles, 19 references, and 336 / 336
   claude-skills mappings.
@@ -118,8 +138,8 @@ Remaining next-phase optimization tracks:
 
 - scanner engine hardening with tokenized command extraction and bypass
   fixtures;
-- bounded source-import capture metadata and schema;
-- router quality summary metrics beyond case pass/fail;
+- networked source-import automation after the schema capture gate;
+- router false-positive / false-negative classification and trend tracking;
 - skill precondition, exclusion, and collision diagnostics;
 - semantic gateway and context-record host integration, kept separate from
   trusted skill content;
@@ -438,7 +458,7 @@ Expected current results:
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
 router-eval: ok, 39 / 39 cases
-full script: 142 tests OK
+full script: 144 tests OK
 ```
 
 ## Routine Maintenance Checklist

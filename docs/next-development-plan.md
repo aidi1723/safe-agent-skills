@@ -56,8 +56,13 @@ Acceptance criteria:
 
 - source-import fixture proves upstream content hash is reproducible
 - schema-check rejects `source_import` without upstream capture metadata
+  (completed for the schema gate on 2026-07-03)
 - imported content is never executed during intake
 - docs clearly separate import, reference, and local authoring paths
+
+Status note: the schema gate is complete. A networked `source-import` command
+or direct Git/archive capture workflow remains future work and should keep the
+same no-execution intake boundary.
 
 ## Phase 3: Router Quality Metrics
 
