@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Router Eval Constraint Schema](updates/2026-07-03-router-eval-constraint-schema.md)
 - [Router Eval Taxonomy Constraints](updates/2026-07-03-router-eval-taxonomy-constraints.md)
 - [Router Eval Prefix Constraints](updates/2026-07-03-router-eval-prefix-constraints.md)
 - [Router Eval Negative Constraints](updates/2026-07-03-router-eval-negative-constraints.md)

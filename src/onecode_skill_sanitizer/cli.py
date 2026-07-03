@@ -1697,6 +1697,42 @@ def load_router_eval(eval_path: Path) -> dict:
     return payload
 
 
+ROUTER_EVAL_STRING_LIST_FIELDS = (
+    "expected_skills",
+    "forbidden_skills",
+    "forbidden_skill_prefixes",
+    "forbidden_skill_subcategories",
+)
+
+
+def validate_router_eval_case(case: dict) -> list[dict]:
+    issues = []
+    for field in ROUTER_EVAL_STRING_LIST_FIELDS:
+        value = case.get(field, [])
+        if not isinstance(value, list) or any(not isinstance(item, str) for item in value):
+            issues.append(
+                {
+                    "id": "router-eval-invalid-case-field",
+                    "field": field,
+                    "expected": "array of strings",
+                    "actual": type(value).__name__,
+                }
+            )
+    max_skill_count = case.get("max_skill_count")
+    if max_skill_count is not None and (
+        not isinstance(max_skill_count, int) or isinstance(max_skill_count, bool) or max_skill_count < 0
+    ):
+        issues.append(
+            {
+                "id": "router-eval-invalid-case-field",
+                "field": "max_skill_count",
+                "expected": "non-negative integer",
+                "actual": type(max_skill_count).__name__,
+            }
+        )
+    return issues
+
+
 def run_router_eval(
     eval_path: Path,
     registry_dir: Path,
@@ -1727,6 +1763,7 @@ def run_router_eval(
             case_issues.append({"id": "router-eval-missing-task"})
         if router_mode not in {"scenario", "mesh"}:
             case_issues.append({"id": "router-eval-invalid-router", "router": router_mode})
+        case_issues.extend(validate_router_eval_case(case))
         if case_issues:
             results.append({"id": case_id, "status": "failed", "issues": case_issues})
             continue

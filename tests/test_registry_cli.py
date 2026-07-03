@@ -1368,6 +1368,61 @@ class RegistryCliTest(unittest.TestCase):
             self.assertIn("router-eval-forbidden-skill-subcategory", issue_ids)
             self.assertIn("router-eval-max-skill-count-exceeded", issue_ids)
 
+    def test_router_eval_rejects_invalid_constraint_field_types(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 1,
+                        "cases": [
+                            {
+                                "id": "invalid-constraints",
+                                "task": "build a product website and prepare launch checks",
+                                "router": "scenario",
+                                "expected_scenario": "website-build-launch",
+                                "expected_task_type": "website_build",
+                                "forbidden_skills": "execution-publish-check",
+                                "forbidden_skill_prefixes": [123],
+                                "forbidden_skill_subcategories": {"name": "execution.browser"},
+                                "max_skill_count": -1,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 2)
+            result = json.loads(eval_out.getvalue())
+            field_issues = [
+                issue for issue in result["cases"][0]["issues"] if issue["id"] == "router-eval-invalid-case-field"
+            ]
+            self.assertEqual(
+                {issue["field"] for issue in field_issues},
+                {
+                    "forbidden_skills",
+                    "forbidden_skill_prefixes",
+                    "forbidden_skill_subcategories",
+                    "max_skill_count",
+                },
+            )
+
     def test_real_router_eval_file_covers_current_catalog_scenarios(self):
         eval_path = Path("evals/router-quality.json")
         payload = json.loads(eval_path.read_text(encoding="utf-8"))

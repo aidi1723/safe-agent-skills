@@ -17,6 +17,23 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Router Eval Constraint Schema
+
+Hardened `router-eval` so malformed constraint fields fail as structured
+evaluation issues before task-pack generation.
+
+Eval cases now validate:
+
+- `expected_skills`, `forbidden_skills`, `forbidden_skill_prefixes`, and
+  `forbidden_skill_subcategories` as arrays of strings.
+- `max_skill_count` as a non-negative integer.
+
+Invalid fields now produce `router-eval-invalid-case-field` instead of being
+silently ignored or causing runtime type errors during comparison.
+
+Update note:
+[Router Eval Constraint Schema](updates/2026-07-03-router-eval-constraint-schema.md).
+
 ## 2026-07-03 Router Eval Taxonomy Constraints
 
 Extended `router-eval` negative constraints with taxonomy-aware forbidden
