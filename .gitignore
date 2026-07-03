@@ -11,3 +11,6 @@ incoming/
 .local-maintenance/
 .superpowers/
 .worktrees/
+
+# Local review drafts; publish current reports under docs/ instead.
+/项目审查报告*.md
