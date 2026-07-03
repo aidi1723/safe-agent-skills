@@ -13,9 +13,47 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 40
+router eval cases: 41
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-04 Structured Context Routing
+
+Added a structured context summary contract for router task text.
+
+Task strings can now include explicit `current_intent`, `history_summary`, and
+`stale_context` fields. The router uses current intent as the primary signal,
+keeps history as weak context, and records stale context while excluding it
+from scenario selection, direct skill matching, and runtime approval-gate
+task-signal checks.
+
+Routed outputs now expose:
+
+- `structured_context_detected`;
+- `stale_context_text`;
+- `stale_context_policy`.
+
+Reusable router-eval coverage was extended with
+`structured-context-stale-history-vague-current-intent`.
+
+Final verification evidence:
+
+```text
+bash scripts/verify.sh: 157 tests OK
+schema-check --registry catalog: OK, 172 manifests
+tests.test_router: 57 tests OK
+router-eval: 41 / 41 cases OK
+by_confidence.high: 36 passed, 0 failed
+by_confidence.low: 5 passed, 0 failed
+low_confidence_case_count: 5
+low_confidence_failed_count: 0
+by_issue_class: {}
+maintain-check: OK with 23 trusted bundles, 19 references, and 336 / 336 claude-skills candidates covered
+verify --registry catalog: 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
+```
+
+Update note:
+[Structured Context Routing](updates/2026-07-04-structured-context-routing.md).
 
 ## 2026-07-04 Current Intent Routing
 

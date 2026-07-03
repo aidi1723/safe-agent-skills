@@ -57,6 +57,11 @@ delivery documentation, and release verification.
   - `selection_quality.explanations`;
   - `selection_quality.recommended_actions`;
   - Markdown task packs render the same reasons and actions.
+- Added structured context routing:
+  - task text can include `current_intent`, `history_summary`, and
+    `stale_context`;
+  - stale context is recorded but excluded from scenario selection, direct
+    skill matching, and approval-gate task-signal checks.
 - Published the accepted milestone feature summary in README and GitHub
   Release notes.
 - Added a source-import capture schema gate:
@@ -70,10 +75,10 @@ delivery documentation, and release verification.
 Final verification was run before this update was published:
 
 ```text
-bash scripts/verify.sh: 154 tests OK
+bash scripts/verify.sh: 157 tests OK
 schema-check --registry catalog: OK, 172 manifests
-router-eval: 40 / 40 cases OK
-router-eval confidence summary: 36 high-confidence passed, 4 low-confidence passed, 0 low-confidence failed
+router-eval: 41 / 41 cases OK
+router-eval confidence summary: 36 high-confidence passed, 5 low-confidence passed, 0 low-confidence failed
 router-eval issue classifications: no current by_issue_class entries
 maintain-check: OK
 verify --registry catalog: 172 skills, 166 trusted, 0 tampered, 0 unknown provenance

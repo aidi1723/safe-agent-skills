@@ -49,6 +49,19 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(profile["current_intent_weight"], 1.0)
         self.assertEqual(profile["history_context_weight"], 0.25)
 
+    def test_build_task_profile_parses_structured_chinese_context_contract(self):
+        profile = build_task_profile("当前意图：继续优化任务\n历史摘要：构建产品官网并准备发布检查\n过期上下文：发布、浏览器、官网")
+
+        self.assertEqual(profile["task_type"], "general")
+        self.assertEqual(profile["primary_domain"], "general")
+        self.assertEqual(profile["matched_signal_score"], 0)
+        self.assertTrue(profile["structured_context_detected"])
+        self.assertTrue(profile["current_intent_detected"])
+        self.assertIn("继续优化任务", profile["current_intent_text"])
+        self.assertIn("构建产品官网", profile["history_context_text"])
+        self.assertIn("发布", profile["stale_context_text"])
+        self.assertEqual(profile["stale_context_policy"], "ignore_for_routing")
+
     def test_build_task_profile_detects_ai_interface_design_polish(self):
         profile = build_task_profile("用 UI-UX-Pro-Max 定设计系统，Visual Designer 把控视觉，CSS 动画工具提升 AI 界面质感")
 
@@ -413,6 +426,88 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(routed["selected_scenario"]["id"], "")
         self.assertTrue(routed["selection_quality"]["low_confidence"])
         self.assertNotIn("execution-publish-check", [skill["name"] for skill in routed["skills"]])
+
+    def test_route_scenario_task_ignores_structured_stale_context_for_vague_current_intent(self):
+        bundle = {
+            "id": "website-build-launch",
+            "name": "Website Build Launch",
+            "status": "trusted",
+            "skills": ["business-requirements-brief", "design-ui-review", "execution-publish-check"],
+            "execution_order": ["business-requirements-brief", "design-ui-review", "execution-publish-check"],
+            "required_capabilities": [
+                {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                {"id": "publish_check", "required": True, "preferred_skills": ["execution-publish-check"]},
+            ],
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_scenario_task(
+            task="当前意图：继续优化任务\n历史摘要：构建产品官网并准备发布检查\n过期上下文：发布、浏览器、官网",
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            max_skills=8,
+        )
+
+        self.assertEqual(routed["task_profile"]["task_type"], "general")
+        self.assertEqual(routed["selected_scenario"]["id"], "")
+        self.assertEqual(routed["pipeline_plan"]["approval_gates"], [])
+        self.assertNotIn("execution-publish-check", [skill["name"] for skill in routed["skills"]])
+
+    def test_route_scenario_task_uses_structured_current_intent_over_unrelated_history(self):
+        bundle = {
+            "id": "skill-router-quality-review",
+            "name": "Skill Router Quality Review",
+            "scenario": "Review skill router quality, automatic selection, and bundle composition behavior.",
+            "status": "trusted",
+            "task_signals": ["safe-agent-skills", "skill router", "smart skill", "智能选择", "自动搭配"],
+            "skills": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "code-test-regression",
+            ],
+            "required_capabilities": [
+                {
+                    "id": "skill_selection_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-token-routing-pattern"],
+                },
+                {
+                    "id": "bundle_quality",
+                    "required": True,
+                    "preferred_skills": ["ai-opensquilla-metaskill-workflow"],
+                },
+                {
+                    "id": "regression_test",
+                    "required": True,
+                    "preferred_skills": ["code-test-regression"],
+                },
+            ],
+            "execution_order": [
+                "ai-opensquilla-metaskill-workflow",
+                "ai-opensquilla-token-routing-pattern",
+                "code-test-regression",
+            ],
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_scenario_task(
+            task=(
+                "current_intent: review safe-agent-skills router quality and skill selection order\n"
+                "history_summary: build a product website and prepare launch checks\n"
+                "stale_context: website, publish, browser automation"
+            ),
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            max_skills=8,
+        )
+
+        self.assertEqual(routed["task_profile"]["task_type"], "skill_router_review")
+        self.assertTrue(routed["task_profile"]["structured_context_detected"])
+        self.assertEqual(routed["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertIn("ai-opensquilla-token-routing-pattern", [skill["name"] for skill in routed["skills"]])
 
     def test_build_pipeline_plan_for_skill_router_quality_review(self):
         profile = build_task_profile("复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标")

@@ -671,41 +671,133 @@ CURRENT_INTENT_WEIGHT = 1.0
 HISTORY_CONTEXT_WEIGHT = 0.25
 
 
+CURRENT_CONTEXT_LABELS = {
+    "current intent",
+    "current request",
+    "current task",
+    "latest request",
+    "当前意图",
+    "当前请求",
+    "当前任务",
+    "最新请求",
+    "本次请求",
+}
+
+HISTORY_CONTEXT_LABELS = {
+    "history summary",
+    "history",
+    "earlier context",
+    "previous context",
+    "conversation history",
+    "context",
+    "历史摘要",
+    "历史上下文",
+    "历史",
+    "之前",
+    "先前上下文",
+    "前文",
+}
+
+STALE_CONTEXT_LABELS = {
+    "stale context",
+    "do not inherit",
+    "do_not_inherit",
+    "ignore context",
+    "过期上下文",
+    "不要继承",
+    "不继承",
+    "忽略上下文",
+}
+
+
+def structured_context_label_key(label: str) -> str:
+    normalized = normalize_task_text(label)
+    if normalized in CURRENT_CONTEXT_LABELS:
+        return "current"
+    if normalized in HISTORY_CONTEXT_LABELS:
+        return "history"
+    if normalized in STALE_CONTEXT_LABELS:
+        return "stale"
+    return ""
+
+
+def parse_structured_context_text(task: str) -> dict:
+    fields = {"current": [], "history": [], "stale": []}
+    active_key = ""
+    saw_label = False
+    for raw_line in task.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        label_match = re.match(r"^([^:：]{1,48})\s*[:：]\s*(.*)$", line)
+        if label_match:
+            key = structured_context_label_key(label_match.group(1))
+            if key:
+                saw_label = True
+                active_key = key
+                value = label_match.group(2).strip()
+                if value:
+                    fields[key].append(value)
+                continue
+        if active_key:
+            fields[active_key].append(line)
+
+    current_text = normalize_task_text(" ".join(fields["current"]))
+    return {
+        "structured_context_detected": bool(saw_label and current_text),
+        "current_intent_text": current_text,
+        "history_context_text": normalize_task_text(" ".join(fields["history"])),
+        "stale_context_text": normalize_task_text(" ".join(fields["stale"])),
+        "stale_context_policy": "ignore_for_routing" if fields["stale"] else "",
+    }
+
+
+def empty_current_intent_metadata() -> dict:
+    return {
+        "structured_context_detected": False,
+        "current_intent_detected": False,
+        "current_intent_text": "",
+        "history_context_text": "",
+        "stale_context_text": "",
+        "stale_context_policy": "",
+        "current_intent_weight": CURRENT_INTENT_WEIGHT,
+        "history_context_weight": 0.0,
+    }
+
+
 def split_current_intent_text(task: str) -> dict:
+    structured = parse_structured_context_text(task)
+    if structured["structured_context_detected"]:
+        return {
+            "structured_context_detected": True,
+            "current_intent_detected": True,
+            "current_intent_text": structured["current_intent_text"],
+            "history_context_text": structured["history_context_text"],
+            "stale_context_text": structured["stale_context_text"],
+            "stale_context_policy": structured["stale_context_policy"],
+            "current_intent_weight": CURRENT_INTENT_WEIGHT,
+            "history_context_weight": HISTORY_CONTEXT_WEIGHT if structured["history_context_text"] else 0.0,
+        }
+
     match = CURRENT_INTENT_MARKER_RE.search(task)
     if not match:
-        return {
-            "current_intent_detected": False,
-            "current_intent_text": "",
-            "history_context_text": "",
-            "current_intent_weight": CURRENT_INTENT_WEIGHT,
-            "history_context_weight": 0.0,
-        }
+        return empty_current_intent_metadata()
 
     history_raw = task[: match.start()].strip(" \n\t。；;")
     if not HISTORY_CONTEXT_MARKER_RE.search(history_raw):
-        return {
-            "current_intent_detected": False,
-            "current_intent_text": "",
-            "history_context_text": "",
-            "current_intent_weight": CURRENT_INTENT_WEIGHT,
-            "history_context_weight": 0.0,
-        }
+        return empty_current_intent_metadata()
 
     current_raw = task[match.end() :].strip(" \n\t。；;")
     history_without_marker = HISTORY_CONTEXT_MARKER_RE.sub("", history_raw).strip(" \n\t。；;")
     if not current_raw:
-        return {
-            "current_intent_detected": False,
-            "current_intent_text": "",
-            "history_context_text": "",
-            "current_intent_weight": CURRENT_INTENT_WEIGHT,
-            "history_context_weight": 0.0,
-        }
+        return empty_current_intent_metadata()
     return {
+        "structured_context_detected": False,
         "current_intent_detected": True,
         "current_intent_text": normalize_task_text(current_raw),
         "history_context_text": normalize_task_text(history_without_marker),
+        "stale_context_text": "",
+        "stale_context_policy": "",
         "current_intent_weight": CURRENT_INTENT_WEIGHT,
         "history_context_weight": HISTORY_CONTEXT_WEIGHT,
     }
@@ -780,9 +872,12 @@ def build_task_profile(task: str) -> dict:
         "risk_flags": list(best["risk_flags"]),
         "required_capabilities": required_capabilities,
         "matched_signal_score": score,
+        "structured_context_detected": intent["structured_context_detected"],
         "current_intent_detected": intent["current_intent_detected"],
         "current_intent_text": intent["current_intent_text"],
         "history_context_text": intent["history_context_text"],
+        "stale_context_text": intent["stale_context_text"],
+        "stale_context_policy": intent["stale_context_policy"],
         "current_intent_weight": intent["current_intent_weight"],
         "history_context_weight": intent["history_context_weight"],
     }

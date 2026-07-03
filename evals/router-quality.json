@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 40,
+  "case_count": 41,
   "cases": [
     {
       "id": "website-launch",
@@ -475,6 +475,27 @@
     {
       "id": "stale-history-vague-current-intent",
       "task": "历史上下文：构建产品官网并准备上线发布检查。当前请求：继续优化任务",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": [],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
+      ],
+      "max_skill_count": 3
+    },
+    {
+      "id": "structured-context-stale-history-vague-current-intent",
+      "task": "当前意图：继续优化任务\n历史摘要：构建产品官网并准备发布检查\n过期上下文：发布、浏览器、官网",
       "router": "scenario",
       "expected_scenario": "",
       "expected_task_type": "general",
