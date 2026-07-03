@@ -96,6 +96,9 @@ Earlier update statement:
 [Industry Application Orchestration](docs/updates/2026-07-03-industry-application-orchestration.md).
 
 Latest closure report:
+[Reference Pattern Expansion Closure Report](docs/reference-pattern-expansion-closure-report.md).
+
+Previous closure report:
 [Project Closure Report](docs/project-closure-report.md).
 
 Latest maintenance log:
