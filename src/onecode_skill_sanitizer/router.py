@@ -657,6 +657,60 @@ def normalize_task_text(task: str) -> str:
     return re.sub(r"\s+", " ", text).strip()
 
 
+CURRENT_INTENT_MARKER_RE = re.compile(
+    r"(?:current\s+request|current\s+task|latest\s+request|now|当前请求|当前任务|最新请求|本次请求|现在)\s*[:：]",
+    re.IGNORECASE,
+)
+
+HISTORY_CONTEXT_MARKER_RE = re.compile(
+    r"^\s*(?:history|earlier\s+context|previous\s+context|conversation\s+history|context|历史上下文|历史|之前|先前上下文|前文)\s*[:：]\s*",
+    re.IGNORECASE,
+)
+
+CURRENT_INTENT_WEIGHT = 1.0
+HISTORY_CONTEXT_WEIGHT = 0.25
+
+
+def split_current_intent_text(task: str) -> dict:
+    match = CURRENT_INTENT_MARKER_RE.search(task)
+    if not match:
+        return {
+            "current_intent_detected": False,
+            "current_intent_text": "",
+            "history_context_text": "",
+            "current_intent_weight": CURRENT_INTENT_WEIGHT,
+            "history_context_weight": 0.0,
+        }
+
+    history_raw = task[: match.start()].strip(" \n\t。；;")
+    if not HISTORY_CONTEXT_MARKER_RE.search(history_raw):
+        return {
+            "current_intent_detected": False,
+            "current_intent_text": "",
+            "history_context_text": "",
+            "current_intent_weight": CURRENT_INTENT_WEIGHT,
+            "history_context_weight": 0.0,
+        }
+
+    current_raw = task[match.end() :].strip(" \n\t。；;")
+    history_without_marker = HISTORY_CONTEXT_MARKER_RE.sub("", history_raw).strip(" \n\t。；;")
+    if not current_raw:
+        return {
+            "current_intent_detected": False,
+            "current_intent_text": "",
+            "history_context_text": "",
+            "current_intent_weight": CURRENT_INTENT_WEIGHT,
+            "history_context_weight": 0.0,
+        }
+    return {
+        "current_intent_detected": True,
+        "current_intent_text": normalize_task_text(current_raw),
+        "history_context_text": normalize_task_text(history_without_marker),
+        "current_intent_weight": CURRENT_INTENT_WEIGHT,
+        "history_context_weight": HISTORY_CONTEXT_WEIGHT,
+    }
+
+
 AMBIGUOUS_PROFILE_SIGNALS = {"report", "报告"}
 
 
@@ -676,9 +730,22 @@ def _signal_score(text: str, signals: Iterable[str]) -> int:
 
 
 def build_task_profile(task: str) -> dict:
-    text = normalize_task_text(task)
-    best = max(SCENARIO_PROFILES, key=lambda profile: (_signal_score(text, profile["signals"]), profile["task_type"]))
-    score = _signal_score(text, best["signals"])
+    intent = split_current_intent_text(task)
+    full_text = normalize_task_text(task)
+    text = intent["current_intent_text"] if intent["current_intent_detected"] else full_text
+    history_text = intent["history_context_text"]
+
+    def profile_score(profile: dict) -> int:
+        current_score = _signal_score(text, profile["signals"])
+        if not intent["current_intent_detected"]:
+            return current_score
+        if current_score <= 0:
+            return 0
+        history_score = _signal_score(history_text, profile["signals"])
+        return current_score + int(history_score * HISTORY_CONTEXT_WEIGHT)
+
+    best = max(SCENARIO_PROFILES, key=lambda profile: (profile_score(profile), profile["task_type"]))
+    score = profile_score(best)
     if score <= 0:
         best = {
             "task_type": "general",
@@ -713,6 +780,11 @@ def build_task_profile(task: str) -> dict:
         "risk_flags": list(best["risk_flags"]),
         "required_capabilities": required_capabilities,
         "matched_signal_score": score,
+        "current_intent_detected": intent["current_intent_detected"],
+        "current_intent_text": intent["current_intent_text"],
+        "history_context_text": intent["history_context_text"],
+        "current_intent_weight": intent["current_intent_weight"],
+        "history_context_weight": intent["history_context_weight"],
     }
 
 
@@ -829,6 +901,35 @@ def build_selection_explanations(bundle: dict, selected_skills: list[dict], cove
     return explanations
 
 
+LOW_CONFIDENCE_EXPLANATIONS = {
+    "no_trusted_scenario_match": "No trusted scenario bundle matched the task.",
+    "low_signal_task_profile": "The task profile had no distinctive scenario signal.",
+    "direct_skill_selection_fallback": "The router used direct skill selection instead of a scenario bundle.",
+    "missing_required_capability": "One or more required capabilities were not covered by selected skills.",
+}
+
+
+LOW_CONFIDENCE_RECOMMENDED_ACTIONS = {
+    "no_trusted_scenario_match": "Record low-confidence route as a residual risk.",
+    "low_signal_task_profile": "Ask for a more specific task if execution depends on scenario certainty.",
+    "direct_skill_selection_fallback": "Use only the selected direct skills and avoid inferred scenario steps.",
+    "missing_required_capability": "Report missing required capabilities before completion.",
+}
+
+
+def low_confidence_reason_codes(task_profile: dict, selected_bundle: dict, missing_required: list[dict]) -> list[str]:
+    reason_codes = []
+    if not selected_bundle:
+        reason_codes.append("no_trusted_scenario_match")
+    if int(task_profile.get("matched_signal_score", 0) or 0) <= 0:
+        reason_codes.append("low_signal_task_profile")
+    if not selected_bundle:
+        reason_codes.append("direct_skill_selection_fallback")
+    if missing_required:
+        reason_codes.append("missing_required_capability")
+    return list(dict.fromkeys(reason_codes))
+
+
 def build_selection_quality(
     task_profile: dict,
     selected_bundle: dict,
@@ -846,6 +947,7 @@ def build_selection_quality(
         warnings.append("No trusted scenario matched; using direct selected skills only.")
     for item in missing_required:
         warnings.append(f"Missing required capability: {item.get('capability', '')}")
+    reason_codes = low_confidence_reason_codes(task_profile, selected_bundle, missing_required)
 
     route_score = int(selected_scenario.get("match_score", 0) or 0)
     matched_signal_score = int(task_profile.get("matched_signal_score", 0) or 0)
@@ -882,6 +984,9 @@ def build_selection_quality(
         "coverage_ratio": coverage_ratio,
         "low_confidence": low_confidence,
         "warnings": warnings,
+        "reason_codes": reason_codes,
+        "explanations": [LOW_CONFIDENCE_EXPLANATIONS[code] for code in reason_codes],
+        "recommended_actions": [LOW_CONFIDENCE_RECOMMENDED_ACTIONS[code] for code in reason_codes],
         "pruned_skills": list(pruned_skills or []),
     }
 
@@ -933,6 +1038,12 @@ def build_pipeline_plan(
     }
     if not bundle_id:
         plan["low_confidence_note"] = "No trusted scenario matched; use direct selected skills only."
+        reasons = low_confidence_reason_codes(task_profile, selected_bundle, [])
+        plan["low_confidence_reasons"] = reasons
+        plan["low_confidence_explanations"] = [LOW_CONFIDENCE_EXPLANATIONS[code] for code in reasons]
+        plan["low_confidence_recommended_actions"] = [
+            LOW_CONFIDENCE_RECOMMENDED_ACTIONS[code] for code in reasons
+        ]
     return plan
 
 
@@ -1417,7 +1528,15 @@ def scenario_stage_skill_map(bundle_id: str, skill_names: list[str]) -> dict[str
 
 
 def approval_gate_text(task: str, bundle: dict, skills: list[dict]) -> str:
-    parts = [task, bundle.get("id", ""), bundle.get("name", ""), bundle.get("scenario", ""), bundle.get("safety_boundary", "")]
+    intent = split_current_intent_text(task)
+    task_text = intent["current_intent_text"] if intent["current_intent_detected"] else task
+    parts = [
+        task_text,
+        bundle.get("id", ""),
+        bundle.get("name", ""),
+        bundle.get("scenario", ""),
+        bundle.get("safety_boundary", ""),
+    ]
     return normalize_task_text(" ".join(parts))
 
 

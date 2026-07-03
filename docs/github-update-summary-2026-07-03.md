@@ -45,6 +45,18 @@ delivery documentation, and release verification.
   - `contract.requires_after`;
   - `contract_requires_after` graph edges;
   - `missing_ordering_count` and `missing_ordering` diagnostics.
+- Added current-intent weighting for history/current follow-up tasks:
+  - current request now controls scenario profile scoring;
+  - stale historical context is weak context only;
+  - vague current requests no longer inherit old website/publish/browser
+    routes.
+  - runtime approval gates also use the current request for task-signal checks
+    when a history/current split is detected.
+- Added deterministic low-confidence explanations:
+  - `selection_quality.reason_codes`;
+  - `selection_quality.explanations`;
+  - `selection_quality.recommended_actions`;
+  - Markdown task packs render the same reasons and actions.
 - Published the accepted milestone feature summary in README and GitHub
   Release notes.
 - Added a source-import capture schema gate:
@@ -58,10 +70,10 @@ delivery documentation, and release verification.
 Final verification was run before this update was published:
 
 ```text
-bash scripts/verify.sh: 148 tests OK
+bash scripts/verify.sh: 154 tests OK
 schema-check --registry catalog: OK, 172 manifests
-router-eval: 39 / 39 cases OK
-router-eval confidence summary: 36 high-confidence passed, 3 low-confidence passed, 0 low-confidence failed
+router-eval: 40 / 40 cases OK
+router-eval confidence summary: 36 high-confidence passed, 4 low-confidence passed, 0 low-confidence failed
 router-eval issue classifications: no current by_issue_class entries
 maintain-check: OK
 verify --registry catalog: 172 skills, 166 trusted, 0 tampered, 0 unknown provenance

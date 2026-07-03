@@ -37,6 +37,18 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(profile["primary_domain"], "web")
         self.assertIn("publish_check", profile["required_capabilities"])
 
+    def test_build_task_profile_prioritizes_chinese_current_intent_over_history(self):
+        profile = build_task_profile("历史上下文：构建产品官网并准备发布检查。当前请求：继续优化任务")
+
+        self.assertEqual(profile["task_type"], "general")
+        self.assertEqual(profile["primary_domain"], "general")
+        self.assertEqual(profile["matched_signal_score"], 0)
+        self.assertTrue(profile["current_intent_detected"])
+        self.assertIn("继续优化任务", profile["current_intent_text"])
+        self.assertIn("构建产品官网", profile["history_context_text"])
+        self.assertEqual(profile["current_intent_weight"], 1.0)
+        self.assertEqual(profile["history_context_weight"], 0.25)
+
     def test_build_task_profile_detects_ai_interface_design_polish(self):
         profile = build_task_profile("用 UI-UX-Pro-Max 定设计系统，Visual Designer 把控视觉，CSS 动画工具提升 AI 界面质感")
 
@@ -374,6 +386,34 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(coverage_by_capability["supply_chain_review"]["status"], "covered")
         self.assertEqual(routed["selection_quality"]["missing_required_count"], 0)
 
+    def test_route_scenario_task_ignores_stale_history_for_vague_current_intent(self):
+        bundle = {
+            "id": "website-build-launch",
+            "name": "Website Build Launch",
+            "status": "trusted",
+            "skills": ["business-requirements-brief", "design-ui-review", "execution-publish-check"],
+            "execution_order": ["business-requirements-brief", "design-ui-review", "execution-publish-check"],
+            "required_capabilities": [
+                {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                {"id": "publish_check", "required": True, "preferred_skills": ["execution-publish-check"]},
+            ],
+        }
+        selected = [{"name": name, "match_score": 0} for name in bundle["skills"]]
+
+        routed = route_scenario_task(
+            task="History: build a product website and prepare launch checks. Current request: continue optimizing this task",
+            selected_skills=selected,
+            bundles_index={"bundles": [bundle]},
+            trusted_skill_names={skill["name"] for skill in selected},
+            max_skills=8,
+        )
+
+        self.assertEqual(routed["task_profile"]["task_type"], "general")
+        self.assertEqual(routed["selected_scenario"]["id"], "")
+        self.assertTrue(routed["selection_quality"]["low_confidence"])
+        self.assertNotIn("execution-publish-check", [skill["name"] for skill in routed["skills"]])
+
     def test_build_pipeline_plan_for_skill_router_quality_review(self):
         profile = build_task_profile("复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标")
         bundle = {
@@ -470,6 +510,40 @@ class RouterTest(unittest.TestCase):
         self.assertEqual([stage["id"] for stage in plan["stages"]], ["source", "planning", "handoff"])
         self.assertIn("research-source-check", plan["stages"][0]["skills"])
         self.assertIn("ai-opensquilla-metaskill-workflow", plan["stages"][1]["skills"])
+        self.assertEqual(plan["approval_gates"], [])
+
+    def test_build_pipeline_plan_includes_low_confidence_reason_codes(self):
+        profile = build_task_profile("帮我看一下这个事情是否合理")
+        skills = [{"name": "execution-file-batch", "match_score": 0}]
+
+        plan = build_pipeline_plan(
+            task="帮我看一下这个事情是否合理",
+            task_profile=profile,
+            selected_bundle={},
+            selected_skills=skills,
+            coverage=[],
+            execution_graph={},
+            invariants=None,
+        )
+
+        self.assertIn("no_trusted_scenario_match", plan["low_confidence_reasons"])
+        self.assertIn("low_signal_task_profile", plan["low_confidence_reasons"])
+
+    def test_build_pipeline_plan_uses_current_intent_for_runtime_approval_gates(self):
+        task = "历史上下文：构建产品官网并准备上线发布检查。当前请求：继续优化任务"
+        profile = build_task_profile(task)
+        skills = [{"name": "execution-file-batch", "match_score": 0}]
+
+        plan = build_pipeline_plan(
+            task=task,
+            task_profile=profile,
+            selected_bundle={},
+            selected_skills=skills,
+            coverage=[],
+            execution_graph={},
+            invariants=None,
+        )
+
         self.assertEqual(plan["approval_gates"], [])
 
     def test_build_pipeline_plan_marks_video_runtime_approval_gates(self):
@@ -859,6 +933,22 @@ class RouterTest(unittest.TestCase):
         self.assertTrue(quality["low_confidence"])
         self.assertEqual(quality["coverage_ratio"], 0)
         self.assertIn("No trusted scenario matched; using direct selected skills only.", quality["warnings"])
+
+    def test_build_selection_quality_explains_low_confidence_general_fallback(self):
+        quality = build_selection_quality(
+            task_profile={"task_type": "general", "matched_signal_score": 0},
+            selected_bundle={},
+            selected_scenario={"id": "", "match_score": 0},
+            coverage=[],
+            pruned_skills=[],
+        )
+
+        self.assertEqual(
+            quality["reason_codes"],
+            ["no_trusted_scenario_match", "low_signal_task_profile", "direct_skill_selection_fallback"],
+        )
+        self.assertIn("No trusted scenario bundle matched the task.", quality["explanations"])
+        self.assertIn("Record low-confidence route as a residual risk.", quality["recommended_actions"])
 
     def test_selection_explanations_include_execution_roles(self):
         bundle = {

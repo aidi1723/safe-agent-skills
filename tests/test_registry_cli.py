@@ -3801,6 +3801,34 @@ class RegistryCliTest(unittest.TestCase):
         self.assertTrue(smart_pack["selection_quality"]["low_confidence"])
         self.assertEqual(smart_names, ["execution-file-batch", "execution-rollback-checkpoint-plan"])
 
+    def test_task_pack_markdown_renders_low_confidence_explanations(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "可以，按照步骤，继续优化",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                    "--format",
+                    "markdown",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        markdown = task_pack_out.getvalue()
+        self.assertIn("## Selection Quality", markdown)
+        self.assertIn("- reason: `no_trusted_scenario_match`", markdown)
+        self.assertIn("- explanation: No trusted scenario bundle matched the task.", markdown)
+        self.assertIn("- recommended action: Record low-confidence route as a residual risk.", markdown)
+
     def test_real_catalog_smart_router_covers_task_and_invariant_skills(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):

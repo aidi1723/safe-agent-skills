@@ -978,6 +978,12 @@ def render_task_pack_markdown(task_pack: dict) -> str:
         )
         for warning in quality.get("warnings", []):
             lines.append(f"- warning: {warning}")
+        for reason in quality.get("reason_codes", []):
+            lines.append(f"- reason: `{reason}`")
+        for explanation in quality.get("explanations", []):
+            lines.append(f"- explanation: {explanation}")
+        for action in quality.get("recommended_actions", []):
+            lines.append(f"- recommended action: {action}")
     if task_pack.get("contract_diagnostics"):
         diagnostics = task_pack["contract_diagnostics"]
         lines.extend(

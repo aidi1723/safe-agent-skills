@@ -87,6 +87,9 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
+[Current Intent Routing](docs/updates/2026-07-04-current-intent-routing.md).
+
+Previous update statement:
 [Requires After Contract Ordering](docs/updates/2026-07-04-requires-after-contract-ordering.md).
 
 Latest closure report:
@@ -98,7 +101,7 @@ GitHub update summary:
 Latest delivery readiness:
 [Delivery Readiness Report](docs/delivery-readiness-report.md).
 
-Previous update statement:
+Earlier update statement:
 [Reference Pattern Expansion](docs/updates/2026-07-03-reference-pattern-expansion.md).
 
 Earlier same-day update:

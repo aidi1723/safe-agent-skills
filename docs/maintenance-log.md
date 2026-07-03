@@ -13,9 +13,49 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 39
+router eval cases: 40
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-04 Current Intent Routing
+
+Added current-intent weighting and deterministic low-confidence explanations to
+the router.
+
+When task text contains explicit history/current markers, the router now scores
+the current request as the primary intent and keeps historical context as weak
+context. This prevents stale historical website, publish, browser, or test
+signals from forcing an unrelated scenario for vague current follow-up
+requests.
+
+Routed outputs now expose:
+
+- `current_intent_detected`;
+- `current_intent_text`;
+- `history_context_text`;
+- `current_intent_weight`;
+- `history_context_weight`;
+- `selection_quality.reason_codes`;
+- `selection_quality.explanations`;
+- `selection_quality.recommended_actions`;
+- `pipeline_plan.low_confidence_reasons`.
+- runtime approval gates use current request text for task-signal checks when
+  a history/current split is detected.
+
+Real catalog baseline after the update:
+
+```text
+bash scripts/verify.sh: 154 tests OK
+router-eval: 40 / 40 cases OK
+by_confidence.high: 36 passed, 0 failed
+by_confidence.low: 4 passed, 0 failed
+low_confidence_case_count: 4
+low_confidence_failed_count: 0
+by_issue_class: {}
+```
+
+Update note:
+[Current Intent Routing](updates/2026-07-04-current-intent-routing.md).
 
 ## 2026-07-04 Stage Acceptance
 
