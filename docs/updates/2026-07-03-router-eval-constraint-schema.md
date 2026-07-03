@@ -4,11 +4,14 @@ Date: 2026-07-03
 
 ## Summary
 
-Hardened `router-eval` so invalid constraint field types fail as structured
-eval issues before task-pack generation.
+Hardened `router-eval` so invalid control, expectation, and constraint field
+types fail as structured eval issues before task-pack generation.
 
 Eval case fields now require:
 
+- `router`: string, with `scenario` or `mesh` as supported values
+- `strategy`: one of `fast`, `balanced`, or `deep`
+- `invariants`: string or array of strings when present
 - `expected_scenario`: string when present
 - `expected_task_type`: string when present
 - `expected_skills`: array of strings
@@ -21,20 +24,26 @@ Eval case fields now require:
 
 - Added `router-eval-invalid-case-field` failures for malformed constraint
   fields.
+- Added structured failures for malformed router, strategy, and invariant
+  control fields.
 - Added the same structured failures for malformed expected scenario and task
   type fields.
+- Kept unknown string router modes on the existing `router-eval-invalid-router`
+  path while preventing non-string router values from raising type errors.
 - Rejected negative, boolean, or non-integer `max_skill_count` values before
   selection comparison.
 - Prevented malformed prefix or subcategory constraints from raising runtime
   type errors during evaluation.
 - Prevented malformed scenario or task-type expectations from being reported
   as normal mismatch failures.
-- Added regression coverage for invalid constraint and expectation field types.
+- Added regression coverage for invalid control, constraint, and expectation
+  field types.
 
 ## Verification Targets
 
 - `PYTHONPATH=src python3 -m unittest tests.test_registry_cli.RegistryCliTest.test_router_eval_rejects_invalid_constraint_field_types`
 - `PYTHONPATH=src python3 -m unittest tests.test_registry_cli.RegistryCliTest.test_router_eval_rejects_invalid_expectation_field_types`
+- `PYTHONPATH=src python3 -m unittest tests.test_registry_cli.RegistryCliTest.test_router_eval_rejects_invalid_control_field_types`
 - `PYTHONPATH=src python3 -m unittest tests.test_registry_cli.RegistryCliTest.test_router_eval_passes_expected_scenario_cases tests.test_registry_cli.RegistryCliTest.test_router_eval_fails_unexpected_scenario_case tests.test_registry_cli.RegistryCliTest.test_router_eval_fails_forbidden_skills_prefixes_subcategories_and_skill_count_limit tests.test_registry_cli.RegistryCliTest.test_router_eval_rejects_invalid_constraint_field_types tests.test_registry_cli.RegistryCliTest.test_real_router_eval_file_covers_current_catalog_scenarios`
 - `PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval --eval evals/router-quality.json --registry catalog --bundles bundles/index.json`
 - `bash scripts/verify.sh`

@@ -19,11 +19,14 @@ verification command: bash scripts/verify.sh
 
 ## 2026-07-03 Router Eval Constraint Schema
 
-Hardened `router-eval` so malformed constraint fields fail as structured
-evaluation issues before task-pack generation.
+Hardened `router-eval` so malformed control, expectation, and constraint
+fields fail as structured evaluation issues before task-pack generation.
 
 Eval cases now validate:
 
+- `router` as a string before router-mode comparison.
+- `strategy` as one of `fast`, `balanced`, or `deep`.
+- `invariants` as a string or array of strings when present.
 - `expected_scenario` and `expected_task_type` as strings when present.
 - `expected_skills`, `forbidden_skills`, `forbidden_skill_prefixes`, and
   `forbidden_skill_subcategories` as arrays of strings.
@@ -33,6 +36,7 @@ Invalid fields now produce `router-eval-invalid-case-field` instead of being
 silently ignored or causing runtime type errors during comparison.
 Malformed scenario and task-type expectations are now rejected before normal
 mismatch checks run.
+Malformed router control fields are now rejected before router-mode comparison.
 
 Update note:
 [Router Eval Constraint Schema](updates/2026-07-03-router-eval-constraint-schema.md).

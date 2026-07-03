@@ -1707,10 +1707,46 @@ ROUTER_EVAL_OPTIONAL_STRING_FIELDS = (
     "expected_scenario",
     "expected_task_type",
 )
+ROUTER_EVAL_ROUTER_VALUES = {"scenario", "mesh"}
+ROUTER_EVAL_STRATEGY_VALUES = {"fast", "balanced", "deep"}
 
 
 def validate_router_eval_case(case: dict) -> list[dict]:
     issues = []
+    router_mode = case.get("router", "scenario")
+    if not isinstance(router_mode, str):
+        issues.append(
+            {
+                "id": "router-eval-invalid-case-field",
+                "field": "router",
+                "expected": "scenario or mesh",
+                "actual": type(router_mode).__name__,
+            }
+        )
+    strategy = case.get("strategy", "balanced")
+    if not isinstance(strategy, str) or strategy not in ROUTER_EVAL_STRATEGY_VALUES:
+        issues.append(
+            {
+                "id": "router-eval-invalid-case-field",
+                "field": "strategy",
+                "expected": "fast, balanced, or deep",
+                "actual": type(strategy).__name__,
+            }
+        )
+    invariants = case.get("invariants")
+    if invariants is not None:
+        invalid_invariants = not isinstance(invariants, (str, list)) or (
+            isinstance(invariants, list) and any(not isinstance(item, str) for item in invariants)
+        )
+        if invalid_invariants:
+            issues.append(
+                {
+                    "id": "router-eval-invalid-case-field",
+                    "field": "invariants",
+                    "expected": "string or array of strings",
+                    "actual": type(invariants).__name__,
+                }
+            )
     for field in ROUTER_EVAL_OPTIONAL_STRING_FIELDS:
         value = case.get(field)
         if value is not None and not isinstance(value, str):
@@ -1776,7 +1812,7 @@ def run_router_eval(
         case_issues = []
         if not isinstance(task, str) or not task:
             case_issues.append({"id": "router-eval-missing-task"})
-        if router_mode not in {"scenario", "mesh"}:
+        if isinstance(router_mode, str) and router_mode not in ROUTER_EVAL_ROUTER_VALUES:
             case_issues.append({"id": "router-eval-invalid-router", "router": router_mode})
         case_issues.extend(validate_router_eval_case(case))
         if case_issues:
