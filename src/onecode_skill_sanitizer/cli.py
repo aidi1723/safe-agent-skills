@@ -579,6 +579,22 @@ def build_agent_instructions(
             skill = item.get("skill") or "missing"
             lines.append(f"- {item['capability']}: {item['status']} by {skill}")
         lines.append("")
+    if router_context and router_context.get("contract_diagnostics"):
+        diagnostics = router_context["contract_diagnostics"]
+        lines.extend(
+            [
+                "Contract diagnostics:",
+                f"- status: {diagnostics.get('status', 'unknown')}",
+                f"- graph mode: {diagnostics.get('graph_mode', 'unknown')}",
+                f"- missing preconditions: {diagnostics.get('missing_precondition_count', 0)}",
+                f"- collisions: {diagnostics.get('collision_count', 0)}",
+            ]
+        )
+        for item in diagnostics.get("missing_preconditions", []):
+            lines.append(f"- missing: {item.get('skill', '')} requires {item.get('artifact', '')}")
+        for item in diagnostics.get("collisions", []):
+            lines.append(f"- collision: {item.get('skill', '')} conflicts with {item.get('conflicts_with', '')}")
+        lines.append("")
     if router_context and router_context.get("pipeline_plan"):
         plan = router_context["pipeline_plan"]
         mode = str(plan.get("mode", "method_only")).replace("_", "-")
@@ -780,6 +796,7 @@ def build_task_pack(
             "execution_plan": routed["execution_plan"],
             "selection_explanations": routed["selection_explanations"],
             "execution_graph": routed["execution_graph"],
+            "contract_diagnostics": routed["contract_diagnostics"],
             "pipeline_plan": routed["pipeline_plan"],
             "invariant_capabilities": routed["invariant_capabilities"],
             "pruned_skills": routed["pruned_skills"],
@@ -825,6 +842,7 @@ def build_task_pack(
             "coverage": routed["coverage"],
             "execution_plan": routed["execution_plan"],
             "pipeline_plan": routed["pipeline_plan"],
+            "contract_diagnostics": routed["contract_diagnostics"],
             "selection_explanations": routed["selection_explanations"],
             "selection_quality": routed["selection_quality"],
         }
@@ -957,6 +975,23 @@ def render_task_pack_markdown(task_pack: dict) -> str:
         )
         for warning in quality.get("warnings", []):
             lines.append(f"- warning: {warning}")
+    if task_pack.get("contract_diagnostics"):
+        diagnostics = task_pack["contract_diagnostics"]
+        lines.extend(
+            [
+                "",
+                "## Contract Diagnostics",
+                "",
+                f"- status: `{diagnostics.get('status', 'unknown')}`",
+                f"- graph mode: `{diagnostics.get('graph_mode', 'unknown')}`",
+                f"- missing preconditions: `{diagnostics.get('missing_precondition_count', 0)}`",
+                f"- collisions: `{diagnostics.get('collision_count', 0)}`",
+            ]
+        )
+        for item in diagnostics.get("missing_preconditions", []):
+            lines.append(f"- missing: `{item.get('skill', '')}` requires `{item.get('artifact', '')}`")
+        for item in diagnostics.get("collisions", []):
+            lines.append(f"- collision: `{item.get('skill', '')}` conflicts with `{item.get('conflicts_with', '')}`")
     if task_pack.get("acceptance_criteria"):
         lines.extend(["", "## Acceptance Criteria", ""])
         for criterion in task_pack["acceptance_criteria"]:
@@ -1390,6 +1425,7 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
         "capability_vector",
         "stage_hint",
         "conflicts_with",
+        "excludes",
         "cost_weight",
     }
     for field in contract:
@@ -1414,6 +1450,9 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
     conflicts = validate_string_list(contract.get("conflicts_with"), path, issues, "conflicts_with", "schema-invalid-contract-conflict")
     if payload.get("name") in conflicts:
         add_issue(issues, "schema-invalid-contract-conflict", path, "contract.conflicts_with cannot include the skill itself")
+    excludes = validate_string_list(contract.get("excludes"), path, issues, "excludes", "schema-invalid-contract-conflict")
+    if payload.get("name") in excludes:
+        add_issue(issues, "schema-invalid-contract-conflict", path, "contract.excludes cannot include the skill itself")
     cost_weight = contract.get("cost_weight")
     if cost_weight is not None and (not isinstance(cost_weight, int) or cost_weight < 1 or cost_weight > 10):
         add_issue(issues, "schema-invalid-contract-cost", path, "contract.cost_weight must be an integer from 1 to 10")

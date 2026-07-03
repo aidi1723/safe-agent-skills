@@ -2611,6 +2611,7 @@ class RegistryCliTest(unittest.TestCase):
                 "requires_context": ["requirements_brief"],
                 "produces_evidence": ["ui_review_report"],
                 "capability_vector": ["design.ui_review"],
+                "excludes": ["design-visual-quality-review"],
                 "cost_weight": 2,
             }
             manifest["hashes"].pop("manifest_sha256", None)

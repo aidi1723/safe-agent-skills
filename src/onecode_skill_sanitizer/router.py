@@ -1042,6 +1042,8 @@ def route_scenario_task(
     )
     execution_plan = build_execution_plan(selected_bundle, routed_skills) if selected_bundle else build_execution_plan({}, routed_skills)
     explanations = build_selection_explanations(selected_bundle, routed_skills, coverage) if selected_bundle else []
+    contract_graph = build_contract_graph(routed_skills)
+    contract_diagnostics = build_contract_diagnostics(routed_skills, contract_graph)
     pipeline_plan = build_pipeline_plan(
         task=task,
         task_profile=profile,
@@ -1062,6 +1064,7 @@ def route_scenario_task(
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
         "pipeline_plan": pipeline_plan,
+        "contract_diagnostics": contract_diagnostics,
     }
 
 
@@ -1670,6 +1673,94 @@ def build_contract_graph(skills: list[dict]) -> dict:
     }
 
 
+EXTERNAL_CONTEXT_ARTIFACTS = {
+    "task_brief",
+    "user_request",
+    "workspace_context",
+    "operator_input",
+}
+
+
+def contract_required_context(contract: dict) -> set[str]:
+    values = contract.get("requires_context", [])
+    if not isinstance(values, list):
+        return set()
+    return {value for value in values if isinstance(value, str) and value}
+
+
+def build_contract_diagnostics(skills: list[dict], graph: dict | None = None) -> dict:
+    selected_names = {skill["name"] for skill in skills}
+    produced_by: dict[str, list[str]] = {}
+    for skill in skills:
+        for artifact in sorted(contract_artifacts(skill_contract(skill))):
+            produced_by.setdefault(artifact, []).append(skill["name"])
+
+    missing_preconditions = []
+    collisions = []
+    seen_collisions: set[tuple[str, str]] = set()
+    for skill in skills:
+        contract = skill_contract(skill)
+        for artifact in sorted(contract_required_context(contract)):
+            if artifact in EXTERNAL_CONTEXT_ARTIFACTS or artifact in produced_by:
+                continue
+            missing_preconditions.append(
+                {
+                    "skill": skill["name"],
+                    "artifact": artifact,
+                    "source": "contract.requires_context",
+                }
+            )
+        for field in ["conflicts_with", "excludes"]:
+            conflicts = contract.get(field, [])
+            if not isinstance(conflicts, list):
+                continue
+            for conflict_name in conflicts:
+                if not isinstance(conflict_name, str) or conflict_name not in selected_names:
+                    continue
+                pair = tuple(sorted([skill["name"], conflict_name]))
+                if pair in seen_collisions:
+                    continue
+                seen_collisions.add(pair)
+                collisions.append(
+                    {
+                        "skill": skill["name"],
+                        "conflicts_with": conflict_name,
+                        "source": f"contract.{field}",
+                    }
+                )
+
+    graph = graph or build_contract_graph(skills)
+    graph_issues = []
+    if graph.get("mode") != "contract":
+        graph_issues.append(
+            {
+                "id": "contract-graph-fallback",
+                "reason": graph.get("fallback_reason", "unknown"),
+            }
+        )
+    elif graph.get("acyclic") is False:
+        graph_issues.append(
+            {
+                "id": "contract-graph-cycle",
+                "reason": graph.get("fallback_reason", "contract_cycle"),
+            }
+        )
+
+    status = "warning" if missing_preconditions or collisions or graph_issues else "ok"
+    return {
+        "schema_version": 1,
+        "status": status,
+        "graph_mode": graph.get("mode", ""),
+        "fallback_reason": graph.get("fallback_reason", ""),
+        "missing_precondition_count": len(missing_preconditions),
+        "missing_preconditions": missing_preconditions,
+        "collision_count": len(collisions),
+        "collisions": collisions,
+        "graph_issue_count": len(graph_issues),
+        "graph_issues": graph_issues,
+    }
+
+
 def sort_mesh_skill_names(ordered_names: list[str]) -> list[str]:
     stage_rank = {"preflight": 0, "source": 1, "planning": 2, "review": 3, "execution": 4, "verification": 5}
     return [
@@ -1761,7 +1852,7 @@ def route_mesh_task(
     optional_sorted_names = strategy_optional_skill_names([name for name in sorted_names if name not in required_names], strategy)
     limit = max(strategy_limits.get(strategy, max_skills), len(required_sorted_names))
     final_names = required_sorted_names + optional_sorted_names[: max(0, limit - len(required_sorted_names))]
-    final_names, final_graph = contract_sorted_skill_names(selected_by_name, final_names)
+    final_names, _final_graph = contract_sorted_skill_names(selected_by_name, final_names)
     routed_skills = [selected_by_name[name] for name in final_names]
     use_stage_ordered_output = bool(selected_bundle and selected_bundle.get("id") == "skill-router-quality-review")
     if use_stage_ordered_output:
@@ -1830,9 +1921,11 @@ def route_mesh_task(
             "selection_reason": "Selected skills from task profile, trusted scenario bundle, invariants, and overlap-group pruning.",
         }
     )
+    contract_graph = build_contract_graph(routed_skills)
+    contract_diagnostics = build_contract_diagnostics(routed_skills, contract_graph)
     execution_graph = (
-        final_graph
-        if final_graph.get("mode") == "contract" and final_graph.get("acyclic", True)
+        contract_graph
+        if contract_graph.get("mode") == "contract" and contract_graph.get("acyclic", True)
         else build_execution_graph(routed_skills)
     )
     pipeline_plan = build_pipeline_plan(
@@ -1864,6 +1957,7 @@ def route_mesh_task(
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
         "execution_graph": execution_graph,
+        "contract_diagnostics": contract_diagnostics,
         "pipeline_plan": pipeline_plan,
         "invariant_capabilities": invariant_capabilities,
         "pruned_skills": pruned_names,

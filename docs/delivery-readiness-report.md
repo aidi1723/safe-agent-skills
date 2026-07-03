@@ -52,7 +52,6 @@ These items are useful future work, but they are not required for the current
 local-catalog delivery boundary:
 
 - networked `source-import` command that captures upstream content directly;
-- first-class skill `preconditions`, `excludes`, and collision diagnostics;
 - host semantic gateway and compact context-record integration;
 - documentation consolidation to reduce historical baseline duplication.
 
@@ -60,6 +59,9 @@ Same-day follow-up status: router false-positive / false-negative
 classification fields and low-confidence routing trend tracking are now
 covered by
 [Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md).
+Later follow-up status: first-class contract diagnostics for preconditions,
+exclusions, and collisions are now covered by
+[Contract Diagnostics](updates/2026-07-04-contract-diagnostics.md).
 
 ## Delivery Boundary
 

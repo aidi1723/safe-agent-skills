@@ -159,21 +159,29 @@ Current coverage:
 
 ### Phase 2: Skill Preconditions and Exclusions
 
-Add optional metadata for skills and bundles:
+Status: partially completed on 2026-07-04 through routed
+`contract_diagnostics`.
+
+Completed diagnostic inputs:
+
+- `contract.requires_context`
+- `contract.excludes`
+- `contract.conflicts_with`
+- contract graph fallback or cycle issues
+
+Future deeper ordering metadata may still add:
 
 ```json
 {
-  "preconditions": ["workspace_available", "task_is_frontend"],
-  "excludes": ["content-copy-compression"],
   "requires_after": ["business-requirements-brief"]
 }
 ```
 
-Acceptance criteria:
+Remaining acceptance criteria:
 
-- router output includes dependency and collision diagnostics
+- explicit ordering metadata is modeled separately from artifact dependencies
 - selected packs are acyclic
-- incompatible skills are pruned or reported
+- incompatible skills are pruned or reported before host execution
 
 ### Phase 3: Semantic Gateway Assertions
 

@@ -1,6 +1,6 @@
 # Maintenance Log
 
-Date: 2026-07-03
+Date: 2026-07-04
 
 ## Current Maintained Baseline
 
@@ -17,13 +17,31 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-04 Contract Diagnostics
+
+Added first-class contract diagnostics to scenario and mesh routed task packs.
+
+Routed outputs now include `contract_diagnostics` with:
+
+- missing preconditions from `contract.requires_context`;
+- explicit exclusions from `contract.excludes`;
+- legacy conflicts from `contract.conflicts_with`;
+- contract graph fallback or cycle issues.
+
+The same diagnostics are rendered in JSON, Markdown task packs, and agent
+instructions. This keeps skill contracts advisory and method-only while making
+precondition and collision risks visible before execution.
+
+Update note:
+[Contract Diagnostics](updates/2026-07-04-contract-diagnostics.md).
+
 ## 2026-07-03 Final Closure
 
 Ran the final closure verification matrix and recorded the handoff report.
 
 Final closure evidence:
 
-- `bash scripts/verify.sh`: 145 tests OK.
+- `bash scripts/verify.sh`: 146 tests OK.
 - `schema-check --registry catalog`: OK, 172 manifests.
 - `router-eval`: 39 / 39 cases OK, no issues in `quality_summary.by_issue`.
 - latest router-eval quality classification: 36 high-confidence cases passed,
@@ -195,7 +213,7 @@ Remaining next-phase optimization tracks:
 - scanner engine hardening with tokenized command extraction and bypass
   fixtures;
 - networked source-import automation after the schema capture gate;
-- skill precondition, exclusion, and collision diagnostics;
+- deeper scheduler metadata such as explicit `requires_after` ordering;
 - semantic gateway and context-record host integration, kept separate from
   trusted skill content;
 - documentation consolidation so current baselines are not confused with dated

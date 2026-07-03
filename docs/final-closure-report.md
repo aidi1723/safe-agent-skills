@@ -81,13 +81,15 @@ These items are intentionally left as future enhancements, not blockers for
 this delivery:
 
 - networked `source-import` command that captures upstream content directly;
-- first-class skill `preconditions`, `excludes`, and collision diagnostics;
 - host semantic gateway and compact context-record integration;
 - documentation consolidation to reduce historical baseline duplication.
 
 Same-day follow-up status: router false-positive / false-negative
 classification fields and low-confidence routing trend tracking were added in
 [Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md).
+Later follow-up status: first-class contract diagnostics for preconditions,
+exclusions, and collisions were added in
+[Contract Diagnostics](updates/2026-07-04-contract-diagnostics.md).
 
 ## Release Record
 

@@ -37,6 +37,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Contract Diagnostics](updates/2026-07-04-contract-diagnostics.md)
 - [Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md)
 - [GitHub Update Summary](github-update-summary-2026-07-03.md)
 - [Final Closure Report](final-closure-report.md)

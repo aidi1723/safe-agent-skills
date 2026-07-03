@@ -34,6 +34,11 @@ delivery documentation, and release verification.
   - deterministic `quality_summary` output;
   - false-positive / false-negative issue classification;
   - low-confidence route trend counters.
+- Added first-class contract diagnostics for routed task packs:
+  - missing preconditions from `contract.requires_context`;
+  - exclusions from `contract.excludes`;
+  - conflicts from `contract.conflicts_with`;
+  - contract graph fallback or cycle issues.
 - Added a source-import capture schema gate:
   `source.usage = source_import` now requires auditable `source.capture`
   metadata.
@@ -45,7 +50,7 @@ delivery documentation, and release verification.
 Final verification was run before this update was published:
 
 ```text
-bash scripts/verify.sh: 145 tests OK
+bash scripts/verify.sh: 146 tests OK
 schema-check --registry catalog: OK, 172 manifests
 router-eval: 39 / 39 cases OK
 router-eval confidence summary: 36 high-confidence passed, 3 low-confidence passed, 0 low-confidence failed
@@ -62,5 +67,4 @@ skills. External references remain metadata-only unless converted through the
 local authoring, schema-check, verification, and approval path.
 
 Remaining work is non-blocking follow-up: networked source-import automation,
-skill preconditions/exclusions/collision diagnostics, host semantic gateway
-integration, and documentation consolidation.
+host semantic gateway integration, and documentation consolidation.

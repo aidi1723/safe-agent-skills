@@ -87,7 +87,7 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Router Eval Quality Classification](docs/updates/2026-07-03-router-eval-quality-classification.md).
+[Contract Diagnostics](docs/updates/2026-07-04-contract-diagnostics.md).
 
 Latest closure report:
 [Final Closure Report](docs/final-closure-report.md).

@@ -81,18 +81,23 @@ What remains:
 - stale-baseline warnings for historical docs that are easy to misread as
   current status
 
-### P2: Collision And Preconditions Are Not Yet First-Class Contracts
+### P2: Collision And Preconditions Now Have First-Class Diagnostics
 
 Scenario bundles and overlap groups already reduce redundant skill selection.
-However, skill preconditions, exclusions, and collision diagnostics are still
-roadmap items rather than enforced metadata.
+Same-day follow-up after this report added routed `contract_diagnostics` for
+skill preconditions, exclusions, and collision risks.
 
-Useful next contracts:
+Completed diagnostic inputs:
 
-- `preconditions`
-- `excludes`
-- `requires_after`
-- bundle-level collision diagnostics
+- `contract.requires_context`
+- `contract.excludes`
+- `contract.conflicts_with`
+- contract graph fallback or cycle issues
+
+Remaining deeper scheduler work:
+
+- explicit `requires_after` ordering metadata;
+- host semantic gateway assertions before tool execution.
 
 ### P2: Semantic Gateway And Context Records Remain Future Host Work
 
@@ -141,8 +146,8 @@ follow-up note, and treat old closure baselines as dated evidence.
    [Router Eval Quality Classification](2026-07-03-router-eval-quality-classification.md).
 3. Add networked source-import automation only after preserving the current
    capture-metadata schema gate.
-4. Add skill precondition/exclusion metadata after router quality summaries
-   make collision behavior measurable.
+4. Contract diagnostics for preconditions, exclusions, and collisions are
+   completed in [Contract Diagnostics](2026-07-04-contract-diagnostics.md).
 5. Keep semantic gateway and context-record work as host-integration design,
    not catalog-skill content.
 

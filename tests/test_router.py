@@ -2,6 +2,7 @@ import unittest
 
 from onecode_skill_sanitizer.router import (
     build_capability_coverage,
+    build_contract_diagnostics,
     build_contract_graph,
     build_execution_graph,
     build_execution_plan,
@@ -1189,6 +1190,79 @@ class RouterTest(unittest.TestCase):
 
         self.assertEqual(graph["mode"], "stage_fallback")
         self.assertEqual(graph["fallback_reason"], "missing_contract")
+
+    def test_build_contract_diagnostics_reports_missing_preconditions_and_collisions(self):
+        skills = [
+            {
+                "name": "business-requirements-brief",
+                "contract": {
+                    "requires_context": ["task_brief"],
+                    "produces_artifacts": ["requirements_brief"],
+                },
+            },
+            {
+                "name": "design-ui-review",
+                "contract": {
+                    "requires_context": ["requirements_brief", "build_artifact"],
+                    "produces_evidence": ["ui_review_report"],
+                    "conflicts_with": ["design-visual-quality-review"],
+                },
+            },
+            {
+                "name": "design-visual-quality-review",
+                "contract": {
+                    "produces_evidence": ["visual_review_report"],
+                    "excludes": ["content-seo-brief"],
+                },
+            },
+            {
+                "name": "content-seo-brief",
+                "contract": {
+                    "produces_artifacts": ["seo_copy"],
+                },
+            },
+            {
+                "name": "execution-publish-check",
+                "contract": {
+                    "requires_context": ["ui_review_report", "browser_check_report"],
+                    "produces_evidence": ["publish_readiness_report"],
+                },
+            },
+        ]
+        graph = build_contract_graph(skills)
+
+        diagnostics = build_contract_diagnostics(skills, graph)
+
+        self.assertEqual(diagnostics["status"], "warning")
+        self.assertEqual(diagnostics["missing_precondition_count"], 2)
+        self.assertEqual(
+            {
+                (item["skill"], item["artifact"])
+                for item in diagnostics["missing_preconditions"]
+            },
+            {
+                ("design-ui-review", "build_artifact"),
+                ("execution-publish-check", "browser_check_report"),
+            },
+        )
+        self.assertEqual(diagnostics["collision_count"], 2)
+        self.assertEqual(
+            diagnostics["collisions"],
+            [
+                {
+                    "skill": "design-ui-review",
+                    "conflicts_with": "design-visual-quality-review",
+                    "source": "contract.conflicts_with",
+                },
+                {
+                    "skill": "design-visual-quality-review",
+                    "conflicts_with": "content-seo-brief",
+                    "source": "contract.excludes",
+                }
+            ],
+        )
+        self.assertEqual(diagnostics["graph_mode"], "contract")
+        self.assertEqual(diagnostics["fallback_reason"], "")
 
     def test_route_mesh_task_uses_contract_graph_when_complete(self):
         bundles_index = {
