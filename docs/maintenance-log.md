@@ -17,6 +17,24 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Final Closure
+
+Ran the final closure verification matrix and recorded the handoff report.
+
+Final closure evidence:
+
+- `bash scripts/verify.sh`: 144 tests OK.
+- `schema-check --registry catalog`: OK, 172 manifests.
+- `router-eval`: 39 / 39 cases OK, no issues in `quality_summary.by_issue`.
+- `maintain-check`: OK with 23 trusted bundles, 19 references, and 336 / 336
+  claude-skills candidates covered.
+- `verify --registry catalog`: 172 skills, 166 trusted, 0 tampered, 0 unknown
+  provenance.
+- `git diff --check`: OK.
+
+Update note:
+[Final Closure Report](final-closure-report.md).
+
 ## 2026-07-03 Source Import Capture Gate
 
 Closed the source-import metadata delivery gap with a schema gate.
