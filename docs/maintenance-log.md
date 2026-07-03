@@ -13,9 +13,33 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 37
+router eval cases: 38
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-03 Vague Continue Optimization Guard
+
+Tightened the update-record follow-up routing fix so vague continuation
+requests do not overmatch `skill-router-quality-review`.
+
+The negative regression case:
+
+```text
+继续优化任务
+```
+
+now remains a low-confidence `general` task. The more specific update-record
+follow-up remains routed to `skill-router-quality-review`:
+
+```text
+写好更新记录后，继续优化任务
+```
+
+Added focused unit coverage, real-world catalog regression coverage, and a
+router-eval guard case: `unsupported-vague-continue-optimization`.
+
+Update note:
+[Vague Continue Optimization Guard](updates/2026-07-03-vague-continue-optimization-guard.md).
 
 ## 2026-07-03 Update Record Follow-Up Routing
 
@@ -181,7 +205,7 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 37
+router eval cases: 38
 verification command: bash scripts/verify.sh
 ```
 
@@ -203,8 +227,8 @@ Expected current results:
 ```text
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
-router-eval: ok, 37 / 37 cases
-full script: 132 tests OK
+router-eval: ok, 38 / 38 cases
+full script: 133 tests OK
 ```
 
 ## Routine Maintenance Checklist

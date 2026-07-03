@@ -207,6 +207,12 @@ class RouterTest(unittest.TestCase):
         self.assertIn("skill_selection_quality", profile["required_capabilities"])
         self.assertIn("bundle_quality", profile["required_capabilities"])
 
+    def test_build_task_profile_does_not_route_vague_continue_optimization_to_skill_router_review(self):
+        profile = build_task_profile("继续优化任务")
+
+        self.assertEqual(profile["task_type"], "general")
+        self.assertEqual(profile["matched_signal_score"], 0)
+
     def test_build_task_profile_detects_chinese_skill_router_synonyms(self):
         for task in [
             "优化技能库的自动推荐和编排能力",

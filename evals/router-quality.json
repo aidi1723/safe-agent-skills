@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 37,
+  "case_count": 38,
   "cases": [
     {
       "id": "website-launch",
@@ -433,6 +433,14 @@
     {
       "id": "unsupported-vague-task",
       "task": "帮我看一下这个事情是否合理",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": []
+    },
+    {
+      "id": "unsupported-vague-continue-optimization",
+      "task": "继续优化任务",
       "router": "scenario",
       "expected_scenario": "",
       "expected_task_type": "general",
