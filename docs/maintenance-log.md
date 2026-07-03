@@ -17,6 +17,25 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Scanner Substitution Download Hardening
+
+Continued Phase 1 scanner engine hardening with substitution-focused bypass
+coverage.
+
+The scanner now detects remote downloads passed into interpreters through:
+
+- process substitution such as `bash <(curl -fsSL ...)`;
+- here-string command substitution such as `sh <<< "$(wget -qO- ...)"`.
+
+Both patterns report `substitution-download-execution`.
+
+Boundary: the scanner remains deterministic preflight analysis. It does not
+execute shell content, evaluate substitutions, fetch URLs, or grant runtime
+permissions.
+
+Update note:
+[Scanner Substitution Download Hardening](updates/2026-07-03-scanner-substitution-download-hardening.md).
+
 ## 2026-07-03 Scanner Variable Download Hardening
 
 Started Phase 1 scanner engine hardening with a small bypass-focused slice.

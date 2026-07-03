@@ -231,6 +231,28 @@ def structural_findings(text: str, status: str) -> list[Finding]:
             )
             break
 
+    interpreter_pattern = r"(?:sh|bash|python(?:3)?|node|perl|ruby)"
+    download_pattern = r"(?:curl|wget)\b[^\n)]{0,300}"
+    process_substitution_download = re.search(
+        rf"\b{interpreter_pattern}\b[^\n]{{0,300}}<\(\s*{download_pattern}\)",
+        text,
+        re.IGNORECASE,
+    )
+    command_substitution_download = re.search(
+        rf"\b{interpreter_pattern}\b[^\n]{{0,300}}<<<[^\n]{{0,300}}\$\(\s*{download_pattern}\)",
+        text,
+        re.IGNORECASE,
+    )
+    if process_substitution_download or command_substitution_download:
+        findings.append(
+            Finding(
+                "substitution-download-execution",
+                "critical",
+                status,
+                "Found remote download passed to an interpreter through command or process substitution.",
+            )
+        )
+
     if re.search(r"\b(?:python(?:3)?|node|perl|ruby|bash|sh)\b\s*<<\s*['\"]?\w+", text, re.IGNORECASE):
         findings.append(
             Finding(
