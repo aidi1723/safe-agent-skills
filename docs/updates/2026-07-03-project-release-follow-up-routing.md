@@ -26,8 +26,9 @@ misclassified as `website-build-launch` by broad publish-related signals.
 - Added optional `execution-publish-check` guidance to the
   `skill-router-quality-review` bundle.
 - Added focused unit, real-world scenario, and reusable router-eval coverage.
-- Updated public baseline records from 34 to 35 router eval cases and from 129
-  to 130 full-script tests.
+- Updated public baseline records from 34 to 36 router eval cases and from 129
+  to 131 full-script tests after the same-day typo skill orchestration routing
+  follow-up.
 
 ## Verification Targets
 

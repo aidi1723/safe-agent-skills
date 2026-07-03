@@ -13,9 +13,27 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 35
+router eval cases: 36
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-03 Typo Skill Orchestration Routing
+
+Fixed a real conversation routing gap where:
+
+```text
+继续，优化和编排sikll，继续补充和优化，做好记录和测试
+```
+
+was routed to `code-review-hardening` because typo normalization did not let the
+skill-router signals win over the generic Chinese `测试` code-review signal.
+
+Adjusted alias normalization so `sikll` becomes `skill` without duplicating the
+replacement target during signal normalization. Added focused unit,
+real-world regression, and router-eval coverage for the same task.
+
+Update note:
+[Typo Skill Orchestration Routing](updates/2026-07-03-typo-skill-orchestration-routing.md).
 
 ## 2026-07-03 Project Release Follow-Up Routing
 
@@ -123,7 +141,7 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 35
+router eval cases: 36
 verification command: bash scripts/verify.sh
 ```
 
@@ -145,8 +163,8 @@ Expected current results:
 ```text
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
-router-eval: ok, 35 / 35 cases
-full script: 130 tests OK
+router-eval: ok, 36 / 36 cases
+full script: 131 tests OK
 ```
 
 ## Routine Maintenance Checklist

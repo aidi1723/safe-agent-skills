@@ -632,7 +632,8 @@ def normalize_task_text(task: str) -> str:
     for source, target in NORMALIZATION_ALIASES:
         if source in text:
             text = text.replace(source, target)
-            expansions.append(target)
+            if target not in text:
+                expansions.append(target)
     if expansions:
         text = " ".join([text, *expansions])
     return re.sub(r"\s+", " ", text).strip()

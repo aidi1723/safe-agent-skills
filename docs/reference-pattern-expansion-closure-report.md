@@ -84,7 +84,7 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 35
+router eval cases: 36
 tampered skills: 0
 unknown provenance records: 0
 ```
@@ -116,10 +116,10 @@ git push
 Verified results:
 
 ```text
-router-eval: ok, 35 / 35 cases
+router-eval: ok, 36 / 36 cases
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 trusted bundles, 19 external references, 336 / 336 candidate mappings
-full script: 130 tests OK
+full script: 131 tests OK
 git diff --check: OK
 push: main 0244a15..0e1c220
 ```

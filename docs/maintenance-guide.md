@@ -39,7 +39,7 @@ Current baseline:
 - categories meeting 3 trusted skills: 15 / 15
 - scenario bundles: 23 trusted
 - external references: 19
-- router eval cases: 35
+- router eval cases: 36
 - phase status: reference-pattern expansion and project-check follow-up closed
   for today's delivery
 
@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Typo Skill Orchestration Routing](updates/2026-07-03-typo-skill-orchestration-routing.md)
 - [Project Release Follow-Up Routing](updates/2026-07-03-project-release-follow-up-routing.md)
 - [Project Check Follow-Up](updates/2026-07-03-project-check-follow-up.md)
 - [Reference Pattern Expansion](updates/2026-07-03-reference-pattern-expansion.md)

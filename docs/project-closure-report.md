@@ -44,7 +44,7 @@ trusted scenario bundles: 23
 trusted overlap groups: 7
 top-level categories: 15 / 15
 claude-skills candidate coverage: 336 / 336
-router eval cases: 35
+router eval cases: 36
 tampered skills: 0
 unknown provenance records: 0
 external references: 19

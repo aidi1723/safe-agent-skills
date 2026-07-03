@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 35,
+  "case_count": 36,
   "cases": [
     {
       "id": "website-launch",
@@ -267,6 +267,18 @@
     {
       "id": "skill-router-chinese-synonyms",
       "task": "优化技能库的自动推荐和任务编排能力",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-typo-orchestration-followup",
+      "task": "继续，优化和编排sikll，继续补充和优化，做好记录和测试",
       "router": "scenario",
       "expected_scenario": "skill-router-quality-review",
       "expected_task_type": "skill_router_review",
