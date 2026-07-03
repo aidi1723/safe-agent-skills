@@ -67,25 +67,41 @@ sandbox.
 
 Current public baseline:
 
-- 152 total skills
-- 146 trusted skills
-- 13 trusted scenario bundles
+- 164 total skills
+- 158 trusted skills
+- 15 trusted scenario bundles
 - 7 status-backed trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
+- 336 / 336 tracked `claude-skills` candidates covered by trusted local mappings
 - 0 tampered skills
 - 0 unknown provenance records
 
 For a domain-oriented map of the catalog and example router commands, see
 [Catalog Overview](docs/catalog-overview.md).
 
+For the current feature surface, category counts, and scenario bundles, see
+[Feature Log](docs/feature-log.md).
+
 See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Smart Router And Claude Skills Closure](docs/updates/2026-07-02-smart-router-claude-skills-closure.md).
+[Industry Application Orchestration](docs/updates/2026-07-03-industry-application-orchestration.md).
 
 Latest closure report:
+[Project Closure Report](docs/project-closure-report.md).
+
+Latest maintenance log:
+[Maintenance Log](docs/maintenance-log.md).
+
+Latest feature log:
+[Feature Log](docs/feature-log.md).
+
+Previous closure:
+[Smart Router And Claude Skills Closure Report](docs/smart-router-claude-skills-closure-report.md).
+
+Previous audit:
 [Claude Skills Expansion Audit](docs/claude-skills-expansion-audit.md).
 
 Previous update:

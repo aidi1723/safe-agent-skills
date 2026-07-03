@@ -37,6 +37,10 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Industry Application Orchestration](updates/2026-07-03-industry-application-orchestration.md)
+- [Project Closure Report](project-closure-report.md)
+- [Maintenance Log](maintenance-log.md)
+- [Feature Log](feature-log.md)
 - [Claude Skills Backlog Cluster Coverage](updates/2026-07-03-claude-skills-backlog-cluster-coverage.md)
 - [Smart Router And Claude Skills Closure](updates/2026-07-02-smart-router-claude-skills-closure.md)
 - [Auto Orchestration Pipeline Plan](updates/2026-06-27-auto-orchestration-pipeline-plan.md)
@@ -123,6 +127,7 @@ smart router mode: deterministic_mesh_router
 | `batch-020-claude-skills-overlap-depth` | 3 | 3 | Fifth local claude-skills overlap-depth batch for Atlassian admin governance, Atlassian template governance, and marketing pricing strategy review |
 | `batch-028-claude-skills-authoring-wave` | 5 | 5 | Local claude-skills authoring wave for commercial operations, finance operations, growth operations, project management operations, and research operations governance |
 | `batch-029-claude-skills-backlog-clusters` | 9 | 9 | Local cluster coverage for the former claude-skills reference-only backlog |
+| `batch-030-industry-application-orchestration` | 3 | 3 | Industry intake, regulated boundary review, and solution packaging for multi-vertical AI application plans |
 
 ## Trusted Category Coverage
 
@@ -132,7 +137,7 @@ smart router mode: deterministic_mesh_router
 | business | `business-atlassian-admin-governance-review`, `business-atlassian-template-governance-review`, `business-capacity-planning-review`, `business-claude-skills-backlog-orchestration`, `business-confluence-knowledge-review`, `business-contract-proposal-review`, `business-customer-success-health-review`, `business-finance-operations-review`, `business-financial-analysis-review`, `business-growth-operations-review`, `business-internal-comms-review`, `business-investment-memo-review`, `business-jira-workflow-review`, `business-knowledge-operations-review`, `business-meeting-analysis-review`, `business-process-mapping-review`, `business-process-sop`, `business-procurement-optimization-review`, `business-product-management-review`, `business-project-management-operations-review`, `business-requirements-brief`, `business-revenue-operations-review`, `business-saas-metrics-review`, `business-sales-engineering-review`, `business-scrum-project-review`, `business-support-triage`, `business-team-communications-review`, `business-vendor-management-review` | 28 |
 | code | `code-ast-refactor-safety`, `code-claude-skills-engineering-role-review`, `code-dead-path-cleanup-review`, `code-dependency-cycle-review`, `code-python-debug`, `code-review-risk`, `code-simplify-refactor-plan`, `code-test-regression`, `codebase-explore-map` | 9 |
 | commerce | `commerce-channel-economics-review`, `commerce-commercial-forecast-review`, `commerce-commercial-operations-review`, `commerce-commercial-policy-review`, `commerce-deal-desk-review`, `commerce-icbu-listing`, `commerce-inquiry-reply`, `commerce-link-tracking-audit`, `commerce-partnerships-strategy-review`, `commerce-pricing-strategy-review`, `commerce-product-keyword-plan`, `commerce-rfp-response-review` | 12 |
-| compliance | `compliance-accessibility-policy`, `compliance-claude-skills-regulated-review`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-terms-review` | 6 |
+| compliance | `compliance-accessibility-policy`, `compliance-claude-skills-regulated-review`, `compliance-license-policy-gate`, `compliance-privacy-check`, `compliance-public-claim-risk-register`, `compliance-regulated-industry-boundary`, `compliance-terms-review` | 7 |
 | content | `content-brand-voice-boundary`, `content-claims-compliance-filter`, `content-claude-skills-growth-review`, `content-editorial-review`, `content-fact-contradiction-review`, `content-freshness-expiry-review`, `content-marketing-pricing-strategy-review`, `content-prompt-engineering-patterns`, `content-seo-brief`, `content-social-post`, `content-strategy-matrix` | 11 |
 | data | `data-haystack-rag-pipeline`, `data-marker-pdf-markdown-review`, `data-markitdown-file-to-markdown`, `data-qdrant-vector-retrieval`, `data-quality-audit`, `data-rag-namespace-boundary-check`, `data-schema-field-contract-check`, `data-table-analysis`, `data-table-calculation-verify`, `data-unstructured-document-partition`, `data-visualization-plan` | 11 |
 | design | `design-accessibility-check`, `design-motion-interaction-polish`, `design-premium-landing-page`, `design-responsive-viewport-check`, `design-system-consistency`, `design-tailwind-radix-system`, `design-ui-review`, `design-visual-quality-review` | 8 |
@@ -142,7 +147,7 @@ smart router mode: deterministic_mesh_router
 | office | `office-claude-skills-document-review`, `office-docx-brief`, `office-link-reference-integrity`, `office-markdown-structure-lint`, `office-pdf-report`, `office-spreadsheet-cleanup`, `office-table-source-reconciliation` | 7 |
 | research | `research-citation-evidence-map`, `research-claude-skills-evidence-review`, `research-clinical-study-design-review`, `research-competitor-brief`, `research-finance-analysis-review`, `research-market-analysis-review`, `research-operations-governance-review`, `research-paper-synthesis`, `research-product-analysis-review`, `research-source-check`, `research-source-lineage-trace` | 11 |
 | security | `security-command-risk-preflight`, `security-guardrails-output-validation`, `security-llm-guard-io-scanning`, `security-opensquilla-sandbox-policy`, `security-prompt-injection-review`, `security-secret-context-redaction`, `security-supply-chain-review`, `trivy-container-security-scan` | 8 |
-| vertical | `vertical-education-plan`, `vertical-learning-memory-refresh`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 4 |
+| vertical | `vertical-education-plan`, `vertical-industry-intake-orchestration`, `vertical-industry-solution-packaging`, `vertical-learning-memory-refresh`, `vertical-manufacturing-qc`, `vertical-real-estate-listing` | 6 |
 
 ## Current Skill List
 
@@ -228,6 +233,7 @@ smart router mode: deterministic_mesh_router
 | `compliance-license-policy-gate` | compliance | trusted |
 | `compliance-privacy-check` | compliance | trusted |
 | `compliance-public-claim-risk-register` | compliance | trusted |
+| `compliance-regulated-industry-boundary` | compliance | trusted |
 | `compliance-terms-review` | compliance | trusted |
 | `vibe-trading-research-assistant` | compliance | quarantined |
 | `content-brand-voice-boundary` | content | trusted |
@@ -306,6 +312,8 @@ smart router mode: deterministic_mesh_router
 | `security-supply-chain-review` | security | trusted |
 | `trivy-container-security-scan` | security | trusted |
 | `vertical-education-plan` | vertical | trusted |
+| `vertical-industry-intake-orchestration` | vertical | trusted |
+| `vertical-industry-solution-packaging` | vertical | trusted |
 | `vertical-learning-memory-refresh` | vertical | trusted |
 | `vertical-manufacturing-qc` | vertical | trusted |
 | `vertical-real-estate-listing` | vertical | trusted |
@@ -315,6 +323,6 @@ smart router mode: deterministic_mesh_router
 
 Recommended next waves:
 
-- `batch-030-domain-depth`: split cluster-covered claude-skills candidates into dedicated local skills only when repeated demand proves a cluster is too broad
+- `batch-031-domain-depth`: split cluster-covered claude-skills candidates into dedicated local skills only when repeated demand proves a cluster is too broad
 - `batch-022-connectors`: connector-aware skills after host adapter verification
 - `batch-023-bundle-tuning`: scenario bundle and overlap-group refinements after the converted catalog settles
