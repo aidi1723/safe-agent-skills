@@ -37,6 +37,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Router Eval Taxonomy Constraints](updates/2026-07-03-router-eval-taxonomy-constraints.md)
 - [Router Eval Prefix Constraints](updates/2026-07-03-router-eval-prefix-constraints.md)
 - [Router Eval Negative Constraints](updates/2026-07-03-router-eval-negative-constraints.md)
 - [Lightweight General Fallback](updates/2026-07-03-lightweight-general-fallback.md)

@@ -1747,11 +1747,15 @@ def run_router_eval(
         actual_scenario = task_pack.get("selected_scenario", {}).get("id", "")
         actual_task_type = task_pack.get("task_profile", {}).get("task_type", "")
         actual_skills = [skill["name"] for skill in task_pack.get("skills", [])]
+        actual_skill_subcategories = {
+            skill["name"]: skill.get("taxonomy", {}).get("subcategory", "") for skill in task_pack.get("skills", [])
+        }
         expected_scenario = case.get("expected_scenario")
         expected_task_type = case.get("expected_task_type")
         expected_skills = case.get("expected_skills", [])
         forbidden_skills = case.get("forbidden_skills", [])
         forbidden_skill_prefixes = case.get("forbidden_skill_prefixes", [])
+        forbidden_skill_subcategories = case.get("forbidden_skill_subcategories", [])
         max_skill_count = case.get("max_skill_count")
 
         if expected_scenario is not None and actual_scenario != expected_scenario:
@@ -1793,6 +1797,16 @@ def run_router_eval(
                         {
                             "id": "router-eval-forbidden-skill-prefix",
                             "prefix": prefix,
+                            "skill": skill_name,
+                        }
+                    )
+        for subcategory in forbidden_skill_subcategories:
+            for skill_name, actual_subcategory in actual_skill_subcategories.items():
+                if actual_subcategory == subcategory:
+                    case_issues.append(
+                        {
+                            "id": "router-eval-forbidden-skill-subcategory",
+                            "subcategory": subcategory,
                             "skill": skill_name,
                         }
                     )

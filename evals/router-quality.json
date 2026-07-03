@@ -444,6 +444,11 @@
         "execution-browser",
         "execution-playwright"
       ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
+      ],
       "max_skill_count": 3
     },
     {
@@ -459,6 +464,11 @@
       "forbidden_skill_prefixes": [
         "execution-browser",
         "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
       ],
       "max_skill_count": 3
     },
@@ -478,6 +488,11 @@
       "forbidden_skill_prefixes": [
         "execution-browser",
         "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
       ],
       "max_skill_count": 3
     }

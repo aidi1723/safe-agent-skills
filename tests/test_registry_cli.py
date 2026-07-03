@@ -1320,7 +1320,7 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["failed_count"], 1)
             self.assertEqual(result["cases"][0]["status"], "failed")
 
-    def test_router_eval_fails_forbidden_skills_prefixes_and_skill_count_limit(self):
+    def test_router_eval_fails_forbidden_skills_prefixes_subcategories_and_skill_count_limit(self):
         with tempfile.TemporaryDirectory() as tmp:
             eval_path = Path(tmp) / "router-eval.json"
             eval_path.write_text(
@@ -1337,6 +1337,7 @@ class RegistryCliTest(unittest.TestCase):
                                 "expected_task_type": "website_build",
                                 "forbidden_skills": ["execution-publish-check"],
                                 "forbidden_skill_prefixes": ["execution-browser"],
+                                "forbidden_skill_subcategories": ["execution.browser"],
                                 "max_skill_count": 1,
                             }
                         ],
@@ -1364,6 +1365,7 @@ class RegistryCliTest(unittest.TestCase):
             issue_ids = {issue["id"] for issue in result["cases"][0]["issues"]}
             self.assertIn("router-eval-forbidden-skill", issue_ids)
             self.assertIn("router-eval-forbidden-skill-prefix", issue_ids)
+            self.assertIn("router-eval-forbidden-skill-subcategory", issue_ids)
             self.assertIn("router-eval-max-skill-count-exceeded", issue_ids)
 
     def test_real_router_eval_file_covers_current_catalog_scenarios(self):

@@ -17,6 +17,24 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Router Eval Taxonomy Constraints
+
+Extended `router-eval` negative constraints with taxonomy-aware forbidden
+subcategory checks.
+
+Eval cases now support:
+
+- `forbidden_skill_subcategories`: selected skills whose taxonomy subcategory
+  should fail the eval case.
+
+Upgraded vague `general` fallback eval cases to forbid browser-related
+execution subcategories: `execution.browser`, `execution.browser_agent`, and
+`execution.browser_test`. Exact skill and prefix constraints remain available
+for targeted and family-level guards.
+
+Update note:
+[Router Eval Taxonomy Constraints](updates/2026-07-03-router-eval-taxonomy-constraints.md).
+
 ## 2026-07-03 Router Eval Prefix Constraints
 
 Extended `router-eval` negative constraints with prefix-based forbidden skill
