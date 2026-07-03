@@ -438,9 +438,11 @@
       "expected_task_type": "general",
       "expected_skills": [],
       "forbidden_skills": [
-        "execution-browser-use-web-task",
-        "execution-playwright-browser-automation",
         "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
       ],
       "max_skill_count": 3
     },
@@ -452,9 +454,11 @@
       "expected_task_type": "general",
       "expected_skills": [],
       "forbidden_skills": [
-        "execution-browser-use-web-task",
-        "execution-playwright-browser-automation",
         "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
       ],
       "max_skill_count": 3
     },
@@ -469,9 +473,11 @@
         "execution-rollback-checkpoint-plan"
       ],
       "forbidden_skills": [
-        "execution-browser-use-web-task",
-        "execution-playwright-browser-automation",
         "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
       ],
       "max_skill_count": 3
     }

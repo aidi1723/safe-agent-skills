@@ -17,6 +17,24 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Router Eval Prefix Constraints
+
+Extended `router-eval` negative constraints with prefix-based forbidden skill
+checks.
+
+Eval cases now support:
+
+- `forbidden_skill_prefixes`: skill-name prefixes that should fail the eval
+  case when any selected skill starts with one of them.
+
+Upgraded vague `general` fallback eval cases from enumerating specific browser
+skill names to forbidding the broader `execution-browser*` and
+`execution-playwright*` families. Exact `forbidden_skills` remains available
+for targeted exclusions such as `execution-publish-check`.
+
+Update note:
+[Router Eval Prefix Constraints](updates/2026-07-03-router-eval-prefix-constraints.md).
+
 ## 2026-07-03 Router Eval Negative Constraints
 
 Deepened `router-eval` so long-term quality cases can assert negative

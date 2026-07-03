@@ -1751,6 +1751,7 @@ def run_router_eval(
         expected_task_type = case.get("expected_task_type")
         expected_skills = case.get("expected_skills", [])
         forbidden_skills = case.get("forbidden_skills", [])
+        forbidden_skill_prefixes = case.get("forbidden_skill_prefixes", [])
         max_skill_count = case.get("max_skill_count")
 
         if expected_scenario is not None and actual_scenario != expected_scenario:
@@ -1785,6 +1786,16 @@ def run_router_eval(
                         "skill": skill_name,
                     }
                 )
+        for prefix in forbidden_skill_prefixes:
+            for skill_name in actual_skills:
+                if skill_name.startswith(prefix):
+                    case_issues.append(
+                        {
+                            "id": "router-eval-forbidden-skill-prefix",
+                            "prefix": prefix,
+                            "skill": skill_name,
+                        }
+                    )
         if isinstance(max_skill_count, int) and len(actual_skills) > max_skill_count:
             case_issues.append(
                 {
