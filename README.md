@@ -87,6 +87,9 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
+[Router Eval Quality Classification](docs/updates/2026-07-03-router-eval-quality-classification.md).
+
+Latest closure report:
 [Final Closure Report](docs/final-closure-report.md).
 
 GitHub update summary:
@@ -103,9 +106,6 @@ Earlier same-day update:
 
 Industry update:
 [Industry Application Orchestration](docs/updates/2026-07-03-industry-application-orchestration.md).
-
-Latest closure report:
-[Project Closure Report](docs/project-closure-report.md).
 
 Previous closure report:
 [Reference Pattern Expansion Closure Report](docs/reference-pattern-expansion-closure-report.md).

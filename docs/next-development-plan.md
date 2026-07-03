@@ -69,6 +69,12 @@ same no-execution intake boundary.
 Goal: make deterministic routing quality measurable rather than only
 behaviorally tested.
 
+Status note: the base router eval suite, deterministic quality summary,
+false-positive / false-negative issue classification, and low-confidence trend
+fields are complete as of 2026-07-03. Remaining work in this phase is broader
+case expansion and documentation consolidation around long-term quality
+baselines.
+
 Recommended work:
 
 - expand `evals/router-quality.json` with positive and negative cases

@@ -45,6 +45,9 @@ only. It does not change router selection behavior, catalog trust state,
 runtime permissions, external imports, network access, browser automation,
 connectors, credentials, production systems, or publication authority.
 
-Remaining router-quality work includes explicit false-positive /
-false-negative classification fields, low-confidence trend tracking, and
-broader documentation consolidation for historical baselines.
+Follow-up completed later the same day:
+[Router Eval Quality Classification](2026-07-03-router-eval-quality-classification.md)
+adds explicit false-positive / false-negative classification fields and
+low-confidence trend tracking. Remaining router-quality-adjacent work now sits
+in preconditions, exclusions, collision diagnostics, and broader documentation
+consolidation for historical baselines.

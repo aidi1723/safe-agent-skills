@@ -1849,11 +1849,54 @@ def router_eval_empty_bucket() -> dict:
     return {"case_count": 0, "passed_count": 0, "failed_count": 0}
 
 
+def classify_router_eval_issue(issue: dict, result_context: dict | None = None) -> str:
+    issue_id = router_eval_summary_key(issue.get("id"), "unknown-issue")
+    context = result_context or {}
+    if issue_id == "router-eval-scenario-mismatch":
+        expected = issue.get("expected", context.get("expected_scenario"))
+        actual = issue.get("actual", context.get("actual_scenario"))
+        if not expected and actual:
+            return "false_positive"
+        if expected and not actual:
+            return "false_negative"
+        return "route_mismatch"
+    if issue_id == "router-eval-missing-skill":
+        return "false_negative"
+    if issue_id in {
+        "router-eval-forbidden-skill",
+        "router-eval-forbidden-skill-prefix",
+        "router-eval-forbidden-skill-subcategory",
+        "router-eval-max-skill-count-exceeded",
+    }:
+        return "false_positive"
+    if issue_id == "router-eval-task-type-mismatch":
+        return "task_type_mismatch"
+    if issue_id in {
+        "router-eval-count-mismatch",
+        "router-eval-invalid-case-field",
+        "router-eval-invalid-router",
+        "router-eval-missing-task",
+    }:
+        return "eval_contract"
+    return "unclassified"
+
+
+def annotate_router_eval_issues(issues: list[dict], result_context: dict | None = None) -> list[dict]:
+    annotated = []
+    for issue in issues:
+        item = dict(issue)
+        item["classification"] = classify_router_eval_issue(item, result_context)
+        annotated.append(item)
+    return annotated
+
+
 def build_router_eval_quality_summary(results: list[dict], top_level_issues: list[dict] | None = None) -> dict:
     by_expected_scenario: dict[str, dict] = {}
     by_actual_scenario: dict[str, dict] = {}
     by_expected_task_type: dict[str, dict] = {}
+    by_confidence: dict[str, dict] = {}
     by_issue: dict[str, int] = {}
+    by_issue_class: dict[str, int] = {}
 
     def bump_bucket(target: dict[str, dict], key: str, status: str) -> None:
         bucket = target.setdefault(key, router_eval_empty_bucket())
@@ -1866,6 +1909,8 @@ def build_router_eval_quality_summary(results: list[dict], top_level_issues: lis
     def bump_issue(issue: dict) -> None:
         issue_id = router_eval_summary_key(issue.get("id"), "unknown-issue")
         by_issue[issue_id] = by_issue.get(issue_id, 0) + 1
+        issue_class = router_eval_summary_key(issue.get("classification"), "unclassified")
+        by_issue_class[issue_class] = by_issue_class.get(issue_class, 0) + 1
 
     for result in results:
         status = result.get("status", "failed")
@@ -1884,20 +1929,32 @@ def build_router_eval_quality_summary(results: list[dict], top_level_issues: lis
             router_eval_summary_key(result.get("expected_task_type"), "(unspecified)"),
             status,
         )
+        bump_bucket(
+            by_confidence,
+            router_eval_summary_key(result.get("actual_confidence"), "(unknown)"),
+            status,
+        )
         for issue in result.get("issues", []):
             bump_issue(issue)
-    for issue in top_level_issues or []:
+    for issue in annotate_router_eval_issues(top_level_issues or []):
         bump_issue(issue)
 
     failed_count = sum(1 for item in results if item.get("status") != "ok")
+    low_confidence_results = [item for item in results if item.get("actual_low_confidence") is True]
+    low_confidence_failed_count = sum(1 for item in low_confidence_results if item.get("status") != "ok")
     return {
         "case_count": len(results),
         "passed_count": len(results) - failed_count,
         "failed_count": failed_count,
+        "low_confidence_case_count": len(low_confidence_results),
+        "low_confidence_passed_count": len(low_confidence_results) - low_confidence_failed_count,
+        "low_confidence_failed_count": low_confidence_failed_count,
         "by_expected_scenario": dict(sorted(by_expected_scenario.items())),
         "by_actual_scenario": dict(sorted(by_actual_scenario.items())),
         "by_expected_task_type": dict(sorted(by_expected_task_type.items())),
+        "by_confidence": dict(sorted(by_confidence.items())),
         "by_issue": dict(sorted(by_issue.items())),
+        "by_issue_class": dict(sorted(by_issue_class.items())),
     }
 
 
@@ -1933,7 +1990,15 @@ def run_router_eval(
             case_issues.append({"id": "router-eval-invalid-router", "router": router_mode})
         case_issues.extend(validate_router_eval_case(case))
         if case_issues:
-            results.append({"id": case_id, "status": "failed", "issues": case_issues})
+            results.append(
+                {
+                    "id": case_id,
+                    "status": "failed",
+                    "actual_confidence": "",
+                    "actual_low_confidence": False,
+                    "issues": annotate_router_eval_issues(case_issues),
+                }
+            )
             continue
 
         task_pack = build_task_pack(
@@ -1951,6 +2016,9 @@ def run_router_eval(
         )
         actual_scenario = task_pack.get("selected_scenario", {}).get("id", "")
         actual_task_type = task_pack.get("task_profile", {}).get("task_type", "")
+        actual_selection_quality = task_pack.get("selection_quality", {})
+        actual_confidence = actual_selection_quality.get("confidence", "")
+        actual_low_confidence = actual_selection_quality.get("low_confidence") is True
         actual_skills = [skill["name"] for skill in task_pack.get("skills", [])]
         actual_skill_subcategories = {
             skill["name"]: skill.get("taxonomy", {}).get("subcategory", "") for skill in task_pack.get("skills", [])
@@ -2024,6 +2092,12 @@ def run_router_eval(
                 }
             )
 
+        result_context = {
+            "expected_scenario": expected_scenario,
+            "actual_scenario": actual_scenario,
+            "expected_task_type": expected_task_type,
+            "actual_task_type": actual_task_type,
+        }
         results.append(
             {
                 "id": case_id,
@@ -2034,9 +2108,11 @@ def run_router_eval(
                 "actual_scenario": actual_scenario,
                 "expected_task_type": expected_task_type,
                 "actual_task_type": actual_task_type,
+                "actual_confidence": actual_confidence,
+                "actual_low_confidence": actual_low_confidence,
                 "max_skill_count": max_skill_count,
                 "actual_skills": actual_skills,
-                "issues": case_issues,
+                "issues": annotate_router_eval_issues(case_issues, result_context),
             }
         )
 

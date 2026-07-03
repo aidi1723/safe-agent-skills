@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md)
 - [GitHub Update Summary](github-update-summary-2026-07-03.md)
 - [Final Closure Report](final-closure-report.md)
 - [Source Import Capture Gate](updates/2026-07-03-source-import-capture-gate.md)

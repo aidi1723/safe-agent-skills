@@ -69,16 +69,15 @@ license snapshots, and capture metadata directly.
 Until that command exists, `source.usage = source_import` remains tightly
 restricted and schema-checked.
 
-### P2: Router Quality Is Stronger, But Metrics Are Still Mostly Case-Based
+### P2: Router Quality Metrics Now Include Classification
 
 The original roadmap asked for router quality metrics. The project now has
 39 fixed router-eval cases plus negative, prefix, taxonomy, and schema
-constraints. That closes much of the immediate behavioral gap.
+constraints. Same-day follow-up added explicit false-positive /
+false-negative classification fields and low-confidence route trend tracking.
 
 What remains:
 
-- explicit false-positive / false-negative classification fields
-- low-confidence trend tracking for vague maintenance tasks
 - stale-baseline warnings for historical docs that are easy to misread as
   current status
 
@@ -137,9 +136,9 @@ follow-up note, and treat old closure baselines as dated evidence.
 
 1. Start scanner engine Phase 1 with a small failing-test slice for shell
    tokenization and command substitution.
-2. Continue router quality metrics after the compact summary output with
-   false-positive / false-negative classification and low-confidence trend
-   tracking.
+2. Router false-positive / false-negative classification and low-confidence
+   trend tracking are completed in
+   [Router Eval Quality Classification](2026-07-03-router-eval-quality-classification.md).
 3. Add networked source-import automation only after preserving the current
    capture-metadata schema gate.
 4. Add skill precondition/exclusion metadata after router quality summaries

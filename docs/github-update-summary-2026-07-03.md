@@ -31,7 +31,9 @@ delivery documentation, and release verification.
   - forbidden prefix checks;
   - forbidden taxonomy subcategory checks;
   - case-field schema validation;
-  - deterministic `quality_summary` output.
+  - deterministic `quality_summary` output;
+  - false-positive / false-negative issue classification;
+  - low-confidence route trend counters.
 - Added a source-import capture schema gate:
   `source.usage = source_import` now requires auditable `source.capture`
   metadata.
@@ -43,9 +45,11 @@ delivery documentation, and release verification.
 Final verification was run before this update was published:
 
 ```text
-bash scripts/verify.sh: 144 tests OK
+bash scripts/verify.sh: 145 tests OK
 schema-check --registry catalog: OK, 172 manifests
 router-eval: 39 / 39 cases OK
+router-eval confidence summary: 36 high-confidence passed, 3 low-confidence passed, 0 low-confidence failed
+router-eval issue classifications: no current by_issue_class entries
 maintain-check: OK
 verify --registry catalog: 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 git diff --check: OK
@@ -58,6 +62,5 @@ skills. External references remain metadata-only unless converted through the
 local authoring, schema-check, verification, and approval path.
 
 Remaining work is non-blocking follow-up: networked source-import automation,
-router false-positive / false-negative classification, low-confidence trend
-tracking, skill preconditions/exclusions/collision diagnostics, host semantic
-gateway integration, and documentation consolidation.
+skill preconditions/exclusions/collision diagnostics, host semantic gateway
+integration, and documentation consolidation.

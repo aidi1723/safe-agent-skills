@@ -23,9 +23,12 @@ Ran the final closure verification matrix and recorded the handoff report.
 
 Final closure evidence:
 
-- `bash scripts/verify.sh`: 144 tests OK.
+- `bash scripts/verify.sh`: 145 tests OK.
 - `schema-check --registry catalog`: OK, 172 manifests.
 - `router-eval`: 39 / 39 cases OK, no issues in `quality_summary.by_issue`.
+- latest router-eval quality classification: 36 high-confidence cases passed,
+  3 low-confidence cases passed, 0 low-confidence failures, and no
+  `by_issue_class` entries in the real catalog eval.
 - `maintain-check`: OK with 23 trusted bundles, 19 references, and 336 / 336
   claude-skills candidates covered.
 - `verify --registry catalog`: 172 skills, 166 trusted, 0 tampered, 0 unknown
@@ -37,6 +40,38 @@ Update note:
 
 GitHub-facing update summary:
 [GitHub Update Summary](github-update-summary-2026-07-03.md).
+
+## 2026-07-03 Router Eval Quality Classification
+
+Extended `router-eval` quality reporting with explicit issue classification
+and low-confidence route trend fields.
+
+Case-level issues now include a deterministic `classification` field. The
+quality summary now includes:
+
+- `by_issue_class`
+- `by_confidence`
+- `low_confidence_case_count`
+- `low_confidence_passed_count`
+- `low_confidence_failed_count`
+
+This closes the follow-up item for false-positive / false-negative
+classification and low-confidence trend tracking while keeping router
+selection behavior unchanged.
+
+Real catalog baseline after the update:
+
+```text
+router-eval: 39 / 39 cases OK
+by_confidence.high: 36 passed, 0 failed
+by_confidence.low: 3 passed, 0 failed
+low_confidence_case_count: 3
+low_confidence_failed_count: 0
+by_issue_class: {}
+```
+
+Update note:
+[Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md).
 
 ## 2026-07-03 Source Import Capture Gate
 
@@ -69,10 +104,10 @@ Added deterministic aggregate metrics to `router-eval` output.
 - expected task type;
 - structured issue id.
 
-This closes the compact quality-summary slice from the project-wide review
-follow-up while keeping the next router-quality tasks separate:
-false-positive / false-negative classification fields, low-confidence trend
-tracking, and broader docs consolidation.
+This closed the compact quality-summary slice from the project-wide review
+follow-up. False-positive / false-negative classification and low-confidence
+trend tracking were completed later in
+[Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md).
 
 Boundary: this is reporting-only. It does not change router selection
 behavior, trusted skill state, runtime permissions, external imports, or
@@ -160,7 +195,6 @@ Remaining next-phase optimization tracks:
 - scanner engine hardening with tokenized command extraction and bypass
   fixtures;
 - networked source-import automation after the schema capture gate;
-- router false-positive / false-negative classification and trend tracking;
 - skill precondition, exclusion, and collision diagnostics;
 - semantic gateway and context-record host integration, kept separate from
   trusted skill content;

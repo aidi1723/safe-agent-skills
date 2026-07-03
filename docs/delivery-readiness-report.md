@@ -43,7 +43,7 @@ trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
 router eval cases: 39
-full verification tests: 144
+full verification tests: 145
 ```
 
 ## Non-Blocking Follow-Up Work
@@ -52,11 +52,14 @@ These items are useful future work, but they are not required for the current
 local-catalog delivery boundary:
 
 - networked `source-import` command that captures upstream content directly;
-- router false-positive / false-negative classification fields;
-- low-confidence routing trend tracking;
 - first-class skill `preconditions`, `excludes`, and collision diagnostics;
 - host semantic gateway and compact context-record integration;
 - documentation consolidation to reduce historical baseline duplication.
+
+Same-day follow-up status: router false-positive / false-negative
+classification fields and low-confidence routing trend tracking are now
+covered by
+[Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md).
 
 ## Delivery Boundary
 

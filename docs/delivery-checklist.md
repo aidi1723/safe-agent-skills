@@ -69,7 +69,7 @@ The local MVP is complete when the project can:
 - external references: 19
 - registry verification: ok
 - router eval cases: 39
-- full verification tests: 144
+- full verification tests: 145
 
 Latest delivery readiness:
 

@@ -64,7 +64,7 @@ trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
 router eval cases: 39
-full verification tests: 144
+full verification tests: 145
 ```
 
 ## Delivery Boundary
@@ -81,11 +81,13 @@ These items are intentionally left as future enhancements, not blockers for
 this delivery:
 
 - networked `source-import` command that captures upstream content directly;
-- router false-positive / false-negative classification fields;
-- low-confidence routing trend tracking;
 - first-class skill `preconditions`, `excludes`, and collision diagnostics;
 - host semantic gateway and compact context-record integration;
 - documentation consolidation to reduce historical baseline duplication.
+
+Same-day follow-up status: router false-positive / false-negative
+classification fields and low-confidence routing trend tracking were added in
+[Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md).
 
 ## Release Record
 

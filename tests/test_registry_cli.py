@@ -1387,6 +1387,73 @@ class RegistryCliTest(unittest.TestCase):
             )
             self.assertEqual(summary["by_issue"], {"router-eval-scenario-mismatch": 1})
 
+    def test_router_eval_reports_issue_classification_and_low_confidence_trend(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 3,
+                        "cases": [
+                            {
+                                "id": "scenario-false-positive",
+                                "task": "build a product website and prepare launch checks",
+                                "router": "scenario",
+                                "expected_scenario": "",
+                                "expected_task_type": "website_build",
+                            },
+                            {
+                                "id": "scenario-false-negative",
+                                "task": "帮我看一下这个事情是否合理",
+                                "router": "scenario",
+                                "expected_scenario": "website-build-launch",
+                                "expected_task_type": "general",
+                            },
+                            {
+                                "id": "low-confidence-general-ok",
+                                "task": "帮我看一下这个事情是否合理",
+                                "router": "scenario",
+                                "expected_scenario": "",
+                                "expected_task_type": "general",
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 2)
+            result = json.loads(eval_out.getvalue())
+            summary = result["quality_summary"]
+            self.assertEqual(summary["low_confidence_case_count"], 2)
+            self.assertEqual(summary["low_confidence_passed_count"], 1)
+            self.assertEqual(summary["low_confidence_failed_count"], 1)
+            self.assertEqual(
+                summary["by_confidence"]["low"],
+                {"case_count": 2, "passed_count": 1, "failed_count": 1},
+            )
+            self.assertEqual(summary["by_issue_class"], {"false_negative": 1, "false_positive": 1})
+            self.assertEqual(result["cases"][0]["issues"][0]["classification"], "false_positive")
+            self.assertEqual(result["cases"][1]["issues"][0]["classification"], "false_negative")
+            self.assertFalse(result["cases"][0]["actual_low_confidence"])
+            self.assertTrue(result["cases"][2]["actual_low_confidence"])
+            self.assertEqual(result["cases"][2]["actual_confidence"], "low")
+
     def test_router_eval_fails_forbidden_skills_prefixes_subcategories_and_skill_count_limit(self):
         with tempfile.TemporaryDirectory() as tmp:
             eval_path = Path(tmp) / "router-eval.json"
