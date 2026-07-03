@@ -13,9 +13,30 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 34
+router eval cases: 35
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-03 Project Release Follow-Up Routing
+
+Added a regression fix for mixed Chinese/English project follow-up requests
+such as writing changelogs, GitHub update notes, verification notes, and
+publication handoff. These tasks now route to `skill-router-quality-review`
+instead of being pulled into `website-build-launch` by broad publish signals.
+
+Updated the `skill-router-quality-review` bundle so release-follow-up routing
+can include the optional `publish_check` capability and
+`execution-publish-check` verifier guidance when the task mentions changelogs,
+GitHub update notes, publication, or project closure.
+
+Added focused unit, real-world regression, and router-eval coverage for:
+
+```text
+继续项目复查收尾，写好更新日志和 GitHub 更新说明，验证后发布
+```
+
+Update note:
+[Project Release Follow-Up Routing](updates/2026-07-03-project-release-follow-up-routing.md).
 
 ## 2026-07-03 Project Check Follow-Up
 
@@ -102,7 +123,7 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 34
+router eval cases: 35
 verification command: bash scripts/verify.sh
 ```
 
@@ -124,8 +145,8 @@ Expected current results:
 ```text
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
-router-eval: ok, 34 / 34 cases
-full script: 129 tests OK
+router-eval: ok, 35 / 35 cases
+full script: 130 tests OK
 ```
 
 ## Routine Maintenance Checklist

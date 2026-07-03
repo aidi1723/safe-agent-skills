@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 34,
+  "case_count": 35,
   "cases": [
     {
       "id": "website-launch",
@@ -273,6 +273,19 @@
       "expected_skills": [
         "ai-opensquilla-metaskill-workflow",
         "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-project-release-followup",
+      "task": "继续项目复查收尾，写好更新日志和 GitHub 更新说明，验证后发布",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "execution-publish-check",
         "code-test-regression"
       ]
     },

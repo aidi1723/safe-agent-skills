@@ -887,6 +887,7 @@
         {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
         {"id": "failure_synthesis", "required": false, "preferred_skills": ["ai-rule-failure-log-synthesis"]},
         {"id": "ci_check", "required": false, "preferred_skills": ["engineering-ci-troubleshoot"]},
+        {"id": "publish_check", "required": false, "preferred_skills": ["execution-publish-check"]},
         {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]}
       ],
       "execution_order": [
@@ -898,6 +899,7 @@
         "ai-rule-failure-log-synthesis",
         "code-test-regression",
         "engineering-ci-troubleshoot",
+        "execution-publish-check",
         "security-supply-chain-review"
       ],
       "skills": [
@@ -909,6 +911,7 @@
         "ai-rule-failure-log-synthesis",
         "code-test-regression",
         "engineering-ci-troubleshoot",
+        "execution-publish-check",
         "security-supply-chain-review"
       ],
       "expected_output": [

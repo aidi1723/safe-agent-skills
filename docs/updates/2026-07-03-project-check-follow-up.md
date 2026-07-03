@@ -37,11 +37,17 @@ trusted scenario bundles: 23
 external references: 19
 trusted overlap groups: 7
 claude-skills candidate coverage: 336 / 336
-router eval cases: 34
+router eval cases: 35
 tampered skills: 0
 unknown provenance records: 0
-full script: 129 tests OK
+full script: 130 tests OK
 ```
+
+Same-day routing follow-up: project closure/release-note requests that mention
+changelogs, GitHub update notes, verification, or publication now route to
+`skill-router-quality-review` and can include optional
+`execution-publish-check` guidance without being misclassified as website
+launch work.
 
 ## Boundary
 

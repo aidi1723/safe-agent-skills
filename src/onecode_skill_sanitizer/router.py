@@ -500,6 +500,14 @@ SCENARIO_PROFILES = [
             "sikll",
             "skill库",
             "审计报告",
+            "项目复查",
+            "项目收尾",
+            "复查收尾",
+            "收尾报告",
+            "更新日志",
+            "更新说明",
+            "github 更新说明",
+            "验证后发布",
             "更智能的解决方法",
             "智能解决方法",
             "智能选择",
@@ -662,13 +670,29 @@ def build_task_profile(task: str) -> dict:
             "required_capabilities": [],
             "signals": [],
         }
+    required_capabilities = list(best["required_capabilities"])
+    if best["task_type"] == "skill_router_review" and any(
+        signal in text
+        for signal in [
+            "github",
+            "release notes",
+            "changelog",
+            "publish",
+            "更新日志",
+            "更新说明",
+            "发布",
+            "收尾",
+        ]
+    ):
+        if "publish_check" not in required_capabilities:
+            required_capabilities.append("publish_check")
     return {
         "task_type": best["task_type"],
         "primary_domain": best["primary_domain"],
         "secondary_domains": list(best["secondary_domains"]),
         "artifact_types": list(best["artifact_types"]),
         "risk_flags": list(best["risk_flags"]),
-        "required_capabilities": list(best["required_capabilities"]),
+        "required_capabilities": required_capabilities,
         "matched_signal_score": score,
     }
 
@@ -1227,7 +1251,7 @@ SCENARIO_STAGE_SKILLS = {
         "preflight": ["ai-opensquilla-metaskill-workflow"],
         "planning": ["ai-opensquilla-token-routing-pattern", "ai-langchain-agent-orchestration"],
         "review": ["ai-tool-schema-protocol-check", "ai-pydantic-schema-contract", "ai-output-schema-eval"],
-        "verification": ["code-test-regression", "engineering-ci-troubleshoot"],
+        "verification": ["code-test-regression", "engineering-ci-troubleshoot", "execution-publish-check"],
         "handoff": ["ai-rule-failure-log-synthesis", "security-supply-chain-review"],
     },
 }

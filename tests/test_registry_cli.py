@@ -3020,6 +3020,10 @@ class RegistryCliTest(unittest.TestCase):
                 "skill-router-quality-review",
             ),
             (
+                "继续项目复查收尾，写好更新日志和 GitHub 更新说明，验证后发布",
+                "skill-router-quality-review",
+            ),
+            (
                 "build a product website and prepare launch checks",
                 "website-build-launch",
             ),

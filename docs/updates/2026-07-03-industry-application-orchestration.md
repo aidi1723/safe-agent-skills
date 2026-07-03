@@ -26,7 +26,7 @@ industry users without requiring separate manual skill installation.
 catalog skills: 172
 trusted skills: 166
 trusted scenario bundles: 23
-router eval cases: 34
+router eval cases: 35
 external references: 19
 ```
 
