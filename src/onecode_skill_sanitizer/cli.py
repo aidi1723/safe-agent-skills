@@ -587,11 +587,14 @@ def build_agent_instructions(
                 f"- status: {diagnostics.get('status', 'unknown')}",
                 f"- graph mode: {diagnostics.get('graph_mode', 'unknown')}",
                 f"- missing preconditions: {diagnostics.get('missing_precondition_count', 0)}",
+                f"- missing ordering: {diagnostics.get('missing_ordering_count', 0)}",
                 f"- collisions: {diagnostics.get('collision_count', 0)}",
             ]
         )
         for item in diagnostics.get("missing_preconditions", []):
             lines.append(f"- missing: {item.get('skill', '')} requires {item.get('artifact', '')}")
+        for item in diagnostics.get("missing_ordering", []):
+            lines.append(f"- ordering: {item.get('skill', '')} requires after {item.get('requires_after', '')}")
         for item in diagnostics.get("collisions", []):
             lines.append(f"- collision: {item.get('skill', '')} conflicts with {item.get('conflicts_with', '')}")
         lines.append("")
@@ -985,11 +988,14 @@ def render_task_pack_markdown(task_pack: dict) -> str:
                 f"- status: `{diagnostics.get('status', 'unknown')}`",
                 f"- graph mode: `{diagnostics.get('graph_mode', 'unknown')}`",
                 f"- missing preconditions: `{diagnostics.get('missing_precondition_count', 0)}`",
+                f"- missing ordering: `{diagnostics.get('missing_ordering_count', 0)}`",
                 f"- collisions: `{diagnostics.get('collision_count', 0)}`",
             ]
         )
         for item in diagnostics.get("missing_preconditions", []):
             lines.append(f"- missing: `{item.get('skill', '')}` requires `{item.get('artifact', '')}`")
+        for item in diagnostics.get("missing_ordering", []):
+            lines.append(f"- ordering: `{item.get('skill', '')}` requires after `{item.get('requires_after', '')}`")
         for item in diagnostics.get("collisions", []):
             lines.append(f"- collision: `{item.get('skill', '')}` conflicts with `{item.get('conflicts_with', '')}`")
     if task_pack.get("acceptance_criteria"):
@@ -1426,6 +1432,7 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
         "stage_hint",
         "conflicts_with",
         "excludes",
+        "requires_after",
         "cost_weight",
     }
     for field in contract:
@@ -1453,6 +1460,9 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
     excludes = validate_string_list(contract.get("excludes"), path, issues, "excludes", "schema-invalid-contract-conflict")
     if payload.get("name") in excludes:
         add_issue(issues, "schema-invalid-contract-conflict", path, "contract.excludes cannot include the skill itself")
+    requires_after = validate_string_list(contract.get("requires_after"), path, issues, "requires_after", "schema-invalid-contract-conflict")
+    if payload.get("name") in requires_after:
+        add_issue(issues, "schema-invalid-contract-conflict", path, "contract.requires_after cannot include the skill itself")
     cost_weight = contract.get("cost_weight")
     if cost_weight is not None and (not isinstance(cost_weight, int) or cost_weight < 1 or cost_weight > 10):
         add_issue(issues, "schema-invalid-contract-cost", path, "contract.cost_weight must be an integer from 1 to 10")

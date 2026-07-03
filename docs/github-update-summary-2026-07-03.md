@@ -39,6 +39,10 @@ delivery documentation, and release verification.
   - exclusions from `contract.excludes`;
   - conflicts from `contract.conflicts_with`;
   - contract graph fallback or cycle issues.
+- Added explicit contract ordering metadata:
+  - `contract.requires_after`;
+  - `contract_requires_after` graph edges;
+  - `missing_ordering_count` and `missing_ordering` diagnostics.
 - Added a source-import capture schema gate:
   `source.usage = source_import` now requires auditable `source.capture`
   metadata.
@@ -50,7 +54,7 @@ delivery documentation, and release verification.
 Final verification was run before this update was published:
 
 ```text
-bash scripts/verify.sh: 146 tests OK
+bash scripts/verify.sh: 148 tests OK
 schema-check --registry catalog: OK, 172 manifests
 router-eval: 39 / 39 cases OK
 router-eval confidence summary: 36 high-confidence passed, 3 low-confidence passed, 0 low-confidence failed

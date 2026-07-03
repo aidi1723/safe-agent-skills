@@ -159,17 +159,18 @@ Current coverage:
 
 ### Phase 2: Skill Preconditions and Exclusions
 
-Status: partially completed on 2026-07-04 through routed
-`contract_diagnostics`.
+Status: completed for local routing metadata on 2026-07-04 through routed
+`contract_diagnostics` and `contract.requires_after` ordering.
 
 Completed diagnostic inputs:
 
 - `contract.requires_context`
 - `contract.excludes`
 - `contract.conflicts_with`
+- `contract.requires_after`
 - contract graph fallback or cycle issues
 
-Future deeper ordering metadata may still add:
+Completed ordering metadata:
 
 ```json
 {
@@ -177,11 +178,11 @@ Future deeper ordering metadata may still add:
 }
 ```
 
-Remaining acceptance criteria:
+Completed acceptance criteria:
 
 - explicit ordering metadata is modeled separately from artifact dependencies
 - selected packs are acyclic
-- incompatible skills are pruned or reported before host execution
+- incompatible skills are reported before host execution
 
 ### Phase 3: Semantic Gateway Assertions
 

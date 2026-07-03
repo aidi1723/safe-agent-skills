@@ -1561,8 +1561,6 @@ def build_contract_edges(skills: list[dict], node_ids: dict[str, str]) -> list[d
     for source in skills:
         source_contract = skill_contract(source)
         produced = contract_artifacts(source_contract)
-        if not produced:
-            continue
         for target in skills:
             if source["name"] == target["name"]:
                 continue
@@ -1580,6 +1578,16 @@ def build_contract_edges(skills: list[dict], node_ids: dict[str, str]) -> list[d
                         "to": node_ids[target["name"]],
                         "type": "contract_dependency",
                         "artifacts": artifacts,
+                    }
+                )
+            requires_after = contract_requires_after(target_contract)
+            if source["name"] in requires_after:
+                edges.append(
+                    {
+                        "from": node_ids[source["name"]],
+                        "to": node_ids[target["name"]],
+                        "type": "contract_requires_after",
+                        "skills": [source["name"]],
                     }
                 )
     return edges
@@ -1688,6 +1696,13 @@ def contract_required_context(contract: dict) -> set[str]:
     return {value for value in values if isinstance(value, str) and value}
 
 
+def contract_requires_after(contract: dict) -> set[str]:
+    values = contract.get("requires_after", [])
+    if not isinstance(values, list):
+        return set()
+    return {value for value in values if isinstance(value, str) and value}
+
+
 def build_contract_diagnostics(skills: list[dict], graph: dict | None = None) -> dict:
     selected_names = {skill["name"] for skill in skills}
     produced_by: dict[str, list[str]] = {}
@@ -1696,6 +1711,7 @@ def build_contract_diagnostics(skills: list[dict], graph: dict | None = None) ->
             produced_by.setdefault(artifact, []).append(skill["name"])
 
     missing_preconditions = []
+    missing_ordering = []
     collisions = []
     seen_collisions: set[tuple[str, str]] = set()
     for skill in skills:
@@ -1708,6 +1724,16 @@ def build_contract_diagnostics(skills: list[dict], graph: dict | None = None) ->
                     "skill": skill["name"],
                     "artifact": artifact,
                     "source": "contract.requires_context",
+                }
+            )
+        for predecessor in sorted(contract_requires_after(contract)):
+            if predecessor in selected_names:
+                continue
+            missing_ordering.append(
+                {
+                    "skill": skill["name"],
+                    "requires_after": predecessor,
+                    "source": "contract.requires_after",
                 }
             )
         for field in ["conflicts_with", "excludes"]:
@@ -1746,7 +1772,7 @@ def build_contract_diagnostics(skills: list[dict], graph: dict | None = None) ->
             }
         )
 
-    status = "warning" if missing_preconditions or collisions or graph_issues else "ok"
+    status = "warning" if missing_preconditions or missing_ordering or collisions or graph_issues else "ok"
     return {
         "schema_version": 1,
         "status": status,
@@ -1754,6 +1780,8 @@ def build_contract_diagnostics(skills: list[dict], graph: dict | None = None) ->
         "fallback_reason": graph.get("fallback_reason", ""),
         "missing_precondition_count": len(missing_preconditions),
         "missing_preconditions": missing_preconditions,
+        "missing_ordering_count": len(missing_ordering),
+        "missing_ordering": missing_ordering,
         "collision_count": len(collisions),
         "collisions": collisions,
         "graph_issue_count": len(graph_issues),

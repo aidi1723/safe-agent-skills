@@ -17,6 +17,24 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-04 Requires After Contract Ordering
+
+Added explicit `contract.requires_after` ordering metadata to schema
+validation, contract graph construction, and routed task-pack diagnostics.
+
+Routed outputs now include missing ordering diagnostics with:
+
+- `missing_ordering_count`;
+- `missing_ordering`;
+- source records pointing to `contract.requires_after`.
+
+Selected `requires_after` predecessors now become `contract_requires_after`
+graph edges, so contract topology can order skills even when no artifact
+dependency exists between them.
+
+Update note:
+[Requires After Contract Ordering](updates/2026-07-04-requires-after-contract-ordering.md).
+
 ## 2026-07-04 Contract Diagnostics
 
 Added first-class contract diagnostics to scenario and mesh routed task packs.
@@ -41,7 +59,7 @@ Ran the final closure verification matrix and recorded the handoff report.
 
 Final closure evidence:
 
-- `bash scripts/verify.sh`: 146 tests OK.
+- `bash scripts/verify.sh`: 148 tests OK.
 - `schema-check --registry catalog`: OK, 172 manifests.
 - `router-eval`: 39 / 39 cases OK, no issues in `quality_summary.by_issue`.
 - latest router-eval quality classification: 36 high-confidence cases passed,
@@ -531,7 +549,7 @@ Expected current results:
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
 router-eval: ok, 39 / 39 cases
-full script: 146 tests OK
+full script: 148 tests OK
 ```
 
 ## Routine Maintenance Checklist

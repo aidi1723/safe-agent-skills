@@ -1173,6 +1173,43 @@ class RouterTest(unittest.TestCase):
         self.assertEqual(nodes_by_skill["content-seo-brief"]["topology_layer"], 1)
         self.assertIn("layer_1", graph["parallel_groups"])
 
+    def test_build_contract_graph_uses_requires_after_ordering_edges(self):
+        graph = build_contract_graph(
+            [
+                {
+                    "name": "business-requirements-brief",
+                    "contract": {
+                        "produces_artifacts": ["requirements_brief"],
+                        "requires_context": ["task_brief"],
+                    },
+                },
+                {
+                    "name": "design-ui-review",
+                    "contract": {
+                        "produces_evidence": ["ui_review_report"],
+                        "requires_after": ["business-requirements-brief"],
+                    },
+                },
+            ]
+        )
+
+        nodes_by_skill = {node["skill"]: node for node in graph["nodes"]}
+        self.assertEqual(graph["mode"], "contract")
+        self.assertTrue(graph["acyclic"])
+        self.assertIn(
+            {
+                "from": nodes_by_skill["business-requirements-brief"]["id"],
+                "to": nodes_by_skill["design-ui-review"]["id"],
+                "type": "contract_requires_after",
+                "skills": ["business-requirements-brief"],
+            },
+            graph["edges"],
+        )
+        self.assertLess(
+            nodes_by_skill["business-requirements-brief"]["topology_layer"],
+            nodes_by_skill["design-ui-review"]["topology_layer"],
+        )
+
     def test_build_contract_graph_falls_back_when_contracts_are_missing(self):
         graph = build_contract_graph(
             [
@@ -1190,6 +1227,32 @@ class RouterTest(unittest.TestCase):
 
         self.assertEqual(graph["mode"], "stage_fallback")
         self.assertEqual(graph["fallback_reason"], "missing_contract")
+
+    def test_build_contract_diagnostics_reports_missing_requires_after(self):
+        skills = [
+            {
+                "name": "design-ui-review",
+                "contract": {
+                    "produces_evidence": ["ui_review_report"],
+                    "requires_after": ["business-requirements-brief"],
+                },
+            }
+        ]
+
+        diagnostics = build_contract_diagnostics(skills, build_contract_graph(skills))
+
+        self.assertEqual(diagnostics["status"], "warning")
+        self.assertEqual(diagnostics["missing_ordering_count"], 1)
+        self.assertEqual(
+            diagnostics["missing_ordering"],
+            [
+                {
+                    "skill": "design-ui-review",
+                    "requires_after": "business-requirements-brief",
+                    "source": "contract.requires_after",
+                }
+            ],
+        )
 
     def test_build_contract_diagnostics_reports_missing_preconditions_and_collisions(self):
         skills = [

@@ -2612,6 +2612,7 @@ class RegistryCliTest(unittest.TestCase):
                 "produces_evidence": ["ui_review_report"],
                 "capability_vector": ["design.ui_review"],
                 "excludes": ["design-visual-quality-review"],
+                "requires_after": ["business-requirements-brief"],
                 "cost_weight": 2,
             }
             manifest["hashes"].pop("manifest_sha256", None)
@@ -2657,6 +2658,7 @@ class RegistryCliTest(unittest.TestCase):
                 "produces_evidence": ["ui_review_report"],
                 "capability_vector": ["design ui review"],
                 "conflicts_with": ["design-contract-review"],
+                "requires_after": ["design-contract-review"],
                 "cost_weight": 0,
             }
             manifest["hashes"].pop("manifest_sha256", None)
