@@ -1784,6 +1784,68 @@ def validate_router_eval_case(case: dict) -> list[dict]:
     return issues
 
 
+def router_eval_summary_key(value: object, empty_label: str) -> str:
+    if isinstance(value, str) and value:
+        return value
+    return empty_label
+
+
+def router_eval_empty_bucket() -> dict:
+    return {"case_count": 0, "passed_count": 0, "failed_count": 0}
+
+
+def build_router_eval_quality_summary(results: list[dict], top_level_issues: list[dict] | None = None) -> dict:
+    by_expected_scenario: dict[str, dict] = {}
+    by_actual_scenario: dict[str, dict] = {}
+    by_expected_task_type: dict[str, dict] = {}
+    by_issue: dict[str, int] = {}
+
+    def bump_bucket(target: dict[str, dict], key: str, status: str) -> None:
+        bucket = target.setdefault(key, router_eval_empty_bucket())
+        bucket["case_count"] += 1
+        if status == "ok":
+            bucket["passed_count"] += 1
+        else:
+            bucket["failed_count"] += 1
+
+    def bump_issue(issue: dict) -> None:
+        issue_id = router_eval_summary_key(issue.get("id"), "unknown-issue")
+        by_issue[issue_id] = by_issue.get(issue_id, 0) + 1
+
+    for result in results:
+        status = result.get("status", "failed")
+        bump_bucket(
+            by_expected_scenario,
+            router_eval_summary_key(result.get("expected_scenario"), "(none)"),
+            status,
+        )
+        bump_bucket(
+            by_actual_scenario,
+            router_eval_summary_key(result.get("actual_scenario"), "(none)"),
+            status,
+        )
+        bump_bucket(
+            by_expected_task_type,
+            router_eval_summary_key(result.get("expected_task_type"), "(unspecified)"),
+            status,
+        )
+        for issue in result.get("issues", []):
+            bump_issue(issue)
+    for issue in top_level_issues or []:
+        bump_issue(issue)
+
+    failed_count = sum(1 for item in results if item.get("status") != "ok")
+    return {
+        "case_count": len(results),
+        "passed_count": len(results) - failed_count,
+        "failed_count": failed_count,
+        "by_expected_scenario": dict(sorted(by_expected_scenario.items())),
+        "by_actual_scenario": dict(sorted(by_actual_scenario.items())),
+        "by_expected_task_type": dict(sorted(by_expected_task_type.items())),
+        "by_issue": dict(sorted(by_issue.items())),
+    }
+
+
 def run_router_eval(
     eval_path: Path,
     registry_dir: Path,
@@ -1932,6 +1994,7 @@ def run_router_eval(
         "passed_count": len(cases) - failed_count,
         "failed_count": failed_count,
         "issues": issues,
+        "quality_summary": build_router_eval_quality_summary(results, issues),
         "cases": results,
     }
 

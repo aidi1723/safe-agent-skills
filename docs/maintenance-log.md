@@ -17,6 +17,29 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Router Quality Summary
+
+Added deterministic aggregate metrics to `router-eval` output.
+
+`router-eval` now returns `quality_summary` with pass/fail counts grouped by:
+
+- expected scenario;
+- actual scenario;
+- expected task type;
+- structured issue id.
+
+This closes the compact quality-summary slice from the project-wide review
+follow-up while keeping the next router-quality tasks separate:
+false-positive / false-negative classification fields, low-confidence trend
+tracking, and broader docs consolidation.
+
+Boundary: this is reporting-only. It does not change router selection
+behavior, trusted skill state, runtime permissions, external imports, or
+publication authority.
+
+Update note:
+[Router Quality Summary](updates/2026-07-03-router-quality-summary.md).
+
 ## 2026-07-03 Scanner Variable Path Hardening
 
 Continued Phase 1 scanner engine hardening with downloaded-file path data-flow
@@ -415,7 +438,7 @@ Expected current results:
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
 router-eval: ok, 39 / 39 cases
-full script: 135 tests OK
+full script: 142 tests OK
 ```
 
 ## Routine Maintenance Checklist

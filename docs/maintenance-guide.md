@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Router Quality Summary](updates/2026-07-03-router-quality-summary.md)
 - [Scanner Variable Path Hardening](updates/2026-07-03-scanner-variable-path-hardening.md)
 - [Scanner Substitution Download Hardening](updates/2026-07-03-scanner-substitution-download-hardening.md)
 - [Scanner Variable Download Hardening](updates/2026-07-03-scanner-variable-download-hardening.md)

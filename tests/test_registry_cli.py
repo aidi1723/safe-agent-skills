@@ -1320,6 +1320,73 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["failed_count"], 1)
             self.assertEqual(result["cases"][0]["status"], "failed")
 
+    def test_router_eval_reports_quality_summary_by_scenario_task_type_and_issue(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 2,
+                        "cases": [
+                            {
+                                "id": "website-ok",
+                                "task": "build a product website and prepare launch checks",
+                                "router": "scenario",
+                                "expected_scenario": "website-build-launch",
+                                "expected_task_type": "website_build",
+                            },
+                            {
+                                "id": "website-bad-scenario",
+                                "task": "build a product website and prepare launch checks",
+                                "router": "scenario",
+                                "expected_scenario": "rag-agent-knowledge-app",
+                                "expected_task_type": "website_build",
+                            },
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 2)
+            result = json.loads(eval_out.getvalue())
+            summary = result["quality_summary"]
+            self.assertEqual(summary["case_count"], 2)
+            self.assertEqual(summary["passed_count"], 1)
+            self.assertEqual(summary["failed_count"], 1)
+            self.assertEqual(
+                summary["by_expected_scenario"]["website-build-launch"],
+                {"case_count": 1, "passed_count": 1, "failed_count": 0},
+            )
+            self.assertEqual(
+                summary["by_expected_scenario"]["rag-agent-knowledge-app"],
+                {"case_count": 1, "passed_count": 0, "failed_count": 1},
+            )
+            self.assertEqual(
+                summary["by_actual_scenario"]["website-build-launch"],
+                {"case_count": 2, "passed_count": 1, "failed_count": 1},
+            )
+            self.assertEqual(
+                summary["by_expected_task_type"]["website_build"],
+                {"case_count": 2, "passed_count": 1, "failed_count": 1},
+            )
+            self.assertEqual(summary["by_issue"], {"router-eval-scenario-mismatch": 1})
+
     def test_router_eval_fails_forbidden_skills_prefixes_subcategories_and_skill_count_limit(self):
         with tempfile.TemporaryDirectory() as tmp:
             eval_path = Path(tmp) / "router-eval.json"

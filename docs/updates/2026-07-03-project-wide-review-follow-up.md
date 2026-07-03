@@ -76,7 +76,6 @@ constraints. That closes much of the immediate behavioral gap.
 
 What remains:
 
-- a compact quality summary report with counts by scenario and failure class
 - explicit false-positive / false-negative classification fields
 - low-confidence trend tracking for vague maintenance tasks
 - stale-baseline warnings for historical docs that are easy to misread as
@@ -127,6 +126,8 @@ follow-up note, and treat old closure baselines as dated evidence.
 - Low-confidence vague continuation tasks now stay lightweight.
 - Router-eval now has positive and negative checks plus schema validation for
   control, expectation, and constraint fields.
+- Router-eval now includes compact quality-summary metrics by scenario,
+  task type, and issue id.
 - Current verification, maintain-check, reference-check, registry verify, and
   router-eval pass.
 
@@ -134,8 +135,9 @@ follow-up note, and treat old closure baselines as dated evidence.
 
 1. Start scanner engine Phase 1 with a small failing-test slice for shell
    tokenization and command substitution.
-2. Add a router quality summary output after the scanner slice, because the
-   underlying eval cases are now stable enough to summarize.
+2. Continue router quality metrics after the compact summary output with
+   false-positive / false-negative classification and low-confidence trend
+   tracking.
 3. Add source-import metadata schema only after deciding the exact import
    command contract.
 4. Add skill precondition/exclusion metadata after router quality summaries
