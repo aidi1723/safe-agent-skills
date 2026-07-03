@@ -531,7 +531,7 @@ Expected current results:
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
 router-eval: ok, 39 / 39 cases
-full script: 144 tests OK
+full script: 146 tests OK
 ```
 
 ## Routine Maintenance Checklist

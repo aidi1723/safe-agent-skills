@@ -56,6 +56,8 @@ This update does not change scenario selection, skill trust status, catalog
 contents, external imports, network access, browser automation, connectors,
 runtime permissions, or publication authority.
 
-Remaining non-blocking follow-up now moves to first-class skill preconditions,
-exclusions, collision diagnostics, host semantic gateway integration, networked
-source-import automation, and documentation consolidation.
+Later follow-up completed first-class skill precondition, exclusion, and
+collision diagnostics in
+[Contract Diagnostics](2026-07-04-contract-diagnostics.md). Remaining
+non-blocking follow-up now focuses on host semantic gateway integration,
+networked source-import automation, and documentation consolidation.
