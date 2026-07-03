@@ -35,6 +35,9 @@ Final closure evidence:
 Update note:
 [Final Closure Report](final-closure-report.md).
 
+GitHub-facing update summary:
+[GitHub Update Summary](github-update-summary-2026-07-03.md).
+
 ## 2026-07-03 Source Import Capture Gate
 
 Closed the source-import metadata delivery gap with a schema gate.

@@ -89,6 +89,9 @@ positioning and contribution stance.
 Latest update statement:
 [Final Closure Report](docs/final-closure-report.md).
 
+GitHub update summary:
+[GitHub Update Summary](docs/github-update-summary-2026-07-03.md).
+
 Latest delivery readiness:
 [Delivery Readiness Report](docs/delivery-readiness-report.md).
 

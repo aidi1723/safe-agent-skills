@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [GitHub Update Summary](github-update-summary-2026-07-03.md)
 - [Final Closure Report](final-closure-report.md)
 - [Source Import Capture Gate](updates/2026-07-03-source-import-capture-gate.md)
 - [Delivery Readiness Report](delivery-readiness-report.md)
