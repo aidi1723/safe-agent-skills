@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-03T12:40:44Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "dbc763c8a6c802c2688af79c14ac3b3cb98f288ae5394c78af569632262dfe8b",
+    "sanitized_sha256": "028ca1ab256b24d7f83d268938f62f19e497dc9815d3cd638fc25e695f21fb97",
+    "source_sha256": "3e149626624d518de4cdd53909cc7f3a3eb21e3edb08d7e2d18c4f2425583af1"
+  },
+  "name": "business-value-investment-research-framework",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-03T12:40:29Z",
+    "collected_by": "onecode-reference-pattern-expansion",
+    "license": "Apache-2.0",
+    "path": "batches/batch-032-reference-pattern-expansion/business-value-investment-research-framework",
+    "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/xbtlin/ai-berkshire",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/business-value-investment-research-framework",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "memo",
+    "category": "business",
+    "collection_priority": "P1",
+    "subcategory": "business.finance",
+    "task_intent": "structure value-investment research with evidence, bear-case, valuation, and regulated-advice boundaries"
+  },
+  "version": "0.1.0"
+}

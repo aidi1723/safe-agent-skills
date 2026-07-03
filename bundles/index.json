@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "bundle_count": 18,
+  "bundle_count": 23,
   "bundles": [
     {
       "id": "website-build-launch",
@@ -277,6 +277,207 @@
         "schema and output validation notes"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "multi-platform-research-discovery",
+      "name": "Multi Platform Research Discovery",
+      "scenario": "Plan public-source search across social, video, code, forum, and community platforms with citation and connector boundaries.",
+      "status": "trusted",
+      "task_signals": ["agent-reach", "agent reach", "multi-platform search", "multi platform search", "social search", "public-source search", "reddit", "youtube", "github", "bilibili", "xiaohongshu", "twitter", "全平台搜索", "多平台搜索", "公开源采集", "社媒采集", "小红书", "零API"],
+      "required_capabilities": [
+        {"id": "platform_boundary", "required": true, "preferred_skills": ["research-multi-platform-search-boundary"]},
+        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]},
+        {"id": "freshness_check", "required": true, "preferred_skills": ["content-freshness-expiry-review"]},
+        {"id": "citation_check", "required": true, "preferred_skills": ["research-citation-evidence-map"]},
+        {"id": "connector_boundary", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "security-supply-chain-review"]}
+      ],
+      "execution_order": [
+        "research-multi-platform-search-boundary",
+        "research-source-check",
+        "research-citation-evidence-map",
+        "content-freshness-expiry-review",
+        "ai-tool-schema-protocol-check",
+        "security-supply-chain-review"
+      ],
+      "skills": [
+        "research-multi-platform-search-boundary",
+        "research-source-check",
+        "research-citation-evidence-map",
+        "content-freshness-expiry-review",
+        "ai-tool-schema-protocol-check",
+        "security-supply-chain-review"
+      ],
+      "expected_output": [
+        "platform scope and permission boundary",
+        "query and recency plan",
+        "source capture and citation schema",
+        "deduplication and freshness notes",
+        "runtime approval gates for login, scraping, browser, or connector use"
+      ],
+      "safety_boundary": "Skills provide method only; browser sessions, platform logins, API use, scraping, account access, and connector setup require host approval."
+    },
+    {
+      "id": "investment-research-diligence",
+      "name": "Investment Research Diligence",
+      "scenario": "Structure AI-assisted investment research with evidence maps, bear cases, valuation assumptions, and regulated-advice boundaries.",
+      "status": "trusted",
+      "task_signals": ["ai-berkshire", "ai berkshire", "berkshire", "value investing", "investment research", "investment memo", "valuation assumptions", "bear case", "capital allocation", "buffett", "munger", "价值投资", "投研", "投资研究", "估值假设", "反方观点", "四大师", "资本配置"],
+      "required_capabilities": [
+        {"id": "investment_framework", "required": true, "preferred_skills": ["business-value-investment-research-framework"]},
+        {"id": "source_check", "required": true, "preferred_skills": ["research-finance-analysis-review", "research-source-check"]},
+        {"id": "valuation_assumptions", "required": true, "preferred_skills": ["business-investment-memo-review", "business-financial-analysis-review"]},
+        {"id": "bear_case", "required": true, "preferred_skills": ["business-value-investment-research-framework", "business-investment-memo-review"]},
+        {"id": "regulated_boundary", "required": true, "preferred_skills": ["compliance-regulated-industry-boundary", "compliance-public-claim-risk-register"]}
+      ],
+      "execution_order": [
+        "business-value-investment-research-framework",
+        "research-finance-analysis-review",
+        "business-investment-memo-review",
+        "business-financial-analysis-review",
+        "research-source-check",
+        "compliance-regulated-industry-boundary",
+        "compliance-public-claim-risk-register"
+      ],
+      "skills": [
+        "business-value-investment-research-framework",
+        "research-finance-analysis-review",
+        "business-investment-memo-review",
+        "business-financial-analysis-review",
+        "research-source-check",
+        "compliance-regulated-industry-boundary",
+        "compliance-public-claim-risk-register"
+      ],
+      "expected_output": [
+        "investment research scope",
+        "evidence and assumption map",
+        "thesis and bear-case notes",
+        "valuation sensitivity notes",
+        "diligence gap register",
+        "financial-advice boundary"
+      ],
+      "safety_boundary": "Skills provide method only; outputs are research support, not financial, legal, tax, or investment advice."
+    },
+    {
+      "id": "agent-role-library-governance",
+      "name": "Agent Role Library Governance",
+      "scenario": "Design or review reusable expert-agent role libraries, AI agency teams, handoff contracts, and role conflict controls.",
+      "status": "trusted",
+      "task_signals": ["agency-agents", "agency agents", "ai agency", "agent role library", "role library", "expert agent", "expert-agent", "agent team service", "handoff", "全栈智能体团队", "智能体团队服务", "专家角色库", "角色库", "多 agent 编排", "多agent编排"],
+      "required_capabilities": [
+        {"id": "role_library_governance", "required": true, "preferred_skills": ["ai-agent-role-library-governance"]},
+        {"id": "agent_orchestration", "required": true, "preferred_skills": ["ai-langchain-agent-orchestration", "ai-opensquilla-metaskill-workflow"]},
+        {"id": "handoff_contract", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "ai-output-schema-eval"]},
+        {"id": "role_conflict_check", "required": true, "preferred_skills": ["ai-autogen-multi-agent-review", "ai-crewai-role-workflow"]},
+        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]}
+      ],
+      "execution_order": [
+        "ai-agent-role-library-governance",
+        "ai-opensquilla-metaskill-workflow",
+        "ai-langchain-agent-orchestration",
+        "ai-crewai-role-workflow",
+        "ai-autogen-multi-agent-review",
+        "ai-tool-schema-protocol-check",
+        "ai-output-schema-eval",
+        "security-supply-chain-review"
+      ],
+      "skills": [
+        "ai-agent-role-library-governance",
+        "ai-opensquilla-metaskill-workflow",
+        "ai-langchain-agent-orchestration",
+        "ai-crewai-role-workflow",
+        "ai-autogen-multi-agent-review",
+        "ai-tool-schema-protocol-check",
+        "ai-output-schema-eval",
+        "security-supply-chain-review"
+      ],
+      "expected_output": [
+        "role catalog boundary",
+        "role contract table",
+        "handoff and ownership map",
+        "conflict and overlap findings",
+        "external role-pack provenance boundary"
+      ],
+      "safety_boundary": "Skills provide method only; external role packs, tools, prompts, or agent runtimes are not trusted without separate review."
+    },
+    {
+      "id": "design-md-system-governance",
+      "name": "Design MD System Governance",
+      "scenario": "Create, review, or enforce DESIGN.md as a design-system source of truth with token, component-state, accessibility, and implementation alignment checks.",
+      "status": "trusted",
+      "task_signals": ["design.md", "design md", "google design.md", "google design md", "design system spec", "design system source of truth", "design tokens", "component states", "设计系统规范", "设计系统 token", "组件状态", "设计源事实"],
+      "required_capabilities": [
+        {"id": "design_md_contract", "required": true, "preferred_skills": ["design-design-md-system-contract"]},
+        {"id": "design_consistency", "required": true, "preferred_skills": ["design-system-consistency"]},
+        {"id": "token_mapping", "required": true, "preferred_skills": ["design-tailwind-radix-system", "design-system-consistency"]},
+        {"id": "component_states", "required": true, "preferred_skills": ["design-ui-review", "design-visual-quality-review"]},
+        {"id": "accessibility", "required": true, "preferred_skills": ["design-accessibility-check", "compliance-accessibility-policy"]}
+      ],
+      "execution_order": [
+        "design-design-md-system-contract",
+        "design-system-consistency",
+        "design-tailwind-radix-system",
+        "design-ui-review",
+        "design-visual-quality-review",
+        "design-accessibility-check",
+        "compliance-accessibility-policy"
+      ],
+      "skills": [
+        "design-design-md-system-contract",
+        "design-system-consistency",
+        "design-tailwind-radix-system",
+        "design-ui-review",
+        "design-visual-quality-review",
+        "design-accessibility-check",
+        "compliance-accessibility-policy"
+      ],
+      "expected_output": [
+        "DESIGN.md authority decision",
+        "design brief or gap list",
+        "token and component-state map",
+        "accessibility and responsive checks",
+        "implementation drift notes"
+      ],
+      "safety_boundary": "Skills provide method only; design-system adoption and broad UI changes still follow host project approval and verification."
+    },
+    {
+      "id": "private-communication-governance",
+      "name": "Private Communication Governance",
+      "scenario": "Review private messaging or secure communication workflows for identifier minimization, metadata privacy, E2EE boundaries, retention, and abuse handling.",
+      "status": "trusted",
+      "task_signals": ["simplex chat", "simplex", "private messaging", "secure communication", "e2ee", "end-to-end encryption", "identifier minimization", "metadata privacy", "no user identifiers", "隐私通讯", "私密通讯", "无用户标识", "端到端加密", "元数据最小化", "元数据隐私"],
+      "required_capabilities": [
+        {"id": "private_comms_boundary", "required": true, "preferred_skills": ["compliance-private-communication-boundary"]},
+        {"id": "privacy_check", "required": true, "preferred_skills": ["compliance-privacy-check"]},
+        {"id": "metadata_minimization", "required": true, "preferred_skills": ["compliance-private-communication-boundary", "security-secret-context-redaction"]},
+        {"id": "encryption_boundary", "required": true, "preferred_skills": ["security-guardrails-output-validation", "security-supply-chain-review"]},
+        {"id": "abuse_handling", "required": true, "preferred_skills": ["compliance-terms-review", "security-prompt-injection-review"]}
+      ],
+      "execution_order": [
+        "compliance-private-communication-boundary",
+        "compliance-privacy-check",
+        "security-secret-context-redaction",
+        "security-guardrails-output-validation",
+        "security-supply-chain-review",
+        "compliance-terms-review",
+        "security-prompt-injection-review"
+      ],
+      "skills": [
+        "compliance-private-communication-boundary",
+        "compliance-privacy-check",
+        "security-secret-context-redaction",
+        "security-guardrails-output-validation",
+        "security-supply-chain-review",
+        "compliance-terms-review",
+        "security-prompt-injection-review"
+      ],
+      "expected_output": [
+        "actor and data-flow map",
+        "identifier minimization table",
+        "metadata and retention risk register",
+        "E2EE and key-management boundary",
+        "consent, deletion, and abuse handling notes"
+      ],
+      "safety_boundary": "Skills provide method only; cryptography, security, compliance, and public privacy claims need specialist review."
     },
     {
       "id": "document-to-knowledge-base",

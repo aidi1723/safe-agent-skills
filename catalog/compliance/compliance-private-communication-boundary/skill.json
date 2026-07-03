@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-03T12:40:44Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "e644c5f9908c5374e36c513750642be5a2e4f3c2b434d70b888e0edfdf670172",
+    "sanitized_sha256": "cf58e783e73027a872f762a1b99f42c2d3f23eb4471721c56fe7e6cf2ae36811",
+    "source_sha256": "f6bff17eaf631319320facd008650114386b95850fa8b458058d3cce9d4c58ef"
+  },
+  "name": "compliance-private-communication-boundary",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-03T12:40:29Z",
+    "collected_by": "onecode-reference-pattern-expansion",
+    "license": "Apache-2.0",
+    "path": "batches/batch-032-reference-pattern-expansion/compliance-private-communication-boundary",
+    "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/simplex-chat/simplex-chat",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/compliance-private-communication-boundary",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "risk_report",
+    "category": "compliance",
+    "collection_priority": "P1",
+    "subcategory": "compliance.privacy",
+    "task_intent": "review private communication workflows for identifier minimization, metadata privacy, E2EE boundaries, retention, and abuse handling"
+  },
+  "version": "0.1.0"
+}

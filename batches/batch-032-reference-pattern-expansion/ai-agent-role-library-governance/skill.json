@@ -1,0 +1,18 @@
+{
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-reference-pattern-expansion",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/msitarzewski/agency-agents",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/ai-agent-role-library-governance",
+    "usage": "local_authoring"
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.orchestration",
+    "task_intent": "govern agent role libraries, expert-agent teams, handoff contracts, role conflicts, and external role-pack boundaries"
+  }
+}

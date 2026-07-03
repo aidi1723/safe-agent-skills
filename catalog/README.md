@@ -12,8 +12,8 @@ directly from the open internet.
 
 ## Current Catalog Status
 
-- total skills: 167
-- trusted skills: 161
+- total skills: 172
+- trusted skills: 166
 - quarantined skills: 3
 - review-required skills: 3
 - tampered skills: 0
@@ -21,7 +21,7 @@ directly from the open internet.
 - registry verification: `ok`
 - top-level category coverage: 15 / 15
 - minimum trusted coverage: 3 trusted skills per top-level category
-- trusted scenario bundles: 18
+- trusted scenario bundles: 23
 - tracked `claude-skills` candidate coverage: 336 / 336
 
 ## Category Coverage

@@ -1,0 +1,18 @@
+{
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-reference-pattern-expansion",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/Panniantong/Agent-Reach",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/research-multi-platform-search-boundary",
+    "usage": "local_authoring"
+  },
+  "taxonomy": {
+    "artifact_type": "research",
+    "category": "research",
+    "collection_priority": "P1",
+    "subcategory": "research.source",
+    "task_intent": "plan multi-platform public-source search with citation, account, connector, and scraping boundaries"
+  }
+}

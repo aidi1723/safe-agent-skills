@@ -1,0 +1,18 @@
+{
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-reference-pattern-expansion",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of Google DESIGN.md ecosystem references",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/design-design-md-system-contract",
+    "usage": "local_authoring"
+  },
+  "taxonomy": {
+    "artifact_type": "design_system",
+    "category": "design",
+    "collection_priority": "P1",
+    "subcategory": "design.system",
+    "task_intent": "create and review DESIGN.md contracts with tokens, component states, accessibility, responsiveness, and implementation alignment"
+  }
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 29,
+  "case_count": 34,
   "cases": [
     {
       "id": "website-launch",
@@ -119,6 +119,66 @@
         "ai-graph-memory-contract",
         "data-rag-namespace-boundary-check",
         "compliance-privacy-check"
+      ]
+    },
+    {
+      "id": "multi-platform-research-discovery",
+      "task": "用 Agent-Reach 做 Reddit、YouTube、GitHub 和小红书的全平台搜索采集，并输出带引用的研究简报",
+      "router": "scenario",
+      "expected_scenario": "multi-platform-research-discovery",
+      "expected_task_type": "multi_platform_research_discovery",
+      "expected_skills": [
+        "research-multi-platform-search-boundary",
+        "research-source-check",
+        "research-citation-evidence-map"
+      ]
+    },
+    {
+      "id": "investment-research-diligence",
+      "task": "参考 ai-berkshire 四大师方法论做价值投资研究，输出反方观点、估值假设和决策边界",
+      "router": "scenario",
+      "expected_scenario": "investment-research-diligence",
+      "expected_task_type": "investment_research_diligence",
+      "expected_skills": [
+        "business-value-investment-research-framework",
+        "business-investment-memo-review",
+        "compliance-regulated-industry-boundary"
+      ]
+    },
+    {
+      "id": "agent-role-library-governance",
+      "task": "借鉴 agency-agents 的全栈智能体团队服务，治理专家角色库、handoff 和多 agent 编排",
+      "router": "scenario",
+      "expected_scenario": "agent-role-library-governance",
+      "expected_task_type": "agent_role_library_governance",
+      "expected_skills": [
+        "ai-agent-role-library-governance",
+        "ai-langchain-agent-orchestration",
+        "security-supply-chain-review"
+      ]
+    },
+    {
+      "id": "design-md-system-governance",
+      "task": "按 Google design.md 规范整理 DESIGN.md，统一设计系统 token、组件状态和可访问性检查",
+      "router": "scenario",
+      "expected_scenario": "design-md-system-governance",
+      "expected_task_type": "design_md_system_governance",
+      "expected_skills": [
+        "design-design-md-system-contract",
+        "design-system-consistency",
+        "design-accessibility-check"
+      ]
+    },
+    {
+      "id": "private-communication-governance",
+      "task": "参考 SimpleX Chat 的隐私通讯模型，设计无用户标识、端到端加密和元数据最小化边界",
+      "router": "scenario",
+      "expected_scenario": "private-communication-governance",
+      "expected_task_type": "private_communication_governance",
+      "expected_skills": [
+        "compliance-private-communication-boundary",
+        "compliance-privacy-check",
+        "security-supply-chain-review"
       ]
     },
     {

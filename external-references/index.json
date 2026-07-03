@@ -1,5 +1,5 @@
 {
-  "reference_count": 14,
+  "reference_count": 19,
   "references": [
     {
       "adoption_status": "converted",
@@ -345,6 +345,132 @@
         "code.explore",
         "ai.tool-schema",
         "security.supply_chain"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "Panniantong",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "multi_platform_public_search",
+        "social_video_code_forum_discovery",
+        "zero_api_fee_positioning",
+        "cli_search_workflow",
+        "agent_research_collection"
+      ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "Agent-Reach",
+      "project_category": "multi_platform_research_reference",
+      "review_notes": "Public GitHub project positioned as a CLI for searching and reading multiple public platforms. Local adoption is limited to a OneCode-authored method skill and scenario bundle for platform scope, account/session boundaries, citations, deduplication, and runtime approval gates.",
+      "runtime_permission_notes": "Reference only. Do not install, run, scrape, log in, call platform APIs, or use browser sessions from default task packs. Platform automation, accounts, scraping, API calls, and connector setup require separate host approval and terms review.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/Panniantong/Agent-Reach",
+      "taxonomy_categories": [
+        "research.source",
+        "content.freshness",
+        "security.supply_chain",
+        "execution.browser"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "xbtlin",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "value_investing_research",
+        "multi_agent_investment_diligence",
+        "master_methodology_lenses",
+        "adversarial_analysis",
+        "investment_memo_support"
+      ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "ai-berkshire",
+      "project_category": "investment_research_framework_reference",
+      "review_notes": "Public GitHub project for AI-assisted value-investing research. Local adoption is limited to a OneCode-authored method skill and scenario bundle for evidence maps, assumptions, bear cases, valuation sensitivity, and regulated-advice boundaries.",
+      "runtime_permission_notes": "Reference only. Do not install or execute upstream agents, fetch financial data, make portfolio recommendations, or treat output as financial advice. Runtime data access and regulated investment use require separate approval and specialist review.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/xbtlin/ai-berkshire",
+      "taxonomy_categories": [
+        "business.finance",
+        "research.finance",
+        "compliance.regulated"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "msitarzewski",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "expert_agent_role_library",
+        "ai_agency_team_catalog",
+        "role_persona_workflows",
+        "specialized_deliverables",
+        "multi_agent_service_packaging"
+      ],
+      "license": "MIT",
+      "metadata_only": true,
+      "name": "agency-agents",
+      "project_category": "agent_role_library_reference",
+      "review_notes": "Public GitHub project for a large reusable expert-agent library. Local adoption is limited to a OneCode-authored method skill and scenario bundle for role contracts, handoff ownership, conflict checks, final synthesis, and external role-pack provenance review.",
+      "runtime_permission_notes": "Reference only. Do not import, install, copy, or execute upstream role prompts or tools without per-role license, provenance, prompt, tool, and runtime review.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/msitarzewski/agency-agents",
+      "taxonomy_categories": [
+        "ai.orchestration",
+        "ai.context-engineering",
+        "security.supply_chain"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "Google DESIGN.md ecosystem",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "design_md_source_of_truth",
+        "design_system_contract",
+        "token_and_component_state_mapping",
+        "accessibility_alignment",
+        "implementation_drift_review"
+      ],
+      "license": "unknown",
+      "metadata_only": true,
+      "name": "Google DESIGN.md ecosystem references",
+      "project_category": "design_system_contract_reference",
+      "review_notes": "GitHub search found multiple public implementations and skills referencing the Google DESIGN.md pattern rather than one canonical verified google-owned repository. Local adoption is limited to a OneCode-authored method skill and scenario bundle for DESIGN.md authority, tokens, component states, accessibility, and implementation drift review.",
+      "runtime_permission_notes": "Reference only. Do not copy external design specs, install third-party design skills, or claim canonical Google provenance without separate official-source verification.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/search?q=Google+design.md&type=repositories",
+      "taxonomy_categories": [
+        "design.system",
+        "web.ui",
+        "compliance.accessibility"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "simplex-chat",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "private_messaging_network",
+        "no_user_identifiers_positioning",
+        "privacy_by_design",
+        "e2ee_messaging",
+        "mobile_and_desktop_clients"
+      ],
+      "license": "AGPL-3.0",
+      "metadata_only": true,
+      "name": "SimpleX Chat",
+      "project_category": "private_communication_reference",
+      "review_notes": "Public GitHub project for privacy-focused messaging. Local adoption is limited to a OneCode-authored method skill and scenario bundle for identifier minimization, metadata privacy, E2EE boundary questions, retention, deletion, and abuse-handling review.",
+      "runtime_permission_notes": "Reference only. Do not install, run, federate, configure servers, claim cryptographic assurance, or ship messaging features without separate architecture, legal, security, and privacy review.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/simplex-chat/simplex-chat",
+      "taxonomy_categories": [
+        "compliance.privacy",
+        "security.review",
+        "engineering.architecture"
       ]
     }
   ],

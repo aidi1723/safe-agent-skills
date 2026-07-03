@@ -1,8 +1,37 @@
 {
-  "generated_at": "2026-07-03T11:11:39Z",
+  "generated_at": "2026-07-03T12:40:44Z",
   "schema_version": 1,
-  "skill_count": 167,
+  "skill_count": 172,
   "skills": [
+    {
+      "hashes": {
+        "manifest_sha256": "a96f7a92cc34018c7c47f6c4e86957add540c59bcfeb1984ac7758216b09f17a",
+        "sanitized_sha256": "8149789dc14cac4375d51a73716e555e7ba343de8752a98f2b42b4a521f28551",
+        "source_sha256": "0f93706e128d651d163778e28d93c0c1903865bccc7b625387ca42e9064ba0d7"
+      },
+      "name": "ai-agent-role-library-governance",
+      "registry_path": "ai/ai-agent-role-library-governance",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T12:40:29Z",
+        "collected_by": "onecode-reference-pattern-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-032-reference-pattern-expansion/ai-agent-role-library-governance",
+        "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/msitarzewski/agency-agents",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/ai-agent-role-library-governance",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "workflow",
+        "category": "ai",
+        "collection_priority": "P1",
+        "subcategory": "ai.orchestration",
+        "task_intent": "govern agent role libraries, expert-agent teams, handoff contracts, role conflicts, and external role-pack boundaries"
+      }
+    },
     {
       "hashes": {
         "manifest_sha256": "4db64ba6d7fa2c4f9a83e2d97c56353b7e392870f6828408e3a5e3d698298a6d",
@@ -1584,6 +1613,35 @@
     },
     {
       "hashes": {
+        "manifest_sha256": "dbc763c8a6c802c2688af79c14ac3b3cb98f288ae5394c78af569632262dfe8b",
+        "sanitized_sha256": "028ca1ab256b24d7f83d268938f62f19e497dc9815d3cd638fc25e695f21fb97",
+        "source_sha256": "3e149626624d518de4cdd53909cc7f3a3eb21e3edb08d7e2d18c4f2425583af1"
+      },
+      "name": "business-value-investment-research-framework",
+      "registry_path": "business/business-value-investment-research-framework",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T12:40:29Z",
+        "collected_by": "onecode-reference-pattern-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-032-reference-pattern-expansion/business-value-investment-research-framework",
+        "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/xbtlin/ai-berkshire",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/business-value-investment-research-framework",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "memo",
+        "category": "business",
+        "collection_priority": "P1",
+        "subcategory": "business.finance",
+        "task_intent": "structure value-investment research with evidence, bear-case, valuation, and regulated-advice boundaries"
+      }
+    },
+    {
+      "hashes": {
         "manifest_sha256": "8c2ff2c5101863fd91f190d476042ce644e9de665065612e761d585315cb0dc4",
         "sanitized_sha256": "03edc53a1a5a8e720c4428d5f3e8a47be0bb99d35de5c975ea83b5727ef323c4",
         "source_sha256": "4eda9d4559b55f63868fcc8283bc04a89f26af0dddbda1c2d8280c8c9fe747b2"
@@ -2363,6 +2421,35 @@
         "collection_priority": "P2",
         "subcategory": "compliance.privacy",
         "task_intent": "check privacy and data-handling risk"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "e644c5f9908c5374e36c513750642be5a2e4f3c2b434d70b888e0edfdf670172",
+        "sanitized_sha256": "cf58e783e73027a872f762a1b99f42c2d3f23eb4471721c56fe7e6cf2ae36811",
+        "source_sha256": "f6bff17eaf631319320facd008650114386b95850fa8b458058d3cce9d4c58ef"
+      },
+      "name": "compliance-private-communication-boundary",
+      "registry_path": "compliance/compliance-private-communication-boundary",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T12:40:29Z",
+        "collected_by": "onecode-reference-pattern-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-032-reference-pattern-expansion/compliance-private-communication-boundary",
+        "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/simplex-chat/simplex-chat",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/compliance-private-communication-boundary",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "risk_report",
+        "category": "compliance",
+        "collection_priority": "P1",
+        "subcategory": "compliance.privacy",
+        "task_intent": "review private communication workflows for identifier minimization, metadata privacy, E2EE boundaries, retention, and abuse handling"
       }
     },
     {
@@ -3172,6 +3259,35 @@
         "collection_priority": "P0",
         "subcategory": "design.accessibility",
         "task_intent": "review UI accessibility and responsive readability"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "867e7adc4e84f6e667eb3cacbcfe1acbf3be98fa6a99a0d49e3105011624620c",
+        "sanitized_sha256": "d9feea2f437d1288f74ca93a3929aeeb5922ea9f24669a309a5f94c21953c9f8",
+        "source_sha256": "03991bf5b34b8012e00597f3f272d69a33bad5fab60900fed22a4a8df19deb54"
+      },
+      "name": "design-design-md-system-contract",
+      "registry_path": "design/design-design-md-system-contract",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T12:40:29Z",
+        "collected_by": "onecode-reference-pattern-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-032-reference-pattern-expansion/design-design-md-system-contract",
+        "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of Google DESIGN.md ecosystem references",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/design-design-md-system-contract",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "design_system",
+        "category": "design",
+        "collection_priority": "P1",
+        "subcategory": "design.system",
+        "task_intent": "create and review DESIGN.md contracts with tokens, component states, accessibility, responsiveness, and implementation alignment"
       }
     },
     {
@@ -4376,6 +4492,35 @@
         "collection_priority": "P1",
         "subcategory": "research.market",
         "task_intent": "review market research, opportunity sizing, competitor signals, buyer evidence, and market assumptions"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "f8fc6666dce05a600c91baa195dad4746dc5cc4dc2469e97441a4c718861a2d7",
+        "sanitized_sha256": "33f90153d30f143b872fda539a8e2a7cd8794cc5aec1867c7b1469fd2a3fcdda",
+        "source_sha256": "b7c8cd0bd088b2580e0ef8222eaa66433b9c610426119f46168096778844833a"
+      },
+      "name": "research-multi-platform-search-boundary",
+      "registry_path": "research/research-multi-platform-search-boundary",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T12:40:29Z",
+        "collected_by": "onecode-reference-pattern-expansion",
+        "license": "Apache-2.0",
+        "path": "batches/batch-032-reference-pattern-expansion/research-multi-platform-search-boundary",
+        "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/Panniantong/Agent-Reach",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/research-multi-platform-search-boundary",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "research",
+        "category": "research",
+        "collection_priority": "P1",
+        "subcategory": "research.source",
+        "task_intent": "plan multi-platform public-source search with citation, account, connector, and scraping boundaries"
       }
     },
     {

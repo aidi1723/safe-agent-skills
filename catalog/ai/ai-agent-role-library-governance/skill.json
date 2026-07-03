@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-03T12:40:44Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "a96f7a92cc34018c7c47f6c4e86957add540c59bcfeb1984ac7758216b09f17a",
+    "sanitized_sha256": "8149789dc14cac4375d51a73716e555e7ba343de8752a98f2b42b4a521f28551",
+    "source_sha256": "0f93706e128d651d163778e28d93c0c1903865bccc7b625387ca42e9064ba0d7"
+  },
+  "name": "ai-agent-role-library-governance",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-03T12:40:29Z",
+    "collected_by": "onecode-reference-pattern-expansion",
+    "license": "Apache-2.0",
+    "path": "batches/batch-032-reference-pattern-expansion/ai-agent-role-library-governance",
+    "reference": "docs/batches/batch-032-reference-pattern-expansion.md; reference analysis of https://github.com/msitarzewski/agency-agents",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-032-reference-pattern-expansion/ai-agent-role-library-governance",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.orchestration",
+    "task_intent": "govern agent role libraries, expert-agent teams, handoff contracts, role conflicts, and external role-pack boundaries"
+  },
+  "version": "0.1.0"
+}

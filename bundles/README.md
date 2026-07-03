@@ -26,6 +26,11 @@ host agent choose a stronger starting plan.
 | `codebase-graph-intelligence` | Review code graph index, MCP code intelligence, architecture query, and impact-analysis boundaries | graph boundary, project context, schema, source confirmation, supply-chain review |
 | `security-agent-guardrails` | Review an agent workflow for prompt injection, guardrails, and I/O scanning | prompt injection, output validation, I/O scanning, supply-chain review |
 | `agent-planning-orchestration` | Clarify fuzzy requirements, decompose a plan, and coordinate multi-agent execution | requirements, metaskill workflow, orchestration, role workflow, multi-agent review |
+| `multi-platform-research-discovery` | Plan multi-platform public-source discovery with citations and connector boundaries | platform boundary, source check, citation map, freshness, supply-chain review |
+| `investment-research-diligence` | Structure investment research with evidence maps, bear cases, valuation assumptions, and non-advice boundaries | investment framework, finance research, memo review, regulated boundary |
+| `agent-role-library-governance` | Govern reusable expert-agent role libraries, handoffs, ownership, and conflicts | role library governance, orchestration, handoff schemas, multi-agent review |
+| `design-md-system-governance` | Review DESIGN.md source-of-truth, tokens, component states, accessibility, and implementation drift | DESIGN.md contract, design consistency, UI review, accessibility |
+| `private-communication-governance` | Review private communication workflows for identifiers, metadata, E2EE boundaries, retention, and abuse handling | privacy boundary, privacy check, secret redaction, supply-chain review |
 | `document-to-knowledge-base` | Convert documents into Markdown, chunks, summaries, and source-backed notes | PDF review, Markdown conversion, document partitioning, source check |
 | `data-analysis-report` | Clean data, analyze tables, plan visuals, and write a decision report | table analysis, data quality, visualization, office brief |
 | `open-source-release` | Prepare a public repository, docs, safety statement, and release handoff | publish check, supply-chain review, editorial review, social post |

@@ -6,16 +6,47 @@ Date: 2026-07-03
 
 ```text
 branch: main
-catalog skills: 167
-trusted skills: 161
-trusted scenario bundles: 18
-external references: 14
+catalog skills: 172
+trusted skills: 166
+trusted scenario bundles: 23
+external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 29
+router eval cases: 34
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-03 Reference Pattern Expansion
+
+Added five trusted, locally authored method skills based on external reference
+project review:
+
+- `research-multi-platform-search-boundary`
+- `business-value-investment-research-framework`
+- `ai-agent-role-library-governance`
+- `design-design-md-system-contract`
+- `compliance-private-communication-boundary`
+
+Added five trusted scenario bundles:
+
+- `multi-platform-research-discovery`
+- `investment-research-diligence`
+- `agent-role-library-governance`
+- `design-md-system-governance`
+- `private-communication-governance`
+
+Recorded metadata-only external references for Agent-Reach, ai-berkshire,
+agency-agents, Google DESIGN.md ecosystem references, and SimpleX Chat.
+OpenMontage and codebase-memory-mcp were reviewed again and remain covered by
+batch 031 skills. No upstream code, prompts, installers, connectors, accounts,
+scrapers, investment agents, role packs, design skills, messaging servers, or
+cryptographic implementations were imported or enabled.
+
+Updated router profiles and eval coverage so multi-platform research,
+investment diligence, role-library governance, DESIGN.md governance, and
+private communication tasks route to dedicated trusted bundles instead of
+generic RAG, website, multi-agent, or general scenarios.
 
 ## 2026-07-03 Agentic Reference Patterns
 
@@ -46,14 +77,14 @@ Current verified baseline after this update:
 
 ```text
 branch: main
-catalog skills: 167
-trusted skills: 161
-trusted scenario bundles: 18
-external references: 14
+catalog skills: 172
+trusted skills: 166
+trusted scenario bundles: 23
+external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 29
+router eval cases: 34
 verification command: bash scripts/verify.sh
 ```
 
@@ -73,10 +104,10 @@ git diff --check
 Expected current results:
 
 ```text
-verify: ok, 167 skills, 161 trusted, 0 tampered, 0 unknown provenance
-maintain-check: ok, 18 bundles, 336 / 336 candidates covered
-router-eval: ok, 29 / 29 cases
-full script: 122 tests OK
+verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
+maintain-check: ok, 23 bundles, 336 / 336 candidates covered
+router-eval: ok, 34 / 34 cases
+full script: 127 tests OK
 ```
 
 ## Routine Maintenance Checklist

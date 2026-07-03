@@ -70,6 +70,46 @@ class RouterTest(unittest.TestCase):
         self.assertIn("requirements", profile["required_capabilities"])
         self.assertIn("multi_agent_review", profile["required_capabilities"])
 
+    def test_build_task_profile_detects_multi_platform_research_discovery(self):
+        profile = build_task_profile("用 Agent-Reach 做 Reddit、YouTube、GitHub 和小红书的全平台搜索采集，并输出带引用的研究简报")
+
+        self.assertEqual(profile["task_type"], "multi_platform_research_discovery")
+        self.assertEqual(profile["primary_domain"], "research")
+        self.assertIn("platform_boundary", profile["required_capabilities"])
+        self.assertIn("source_check", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_investment_research_diligence(self):
+        profile = build_task_profile("参考 ai-berkshire 四大师方法论做价值投资研究，输出反方观点、估值假设和决策边界")
+
+        self.assertEqual(profile["task_type"], "investment_research_diligence")
+        self.assertEqual(profile["primary_domain"], "business")
+        self.assertIn("investment_framework", profile["required_capabilities"])
+        self.assertIn("regulated_boundary", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_agent_role_library_governance(self):
+        profile = build_task_profile("借鉴 agency-agents 的全栈智能体团队服务，治理专家角色库、handoff 和多 agent 编排")
+
+        self.assertEqual(profile["task_type"], "agent_role_library_governance")
+        self.assertEqual(profile["primary_domain"], "ai")
+        self.assertIn("role_library_governance", profile["required_capabilities"])
+        self.assertIn("agent_orchestration", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_design_md_system_governance(self):
+        profile = build_task_profile("按 Google design.md 规范整理 DESIGN.md，统一设计系统 token、组件状态和可访问性检查")
+
+        self.assertEqual(profile["task_type"], "design_md_system_governance")
+        self.assertEqual(profile["primary_domain"], "design")
+        self.assertIn("design_md_contract", profile["required_capabilities"])
+        self.assertIn("accessibility", profile["required_capabilities"])
+
+    def test_build_task_profile_detects_private_communication_governance(self):
+        profile = build_task_profile("参考 SimpleX Chat 的隐私通讯模型，设计无用户标识、端到端加密和元数据最小化边界")
+
+        self.assertEqual(profile["task_type"], "private_communication_governance")
+        self.assertEqual(profile["primary_domain"], "compliance")
+        self.assertIn("private_comms_boundary", profile["required_capabilities"])
+        self.assertIn("privacy_check", profile["required_capabilities"])
+
     def test_score_bundle_prefers_matching_scenario(self):
         profile = build_task_profile("review generated code and harden tests before accepting the PR")
         code_bundle = {
