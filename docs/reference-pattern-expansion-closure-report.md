@@ -14,6 +14,12 @@ Commit:
 330a536 feat: add reference pattern expansion skills
 ```
 
+Project-check follow-up commit:
+
+```text
+0e1c220 fix: preserve protective sanitizer guidance
+```
+
 ## Status
 
 The reference-pattern expansion work is closed for the current scope.
@@ -85,7 +91,8 @@ unknown provenance records: 0
 
 ## Verification Evidence
 
-Commands run before publishing commit `330a536`:
+Commands run before publishing the reference-pattern work and again during the
+project-check follow-up:
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
@@ -112,9 +119,9 @@ Verified results:
 router-eval: ok, 34 / 34 cases
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 trusted bundles, 19 external references, 336 / 336 candidate mappings
-full script: 127 tests OK
+full script: 129 tests OK
 git diff --check: OK
-push: main 243510d..330a536
+push: main 0244a15..0e1c220
 ```
 
 ## Safety Boundary

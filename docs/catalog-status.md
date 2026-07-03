@@ -37,6 +37,7 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Project Check Follow-Up](updates/2026-07-03-project-check-follow-up.md)
 - [Reference Pattern Expansion](updates/2026-07-03-reference-pattern-expansion.md)
 - [Industry Application Orchestration](updates/2026-07-03-industry-application-orchestration.md)
 - [Agentic Reference Patterns](updates/2026-07-03-agentic-reference-patterns.md)

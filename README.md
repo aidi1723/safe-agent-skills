@@ -87,19 +87,22 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
-[Reference Pattern Expansion](docs/updates/2026-07-03-reference-pattern-expansion.md).
+[Project Check Follow-Up](docs/updates/2026-07-03-project-check-follow-up.md).
 
 Previous update statement:
+[Reference Pattern Expansion](docs/updates/2026-07-03-reference-pattern-expansion.md).
+
+Earlier same-day update:
 [Agentic Reference Patterns](docs/updates/2026-07-03-agentic-reference-patterns.md).
 
-Earlier update statement:
+Industry update:
 [Industry Application Orchestration](docs/updates/2026-07-03-industry-application-orchestration.md).
 
 Latest closure report:
-[Reference Pattern Expansion Closure Report](docs/reference-pattern-expansion-closure-report.md).
+[Project Closure Report](docs/project-closure-report.md).
 
 Previous closure report:
-[Project Closure Report](docs/project-closure-report.md).
+[Reference Pattern Expansion Closure Report](docs/reference-pattern-expansion-closure-report.md).
 
 Latest maintenance log:
 [Maintenance Log](docs/maintenance-log.md).

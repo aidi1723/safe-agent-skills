@@ -32,14 +32,16 @@ The catalog is ready for public maintenance when:
 
 Current baseline:
 
-- total skills: 164
-- trusted skills: 158
+- total skills: 172
+- trusted skills: 166
 - quarantined skills: 3
 - review-required skills: 3
 - categories meeting 3 trusted skills: 15 / 15
-- scenario bundles: 15 trusted
-- phase status: Claude Skills backlog cluster coverage and smart router
-  hardening closed for today's delivery
+- scenario bundles: 23 trusted
+- external references: 19
+- router eval cases: 34
+- phase status: reference-pattern expansion and project-check follow-up closed
+  for today's delivery
 
 Closure report:
 
@@ -57,6 +59,10 @@ Next development:
 
 Latest update:
 
+- [Project Check Follow-Up](updates/2026-07-03-project-check-follow-up.md)
+- [Reference Pattern Expansion](updates/2026-07-03-reference-pattern-expansion.md)
+- [Agentic Reference Patterns](updates/2026-07-03-agentic-reference-patterns.md)
+- [Industry Application Orchestration](updates/2026-07-03-industry-application-orchestration.md)
 - [Claude Skills Backlog Cluster Coverage](updates/2026-07-03-claude-skills-backlog-cluster-coverage.md)
 - [Smart Router And Claude Skills Closure](updates/2026-07-02-smart-router-claude-skills-closure.md)
 - [Claude Skills Expansion](updates/2026-07-02-claude-skills-expansion.md)

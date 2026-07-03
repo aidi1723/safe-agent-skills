@@ -23,11 +23,16 @@ industry users without requiring separate manual skill installation.
 ## Current Result
 
 ```text
-catalog skills: 164
-trusted skills: 158
-trusted scenario bundles: 15
-router eval cases: 26
+catalog skills: 172
+trusted skills: 166
+trusted scenario bundles: 23
+router eval cases: 34
+external references: 19
 ```
+
+The current repository baseline includes later same-day reference-pattern and
+project-check follow-up work; the industry bundle itself remains the three
+trusted skills listed above.
 
 ## Safety Boundary
 

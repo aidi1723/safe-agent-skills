@@ -29,7 +29,7 @@ AI Agent 工程真正难的地方，往往不是没有工具，而是工具太�
 当前公开基线已经覆盖 15 个一级分类，每个分类至少 3 个 `trusted` skill。
 
 最新更新声明：
-[Bundle-Aware Task Packs and OpenSquilla Reference Batch](updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)。
+[Project Check Follow-Up](updates/2026-07-03-project-check-follow-up.md)。
 
 本次更新后，`task-pack` 不仅可以根据任务自动选择单个优秀 skill，也可以通过
 `--include-bundles` 自动匹配场景组合，例如建站、RAG 知识库、代码审查、
@@ -141,7 +141,7 @@ OpenClaw、OneCode 或其他宿主运行时自己的安全策略控制。
 - trusted / quarantined / review_required 状态分离
 - 默认只选择 `trusted` skill
 - 来源与许可证记录
-- `SKILL.md` 哈希校验
+- `SKILL.md` 和 `skill.json` 哈希校验
 - registry 完整性验证
 - 批次文档和维护记录
 
@@ -159,17 +159,19 @@ OpenClaw、OneCode 或其他宿主运行时自己的安全策略控制。
 当前 catalog 状态：
 
 ```text
-total skills: 164
-trusted skills: 158
+total skills: 172
+trusted skills: 166
 quarantined skills: 3
 review_required skills: 3
-scenario bundles: 15 trusted
+scenario bundles: 23 trusted
+external references: 19
 top-level categories: 15 / 15
 minimum trusted coverage: 3 trusted skills per category
 tampered skills: 0
 unknown provenance records: 0
 registry verification: ok
 bundle maintenance check: ok
+router eval cases: 34
 ```
 
 这意味着仓库已经具备公开维护的最低基础：不是只放几个示例，而是每个核心分类都有可默认选择的安全 skill。
