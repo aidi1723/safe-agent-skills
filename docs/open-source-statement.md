@@ -29,7 +29,7 @@ AI Agent 工程真正难的地方，往往不是没有工具，而是工具太�
 当前公开基线已经覆盖 15 个一级分类，每个分类至少 3 个 `trusted` skill。
 
 最新更新声明：
-[Skill Router Execution Order](updates/2026-07-03-skill-router-execution-order.md)。
+[Update Record Follow-Up Routing](updates/2026-07-03-update-record-followup-routing.md)。
 
 本次更新后，`task-pack` 不仅可以根据任务自动选择单个优秀 skill，也可以通过
 `--include-bundles` 自动匹配场景组合，例如建站、RAG 知识库、代码审查、
@@ -171,7 +171,7 @@ tampered skills: 0
 unknown provenance records: 0
 registry verification: ok
 bundle maintenance check: ok
-router eval cases: 36
+router eval cases: 37
 ```
 
 这意味着仓库已经具备公开维护的最低基础：不是只放几个示例，而是每个核心分类都有可默认选择的安全 skill。

@@ -3012,6 +3012,10 @@ class RegistryCliTest(unittest.TestCase):
                 "skill-router-quality-review",
             ),
             (
+                "写好更新记录后，继续优化任务",
+                "skill-router-quality-review",
+            ),
+            (
                 "優化技能庫的自動推薦和任務編排能力",
                 "skill-router-quality-review",
             ),

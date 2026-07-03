@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 36,
+  "case_count": 37,
   "cases": [
     {
       "id": "website-launch",
@@ -279,6 +279,18 @@
     {
       "id": "skill-router-typo-orchestration-followup",
       "task": "继续，优化和编排sikll，继续补充和优化，做好记录和测试",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-update-record-followup",
+      "task": "写好更新记录后，继续优化任务",
       "router": "scenario",
       "expected_scenario": "skill-router-quality-review",
       "expected_task_type": "skill_router_review",

@@ -13,9 +13,27 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 36
+router eval cases: 37
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-03 Update Record Follow-Up Routing
+
+Fixed a continuation-task routing gap where:
+
+```text
+写好更新记录后，继续优化任务
+```
+
+fell back to the low-confidence `general` task pack instead of selecting
+`skill-router-quality-review`.
+
+Added narrow update-record continuation signals, focused unit coverage,
+real-world catalog regression coverage, and a reusable router-eval case:
+`skill-router-update-record-followup`.
+
+Update note:
+[Update Record Follow-Up Routing](updates/2026-07-03-update-record-followup-routing.md).
 
 ## 2026-07-03 Skill Router Execution Order
 
@@ -163,7 +181,7 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 36
+router eval cases: 37
 verification command: bash scripts/verify.sh
 ```
 
@@ -185,8 +203,8 @@ Expected current results:
 ```text
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
-router-eval: ok, 36 / 36 cases
-full script: 131 tests OK
+router-eval: ok, 37 / 37 cases
+full script: 132 tests OK
 ```
 
 ## Routine Maintenance Checklist
