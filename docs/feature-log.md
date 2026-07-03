@@ -24,7 +24,7 @@ scenario bundles from this repository. The router emits a task pack with:
 23 trusted scenario bundles
 15 top-level categories
 7 trusted overlap groups
-38 router eval cases
+39 router eval cases
 336 / 336 tracked claude-skills candidates covered
 ```
 

@@ -13,9 +13,30 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 38
+router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
+
+## 2026-07-03 Lightweight General Fallback
+
+Reduced low-confidence `general` task packs so vague continuation requests do
+not default to browser automation, web-task, sandbox, or publish-check
+guidance.
+
+The regression case:
+
+```text
+可以，按照步骤，继续优化
+```
+
+now remains `general` and selects only the lightweight local fallback:
+`execution-file-batch` and `execution-rollback-checkpoint-plan`.
+
+Added scenario-router and smart-router CLI coverage plus router-eval case:
+`unsupported-vague-stepwise-continue-optimization-lightweight`.
+
+Update note:
+[Lightweight General Fallback](updates/2026-07-03-lightweight-general-fallback.md).
 
 ## 2026-07-03 Vague Continue Optimization Guard
 
@@ -205,7 +226,7 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 38
+router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
@@ -227,8 +248,8 @@ Expected current results:
 ```text
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
-router-eval: ok, 38 / 38 cases
-full script: 133 tests OK
+router-eval: ok, 39 / 39 cases
+full script: 134 tests OK
 ```
 
 ## Routine Maintenance Checklist

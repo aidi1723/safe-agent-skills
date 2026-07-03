@@ -3295,6 +3295,58 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("acceptance_criteria", task_pack)
         self.assertIn("completion_contract", task_pack)
 
+    def test_real_catalog_scenario_router_keeps_vague_general_fallback_lightweight(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "可以，按照步骤，继续优化",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+
+        self.assertEqual(task_pack["task_profile"]["task_type"], "general")
+        self.assertEqual(task_pack["selected_scenario"]["id"], "")
+        self.assertTrue(task_pack["selection_quality"]["low_confidence"])
+        self.assertLessEqual(len(names), 3)
+        self.assertIn("execution-file-batch", names)
+        self.assertIn("execution-rollback-checkpoint-plan", names)
+        self.assertNotIn("execution-browser-use-web-task", names)
+        self.assertNotIn("execution-playwright-browser-automation", names)
+        self.assertNotIn("execution-publish-check", names)
+
+        smart_out = io.StringIO()
+        with contextlib.redirect_stdout(smart_out):
+            smart_code = main(
+                [
+                    "smart",
+                    "可以，按照步骤，继续优化",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(smart_code, 0)
+        smart_pack = json.loads(smart_out.getvalue())
+        smart_names = [skill["name"] for skill in smart_pack["skills"]]
+        self.assertEqual(smart_pack["task_profile"]["task_type"], "general")
+        self.assertEqual(smart_pack["selected_scenario"]["id"], "")
+        self.assertTrue(smart_pack["selection_quality"]["low_confidence"])
+        self.assertEqual(smart_names, ["execution-file-batch", "execution-rollback-checkpoint-plan"])
+
     def test_real_catalog_smart_router_covers_task_and_invariant_skills(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):

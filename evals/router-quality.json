@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 38,
+  "case_count": 39,
   "cases": [
     {
       "id": "website-launch",
@@ -445,6 +445,17 @@
       "expected_scenario": "",
       "expected_task_type": "general",
       "expected_skills": []
+    },
+    {
+      "id": "unsupported-vague-stepwise-continue-optimization-lightweight",
+      "task": "可以，按照步骤，继续优化",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": [
+        "execution-file-batch",
+        "execution-rollback-checkpoint-plan"
+      ]
     }
   ]
 }

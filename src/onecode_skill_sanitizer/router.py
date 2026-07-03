@@ -6,6 +6,22 @@ from collections.abc import Iterable
 
 ROUTER_VERSION = 1
 
+LOW_CONFIDENCE_GENERAL_FALLBACK_SKILLS = [
+    "execution-file-batch",
+    "execution-rollback-checkpoint-plan",
+]
+
+LOW_CONFIDENCE_GENERAL_NOISE_SKILLS = {
+    "execution-browser-check",
+    "execution-browser-use-web-task",
+    "execution-claude-skills-productivity-review",
+    "execution-e2b-sandbox-boundary",
+    "execution-file-batch",
+    "execution-playwright-browser-automation",
+    "execution-publish-check",
+    "execution-rollback-checkpoint-plan",
+}
+
 
 SCENARIO_PROFILES = [
     {
@@ -920,6 +936,30 @@ def build_pipeline_plan(
     return plan
 
 
+def should_use_lightweight_general_fallback(
+    task_profile: dict,
+    selected_bundle: dict,
+    invariant_capabilities: Iterable[str] | None = None,
+) -> bool:
+    return (
+        not selected_bundle
+        and task_profile.get("task_type") == "general"
+        and int(task_profile.get("matched_signal_score", 0) or 0) <= 0
+        and not list(invariant_capabilities or [])
+    )
+
+
+def lightweight_general_fallback_skill_names(selected_skills: list[dict], selected_by_name: dict[str, dict]) -> list[str]:
+    direct_names = [
+        skill["name"]
+        for skill in selected_skills
+        if skill.get("match_score", 0) > 0 and skill["name"] not in LOW_CONFIDENCE_GENERAL_NOISE_SKILLS
+    ]
+    if direct_names:
+        return direct_names
+    return [name for name in LOW_CONFIDENCE_GENERAL_FALLBACK_SKILLS if name in selected_by_name]
+
+
 def route_scenario_task(
     task: str,
     selected_skills: list[dict],
@@ -943,7 +983,9 @@ def route_scenario_task(
 
     selected_by_name = {skill["name"]: skill for skill in selected_skills}
     ordered_names: list[str] = []
-    if selected_bundle:
+    if should_use_lightweight_general_fallback(profile, selected_bundle):
+        ordered_names.extend(lightweight_general_fallback_skill_names(selected_skills, selected_by_name))
+    elif selected_bundle:
         for name in selected_bundle.get("execution_order", selected_bundle.get("skills", [])):
             if name in selected_by_name and name not in ordered_names:
                 ordered_names.append(name)
@@ -951,9 +993,13 @@ def route_scenario_task(
             for name in capability.get("preferred_skills", []):
                 if name in selected_by_name and name not in ordered_names:
                     ordered_names.append(name)
-    for skill in selected_skills:
-        if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
-            ordered_names.append(skill["name"])
+        for skill in selected_skills:
+            if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
+                ordered_names.append(skill["name"])
+    else:
+        for skill in selected_skills:
+            if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
+                ordered_names.append(skill["name"])
     required_skill_names: list[str] = []
     if selected_bundle:
         task_required_capabilities = set(profile.get("required_capabilities", []))
@@ -1674,9 +1720,16 @@ def route_mesh_task(
     invariant_capabilities = parse_invariant_capabilities(invariants)
     selected_bundle = select_trusted_bundle_for_profile(bundles_index, profile, trusted_skill_names)
     selected_by_name = {skill["name"]: skill for skill in selected_skills}
+    use_lightweight_general_fallback = should_use_lightweight_general_fallback(
+        profile,
+        selected_bundle,
+        invariant_capabilities,
+    )
 
     ordered_names: list[str] = []
-    if selected_bundle:
+    if use_lightweight_general_fallback:
+        ordered_names.extend(lightweight_general_fallback_skill_names(selected_skills, selected_by_name))
+    elif selected_bundle:
         for name in selected_bundle.get("execution_order", selected_bundle.get("skills", [])):
             if name in selected_by_name and name not in ordered_names:
                 ordered_names.append(name)
@@ -1685,21 +1738,23 @@ def route_mesh_task(
                 if name in selected_by_name and name not in ordered_names:
                     ordered_names.append(name)
 
-    for name in capability_skill_names(invariant_capabilities, trusted_skill_names):
-        if name in selected_by_name and name not in ordered_names:
-            ordered_names.append(name)
+    if not use_lightweight_general_fallback:
+        for name in capability_skill_names(invariant_capabilities, trusted_skill_names):
+            if name in selected_by_name and name not in ordered_names:
+                ordered_names.append(name)
 
-    for skill in selected_skills:
-        if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
-            ordered_names.append(skill["name"])
+        for skill in selected_skills:
+            if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
+                ordered_names.append(skill["name"])
 
     required_names = set(capability_skill_names(invariant_capabilities, trusted_skill_names))
     task_required_capabilities = set(profile.get("required_capabilities", []))
     required_names.update(selected_bundle_required_skill_names(selected_bundle, selected_by_name, task_required_capabilities))
     ordered_names, pruned_names = prune_overlap_skill_names(ordered_names, overlap_groups, required_names)
-    for skill in selected_skills:
-        if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
-            ordered_names.append(skill["name"])
+    if not use_lightweight_general_fallback:
+        for skill in selected_skills:
+            if skill.get("match_score", 0) > 0 and skill["name"] not in ordered_names:
+                ordered_names.append(skill["name"])
     sorted_names, prelimit_graph = contract_sorted_skill_names(selected_by_name, ordered_names)
     strategy_limits = {"fast": min(max_skills, 5), "balanced": max_skills, "deep": max(max_skills, 10)}
     required_sorted_names = [name for name in sorted_names if name in required_names]

@@ -39,7 +39,7 @@ Current baseline:
 - categories meeting 3 trusted skills: 15 / 15
 - scenario bundles: 23 trusted
 - external references: 19
-- router eval cases: 38
+- router eval cases: 39
 - phase status: reference-pattern expansion and project-check follow-up closed
   for today's delivery
 
@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Lightweight General Fallback](updates/2026-07-03-lightweight-general-fallback.md)
 - [Vague Continue Optimization Guard](updates/2026-07-03-vague-continue-optimization-guard.md)
 - [Update Record Follow-Up Routing](updates/2026-07-03-update-record-followup-routing.md)
 - [Skill Router Execution Order](updates/2026-07-03-skill-router-execution-order.md)
