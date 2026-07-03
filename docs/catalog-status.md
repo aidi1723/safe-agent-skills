@@ -37,6 +37,8 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Router Eval Negative Constraints](updates/2026-07-03-router-eval-negative-constraints.md)
+- [Lightweight General Fallback](updates/2026-07-03-lightweight-general-fallback.md)
 - [Project Check Follow-Up](updates/2026-07-03-project-check-follow-up.md)
 - [Reference Pattern Expansion](updates/2026-07-03-reference-pattern-expansion.md)
 - [Industry Application Orchestration](updates/2026-07-03-industry-application-orchestration.md)

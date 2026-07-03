@@ -29,6 +29,7 @@ AI Agent 工程真正难的地方，往往不是没有工具，而是工具太�
 当前公开基线已经覆盖 15 个一级分类，每个分类至少 3 个 `trusted` skill。
 
 最新更新声明：
+[Router Eval Negative Constraints](updates/2026-07-03-router-eval-negative-constraints.md)，
 [Lightweight General Fallback](updates/2026-07-03-lightweight-general-fallback.md)，
 [Vague Continue Optimization Guard](updates/2026-07-03-vague-continue-optimization-guard.md)。
 

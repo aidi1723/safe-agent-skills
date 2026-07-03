@@ -1320,6 +1320,50 @@ class RegistryCliTest(unittest.TestCase):
             self.assertEqual(result["failed_count"], 1)
             self.assertEqual(result["cases"][0]["status"], "failed")
 
+    def test_router_eval_fails_forbidden_skills_and_skill_count_limit(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 1,
+                        "cases": [
+                            {
+                                "id": "overloaded-website-pack",
+                                "task": "build a product website and prepare launch checks",
+                                "router": "scenario",
+                                "expected_scenario": "website-build-launch",
+                                "expected_task_type": "website_build",
+                                "forbidden_skills": ["execution-publish-check"],
+                                "max_skill_count": 1,
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 2)
+            result = json.loads(eval_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["cases"][0]["issues"]}
+            self.assertIn("router-eval-forbidden-skill", issue_ids)
+            self.assertIn("router-eval-max-skill-count-exceeded", issue_ids)
+
     def test_real_router_eval_file_covers_current_catalog_scenarios(self):
         eval_path = Path("evals/router-quality.json")
         payload = json.loads(eval_path.read_text(encoding="utf-8"))

@@ -17,6 +17,23 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Router Eval Negative Constraints
+
+Deepened `router-eval` so long-term quality cases can assert negative
+constraints as well as expected selections.
+
+Eval cases now support:
+
+- `forbidden_skills`: selected skills that should fail the eval case.
+- `max_skill_count`: an upper bound for selected-skill count.
+
+Upgraded vague `general` fallback eval cases so browser automation,
+Playwright automation, and publish checks cannot silently return to
+low-confidence packs.
+
+Update note:
+[Router Eval Negative Constraints](updates/2026-07-03-router-eval-negative-constraints.md).
+
 ## 2026-07-03 Lightweight General Fallback
 
 Reduced low-confidence `general` task packs so vague continuation requests do
@@ -249,7 +266,7 @@ Expected current results:
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
 router-eval: ok, 39 / 39 cases
-full script: 134 tests OK
+full script: 135 tests OK
 ```
 
 ## Routine Maintenance Checklist

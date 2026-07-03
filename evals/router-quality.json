@@ -436,7 +436,13 @@
       "router": "scenario",
       "expected_scenario": "",
       "expected_task_type": "general",
-      "expected_skills": []
+      "expected_skills": [],
+      "forbidden_skills": [
+        "execution-browser-use-web-task",
+        "execution-playwright-browser-automation",
+        "execution-publish-check"
+      ],
+      "max_skill_count": 3
     },
     {
       "id": "unsupported-vague-continue-optimization",
@@ -444,7 +450,13 @@
       "router": "scenario",
       "expected_scenario": "",
       "expected_task_type": "general",
-      "expected_skills": []
+      "expected_skills": [],
+      "forbidden_skills": [
+        "execution-browser-use-web-task",
+        "execution-playwright-browser-automation",
+        "execution-publish-check"
+      ],
+      "max_skill_count": 3
     },
     {
       "id": "unsupported-vague-stepwise-continue-optimization-lightweight",
@@ -455,7 +467,13 @@
       "expected_skills": [
         "execution-file-batch",
         "execution-rollback-checkpoint-plan"
-      ]
+      ],
+      "forbidden_skills": [
+        "execution-browser-use-web-task",
+        "execution-playwright-browser-automation",
+        "execution-publish-check"
+      ],
+      "max_skill_count": 3
     }
   ]
 }

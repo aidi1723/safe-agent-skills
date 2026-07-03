@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Router Eval Negative Constraints](updates/2026-07-03-router-eval-negative-constraints.md)
 - [Lightweight General Fallback](updates/2026-07-03-lightweight-general-fallback.md)
 - [Vague Continue Optimization Guard](updates/2026-07-03-vague-continue-optimization-guard.md)
 - [Update Record Follow-Up Routing](updates/2026-07-03-update-record-followup-routing.md)
