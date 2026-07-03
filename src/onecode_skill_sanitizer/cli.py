@@ -1703,10 +1703,25 @@ ROUTER_EVAL_STRING_LIST_FIELDS = (
     "forbidden_skill_prefixes",
     "forbidden_skill_subcategories",
 )
+ROUTER_EVAL_OPTIONAL_STRING_FIELDS = (
+    "expected_scenario",
+    "expected_task_type",
+)
 
 
 def validate_router_eval_case(case: dict) -> list[dict]:
     issues = []
+    for field in ROUTER_EVAL_OPTIONAL_STRING_FIELDS:
+        value = case.get(field)
+        if value is not None and not isinstance(value, str):
+            issues.append(
+                {
+                    "id": "router-eval-invalid-case-field",
+                    "field": field,
+                    "expected": "string",
+                    "actual": type(value).__name__,
+                }
+            )
     for field in ROUTER_EVAL_STRING_LIST_FIELDS:
         value = case.get(field, [])
         if not isinstance(value, list) or any(not isinstance(item, str) for item in value):

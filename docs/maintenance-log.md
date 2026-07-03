@@ -24,12 +24,15 @@ evaluation issues before task-pack generation.
 
 Eval cases now validate:
 
+- `expected_scenario` and `expected_task_type` as strings when present.
 - `expected_skills`, `forbidden_skills`, `forbidden_skill_prefixes`, and
   `forbidden_skill_subcategories` as arrays of strings.
 - `max_skill_count` as a non-negative integer.
 
 Invalid fields now produce `router-eval-invalid-case-field` instead of being
 silently ignored or causing runtime type errors during comparison.
+Malformed scenario and task-type expectations are now rejected before normal
+mismatch checks run.
 
 Update note:
 [Router Eval Constraint Schema](updates/2026-07-03-router-eval-constraint-schema.md).
