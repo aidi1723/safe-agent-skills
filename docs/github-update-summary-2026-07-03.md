@@ -15,6 +15,8 @@ delivery documentation, and release verification.
 
 - Added and verified final closure documentation:
   [Final Closure Report](final-closure-report.md).
+- Added current-stage acceptance documentation:
+  [Stage Acceptance Report](stage-acceptance-report-2026-07-04.md).
 - Added delivery-readiness documentation:
   [Delivery Readiness Report](delivery-readiness-report.md).
 - Hardened scanner detection for:
@@ -43,6 +45,8 @@ delivery documentation, and release verification.
   - `contract.requires_after`;
   - `contract_requires_after` graph edges;
   - `missing_ordering_count` and `missing_ordering` diagnostics.
+- Published the accepted milestone feature summary in README and GitHub
+  Release notes.
 - Added a source-import capture schema gate:
   `source.usage = source_import` now requires auditable `source.capture`
   metadata.

@@ -90,7 +90,7 @@ Latest update statement:
 [Requires After Contract Ordering](docs/updates/2026-07-04-requires-after-contract-ordering.md).
 
 Latest closure report:
-[Final Closure Report](docs/final-closure-report.md).
+[Stage Acceptance Report](docs/stage-acceptance-report-2026-07-04.md).
 
 GitHub update summary:
 [GitHub Update Summary](docs/github-update-summary-2026-07-03.md).

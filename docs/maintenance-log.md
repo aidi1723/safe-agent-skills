@@ -17,6 +17,17 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-04 Stage Acceptance
+
+Accepted the current milestone as ready for handoff.
+
+Acceptance report:
+[Stage Acceptance Report](stage-acceptance-report-2026-07-04.md).
+
+The report records the delivered router, contract-diagnostics,
+`contract.requires_after`, router-eval, scanner, source-import capture, and
+publication-documentation improvements, plus the current verification baseline.
+
 ## 2026-07-04 Requires After Contract Ordering
 
 Added explicit `contract.requires_after` ordering metadata to schema
