@@ -6,9 +6,9 @@ skill, not manual installation of every catalog skill.
 
 ## Current Baseline
 
-- 164 catalog skills
-- 158 trusted skills
-- 15 trusted scenario bundles
+- 167 catalog skills
+- 161 trusted skills
+- 18 trusted scenario bundles
 - 15 top-level categories
 - trusted-only default routing
 - provenance, hash, schema, and maintain checks before publication

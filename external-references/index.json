@@ -1,5 +1,5 @@
 {
-  "reference_count": 11,
+  "reference_count": 14,
   "references": [
     {
       "adoption_status": "converted",
@@ -265,6 +265,85 @@
         "ai.context-engineering",
         "engineering.workflow",
         "business.operations",
+        "security.supply_chain"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "calesthio",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "agentic_video_production",
+        "reference_video_analysis",
+        "media_pipeline_manifests",
+        "provider_routing",
+        "cost_estimation",
+        "render_quality_gates"
+      ],
+      "license": "GNU AGPLv3",
+      "metadata_only": true,
+      "name": "OpenMontage",
+      "project_category": "agentic_media_production_reference",
+      "review_notes": "Public GitHub project for agent-driven video production. Local adoption is limited to a OneCode-authored method skill and scenario bundle for pipeline planning, reference analysis, provider routing, budget notes, and QA gates. No upstream runtime code or prompt bodies are imported.",
+      "runtime_permission_notes": "Reference only. Do not run media generators, renderers, provider calls, asset downloads, uploads, or publishing from default task packs. Runtime use requires separate dependency, license, asset-rights, budget, and host approval review.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/calesthio/OpenMontage",
+      "taxonomy_categories": [
+        "media.video",
+        "content.strategy",
+        "execution.pipeline",
+        "ai.orchestration"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "topoteretes",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "long_term_agent_memory",
+        "knowledge_graph_memory",
+        "remember_recall_forget_improve",
+        "tenant_isolation",
+        "memory_traceability",
+        "cross_session_context"
+      ],
+      "license": "Apache-2.0",
+      "metadata_only": true,
+      "name": "cognee",
+      "project_category": "agent_memory_platform_reference",
+      "review_notes": "Public GitHub project for persistent agent memory and graph-backed recall. Local adoption is limited to a OneCode-authored method skill and scenario bundle for memory operation contracts, provenance, disclosure, correction, deletion, and tenant boundary review.",
+      "runtime_permission_notes": "Reference only. Do not start a memory service, index durable data, share memory across tenants, or write persistent records from default task packs. Any runtime integration requires host approval and separate privacy review.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/topoteretes/cognee",
+      "taxonomy_categories": [
+        "ai.memory",
+        "data.rag-boundary",
+        "compliance.privacy"
+      ]
+    },
+    {
+      "adoption_status": "converted",
+      "author": "DeusData",
+      "captured_at": "2026-07-03",
+      "claimed_capabilities": [
+        "codebase_knowledge_graph",
+        "mcp_code_intelligence",
+        "call_graph_queries",
+        "git_diff_impact_analysis",
+        "architecture_queries",
+        "local_structural_indexing"
+      ],
+      "license": "MIT",
+      "metadata_only": true,
+      "name": "codebase-memory-mcp",
+      "project_category": "codebase_graph_intelligence_reference",
+      "review_notes": "Public GitHub project for local codebase graph indexing and MCP code intelligence. Local adoption is limited to a OneCode-authored method skill and scenario bundle for graph-index suitability, source confirmation, freshness checks, and MCP boundary review.",
+      "runtime_permission_notes": "Reference only. Do not install, start, update, configure, or auto-index through default task packs. MCP setup, config edits, background services, UI launch, and index writes require separate host approval.",
+      "source_type": "github_reference",
+      "source_url": "https://github.com/DeusData/codebase-memory-mcp",
+      "taxonomy_categories": [
+        "code.explore",
+        "ai.tool-schema",
         "security.supply_chain"
       ]
     }

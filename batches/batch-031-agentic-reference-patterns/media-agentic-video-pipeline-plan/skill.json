@@ -1,0 +1,18 @@
+{
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-agentic-reference-patterns",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-031-agentic-reference-patterns.md; reference analysis of https://github.com/calesthio/OpenMontage",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-031-agentic-reference-patterns/media-agentic-video-pipeline-plan",
+    "usage": "local_authoring"
+  },
+  "taxonomy": {
+    "artifact_type": "media",
+    "category": "media",
+    "collection_priority": "P1",
+    "subcategory": "media.video",
+    "task_intent": "plan agent-driven video production pipelines with cost, provider, reference, and render QA gates"
+  }
+}

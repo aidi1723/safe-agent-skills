@@ -1,7 +1,7 @@
 {
-  "generated_at": "2026-07-02T16:48:20Z",
+  "generated_at": "2026-07-03T11:11:39Z",
   "schema_version": 1,
-  "skill_count": 164,
+  "skill_count": 167,
   "skills": [
     {
       "hashes": {
@@ -117,6 +117,35 @@
         "collection_priority": "P1",
         "subcategory": "ai.role_workflow",
         "task_intent": "design role-based collaborative agent workflows"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "9a0ca7b832c4f7607799e1029c1fceade0e5104cff8357a455fb4d9d1adda549",
+        "sanitized_sha256": "8d54e14f509c448f444aa6713bd5df1895a79e803117f780ea7a7925a1465531",
+        "source_sha256": "5c1436c32063d1844c5df9883f9082331513260f7180edb6e85bbba290fbe06a"
+      },
+      "name": "ai-graph-memory-contract",
+      "registry_path": "ai/ai-graph-memory-contract",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T11:11:30Z",
+        "collected_by": "onecode-agentic-reference-patterns",
+        "license": "Apache-2.0",
+        "path": "batches/batch-031-agentic-reference-patterns/ai-graph-memory-contract",
+        "reference": "docs/batches/batch-031-agentic-reference-patterns.md; reference analysis of https://github.com/topoteretes/cognee",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-031-agentic-reference-patterns/ai-graph-memory-contract",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "policy",
+        "category": "ai",
+        "collection_priority": "P0",
+        "subcategory": "ai.memory",
+        "task_intent": "define long-term graph memory operation contracts with provenance, disclosure, and tenant boundaries"
       }
     },
     {
@@ -1638,6 +1667,35 @@
         "collection_priority": "P2",
         "subcategory": "code.claude_skills_engineering_roles",
         "task_intent": "convert claude-skills engineering-role references into bounded code review, testing, architecture, and implementation guidance"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "6310250b769aead6434a9866db6e595bde23b4cbcc5ac5207b9f04d823f0f2cd",
+        "sanitized_sha256": "afc7bca7d53edec3ad55b2db93800644dd57cc989e68f44ceb5442b51158fdd8",
+        "source_sha256": "10eb1eea6f2a732aa67442036522d3a6375882d4229c15b119599624dacabefd"
+      },
+      "name": "code-codebase-graph-index-boundary",
+      "registry_path": "code/code-codebase-graph-index-boundary",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T11:11:30Z",
+        "collected_by": "onecode-agentic-reference-patterns",
+        "license": "Apache-2.0",
+        "path": "batches/batch-031-agentic-reference-patterns/code-codebase-graph-index-boundary",
+        "reference": "docs/batches/batch-031-agentic-reference-patterns.md; reference analysis of https://github.com/DeusData/codebase-memory-mcp",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-031-agentic-reference-patterns/code-codebase-graph-index-boundary",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "code",
+        "category": "code",
+        "collection_priority": "P0",
+        "subcategory": "code.explore",
+        "task_intent": "review codebase graph index and MCP code intelligence boundaries for structural repository exploration"
       }
     },
     {
@@ -3796,6 +3854,35 @@
         "collection_priority": "P0",
         "subcategory": "execution.rollback",
         "task_intent": "plan checkpoints and rollback before risky work"
+      }
+    },
+    {
+      "hashes": {
+        "manifest_sha256": "eca5482ebe3bfd10ca8928d8d6555e4e533fa24245ec94cc6e666a169de26023",
+        "sanitized_sha256": "c5faf121dce6025e6fbc515b893bc93457bf853bb43e5338968bc7fae8b55e8b",
+        "source_sha256": "f728cade8b1228f7a361b0b1f0fdef2e682a1328ce15a4fb52e503e428f1af8a"
+      },
+      "name": "media-agentic-video-pipeline-plan",
+      "registry_path": "media/media-agentic-video-pipeline-plan",
+      "risk_level": "low",
+      "source": {
+        "author": "OneCode Project",
+        "captured_at": "2026-07-03T11:11:30Z",
+        "collected_by": "onecode-agentic-reference-patterns",
+        "license": "Apache-2.0",
+        "path": "batches/batch-031-agentic-reference-patterns/media-agentic-video-pipeline-plan",
+        "reference": "docs/batches/batch-031-agentic-reference-patterns.md; reference analysis of https://github.com/calesthio/OpenMontage",
+        "type": "local_folder",
+        "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-031-agentic-reference-patterns/media-agentic-video-pipeline-plan",
+        "usage": "local_authoring"
+      },
+      "status": "trusted",
+      "taxonomy": {
+        "artifact_type": "media",
+        "category": "media",
+        "collection_priority": "P1",
+        "subcategory": "media.video",
+        "task_intent": "plan agent-driven video production pipelines with cost, provider, reference, and render QA gates"
       }
     },
     {

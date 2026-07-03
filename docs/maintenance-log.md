@@ -6,13 +6,54 @@ Date: 2026-07-03
 
 ```text
 branch: main
-catalog skills: 164
-trusted skills: 158
-trusted scenario bundles: 15
+catalog skills: 167
+trusted skills: 161
+trusted scenario bundles: 18
+external references: 14
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 26
+router eval cases: 29
+verification command: bash scripts/verify.sh
+```
+
+## 2026-07-03 Agentic Reference Patterns
+
+Added three trusted, locally authored method skills based on external reference
+project review:
+
+- `media-agentic-video-pipeline-plan`
+- `ai-graph-memory-contract`
+- `code-codebase-graph-index-boundary`
+
+Added three trusted scenario bundles:
+
+- `agentic-media-production`
+- `agent-long-term-memory-governance`
+- `codebase-graph-intelligence`
+
+Recorded metadata-only external references for OpenMontage, cognee, and
+codebase-memory-mcp. The references remain non-runtime provenance records; no
+upstream code, prompts, installers, renderers, memory services, MCP servers, or
+background indexers were imported or enabled.
+
+Updated router profiles and regression coverage so reference-video media
+production, long-term graph memory governance, and MCP code graph intelligence
+route to dedicated trusted bundles instead of older generic video, RAG, or code
+review scenarios.
+
+Current verified baseline after this update:
+
+```text
+branch: main
+catalog skills: 167
+trusted skills: 161
+trusted scenario bundles: 18
+external references: 14
+trusted overlap groups: 7
+tracked claude-skills candidates: 336
+covered claude-skills candidates: 336
+router eval cases: 29
 verification command: bash scripts/verify.sh
 ```
 
@@ -32,9 +73,9 @@ git diff --check
 Expected current results:
 
 ```text
-verify: ok, 164 skills, 158 trusted, 0 tampered, 0 unknown provenance
-maintain-check: ok, 15 bundles, 336 / 336 candidates covered
-router-eval: ok, 26 / 26 cases
+verify: ok, 167 skills, 161 trusted, 0 tampered, 0 unknown provenance
+maintain-check: ok, 18 bundles, 336 / 336 candidates covered
+router-eval: ok, 29 / 29 cases
 full script: 122 tests OK
 ```
 
@@ -64,4 +105,3 @@ full script: 122 tests OK
   and mixed-language task phrasing.
 - Add deeper parser-backed checks where deterministic regex scanning is too
   shallow for a recurring risk class.
-

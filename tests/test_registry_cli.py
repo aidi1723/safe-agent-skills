@@ -2118,7 +2118,7 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(schema_code, 0)
         result = json.loads(schema_out.getvalue())
         self.assertEqual(result["status"], "ok")
-        self.assertEqual(result["skill_manifest_count"], 164)
+        self.assertEqual(result["skill_manifest_count"], 167)
         self.assertEqual(result["issues"], [])
 
     def test_verify_registry_detects_manifest_policy_tampering(self):
@@ -3020,6 +3020,18 @@ class RegistryCliTest(unittest.TestCase):
             (
                 "设计一个带向量检索和引用检查的 RAG 知识代理",
                 "rag-agent-knowledge-app",
+            ),
+            (
+                "analyze a reference TikTok video, estimate media production cost, and plan an agentic Remotion render QA gate",
+                "agentic-media-production",
+            ),
+            (
+                "design long-term graph memory for agents with remember recall forget improve and tenant isolation",
+                "agent-long-term-memory-governance",
+            ),
+            (
+                "use an MCP code graph index for call graph exploration and git diff impact analysis",
+                "codebase-graph-intelligence",
             ),
             (
                 "把 PDF 文档转成知识库并做引用检查",

@@ -23,6 +23,7 @@ host agent choose a stronger starting plan.
 | `website-build-launch` | Build or polish a website and prepare it for release | architecture, UI, content, SEO, browser check, publish check |
 | `code-review-hardening` | Review code, tests, schema contracts, and security risk | code review, regression tests, structured output, supply-chain review |
 | `codebase-change-lifecycle` | Explore a codebase, implement or debug changes, simplify, test, and review | context, debugging, refactor safety, tests, review, release |
+| `codebase-graph-intelligence` | Review code graph index, MCP code intelligence, architecture query, and impact-analysis boundaries | graph boundary, project context, schema, source confirmation, supply-chain review |
 | `security-agent-guardrails` | Review an agent workflow for prompt injection, guardrails, and I/O scanning | prompt injection, output validation, I/O scanning, supply-chain review |
 | `agent-planning-orchestration` | Clarify fuzzy requirements, decompose a plan, and coordinate multi-agent execution | requirements, metaskill workflow, orchestration, role workflow, multi-agent review |
 | `document-to-knowledge-base` | Convert documents into Markdown, chunks, summaries, and source-backed notes | PDF review, Markdown conversion, document partitioning, source check |
@@ -30,7 +31,9 @@ host agent choose a stronger starting plan.
 | `open-source-release` | Prepare a public repository, docs, safety statement, and release handoff | publish check, supply-chain review, editorial review, social post |
 | `content-seo-publication` | Draft and review SEO/GEO content for publication | SEO brief, editorial review, source check, prompt patterns |
 | `content-video-production` | Plan copy, content matrix, video script, and media handoff for short-form or programmatic video production | content strategy, brand voice, claims review, video script, Remotion boundary, media asset review |
+| `agentic-media-production` | Plan reference-video analysis, media pipeline selection, provider routing, cost estimates, and render QA | agentic video pipeline, source check, Remotion boundary, asset review, schema review |
 | `rag-agent-knowledge-app` | Design a source-grounded RAG or knowledge-base agent | orchestration, RAG workflow, retrieval, schema, source check, prompt-injection review |
+| `agent-long-term-memory-governance` | Design durable agent memory contracts, recall disclosure, deletion paths, and tenant boundaries | memory contract, namespace boundary, privacy, source check, schema eval |
 | `commerce-listing-growth` | Prepare marketplace product listings and buyer communication | listing, keyword plan, inquiry reply, content review |
 
 ## Website Build Launch

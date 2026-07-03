@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "bundle_count": 15,
+  "bundle_count": 18,
   "bundles": [
     {
       "id": "website-build-launch",
@@ -157,6 +157,45 @@
         "build or CI readiness notes"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "codebase-graph-intelligence",
+      "name": "Codebase Graph Intelligence",
+      "scenario": "Use structural code graph and MCP code intelligence patterns for call graph exploration, architecture queries, and git diff impact analysis.",
+      "status": "trusted",
+      "task_signals": ["mcp code graph", "code graph index", "codebase graph", "call graph", "symbol graph", "architecture query", "git diff impact", "impact analysis", "structural code exploration", "codebase-memory-mcp", "代码图谱", "调用图", "符号图", "影响分析"],
+      "required_capabilities": [
+        {"id": "graph_index_boundary", "required": true, "preferred_skills": ["code-codebase-graph-index-boundary"]},
+        {"id": "project_context", "required": true, "preferred_skills": ["codebase-explore-map"]},
+        {"id": "impact_analysis", "required": true, "preferred_skills": ["code-review-risk", "code-test-regression"]},
+        {"id": "source_confirmation", "required": true, "preferred_skills": ["code-review-risk"]},
+        {"id": "mcp_boundary", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "security-supply-chain-review"]}
+      ],
+      "execution_order": [
+        "code-codebase-graph-index-boundary",
+        "codebase-explore-map",
+        "ai-tool-schema-protocol-check",
+        "code-review-risk",
+        "code-test-regression",
+        "security-supply-chain-review"
+      ],
+      "skills": [
+        "code-codebase-graph-index-boundary",
+        "codebase-explore-map",
+        "ai-tool-schema-protocol-check",
+        "code-review-risk",
+        "code-test-regression",
+        "security-supply-chain-review"
+      ],
+      "expected_output": [
+        "graph-index suitability decision",
+        "repository scope and ignore boundary",
+        "read-only query and source-confirmation plan",
+        "freshness and staleness notes",
+        "impact analysis and regression-test targets",
+        "MCP setup or config approval boundary"
+      ],
+      "safety_boundary": "Skills provide method only; indexing, MCP setup, config edits, UI launch, background services, and source changes require host approval."
     },
     {
       "id": "security-agent-guardrails",
@@ -334,6 +373,50 @@
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent. Programmatic video execution needs separate runtime and license review."
     },
     {
+      "id": "agentic-media-production",
+      "name": "Agentic Media Production",
+      "scenario": "Plan agent-driven media production with reference-video analysis, pipeline selection, provider routing, cost estimates, render QA, captions, and asset-rights gates.",
+      "status": "trusted",
+      "task_signals": ["agentic video", "agentic media", "reference video", "reference-video", "paste a video", "tiktok video", "youtube short", "reels", "provider routing", "provider route", "cost estimate", "render qa", "ffprobe", "post-render", "openmontage", "参考视频", "成本估算", "渲染质检", "媒体管线"],
+      "required_capabilities": [
+        {"id": "agentic_video_pipeline", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan"]},
+        {"id": "reference_analysis", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "research-source-check"]},
+        {"id": "provider_route", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "ai-tool-schema-protocol-check"]},
+        {"id": "cost_estimate", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "ai-opensquilla-token-routing-pattern"]},
+        {"id": "render_qa", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "media-remotion-video-production-boundary"]},
+        {"id": "asset_review", "required": true, "preferred_skills": ["media-asset-review", "content-claims-compliance-filter"]}
+      ],
+      "execution_order": [
+        "media-agentic-video-pipeline-plan",
+        "research-source-check",
+        "media-video-script-review",
+        "media-remotion-video-production-boundary",
+        "media-asset-review",
+        "content-claims-compliance-filter",
+        "ai-tool-schema-protocol-check",
+        "ai-opensquilla-token-routing-pattern"
+      ],
+      "skills": [
+        "media-agentic-video-pipeline-plan",
+        "research-source-check",
+        "media-video-script-review",
+        "media-remotion-video-production-boundary",
+        "media-asset-review",
+        "content-claims-compliance-filter",
+        "ai-tool-schema-protocol-check",
+        "ai-opensquilla-token-routing-pattern"
+      ],
+      "expected_output": [
+        "reference analysis or original production brief",
+        "concept variants and selected direction",
+        "pipeline and stage plan",
+        "provider route and cost estimate",
+        "asset, rights, caption, and claims review",
+        "pre-render and post-render QA gates"
+      ],
+      "safety_boundary": "Skills provide method only; media generation, rendering, paid provider calls, downloads, uploads, and publishing require host approval."
+    },
+    {
       "id": "data-analysis-report",
       "name": "Data Analysis Report",
       "scenario": "Clean a dataset, analyze tables, plan charts, and prepare a business or research report.",
@@ -494,6 +577,48 @@
         "citation and prompt-injection review"
       ],
       "safety_boundary": "Skills provide method only; runtime permissions remain controlled by the host agent."
+    },
+    {
+      "id": "agent-long-term-memory-governance",
+      "name": "Agent Long-Term Memory Governance",
+      "scenario": "Design or review durable agent memory, graph memory contracts, recall disclosure, correction and deletion paths, tenant isolation, and retrieval boundaries.",
+      "status": "trusted",
+      "task_signals": ["long-term memory", "long term memory", "graph memory", "persistent memory", "durable memory", "remember recall forget improve", "remember", "recall", "forget", "tenant isolation", "memory correction", "cognee", "长期记忆", "图谱记忆", "持久记忆", "租户隔离", "记忆治理"],
+      "required_capabilities": [
+        {"id": "memory_contract", "required": true, "preferred_skills": ["ai-graph-memory-contract"]},
+        {"id": "retrieval_boundary", "required": true, "preferred_skills": ["data-rag-namespace-boundary-check", "ai-langchain-agent-orchestration"]},
+        {"id": "tenant_isolation", "required": true, "preferred_skills": ["data-rag-namespace-boundary-check", "compliance-privacy-check"]},
+        {"id": "forget_path", "required": true, "preferred_skills": ["ai-graph-memory-contract", "compliance-privacy-check"]},
+        {"id": "source_disclosure", "required": true, "preferred_skills": ["research-source-check", "ai-graph-memory-contract"]},
+        {"id": "schema_contract", "required": false, "preferred_skills": ["ai-pydantic-schema-contract", "ai-output-schema-eval"]}
+      ],
+      "execution_order": [
+        "ai-graph-memory-contract",
+        "data-rag-namespace-boundary-check",
+        "ai-langchain-agent-orchestration",
+        "compliance-privacy-check",
+        "research-source-check",
+        "ai-pydantic-schema-contract",
+        "ai-output-schema-eval"
+      ],
+      "skills": [
+        "ai-graph-memory-contract",
+        "data-rag-namespace-boundary-check",
+        "ai-langchain-agent-orchestration",
+        "compliance-privacy-check",
+        "research-source-check",
+        "ai-pydantic-schema-contract",
+        "ai-output-schema-eval"
+      ],
+      "expected_output": [
+        "memory operation contract",
+        "memory record schema",
+        "tenant and project boundary map",
+        "retrieval and disclosure policy",
+        "correction, deletion, and retention path",
+        "source, freshness, and confidence notes"
+      ],
+      "safety_boundary": "Skills provide method only; memory service setup, indexing, cross-tenant sharing, durable writes, and deletion operations require host approval."
     },
     {
       "id": "claude-skills-backlog-coverage",

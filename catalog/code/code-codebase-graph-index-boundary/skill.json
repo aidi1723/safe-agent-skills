@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-03T11:11:39Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "6310250b769aead6434a9866db6e595bde23b4cbcc5ac5207b9f04d823f0f2cd",
+    "sanitized_sha256": "afc7bca7d53edec3ad55b2db93800644dd57cc989e68f44ceb5442b51158fdd8",
+    "source_sha256": "10eb1eea6f2a732aa67442036522d3a6375882d4229c15b119599624dacabefd"
+  },
+  "name": "code-codebase-graph-index-boundary",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-03T11:11:30Z",
+    "collected_by": "onecode-agentic-reference-patterns",
+    "license": "Apache-2.0",
+    "path": "batches/batch-031-agentic-reference-patterns/code-codebase-graph-index-boundary",
+    "reference": "docs/batches/batch-031-agentic-reference-patterns.md; reference analysis of https://github.com/DeusData/codebase-memory-mcp",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-031-agentic-reference-patterns/code-codebase-graph-index-boundary",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P0",
+    "subcategory": "code.explore",
+    "task_intent": "review codebase graph index and MCP code intelligence boundaries for structural repository exploration"
+  },
+  "version": "0.1.0"
+}

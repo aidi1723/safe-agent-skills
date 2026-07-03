@@ -67,9 +67,9 @@ sandbox.
 
 Current public baseline:
 
-- 164 total skills
-- 158 trusted skills
-- 15 trusted scenario bundles
+- 167 total skills
+- 161 trusted skills
+- 18 trusted scenario bundles
 - 7 status-backed trusted-only skill overlap groups
 - 15 / 15 top-level categories covered
 - at least 3 trusted skills in every top-level category
@@ -87,6 +87,9 @@ See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
 Latest update statement:
+[Agentic Reference Patterns](docs/updates/2026-07-03-agentic-reference-patterns.md).
+
+Previous update statement:
 [Industry Application Orchestration](docs/updates/2026-07-03-industry-application-orchestration.md).
 
 Latest closure report:

@@ -1,0 +1,18 @@
+{
+  "source": {
+    "author": "OneCode Project",
+    "collected_by": "onecode-agentic-reference-patterns",
+    "license": "Apache-2.0",
+    "reference": "docs/batches/batch-031-agentic-reference-patterns.md; reference analysis of https://github.com/topoteretes/cognee",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-031-agentic-reference-patterns/ai-graph-memory-contract",
+    "usage": "local_authoring"
+  },
+  "taxonomy": {
+    "artifact_type": "policy",
+    "category": "ai",
+    "collection_priority": "P0",
+    "subcategory": "ai.memory",
+    "task_intent": "define long-term graph memory operation contracts with provenance, disclosure, and tenant boundaries"
+  }
+}

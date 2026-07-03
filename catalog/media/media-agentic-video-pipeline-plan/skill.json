@@ -1,0 +1,49 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved by local operator.",
+  "approved_at": "2026-07-03T11:11:39Z",
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "eca5482ebe3bfd10ca8928d8d6555e4e533fa24245ec94cc6e666a169de26023",
+    "sanitized_sha256": "c5faf121dce6025e6fbc515b893bc93457bf853bb43e5338968bc7fae8b55e8b",
+    "source_sha256": "f728cade8b1228f7a361b0b1f0fdef2e682a1328ce15a4fb52e503e428f1af8a"
+  },
+  "name": "media-agentic-video-pipeline-plan",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "scope": "none"
+    }
+  },
+  "required_verifiers": [],
+  "risk_level": "low",
+  "schema_version": 1,
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-07-03T11:11:30Z",
+    "collected_by": "onecode-agentic-reference-patterns",
+    "license": "Apache-2.0",
+    "path": "batches/batch-031-agentic-reference-patterns/media-agentic-video-pipeline-plan",
+    "reference": "docs/batches/batch-031-agentic-reference-patterns.md; reference analysis of https://github.com/calesthio/OpenMontage",
+    "type": "local_folder",
+    "url": "https://github.com/aidi1723/safe-agent-skills/tree/main/batches/batch-031-agentic-reference-patterns/media-agentic-video-pipeline-plan",
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "media",
+    "category": "media",
+    "collection_priority": "P1",
+    "subcategory": "media.video",
+    "task_intent": "plan agent-driven video production pipelines with cost, provider, reference, and render QA gates"
+  },
+  "version": "0.1.0"
+}
