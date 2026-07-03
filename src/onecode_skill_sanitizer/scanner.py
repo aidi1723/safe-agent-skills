@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import hashlib
 import re
+import shlex
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -191,6 +192,24 @@ def structural_findings(text: str, status: str) -> list[Finding]:
             )
             break
 
+    download_command_variables = {
+        name: tokens
+        for name, tokens in iter_shell_variable_assignments(text).items()
+        if tokens and tokens[0].lower() in {"curl", "wget"}
+    }
+    for name in download_command_variables:
+        expansion = rf"(?:\${{{re.escape(name)}}}|\${re.escape(name)})"
+        if re.search(rf"{expansion}[^\n]*(?:\||;|&&)\s*(?:sh|bash)\b", text, re.IGNORECASE):
+            findings.append(
+                Finding(
+                    "indirect-download-execution",
+                    "critical",
+                    status,
+                    "Found variable-indirected remote download followed by shell execution.",
+                )
+            )
+            break
+
     downloaded_paths = {
         match.group("path").strip("'\".,;:)")
         for match in re.finditer(
@@ -222,6 +241,29 @@ def structural_findings(text: str, status: str) -> list[Finding]:
             )
         )
     return findings
+
+
+def iter_shell_variable_assignments(text: str) -> dict[str, list[str]]:
+    assignments: dict[str, list[str]] = {}
+    for match in re.finditer(
+        r"(?m)^\s*(?:export\s+)?(?P<name>[A-Za-z_][A-Za-z0-9_]*)\s*=\s*(?P<value>[^\n#]+?)\s*$",
+        text,
+    ):
+        assignments[match.group("name")] = shell_words(match.group("value"))
+    return assignments
+
+
+def shell_words(value: str) -> list[str]:
+    try:
+        words = shlex.split(value, posix=True)
+    except ValueError:
+        words = value.strip().split()
+    if len(words) == 1 and re.search(r"\s", words[0]):
+        try:
+            return shlex.split(words[0], posix=True)
+        except ValueError:
+            return words[0].split()
+    return words
 
 
 def line_findings(line: str) -> list[Finding]:

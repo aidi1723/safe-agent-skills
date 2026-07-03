@@ -17,6 +17,25 @@ router eval cases: 39
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Scanner Variable Download Hardening
+
+Started Phase 1 scanner engine hardening with a small bypass-focused slice.
+
+The scanner now detects variables that store a `curl` or `wget` command and
+are later expanded into `sh` or `bash`, reporting
+`indirect-download-execution`.
+
+Added regression coverage for:
+
+- `INSTALLER='curl ...'` followed by `$INSTALLER | bash`;
+- `FETCH="wget ... -O /tmp/setup.sh"` followed by `${FETCH} && sh ...`.
+
+Boundary: the scanner remains deterministic preflight analysis. It does not
+execute shell content, fetch URLs, or grant runtime permissions.
+
+Update note:
+[Scanner Variable Download Hardening](updates/2026-07-03-scanner-variable-download-hardening.md).
+
 ## 2026-07-03 Project-Wide Review Follow-Up
 
 Reviewed the full project against earlier audit, closure, roadmap, and

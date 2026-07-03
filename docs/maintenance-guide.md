@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Scanner Variable Download Hardening](updates/2026-07-03-scanner-variable-download-hardening.md)
 - [Project-Wide Review Follow-Up](updates/2026-07-03-project-wide-review-follow-up.md)
 - [Router Eval Constraint Schema](updates/2026-07-03-router-eval-constraint-schema.md)
 - [Router Eval Taxonomy Constraints](updates/2026-07-03-router-eval-taxonomy-constraints.md)
