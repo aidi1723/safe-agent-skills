@@ -896,11 +896,11 @@
         "ai-langchain-agent-orchestration",
         "ai-tool-schema-protocol-check",
         "ai-output-schema-eval",
-        "ai-rule-failure-log-synthesis",
+        "security-supply-chain-review",
         "code-test-regression",
         "engineering-ci-troubleshoot",
         "execution-publish-check",
-        "security-supply-chain-review"
+        "ai-rule-failure-log-synthesis"
       ],
       "skills": [
         "ai-opensquilla-metaskill-workflow",
@@ -908,11 +908,11 @@
         "ai-langchain-agent-orchestration",
         "ai-tool-schema-protocol-check",
         "ai-output-schema-eval",
-        "ai-rule-failure-log-synthesis",
+        "security-supply-chain-review",
         "code-test-regression",
         "engineering-ci-troubleshoot",
         "execution-publish-check",
-        "security-supply-chain-review"
+        "ai-rule-failure-log-synthesis"
       ],
       "expected_output": [
         "router task profile and scenario selection findings",

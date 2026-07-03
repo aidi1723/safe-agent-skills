@@ -59,6 +59,7 @@ Next development:
 
 Latest update:
 
+- [Skill Router Execution Order](updates/2026-07-03-skill-router-execution-order.md)
 - [Typo Skill Orchestration Routing](updates/2026-07-03-typo-skill-orchestration-routing.md)
 - [Project Release Follow-Up Routing](updates/2026-07-03-project-release-follow-up-routing.md)
 - [Project Check Follow-Up](updates/2026-07-03-project-check-follow-up.md)

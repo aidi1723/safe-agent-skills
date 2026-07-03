@@ -1251,9 +1251,14 @@ SCENARIO_STAGE_SKILLS = {
     "skill-router-quality-review": {
         "preflight": ["ai-opensquilla-metaskill-workflow"],
         "planning": ["ai-opensquilla-token-routing-pattern", "ai-langchain-agent-orchestration"],
-        "review": ["ai-tool-schema-protocol-check", "ai-pydantic-schema-contract", "ai-output-schema-eval"],
+        "review": [
+            "ai-tool-schema-protocol-check",
+            "ai-pydantic-schema-contract",
+            "ai-output-schema-eval",
+            "security-supply-chain-review",
+        ],
         "verification": ["code-test-regression", "engineering-ci-troubleshoot", "execution-publish-check"],
-        "handoff": ["ai-rule-failure-log-synthesis", "security-supply-chain-review"],
+        "handoff": ["ai-rule-failure-log-synthesis"],
     },
 }
 
@@ -1701,6 +1706,12 @@ def route_mesh_task(
     final_names = required_sorted_names + optional_sorted_names[: max(0, limit - len(required_sorted_names))]
     final_names, final_graph = contract_sorted_skill_names(selected_by_name, final_names)
     routed_skills = [selected_by_name[name] for name in final_names]
+    use_stage_ordered_output = bool(selected_bundle and selected_bundle.get("id") == "skill-router-quality-review")
+    if use_stage_ordered_output:
+        stage_map = scenario_stage_skill_map(selected_bundle.get("id", ""), selected_skill_names(routed_skills))
+        ordered_names = [name for stage in PIPELINE_STAGE_ORDER for name in stage_map.get(stage, [])]
+        ordered_names.extend(skill["name"] for skill in routed_skills if skill["name"] not in ordered_names)
+        routed_skills = [selected_by_name[name] for name in ordered_names]
     selected_names = {skill["name"] for skill in routed_skills}
     coverage = (
         build_capability_coverage(selected_bundle, selected_names, set(selected_by_name), task_required_capabilities)
@@ -1731,13 +1742,25 @@ def route_mesh_task(
         coverage=coverage,
         pruned_skills=pruned_names,
     )
+    stage_map = (
+        scenario_stage_skill_map(selected_bundle.get("id", ""), selected_skill_names(routed_skills))
+        if use_stage_ordered_output
+        else {}
+    )
+    stage_by_name = {name: stage for stage, names in stage_map.items() for name in names}
+    ordered_names = [name for stage in PIPELINE_STAGE_ORDER for name in stage_map.get(stage, [])] if use_stage_ordered_output else []
+    for skill in routed_skills:
+        name = skill["name"]
+        if name not in ordered_names:
+            ordered_names.append(name)
+            stage_by_name[name] = skill_stage_for_item(skill)
     execution_plan = [
         {
             "order": index,
-            "skill": skill["name"],
-            "instruction": f"Apply `{skill['name']}` during the `{skill_stage_for_item(skill)}` stage, then record evidence and unresolved assumptions.",
+            "skill": name,
+            "instruction": f"Apply `{name}` during the `{stage_by_name.get(name, 'production')}` stage, then record evidence and unresolved assumptions.",
         }
-        for index, skill in enumerate(routed_skills, start=1)
+        for index, name in enumerate(ordered_names, start=1)
     ]
     explanations = build_selection_explanations(selected_bundle, routed_skills, coverage) if selected_bundle else []
     explanations.append(

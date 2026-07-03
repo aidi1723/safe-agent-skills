@@ -17,6 +17,28 @@ router eval cases: 36
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-03 Skill Router Execution Order
+
+Improved `skill-router-quality-review` orchestration so selected skills,
+pipeline stages, and the flat execution plan follow the same stage-aware
+sequence:
+
+```text
+preflight -> planning -> review -> verification -> handoff
+```
+
+Moved `security-supply-chain-review` into the Review stage so provenance,
+permission, and dependency risks are checked before regression and CI
+verification. Kept `ai-rule-failure-log-synthesis` in Handoff so failure-rule
+updates are synthesized after verification evidence exists.
+
+Also reordered smart-router `skills` output with the same scenario stage map,
+so the visible selected-skill list no longer starts with a later-stage review
+skill.
+
+Update note:
+[Skill Router Execution Order](updates/2026-07-03-skill-router-execution-order.md).
+
 ## 2026-07-03 Typo Skill Orchestration Routing
 
 Fixed a real conversation routing gap where:

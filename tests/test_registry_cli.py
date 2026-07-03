@@ -3159,7 +3159,11 @@ class RegistryCliTest(unittest.TestCase):
         self.assertTrue(task_pack["pipeline_plan"]["stages"])
         self.assertIn("ai-opensquilla-metaskill-workflow", names)
         self.assertIn("ai-opensquilla-token-routing-pattern", names)
+        self.assertEqual(names[:2], ["ai-opensquilla-metaskill-workflow", "ai-opensquilla-token-routing-pattern"])
         self.assertTrue(task_pack["execution_graph"]["acyclic"])
+        execution_order = [step["skill"] for step in task_pack["execution_plan"]]
+        self.assertLess(execution_order.index("security-supply-chain-review"), execution_order.index("code-test-regression"))
+        self.assertGreater(execution_order.index("ai-rule-failure-log-synthesis"), execution_order.index("engineering-ci-troubleshoot"))
 
     def test_smart_markdown_renders_pipeline_plan(self):
         task_pack_out = io.StringIO()

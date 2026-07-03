@@ -371,8 +371,10 @@ class RouterTest(unittest.TestCase):
             {"name": "ai-opensquilla-token-routing-pattern", "match_score": 0},
             {"name": "ai-tool-schema-protocol-check", "match_score": 0},
             {"name": "ai-output-schema-eval", "match_score": 0},
+            {"name": "security-supply-chain-review", "match_score": 0},
             {"name": "code-test-regression", "match_score": 0},
             {"name": "engineering-ci-troubleshoot", "match_score": 0},
+            {"name": "ai-rule-failure-log-synthesis", "match_score": 0},
         ]
         coverage = [
             {
@@ -405,7 +407,10 @@ class RouterTest(unittest.TestCase):
         )
         self.assertIn("ai-opensquilla-metaskill-workflow", plan["stages"][0]["skills"])
         self.assertIn("ai-tool-schema-protocol-check", plan["stages"][2]["skills"])
+        self.assertIn("security-supply-chain-review", plan["stages"][2]["skills"])
         self.assertIn("code-test-regression", plan["stages"][3]["skills"])
+        self.assertIn("ai-rule-failure-log-synthesis", plan["stages"][4]["skills"])
+        self.assertNotIn("security-supply-chain-review", plan["stages"][4]["skills"])
         for stage in plan["stages"]:
             self.assertIn("id", stage)
             self.assertIn("name", stage)
