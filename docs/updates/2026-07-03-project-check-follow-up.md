@@ -37,10 +37,10 @@ trusted scenario bundles: 23
 external references: 19
 trusted overlap groups: 7
 claude-skills candidate coverage: 336 / 336
-router eval cases: 36
+router eval cases: 41
 tampered skills: 0
 unknown provenance records: 0
-full script: 131 tests OK
+full script: 157 tests OK
 ```
 
 Same-day routing follow-up: project closure/release-note requests that mention

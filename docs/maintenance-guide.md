@@ -39,9 +39,9 @@ Current baseline:
 - categories meeting 3 trusted skills: 15 / 15
 - scenario bundles: 23 trusted
 - external references: 19
-- router eval cases: 39
-- phase status: reference-pattern expansion and project-check follow-up closed
-  for today's delivery
+- router eval cases: 41
+- full verification tests: 157
+- phase status: structured context routing closed for current delivery
 
 Closure report:
 
@@ -59,6 +59,8 @@ Next development:
 
 Latest update:
 
+- [Structured Context Routing](updates/2026-07-04-structured-context-routing.md)
+- [Current Intent Routing](updates/2026-07-04-current-intent-routing.md)
 - [Requires After Contract Ordering](updates/2026-07-04-requires-after-contract-ordering.md)
 - [Contract Diagnostics](updates/2026-07-04-contract-diagnostics.md)
 - [Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md)

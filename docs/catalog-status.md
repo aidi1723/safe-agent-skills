@@ -37,6 +37,8 @@ Every top-level category now has at least 3 trusted skills.
 
 Latest update statement:
 
+- [Structured Context Routing](updates/2026-07-04-structured-context-routing.md)
+- [Current Intent Routing](updates/2026-07-04-current-intent-routing.md)
 - [Requires After Contract Ordering](updates/2026-07-04-requires-after-contract-ordering.md)
 - [Contract Diagnostics](updates/2026-07-04-contract-diagnostics.md)
 - [Router Eval Quality Classification](updates/2026-07-03-router-eval-quality-classification.md)

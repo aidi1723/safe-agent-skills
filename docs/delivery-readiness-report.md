@@ -42,8 +42,8 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 39
-full verification tests: 145
+router eval cases: 41
+full verification tests: 157
 ```
 
 ## Non-Blocking Follow-Up Work

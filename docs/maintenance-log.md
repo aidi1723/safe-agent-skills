@@ -604,7 +604,7 @@ production, long-term graph memory governance, and MCP code graph intelligence
 route to dedicated trusted bundles instead of older generic video, RAG, or code
 review scenarios.
 
-Current verified baseline after this update:
+Historical verified baseline after this update:
 
 ```text
 branch: main
@@ -637,8 +637,8 @@ Expected current results:
 ```text
 verify: ok, 172 skills, 166 trusted, 0 tampered, 0 unknown provenance
 maintain-check: ok, 23 bundles, 336 / 336 candidates covered
-router-eval: ok, 39 / 39 cases
-full script: 148 tests OK
+router-eval: ok, 41 / 41 cases
+full script: 157 tests OK
 ```
 
 ## Routine Maintenance Checklist

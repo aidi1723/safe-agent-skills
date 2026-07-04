@@ -68,8 +68,8 @@ The local MVP is complete when the project can:
 - scenario bundles: 23 trusted
 - external references: 19
 - registry verification: ok
-- router eval cases: 39
-- full verification tests: 145
+- router eval cases: 41
+- full verification tests: 157
 
 Latest delivery readiness:
 

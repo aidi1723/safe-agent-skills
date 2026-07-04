@@ -112,7 +112,7 @@ reference-only candidate
   -> trusted catalog inclusion
 ```
 
-## Current Catalog Baseline
+## Catalog Baseline At Closure
 
 ```text
 catalog skills: 161

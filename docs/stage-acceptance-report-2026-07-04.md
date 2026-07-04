@@ -66,10 +66,10 @@ trusted method-skill selection and orchestration.
 Fresh verification for this stage:
 
 ```text
-bash scripts/verify.sh: 148 tests OK
+bash scripts/verify.sh: 157 tests OK
 schema-check --registry catalog: OK, 172 manifests
-router-eval: 39 / 39 cases OK
-router-eval confidence summary: 36 high-confidence passed, 3 low-confidence passed, 0 low-confidence failed
+router-eval: 41 / 41 cases OK
+router-eval confidence summary: 36 high-confidence passed, 5 low-confidence passed, 0 low-confidence failed
 router-eval issue classifications: no current by_issue_class entries
 maintain-check: OK
 verify --registry catalog: 172 skills, 166 trusted, 0 tampered, 0 unknown provenance

@@ -47,7 +47,7 @@ category-cluster skills from `batch-029-claude-skills-backlog-clusters`.
 Candidate-map conversion means covered by local OneCode-authored guidance; it
 does not mean upstream skill bodies were copied or executed.
 
-## Current Baseline
+## Baseline At Closure
 
 ```text
 catalog skills: 161

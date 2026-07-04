@@ -176,7 +176,8 @@ tampered skills: 0
 unknown provenance records: 0
 registry verification: ok
 bundle maintenance check: ok
-router eval cases: 39
+router eval cases: 41
+full verification tests: 157
 ```
 
 这意味着仓库已经具备公开维护的最低基础：不是只放几个示例，而是每个核心分类都有可默认选择的安全 skill。
