@@ -80,6 +80,15 @@ class RouterTest(unittest.TestCase):
         self.assertIn("project_context", profile["required_capabilities"])
         self.assertIn("regression_test", profile["required_capabilities"])
 
+    def test_build_task_profile_detects_chinese_project_wide_review(self):
+        profile = build_task_profile("审查整个项目，看是否还有需要优化和完善的地方")
+
+        self.assertEqual(profile["task_type"], "codebase_change_lifecycle")
+        self.assertEqual(profile["primary_domain"], "code")
+        self.assertIn("project_context", profile["required_capabilities"])
+        self.assertIn("code_review", profile["required_capabilities"])
+        self.assertGreater(profile["matched_signal_score"], 0)
+
     def test_build_task_profile_detects_content_video_production(self):
         profile = build_task_profile("Copywriting 写文案，Content Strategy 规划内容矩阵，Remotion 实现一句话灵感到成片")
 

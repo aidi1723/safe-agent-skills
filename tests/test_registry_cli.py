@@ -1,7 +1,9 @@
 import contextlib
 import io
 import json
+import os
 import re
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -3386,6 +3388,65 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("ai-opensquilla-token-routing-pattern", names)
         self.assertIn("code-test-regression", names)
 
+    def test_real_catalog_scenario_router_covers_supply_chain_review_for_router_quality(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "复查 skill-router-quality-review 的 supply_chain_review coverage 缺口",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        coverage = {item["capability"]: item for item in task_pack["coverage"]}
+
+        self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertIn("security-supply-chain-review", names)
+        self.assertEqual(coverage["supply_chain_review"]["status"], "covered")
+        self.assertEqual(task_pack["selection_quality"]["missing_required_count"], 0)
+
+    def test_task_pack_script_prefers_repository_local_project_over_stale_safe_agent_home(self):
+        script = Path("integrations/skills/safe-agent-router/scripts/task_pack.sh").resolve()
+
+        with tempfile.TemporaryDirectory() as tmp:
+            stale_home = Path(tmp) / "stale-safe-agent-skills"
+            (stale_home / "catalog").mkdir(parents=True)
+            env = os.environ.copy()
+            env["SAFE_AGENT_SKILLS_HOME"] = str(stale_home)
+
+            result = subprocess.run(
+                [
+                    "sh",
+                    str(script),
+                    "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+                    "--format",
+                    "json",
+                ],
+                cwd=Path.cwd(),
+                capture_output=True,
+                env=env,
+                text=True,
+                check=False,
+            )
+
+        self.assertEqual(result.returncode, 0, result.stderr)
+        task_pack = json.loads(result.stdout)
+        self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
+
     def test_real_catalog_scenario_router_routes_audit_followup_to_skill_router_bundle(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):
@@ -3860,6 +3921,35 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(coverage["claims_compliance"]["status"], "covered")
         self.assertEqual(coverage["responsive_check"]["status"], "covered")
         self.assertTrue(task_pack["execution_graph"]["acyclic"])
+
+    def test_smart_defaults_resolve_repository_assets_from_environment(self):
+        original_cwd = Path.cwd()
+        original_home = os.environ.get("SAFE_AGENT_SKILLS_HOME")
+        with tempfile.TemporaryDirectory() as tmp:
+            try:
+                os.environ["SAFE_AGENT_SKILLS_HOME"] = str(original_cwd)
+                os.chdir(tmp)
+                task_pack_out = io.StringIO()
+                with contextlib.redirect_stdout(task_pack_out):
+                    task_pack_code = main(
+                        [
+                            "smart",
+                            "审查整个项目，看是否还有需要优化和完善的地方",
+                            "--max-skills",
+                            "8",
+                        ]
+                    )
+            finally:
+                os.chdir(original_cwd)
+                if original_home is None:
+                    os.environ.pop("SAFE_AGENT_SKILLS_HOME", None)
+                else:
+                    os.environ["SAFE_AGENT_SKILLS_HOME"] = original_home
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        self.assertEqual(task_pack["selected_scenario"]["id"], "codebase-change-lifecycle")
+        self.assertEqual(task_pack["task_profile"]["task_type"], "codebase_change_lifecycle")
 
     def test_real_catalog_scenario_router_selects_rag_bundle(self):
         task_pack_out = io.StringIO()

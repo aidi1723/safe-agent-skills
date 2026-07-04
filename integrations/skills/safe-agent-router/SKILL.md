@@ -98,7 +98,9 @@ Expected output includes:
 
 The router script needs the Safe-Agent-Skills repository.
 
-Preferred:
+When `scripts/task_pack.sh` is run from inside this repository, it resolves the
+repository beside the script first. Installed wrappers can point the script at a
+checkout with `SAFE_AGENT_SKILLS_HOME`:
 
 ```bash
 export SAFE_AGENT_SKILLS_HOME="/path/to/safe-agent-skills"

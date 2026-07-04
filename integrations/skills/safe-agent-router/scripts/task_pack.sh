@@ -30,11 +30,14 @@ while [ $# -gt 0 ]; do
 done
 
 SCRIPT_DIR=$(CDPATH= cd -- "$(dirname -- "$0")" && pwd)
+SCRIPT_PROJECT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/../../../.." && pwd)
 
-if [ -n "${SAFE_AGENT_SKILLS_HOME:-}" ]; then
+if [ -d "$SCRIPT_PROJECT_DIR/catalog" ] && [ -d "$SCRIPT_PROJECT_DIR/src" ]; then
+  PROJECT_DIR=$SCRIPT_PROJECT_DIR
+elif [ -n "${SAFE_AGENT_SKILLS_HOME:-}" ]; then
   PROJECT_DIR=$SAFE_AGENT_SKILLS_HOME
 else
-  PROJECT_DIR=$(CDPATH= cd -- "$SCRIPT_DIR/../../../.." && pwd)
+  PROJECT_DIR=$SCRIPT_PROJECT_DIR
 fi
 
 if [ ! -d "$PROJECT_DIR/catalog" ] || [ ! -d "$PROJECT_DIR/src" ]; then

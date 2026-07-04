@@ -39,9 +39,9 @@ Current baseline:
 - categories meeting 3 trusted skills: 15 / 15
 - scenario bundles: 23 trusted
 - external references: 19
-- router eval cases: 41
-- full verification tests: 157
-- phase status: structured context routing closed for current delivery
+- router eval cases: 42
+- full verification tests: 162
+- phase status: maintenance boundary refactor in progress
 
 Closure report:
 
@@ -97,6 +97,47 @@ Latest update:
 - [Community Skill Reference Review](updates/2026-06-16-community-skill-reference-review.md)
 - [Headroom Agent I/O Compression Closure Report](headroom-agent-io-compression-closure-report.md)
 
+## Code Maintenance Boundary
+
+Keep command wiring thin and move reusable logic into focused modules:
+
+- `src/onecode_skill_sanitizer/cli.py`: argparse setup, command orchestration,
+  JSON/Markdown output, and compatibility wrappers.
+- `src/onecode_skill_sanitizer/paths.py`: repository asset path resolution,
+  including `SAFE_AGENT_SKILLS_HOME`.
+- `src/onecode_skill_sanitizer/validation.py`: manifest hashing, sealing,
+  schema checks, policy checks, and other pure validation helpers.
+- `src/onecode_skill_sanitizer/references.py`: external reference index file
+  loading and metadata-only reference validation.
+- `src/onecode_skill_sanitizer/router.py`: deterministic task profiling,
+  scenario scoring, mesh routing, contract graphs, pipeline plans, and
+  selection quality.
+- `src/onecode_skill_sanitizer/scanner.py`: deterministic source text risk
+  scanning.
+- `src/onecode_skill_sanitizer/taxonomy.py`: skill and task taxonomy
+  classification.
+
+When adding behavior, prefer the narrowest module that owns the domain. Keep
+`cli.py` as the adapter layer unless the behavior is command-specific and not
+needed by tests, maintain-check, router-eval, or future callers.
+
+## Refactor Workflow
+
+Use small compatibility-preserving moves:
+
+1. Identify the command behavior and the smallest reusable boundary.
+2. Add or move a focused test that imports the target module directly.
+3. Run the focused test and confirm it fails for the expected missing boundary.
+4. Move the implementation without changing command output or registry data.
+5. Re-run the focused test and the affected CLI regression tests.
+6. Update [Module Boundary Refactor Plan](module-boundary-refactor-plan.md)
+   when the move is complete.
+7. Run the release verification commands before reporting completion.
+
+Avoid mixing pure module moves with catalog hash changes, skill status changes,
+router scoring changes, or batch content updates. Those require separate
+review notes and regression coverage.
+
 ## Intake Rule
 
 Do not execute third-party skills during intake.
@@ -122,6 +163,8 @@ handoff information must stay in ignored local files, not public docs.
 Before publishing or updating the public repository:
 
 ```bash
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+ruff check .
 PYTHONPATH=src python3 -m onecode_skill_sanitizer verify --registry catalog
 PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   "review security risk in this package" \
@@ -156,10 +199,13 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" \
   --format json
 bash scripts/verify.sh
+git diff --check
 ```
 
 Confirm:
 
+- unit tests report the expected test count for the current baseline
+- ruff reports no lint errors
 - `status: ok`
 - `unknown_provenance_count: 0`
 - `tampered_count: 0`
@@ -176,6 +222,8 @@ Confirm:
 - scenario router RAG sample selects `rag-agent-knowledge-app`
 - smart router reports `deterministic_mesh_router`
 - batch docs exist for new entries
+- public docs mention any new module boundary, router behavior, or catalog
+  governance change before release
 
 ## Contribution Standard
 

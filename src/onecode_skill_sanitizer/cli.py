@@ -1,115 +1,36 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import re
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .paths import resolve_project_asset_path
+from .references import validate_external_references
 from .router import route_mesh_task, route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
-
-
-STATUS_VALUES = {"quarantined", "review_required", "trusted", "rejected", "disabled"}
-RISK_LEVEL_VALUES = {"low", "medium", "high", "critical"}
-SOURCE_TYPE_VALUES = {"local_folder", "archive", "git", "community_index", "github_reference", "web_reference"}
-SOURCE_USAGE_VALUES = {"source_import", "reference_only", "local_authoring"}
-SOURCE_DEFAULT_USAGE_BY_TYPE = {
-    "archive": "source_import",
-    "community_index": "source_import",
-    "git": "source_import",
-    "github_reference": "reference_only",
-    "local_folder": "local_authoring",
-    "web_reference": "reference_only",
-}
-SOURCE_USAGE_BY_TYPE = {
-    "archive": {"source_import"},
-    "community_index": {"source_import"},
-    "git": {"source_import"},
-    "github_reference": {"reference_only"},
-    "local_folder": {"local_authoring"},
-    "web_reference": {"reference_only"},
-}
-SOURCE_REQUIRED_FIELDS = ["type", "usage", "path", "url", "author", "license", "reference", "collected_by", "captured_at"]
-SOURCE_PROVENANCE_FIELDS = ["url", "author", "license", "reference", "collected_by"]
-SOURCE_IMPORT_CAPTURE_FIELDS = [
-    "upstream_url",
-    "upstream_ref_type",
-    "upstream_ref",
-    "captured_at",
-    "license_snapshot",
-    "upstream_sha256",
-    "content_path",
-    "capture_method",
-]
-SOURCE_IMPORT_REF_TYPE_VALUES = {"archive", "branch", "commit", "release", "tag"}
-HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
-REFERENCE_REQUIRED_FIELDS = [
-    "name",
-    "source_url",
-    "source_type",
-    "author",
-    "license",
-    "captured_at",
-    "project_category",
-    "claimed_capabilities",
-    "taxonomy_categories",
-    "runtime_permission_notes",
-    "adoption_status",
-    "review_notes",
-    "metadata_only",
-]
-REFERENCE_ADOPTION_STATUSES = {"reference_only", "candidate", "rejected", "converted"}
-FILESYSTEM_SCOPE_VALUES = {"workspace_only", "read_only_workspace", "none"}
-NETWORK_SCOPE_VALUES = {"none", "approved_hosts", "onecode_api_only"}
-CONTRACT_STAGE_VALUES = {"preflight", "source", "planning", "review", "execution", "verification"}
-CONTRACT_CAPABILITY_PATTERN = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
-CONTRACT_ARTIFACT_PATTERN = re.compile(r"^[a-z][a-z0-9_]{1,80}$")
-DISALLOWED_TOOL_VALUES = {
-    "account",
-    "browser",
-    "connector",
-    "filesystem",
-    "network",
-    "production",
-    "shell",
-}
+from .validation import SOURCE_DEFAULT_USAGE_BY_TYPE
+from .validation import SOURCE_PROVENANCE_FIELDS
+from .validation import SOURCE_USAGE_VALUES
+from .validation import add_issue
+from .validation import manifest_sha256
+from .validation import seal_manifest
+from .validation import text_sha256
+from .validation import validate_manifest_schema
+from .validation import validate_registry_index_schema
+from .validation import validate_sanitization_report_schema
+from .validation import validate_verify_report_schema
 
 
 def utc_now() -> str:
     return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
 
 
-def text_sha256(text: str) -> str:
-    return hashlib.sha256(text.encode("utf-8")).hexdigest()
-
-
 def write_json(path: Path, payload: dict) -> None:
     path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-
-
-def canonical_json_sha256(payload: dict) -> str:
-    return text_sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False))
-
-
-def manifest_payload_for_hash(manifest: dict) -> dict:
-    payload = json.loads(json.dumps(manifest, sort_keys=True))
-    hashes = payload.get("hashes")
-    if isinstance(hashes, dict):
-        hashes.pop("manifest_sha256", None)
-    return payload
-
-
-def manifest_sha256(manifest: dict) -> str:
-    return canonical_json_sha256(manifest_payload_for_hash(manifest))
-
-
-def seal_manifest(manifest: dict) -> dict:
-    manifest.setdefault("hashes", {})["manifest_sha256"] = manifest_sha256(manifest)
-    return manifest
 
 
 def load_optional_skill_json(source_dir: Path) -> dict:
@@ -354,13 +275,13 @@ def import_command(args: argparse.Namespace) -> int:
 
 
 def list_command(args: argparse.Namespace) -> int:
-    index = load_registry_index(Path(args.registry))
+    index = load_registry_index(resolve_project_asset_path(args.registry))
     print(json.dumps(index, indent=2, sort_keys=True))
     return 0
 
 
 def inspect_command(args: argparse.Namespace) -> int:
-    registry_dir = Path(args.registry)
+    registry_dir = resolve_project_asset_path(args.registry)
     index = load_registry_index(registry_dir)
     matches = [entry for entry in index["skills"] if entry["name"] == args.name]
     if not matches:
@@ -393,8 +314,7 @@ def skill_matches_task(entry: dict, task_taxonomy: dict, task_text: str) -> int:
 
 
 def select_command(args: argparse.Namespace) -> int:
-    registry_dir = Path(args.registry)
-    index = load_registry_index(registry_dir)
+    registry_dir = resolve_project_asset_path(args.registry)
     task_taxonomy = classify_skill("task", args.task).to_json()
     selected = select_skills_for_task(registry_dir, task_taxonomy, args.task, args.include_review_required)
     result = {
@@ -1071,17 +991,17 @@ def render_task_pack_markdown(task_pack: dict) -> str:
 
 def task_pack_command(args: argparse.Namespace) -> int:
     task_pack = build_task_pack(
-        Path(args.registry),
+        resolve_project_asset_path(args.registry),
         args.task,
         args.top,
         args.include_review_required,
         args.include_bundles,
-        Path(args.bundles) if args.bundles else None,
+        resolve_project_asset_path(args.bundles) if args.bundles else None,
         args.router,
         args.max_skills,
         args.invariants if getattr(args, "invariants", None) else None,
         getattr(args, "strategy", "balanced"),
-        Path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
+        resolve_project_asset_path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
     )
     if args.format == "markdown":
         print(render_task_pack_markdown(task_pack))
@@ -1092,17 +1012,17 @@ def task_pack_command(args: argparse.Namespace) -> int:
 
 def smart_command(args: argparse.Namespace) -> int:
     task_pack = build_task_pack(
-        Path(args.registry),
+        resolve_project_asset_path(args.registry),
         args.task,
         args.max_skills,
         False,
         True,
-        Path(args.bundles) if args.bundles else None,
+        resolve_project_asset_path(args.bundles) if args.bundles else None,
         "mesh",
         args.max_skills,
         args.invariants,
         args.strategy,
-        Path(args.overlap_groups) if args.overlap_groups else None,
+        resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
     )
     if args.format == "markdown":
         print(render_task_pack_markdown(task_pack))
@@ -1188,7 +1108,7 @@ def verify_registry(registry_dir: Path) -> dict:
 
 
 def verify_command(args: argparse.Namespace) -> int:
-    result = verify_registry(Path(args.registry))
+    result = verify_registry(resolve_project_asset_path(args.registry))
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
 
@@ -1222,379 +1142,6 @@ def registry_index_staleness(registry_dir: Path) -> list[dict]:
             "actual_skill_count": existing.get("skill_count"),
         }
     ]
-
-
-def add_issue(issues: list[dict], issue_id: str, path: Path | str, summary: str, severity: str = "high") -> None:
-    issues.append(
-        {
-            "id": issue_id,
-            "severity": severity,
-            "path": path.as_posix() if isinstance(path, Path) else str(path),
-            "summary": summary,
-        }
-    )
-
-
-def validate_hashes(payload: dict, path: Path, issues: list[dict]) -> None:
-    hashes = payload.get("hashes")
-    if not isinstance(hashes, dict):
-        add_issue(issues, "schema-invalid-hashes", path, "hashes must be an object")
-        return
-    for key in ["source_sha256", "sanitized_sha256"]:
-        value = hashes.get(key)
-        if not isinstance(value, str) or not HASH_PATTERN.fullmatch(value):
-            add_issue(issues, "schema-invalid-hash", path, f"{key} must be a 64 character lowercase sha256 hex string")
-    manifest_hash = hashes.get("manifest_sha256")
-    if manifest_hash is None:
-        add_issue(issues, "schema-missing-manifest-hash", path, "hashes.manifest_sha256 is required")
-    elif not isinstance(manifest_hash, str) or not HASH_PATTERN.fullmatch(manifest_hash):
-        add_issue(issues, "schema-invalid-hash", path, "manifest_sha256 must be a 64 character lowercase sha256 hex string")
-
-
-def validate_manifest_integrity(payload: dict, path: Path, issues: list[dict]) -> None:
-    hashes = payload.get("hashes")
-    if not isinstance(hashes, dict):
-        return
-    expected = hashes.get("manifest_sha256")
-    if not isinstance(expected, str) or not HASH_PATTERN.fullmatch(expected):
-        return
-    actual = manifest_sha256(payload)
-    if actual != expected:
-        add_issue(issues, "schema-manifest-hash-mismatch", path, "hashes.manifest_sha256 does not match manifest content", "critical")
-
-
-def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
-    source = payload.get("source")
-    if not isinstance(source, dict):
-        add_issue(issues, "schema-invalid-source", path, "source must be an object")
-        return
-    for field in SOURCE_REQUIRED_FIELDS:
-        value = source.get(field)
-        if not isinstance(value, str) or not value:
-            add_issue(issues, "schema-missing-source-field", path, f"source.{field} is required")
-    source_type = source.get("type")
-    if isinstance(source_type, str) and source_type not in SOURCE_TYPE_VALUES:
-        add_issue(issues, "schema-invalid-source-type", path, f"source.type {source_type!r} is not supported")
-    source_usage = source.get("usage")
-    if isinstance(source_usage, str) and source_usage not in SOURCE_USAGE_VALUES:
-        add_issue(issues, "schema-invalid-source-usage", path, f"source.usage {source_usage!r} is not supported")
-    if isinstance(source_type, str) and isinstance(source_usage, str):
-        expected_usages = SOURCE_USAGE_BY_TYPE.get(source_type)
-        if expected_usages is not None and source_usage not in expected_usages:
-            allowed = ", ".join(sorted(expected_usages))
-            add_issue(
-                issues,
-                "schema-invalid-source-usage-for-type",
-                path,
-                f"source.type {source_type!r} requires source.usage to be one of: {allowed}",
-            )
-    if source_usage == "source_import":
-        capture = source.get("capture")
-        if not isinstance(capture, dict):
-            add_issue(
-                issues,
-                "schema-missing-source-import-capture",
-                path,
-                "source.capture is required when source.usage is source_import",
-            )
-            return
-        for field in SOURCE_IMPORT_CAPTURE_FIELDS:
-            value = capture.get(field)
-            if not isinstance(value, str) or not value:
-                add_issue(
-                    issues,
-                    "schema-invalid-source-import-capture",
-                    path,
-                    f"source.capture.{field} is required for source_import",
-                )
-        upstream_url = capture.get("upstream_url")
-        if isinstance(upstream_url, str) and upstream_url and not upstream_url.startswith(("https://", "http://")):
-            add_issue(
-                issues,
-                "schema-invalid-source-import-capture",
-                path,
-                "source.capture.upstream_url must be an http or https URL",
-            )
-        ref_type = capture.get("upstream_ref_type")
-        if isinstance(ref_type, str) and ref_type and ref_type not in SOURCE_IMPORT_REF_TYPE_VALUES:
-            allowed = ", ".join(sorted(SOURCE_IMPORT_REF_TYPE_VALUES))
-            add_issue(
-                issues,
-                "schema-invalid-source-import-capture",
-                path,
-                f"source.capture.upstream_ref_type must be one of: {allowed}",
-            )
-        upstream_sha = capture.get("upstream_sha256")
-        if isinstance(upstream_sha, str) and upstream_sha and not HASH_PATTERN.fullmatch(upstream_sha):
-            add_issue(
-                issues,
-                "schema-invalid-source-import-capture",
-                path,
-                "source.capture.upstream_sha256 must be a 64 character lowercase sha256 hex string",
-            )
-
-
-def validate_taxonomy(payload: dict, path: Path, issues: list[dict]) -> None:
-    taxonomy = payload.get("taxonomy")
-    if not isinstance(taxonomy, dict):
-        add_issue(issues, "schema-invalid-taxonomy", path, "taxonomy must be an object")
-        return
-    for field in ["category", "subcategory", "collection_priority"]:
-        if not isinstance(taxonomy.get(field), str) or not taxonomy.get(field):
-            add_issue(issues, "schema-missing-taxonomy-field", path, f"taxonomy.{field} is required")
-
-
-def validate_policy(payload: dict, path: Path, issues: list[dict]) -> None:
-    policy = payload.get("policy")
-    if not isinstance(policy, dict):
-        add_issue(issues, "schema-invalid-policy", path, "policy must be an object")
-        return
-    filesystem = policy.get("filesystem")
-    if not isinstance(filesystem, dict):
-        add_issue(issues, "schema-invalid-policy-filesystem", path, "policy.filesystem must be an object")
-    else:
-        scope = filesystem.get("scope")
-        if scope not in FILESYSTEM_SCOPE_VALUES:
-            add_issue(issues, "schema-invalid-policy-filesystem-scope", path, "policy.filesystem.scope is not supported")
-    network = policy.get("network")
-    if not isinstance(network, dict):
-        add_issue(issues, "schema-invalid-policy-network", path, "policy.network must be an object")
-    else:
-        scope = network.get("scope")
-        if scope not in NETWORK_SCOPE_VALUES:
-            add_issue(issues, "schema-invalid-policy-network-scope", path, "policy.network.scope is not supported")
-        approved_hosts = network.get("approved_hosts")
-        if approved_hosts is not None and (
-            not isinstance(approved_hosts, list) or not all(isinstance(item, str) and item for item in approved_hosts)
-        ):
-            add_issue(issues, "schema-invalid-policy-approved-hosts", path, "policy.network.approved_hosts must be a string array")
-    approval = policy.get("approval")
-    if not isinstance(approval, dict):
-        add_issue(issues, "schema-invalid-policy-approval", path, "policy.approval must be an object")
-    else:
-        required_for = approval.get("required_for")
-        if not isinstance(required_for, list) or not all(isinstance(item, str) and item for item in required_for):
-            add_issue(issues, "schema-invalid-policy-approval-required-for", path, "policy.approval.required_for must be a string array")
-
-
-def validate_allowed_tools(payload: dict, path: Path, issues: list[dict]) -> None:
-    allowed_tools = payload.get("allowed_tools")
-    if not isinstance(allowed_tools, list):
-        add_issue(issues, "schema-invalid-allowed-tools", path, "allowed_tools must be an array")
-        return
-    seen = set()
-    for tool in allowed_tools:
-        if not isinstance(tool, str) or not tool:
-            add_issue(issues, "schema-invalid-allowed-tool", path, "allowed_tools entries must be non-empty strings")
-            continue
-        normalized = tool.lower()
-        if normalized in seen:
-            add_issue(issues, "schema-duplicate-allowed-tool", path, f"allowed_tools contains duplicate value {tool!r}", "medium")
-        seen.add(normalized)
-        if normalized in DISALLOWED_TOOL_VALUES:
-            add_issue(issues, "schema-disallowed-tool", path, f"allowed_tools cannot grant runtime permission {tool!r}", "critical")
-
-
-def validate_string_list(
-    value: object,
-    path: Path,
-    issues: list[dict],
-    field: str,
-    issue_id: str,
-    pattern: re.Pattern[str] | None = None,
-) -> list[str]:
-    if value is None:
-        return []
-    if not isinstance(value, list):
-        add_issue(issues, issue_id, path, f"contract.{field} must be an array")
-        return []
-    values = []
-    seen = set()
-    for item in value:
-        if not isinstance(item, str) or not item:
-            add_issue(issues, issue_id, path, f"contract.{field} entries must be non-empty strings")
-            continue
-        if pattern is not None and not pattern.fullmatch(item):
-            add_issue(issues, issue_id, path, f"contract.{field} entry {item!r} is not supported")
-        if item in seen:
-            add_issue(issues, issue_id, path, f"contract.{field} contains duplicate entry {item!r}", "medium")
-        seen.add(item)
-        values.append(item)
-    return values
-
-
-def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
-    contract = payload.get("contract")
-    if contract is None:
-        return
-    if not isinstance(contract, dict):
-        add_issue(issues, "schema-invalid-contract", path, "contract must be an object")
-        return
-    allowed_fields = {
-        "requires_context",
-        "produces_artifacts",
-        "produces_evidence",
-        "capability_vector",
-        "stage_hint",
-        "conflicts_with",
-        "excludes",
-        "requires_after",
-        "cost_weight",
-    }
-    for field in contract:
-        if field not in allowed_fields:
-            add_issue(issues, "schema-invalid-contract-field", path, f"contract.{field} is not supported")
-    validate_string_list(contract.get("requires_context"), path, issues, "requires_context", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
-    validate_string_list(contract.get("produces_artifacts"), path, issues, "produces_artifacts", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
-    validate_string_list(contract.get("produces_evidence"), path, issues, "produces_evidence", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
-    capabilities = validate_string_list(
-        contract.get("capability_vector"),
-        path,
-        issues,
-        "capability_vector",
-        "schema-invalid-contract-capability",
-        CONTRACT_CAPABILITY_PATTERN,
-    )
-    if contract.get("capability_vector") is not None and not capabilities:
-        add_issue(issues, "schema-invalid-contract-capability", path, "contract.capability_vector cannot be empty")
-    stage_hint = contract.get("stage_hint")
-    if stage_hint is not None and stage_hint not in CONTRACT_STAGE_VALUES:
-        add_issue(issues, "schema-invalid-contract-stage", path, "contract.stage_hint is not supported")
-    conflicts = validate_string_list(contract.get("conflicts_with"), path, issues, "conflicts_with", "schema-invalid-contract-conflict")
-    if payload.get("name") in conflicts:
-        add_issue(issues, "schema-invalid-contract-conflict", path, "contract.conflicts_with cannot include the skill itself")
-    excludes = validate_string_list(contract.get("excludes"), path, issues, "excludes", "schema-invalid-contract-conflict")
-    if payload.get("name") in excludes:
-        add_issue(issues, "schema-invalid-contract-conflict", path, "contract.excludes cannot include the skill itself")
-    requires_after = validate_string_list(contract.get("requires_after"), path, issues, "requires_after", "schema-invalid-contract-conflict")
-    if payload.get("name") in requires_after:
-        add_issue(issues, "schema-invalid-contract-conflict", path, "contract.requires_after cannot include the skill itself")
-    cost_weight = contract.get("cost_weight")
-    if cost_weight is not None and (not isinstance(cost_weight, int) or cost_weight < 1 or cost_weight > 10):
-        add_issue(issues, "schema-invalid-contract-cost", path, "contract.cost_weight must be an integer from 1 to 10")
-
-
-def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> None:
-    required = [
-        "schema_version",
-        "name",
-        "version",
-        "status",
-        "risk_level",
-        "taxonomy",
-        "source",
-        "hashes",
-        "allowed_tools",
-        "required_verifiers",
-        "policy",
-    ]
-    for field in required:
-        if field not in payload:
-            add_issue(issues, "schema-missing-manifest-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
-        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
-    if payload.get("status") not in STATUS_VALUES:
-        add_issue(issues, "schema-invalid-status", path, "status is not a supported registry state")
-    if payload.get("risk_level") not in RISK_LEVEL_VALUES:
-        add_issue(issues, "schema-invalid-risk-level", path, "risk_level is not supported")
-    if not isinstance(payload.get("required_verifiers"), list):
-        add_issue(issues, "schema-invalid-required-verifiers", path, "required_verifiers must be an array")
-    validate_allowed_tools(payload, path, issues)
-    validate_policy(payload, path, issues)
-    validate_contract(payload, path, issues)
-    validate_taxonomy(payload, path, issues)
-    validate_source(payload, path, issues)
-    validate_hashes(payload, path, issues)
-    validate_manifest_integrity(payload, path, issues)
-
-
-def validate_registry_index_schema(payload: dict, path: Path, issues: list[dict]) -> None:
-    for field in ["schema_version", "generated_at", "skill_count", "skills"]:
-        if field not in payload:
-            add_issue(issues, "schema-missing-index-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
-        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
-    skills = payload.get("skills")
-    if not isinstance(skills, list):
-        add_issue(issues, "schema-invalid-index-skills", path, "skills must be an array")
-        return
-    if payload.get("skill_count") != len(skills):
-        add_issue(issues, "schema-index-count-mismatch", path, "skill_count must match skills length")
-    for index, entry in enumerate(skills):
-        entry_path = f"{path.as_posix()}#/skills/{index}"
-        for field in ["name", "status", "risk_level", "taxonomy", "source", "hashes", "registry_path"]:
-            if field not in entry:
-                add_issue(issues, "schema-missing-index-entry-field", entry_path, f"{field} is required")
-        if entry.get("status") not in STATUS_VALUES:
-            add_issue(issues, "schema-invalid-status", entry_path, "status is not a supported registry state")
-        if entry.get("risk_level") not in RISK_LEVEL_VALUES:
-            add_issue(issues, "schema-invalid-risk-level", entry_path, "risk_level is not supported")
-        validate_taxonomy(entry, Path(entry_path), issues)
-        validate_source(entry, Path(entry_path), issues)
-        validate_hashes(entry, Path(entry_path), issues)
-
-
-def validate_verify_report_schema(payload: dict, path: Path, issues: list[dict]) -> None:
-    for field in ["schema_version", "generated_at", "status", "skill_count", "trusted_count", "tampered_count", "unknown_provenance_count", "issues"]:
-        if field not in payload:
-            add_issue(issues, "schema-missing-verify-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
-        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
-    if payload.get("status") not in {"ok", "failed"}:
-        add_issue(issues, "schema-invalid-verify-status", path, "status must be ok or failed")
-    for field in ["skill_count", "trusted_count", "tampered_count", "unknown_provenance_count"]:
-        value = payload.get(field)
-        if not isinstance(value, int) or value < 0:
-            add_issue(issues, "schema-invalid-verify-count", path, f"{field} must be a non-negative integer")
-    if not isinstance(payload.get("issues"), list):
-        add_issue(issues, "schema-invalid-verify-issues", path, "issues must be an array")
-
-
-def validate_sanitization_report_schema(payload: dict, path: Path, manifest: dict, issues: list[dict]) -> None:
-    for field in [
-        "schema_version",
-        "skill_name",
-        "taxonomy",
-        "source",
-        "files",
-        "hashes",
-        "summary",
-        "findings",
-        "required_verifiers",
-        "recommendation",
-    ]:
-        if field not in payload:
-            add_issue(issues, "schema-missing-report-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
-        add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
-    if payload.get("skill_name") != manifest.get("name"):
-        add_issue(issues, "schema-report-name-mismatch", path, "report skill_name must match manifest name")
-    validate_taxonomy(payload, path, issues)
-    validate_source(payload, path, issues)
-    validate_hashes(payload, path, issues)
-    for field in ["files", "findings", "required_verifiers"]:
-        if not isinstance(payload.get(field), list):
-            add_issue(issues, "schema-invalid-report-list", path, f"{field} must be an array")
-    summary = payload.get("summary")
-    if not isinstance(summary, dict):
-        add_issue(issues, "schema-invalid-report-summary", path, "summary must be an object")
-    else:
-        for field in ["status", "risk_level", "removed_fragment_count", "rewritten_fragment_count", "unresolved_finding_count"]:
-            if field not in summary:
-                add_issue(issues, "schema-missing-report-summary-field", path, f"summary.{field} is required")
-        if summary.get("status") != manifest.get("status") or summary.get("risk_level") != manifest.get("risk_level"):
-            add_issue(issues, "schema-report-summary-mismatch", path, "report summary status and risk_level must match manifest")
-
-    for field in ["source", "hashes", "taxonomy"]:
-        if payload.get(field) != manifest.get(field):
-            add_issue(issues, f"schema-report-{field}-mismatch", path, f"report {field} must match manifest {field}")
-    if payload.get("required_verifiers") != manifest.get("required_verifiers"):
-        add_issue(
-            issues,
-            "schema-report-required-verifiers-mismatch",
-            path,
-            "report required_verifiers must match manifest required_verifiers",
-        )
 
 
 def schema_check(registry_dir: Path) -> dict:
@@ -1644,154 +1191,13 @@ def schema_check(registry_dir: Path) -> dict:
 
 
 def schema_check_command(args: argparse.Namespace) -> int:
-    result = schema_check(Path(args.registry))
+    result = schema_check(resolve_project_asset_path(args.registry))
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
 
 
-def validate_external_references(references_path: Path) -> dict:
-    issues: list[dict] = []
-    try:
-        payload = json.loads(references_path.read_text(encoding="utf-8"))
-    except FileNotFoundError:
-        return {
-            "schema_version": 1,
-            "generated_at": utc_now(),
-            "status": "failed",
-            "reference_count": 0,
-            "issues": [
-                {
-                    "id": "reference-index-missing",
-                    "severity": "high",
-                    "path": references_path.as_posix(),
-                }
-            ],
-        }
-    except json.JSONDecodeError as exc:
-        return {
-            "schema_version": 1,
-            "generated_at": utc_now(),
-            "status": "failed",
-            "reference_count": 0,
-            "issues": [
-                {
-                    "id": "reference-invalid-json",
-                    "severity": "critical",
-                    "path": references_path.as_posix(),
-                    "summary": str(exc),
-                }
-            ],
-        }
-
-    if payload.get("schema_version") != 1:
-        add_issue(issues, "reference-invalid-version", references_path, "schema_version must be 1")
-    references = payload.get("references")
-    if not isinstance(references, list):
-        add_issue(issues, "reference-invalid-list", references_path, "references must be an array")
-        references = []
-    declared_count = payload.get("reference_count")
-    if declared_count is not None and declared_count != len(references):
-        issues.append(
-            {
-                "id": "reference-count-mismatch",
-                "severity": "medium",
-                "path": references_path.as_posix(),
-                "expected": len(references),
-                "actual": declared_count,
-            }
-        )
-
-    seen_names = set()
-    for index, reference in enumerate(references):
-        reference_path = f"{references_path.as_posix()}#/references/{index}"
-        if not isinstance(reference, dict):
-            add_issue(issues, "reference-invalid-entry", reference_path, "reference entry must be an object")
-            continue
-        for field in REFERENCE_REQUIRED_FIELDS:
-            value = reference.get(field)
-            if value in (None, ""):
-                issues.append(
-                    {
-                        "id": "reference-missing-field",
-                        "severity": "high",
-                        "path": reference_path,
-                        "field": field,
-                    }
-                )
-        name = reference.get("name")
-        if isinstance(name, str):
-            if name in seen_names:
-                issues.append(
-                    {
-                        "id": "reference-duplicate-name",
-                        "severity": "medium",
-                        "path": reference_path,
-                        "name": name,
-                    }
-                )
-            seen_names.add(name)
-        source_url = reference.get("source_url")
-        if isinstance(source_url, str) and not source_url.startswith(("https://", "http://")):
-            issues.append(
-                {
-                    "id": "reference-invalid-source-url",
-                    "severity": "high",
-                    "path": reference_path,
-                    "source_url": source_url,
-                }
-            )
-        source_type = reference.get("source_type")
-        if isinstance(source_type, str) and source_type not in SOURCE_TYPE_VALUES:
-            issues.append(
-                {
-                    "id": "reference-invalid-source-type",
-                    "severity": "high",
-                    "path": reference_path,
-                    "source_type": source_type,
-                }
-            )
-        adoption_status = reference.get("adoption_status")
-        if isinstance(adoption_status, str) and adoption_status not in REFERENCE_ADOPTION_STATUSES:
-            issues.append(
-                {
-                    "id": "reference-invalid-adoption-status",
-                    "severity": "high",
-                    "path": reference_path,
-                    "adoption_status": adoption_status,
-                }
-            )
-        for field in ["claimed_capabilities", "taxonomy_categories"]:
-            value = reference.get(field)
-            if not isinstance(value, list) or not value or not all(isinstance(item, str) and item for item in value):
-                issues.append(
-                    {
-                        "id": "reference-invalid-list-field",
-                        "severity": "high",
-                        "path": reference_path,
-                        "field": field,
-                    }
-                )
-        if reference.get("metadata_only") is not True:
-            issues.append(
-                {
-                    "id": "reference-not-metadata-only",
-                    "severity": "critical",
-                    "path": reference_path,
-                    "name": name or "",
-                }
-            )
-
-    return {
-        "schema_version": 1,
-        "generated_at": utc_now(),
-        "status": "failed" if issues else "ok",
-        "reference_count": len(references),
-        "issues": issues,
-    }
-
-
 def reference_check_command(args: argparse.Namespace) -> int:
-    result = validate_external_references(Path(args.references))
+    result = validate_external_references(resolve_project_asset_path(args.references))
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
 
@@ -2187,10 +1593,10 @@ def run_router_eval(
 
 def router_eval_command(args: argparse.Namespace) -> int:
     result = run_router_eval(
-        eval_path=Path(args.eval),
-        registry_dir=Path(args.registry),
-        bundles_path=Path(args.bundles),
-        overlap_groups_path=Path(args.overlap_groups) if args.overlap_groups else None,
+        eval_path=resolve_project_asset_path(args.eval),
+        registry_dir=resolve_project_asset_path(args.registry),
+        bundles_path=resolve_project_asset_path(args.bundles),
+        overlap_groups_path=resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
         max_skills=args.max_skills,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
@@ -3077,11 +2483,13 @@ def maintain_check(
 
 def maintain_check_command(args: argparse.Namespace) -> int:
     result = maintain_check(
-        Path(args.registry),
-        Path(args.bundles) if args.bundles else None,
-        Path(args.overlap_groups) if args.overlap_groups else None,
-        Path(args.references) if getattr(args, "references", None) else None,
-        Path(args.claude_skills_candidate_map) if getattr(args, "claude_skills_candidate_map", None) else None,
+        resolve_project_asset_path(args.registry),
+        resolve_project_asset_path(args.bundles) if args.bundles else None,
+        resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
+        resolve_project_asset_path(args.references) if getattr(args, "references", None) else None,
+        resolve_project_asset_path(args.claude_skills_candidate_map)
+        if getattr(args, "claude_skills_candidate_map", None)
+        else None,
     )
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2

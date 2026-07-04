@@ -146,11 +146,15 @@ Copy the skill folder into that agent's skill or instruction directory:
 cp -R integrations/skills/safe-agent-router /path/to/agent/skills/
 ```
 
-Set the repository path:
+Set the repository path when the skill is copied outside this repository:
 
 ```bash
 export SAFE_AGENT_SKILLS_HOME="/path/to/safe-agent-skills"
 ```
+
+When `integrations/skills/safe-agent-router/scripts/task_pack.sh` is invoked
+from this checkout, it resolves the repository beside the script first and does
+not depend on a globally exported path.
 
 Expose this read-only command to the agent:
 

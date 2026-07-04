@@ -13,8 +13,67 @@ external references: 19
 trusted overlap groups: 7
 tracked claude-skills candidates: 336
 covered claude-skills candidates: 336
-router eval cases: 41
+router eval cases: 42
 verification command: bash scripts/verify.sh
+```
+
+## 2026-07-04 Maintenance Boundary Refactor
+
+Continued the project-wide maintenance pass by reducing `cli.py` ownership and
+documenting the maintenance workflow.
+
+Code boundaries added or clarified:
+
+- `onecode_skill_sanitizer.paths` owns repository asset path resolution and
+  `SAFE_AGENT_SKILLS_HOME` support.
+- `onecode_skill_sanitizer.validation` owns manifest hashing, sealing, and
+  pure schema validation.
+- `onecode_skill_sanitizer.references` owns external reference index loading
+  and metadata-only reference validation.
+- `cli.py` remains the command orchestration layer and compatibility wrapper.
+
+Maintenance docs updated:
+
+- [Maintenance Guide](maintenance-guide.md)
+- [Module Boundary Refactor Plan](module-boundary-refactor-plan.md)
+
+Verification target for this maintenance slice:
+
+```text
+PYTHONPATH=src python3 -m unittest discover -s tests -v
+ruff check .
+bash scripts/verify.sh
+git diff --check
+```
+
+## 2026-07-04 Router Skill Script Resolution
+
+Locked down the `skill-router-quality-review` bundle's real-catalog
+`supply_chain_review` coverage and corrected the repository-local router skill
+script path resolution.
+
+Changes:
+
+- Added a real-catalog regression asserting `security-supply-chain-review`
+  covers the required `supply_chain_review` capability with no missing required
+  coverage for `skill-router-quality-review`.
+- Updated `integrations/skills/safe-agent-router/scripts/task_pack.sh` to prefer
+  the repository beside the script before falling back to `SAFE_AGENT_SKILLS_HOME`.
+- Documented the script-local repository precedence in the router skill README.
+
+Why this matters: a globally exported `SAFE_AGENT_SKILLS_HOME` can point at an
+older checkout during development. Repository-local script resolution keeps the
+checked-out integration script aligned with the code and catalog under review.
+
+Verification evidence:
+
+```text
+targeted regression tests: 2 tests OK
+repository task_pack.sh with stale SAFE_AGENT_SKILLS_HOME: selected skill-router-quality-review and security-supply-chain-review
+ruff check .: OK
+PYTHONPATH=src python3 -m unittest discover -s tests -v: 164 tests OK
+bash scripts/verify.sh: 164 tests OK
+git diff --check: clean
 ```
 
 ## 2026-07-04 Structured Context Routing

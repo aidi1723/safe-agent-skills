@@ -9,8 +9,8 @@ skill, not manual installation of every catalog skill.
 - 172 catalog skills
 - 166 trusted skills
 - 23 trusted scenario bundles
-- 41 router eval cases
-- 157 full verification tests
+- 42 router eval cases
+- 162 full verification tests
 - 15 top-level categories
 - trusted-only default routing
 - provenance, hash, schema, and maintain checks before publication

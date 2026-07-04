@@ -23,6 +23,9 @@ search_repo() {
 }
 
 PYTHONPATH=src python3 -m compileall src tests
+if python3 -m ruff --version >/dev/null 2>&1; then
+  python3 -m ruff check .
+fi
 PYTHONPATH=src python3 -m unittest discover -s tests -v
 PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check \
   --registry catalog \

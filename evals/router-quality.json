@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 41,
+  "case_count": 42,
   "cases": [
     {
       "id": "website-launch",
@@ -46,6 +46,18 @@
       "expected_skills": [
         "ecc-agent-coding-safety",
         "code-python-debug",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "codebase-project-wide-review-cn",
+      "task": "审查整个项目，看是否还有需要优化和完善的地方",
+      "router": "scenario",
+      "expected_scenario": "codebase-change-lifecycle",
+      "expected_task_type": "codebase_change_lifecycle",
+      "expected_skills": [
+        "codebase-explore-map",
+        "code-review-risk",
         "code-test-regression"
       ]
     },

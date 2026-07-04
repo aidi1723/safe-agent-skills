@@ -225,11 +225,26 @@ belong to the host runtime's approval and policy layer.
 
 ## Local CLI
 
-From this folder, use:
+From this repository checkout, use:
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer --help
 ```
+
+Several router commands use repository assets such as `catalog/`,
+`bundles/index.json`, `catalog/overlap-groups.json`, and
+`external-references/index.json`. When running the CLI from outside this
+checkout, set `SAFE_AGENT_SKILLS_HOME` so default asset paths resolve back to
+the verified catalog:
+
+```bash
+export SAFE_AGENT_SKILLS_HOME=/path/to/safe-agent-skills
+onecode-skill-sanitizer smart "审查整个项目，看是否还有需要优化和完善的地方"
+```
+
+Private registry workflows can still pass explicit local paths such as
+`--registry ./registry`; those paths remain relative to the current command
+location when they already exist or are being created by write commands.
 
 ```bash
 onecode-skill-sanitizer scan ./incoming/pdf-skill
