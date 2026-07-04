@@ -40,11 +40,12 @@ Current baseline:
 - scenario bundles: 23 trusted
 - external references: 19
 - router eval cases: 42
-- full verification tests: 162
-- phase status: maintenance boundary refactor in progress
+- full verification tests: 164
+- phase status: maintenance optimization closed
 
 Closure report:
 
+- [Maintenance Optimization Closure Report](maintenance-optimization-closure-report-2026-07-04.md)
 - [Auto Orchestration Pipeline Plan Closure Report](auto-orchestration-pipeline-plan-closure-report.md)
 - [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
 - [Smart Router And Claude Skills Closure Report](smart-router-claude-skills-closure-report.md)
@@ -59,6 +60,7 @@ Next development:
 
 Latest update:
 
+- [Maintenance Optimization Closure Report](maintenance-optimization-closure-report-2026-07-04.md)
 - [Structured Context Routing](updates/2026-07-04-structured-context-routing.md)
 - [Current Intent Routing](updates/2026-07-04-current-intent-routing.md)
 - [Requires After Contract Ordering](updates/2026-07-04-requires-after-contract-ordering.md)

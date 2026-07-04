@@ -17,6 +17,17 @@ router eval cases: 42
 verification command: bash scripts/verify.sh
 ```
 
+## 2026-07-04 Maintenance Optimization Closure Report
+
+Added the post-commit maintenance closure report for the completed optimization
+pass:
+
+- [Maintenance Optimization Closure Report](maintenance-optimization-closure-report-2026-07-04.md)
+
+The report records the final commit, installed router skill synchronization,
+local verification evidence, GitHub Actions matrix result, future maintenance
+entry points, and non-blocking follow-up.
+
 ## 2026-07-04 Maintenance Boundary Refactor
 
 Continued the project-wide maintenance pass by reducing `cli.py` ownership and

@@ -96,6 +96,9 @@ Earlier update statement:
 [Requires After Contract Ordering](docs/updates/2026-07-04-requires-after-contract-ordering.md).
 
 Latest closure report:
+[Maintenance Optimization Closure Report](docs/maintenance-optimization-closure-report-2026-07-04.md).
+
+Latest stage acceptance:
 [Stage Acceptance Report](docs/stage-acceptance-report-2026-07-04.md).
 
 GitHub update summary:
