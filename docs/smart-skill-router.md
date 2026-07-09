@@ -139,6 +139,7 @@ inference.
 - `execution_graph`
 - `pipeline_plan`
 - `selection_explanations`
+- `selection_trace`
 - `pruned_skills`
 
 The execution graph is a deterministic DAG with node-level stage gates and
@@ -155,6 +156,13 @@ own policy requires stricter sequencing.
 
 The graph is guidance for the host agent. It does not execute anything by
 itself.
+
+`selection_trace` is the maintainer-facing audit trail for smarter routing. It
+records the compact task profile, selected scenario, candidate count, selected
+and required skills, overlap-pruned skills, capability coverage summary,
+low-confidence reasons, and one candidate record per considered skill. Use it
+when tuning aliases, scenario signals, capability mappings, overlap groups, or
+router evals.
 
 `pipeline_plan` is a method-only orchestration contract layered on top of the
 selected trusted skills. It groups selected skills into stages such as
@@ -180,3 +188,6 @@ Use `smart` as the default command for normal tasks:
 
 Use `task-pack --router scenario` when you need the older scenario-only output
 shape for a host integration that has not adopted mesh fields yet.
+
+See [Router Development Guide](router-development.md) for the maintainer
+workflow for extending scenarios, contracts, traces, and regression tests.

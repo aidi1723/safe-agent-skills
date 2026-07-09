@@ -760,6 +760,7 @@ def build_task_pack(
             "invariant_capabilities": routed["invariant_capabilities"],
             "pruned_skills": routed["pruned_skills"],
             "selection_quality": routed["selection_quality"],
+            "selection_trace": routed["selection_trace"],
         }
         task_pack["acceptance_criteria"] = build_acceptance_criteria(task_pack)
         task_pack["completion_contract"] = build_completion_contract(task_pack)
@@ -805,6 +806,7 @@ def build_task_pack(
             "contract_diagnostics": routed["contract_diagnostics"],
             "selection_explanations": routed["selection_explanations"],
             "selection_quality": routed["selection_quality"],
+            "selection_trace": routed["selection_trace"],
         }
         task_pack["acceptance_criteria"] = build_acceptance_criteria(task_pack)
         task_pack["completion_contract"] = build_completion_contract(task_pack)
@@ -920,6 +922,37 @@ def render_task_pack_markdown(task_pack: dict) -> str:
         lines.extend(["", "## Selection Explanations", ""])
         for item in task_pack.get("selection_explanations", []):
             lines.append(f"- `{item['name']}` ({item['type']}, {item['role']}): {item['selection_reason']}")
+        if task_pack.get("selection_trace"):
+            trace = task_pack["selection_trace"]
+            lines.extend(
+                [
+                    "",
+                    "## Selection Trace",
+                    "",
+                    f"- candidates: `{trace.get('candidate_count', 0)}`",
+                    f"- selected: `{trace.get('selected_count', 0)}`",
+                    f"- required skills: `{trace.get('required_skill_count', 0)}`",
+                ]
+            )
+            for item in trace.get("decision_stages", []):
+                details = []
+                if "decision" in item:
+                    details.append(f"decision `{item['decision']}`")
+                if "score" in item:
+                    details.append(f"score `{item['score']}`")
+                if "selected_count" in item:
+                    details.append(f"selected `{item['selected_count']}`")
+                if "pruned_count" in item:
+                    details.append(f"pruned `{item['pruned_count']}`")
+                if "covered_count" in item:
+                    details.append(f"covered `{item['covered_count']}`")
+                if "missing_count" in item:
+                    details.append(f"missing `{item['missing_count']}`")
+                if "omitted_by_limit_count" in item:
+                    details.append(f"omitted `{item['omitted_by_limit_count']}`")
+                lines.append(f"- `{item.get('stage', '')}`: " + ", ".join(details))
+            for item in trace.get("pruned", []):
+                lines.append(f"- pruned `{item.get('name', '')}`: {item.get('reason', '')}")
     if task_pack.get("selection_quality"):
         quality = task_pack["selection_quality"]
         lines.extend(

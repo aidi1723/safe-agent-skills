@@ -58,6 +58,9 @@ The JSON output includes:
   `max-skills` execution pack.
 - `execution_plan`: optional ordered skill execution guidance
 - `selection_explanations`: optional reasons for selected bundles and skills
+- `selection_trace`: optional machine-readable audit trail showing task
+  profiling, scenario selection, candidate count, selected/pruned skills,
+  required skill protection, capability coverage, and selection quality
 - `execution_graph`: optional mesh DAG with `stage`, `gate`,
   `parallel_group`, and `stage_order` edges when `smart` or `--router mesh` is
   used
@@ -179,7 +182,9 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
 ```
 
 Mesh output adds an execution graph, invariant capability coverage, and an
-overlap-pruned skill list. It remains deterministic and permission-neutral.
+overlap-pruned skill list. It also includes `selection_trace` so host agents
+and maintainers can inspect why skills were selected, omitted, or pruned. It
+remains deterministic and permission-neutral.
 
 ## Safety Boundary
 

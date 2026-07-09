@@ -80,6 +80,10 @@ Current public baseline:
 For a domain-oriented map of the catalog and example router commands, see
 [Catalog Overview](docs/catalog-overview.md).
 
+For the maintainer workflow for smarter skill selection, orchestration traces,
+scenario contracts, and router regression tests, see
+[Router Development Guide](docs/router-development.md).
+
 For the current feature surface, category counts, and scenario bundles, see
 [Feature Log](docs/feature-log.md).
 

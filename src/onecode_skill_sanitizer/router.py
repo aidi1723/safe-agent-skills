@@ -1103,6 +1103,140 @@ def build_selection_quality(
     }
 
 
+def build_selection_trace(
+    router_mode: str,
+    strategy: str,
+    task_profile: dict,
+    selected_bundle: dict,
+    selected_scenario: dict,
+    candidate_skills: list[dict],
+    routed_skills: list[dict],
+    coverage: list[dict],
+    required_skill_names: set[str] | None,
+    pruned_skill_names: list[str] | None,
+    invariant_capabilities: list[str] | None,
+    selection_quality: dict,
+) -> dict:
+    selected_names = set(selected_skill_names(routed_skills))
+    required_names = set(required_skill_names or set())
+    pruned_names = list(pruned_skill_names or [])
+    pruned_set = set(pruned_names)
+    coverage_by_skill: dict[str, list[str]] = {}
+    required_by_skill: dict[str, bool] = {}
+    for item in coverage:
+        skill_name = item.get("skill", "")
+        if not skill_name:
+            continue
+        coverage_by_skill.setdefault(skill_name, []).append(item.get("capability", ""))
+        if item.get("required", True):
+            required_by_skill[skill_name] = True
+
+    candidates = []
+    seen = set()
+    for skill in candidate_skills:
+        name = skill.get("name", "")
+        if not name or name in seen:
+            continue
+        seen.add(name)
+        selected = name in selected_names
+        pruned = name in pruned_set
+        required = name in required_names or required_by_skill.get(name, False)
+        if selected:
+            status = "selected"
+        elif pruned:
+            status = "pruned"
+        else:
+            status = "available_not_selected"
+        if pruned:
+            reason = "overlap_group_non_required"
+        elif required and selected:
+            reason = "required_capability"
+        elif selected and skill.get("match_score", 0) > 0:
+            reason = "direct_task_match"
+        elif selected_bundle and name in selected_bundle.get("skills", []):
+            reason = "scenario_bundle"
+        elif selected:
+            reason = "router_selected"
+        else:
+            reason = "not_needed_for_current_route"
+        candidates.append(
+            {
+                "name": name,
+                "status": status,
+                "selected": selected,
+                "required": required,
+                "match_score": skill.get("match_score", 0),
+                "stage": pipeline_stage_for_skill(name),
+                "matched_capabilities": coverage_by_skill.get(name, []),
+                "reason": reason,
+            }
+        )
+
+    coverage_summary = {
+        "covered": [item.get("capability", "") for item in coverage if item.get("status") == "covered"],
+        "missing": [item.get("capability", "") for item in coverage if item.get("status") == "missing"],
+        "omitted_by_limit": [
+            item.get("capability", "") for item in coverage if item.get("status") == "omitted_by_limit"
+        ],
+    }
+    return {
+        "schema_version": 1,
+        "router_mode": router_mode,
+        "strategy": strategy,
+        "task_profile": {
+            "task_type": task_profile.get("task_type", "general"),
+            "primary_domain": task_profile.get("primary_domain", "general"),
+            "matched_signal_score": task_profile.get("matched_signal_score", 0),
+        },
+        "scenario": {
+            "id": selected_scenario.get("id", ""),
+            "name": selected_scenario.get("name", ""),
+            "match_score": selected_scenario.get("match_score", 0),
+        },
+        "candidate_count": len(candidates),
+        "selected_count": len(selected_names),
+        "required_skill_count": len(required_names),
+        "invariant_capabilities": list(invariant_capabilities or []),
+        "coverage": coverage_summary,
+        "pruned": [{"name": name, "reason": "overlap_group_non_required"} for name in pruned_names],
+        "candidates": candidates,
+        "quality": {
+            "confidence": selection_quality.get("confidence", "low"),
+            "score": selection_quality.get("score", 0),
+            "low_confidence": selection_quality.get("low_confidence", False),
+            "reason_codes": list(selection_quality.get("reason_codes", [])),
+            "warnings": list(selection_quality.get("warnings", [])),
+        },
+        "decision_stages": [
+            {
+                "stage": "task_profile",
+                "decision": task_profile.get("task_type", "general"),
+                "score": task_profile.get("matched_signal_score", 0),
+            },
+            {
+                "stage": "scenario_selection",
+                "decision": selected_scenario.get("id", "") or "direct_skill_selection",
+                "score": selected_scenario.get("match_score", 0),
+            },
+            {
+                "stage": "capability_coverage",
+                "covered_count": len(coverage_summary["covered"]),
+                "missing_count": len(coverage_summary["missing"]),
+                "omitted_by_limit_count": len(coverage_summary["omitted_by_limit"]),
+            },
+            {
+                "stage": "overlap_pruning",
+                "pruned_count": len(pruned_names),
+            },
+            {
+                "stage": "final_pack",
+                "selected_count": len(selected_names),
+                "confidence": selection_quality.get("confidence", "low"),
+            },
+        ],
+    }
+
+
 def build_pipeline_plan(
     task: str,
     task_profile: dict,
@@ -1263,6 +1397,20 @@ def route_scenario_task(
         coverage=coverage,
         pruned_skills=[],
     )
+    selection_trace = build_selection_trace(
+        router_mode="deterministic_scenario_router",
+        strategy="balanced",
+        task_profile=profile,
+        selected_bundle=selected_bundle,
+        selected_scenario=selected_scenario,
+        candidate_skills=selected_skills,
+        routed_skills=routed_skills,
+        coverage=coverage,
+        required_skill_names=set(required_skill_names),
+        pruned_skill_names=[],
+        invariant_capabilities=[],
+        selection_quality=selection_quality,
+    )
     execution_plan = build_execution_plan(selected_bundle, routed_skills) if selected_bundle else build_execution_plan({}, routed_skills)
     explanations = build_selection_explanations(selected_bundle, routed_skills, coverage) if selected_bundle else []
     contract_graph = build_contract_graph(routed_skills)
@@ -1284,6 +1432,7 @@ def route_scenario_task(
         "bundles": [selected_bundle] if selected_bundle else [],
         "coverage": coverage,
         "selection_quality": selection_quality,
+        "selection_trace": selection_trace,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
         "pipeline_plan": pipeline_plan,
@@ -2149,6 +2298,20 @@ def route_mesh_task(
         coverage=coverage,
         pruned_skills=pruned_names,
     )
+    selection_trace = build_selection_trace(
+        router_mode="deterministic_mesh_router",
+        strategy=strategy,
+        task_profile=profile,
+        selected_bundle=selected_bundle,
+        selected_scenario=selected_scenario,
+        candidate_skills=selected_skills,
+        routed_skills=routed_skills,
+        coverage=coverage,
+        required_skill_names=required_names,
+        pruned_skill_names=pruned_names,
+        invariant_capabilities=invariant_capabilities,
+        selection_quality=selection_quality,
+    )
     stage_map = (
         scenario_stage_skill_map(selected_bundle.get("id", ""), selected_skill_names(routed_skills))
         if use_stage_ordered_output
@@ -2213,6 +2376,7 @@ def route_mesh_task(
         "bundles": [selected_bundle] if selected_bundle else [],
         "coverage": coverage,
         "selection_quality": selection_quality,
+        "selection_trace": selection_trace,
         "execution_plan": execution_plan,
         "selection_explanations": explanations,
         "execution_graph": execution_graph,

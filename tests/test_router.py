@@ -7,8 +7,9 @@ from onecode_skill_sanitizer.router import (
     build_execution_graph,
     build_execution_plan,
     build_pipeline_plan,
-    build_selection_quality,
     build_selection_explanations,
+    build_selection_quality,
+    build_selection_trace,
     build_task_profile,
     execution_role_for_stage,
     parse_invariant_capabilities,
@@ -1246,6 +1247,109 @@ class RouterTest(unittest.TestCase):
         self.assertIn("design-system-consistency", routed["pruned_skills"])
         self.assertEqual(routed["execution_graph"]["nodes"][0]["skill"], "security-secret-context-redaction")
         self.assertTrue(routed["execution_graph"]["edges"])
+
+    def test_route_mesh_task_exposes_selection_trace_for_auditable_routing(self):
+        bundles_index = {
+            "bundles": [
+                {
+                    "id": "website-build-launch",
+                    "name": "Website Build Launch",
+                    "scenario": "Build or polish a website and prepare it for release.",
+                    "status": "trusted",
+                    "task_signals": ["website", "landing page", "launch"],
+                    "skills": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "design-system-consistency",
+                        "content-seo-brief",
+                    ],
+                    "required_capabilities": [
+                        {"id": "requirements", "required": True, "preferred_skills": ["business-requirements-brief"]},
+                        {"id": "ui_review", "required": True, "preferred_skills": ["design-ui-review"]},
+                        {"id": "seo_copy", "required": True, "preferred_skills": ["content-seo-brief"]},
+                    ],
+                    "execution_order": [
+                        "business-requirements-brief",
+                        "design-ui-review",
+                        "design-system-consistency",
+                        "content-seo-brief",
+                    ],
+                    "safety_boundary": "Skills provide method only.",
+                }
+            ]
+        }
+        overlap_groups = {
+            "groups": [
+                {
+                    "id": "ui-quality-review",
+                    "status": "trusted",
+                    "primary_skill": "design-ui-review",
+                    "adjacent_skills": ["design-system-consistency"],
+                    "use_before": [],
+                    "use_after": [],
+                }
+            ]
+        }
+        selected = [
+            {"name": "business-requirements-brief", "match_score": 7, "taxonomy": {"category": "business"}},
+            {"name": "design-ui-review", "match_score": 9, "taxonomy": {"category": "design"}},
+            {"name": "design-system-consistency", "match_score": 8, "taxonomy": {"category": "design"}},
+            {"name": "content-seo-brief", "match_score": 8, "taxonomy": {"category": "content"}},
+        ]
+
+        routed = route_mesh_task(
+            task="build a landing page and prepare launch checks",
+            invariants=None,
+            selected_skills=selected,
+            bundles_index=bundles_index,
+            trusted_skill_names={skill["name"] for skill in selected},
+            overlap_groups=overlap_groups,
+            max_skills=3,
+            strategy="balanced",
+        )
+
+        trace = routed["selection_trace"]
+        candidate_by_name = {item["name"]: item for item in trace["candidates"]}
+
+        self.assertEqual(trace["schema_version"], 1)
+        self.assertEqual(trace["router_mode"], "deterministic_mesh_router")
+        self.assertEqual(trace["scenario"]["id"], "website-build-launch")
+        self.assertEqual(trace["candidate_count"], 4)
+        self.assertEqual(trace["selected_count"], 3)
+        self.assertEqual(trace["pruned"][0]["name"], "design-system-consistency")
+        self.assertEqual(trace["pruned"][0]["reason"], "overlap_group_non_required")
+        self.assertTrue(candidate_by_name["business-requirements-brief"]["required"])
+        self.assertTrue(candidate_by_name["design-ui-review"]["selected"])
+        self.assertFalse(candidate_by_name["design-system-consistency"]["selected"])
+        self.assertEqual(candidate_by_name["design-system-consistency"]["status"], "pruned")
+        self.assertIn("ui_review", candidate_by_name["design-ui-review"]["matched_capabilities"])
+        self.assertEqual(trace["quality"]["confidence"], routed["selection_quality"]["confidence"])
+
+    def test_build_selection_trace_marks_general_low_confidence_fallback(self):
+        trace = build_selection_trace(
+            router_mode="deterministic_scenario_router",
+            strategy="balanced",
+            task_profile={"task_type": "general", "primary_domain": "general", "matched_signal_score": 0},
+            selected_bundle={},
+            selected_scenario={"id": "", "match_score": 0},
+            candidate_skills=[{"name": "execution-file-batch", "match_score": 0}],
+            routed_skills=[{"name": "execution-file-batch", "match_score": 0}],
+            coverage=[],
+            required_skill_names=set(),
+            pruned_skill_names=[],
+            invariant_capabilities=[],
+            selection_quality={
+                "confidence": "low",
+                "score": 0,
+                "low_confidence": True,
+                "reason_codes": ["no_trusted_scenario_match"],
+            },
+        )
+
+        self.assertEqual(trace["scenario"]["id"], "")
+        self.assertEqual(trace["quality"]["confidence"], "low")
+        self.assertEqual(trace["quality"]["reason_codes"], ["no_trusted_scenario_match"])
+        self.assertEqual(trace["candidates"][0]["status"], "selected")
 
     def test_route_mesh_task_includes_pipeline_plan(self):
         bundle = {
