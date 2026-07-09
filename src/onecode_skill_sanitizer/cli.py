@@ -9,7 +9,7 @@ from pathlib import Path
 
 from .paths import resolve_project_asset_path
 from .references import validate_external_references
-from .router import route_mesh_task, route_scenario_task
+from .router import build_task_profile, route_mesh_task, route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
 from .validation import SOURCE_DEFAULT_USAGE_BY_TYPE
@@ -349,6 +349,41 @@ def select_skills_for_task(registry_dir: Path, task_taxonomy: dict, task: str, i
         selected.append(item)
     selected.sort(key=lambda item: (-item["match_score"], item["name"]))
     return selected
+
+
+TASK_PROFILE_CATEGORY_VALUES = {
+    "design",
+    "code",
+    "engineering",
+    "security",
+    "office",
+    "execution",
+    "research",
+    "data",
+    "business",
+    "content",
+    "commerce",
+    "media",
+    "compliance",
+    "ai",
+    "vertical",
+}
+
+
+def task_taxonomy_from_profile(task: str, fallback_taxonomy: dict) -> dict:
+    profile = build_task_profile(task)
+    primary_domain = profile.get("primary_domain", "")
+    if primary_domain not in TASK_PROFILE_CATEGORY_VALUES:
+        return fallback_taxonomy
+    task_type = str(profile.get("task_type", "")).replace("-", "_")
+    artifact_types = profile.get("artifact_types", [])
+    return {
+        "category": primary_domain,
+        "subcategory": f"{primary_domain}.{task_type}",
+        "task_intent": f"route {task_type} tasks with verified skill selection",
+        "artifact_type": artifact_types[0] if artifact_types else "workflow",
+        "collection_priority": "P0",
+    }
 
 
 def extract_frontmatter_description(text: str) -> str:
@@ -695,6 +730,7 @@ def build_task_pack(
             max_skills=max_skills or top,
             strategy=strategy,
         )
+        routed_task_taxonomy = task_taxonomy_from_profile(task, task_taxonomy)
         skills = routed["skills"]
         bundles = []
         if include_bundles and routed["selected_scenario"].get("id"):
@@ -705,7 +741,7 @@ def build_task_pack(
             "schema_version": 1,
             "generated_at": utc_now(),
             "task": task,
-            "task_taxonomy": task_taxonomy,
+            "task_taxonomy": routed_task_taxonomy,
             "skill_count": len(skills),
             "bundle_count": len(bundles),
             "safety_boundary": "Only use trusted skills by default. Skills provide method and verification guidance, not runtime permissions.",
@@ -742,6 +778,7 @@ def build_task_pack(
             trusted_skill_names=trusted_skill_names(registry_dir),
             max_skills=max_skills or top,
         )
+        routed_task_taxonomy = task_taxonomy_from_profile(task, task_taxonomy)
         skills = routed["skills"]
         bundles = []
         if include_bundles and routed["selected_scenario"].get("id"):
@@ -752,7 +789,7 @@ def build_task_pack(
             "schema_version": 1,
             "generated_at": utc_now(),
             "task": task,
-            "task_taxonomy": task_taxonomy,
+            "task_taxonomy": routed_task_taxonomy,
             "skill_count": len(skills),
             "bundle_count": len(bundles),
             "safety_boundary": "Only use trusted skills by default. Skills provide method and verification guidance, not runtime permissions.",

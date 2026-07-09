@@ -2,9 +2,22 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
+  "contract": {
+    "capability_vector": [
+      "engineering.ci"
+    ],
+    "cost_weight": 2,
+    "produces_evidence": [
+      "ci_check_report"
+    ],
+    "requires_context": [
+      "regression_test_plan"
+    ],
+    "stage_hint": "verification"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "76fa3935d8d364e3bcae45f438341c342693d71052af93d5a9818598f100d06d",
+    "manifest_sha256": "521d8200e1c2d4021fca764b6181d77490dd5945a7bf8cb3a956818a402d9889",
     "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
     "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
   },

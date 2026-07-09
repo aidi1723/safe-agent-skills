@@ -818,7 +818,7 @@ def _signal_score(text: str, signals: Iterable[str]) -> int:
     distinctive_score = 0
     for signal in signals:
         normalized_signal = normalize_task_text(signal)
-        if normalized_signal and normalized_signal in text:
+        if signal_matches_text(normalized_signal, text):
             signal_score = 4 if " " in normalized_signal else 2
             score += signal_score
             if normalized_signal not in AMBIGUOUS_PROFILE_SIGNALS:
@@ -826,6 +826,16 @@ def _signal_score(text: str, signals: Iterable[str]) -> int:
     if score and not distinctive_score:
         return 0
     return score
+
+
+def signal_matches_text(signal: str, text: str) -> bool:
+    if not signal:
+        return False
+    if " " in signal:
+        return signal in text
+    if len(signal) <= 3 and re.fullmatch(r"[a-z0-9]+", signal):
+        return re.search(rf"(?<![a-z0-9]){re.escape(signal)}(?![a-z0-9])", text) is not None
+    return signal in text
 
 
 def build_task_profile(task: str) -> dict:

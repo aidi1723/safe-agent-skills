@@ -3354,6 +3354,31 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(task_pack["bundles"], [])
         self.assertNotIn("website-build-launch", task_pack["agent_instructions"])
 
+    def test_scenario_router_does_not_match_pr_inside_prepare(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "task-pack",
+                    "prepare a meeting brief",
+                    "--registry",
+                    "catalog",
+                    "--include-bundles",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--max-skills",
+                    "8",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        self.assertNotEqual(task_pack["task_profile"]["task_type"], "code_review")
+        self.assertNotEqual(task_pack["selected_scenario"]["id"], "code-review-hardening")
+        self.assertNotIn("code-review-risk", [skill["name"] for skill in task_pack["skills"]])
+
     def test_real_catalog_scenario_router_selects_skill_router_quality_review_bundle(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):
@@ -3387,6 +3412,11 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("ai-opensquilla-metaskill-workflow", names)
         self.assertIn("ai-opensquilla-token-routing-pattern", names)
         self.assertIn("code-test-regression", names)
+        self.assertEqual(task_pack["task_taxonomy"]["category"], "ai")
+        self.assertEqual(task_pack["task_taxonomy"]["subcategory"], "ai.skill_router_review")
+        self.assertEqual(task_pack["contract_diagnostics"]["graph_mode"], "contract")
+        self.assertEqual(task_pack["contract_diagnostics"]["fallback_reason"], "")
+        self.assertEqual(task_pack["contract_diagnostics"]["graph_issue_count"], 0)
 
     def test_real_catalog_scenario_router_covers_supply_chain_review_for_router_quality(self):
         task_pack_out = io.StringIO()
@@ -3445,7 +3475,9 @@ class RegistryCliTest(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         task_pack = json.loads(result.stdout)
+        self.assertEqual(task_pack["router"]["mode"], "deterministic_mesh_router")
         self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertIn("execution_graph", task_pack)
 
     def test_real_catalog_scenario_router_routes_audit_followup_to_skill_router_bundle(self):
         task_pack_out = io.StringIO()

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-03T13:07:14Z",
+  "generated_at": "2026-07-08T04:26:16Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -207,8 +207,25 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "ai.orchestration",
+          "ai.workflow"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+          "agent_workflow_map"
+        ],
+        "produces_evidence": [
+          "orchestration_notes"
+        ],
+        "requires_context": [
+          "workflow_review_scope"
+        ],
+        "stage_hint": "planning"
+      },
       "hashes": {
-        "manifest_sha256": "ad4d577734bc3344e7a8edee76ec18ed63a31507b303b8fd7e2fab5cb7143614",
+        "manifest_sha256": "4d60648fdf6f7f8951b38c2a53495c43d889fe12d94e6755bfa6839790631c6e",
         "sanitized_sha256": "c6d80969d90e023528dc6684e04bd64c029a95bb252b6957dcabfab05e78855f",
         "source_sha256": "f3da5086b6bffa6fb5a36657bc3780e748435415c4fd72ffd60bfac70093ab77"
       },
@@ -381,8 +398,26 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "ai.metaskill",
+          "ai.bundle_quality"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+          "workflow_review_scope"
+        ],
+        "produces_evidence": [
+          "bundle_quality_notes"
+        ],
+        "requires_context": [
+          "user_request",
+          "workspace_context"
+        ],
+        "stage_hint": "preflight"
+      },
       "hashes": {
-        "manifest_sha256": "9745075958335b53669ed5f93fd424457569cb71893697dc41d6b9e05cd41c89",
+        "manifest_sha256": "dc2c9605d7bac17abc7012bbebe80adb0a190abc3d59270078348bf1148f86ac",
         "sanitized_sha256": "c67b142344ddd90996a2863bc9eac8dedcf50d8b60db0f9af211e81df1b1d0ca",
         "source_sha256": "6559127e7dd44d4dbb8cdd26009fe5b6e54cc8287f2fea8bc284311061b086ca"
       },
@@ -410,8 +445,25 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "ai.routing",
+          "ai.skill_selection"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+          "routing_selection_plan"
+        ],
+        "produces_evidence": [
+          "skill_selection_notes"
+        ],
+        "requires_context": [
+          "workflow_review_scope"
+        ],
+        "stage_hint": "planning"
+      },
       "hashes": {
-        "manifest_sha256": "8e1b37eeb506bb1d5f80b96a42328fd5747aa42ddf204b195dfd98bde74da294",
+        "manifest_sha256": "8546ae995b745343aeeecb68f69badd8bc0ac6a2d6242d387b0e28ed346c3144",
         "sanitized_sha256": "36086d4ab5063843cde2d9776f9c475910ae3775bd5c7e1ad30378332e965a7d",
         "source_sha256": "ee8814bb349ca4a647d47b5b92b51a7aa5e667e418785062f4276998e8060adb"
       },
@@ -468,8 +520,22 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "ai.eval",
+          "ai.output_schema"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+          "output_schema_eval_report"
+        ],
+        "requires_context": [
+          "routing_selection_plan"
+        ],
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "660953bf4162ec0b26a821fb19fb43d750191e8222c32e804752b14a39083427",
+        "manifest_sha256": "e59e032e1d994c0a4118a5d2a152a9db3d4ac60c2e8f8894d9eeb4f3b8f1baae",
         "sanitized_sha256": "2fce3196b4f9ae19e6d12a78ed9242464038f7adec2d9de7c29bbd23e7ed461b",
         "source_sha256": "364bcf0a17ff8fa007072e36f135105f0247090c98db29f94c4cbe038ce98675"
       },
@@ -555,8 +621,24 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "ai.rule_synthesis"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+          "failure_rule_synthesis_report"
+        ],
+        "requires_context": [
+          "tool_schema_contract_report",
+          "output_schema_eval_report",
+          "regression_test_evidence",
+          "ci_check_report"
+        ],
+        "stage_hint": "verification"
+      },
       "hashes": {
-        "manifest_sha256": "08c1995e50d01a21e73543080879c2fb56365d3e9db573ef866de6f763e31502",
+        "manifest_sha256": "2dfdb47e28f9f85c9f6961aaece19c407d664e57b027ef0f31b12f53f9cec853",
         "sanitized_sha256": "4ffdf950718a0623bbafacd0decdb672d23e6515f155dd884a8b7cd4a144c7a1",
         "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
       },
@@ -642,8 +724,22 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "ai.tool_schema",
+          "ai.routing_contract"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+          "tool_schema_contract_report"
+        ],
+        "requires_context": [
+          "routing_selection_plan"
+        ],
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "a4f3d8cc09676f73b44b77e3437de38e35b7ebc319b129d81a9ffc8780ff39a6",
+        "manifest_sha256": "00ac166021c29a777ee4f96e8f9fc3d59b363b8a08d8d6c9535aac10744623d5",
         "sanitized_sha256": "d105aea8ae5d8446d2a4ea7d7cd54dce1e569f4761034e5a49a1e7b7ecc7cbee",
         "source_sha256": "8f348a217dd395e8b3b8122050fa2628ce76df4616299cf06c08b4a4ac466145"
       },
@@ -1902,8 +1998,24 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "code.test"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+          "regression_test_plan"
+        ],
+        "produces_evidence": [
+          "regression_test_evidence"
+        ],
+        "requires_context": [
+          "routing_selection_plan"
+        ],
+        "stage_hint": "verification"
+      },
       "hashes": {
-        "manifest_sha256": "0ef975c6d26e6d298830d1f2b6da332316f1872e8cf76b6352b3075dfeb23273",
+        "manifest_sha256": "32271baa11dc420a9eb5d44c32d7577b8223eae909dfb2e426362b2a143cbee1",
         "sanitized_sha256": "60e9c0237617a047c487b233da9cb5eaad87a0ae26db1bcedcb73d8b2616ae6e",
         "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
       },
@@ -3567,8 +3679,21 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "engineering.ci"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+          "ci_check_report"
+        ],
+        "requires_context": [
+          "regression_test_plan"
+        ],
+        "stage_hint": "verification"
+      },
       "hashes": {
-        "manifest_sha256": "76fa3935d8d364e3bcae45f438341c342693d71052af93d5a9818598f100d06d",
+        "manifest_sha256": "521d8200e1c2d4021fca764b6181d77490dd5945a7bf8cb3a956818a402d9889",
         "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
         "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
       },
@@ -4872,8 +4997,21 @@
       }
     },
     {
+      "contract": {
+        "capability_vector": [
+          "security.supply_chain"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+          "supply_chain_review_report"
+        ],
+        "requires_context": [
+          "routing_selection_plan"
+        ],
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "4132aa1433bd7126b0e3380ddecf55b7c9f7fd8c607317369c7bfbba7e5c68f0",
+        "manifest_sha256": "2e76aa00d531dedfa18655c01c687fb9bea7b614a762895dd86ce4bf58454f8f",
         "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
         "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
       },

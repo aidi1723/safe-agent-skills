@@ -295,20 +295,17 @@ onecode-skill-sanitizer disable ./registry/office/old-skill
 `select` returns only `trusted` skills by default. Use
 `--include-review-required` only for review work, not normal execution.
 
-`task-pack` is the universal Agent-facing interface. It verifies the registry,
+`smart` is the recommended Agent-facing interface. It verifies the registry,
 selects matching trusted skills, loads their sanitized `SKILL.md` instructions,
 and emits a JSON or Markdown instruction pack that any host Agent can place in
-its planning context. The pack provides method, verifier expectations, and
-provenance. It does not grant filesystem, network, connector, shell, or
-production permissions; those remain controlled by the host runtime.
+its planning context. The pack provides method, verifier expectations,
+provenance, capability coverage, and a deterministic mesh execution graph. It
+does not grant filesystem, network, connector, shell, or production permissions;
+those remain controlled by the host runtime.
 
-`task-pack --include-bundles` can also include matching trusted scenario
-bundles, so a host Agent receives both individual skill guidance and a larger
-task playbook when the task matches a known workflow.
-
-For the simplest default entry, use `smart`. The name is a convenience label:
-selection is deterministic, non-LLM routing over trusted catalog metadata,
-scenario signals, overlap groups, and invariant hints:
+The `smart` name is a convenience label: selection is deterministic, non-LLM
+routing over trusted catalog metadata, scenario signals, overlap groups, and
+invariant hints:
 
 ```bash
 onecode-skill-sanitizer smart \
@@ -325,7 +322,10 @@ For vague or unsupported repository-maintenance tasks, `smart` is conservative:
 if the task does not match a trusted scenario signal, it leaves
 `selected_scenario.id` empty and returns only directly matched trusted skills.
 
-For more precise task-aware composition, use the deterministic scenario router:
+`task-pack` remains available as a lower-level compatibility interface. Use
+`task-pack --include-bundles` when an integration needs matching trusted
+scenario bundles without the mesh router. Use `task-pack --router scenario`
+only when a host integration has not adopted mesh fields yet:
 
 ```bash
 onecode-skill-sanitizer task-pack "build a product website and prepare launch checks" \

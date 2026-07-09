@@ -2,7 +2,9 @@
 
 ## Goal
 
-`task-pack` is the universal skill-selection interface for agents.
+`smart` is the recommended default skill-selection interface for agents.
+`task-pack` remains the lower-level compatibility interface for hosts that need
+the older simple or scenario-only output shape.
 
 It turns a natural-language task into a verified instruction pack that any
 agent runtime can read as JSON or Markdown. The pack selects matching skills
@@ -17,20 +19,18 @@ systems.
 ## Command
 
 ```bash
-PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "review security risk in this package" \
   --registry catalog \
-  --top 3 \
   --format json
 ```
 
 Markdown output is useful when the host agent consumes plain text:
 
 ```bash
-PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "polish this dashboard interface" \
   --registry catalog \
-  --top 2 \
   --format markdown
 ```
 
@@ -45,9 +45,12 @@ The JSON output includes:
 - `skills`: selected skill records with status, source, taxonomy, hashes,
   capability description, safe workflow, expected output, verifier
   expectations, and failure handling
-- `bundles`: optional trusted scenario bundles when `--include-bundles` is used
-- `router`: optional router metadata when `--router scenario` is used
-- `task_profile`: optional deterministic task profile for scenario routing
+- `bundles`: optional trusted scenario bundles when `smart` or
+  `--include-bundles` is used
+- `router`: optional router metadata when `smart`, `--router scenario`, or
+  `--router mesh` is used
+- `task_profile`: optional deterministic task profile for smart, scenario, or
+  mesh routing
 - `selected_scenario`: optional best matching trusted scenario bundle
 - `coverage`: optional capability coverage records for the selected scenario
   with `covered`, `missing`, or `omitted_by_limit` status. `omitted_by_limit`
@@ -70,7 +73,7 @@ The JSON output includes:
 Default mode selects only `trusted` skills.
 
 ```bash
-PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "process a pdf report" \
   --registry catalog
 ```
@@ -84,32 +87,31 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   --include-review-required
 ```
 
-`quarantined`, `rejected`, and `disabled` skills are never selected by
-`task-pack`, even in review mode.
+`quarantined`, `rejected`, and `disabled` skills are never selected by default.
+Review-required skills are available only through explicit review-mode
+`task-pack` commands.
 
 ## Bundle-Aware Output
 
-Use `--include-bundles` when the host agent should receive both individual
-skill guidance and matching scenario playbooks:
+Use `smart` when the host agent should receive both individual skill guidance
+and matching scenario playbooks:
 
 ```bash
-PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "design a RAG document agent with vector retrieval and citation checks" \
   --registry catalog \
-  --top 5 \
-  --include-bundles \
   --bundles bundles/index.json \
   --format json
 ```
 
-Only `trusted` bundles are emitted, and trusted bundles must reference only
+Only `trusted` bundles are selected, and trusted bundles must reference only
 existing `trusted` skills. Use `maintain-check` before publishing bundle
 changes.
 
 ## Scenario Router
 
-Use `--router scenario` when the host agent should receive a task-aware skill
-composition rather than a simple match-score list.
+Use `--router scenario` when an older host integration needs task-aware skill
+composition but has not adopted mesh router fields.
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
@@ -199,10 +201,12 @@ decides what the agent is allowed to do.
 ## Agent Integration Pattern
 
 1. Receive the user task.
-2. Run `task-pack` against the local or synced safe skill catalog.
-3. Optionally include trusted scenario bundles with `--include-bundles`.
-4. Use `--router scenario` when the task should be composed from a known
-   scenario, required capabilities, and an ordered skill plan.
+2. Run `safe-agent-router-task-pack` or `smart` against the local or synced
+   safe skill catalog.
+3. Use `task-pack --router scenario` only for older integrations that cannot
+   consume mesh fields yet.
+4. Confirm selected scenario, capability coverage, execution graph, pipeline
+   plan, and verifier expectations before planning.
 5. Inject `agent_instructions` into the agent's planning context.
 6. Execute only under the host runtime's existing permission policy.
 7. Run the verifier expectations listed by the selected skills.

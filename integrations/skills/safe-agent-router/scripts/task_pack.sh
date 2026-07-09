@@ -47,10 +47,8 @@ fi
 
 cd "$PROJECT_DIR"
 
-PYTHONPATH="$PROJECT_DIR/src${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m onecode_skill_sanitizer task-pack "$TASK" \
+PYTHONPATH="$PROJECT_DIR/src${PYTHONPATH:+:$PYTHONPATH}" exec python3 -m onecode_skill_sanitizer smart "$TASK" \
   --registry catalog \
-  --include-bundles \
   --bundles bundles/index.json \
-  --router scenario \
   --max-skills "$MAX_SKILLS" \
   --format "$FORMAT"

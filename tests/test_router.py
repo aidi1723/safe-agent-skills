@@ -80,6 +80,18 @@ class RouterTest(unittest.TestCase):
         self.assertIn("project_context", profile["required_capabilities"])
         self.assertIn("regression_test", profile["required_capabilities"])
 
+    def test_build_task_profile_does_not_match_pr_inside_common_words(self):
+        for task in [
+            "prepare a meeting brief",
+            "project planning",
+            "review product requirements",
+            "pricing proposal review",
+        ]:
+            with self.subTest(task=task):
+                profile = build_task_profile(task)
+
+                self.assertNotEqual(profile["task_type"], "code_review")
+
     def test_build_task_profile_detects_chinese_project_wide_review(self):
         profile = build_task_profile("审查整个项目，看是否还有需要优化和完善的地方")
 

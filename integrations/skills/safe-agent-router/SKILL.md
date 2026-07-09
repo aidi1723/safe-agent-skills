@@ -68,11 +68,9 @@ task plan context.
 Default command:
 
 ```bash
-onecode-skill-sanitizer task-pack "$USER_TASK" \
+onecode-skill-sanitizer smart "$USER_TASK" \
   --registry catalog \
-  --include-bundles \
   --bundles bundles/index.json \
-  --router scenario \
   --max-skills 8 \
   --format markdown
 ```

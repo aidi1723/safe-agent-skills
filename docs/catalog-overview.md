@@ -10,7 +10,7 @@ skill, not manual installation of every catalog skill.
 - 166 trusted skills
 - 23 trusted scenario bundles
 - 42 router eval cases
-- 162 full verification tests
+- 166 full verification tests
 - 15 top-level categories
 - trusted-only default routing
 - provenance, hash, schema, and maintain checks before publication
@@ -19,15 +19,15 @@ skill, not manual installation of every catalog skill.
 
 | Domain | Use For | Example Command |
 | --- | --- | --- |
-| `ai` | agent planning, routing, schemas, RAG, output validation | `onecode-skill-sanitizer task-pack "design a RAG document agent" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `code` | code review, debugging, regression tests, refactor safety | `onecode-skill-sanitizer task-pack "review generated code and harden tests" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `design` | UI review, design-system consistency, responsive checks | `onecode-skill-sanitizer task-pack "polish a product dashboard UI" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `security` | prompt injection, supply chain, guardrails, secret redaction | `onecode-skill-sanitizer task-pack "review an agent workflow for connector permissions" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `content` | SEO briefs, editorial checks, claims compliance, social posts | `onecode-skill-sanitizer task-pack "draft and fact check an SEO blog post" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `data` | data quality, table analysis, document-to-knowledge workflows | `onecode-skill-sanitizer task-pack "clean spreadsheet data and prepare chart notes" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `commerce` | marketplace listings, keyword plans, buyer replies, RFP responses, pricing strategy | `onecode-skill-sanitizer task-pack "review this RFP response and pricing assumptions" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `research` | source checks, citation maps, paper synthesis, freshness review, clinical study design review | `onecode-skill-sanitizer task-pack "review a clinical study protocol design" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
-| `vertical` | industry solution intake, education, manufacturing, real estate, multi-industry AI application packaging | `onecode-skill-sanitizer task-pack "build an industry solution pack for healthcare, legal, finance, education, manufacturing, and SaaS users" --registry catalog --include-bundles --bundles bundles/index.json --router scenario` |
+| `ai` | agent planning, routing, schemas, RAG, output validation | `onecode-skill-sanitizer smart "design a RAG document agent" --registry catalog --bundles bundles/index.json` |
+| `code` | code review, debugging, regression tests, refactor safety | `onecode-skill-sanitizer smart "review generated code and harden tests" --registry catalog --bundles bundles/index.json` |
+| `design` | UI review, design-system consistency, responsive checks | `onecode-skill-sanitizer smart "polish a product dashboard UI" --registry catalog --bundles bundles/index.json` |
+| `security` | prompt injection, supply chain, guardrails, secret redaction | `onecode-skill-sanitizer smart "review an agent workflow for connector permissions" --registry catalog --bundles bundles/index.json` |
+| `content` | SEO briefs, editorial checks, claims compliance, social posts | `onecode-skill-sanitizer smart "draft and fact check an SEO blog post" --registry catalog --bundles bundles/index.json` |
+| `data` | data quality, table analysis, document-to-knowledge workflows | `onecode-skill-sanitizer smart "clean spreadsheet data and prepare chart notes" --registry catalog --bundles bundles/index.json` |
+| `commerce` | marketplace listings, keyword plans, buyer replies, RFP responses, pricing strategy | `onecode-skill-sanitizer smart "review this RFP response and pricing assumptions" --registry catalog --bundles bundles/index.json` |
+| `research` | source checks, citation maps, paper synthesis, freshness review, clinical study design review | `onecode-skill-sanitizer smart "review a clinical study protocol design" --registry catalog --bundles bundles/index.json` |
+| `vertical` | industry solution intake, education, manufacturing, real estate, multi-industry AI application packaging | `onecode-skill-sanitizer smart "build an industry solution pack for healthcare, legal, finance, education, manufacturing, and SaaS users" --registry catalog --bundles bundles/index.json` |
 
 ## Maintenance Priorities
 

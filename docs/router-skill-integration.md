@@ -213,7 +213,8 @@ Expected:
 
 ```text
 selected_scenario.id: rag-agent-knowledge-app
-router.mode: deterministic_scenario_router
+router.mode: deterministic_mesh_router
+execution_graph: present
 safety_boundary: present
 ```
 

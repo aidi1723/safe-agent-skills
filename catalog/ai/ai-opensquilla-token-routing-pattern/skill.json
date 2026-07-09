@@ -2,9 +2,26 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T12:58:26Z",
+  "contract": {
+    "capability_vector": [
+      "ai.routing",
+      "ai.skill_selection"
+    ],
+    "cost_weight": 2,
+    "produces_artifacts": [
+      "routing_selection_plan"
+    ],
+    "produces_evidence": [
+      "skill_selection_notes"
+    ],
+    "requires_context": [
+      "workflow_review_scope"
+    ],
+    "stage_hint": "planning"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "8e1b37eeb506bb1d5f80b96a42328fd5747aa42ddf204b195dfd98bde74da294",
+    "manifest_sha256": "8546ae995b745343aeeecb68f69badd8bc0ac6a2d6242d387b0e28ed346c3144",
     "sanitized_sha256": "36086d4ab5063843cde2d9776f9c475910ae3775bd5c7e1ad30378332e965a7d",
     "source_sha256": "ee8814bb349ca4a647d47b5b92b51a7aa5e667e418785062f4276998e8060adb"
   },
