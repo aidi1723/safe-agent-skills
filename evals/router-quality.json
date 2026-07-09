@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "case_count": 42,
+  "case_count": 43,
   "cases": [
     {
       "id": "website-launch",
@@ -262,6 +262,42 @@
         "ai-opensquilla-metaskill-workflow",
         "ai-opensquilla-token-routing-pattern",
         "code-test-regression"
+      ],
+      "expected_trace_selected": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ],
+      "expected_trace_required": [
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression",
+        "security-supply-chain-review"
+      ]
+    },
+    {
+      "id": "skill-router-mesh-trace-pruning",
+      "task": "优化技能库的自动推荐和任务编排能力",
+      "router": "mesh",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ],
+      "expected_trace_selected": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ],
+      "expected_trace_required": [
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression",
+        "security-supply-chain-review"
+      ],
+      "expected_trace_pruned": [
+        "execution-browser-check",
+        "execution-browser-use-web-task"
       ]
     },
     {
@@ -461,6 +497,11 @@
         "execution.browser_agent",
         "execution.browser_test"
       ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
+      ],
       "max_skill_count": 3
     },
     {
@@ -481,6 +522,11 @@
         "execution.browser",
         "execution.browser_agent",
         "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
       ],
       "max_skill_count": 3
     },
@@ -503,6 +549,11 @@
         "execution.browser_agent",
         "execution.browser_test"
       ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
+      ],
       "max_skill_count": 3
     },
     {
@@ -523,6 +574,11 @@
         "execution.browser",
         "execution.browser_agent",
         "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
       ],
       "max_skill_count": 3
     },
@@ -547,6 +603,11 @@
         "execution.browser",
         "execution.browser_agent",
         "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
       ],
       "max_skill_count": 3
     }

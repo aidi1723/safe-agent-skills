@@ -1288,6 +1288,10 @@ ROUTER_EVAL_STRING_LIST_FIELDS = (
     "forbidden_skills",
     "forbidden_skill_prefixes",
     "forbidden_skill_subcategories",
+    "expected_trace_selected",
+    "expected_trace_pruned",
+    "expected_trace_required",
+    "expected_trace_reason_codes",
 )
 ROUTER_EVAL_OPTIONAL_STRING_FIELDS = (
     "expected_scenario",
@@ -1394,12 +1398,20 @@ def classify_router_eval_issue(issue: dict, result_context: dict | None = None) 
     if issue_id == "router-eval-missing-skill":
         return "false_negative"
     if issue_id in {
+        "router-eval-trace-missing-selected",
+        "router-eval-trace-missing-required",
+    }:
+        return "false_negative"
+    if issue_id in {
         "router-eval-forbidden-skill",
         "router-eval-forbidden-skill-prefix",
         "router-eval-forbidden-skill-subcategory",
         "router-eval-max-skill-count-exceeded",
+        "router-eval-trace-missing-pruned",
     }:
         return "false_positive"
+    if issue_id == "router-eval-trace-missing-reason-code":
+        return "route_mismatch"
     if issue_id == "router-eval-task-type-mismatch":
         return "task_type_mismatch"
     if issue_id in {
@@ -1554,12 +1566,17 @@ def run_router_eval(
         actual_skill_subcategories = {
             skill["name"]: skill.get("taxonomy", {}).get("subcategory", "") for skill in task_pack.get("skills", [])
         }
+        actual_selection_trace = router_eval_trace_summary(task_pack.get("selection_trace", {}))
         expected_scenario = case.get("expected_scenario")
         expected_task_type = case.get("expected_task_type")
         expected_skills = case.get("expected_skills", [])
         forbidden_skills = case.get("forbidden_skills", [])
         forbidden_skill_prefixes = case.get("forbidden_skill_prefixes", [])
         forbidden_skill_subcategories = case.get("forbidden_skill_subcategories", [])
+        expected_trace_selected = case.get("expected_trace_selected", [])
+        expected_trace_pruned = case.get("expected_trace_pruned", [])
+        expected_trace_required = case.get("expected_trace_required", [])
+        expected_trace_reason_codes = case.get("expected_trace_reason_codes", [])
         max_skill_count = case.get("max_skill_count")
 
         if expected_scenario is not None and actual_scenario != expected_scenario:
@@ -1622,6 +1639,38 @@ def run_router_eval(
                     "actual": len(actual_skills),
                 }
             )
+        for skill_name in expected_trace_selected:
+            if skill_name not in actual_selection_trace["selected"]:
+                case_issues.append(
+                    {
+                        "id": "router-eval-trace-missing-selected",
+                        "skill": skill_name,
+                    }
+                )
+        for skill_name in expected_trace_required:
+            if skill_name not in actual_selection_trace["required"]:
+                case_issues.append(
+                    {
+                        "id": "router-eval-trace-missing-required",
+                        "skill": skill_name,
+                    }
+                )
+        for skill_name in expected_trace_pruned:
+            if skill_name not in actual_selection_trace["pruned"]:
+                case_issues.append(
+                    {
+                        "id": "router-eval-trace-missing-pruned",
+                        "skill": skill_name,
+                    }
+                )
+        for reason_code in expected_trace_reason_codes:
+            if reason_code not in actual_selection_trace["reason_codes"]:
+                case_issues.append(
+                    {
+                        "id": "router-eval-trace-missing-reason-code",
+                        "reason_code": reason_code,
+                    }
+                )
 
         result_context = {
             "expected_scenario": expected_scenario,
@@ -1643,6 +1692,7 @@ def run_router_eval(
                 "actual_low_confidence": actual_low_confidence,
                 "max_skill_count": max_skill_count,
                 "actual_skills": actual_skills,
+                "actual_selection_trace": actual_selection_trace,
                 "issues": annotate_router_eval_issues(case_issues, result_context),
             }
         )
@@ -1658,6 +1708,35 @@ def run_router_eval(
         "issues": issues,
         "quality_summary": build_router_eval_quality_summary(results, issues),
         "cases": results,
+    }
+
+
+def router_eval_trace_summary(selection_trace: dict) -> dict:
+    candidates = selection_trace.get("candidates", [])
+    selected = [
+        item.get("name", "")
+        for item in candidates
+        if item.get("selected") is True and item.get("name")
+    ]
+    required = [
+        item.get("name", "")
+        for item in candidates
+        if item.get("required") is True and item.get("name")
+    ]
+    pruned = [
+        item.get("name", "")
+        for item in selection_trace.get("pruned", [])
+        if item.get("name")
+    ]
+    quality = selection_trace.get("quality", {})
+    return {
+        "selected_count": selection_trace.get("selected_count", len(selected)),
+        "candidate_count": selection_trace.get("candidate_count", len(candidates)),
+        "required_skill_count": selection_trace.get("required_skill_count", len(required)),
+        "selected": selected,
+        "required": required,
+        "pruned": pruned,
+        "reason_codes": list(quality.get("reason_codes", [])),
     }
 
 

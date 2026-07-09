@@ -1504,6 +1504,109 @@ class RegistryCliTest(unittest.TestCase):
             self.assertIn("router-eval-forbidden-skill-subcategory", issue_ids)
             self.assertIn("router-eval-max-skill-count-exceeded", issue_ids)
 
+    def test_router_eval_can_assert_selection_trace_selected_pruned_required_and_reasons(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 1,
+                        "cases": [
+                            {
+                                "id": "skill-router-trace",
+                                "task": "优化技能库的自动推荐和任务编排能力",
+                                "router": "mesh",
+                                "expected_scenario": "skill-router-quality-review",
+                                "expected_task_type": "skill_router_review",
+                                "expected_trace_selected": [
+                                    "ai-opensquilla-metaskill-workflow",
+                                    "ai-opensquilla-token-routing-pattern",
+                                ],
+                                "expected_trace_required": [
+                                    "ai-opensquilla-token-routing-pattern",
+                                    "code-test-regression",
+                                ],
+                                "expected_trace_pruned": [
+                                    "execution-browser-check",
+                                    "execution-browser-use-web-task",
+                                ],
+                                "expected_trace_reason_codes": [],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 0)
+            result = json.loads(eval_out.getvalue())
+            self.assertEqual(result["status"], "ok")
+            self.assertIn("actual_selection_trace", result["cases"][0])
+            self.assertEqual(result["cases"][0]["actual_selection_trace"]["selected_count"], 8)
+
+    def test_router_eval_fails_selection_trace_mismatches(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            eval_path = Path(tmp) / "router-eval.json"
+            eval_path.write_text(
+                json.dumps(
+                    {
+                        "schema_version": 1,
+                        "case_count": 1,
+                        "cases": [
+                            {
+                                "id": "skill-router-bad-trace",
+                                "task": "优化技能库的自动推荐和任务编排能力",
+                                "router": "mesh",
+                                "expected_scenario": "skill-router-quality-review",
+                                "expected_task_type": "skill_router_review",
+                                "expected_trace_selected": ["execution-browser-check"],
+                                "expected_trace_required": ["execution-browser-check"],
+                                "expected_trace_pruned": ["ai-opensquilla-token-routing-pattern"],
+                                "expected_trace_reason_codes": ["no_trusted_scenario_match"],
+                            }
+                        ],
+                    }
+                ),
+                encoding="utf-8",
+            )
+
+            eval_out = io.StringIO()
+            with contextlib.redirect_stdout(eval_out):
+                eval_code = main(
+                    [
+                        "router-eval",
+                        "--eval",
+                        str(eval_path),
+                        "--registry",
+                        "catalog",
+                        "--bundles",
+                        "bundles/index.json",
+                    ]
+                )
+
+            self.assertEqual(eval_code, 2)
+            result = json.loads(eval_out.getvalue())
+            issue_ids = {issue["id"] for issue in result["cases"][0]["issues"]}
+            self.assertIn("router-eval-trace-missing-selected", issue_ids)
+            self.assertIn("router-eval-trace-missing-required", issue_ids)
+            self.assertIn("router-eval-trace-missing-pruned", issue_ids)
+            self.assertIn("router-eval-trace-missing-reason-code", issue_ids)
+
     def test_router_eval_rejects_invalid_constraint_field_types(self):
         with tempfile.TemporaryDirectory() as tmp:
             eval_path = Path(tmp) / "router-eval.json"
@@ -1522,6 +1625,10 @@ class RegistryCliTest(unittest.TestCase):
                                 "forbidden_skills": "execution-publish-check",
                                 "forbidden_skill_prefixes": [123],
                                 "forbidden_skill_subcategories": {"name": "execution.browser"},
+                                "expected_trace_selected": "design-ui-review",
+                                "expected_trace_pruned": [123],
+                                "expected_trace_required": {"name": "design-ui-review"},
+                                "expected_trace_reason_codes": [False],
                                 "max_skill_count": -1,
                             }
                         ],
@@ -1555,6 +1662,10 @@ class RegistryCliTest(unittest.TestCase):
                     "forbidden_skills",
                     "forbidden_skill_prefixes",
                     "forbidden_skill_subcategories",
+                    "expected_trace_selected",
+                    "expected_trace_pruned",
+                    "expected_trace_required",
+                    "expected_trace_reason_codes",
                     "max_skill_count",
                 },
             )

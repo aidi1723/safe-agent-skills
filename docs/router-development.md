@@ -161,6 +161,20 @@ Minimum test set:
 - Contract graph or fallback graph behavior when ordering changes.
 - CLI task-pack JSON or Markdown exposure when output fields change.
 
+Router eval files can assert trace behavior with these optional fields:
+
+- `expected_trace_selected`: skills that must appear as selected in the
+  compact eval trace.
+- `expected_trace_required`: skills that must be protected by required
+  capabilities or invariants.
+- `expected_trace_pruned`: skills that must be overlap-pruned for the case.
+- `expected_trace_reason_codes`: low-confidence or route-quality reason codes
+  that must appear in the trace.
+
+Use these fields sparingly for cases where the decision path matters, not for
+every ordinary scenario case. They are best for router-quality, low-confidence,
+overlap-pruning, and required-capability regressions.
+
 Focused command:
 
 ```bash
@@ -179,11 +193,10 @@ Do not claim routing quality improved until fresh verification passes.
 
 The remaining intelligent-routing work should be implemented in this order:
 
-1. Expand `selection_trace` consumers and eval assertions.
-2. Add more complete skill `contract` metadata for high-traffic bundles.
-3. Add negative and ambiguity examples to `evals/router-quality.json`.
-4. Add trace-based metrics to router eval output.
-5. Consider two-stage recall/rank/prune scoring only after trace coverage
+1. Add more complete skill `contract` metadata for high-traffic bundles.
+2. Add negative and ambiguity examples to `evals/router-quality.json`.
+3. Add trace-based metrics to router eval output.
+4. Consider two-stage recall/rank/prune scoring only after trace coverage
    makes current deterministic behavior easy to audit.
 
 The project should continue to prefer deterministic, reviewable metadata over
