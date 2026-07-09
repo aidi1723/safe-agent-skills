@@ -2,9 +2,24 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator after design-skill inclusion review.",
   "approved_at": "2026-06-11T06:36:20Z",
+  "contract": {
+    "capability_vector": [
+      "design.motion_polish"
+    ],
+    "cost_weight": 2,
+    "produces_evidence": [
+      "motion_polish_report"
+    ],
+    "requires_context": [
+      "requirements_brief",
+      "build_artifact",
+      "ui_review_report"
+    ],
+    "stage_hint": "review"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e4597543268da4f47c48fce98127816295c4d2c365c73ab3d26b9725e3b77089",
+    "manifest_sha256": "ddadfe5d491e2169c51606f14f938880b3392067a87a2343a015fc7f39a04055",
     "sanitized_sha256": "9e5d6471343581814b7e9d10f63e6185e8ac6fe285c193bd4784e43d4439290b",
     "source_sha256": "c166662fd2ea04b63f370d46b5b4115f4333ae44255ed6dceff4b56d5afa1c17"
   },

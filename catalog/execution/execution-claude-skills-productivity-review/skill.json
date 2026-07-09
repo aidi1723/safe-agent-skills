@@ -2,9 +2,23 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T16:17:52Z",
+  "contract": {
+    "capability_vector": [
+      "execution.productivity_review"
+    ],
+    "cost_weight": 2,
+    "produces_evidence": [
+      "productivity_review_report"
+    ],
+    "requires_context": [
+      "user_request",
+      "workspace_context"
+    ],
+    "stage_hint": "review"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "9de595f0d513ff52e3456dc3c0807d3964ee3d2c40469cd9b2c908c6a5b12610",
+    "manifest_sha256": "af40d384b041a5440d824dfe0d53e19b64e8337f83357e6f6e0bea37c48fbe14",
     "sanitized_sha256": "ae7b9da3636164d7bc92b9791f6fc86c3cb1d2511225a549c96e1587795768d7",
     "source_sha256": "98124b0b44b2154dab44943b576d4a6dd8eabcc207eb3278c5f35c6b352e0e7c"
   },

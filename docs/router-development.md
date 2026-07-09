@@ -141,11 +141,41 @@ Change these files together:
 - `docs/smart-skill-router.md` and `docs/agent-task-pack.md`
   - Document any new output fields or operator behavior.
 
-After changing manifests, re-seal and reindex before verification:
+After changing manifests, reindex before verification. `reindex` refreshes the
+catalog index and manifest integrity records for the current CLI:
 
 ```bash
-PYTHONPATH=src python3 -m onecode_skill_sanitizer reindex --registry catalog --seal-manifests
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reindex --registry catalog
 ```
+
+## Contract Metadata For High-Traffic Bundles
+
+High-traffic scenario bundles should stay contract-complete in both balanced
+and deep routing. If a selected skill lacks `contract`, the router must fall
+back from `mode: contract` to stage ordering, which makes advanced
+orchestration less precise.
+
+For bundle skills that may appear in `smart --strategy deep`, add a compact
+contract with:
+
+- `requires_context`: upstream artifacts or external context needed to apply
+  the method.
+- `produces_artifacts` or `produces_evidence`: named outputs that downstream
+  skills can depend on.
+- `capability_vector`: dotted capability identifiers that match the skill
+  purpose.
+- `stage_hint`: one of `preflight`, `source`, `planning`, `review`,
+  `execution`, or `verification`.
+- `cost_weight`: an integer from 1 to 10.
+
+Keep these contracts method-only. They describe ordering and evidence, not
+permission to run shells, browsers, connectors, accounts, network, or
+production writes.
+
+Regression coverage should include at least one real-catalog route for each
+high-frequency bundle. For `website-build-launch`, deep routing must keep
+optional polish skills such as premium landing, motion polish, and browser
+automation in a contract graph without fallback.
 
 ## TDD Requirements
 
@@ -193,7 +223,8 @@ Do not claim routing quality improved until fresh verification passes.
 
 The remaining intelligent-routing work should be implemented in this order:
 
-1. Add more complete skill `contract` metadata for high-traffic bundles.
+1. Continue extending complete skill `contract` metadata to remaining
+   high-traffic bundles.
 2. Add negative and ambiguity examples to `evals/router-quality.json`.
 3. Add trace-based metrics to router eval output.
 4. Consider two-stage recall/rank/prune scoring only after trace coverage

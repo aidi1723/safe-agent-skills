@@ -3529,6 +3529,53 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(task_pack["contract_diagnostics"]["fallback_reason"], "")
         self.assertEqual(task_pack["contract_diagnostics"]["graph_issue_count"], 0)
 
+    def test_real_catalog_deep_website_route_uses_contract_graph_for_optional_polish_skills(self):
+        task_pack_out = io.StringIO()
+        with contextlib.redirect_stdout(task_pack_out):
+            task_pack_code = main(
+                [
+                    "smart",
+                    "polish a premium website landing page with design system, motion polish, SEO copy, browser verification, and publish readiness",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--max-skills",
+                    "14",
+                    "--strategy",
+                    "deep",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        self.assertEqual(task_pack_code, 0)
+        task_pack = json.loads(task_pack_out.getvalue())
+        names = [skill["name"] for skill in task_pack["skills"]]
+        graph = task_pack["execution_graph"]
+        nodes_by_skill = {node["skill"]: node for node in graph["nodes"]}
+
+        self.assertEqual(task_pack["selected_scenario"]["id"], "website-build-launch")
+        self.assertEqual(task_pack["contract_diagnostics"]["graph_mode"], "contract")
+        self.assertEqual(task_pack["contract_diagnostics"]["fallback_reason"], "")
+        self.assertEqual(task_pack["contract_diagnostics"]["graph_issue_count"], 0)
+        self.assertIn("design-premium-landing-page", names)
+        self.assertIn("design-motion-interaction-polish", names)
+        self.assertIn("execution-playwright-browser-automation", names)
+
+        def has_dependency(source: str, target: str, artifact: str) -> bool:
+            return {
+                "from": nodes_by_skill[source]["id"],
+                "to": nodes_by_skill[target]["id"],
+                "type": "contract_dependency",
+                "artifacts": [artifact],
+            } in graph["edges"]
+
+        self.assertTrue(has_dependency("business-requirements-brief", "engineering-build-release", "requirements_brief"))
+        self.assertTrue(has_dependency("engineering-build-release", "design-ui-review", "build_artifact"))
+        self.assertTrue(has_dependency("design-ui-review", "execution-browser-check", "ui_review_report"))
+        self.assertTrue(has_dependency("execution-browser-check", "execution-publish-check", "browser_check_report"))
+
     def test_real_catalog_scenario_router_covers_supply_chain_review_for_router_quality(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):
