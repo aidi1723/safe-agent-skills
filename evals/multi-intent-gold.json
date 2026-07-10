@@ -1,0 +1,1809 @@
+{
+  "cases": [
+    {
+      "id": "compound-website-code-review",
+      "category": "compound",
+      "task": "Build a responsive product website；review the pull request and tests",
+      "expected_intents": [
+        "website_build",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-code-lifecycle-graph",
+      "category": "compound",
+      "task": "Map the project and debug the code lifecycle；build a call graph for impact analysis",
+      "expected_intents": [
+        "codebase_change_lifecycle",
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle",
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-security-planning",
+      "category": "compound",
+      "task": "Review prompt injection guardrails；decompose the fuzzy requirements into an agent plan",
+      "expected_intents": [
+        "agent_security",
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails",
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-research-investment",
+      "category": "compound",
+      "task": "Run multi-platform public-source research；prepare a value-investing memo with a bear case",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-role-design",
+      "category": "compound",
+      "task": "Govern the expert agent role library；audit DESIGN.md tokens and component states",
+      "expected_intents": [
+        "agent_role_library_governance",
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance",
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-private-docs",
+      "category": "compound",
+      "task": "Review E2EE metadata privacy；turn the PDF documents into a knowledge base",
+      "expected_intents": [
+        "private_communication_governance",
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-content-agentic-media",
+      "category": "compound",
+      "task": "Draft a short-video content matrix；build an agentic media pipeline from a reference video",
+      "expected_intents": [
+        "content_video_production",
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production",
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-data-seo",
+      "category": "compound",
+      "task": "Analyze the spreadsheet and create charts；write an SEO article for public content",
+      "expected_intents": [
+        "data_analysis",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-rag-memory",
+      "category": "compound",
+      "task": "Build a citation-grounded RAG agent；review long-term memory recall and forgetting governance",
+      "expected_intents": [
+        "rag_agent",
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app",
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-backlog-router",
+      "category": "compound",
+      "task": "Assess the remaining claude-skills backlog；audit the smart skill router quality",
+      "expected_intents": [
+        "claude_skills_backlog_coverage",
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage",
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-industry-commerce",
+      "category": "compound",
+      "task": "Package a healthcare industry AI solution；optimize marketplace listings, keywords, and inquiries",
+      "expected_intents": [
+        "industry_application_orchestration",
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-website-security",
+      "category": "compound",
+      "task": "Create an official site and launch checklist；audit tool permissions and sandbox guardrails",
+      "expected_intents": [
+        "website_build",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "website-build-launch",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-review-lifecycle",
+      "category": "compound",
+      "task": "Review the generated code and bug fix；map the whole project and regression test the change",
+      "expected_intents": [
+        "code_review",
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening",
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-graph-rag",
+      "category": "compound",
+      "task": "Build a symbol graph and architecture query；create a retrieval agent with vector citations",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-planning-role",
+      "category": "compound",
+      "task": "Interview stakeholders about fuzzy requirements；define an AI agency role library and handoffs",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-research-content",
+      "category": "compound",
+      "task": "Search social and public platforms；turn findings into a copywriting and video production plan",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-investment-data",
+      "category": "compound",
+      "task": "Prepare valuation assumptions and a bear case；analyze the dataset and produce charts",
+      "expected_intents": [
+        "investment_research_diligence",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-design-website",
+      "category": "compound",
+      "task": "Define DESIGN.md as the source of truth；build the landing page with responsive verification",
+      "expected_intents": [
+        "design_md_system_governance",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-private-security",
+      "category": "compound",
+      "task": "Assess private messaging identifier minimization；review connector prompt-injection defenses",
+      "expected_intents": [
+        "private_communication_governance",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-docs-memory",
+      "category": "compound",
+      "task": "Convert office files into a knowledge base；govern persistent memory remember, recall, and forget",
+      "expected_intents": [
+        "document_knowledge_base",
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-agentic-seo",
+      "category": "compound",
+      "task": "Produce an agentic TikTok video from a reference clip；prepare the SEO blog post",
+      "expected_intents": [
+        "agentic_media_production",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-release-router",
+      "category": "compound",
+      "task": "Prepare an open-source GitHub release；review automatic skill composition quality",
+      "expected_intents": [
+        "open_source_release",
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "open-source-release",
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-industry-rag",
+      "category": "compound",
+      "task": "Design a legal industry solution pack；build its citation-grounded RAG knowledge agent",
+      "expected_intents": [
+        "industry_application_orchestration",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-commerce-research",
+      "category": "compound",
+      "task": "Optimize buyer marketplace keywords；run multi-platform competitor research",
+      "expected_intents": [
+        "commerce_growth",
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth",
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-backlog-review",
+      "category": "compound",
+      "task": "Assess candidate skills in the claude-skills backlog；review the pull request and tests",
+      "expected_intents": [
+        "claude_skills_backlog_coverage",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-video-data",
+      "category": "compound",
+      "task": "Plan copywriting and short-video production；analyze campaign spreadsheet results",
+      "expected_intents": [
+        "content_video_production",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "content-video-production",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-media-private",
+      "category": "compound",
+      "task": "Build a reference-video agentic media workflow；review E2EE metadata privacy",
+      "expected_intents": [
+        "agentic_media_production",
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production",
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-memory-investment",
+      "category": "compound",
+      "task": "Govern durable graph memory；prepare an investment memo with valuation assumptions",
+      "expected_intents": [
+        "agent_long_term_memory_governance",
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance",
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-seo-commerce",
+      "category": "compound",
+      "task": "Write a public SEO article；improve product listing keywords and inquiry replies",
+      "expected_intents": [
+        "content_seo",
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication",
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-lifecycle-planning",
+      "category": "compound",
+      "task": "Explore and simplify the codebase change；create a multi-agent implementation plan",
+      "expected_intents": [
+        "codebase_change_lifecycle",
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle",
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-graph-design",
+      "category": "compound",
+      "task": "Run git diff impact analysis with a code graph；align design tokens and component states",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-role-industry",
+      "category": "compound",
+      "task": "Define expert-agent roles and ownership；package a manufacturing industry AI solution",
+      "expected_intents": [
+        "agent_role_library_governance",
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance",
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-docs-router",
+      "category": "compound",
+      "task": "Turn markdown docs into a knowledge base；evaluate smart skill selection and composition",
+      "expected_intents": [
+        "document_knowledge_base",
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-rag-security",
+      "category": "compound",
+      "task": "Build a vector retrieval agent with citations；audit its tool permissions and guardrails",
+      "expected_intents": [
+        "rag_agent",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-website-seo",
+      "category": "compound",
+      "task": "Build the company website；write SEO copy and public blog content",
+      "expected_intents": [
+        "website_build",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "website-build-launch",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-review-release-notes",
+      "category": "compound",
+      "task": "Review the pull request and regression tests；draft open source release notes",
+      "expected_intents": [
+        "code_review",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-research-backlog",
+      "category": "compound",
+      "task": "Search public platforms for agent skills；assess the remaining claude-skills candidate map",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-data-industry",
+      "category": "compound",
+      "task": "Analyze the customer dataset and report；design a finance industry application workflow",
+      "expected_intents": [
+        "data_analysis",
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-commerce-website",
+      "category": "compound",
+      "task": "Plan marketplace listings and buyer inquiries；build a responsive official site",
+      "expected_intents": [
+        "commerce_growth",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "compound-planning-memory",
+      "category": "compound",
+      "task": "Decompose fuzzy requirements into an agent team plan；define long-term memory retention and forgetting",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-website-release",
+      "category": "sequential",
+      "task": "Build and verify the product website then release the package",
+      "expected_intents": [
+        "website_build",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "website-build-launch",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "website_build",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-review-release",
+      "category": "sequential",
+      "task": "Review the pull request and tests then release the package",
+      "expected_intents": [
+        "code_review",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "code_review",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-lifecycle-release",
+      "category": "sequential",
+      "task": "Debug and regression-test the codebase change then release the package",
+      "expected_intents": [
+        "codebase_change_lifecycle",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "codebase_change_lifecycle",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-graph-release",
+      "category": "sequential",
+      "task": "Build the code graph and impact report then release the package",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "codebase_graph_intelligence",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-security-release",
+      "category": "sequential",
+      "task": "Audit prompt injection and tool permissions then release the package",
+      "expected_intents": [
+        "agent_security",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_security",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-planning-release",
+      "category": "sequential",
+      "task": "Complete the multi-agent implementation plan then release the package",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_planning_orchestration",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-research-release",
+      "category": "sequential",
+      "task": "Finish multi-platform public-source research then release the package",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "multi_platform_research_discovery",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-investment-release",
+      "category": "sequential",
+      "task": "Approve the investment memo and bear case then release the package",
+      "expected_intents": [
+        "investment_research_diligence",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "investment_research_diligence",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-roles-release",
+      "category": "sequential",
+      "task": "Approve the expert agent role library then release the package",
+      "expected_intents": [
+        "agent_role_library_governance",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_role_library_governance",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-design-release",
+      "category": "sequential",
+      "task": "Validate DESIGN.md tokens and component states then release the package",
+      "expected_intents": [
+        "design_md_system_governance",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "design_md_system_governance",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-private-release",
+      "category": "sequential",
+      "task": "Approve the E2EE metadata privacy review then release the package",
+      "expected_intents": [
+        "private_communication_governance",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "private_communication_governance",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-docs-release",
+      "category": "sequential",
+      "task": "Finish the PDF knowledge base conversion then release the package",
+      "expected_intents": [
+        "document_knowledge_base",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "document_knowledge_base",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-video-release",
+      "category": "sequential",
+      "task": "Approve the short-video content production plan then release the package",
+      "expected_intents": [
+        "content_video_production",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "content-video-production",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "content_video_production",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-media-release",
+      "category": "sequential",
+      "task": "Verify the agentic reference-video render then release the package",
+      "expected_intents": [
+        "agentic_media_production",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agentic_media_production",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-data-release",
+      "category": "sequential",
+      "task": "Validate the spreadsheet analysis and charts then release the package",
+      "expected_intents": [
+        "data_analysis",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "data_analysis",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-seo-release",
+      "category": "sequential",
+      "task": "Approve the SEO article and public copy then release the package",
+      "expected_intents": [
+        "content_seo",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "content_seo",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-rag-release",
+      "category": "sequential",
+      "task": "Verify the citation-grounded RAG agent then release the package",
+      "expected_intents": [
+        "rag_agent",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "rag_agent",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-memory-release",
+      "category": "sequential",
+      "task": "Approve long-term memory retention governance then release the package",
+      "expected_intents": [
+        "agent_long_term_memory_governance",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_long_term_memory_governance",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-router-release",
+      "category": "sequential",
+      "task": "Complete the smart skill router quality audit then release the package",
+      "expected_intents": [
+        "skill_router_review",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "skill_router_review",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-commerce-release",
+      "category": "sequential",
+      "task": "Approve the marketplace listing and keyword plan then release the package",
+      "expected_intents": [
+        "commerce_growth",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "commerce_growth",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "vague-current-website",
+      "category": "vague_context",
+      "task": "当前意图：构建响应式官网\n历史摘要：曾经讨论过投资报告",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "vague-current-router",
+      "category": "vague_context",
+      "task": "当前意图：复查 skill router\n过期上下文：发布仓库",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "vague-current-data",
+      "category": "vague_context",
+      "task": "Current intent: analyze the spreadsheet and charts\nHistory context: old website launch",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "vague-fuzzy-plan",
+      "category": "vague_context",
+      "task": "The requirements are fuzzy; interview me and make a plan",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "vague-document-context",
+      "category": "vague_context",
+      "task": "当前请求：把这些 PDF 做成知识库\n历史上下文：旧的 SEO 项目",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "vague-continue",
+      "category": "vague_context",
+      "task": "继续优化这个事情",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-look",
+      "category": "vague_context",
+      "task": "帮我看一下是否合理",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-do-better",
+      "category": "vague_context",
+      "task": "Make it better",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-proceed",
+      "category": "vague_context",
+      "task": "Proceed with the next step",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-context-stale",
+      "category": "vague_context",
+      "task": "当前意图：继续处理\n历史摘要：构建网站并发布\n过期上下文：浏览器",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-that-one",
+      "category": "vague_context",
+      "task": "Use the approach we discussed",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-polish",
+      "category": "vague_context",
+      "task": "再润色一下",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-unspecified-review",
+      "category": "vague_context",
+      "task": "Review this",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-fix-it",
+      "category": "vague_context",
+      "task": "Fix it please",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "vague-context-only",
+      "category": "vague_context",
+      "task": "历史摘要：RAG agent 和网站。当前请求：继续",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release",
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-publish",
+      "category": "negative",
+      "task": "Do not publish or release anything",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-website",
+      "category": "negative",
+      "task": "Do not build a website",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-security-scan",
+      "category": "negative",
+      "task": "No prompt-injection review is needed",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-investment",
+      "category": "negative",
+      "task": "This is not an investment memo request",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-video",
+      "category": "negative",
+      "task": "Do not create a video",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-video-production"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-rag",
+      "category": "negative",
+      "task": "We are not building a RAG agent",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-commerce",
+      "category": "negative",
+      "task": "不要做商品 listing 和关键词优化",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-docs",
+      "category": "negative",
+      "task": "无需把 PDF 转成知识库",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-router",
+      "category": "negative",
+      "task": "不要审查 skill router",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-no-research",
+      "category": "negative",
+      "task": "Never run multi-platform research",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "multi-cn-website",
+      "category": "multilingual_typo_paraphrase",
+      "task": "做一个响应式企业官网并检查上线",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-cn-router",
+      "category": "multilingual_typo_paraphrase",
+      "task": "评估智能 skill 选择和自动搭配是否准确",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-cn-private",
+      "category": "multilingual_typo_paraphrase",
+      "task": "检查端到端加密、元数据隐私和无用户标识",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-cn-industry",
+      "category": "multilingual_typo_paraphrase",
+      "task": "为医疗行业设计 AI 应用方案和合规边界",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-cn-commerce",
+      "category": "multilingual_typo_paraphrase",
+      "task": "优化商品关键词、买家询盘和 marketplace listing",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-typo-rag",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Build a retrival vecter agent with citatons",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-typo-design",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Govern desgin md tokens and componant states",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-paraphrase-graph",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Create a structural symbol map to trace change impact",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-paraphrase-memory",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Define durable remember-recall-forget behavior for the agent",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-paraphrase-media",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Turn a reference clip into an automated reels production workflow",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "safety-private-security",
+      "category": "safety_sensitive",
+      "task": "Review private messaging metadata privacy；audit prompt-injection and connector permissions",
+      "expected_intents": [
+        "private_communication_governance",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "safety-investment-research",
+      "category": "safety_sensitive",
+      "task": "Research public sources for a company；prepare an investment memo with bear-case assumptions",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "safety-industry-data",
+      "category": "safety_sensitive",
+      "task": "Design a healthcare AI workflow with compliance boundaries；analyze the patient dataset and charts",
+      "expected_intents": [
+        "industry_application_orchestration",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "safety-rag-documents",
+      "category": "safety_sensitive",
+      "task": "Convert regulated office documents into a knowledge base；build a citation-grounded RAG agent",
+      "expected_intents": [
+        "document_knowledge_base",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "safety-release-security",
+      "category": "safety_sensitive",
+      "task": "Audit tool permissions, sandboxing, and prompt injection；release the package after approval",
+      "expected_intents": [
+        "agent_security",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_security",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    }
+  ]
+}

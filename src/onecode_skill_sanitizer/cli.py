@@ -21,6 +21,10 @@ from .contracts import contract_coverage
 from .intent import decompose_task, normalize_task
 from .paths import resolve_project_asset_path
 from .references import validate_external_references
+from .router_eval_v2 import DatasetValidationError
+from .router_eval_v2 import EvaluatorError
+from .router_eval_v2 import evaluate_router_v2
+from .router_eval_v2 import load_eval_dataset_v2
 from .router import build_task_profile, route_mesh_task, route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
@@ -2487,6 +2491,41 @@ def router_eval_command(args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 2
 
 
+def router_eval_v2_command(args: argparse.Namespace) -> int:
+    eval_path = resolve_project_asset_path(args.eval)
+    registry_dir = resolve_project_asset_path(args.registry)
+    bundles_path = resolve_project_asset_path(args.bundles)
+    try:
+        cases = load_eval_dataset_v2(eval_path)
+        bundles_index = load_bundles_index(bundles_path)
+        known_scenarios = {
+            bundle["id"]
+            for bundle in bundles_index.get("bundles", [])
+            if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
+        }
+        result = evaluate_router_v2(
+            cases,
+            route_builder=lambda case: build_task_pack_v2(
+                registry_dir,
+                case["task"],
+                bundles_path,
+            ),
+            known_scenarios=known_scenarios,
+        )
+    except (DatasetValidationError, EvaluatorError, ValueError, OSError, SystemExit) as exc:
+        print(
+            json.dumps(
+                {"status": "error", "error": str(exc)},
+                indent=2,
+                sort_keys=True,
+                allow_nan=False,
+            )
+        )
+        return 2
+    print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
+    return 0
+
+
 def claude_skills_candidate_action(candidate: dict) -> str:
     adoption = candidate.get("adoption", "reference_only")
     if adoption == "converted":
@@ -3584,6 +3623,12 @@ def build_parser() -> argparse.ArgumentParser:
     router_eval_parser.add_argument("--overlap-groups")
     router_eval_parser.add_argument("--max-skills", type=positive_int, default=8)
     router_eval_parser.set_defaults(func=router_eval_command)
+
+    router_eval_v2_parser = subparsers.add_parser("router-eval-v2")
+    router_eval_v2_parser.add_argument("--eval", required=True)
+    router_eval_v2_parser.add_argument("--registry", required=True)
+    router_eval_v2_parser.add_argument("--bundles", required=True)
+    router_eval_v2_parser.set_defaults(func=router_eval_v2_command)
 
     claude_skills_bulk_plan_parser = subparsers.add_parser("claude-skills-bulk-plan")
     claude_skills_bulk_plan_parser.add_argument("--candidate-map", required=True)
