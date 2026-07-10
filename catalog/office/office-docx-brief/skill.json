@@ -4,8 +4,9 @@
   "approved_at": "2026-06-04T07:47:37Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "bf63cbddb70abe76b5c60283c9237b68e5938d5df7066d04975f45bf18341711",
-    "sanitized_sha256": "bd3f81e1640f954d2438dd2191fe79bad59ee9a7bb1976c8bc3b17642b0fcc67",
+    "auxiliary_sha256": "116b7e8f8df12c73f0a261fb063a7a9ae2b929a788e6d9c1b554fffa80c24ec3",
+    "manifest_sha256": "0400ac998994470bfe885be4b8c03ee88c85b1d0abfe92db57d07791dbde6a53",
+    "sanitized_sha256": "130398e1cec8db0eab0ef83ff454c2b61d57ce35ac8870c0fe7435909f737e3b",
     "source_sha256": "f9b6206d85b37cad967a410aa7515bec5ad9b9762234d7ce027895241a5b182f"
   },
   "name": "office-docx-brief",
