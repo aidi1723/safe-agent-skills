@@ -54,6 +54,9 @@ class SkillDepthTest(unittest.TestCase):
     def test_real_ci_troubleshoot_is_specialist_with_protected_reference(self):
         self.assert_real_specialist("engineering-ci-troubleshoot")
 
+    def test_real_pdf_report_is_specialist_with_protected_reference(self):
+        self.assert_real_specialist("office-pdf-report")
+
     def test_depth_check_command_returns_warnings_without_failure(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)
