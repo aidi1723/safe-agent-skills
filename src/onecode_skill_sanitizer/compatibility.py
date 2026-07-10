@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from typing import Any
 
 
@@ -15,12 +16,76 @@ _DYNAMIC_KEYS = {
     "request_id",
     "trace_id",
 }
-_SECRET_MARKERS = ("api_key", "apikey", "secret", "password", "credential", "token")
+_SECRET_KEY_RE = re.compile(
+    r"(?:api[_ -]?key|access[_ -]?key|private[_ -]?key|secret|token|password|bearer|"
+    r"authorization|auth|session|credentials?|凭证|密钥|密码|令牌)",
+    re.IGNORECASE,
+)
+_SECRET_ASSIGNMENT_RE = re.compile(
+    r"(?P<label>\b(?:api[_ -]?key|access[_ -]?key|private[_ -]?key|secret|token|password|"
+    r"authorization|auth|session|credentials?)\b|凭证|密钥|密码|令牌)"
+    r"(?P<separator>\s*[=:]\s*)"
+    r"(?P<value>\"[^\"\r\n]*\"|'[^'\r\n]*'|[^\s,;，；]+)",
+    re.IGNORECASE,
+)
+_BEARER_RE = re.compile(r"\bBearer\s+[A-Za-z0-9._~+/=-]+", re.IGNORECASE)
 
 
 def build_route_id(inputs: dict) -> str:
     canonical = json.dumps(
-        _routing_relevant(inputs if isinstance(inputs, dict) else {}),
+        inputs if isinstance(inputs, dict) else {},
+        ensure_ascii=False,
+        separators=(",", ":"),
+        sort_keys=True,
+    ).encode("utf-8")
+    return f"sha256:{hashlib.sha256(canonical).hexdigest()}"
+
+
+def build_route_identity_payload(
+    *,
+    current: str,
+    history: str,
+    stale: str,
+    stale_policy: str,
+    invariants: list[str] | tuple[str, ...],
+    strategy: str,
+    provider_identifier: str,
+    catalog_content_hash: str,
+    bundle_content_hash: str,
+    overlap_content_hash: str,
+    router_version: str,
+    package_version: str,
+    capabilities: list[str] | tuple[str, ...] = (),
+) -> dict[str, Any]:
+    return {
+        "current": redact_route_identity_text(current),
+        "history": redact_route_identity_text(history),
+        "stale": redact_route_identity_text(stale),
+        "stale_policy": redact_route_identity_text(stale_policy),
+        "invariants": [redact_route_identity_text(value) for value in invariants],
+        "capabilities": [redact_route_identity_text(value) for value in capabilities],
+        "strategy": strategy,
+        "provider_identifier": provider_identifier,
+        "catalog_content_hash": catalog_content_hash,
+        "bundle_content_hash": bundle_content_hash,
+        "overlap_content_hash": overlap_content_hash,
+        "router_version": router_version,
+        "package_version": package_version,
+    }
+
+
+def redact_route_identity_text(value: Any) -> str:
+    text = value if isinstance(value, str) else ""
+    text = _BEARER_RE.sub("Bearer [REDACTED]", text)
+    return _SECRET_ASSIGNMENT_RE.sub(
+        lambda match: f"{match.group('label')}{match.group('separator')}[REDACTED]",
+        text,
+    )
+
+
+def build_canonical_content_hash(value: Any) -> str:
+    canonical = json.dumps(
+        _canonical_asset_value(value),
         ensure_ascii=False,
         separators=(",", ":"),
         sort_keys=True,
@@ -72,21 +137,18 @@ def to_legacy_v1(payload: dict) -> dict:
     }
 
 
-def _routing_relevant(value: Any) -> Any:
+def _canonical_asset_value(value: Any) -> Any:
     if isinstance(value, dict):
         return {
-            key: _routing_relevant(item)
+            key: "[REDACTED]" if _SECRET_KEY_RE.search(key) else _canonical_asset_value(item)
             for key, item in value.items()
-            if isinstance(key, str) and not _excluded_key(key)
+            if isinstance(key, str) and key.lower() not in _DYNAMIC_KEYS
         }
     if isinstance(value, (list, tuple)):
-        return [_routing_relevant(item) for item in value]
+        return [_canonical_asset_value(item) for item in value]
+    if isinstance(value, str):
+        return redact_route_identity_text(value)
     return value
-
-
-def _excluded_key(key: str) -> bool:
-    normalized = key.lower()
-    return normalized in _DYNAMIC_KEYS or any(marker in normalized for marker in _SECRET_MARKERS)
 
 
 def _object(value: Any) -> dict:

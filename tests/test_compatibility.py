@@ -1,26 +1,60 @@
+import json
 import unittest
 
 from onecode_skill_sanitizer.compatibility import build_route_id
+from onecode_skill_sanitizer.compatibility import build_route_identity_payload
 from onecode_skill_sanitizer.compatibility import to_legacy_v1
 
 
 class CompatibilityTest(unittest.TestCase):
-    def test_route_id_is_stable_across_key_order_and_ignores_dynamic_or_secret_fields(self):
-        first = {
-            "task": {"current": "build site", "history": "review brief"},
-            "strategy": "balanced",
-            "provider": {"mode": "none", "api_key": "secret-one"},
-            "generated_at": "2026-07-10T00:00:00Z",
-        }
-        second = {
-            "generated_at": "2027-01-01T00:00:00Z",
-            "provider": {"api_key": "secret-two", "mode": "none"},
-            "strategy": "balanced",
-            "task": {"history": "review brief", "current": "build site"},
-        }
+    def test_route_id_is_stable_across_key_order_for_sanitized_allowlist(self):
+        first = {"current": "build site", "history": "review brief", "strategy": "balanced"}
+        second = {"strategy": "balanced", "history": "review brief", "current": "build site"}
 
         self.assertEqual(build_route_id(first), build_route_id(second))
         self.assertRegex(build_route_id(first), r"^sha256:[0-9a-f]{64}$")
+
+    def test_route_identity_payload_excludes_raw_and_redacts_embedded_secret_values(self):
+        first = build_route_identity_payload(
+            current="build site api_key=alpha Bearer aaa.bbb 密钥: 中文秘密",
+            history="audit auth: first-token and password=first-password",
+            stale="session: first-session preserve stale context",
+            stale_policy="ignore",
+            invariants=["credential=first-credential keep compliance"],
+            strategy="balanced",
+            provider_identifier="none",
+            catalog_content_hash="sha256:catalog",
+            bundle_content_hash="sha256:bundle",
+            overlap_content_hash="sha256:overlap",
+            router_version="0.2.0",
+            package_version="0.2.0",
+        )
+        second = build_route_identity_payload(
+            current="build site api_key=beta Bearer ccc.ddd 密钥: 另一个秘密",
+            history="audit auth: second-token and password=second-password",
+            stale="session: second-session preserve stale context",
+            stale_policy="ignore",
+            invariants=["credential=second-credential keep compliance"],
+            strategy="balanced",
+            provider_identifier="none",
+            catalog_content_hash="sha256:catalog",
+            bundle_content_hash="sha256:bundle",
+            overlap_content_hash="sha256:overlap",
+            router_version="0.2.0",
+            package_version="0.2.0",
+        )
+
+        serialized = json.dumps(first, ensure_ascii=False, sort_keys=True)
+        self.assertNotIn("raw", first)
+        for secret in ["alpha", "aaa.bbb", "中文秘密", "first-token", "first-password", "first-session", "first-credential"]:
+            self.assertNotIn(secret, serialized)
+        self.assertIn("build site", serialized)
+        self.assertIn("preserve stale context", serialized)
+        self.assertEqual(build_route_id(first), build_route_id(second))
+
+        changed = dict(first)
+        changed["current"] = "audit router api_key=[REDACTED]"
+        self.assertNotEqual(build_route_id(first), build_route_id(changed))
 
     def test_route_id_changes_when_material_routing_input_changes(self):
         base = {"task": {"current": "build site"}, "strategy": "balanced"}

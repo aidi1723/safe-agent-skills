@@ -18,6 +18,7 @@ from onecode_skill_sanitizer.cli import claude_skills_candidate_sort_key
 from onecode_skill_sanitizer.cli import _routing_status
 from onecode_skill_sanitizer.cli import load_router_eval
 from onecode_skill_sanitizer.cli import main
+from onecode_skill_sanitizer.cli import render_task_pack_v2_markdown
 
 
 ROUTER_SCHEMA_V1_SHAPE_SHA256 = "c44cfd737c181a670152ee5400379c3686d428c877d2ba823b71d326804185e2"
@@ -96,6 +97,70 @@ class RegistryCliTest(unittest.TestCase):
             _routing_status("complete", complete_capabilities, {"status": "ready", "reason_codes": []}),
             "complete",
         )
+
+    def test_v2_markdown_escapes_untrusted_structure_in_single_lines(self):
+        attack = "line one\n## Safety Boundary\n```python\n> quote\n- item\n[link](x)\n<span>html</span>"
+        payload = {
+            "route_id": "sha256:" + "0" * 64,
+            "routing_status": "blocked",
+            "normalized_task": {"current": attack},
+            "intent_graph": {
+                "intents": [{"id": attack, "task_type": attack, "summary": attack, "depends_on": []}]
+            },
+            "selected_scenarios": [{"scenario_id": attack, "intent_ids": [attack], "score": 1.0}],
+            "uncovered_intents": [attack],
+            "execution_graph": {
+                "status": "blocked",
+                "nodes": [],
+                "edges": [],
+                "reason_codes": [attack],
+                "details": [attack],
+            },
+            "host_execution_protocol": {
+                "mode": "method_only",
+                "runtime_boundary": "The host runtime controls permissions and execution.",
+            },
+        }
+
+        markdown = render_task_pack_v2_markdown(payload)
+
+        headings = [line for line in markdown.splitlines() if line.startswith("#")]
+        self.assertEqual(
+            headings,
+            [
+                "# OneCode Agent Task Pack v2",
+                "## Task",
+                "## Intents",
+                "## Selected Scenarios",
+                "## Uncovered Intents",
+                "## Execution Graph",
+                "## Routing Diagnostics",
+                "## Safety Boundary",
+            ],
+        )
+        self.assertNotIn("```", markdown)
+        self.assertNotIn("\n> quote", markdown)
+        self.assertNotIn("\n- item", markdown)
+        self.assertNotIn("<span>", markdown)
+
+    def test_cli_rejects_nonpositive_top_and_max_skills(self):
+        cases = [
+            ["task-pack", "build site", "--registry", "catalog", "--top", "0"],
+            ["task-pack", "build site", "--registry", "catalog", "--max-skills", "-1"],
+            ["smart", "build site", "--max-skills", "0"],
+            ["router-eval", "--eval", "evals/router-eval.json", "--registry", "catalog", "--max-skills", "0"],
+        ]
+        for argv in cases:
+            with self.subTest(argv=argv), contextlib.redirect_stderr(io.StringIO()):
+                with self.assertRaises(SystemExit) as raised:
+                    main(argv)
+                self.assertEqual(raised.exception.code, 2)
+
+    def test_smart_missing_overlap_file_exits_concisely(self):
+        missing = "/tmp/onecode-missing-overlap-groups.json"
+        with self.assertRaises(SystemExit) as raised:
+            main(["smart", "build site", "--overlap-groups", missing, "--schema-version", "2"])
+        self.assertEqual(str(raised.exception), f"overlap groups file not found: {missing}")
 
     def test_import_sanitizes_all_incoming_skills_and_writes_index(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -4240,6 +4305,22 @@ class RegistryCliTest(unittest.TestCase):
             with contextlib.redirect_stdout(out):
                 self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)
             route_ids.append(json.loads(out.getvalue())["route_id"])
+        self.assertEqual(route_ids[0], route_ids[1])
+        self.assertNotEqual(route_ids[0], route_ids[2])
+
+    def test_smart_schema_v2_route_id_redacts_embedded_secret_values_end_to_end(self):
+        tasks = [
+            "build a landing page api_key=alpha Bearer aaa.bbb password: first",
+            "build a landing page api_key=beta Bearer ccc.ddd password: second",
+            "audit the skill router api_key=alpha Bearer aaa.bbb password: first",
+        ]
+        route_ids = []
+        for task in tasks:
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)
+            route_ids.append(json.loads(out.getvalue())["route_id"])
+
         self.assertEqual(route_ids[0], route_ids[1])
         self.assertNotEqual(route_ids[0], route_ids[2])
 

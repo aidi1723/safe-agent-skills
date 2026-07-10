@@ -1,14 +1,19 @@
 from __future__ import annotations
 
 import argparse
+import html
 import json
 import re
 import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from . import __version__
 from .candidates import retrieve_scenario_candidates
-from .compatibility import build_route_id, to_legacy_v1
+from .compatibility import build_canonical_content_hash
+from .compatibility import build_route_id
+from .compatibility import build_route_identity_payload
+from .compatibility import to_legacy_v1
 from .compiler import compile_execution_graph
 from .composer import compose_scenarios
 from .intent import decompose_task, normalize_task
@@ -910,18 +915,29 @@ def build_task_pack_v2(
             "skipped",
         ],
     }
-    route_inputs = {
-        "normalized_task": normalized_task.to_json(),
-        "invariants": invariants or [],
-        "strategy": strategy,
-        "provider": {"mode": provider["used"], "model": "none"},
-        "catalog_index_route_id": _json_asset_route_id(registry_dir / "index.json"),
-        "bundle_index_route_id": _json_asset_route_id(bundles_path),
-        "overlap_groups_route_id": (
-            _json_asset_route_id(overlap_groups_path) if overlap_groups_path is not None else "none"
+    route_inputs = build_route_identity_payload(
+        current=normalized_task.current,
+        history=normalized_task.history,
+        stale=normalized_task.stale,
+        stale_policy=normalized_task.stale_policy,
+        invariants=invariants or [],
+        capabilities=sorted(
+            {
+                artifact
+                for intent in intent_graph.intents
+                for artifact in intent.required_artifacts
+            }
         ),
-        "router_version": "0.2.0",
-    }
+        strategy=strategy,
+        provider_identifier=provider["used"],
+        catalog_content_hash=_json_asset_content_hash(registry_dir / "index.json"),
+        bundle_content_hash=_json_asset_content_hash(bundles_path),
+        overlap_content_hash=(
+            _json_asset_content_hash(overlap_groups_path) if overlap_groups_path is not None else "none"
+        ),
+        router_version="hybrid-router-v2-first-milestone",
+        package_version=__version__,
+    )
     payload = {
         "schema_version": 2,
         "generated_at": utc_now(),
@@ -1006,8 +1022,8 @@ def _routing_status(
     return "complete" if execution_graph.get("status") == "ready" else "blocked"
 
 
-def _json_asset_route_id(path: Path) -> str:
-    return build_route_id(json.loads(path.read_text(encoding="utf-8")))
+def _json_asset_content_hash(path: Path) -> str:
+    return build_canonical_content_hash(json.loads(path.read_text(encoding="utf-8")))
 
 
 def render_task_pack_markdown(task_pack: dict) -> str:
@@ -1240,31 +1256,39 @@ def render_task_pack_markdown(task_pack: dict) -> str:
 
 
 def render_task_pack_v2_markdown(task_pack: dict) -> str:
+    graph = task_pack["execution_graph"]
     lines = [
         "# OneCode Agent Task Pack v2",
         "",
-        f"Route ID: `{task_pack['route_id']}`",
-        f"Routing status: `{task_pack['routing_status']}`",
+        f"Route ID: {markdown_safe_line(task_pack['route_id'])}",
+        f"Routing status: {markdown_safe_line(task_pack['routing_status'])}",
+        "",
+        "## Task",
+        "",
+        markdown_safe_line(task_pack["normalized_task"]["current"]),
         "",
         "## Intents",
         "",
     ]
     for intent in task_pack["intent_graph"]["intents"]:
-        dependencies = ", ".join(intent["depends_on"]) or "none"
+        dependencies = ", ".join(markdown_safe_line(value) for value in intent["depends_on"]) or "none"
         lines.append(
-            f"- `{intent['id']}` `{intent['task_type']}`: {intent['summary']} (depends on: {dependencies})"
+            f"- {markdown_safe_line(intent['id'])} {markdown_safe_line(intent['task_type'])}: "
+            f"{markdown_safe_line(intent['summary'])} (depends on: {dependencies})"
         )
     lines.extend(["", "## Selected Scenarios", ""])
     if task_pack["selected_scenarios"]:
         for scenario in task_pack["selected_scenarios"]:
+            intent_ids = ", ".join(markdown_safe_line(value) for value in scenario["intent_ids"])
             lines.append(
-                f"- `{scenario['scenario_id']}` for `{', '.join(scenario['intent_ids'])}`; score `{scenario['score']}`"
+                f"- {markdown_safe_line(scenario['scenario_id'])} for {intent_ids}; "
+                f"score {markdown_safe_line(scenario['score'])}"
             )
     else:
         lines.append("- none")
     lines.extend(["", "## Uncovered Intents", ""])
     if task_pack["uncovered_intents"]:
-        lines.extend(f"- `{intent_id}`" for intent_id in task_pack["uncovered_intents"])
+        lines.extend(f"- {markdown_safe_line(intent_id)}" for intent_id in task_pack["uncovered_intents"])
     else:
         lines.append("- none")
     lines.extend(
@@ -1272,18 +1296,32 @@ def render_task_pack_v2_markdown(task_pack: dict) -> str:
             "",
             "## Execution Graph",
             "",
-            f"- status: `{task_pack['execution_graph']['status']}`",
-            f"- nodes: `{len(task_pack['execution_graph']['nodes'])}`",
-            f"- edges: `{len(task_pack['execution_graph']['edges'])}`",
+            f"- status: {markdown_safe_line(graph['status'])}",
+            f"- nodes: {len(graph['nodes'])}",
+            f"- edges: {len(graph['edges'])}",
+            "",
+            "## Routing Diagnostics",
+            "",
             "",
             "## Safety Boundary",
             "",
-            f"- mode: `{task_pack['host_execution_protocol']['mode']}`",
-            f"- {task_pack['host_execution_protocol']['runtime_boundary']}",
+            f"- mode: {markdown_safe_line(task_pack['host_execution_protocol']['mode'])}",
+            f"- {markdown_safe_line(task_pack['host_execution_protocol']['runtime_boundary'])}",
             "",
         ]
     )
+    diagnostics = [*graph.get("reason_codes", []), *graph.get("details", [])]
+    diagnostics_start = lines.index("## Routing Diagnostics") + 2
+    lines[diagnostics_start:diagnostics_start] = (
+        [f"- {markdown_safe_line(value)}" for value in diagnostics] if diagnostics else ["- none"]
+    )
     return "\n".join(lines)
+
+
+def markdown_safe_line(value: object) -> str:
+    normalized = " ".join(str(value).split())
+    escaped = html.escape(normalized, quote=True).replace("\\", "\\\\")
+    return re.sub(r"([`*_{}\[\]()#+\-.!|>])", r"\\\1", escaped)
 
 
 def task_pack_command(args: argparse.Namespace) -> int:
@@ -2858,6 +2896,8 @@ def validate_claude_skills_candidate_map(registry_dir: Path, candidate_map_path:
 
 def resolve_overlap_groups_path(registry_dir: Path, overlap_path: Path | None) -> Path | None:
     if overlap_path is not None:
+        if not overlap_path.is_file():
+            raise SystemExit(f"overlap groups file not found: {overlap_path}")
         return overlap_path
     default_path = registry_dir / "overlap-groups.json"
     return default_path if default_path.exists() else None
@@ -3064,13 +3104,13 @@ def build_parser() -> argparse.ArgumentParser:
     task_pack_parser = subparsers.add_parser("task-pack")
     task_pack_parser.add_argument("task")
     task_pack_parser.add_argument("--registry", required=True)
-    task_pack_parser.add_argument("--top", type=int, default=3)
+    task_pack_parser.add_argument("--top", type=positive_int, default=3)
     task_pack_parser.add_argument("--format", choices=["json", "markdown"], default="json")
     task_pack_parser.add_argument("--include-review-required", action="store_true")
     task_pack_parser.add_argument("--include-bundles", action="store_true")
     task_pack_parser.add_argument("--bundles", default="bundles/index.json")
     task_pack_parser.add_argument("--router", choices=["simple", "scenario", "mesh"], default="simple")
-    task_pack_parser.add_argument("--max-skills", type=int)
+    task_pack_parser.add_argument("--max-skills", type=positive_int)
     task_pack_parser.add_argument("--invariants", action="append")
     task_pack_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
     task_pack_parser.add_argument("--overlap-groups")
@@ -3084,7 +3124,7 @@ def build_parser() -> argparse.ArgumentParser:
     smart_parser.add_argument("--overlap-groups")
     smart_parser.add_argument("--invariants", action="append")
     smart_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
-    smart_parser.add_argument("--max-skills", type=int, default=8)
+    smart_parser.add_argument("--max-skills", type=positive_int, default=8)
     smart_parser.add_argument("--format", choices=["json", "markdown"], default="json")
     smart_parser.add_argument("--schema-version", type=int, choices=[1, 2], default=2)
     smart_parser.set_defaults(func=smart_command)
@@ -3114,7 +3154,7 @@ def build_parser() -> argparse.ArgumentParser:
     router_eval_parser.add_argument("--registry", required=True)
     router_eval_parser.add_argument("--bundles", default="bundles/index.json")
     router_eval_parser.add_argument("--overlap-groups")
-    router_eval_parser.add_argument("--max-skills", type=int, default=8)
+    router_eval_parser.add_argument("--max-skills", type=positive_int, default=8)
     router_eval_parser.set_defaults(func=router_eval_command)
 
     claude_skills_bulk_plan_parser = subparsers.add_parser("claude-skills-bulk-plan")
@@ -3140,6 +3180,16 @@ def build_parser() -> argparse.ArgumentParser:
     reindex_parser.set_defaults(func=reindex_command)
 
     return parser
+
+
+def positive_int(value: str) -> int:
+    try:
+        parsed = int(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be an integer greater than or equal to 1") from exc
+    if parsed < 1:
+        raise argparse.ArgumentTypeError("must be greater than or equal to 1")
+    return parsed
 
 
 def add_provenance_args(parser: argparse.ArgumentParser) -> None:
