@@ -1,4 +1,5 @@
 import contextlib
+import copy
 import hashlib
 import io
 import json
@@ -9,7 +10,12 @@ import tempfile
 import unittest
 from pathlib import Path
 
+from jsonschema import Draft202012Validator
+from referencing import Registry
+from referencing import Resource
+
 from onecode_skill_sanitizer.cli import claude_skills_candidate_sort_key
+from onecode_skill_sanitizer.cli import _routing_status
 from onecode_skill_sanitizer.cli import load_router_eval
 from onecode_skill_sanitizer.cli import main
 
@@ -45,7 +51,52 @@ def payload_shape_sha256(payload):
     return hashlib.sha256(encoded).hexdigest()
 
 
+def validate_task_pack_v2(payload):
+    schema = json.loads(Path("schemas/task-pack-v2.schema.json").read_text(encoding="utf-8"))
+    intent_schema = json.loads(Path("schemas/intent-graph.schema.json").read_text(encoding="utf-8"))
+    registry = Registry().with_resource(intent_schema["$id"], Resource.from_contents(intent_schema))
+    Draft202012Validator.check_schema(schema)
+    Draft202012Validator(schema, registry=registry).validate(payload)
+
+
 class RegistryCliTest(unittest.TestCase):
+    def test_v2_routing_status_precedence_is_blocked_then_incomplete_then_complete(self):
+        complete_capabilities = {"status": "complete", "missing_required_count": 0}
+        incomplete_capabilities = {"status": "incomplete", "missing_required_count": 1}
+
+        self.assertEqual(
+            _routing_status(
+                "complete",
+                incomplete_capabilities,
+                {"status": "blocked", "reason_codes": ["dependency_cycle"]},
+            ),
+            "blocked",
+        )
+        self.assertEqual(
+            _routing_status(
+                "complete",
+                incomplete_capabilities,
+                {"status": "blocked", "reason_codes": []},
+            ),
+            "blocked",
+        )
+        self.assertEqual(
+            _routing_status(
+                "incomplete",
+                complete_capabilities,
+                {"status": "blocked", "reason_codes": ["incomplete_composition"]},
+            ),
+            "incomplete",
+        )
+        self.assertEqual(
+            _routing_status("complete", incomplete_capabilities, {"status": "ready", "reason_codes": []}),
+            "incomplete",
+        )
+        self.assertEqual(
+            _routing_status("complete", complete_capabilities, {"status": "ready", "reason_codes": []}),
+            "complete",
+        )
+
     def test_import_sanitizes_all_incoming_skills_and_writes_index(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -4191,6 +4242,130 @@ class RegistryCliTest(unittest.TestCase):
             route_ids.append(json.loads(out.getvalue())["route_id"])
         self.assertEqual(route_ids[0], route_ids[1])
         self.assertNotEqual(route_ids[0], route_ids[2])
+
+    def test_smart_schema_v2_route_id_uses_canonical_overlap_content(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            overlap_a = root / "first" / "overlap.json"
+            overlap_b = root / "second" / "renamed.json"
+            overlap_c = root / "changed.json"
+            overlap_a.parent.mkdir()
+            overlap_b.parent.mkdir()
+            shared = {
+                "schema_version": 1,
+                "group_count": 1,
+                "generated_at": "2026-07-10T00:00:00Z",
+                "api_key": "secret-one",
+                "groups": [{"id": "shared", "status": "trusted", "primary_skill": "design-ui-review"}],
+            }
+            same_material = copy.deepcopy(shared)
+            same_material["generated_at"] = "2027-01-01T00:00:00Z"
+            same_material["api_key"] = "secret-two"
+            changed = copy.deepcopy(shared)
+            changed["groups"][0]["primary_skill"] = "design-system-consistency"
+            for path, content in [(overlap_a, shared), (overlap_b, same_material), (overlap_c, changed)]:
+                path.write_text(json.dumps(content), encoding="utf-8")
+
+            route_ids = []
+            for overlap_path in [overlap_a, overlap_b, overlap_c]:
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(
+                        main(
+                            [
+                                "smart",
+                                "build a landing page",
+                                "--overlap-groups",
+                                str(overlap_path),
+                                "--schema-version",
+                                "2",
+                                "--format",
+                                "json",
+                            ]
+                        ),
+                        0,
+                    )
+                route_ids.append(json.loads(out.getvalue())["route_id"])
+
+        self.assertEqual(route_ids[0], route_ids[1])
+        self.assertNotEqual(route_ids[0], route_ids[2])
+
+    def test_smart_schema_v2_marks_missing_required_capability_incomplete(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            bundles_path = Path(tmp) / "bundles.json"
+            bundles = json.loads(Path("bundles/index.json").read_text(encoding="utf-8"))
+            website = copy.deepcopy(next(bundle for bundle in bundles["bundles"] if bundle["id"] == "website-build-launch"))
+            website["required_capabilities"].append(
+                {"id": "missing_required", "required": True, "preferred_skills": []}
+            )
+            bundles_path.write_text(
+                json.dumps({"schema_version": 1, "bundle_count": 1, "bundles": [website]}),
+                encoding="utf-8",
+            )
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(
+                    main(
+                        [
+                            "smart",
+                            "build a landing page",
+                            "--bundles",
+                            str(bundles_path),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    ),
+                    0,
+                )
+            payload = json.loads(out.getvalue())
+
+        self.assertEqual(payload["execution_graph"]["status"], "ready")
+        self.assertEqual(payload["capability_resolution"]["status"], "incomplete")
+        self.assertEqual(payload["capability_resolution"]["missing_required_count"], 1)
+        self.assertEqual(payload["routing_status"], "incomplete")
+
+    def test_task_pack_v2_schema_validates_complete_incomplete_and_blocked_payloads(self):
+        payloads = []
+        for task in ["build a landing page", "help me with this"]:
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)
+            payloads.append(json.loads(out.getvalue()))
+
+        with tempfile.TemporaryDirectory() as tmp:
+            bundles_path = Path(tmp) / "blocked-bundles.json"
+            bundles = json.loads(Path("bundles/index.json").read_text(encoding="utf-8"))
+            website = copy.deepcopy(next(bundle for bundle in bundles["bundles"] if bundle["id"] == "website-build-launch"))
+            website["execution_order"] = []
+            bundles_path.write_text(
+                json.dumps({"schema_version": 1, "bundle_count": 1, "bundles": [website]}),
+                encoding="utf-8",
+            )
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(
+                    main(
+                        [
+                            "smart",
+                            "build a landing page",
+                            "--bundles",
+                            str(bundles_path),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    ),
+                    0,
+                )
+            payloads.append(json.loads(out.getvalue()))
+
+        self.assertEqual([payload["routing_status"] for payload in payloads], ["complete", "incomplete", "blocked"])
+        for payload in payloads:
+            with self.subTest(status=payload["routing_status"]):
+                validate_task_pack_v2(payload)
 
     def test_smart_schema_v2_matches_strict_top_level_schema_and_markdown(self):
         json_out = io.StringIO()

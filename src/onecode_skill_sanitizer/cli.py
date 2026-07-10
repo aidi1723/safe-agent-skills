@@ -842,6 +842,7 @@ def build_task_pack_v2(
     max_skills: int | None = None,
     invariants: list[str] | None = None,
     strategy: str = "balanced",
+    overlap_groups_path: Path | None = None,
 ) -> dict:
     verification = verify_registry(registry_dir)
     if verification["status"] != "ok":
@@ -889,7 +890,7 @@ def build_task_pack_v2(
     capability_resolution = _build_v2_capability_resolution(
         bundles_index, selected_scenarios, set(required_skill_names)
     )
-    routing_status = _routing_status(composition.status, execution_graph)
+    routing_status = _routing_status(composition.status, capability_resolution, execution_graph)
     provider = {
         "requested": "none",
         "used": "none",
@@ -916,6 +917,9 @@ def build_task_pack_v2(
         "provider": {"mode": provider["used"], "model": "none"},
         "catalog_index_route_id": _json_asset_route_id(registry_dir / "index.json"),
         "bundle_index_route_id": _json_asset_route_id(bundles_path),
+        "overlap_groups_route_id": (
+            _json_asset_route_id(overlap_groups_path) if overlap_groups_path is not None else "none"
+        ),
         "router_version": "0.2.0",
     }
     payload = {
@@ -984,11 +988,20 @@ def _build_v2_capability_resolution(
     }
 
 
-def _routing_status(composition_status: str, execution_graph: dict) -> str:
-    blocking_reasons = set(execution_graph.get("reason_codes", [])) - {"incomplete_composition"}
-    if blocking_reasons:
+def _routing_status(
+    composition_status: str,
+    capability_resolution: dict,
+    execution_graph: dict,
+) -> str:
+    reason_codes = set(execution_graph.get("reason_codes", []))
+    composition_only_block = reason_codes == {"incomplete_composition"} and composition_status != "complete"
+    if execution_graph.get("status") == "blocked" and not composition_only_block:
         return "blocked"
-    if composition_status != "complete":
+    if (
+        composition_status != "complete"
+        or capability_resolution.get("status") != "complete"
+        or capability_resolution.get("missing_required_count", 0) > 0
+    ):
         return "incomplete"
     return "complete" if execution_graph.get("status") == "ready" else "blocked"
 
@@ -1275,6 +1288,10 @@ def render_task_pack_v2_markdown(task_pack: dict) -> str:
 
 def task_pack_command(args: argparse.Namespace) -> int:
     if args.schema_version == 2:
+        overlap_groups_path = resolve_overlap_groups_path(
+            resolve_project_asset_path(args.registry),
+            resolve_project_asset_path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
+        )
         task_pack = build_task_pack_v2(
             resolve_project_asset_path(args.registry),
             args.task,
@@ -1282,6 +1299,7 @@ def task_pack_command(args: argparse.Namespace) -> int:
             args.max_skills,
             args.invariants if getattr(args, "invariants", None) else None,
             getattr(args, "strategy", "balanced"),
+            overlap_groups_path,
         )
     else:
         task_pack = build_task_pack(
@@ -1306,6 +1324,10 @@ def task_pack_command(args: argparse.Namespace) -> int:
 
 def smart_command(args: argparse.Namespace) -> int:
     if args.schema_version == 2:
+        overlap_groups_path = resolve_overlap_groups_path(
+            resolve_project_asset_path(args.registry),
+            resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
+        )
         task_pack = build_task_pack_v2(
             resolve_project_asset_path(args.registry),
             args.task,
@@ -1313,6 +1335,7 @@ def smart_command(args: argparse.Namespace) -> int:
             args.max_skills,
             args.invariants,
             args.strategy,
+            overlap_groups_path,
         )
     else:
         task_pack = build_task_pack(
