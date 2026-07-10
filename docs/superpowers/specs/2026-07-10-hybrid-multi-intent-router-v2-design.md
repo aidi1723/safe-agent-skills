@@ -278,7 +278,7 @@ supporting intents and score breakdown.
 
 ```json
 {
-  "scenario": "skill-router-quality-review",
+  "scenario_id": "skill-router-quality-review",
   "intent_ids": ["i2"],
   "score": 0.89,
   "score_breakdown": {
@@ -698,6 +698,27 @@ metric regressions rather than only per-case pass or fail.
 
 ## Acceptance Criteria
 
+Acceptance is split into two gates. Structural closure proves that the
+deterministic first milestone is implemented and verifiable. Production-ready
+approval requires the broader held-out quality and safety thresholds.
+
+### Structural First-Milestone Acceptance
+
+This gate may pass before production-ready approval. It requires:
+
+- Schema v2 is the default and the mandatory fixture emits exactly three
+  `selected_scenarios[].scenario_id` values in the required order.
+- The mandatory fixture compiles a `ready`, acyclic execution graph and release
+  depends on both preceding intent paths.
+- `host_execution_protocol.mode` is `method_only`.
+- Core bundle Contract v2 coverage is at least 80%.
+- `router-eval-v2` executes against the independent dataset contract and emits
+  present, finite metrics. Structural closure does not require every production
+  threshold to pass.
+- Schema v1 compatibility and its regression evaluation remain available.
+
+### Production-Ready Quality Gate
+
 The first production-ready Schema v2 release must meet:
 
 | Metric | Threshold |
@@ -705,12 +726,17 @@ The first production-ready Schema v2 release must meet:
 | Task-type macro F1 | at least 0.90 |
 | Scenario F1 | at least 0.88 |
 | Required-capability recall | at least 0.97 |
-| Forbidden-skill false-positive rate | at most 0.5% |
+| Forbidden scenario or skill false-positive rate | at most 0.5% |
 | Multi-intent exact match | at least 0.80 |
 | DAG validity | 100% |
 | High-confidence error rate | at most 2% |
 | Provider-failure deterministic fallback | 100% |
 | Core bundle contract coverage | at least 80% |
+
+The first-milestone evaluator does not yet report task-type macro F1 or
+required-capability recall. Those missing metrics fail production-ready
+approval until implemented and measured. Dependency-edge recall is an
+additional diagnostic quality metric; it does not replace any production gate.
 
 The compound request below is a mandatory acceptance fixture:
 
@@ -804,8 +830,11 @@ requiring a model:
 6. at least 100 new multi-intent and negative evaluation cases
 7. at least 80 percent contract coverage for core bundle skills
 
-Semantic providers are integrated only after this deterministic foundation is
-passing and measurable.
+The deterministic structural foundation may close before the production-ready
+quality gate. After structural closure, prioritize a routing-quality remediation
+iteration that adds the missing production metrics and closes measured DAG and
+false-positive gaps. Semantic-provider implementation should begin only after
+that remediation has established a credible deterministic quality baseline.
 
 ## Failure Handling
 

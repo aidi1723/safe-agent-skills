@@ -37,6 +37,7 @@ Current delivery scope is intentionally bounded:
 | Core Contract v2 coverage | Ready at 81.25% |
 | Independent 100-case v2 evaluation | Ready |
 | Production router quality gate | Not ready |
+| Routing-quality remediation | Required before semantic providers |
 | Semantic providers | Pending |
 | Host runtime replanning | Pending |
 
@@ -60,7 +61,21 @@ The structural milestone can be complete while the production-ready quality
 gate remains unmet. No delivery statement may claim 100% DAG validity or
 production readiness.
 
-## Non-Blocking Follow-Up Work
+Production approval also remains blocked because task-type macro F1 and
+required-capability recall are not yet reported. A deterministic routing-quality
+remediation iteration should precede semantic-provider implementation.
+
+## Required Quality Remediation
+
+Before semantic-provider implementation, complete a deterministic routing-quality
+iteration that:
+
+- reports task-type macro F1 and required-capability recall;
+- reduces forbidden scenario or skill false positives to at most 0.5%;
+- reaches 1.0 DAG validity;
+- improves dependency-edge recall as an additional diagnostic gap.
+
+## Other Follow-Up Work
 
 These items are useful future work, but they are not required for the current
 local-catalog delivery boundary:

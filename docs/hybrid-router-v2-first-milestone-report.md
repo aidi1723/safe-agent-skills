@@ -7,6 +7,9 @@ Date: 2026-07-10
 The deterministic multi-intent structural milestone is complete. The
 production-ready router quality gate is **not met**.
 
+The gates are separate: structural first-milestone acceptance passes, while
+production-ready release approval fails.
+
 Schema v2 decomposes and composes multiple trusted workflows, but remains
 method-only. It does not execute selected skills or grant runtime permissions.
 It is not an autonomous runtime and is not a semantic router yet.
@@ -95,6 +98,29 @@ unexpected scenarios, and blocked/DAG coherence failures. These results are
 quality evidence, not a command failure: `router-eval-v2` reports current
 metrics without pretending the quality targets passed.
 
+## Corrected Acceptance Script
+
+The corrected acceptance commands and assertion block from the implementation
+plan were rerun exactly after standardizing selected scenario records on
+`scenario_id`. The block also validates 81.25% Contract v2 coverage, both
+release dependency paths, the 100-case independent labeling contract, and
+finite evaluator output without asserting that the current DAG metric is
+already 1.0.
+
+```text
+structural first-milestone acceptance: PASS
+production-ready quality gate: FAIL
+- task_type_macro_f1: not reported
+- required_capability_recall: not reported
+- forbidden_scenario_false_positive_rate: 8.1818% > 0.5%
+- dag_validity: 0.8900 < 1.0
+diagnostic dependency_edge_recall: 0.1429
+```
+
+Scenario F1 is 0.9448 and multi-intent exact match is 0.85, so those measured
+production thresholds pass. Production approval still fails because of the
+listed false-positive, DAG, and missing-metric gates.
+
 ## Compatibility And Safety
 
 Schema v2 is the default. Explicit Schema v1 remains available, and the v1
@@ -113,6 +139,9 @@ represented as ready execution graphs.
 
 ## Pending Work
 
+- Routing-quality remediation: add task-type macro F1 and required-capability
+  recall, reduce forbidden false positives, reach 1.0 DAG validity, and improve
+  dependency-edge recall before semantic-provider implementation.
 - Semantic providers: strict provider protocol, privacy policy, structured
   output, semantic reranking, deterministic fallback, and calibration.
 - Host replanning: execution-event schema, transition validation, ready-node

@@ -745,6 +745,7 @@ python3 -m ruff check .
 bash scripts/verify.sh
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart "构建官网，同时审计 skill 路由器，验证通过后发布更新" --schema-version 2 --format json > /tmp/hybrid-router-v2-acceptance.json
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 --eval evals/multi-intent-gold.json --registry catalog --bundles bundles/index.json > /tmp/hybrid-router-v2-eval.json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check --registry catalog --bundles bundles/index.json --scenario website-build-launch --scenario code-review-hardening --scenario codebase-change-lifecycle --scenario skill-router-quality-review --scenario open-source-release --scenario rag-agent-knowledge-app --scenario document-to-knowledge-base --scenario security-agent-guardrails --minimum-ratio 0.80 > /tmp/hybrid-router-v2-contract.json
 ```
 
 - [ ] **Step 6: Assert acceptance output**
@@ -752,20 +753,83 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 --eval evals/mu
 ```bash
 python3 - <<'PY'
 import json
+import math
 
 route = json.load(open("/tmp/hybrid-router-v2-acceptance.json", encoding="utf-8"))
 evaluation = json.load(open("/tmp/hybrid-router-v2-eval.json", encoding="utf-8"))
+contract = json.load(open("/tmp/hybrid-router-v2-contract.json", encoding="utf-8"))
+dataset = json.load(open("evals/multi-intent-gold.json", encoding="utf-8"))
 
 assert route["schema_version"] == 2
-assert [item["scenario"] for item in route["selected_scenarios"]] == [
+assert [item["scenario_id"] for item in route["selected_scenarios"]] == [
     "website-build-launch",
     "skill-router-quality-review",
     "open-source-release",
 ]
+assert route["execution_graph"]["status"] == "ready"
 assert route["execution_graph"]["acyclic"] is True
 assert route["host_execution_protocol"]["mode"] == "method_only"
-assert evaluation["metrics"]["dag_validity"] == 1.0
-print("hybrid router v2 first milestone acceptance: ok")
+assert route["intent_graph"]["intents"][2]["depends_on"] == ["i1", "i2"]
+assert sum(
+    edge["type"] == "intent_completion_dependency"
+    for edge in route["execution_graph"]["edges"]
+) == 2
+assert sum(
+    edge["type"] == "intent_verification_dependency"
+    for edge in route["execution_graph"]["edges"]
+) == 2
+assert contract["status"] == "ok"
+assert contract["coverage_ratio"] >= 0.80
+assert evaluation["case_count"] == 100
+assert len(dataset["cases"]) == 100
+assert dataset["labeling"] == {
+    "method": "manual_review",
+    "reviewer_role": "independent_dataset_review",
+    "generated_from_router": False,
+    "reviewed_at": "2026-07-10",
+}
+
+required_metrics = [
+    "multi_intent_exact_match",
+    "scenario_precision",
+    "scenario_recall",
+    "scenario_f1",
+    "forbidden_scenario_false_positive_rate",
+    "dependency_edge_recall",
+    "dag_validity",
+]
+for metric_name in required_metrics:
+    assert metric_name in evaluation["metrics"]
+    assert math.isfinite(evaluation["metrics"][metric_name])
+
+production_failures = []
+metrics = evaluation["metrics"]
+if "task_type_macro_f1" not in metrics:
+    production_failures.append("task_type_macro_f1: not reported")
+if metrics["scenario_f1"] < 0.88:
+    production_failures.append(f"scenario_f1: {metrics['scenario_f1']:.4f} < 0.88")
+if "required_capability_recall" not in metrics:
+    production_failures.append("required_capability_recall: not reported")
+if metrics["forbidden_scenario_false_positive_rate"] > 0.005:
+    production_failures.append(
+        "forbidden_scenario_false_positive_rate: "
+        f"{metrics['forbidden_scenario_false_positive_rate']:.4%} > 0.5%"
+    )
+if metrics["multi_intent_exact_match"] < 0.80:
+    production_failures.append(
+        f"multi_intent_exact_match: {metrics['multi_intent_exact_match']:.4f} < 0.80"
+    )
+if metrics["dag_validity"] < 1.0:
+    production_failures.append(f"dag_validity: {metrics['dag_validity']:.4f} < 1.0")
+
+print("structural first-milestone acceptance: PASS")
+print("production-ready quality gate: " + ("PASS" if not production_failures else "FAIL"))
+for failure in production_failures:
+    print(f"- {failure}")
+print(
+    "diagnostic dependency_edge_recall: "
+    f"{metrics['dependency_edge_recall']:.4f}"
+)
 PY
 ```
 
@@ -787,13 +851,13 @@ git commit -m "docs: close hybrid router v2 first milestone"
 
 ---
 
-## Completion Gate
+## Structural First-Milestone Completion Gate
 
-The milestone is complete only when:
+The implementation/structural milestone is complete only when:
 
 - Schema v2 is the default for `smart`.
 - Schema v1 remains available and current v1 evaluations pass.
-- The mandatory compound task selects all three scenarios.
+- The mandatory compound task selects all three `scenario_id` values.
 - Release depends on both preceding intent paths.
 - Vague tasks are incomplete rather than falsely routed.
 - Cyclic global graphs are blocked.
@@ -801,17 +865,45 @@ The milestone is complete only when:
 - The independent dataset contains exactly 100 cases.
 - New schemas, tests, lint, maintenance checks, v1 evaluation, v2 evaluation,
   and verification commands pass.
+- The v2 evaluator dataset contract is valid and every required metric is
+  present and finite. Production thresholds are evaluated separately.
 - Documentation consistently states the method-only boundary.
+
+Passing this gate closes deterministic structural implementation. It does not
+approve a production-ready release.
+
+## Production-Ready Quality Gate
+
+Production approval additionally requires the design thresholds, including:
+
+- task-type macro F1 at least 0.90;
+- scenario F1 at least 0.88;
+- required-capability recall at least 0.97;
+- forbidden scenario or skill false-positive rate at most 0.5%;
+- multi-intent exact match at least 0.80;
+- DAG validity exactly 1.0;
+- the remaining high-confidence, fallback, and contract thresholds from the
+  design specification.
+
+This gate currently fails because forbidden-scenario false positives are
+8.18%, DAG validity is 0.89, and task-type macro F1 and required-capability
+recall are not yet reported. Dependency-edge recall near 0.1429 is an
+additional diagnostic gap.
 
 ## Follow-On Plans
 
-After this gate passes:
+After the structural gate passes:
 
-1. `hybrid-router-v2-semantic-providers`: provider protocol, local HTTP,
+1. `hybrid-router-v2-routing-quality-remediation`: add missing production
+   metrics, repair forbidden false positives and DAG validity, and improve
+   dependency-edge recall while preserving deterministic behavior.
+2. `hybrid-router-v2-semantic-providers`: provider protocol, local HTTP,
    OpenAI-compatible structured output, privacy policy, semantic reranking,
    deterministic fallback, and confidence calibration.
-2. `hybrid-router-v2-host-replanning`: execution event schema, transition
+3. `hybrid-router-v2-host-replanning`: execution event schema, transition
    validation, ready-node calculation, approval propagation, method-only
    `replan`, and host integration fixtures.
 
-Do not begin either plan before the deterministic milestone passes.
+Do not begin semantic-provider work before the structural milestone passes and
+the routing-quality remediation iteration establishes a credible deterministic
+baseline. Host replanning remains a later boundary.
