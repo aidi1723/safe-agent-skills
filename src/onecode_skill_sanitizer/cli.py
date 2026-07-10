@@ -26,7 +26,9 @@ from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_v2
 from .router import CAPABILITY_SKILL_PREFERENCES
+from .router import PIPELINE_STAGE_ORDER
 from .router import build_task_profile, capability_skill_names, parse_invariant_capabilities
+from .router import pipeline_stage_for_skill
 from .router import route_mesh_task, route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
@@ -274,7 +276,15 @@ def load_registry_index(registry_dir: Path) -> dict:
     index_path = registry_dir / "index.json"
     if not index_path.exists():
         return write_registry_index(registry_dir)
-    return json.loads(index_path.read_text(encoding="utf-8"))
+    payload = json.loads(index_path.read_text(encoding="utf-8"))
+    if not isinstance(payload, dict):
+        raise ValueError("registry index must be an object")
+    skills = payload.get("skills")
+    if not isinstance(skills, list):
+        raise ValueError("registry index skills must be an array")
+    if any(not isinstance(entry, dict) for entry in skills):
+        raise ValueError("registry index skill entries must be objects")
+    return payload
 
 
 def import_command(args: argparse.Namespace) -> int:
@@ -463,8 +473,13 @@ def load_bundles_index(bundles_path: Path) -> dict:
     if not bundles_path.exists():
         raise SystemExit(f"missing bundles index: {bundles_path}")
     payload = json.loads(bundles_path.read_text(encoding="utf-8"))
-    if not isinstance(payload.get("bundles"), list):
-        raise SystemExit(f"invalid bundles index: {bundles_path}")
+    if not isinstance(payload, dict):
+        raise ValueError("bundles index must be an object")
+    bundles = payload.get("bundles")
+    if not isinstance(bundles, list):
+        raise ValueError("bundles index bundles must be an array")
+    if any(not isinstance(bundle, dict) for bundle in bundles):
+        raise ValueError("bundles index entries must be objects")
     return payload
 
 
@@ -870,17 +885,23 @@ def build_task_pack_v2(
     execution_graph = compile_execution_graph(intent_graph, composition, bundles_index, trusted_names)
     invariant_capabilities = parse_invariant_capabilities(invariants)
     invariant_skill_names = capability_skill_names(invariant_capabilities, trusted_names)
+
+    trusted_items = {
+        item["name"]: _with_v2_effective_stage(item)
+        for item in load_trusted_skill_pack_items(registry_dir)
+        if item["name"] in trusted_names
+    }
+    stage_by_skill = {
+        name: _v2_skill_stage(item)
+        for name, item in trusted_items.items()
+    }
+    execution_graph = _normalize_v2_graph_stages(execution_graph, stage_by_skill)
     execution_graph = _extend_v2_graph_with_invariants(
         execution_graph,
         invariant_capabilities,
         invariant_skill_names,
+        stage_by_skill,
     )
-
-    trusted_items = {
-        item["name"]: item
-        for item in load_trusted_skill_pack_items(registry_dir)
-        if item["name"] in trusted_names
-    }
     required_skill_names = []
     for node in execution_graph["nodes"]:
         skill_name = node["skill"]
@@ -916,6 +937,7 @@ def build_task_pack_v2(
         selected_scenarios,
         set(required_skill_names),
         invariant_capabilities,
+        stage_by_skill,
     )
     routing_status = _routing_status(composition.status, capability_resolution, execution_graph)
     provider = {
@@ -1001,6 +1023,7 @@ def _build_v2_capability_resolution(
     selected_scenarios: list[dict],
     selected_skill_names: set[str],
     invariant_capabilities: list[str] | None = None,
+    stage_by_skill: dict[str, str] | None = None,
 ) -> dict:
     bundles = {bundle["id"]: bundle for bundle in bundles_index.get("bundles", []) if isinstance(bundle, dict)}
     capabilities = []
@@ -1033,6 +1056,7 @@ def _build_v2_capability_resolution(
                 "status": "covered" if matched else "missing",
                 "skills": matched,
                 "source": "invariant",
+                "stage": stage_by_skill.get(matched[0], "") if matched and stage_by_skill else "",
             }
         )
     missing_required = [
@@ -1049,6 +1073,7 @@ def _extend_v2_graph_with_invariants(
     execution_graph: dict,
     invariant_capabilities: list[str],
     invariant_skill_names: list[str],
+    stage_by_skill: dict[str, str],
 ) -> dict:
     graph = dict(execution_graph)
     nodes = [dict(node) for node in execution_graph.get("nodes", [])]
@@ -1063,10 +1088,6 @@ def _extend_v2_graph_with_invariants(
         return graph
 
     original_node_ids = {node["id"] for node in nodes}
-    incoming = {edge["to"] for edge in edges if edge["to"] in original_node_ids}
-    outgoing = {edge["from"] for edge in edges if edge["from"] in original_node_ids}
-    roots = sorted(original_node_ids - incoming)
-    terminals = sorted(original_node_ids - outgoing)
     intent_ids = sorted(
         {
             intent_id
@@ -1075,15 +1096,20 @@ def _extend_v2_graph_with_invariants(
             if isinstance(intent_id, str)
         }
     )
-    stage_by_capability = {
-        "secret_redaction": "preflight",
-        "claims_compliance": "review",
-        "responsive_check": "verification",
-    }
-    preflight_ids = []
-    handoff_ids = []
-    for skill_name in invariant_skill_names:
-        capability = capability_by_skill[skill_name]
+    rank_by_stage = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}
+    invariant_specs = sorted(
+        [
+            (
+                stage_by_skill.get(skill_name, pipeline_stage_for_skill(skill_name)),
+                skill_name,
+                capability_by_skill[skill_name],
+            )
+            for skill_name in invariant_skill_names
+        ],
+        key=lambda item: (rank_by_stage.get(item[0], len(rank_by_stage)), item[1]),
+    )
+    invariant_ids_by_stage: dict[str, list[str]] = {}
+    for stage, skill_name, capability in invariant_specs:
         node_id = f"invariant:{capability}:{skill_name}"
         nodes.append(
             {
@@ -1091,30 +1117,52 @@ def _extend_v2_graph_with_invariants(
                 "intent_ids": intent_ids,
                 "scenario_ids": [],
                 "skill": skill_name,
-                "stage": stage_by_capability.get(capability, "review"),
+                "stage": stage,
                 "host_action": False,
                 "invariant_capability": capability,
             }
         )
-        if capability == "secret_redaction":
-            preflight_ids.append(node_id)
-        else:
-            handoff_ids.append(node_id)
+        invariant_ids_by_stage.setdefault(stage, []).append(node_id)
 
-    for source, target in zip(preflight_ids, preflight_ids[1:]):
-        edges.append({"from": source, "to": target, "type": "invariant_safeguard"})
-    if preflight_ids:
-        edges.extend(
-            {"from": preflight_ids[-1], "to": root, "type": "invariant_safeguard"}
-            for root in roots
-        )
-    for source, target in zip(handoff_ids, handoff_ids[1:]):
-        edges.append({"from": source, "to": target, "type": "invariant_safeguard"})
-    if handoff_ids:
-        edges.extend(
-            {"from": terminal, "to": handoff_ids[0], "type": "invariant_safeguard"}
-            for terminal in terminals
-        )
+    original_nodes = {node["id"]: node for node in nodes if node["id"] in original_node_ids}
+    graph_roots = sorted(original_node_ids - {edge["to"] for edge in edges})
+    graph_terminals = sorted(original_node_ids - {edge["from"] for edge in edges})
+    previous_last = ""
+    for stage in PIPELINE_STAGE_ORDER:
+        stage_ids = invariant_ids_by_stage.get(stage, [])
+        if not stage_ids:
+            continue
+        for source, target in zip(stage_ids, stage_ids[1:]):
+            edges.append({"from": source, "to": target, "type": "invariant_safeguard"})
+        if previous_last:
+            edges.append({"from": previous_last, "to": stage_ids[0], "type": "invariant_safeguard"})
+        stage_rank = rank_by_stage[stage]
+        crossing_edges = [
+            edge
+            for edge in edges
+            if edge["from"] in original_nodes
+            and edge["to"] in original_nodes
+            and rank_by_stage[original_nodes[edge["from"]]["stage"]] < stage_rank
+            <= rank_by_stage[original_nodes[edge["to"]]["stage"]]
+        ]
+        if crossing_edges:
+            for edge in crossing_edges:
+                edges.append({"from": edge["from"], "to": stage_ids[0], "type": "invariant_safeguard"})
+                edges.append({"from": stage_ids[-1], "to": edge["to"], "type": "invariant_safeguard"})
+        elif stage_rank == 0:
+            edges.extend(
+                {"from": stage_ids[-1], "to": root, "type": "invariant_safeguard"}
+                for root in graph_roots
+            )
+        elif all(
+            rank_by_stage[original_nodes[node_id]["stage"]] < stage_rank
+            for node_id in original_node_ids
+        ):
+            edges.extend(
+                {"from": terminal, "to": stage_ids[0], "type": "invariant_safeguard"}
+                for terminal in graph_terminals
+            )
+        previous_last = stage_ids[-1]
 
     graph["nodes"] = nodes
     graph["edges"] = sorted(
@@ -1127,6 +1175,66 @@ def _extend_v2_graph_with_invariants(
         {"from": source, "to": target, "type": edge_type}
         for source, target, edge_type in graph["edges"]
     ]
+    return graph
+
+
+def _v2_skill_stage(skill: dict) -> str:
+    contract = skill.get("contract")
+    if isinstance(contract, dict) and contract.get("stage_hint") in PIPELINE_STAGE_ORDER:
+        return contract["stage_hint"]
+    return pipeline_stage_for_skill(skill.get("name", ""))
+
+
+def _with_v2_effective_stage(skill: dict) -> dict:
+    projected = dict(skill)
+    contract = dict(skill.get("contract")) if isinstance(skill.get("contract"), dict) else {}
+    contract["stage_hint"] = _v2_skill_stage(skill)
+    projected["contract"] = contract
+    return projected
+
+
+def _normalize_v2_graph_stages(execution_graph: dict, stage_by_skill: dict[str, str]) -> dict:
+    graph = dict(execution_graph)
+    nodes = [
+        {**node, "stage": stage_by_skill.get(node.get("skill", ""), node.get("stage", "production"))}
+        for node in execution_graph.get("nodes", [])
+    ]
+    rank_by_stage = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}
+    original_rank = {node["id"]: rank for rank, node in enumerate(nodes)}
+    nodes_by_intent: dict[str, list[dict]] = {}
+    for node in nodes:
+        intent_ids = node.get("intent_ids", [])
+        if len(intent_ids) == 1:
+            nodes_by_intent.setdefault(intent_ids[0], []).append(node)
+    edges = [
+        dict(edge)
+        for edge in execution_graph.get("edges", [])
+        if edge.get("type") != "scenario_order"
+    ]
+    for intent_id in sorted(nodes_by_intent):
+        ordered = sorted(
+            nodes_by_intent[intent_id],
+            key=lambda node: (
+                rank_by_stage.get(node["stage"], len(rank_by_stage)),
+                original_rank[node["id"]],
+                node["id"],
+            ),
+        )
+        edges.extend(
+            {"from": source["id"], "to": target["id"], "type": "scenario_order"}
+            for source, target in zip(ordered, ordered[1:])
+        )
+    graph["nodes"] = nodes
+    graph["edges"] = sorted(
+        (
+            {"from": source, "to": target, "type": edge_type}
+            for source, target, edge_type in {
+                (edge["from"], edge["to"], edge["type"])
+                for edge in edges
+            }
+        ),
+        key=lambda edge: (edge["from"], edge["to"], edge["type"]),
+    )
     return graph
 
 

@@ -33,10 +33,10 @@ _URI_CREDENTIAL_RE = re.compile(
     r"(?P<scheme>\b[a-z][a-z0-9+.-]*://)(?P<user>[^\s/@:]+):(?P<password>[^\s/@]+)@",
     re.IGNORECASE,
 )
-_OPENAI_KEY_RE = re.compile(r"\bsk-(?:proj-)?[A-Za-z0-9_-]{10,}\b")
-_GITHUB_TOKEN_RE = re.compile(r"\b(?:ghp_|github_pat_)[A-Za-z0-9_]{10,}\b")
-_AWS_ACCESS_KEY_RE = re.compile(r"\bAKIA[A-Z0-9]{16}\b")
-_JWT_RE = re.compile(r"\b[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b")
+_OPENAI_KEY_RE = re.compile(r"\bsk-(?:proj-)?[A-Za-z0-9_-]{20,}\b")
+_GITHUB_TOKEN_RE = re.compile(r"\b(?:ghp_|gho_|ghu_|ghs_|ghr_|github_pat_)[A-Za-z0-9_]{20,}\b")
+_AWS_ACCESS_KEY_RE = re.compile(r"(?<![A-Z0-9])(?:AKIA|ASIA)[A-Z0-9]{16}(?![A-Z0-9])")
+_JWT_RE = re.compile(r"\beyJ[A-Za-z0-9_-]{7,}\.[A-Za-z0-9_-]{10,}\.[A-Za-z0-9_-]{10,}\b")
 
 
 def build_route_id(inputs: dict) -> str:

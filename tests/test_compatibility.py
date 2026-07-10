@@ -58,21 +58,31 @@ class CompatibilityTest(unittest.TestCase):
 
     def test_route_identity_redacts_bare_credentials_without_erasing_intent(self):
         secret_variants = [
-            "sk-alpha1234567890",
-            "sk-proj-alpha1234567890",
-            "ghp_alpha1234567890",
-            "github_pat_alpha1234567890",
+            "sk-alpha1234567890beta1234567890",
+            "sk-proj-alpha1234567890beta1234567890",
+            "ghp_alpha1234567890beta1234567890",
+            "gho_alpha1234567890beta1234567890",
+            "ghu_alpha1234567890beta1234567890",
+            "ghs_alpha1234567890beta1234567890",
+            "ghr_alpha1234567890beta1234567890",
+            "github_pat_alpha1234567890_beta1234567890",
             "AKIAABCDEFGHIJKLMNOP",
-            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature",
+            "ASIAABCDEFGHIJKLMNOP",
+            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature1234567",
             "https://user:first-password@example.com/deploy",
         ]
         replacement_variants = [
-            "sk-beta0987654321",
-            "sk-proj-beta0987654321",
-            "ghp_beta0987654321",
-            "github_pat_beta0987654321",
+            "sk-gamma0987654321delta0987654321",
+            "sk-proj-gamma0987654321delta0987654321",
+            "ghp_gamma0987654321delta0987654321",
+            "gho_gamma0987654321delta0987654321",
+            "ghu_gamma0987654321delta0987654321",
+            "ghs_gamma0987654321delta0987654321",
+            "ghr_gamma0987654321delta0987654321",
+            "github_pat_gamma0987654321_delta0987654321",
             "AKIAQRSTUVWXYZABCDEF",
-            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5ODc2NTQzMjEwIn0.other-signature",
+            "ASIAQRSTUVWXYZABCDEF",
+            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5ODc2NTQzMjEwIn0.other_signature987",
             "https://user:second-password@example.com/deploy",
         ]
 
@@ -127,6 +137,35 @@ class CompatibilityTest(unittest.TestCase):
         changed_host["current"] = "deploy release using https://user:[REDACTED]@other.example/deploy"
         self.assertIn("responsive-layout", ordinary["current"])
         self.assertNotEqual(build_route_id(first), build_route_id(changed_host))
+
+    def test_route_identity_preserves_benign_token_like_material(self):
+        benign_values = [
+            "sk-telemetry-plugin",
+            "abcdefgh.12345678.deadbeef",
+            "AKIA-short-label",
+            "ASIA-roadmap-note",
+        ]
+        for first_value in benign_values:
+            second_value = f"changed-{first_value}"
+            with self.subTest(value=first_value):
+                first = build_route_identity_payload(
+                    current=f"review {first_value}",
+                    history="",
+                    stale="",
+                    stale_policy="ignore",
+                    invariants=[],
+                    strategy="balanced",
+                    provider_identifier="none",
+                    catalog_content_hash="sha256:catalog",
+                    bundle_content_hash="sha256:bundle",
+                    overlap_content_hash="none",
+                    router_version="v2",
+                    package_version="v2",
+                )
+                second = dict(first)
+                second["current"] = f"review {second_value}"
+                self.assertIn(first_value, first["current"])
+                self.assertNotEqual(build_route_id(first), build_route_id(second))
 
     def test_route_id_changes_when_material_routing_input_changes(self):
         base = {"task": {"current": "build site"}, "strategy": "balanced"}

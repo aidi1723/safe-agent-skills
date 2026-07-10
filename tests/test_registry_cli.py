@@ -4999,6 +4999,115 @@ class RegistryCliTest(unittest.TestCase):
                             self.assertIn("message", payload["error"])
                         else:
                             self.assertIn("# OneCode Task Pack v2 Error", output)
+
+    def test_v2_cli_bounds_valid_json_with_malformed_structures(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            malformed_assets = []
+            for index, payload in enumerate(([], {}, {"bundles": ["not-an-object"]})):
+                path = root / f"bundles-{index}.json"
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                malformed_assets.extend(
+                    [
+                        ["smart", "build site", "--schema-version", "2", "--bundles", str(path)],
+                        [
+                            "task-pack",
+                            "build site",
+                            "--registry",
+                            "catalog",
+                            "--schema-version",
+                            "2",
+                            "--bundles",
+                            str(path),
+                        ],
+                    ]
+                )
+            for index, payload in enumerate(({}, {"skills": "not-a-list"})):
+                registry = root / f"catalog-{index}"
+                registry.mkdir()
+                (registry / "index.json").write_text(json.dumps(payload), encoding="utf-8")
+                malformed_assets.extend(
+                    [
+                        ["smart", "build site", "--schema-version", "2", "--registry", str(registry)],
+                        [
+                            "task-pack",
+                            "build site",
+                            "--registry",
+                            str(registry),
+                            "--schema-version",
+                            "2",
+                        ],
+                    ]
+                )
+
+            for argv in malformed_assets:
+                for output_format in ("json", "markdown"):
+                    with self.subTest(argv=argv, output_format=output_format):
+                        out = io.StringIO()
+                        err = io.StringIO()
+                        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                            exit_code = main([*argv, "--format", output_format])
+                        output = out.getvalue()
+                        self.assertEqual(exit_code, 2)
+                        self.assertEqual(err.getvalue(), "")
+                        self.assertNotIn("Traceback", output)
+                        self.assertNotIn(str(root), output)
+                        if output_format == "json":
+                            payload = json.loads(output)
+                            self.assertEqual(payload["schema_version"], 2)
+                            self.assertEqual(payload["status"], "error")
+                            self.assertIn(payload["error"]["code"], {"invalid_asset", "invalid_input"})
+                        else:
+                            self.assertIn("# OneCode Task Pack v2 Error", output)
+
+    def test_v2_all_invariant_nodes_follow_contract_stages_and_forward_edges(self):
+        from onecode_skill_sanitizer.router import PIPELINE_STAGE_ORDER
+
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(
+                main(
+                    [
+                        "smart",
+                        "build a landing page and prepare launch checks",
+                        "--schema-version",
+                        "2",
+                        "--invariants",
+                        "不能泄露密钥；公开文案必须合规；必须响应式验证；必须核查来源证据；必须使用浏览器截图验证",
+                        "--format",
+                        "json",
+                    ]
+                ),
+                0,
+            )
+        payload = json.loads(out.getvalue())
+        selected = {skill["name"]: skill for skill in payload["selected_skills"]}
+        nodes = {node["id"]: node for node in payload["execution_graph"]["nodes"]}
+        invariant_nodes = [node for node in nodes.values() if node["id"].startswith("invariant:")]
+        stage_rank = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}
+        records = {
+            item["capability"]: item
+            for item in payload["capability_resolution"]["capabilities"]
+            if item.get("source") == "invariant"
+        }
+
+        self.assertEqual(payload["execution_graph"]["status"], "ready")
+        self.assertTrue(payload["execution_graph"]["acyclic"])
+        self.assertEqual(len(invariant_nodes), 5)
+        self.assertEqual(set(records), {"secret_redaction", "claims_compliance", "responsive_check", "source_check", "browser_verification"})
+        self.assertEqual(
+            {node["skill"] for node in invariant_nodes},
+            set(selected) & {node["skill"] for node in invariant_nodes},
+        )
+        for node in invariant_nodes:
+            contract_stage = selected[node["skill"]]["contract"]["stage_hint"]
+            self.assertEqual(node["stage"], contract_stage)
+            self.assertEqual(records[node["invariant_capability"]]["stage"], node["stage"])
+        for edge in payload["execution_graph"]["edges"]:
+            source_stage = nodes[edge["from"]]["stage"]
+            target_stage = nodes[edge["to"]]["stage"]
+            self.assertLessEqual(stage_rank[source_stage], stage_rank[target_stage])
+
     def test_smart_defaults_resolve_repository_assets_from_environment(self):
         original_cwd = Path.cwd()
         original_home = os.environ.get("SAFE_AGENT_SKILLS_HOME")

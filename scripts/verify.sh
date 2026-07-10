@@ -69,7 +69,7 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
   --minimum-ratio 0.80 >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "build a landing page and prepare launch checks" \
-  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" \
+  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证；必须核查来源证据；必须使用浏览器截图验证" \
   --format json | PYTHONPATH=src python3 -c '
 import json
 import sys
@@ -79,9 +79,14 @@ expected = {
     "secret_redaction": "security-secret-context-redaction",
     "claims_compliance": "content-claims-compliance-filter",
     "responsive_check": "design-responsive-viewport-check",
+    "source_check": "research-source-check",
+    "browser_verification": "execution-playwright-browser-automation",
 }
-skills = {item["name"] for item in payload["selected_skills"]}
-graph_skills = {node["skill"] for node in payload["execution_graph"]["nodes"]}
+stages = ["preflight", "source", "planning", "production", "review", "verification", "handoff"]
+stage_rank = {stage: rank for rank, stage in enumerate(stages)}
+skills = {item["name"]: item for item in payload["selected_skills"]}
+nodes = {node["id"]: node for node in payload["execution_graph"]["nodes"]}
+graph_skills = {node["skill"] for node in nodes.values()}
 records = {
     item["capability"]: item
     for item in payload["capability_resolution"]["capabilities"]
@@ -94,6 +99,13 @@ for capability, skill in expected.items():
         raise SystemExit(f"missing invariant safeguard skill: {skill}")
     if records.get(capability, {}).get("status") != "covered":
         raise SystemExit(f"invariant capability is not covered: {capability}")
+    node = next(node for node in nodes.values() if node.get("invariant_capability") == capability)
+    contract_stage = skills[skill]["contract"]["stage_hint"]
+    if node["stage"] != contract_stage or records[capability].get("stage") != contract_stage:
+        raise SystemExit(f"invariant stage mismatch: {capability}")
+for edge in payload["execution_graph"]["edges"]:
+    if stage_rank[nodes[edge["from"]]["stage"]] > stage_rank[nodes[edge["to"]]["stage"]]:
+        raise SystemExit(f"backward stage edge: {edge}")
 '
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标" >/dev/null

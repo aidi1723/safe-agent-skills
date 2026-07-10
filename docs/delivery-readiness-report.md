@@ -46,16 +46,19 @@ Current delivery scope is intentionally bounded:
 
 ## Current Verified Baseline
 
-Fresh milestone verification on 2026-07-10 records 312 passing tests, clean
+Fresh milestone verification on 2026-07-10 records 315 passing tests, clean
 Ruff lint, a passing `scripts/verify.sh`, explicit v2 invariant safeguard graph
 acceptance, 81.25% core Contract v2 coverage, and 43/43 passing Schema v1
 regression cases.
 
 The v2 default now fails closed to `incomplete` when a required parsed invariant
-cannot be covered by a trusted safeguard skill. Expected malformed or missing
-routing assets return stable exit-code-2 JSON or Markdown errors without
-tracebacks, absolute temporary paths, or credential values. Schema v1 behavior
-remains explicitly covered by its existing compatibility tests.
+cannot be covered by a trusted safeguard skill. All five current invariant
+capabilities use effective skill contract stages, and acceptance checks reject
+backward pipeline-stage edges. Expected malformed, missing, or structurally
+invalid routing assets return stable exit-code-2 JSON or Markdown errors without
+tracebacks, absolute temporary paths, or credential values. Credential matching
+also avoids redacting benign token-like routing text. Schema v1 behavior remains
+explicitly covered by its existing compatibility tests.
 
 The manually curated 100-case v2 evaluator currently reports:
 
