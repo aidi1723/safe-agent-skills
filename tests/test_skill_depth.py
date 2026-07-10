@@ -66,6 +66,9 @@ class SkillDepthTest(unittest.TestCase):
     def test_real_seo_brief_is_specialist_with_protected_reference(self):
         self.assert_real_specialist("content-seo-brief")
 
+    def test_real_publish_check_is_specialist_with_protected_reference(self):
+        self.assert_real_specialist("execution-publish-check")
+
     def test_depth_check_command_returns_warnings_without_failure(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

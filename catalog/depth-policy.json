@@ -12,6 +12,7 @@
     "engineering-build-release": "specialist",
     "engineering-ci-troubleshoot": "specialist",
     "execution-browser-check": "specialist",
+    "execution-publish-check": "specialist",
     "office-docx-brief": "specialist",
     "office-pdf-report": "specialist",
     "research-source-check": "specialist",
