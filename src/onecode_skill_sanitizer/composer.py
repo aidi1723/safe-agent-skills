@@ -5,7 +5,7 @@ from __future__ import annotations
 from dataclasses import asdict, dataclass
 from typing import Any
 
-from .candidates import ScenarioCandidate
+from .candidates import ScenarioCandidate, trusted_scenario_map
 from .intent import IntentGraph
 
 
@@ -33,9 +33,14 @@ class ScenarioComposition:
 def compose_scenarios(
     intent_graph: IntentGraph,
     candidates: tuple[ScenarioCandidate, ...] | list[ScenarioCandidate],
+    bundles_index: dict,
+    trusted_skill_names: set[str],
 ) -> ScenarioComposition:
+    valid_scenarios = trusted_scenario_map(bundles_index, trusted_skill_names)
     by_intent: dict[str, list[tuple[int, ScenarioCandidate]]] = {}
     for index, candidate in enumerate(candidates):
+        if candidate.scenario_id not in valid_scenarios:
+            continue
         by_intent.setdefault(candidate.intent_id, []).append((index, candidate))
 
     selected_by_intent: list[ScenarioCandidate] = []
@@ -47,7 +52,7 @@ def compose_scenarios(
             continue
         _, selected = min(
             available,
-            key=lambda item: (-item[1].deterministic_score, item[0]),
+            key=lambda item: (-item[1].deterministic_score, item[1].scenario_id),
         )
         selected_by_intent.append(selected)
 
