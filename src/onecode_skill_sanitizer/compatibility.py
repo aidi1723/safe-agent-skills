@@ -18,13 +18,13 @@ _DYNAMIC_KEYS = {
 }
 _SECRET_KEY_RE = re.compile(
     r"(?:api[_ -]?key|access[_ -]?key|private[_ -]?key|secret|token|password|bearer|"
-    r"authorization|auth|session|credentials?|凭证|密钥|密码|令牌)",
+    r"authorization|auth|session|credentials?|访问令牌|授权|会话|私钥|凭证|密钥|密码|令牌)",
     re.IGNORECASE,
 )
 _SECRET_ASSIGNMENT_RE = re.compile(
     r"(?P<label>\b(?:api[_ -]?key|access[_ -]?key|private[_ -]?key|secret|token|password|"
-    r"authorization|auth|session|credentials?)\b|凭证|密钥|密码|令牌)"
-    r"(?P<separator>\s*[=:]\s*)"
+    r"authorization|auth|session|credentials?)\b|访问令牌|授权|会话|私钥|凭证|密钥|密码|令牌)"
+    r"(?P<separator>\s*[=:：＝]\s*)"
     r"(?P<value>\"[^\"\r\n]*\"|'[^'\r\n]*'|[^\s,;，；]+)",
     re.IGNORECASE,
 )

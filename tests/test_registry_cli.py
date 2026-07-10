@@ -4324,6 +4324,37 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(route_ids[0], route_ids[1])
         self.assertNotEqual(route_ids[0], route_ids[2])
 
+    def test_smart_schema_v2_route_id_redacts_full_width_chinese_secret_assignments(self):
+        pairs = [
+            ("密码：甲，构建官网", "密码：乙，构建官网"),
+            ("访问令牌：令牌甲，构建官网", "访问令牌：令牌乙，构建官网"),
+            ("授权：授权甲，构建官网", "授权：授权乙，构建官网"),
+            ("会话：会话甲，构建官网", "会话：会话乙，构建官网"),
+            ("私钥：私钥甲，构建官网", "私钥：私钥乙，构建官网"),
+            ("密钥＝密钥甲，构建官网", "密钥＝密钥乙，构建官网"),
+            (
+                "历史：密码：历史甲，保留审计上下文\n当前任务：构建官网",
+                "历史：密码：历史乙，保留审计上下文\n当前任务：构建官网",
+            ),
+        ]
+        for first_task, second_task in pairs:
+            with self.subTest(first_task=first_task):
+                route_ids = []
+                for task in [first_task, second_task]:
+                    out = io.StringIO()
+                    with contextlib.redirect_stdout(out):
+                        self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)
+                    route_ids.append(json.loads(out.getvalue())["route_id"])
+                self.assertEqual(route_ids[0], route_ids[1])
+
+        intent_route_ids = []
+        for task in ["密码：甲，构建官网", "密码：乙，审计 skill 路由器"]:
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)
+            intent_route_ids.append(json.loads(out.getvalue())["route_id"])
+        self.assertNotEqual(intent_route_ids[0], intent_route_ids[1])
+
     def test_smart_schema_v2_route_id_uses_canonical_overlap_content(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
