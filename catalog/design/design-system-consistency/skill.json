@@ -14,13 +14,17 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "requirements_brief",
+      "build_artifact"
+    ],
     "produces_evidence": [
+      "design_system_change_targets",
       "design_system_report"
     ],
     "requires_context": [
-      "requirements_brief",
-      "build_artifact"
+      "interface_scope",
+      "design_tokens_or_components"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -28,7 +32,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "66c46b3d2d5e1b85ca76f6164d1c6e9bc27319ddf2d5794d9b105d3db2a7dcb1",
+    "manifest_sha256": "fca1174f8cdae694c1aea33aaf971a8e90a970ae545fb35c092f15beca10ea67",
     "sanitized_sha256": "3e584d8866708f8693b1a5d8b4733176023107ac98a25d3538bb6e67cc73a496",
     "source_sha256": "6d76b7490d836997a0216bc11ee49745d90033056516850e77679f0bea80a50b"
   },

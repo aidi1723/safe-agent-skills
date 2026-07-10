@@ -14,14 +14,19 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
-    "produces_evidence": [
-      "visual_quality_report"
-    ],
-    "requires_context": [
+    "optional_context": [
       "requirements_brief",
       "build_artifact",
       "ui_review_report"
+    ],
+    "produces_evidence": [
+      "visual_quality_change_targets",
+      "visual_quality_report"
+    ],
+    "requires_context": [
+      "interface_under_review",
+      "product_domain",
+      "viewport_targets"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +34,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "b0120381494b3ae2f930fb4efe2045dd0acfe65641a3c7d45dda936d730f7973",
+    "manifest_sha256": "c9eaca6cb12a8fa8105c68fd9b4de31f0fe8b991c8f549a15e23b6b804b5b5c2",
     "sanitized_sha256": "a12fb2d03e7c3df96d5069a2f4231459d45046127334c20410b68d148d5b638a",
     "source_sha256": "865e08fee3b2450b713ef572b949363ff842bfee9c693849f87e00994cdd801e"
   },

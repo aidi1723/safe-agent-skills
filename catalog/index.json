@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T05:10:58Z",
+  "generated_at": "2026-07-10T05:44:39Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -220,22 +220,28 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "workflow_review_scope"
+        ],
         "produces_artifacts": [
-          "agent_workflow_map"
+          "agent_workflow_map",
+          "tool_routing_plan"
         ],
         "produces_evidence": [
-          "orchestration_notes"
+          "validation_checkpoint_plan"
         ],
         "requires_context": [
-          "workflow_review_scope"
+          "agent_task",
+          "available_tools",
+          "data_sources",
+          "allowed_actions"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "148c809a32d1d90d3b05c260702247241c0c54fe8c7044f1841c61b2b309d188",
+        "manifest_sha256": "4e5b3f588b7d2e480bab5448e4e964a8ce57e93b4d573d6cd72cb79a7a2ee434",
         "sanitized_sha256": "c6d80969d90e023528dc6684e04bd64c029a95bb252b6957dcabfab05e78855f",
         "source_sha256": "f3da5086b6bffa6fb5a36657bc3780e748435415c4fd72ffd60bfac70093ab77"
       },
@@ -332,22 +338,27 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "privacy_constraints"
+        ],
         "produces_artifacts": [
-          "rag_workflow_plan"
+          "knowledge_source_inventory",
+          "indexing_chunking_plan",
+          "retrieval_citation_policy"
         ],
         "produces_evidence": [
-          "citation_policy_notes"
+          "answer_grounding_checklist"
         ],
         "requires_context": [
-          "knowledge_sources"
+          "knowledge_sources",
+          "grounding_requirements"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "ea4212540844b7fcf1534db51241791f358fffc8e4b975d019cd0b3a83820467",
+        "manifest_sha256": "c473b920f94c4e52aac1dffa16c911b0b90176f1d4cde7bdca289513b9ef21c0",
         "sanitized_sha256": "164a6e8d0b6f32d3ffb93bf4cb128d7eeaf3de8f32fb3d4783be07f572e7e8c8",
         "source_sha256": "3ce32a4629294a00bd8f815d0bdc109e41c3e3d49bb5d5f30a53308a112a36c7"
       },
@@ -446,23 +457,28 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
-        "produces_artifacts": [
-          "workflow_review_scope"
-        ],
-        "produces_evidence": [
-          "bundle_quality_notes"
-        ],
-        "requires_context": [
+        "optional_context": [
           "user_request",
           "workspace_context"
+        ],
+        "produces_artifacts": [
+          "repeated_task_summary",
+          "metaskill_or_bundle_plan"
+        ],
+        "produces_evidence": [
+          "verification_gate_plan"
+        ],
+        "requires_context": [
+          "repeated_task",
+          "expected_artifact",
+          "verification_requirements"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "preflight"
       },
       "hashes": {
-        "manifest_sha256": "c5c27dbe5f8fe71d7f902ad49c6c60996d079f854fb9aade644522ff651f3a83",
+        "manifest_sha256": "1e78511f481633d5129abcd012535aa919d3a5a8a7fc39dcb6b7a6bf19f2606a",
         "sanitized_sha256": "c67b142344ddd90996a2863bc9eac8dedcf50d8b60db0f9af211e81df1b1d0ca",
         "source_sha256": "6559127e7dd44d4dbb8cdd26009fe5b6e54cc8287f2fea8bc284311061b086ca"
       },
@@ -503,22 +519,27 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "workflow_review_scope"
+        ],
         "produces_artifacts": [
-          "routing_selection_plan"
+          "task_pack_selection_plan"
         ],
         "produces_evidence": [
-          "skill_selection_notes"
+          "skill_selection_rationale",
+          "context_budget_review"
         ],
         "requires_context": [
-          "workflow_review_scope"
+          "agent_task",
+          "trusted_skill_catalog",
+          "context_budget"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "bd482cf3726e5a5fc640609d8a72642380b3b1c943224f722cb42b1bbde3ec29",
+        "manifest_sha256": "8ad9b145f47fdbf8936e5deb8de1110ba7f1972bfd2a74296c629cf63ad2fbf9",
         "sanitized_sha256": "36086d4ab5063843cde2d9776f9c475910ae3775bd5c7e1ad30378332e965a7d",
         "source_sha256": "ee8814bb349ca4a647d47b5b92b51a7aa5e667e418785062f4276998e8060adb"
       },
@@ -588,19 +609,25 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "routing_selection_plan"
+        ],
+        "produces_artifacts": [
+          "output_evaluation_report"
+        ],
         "produces_evidence": [
-          "output_schema_eval_report"
+          "schema_failure_details"
         ],
         "requires_context": [
-          "routing_selection_plan"
+          "output_under_review",
+          "expected_schema_or_checklist"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "33573cd2a0c6ceaf184fcd5eea9ccab2c51b8c69be4823610f7433c69d68b7ad",
+        "manifest_sha256": "5e8f45a1790545b9ccec11e7f236dfa4fa6ba8a3da02ba8257c62453014b8c36",
         "sanitized_sha256": "2fce3196b4f9ae19e6d12a78ed9242464038f7adec2d9de7c29bbd23e7ed461b",
         "source_sha256": "364bcf0a17ff8fa007072e36f135105f0247090c98db29f94c4cbe038ce98675"
       },
@@ -698,22 +725,28 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
-        "produces_evidence": [
-          "failure_rule_synthesis_report"
-        ],
-        "requires_context": [
+        "optional_context": [
           "tool_schema_contract_report",
           "output_schema_eval_report",
           "regression_test_evidence",
           "ci_check_report"
+        ],
+        "produces_artifacts": [
+          "candidate_rule_set"
+        ],
+        "produces_evidence": [
+          "false_positive_risk_review"
+        ],
+        "requires_context": [
+          "sanitized_failure_logs",
+          "failed_rules_or_verifiers"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "9d1a26722db22ce414d74942ca23e07e4a2bc97497e9146f6945a6f8a0f4b74e",
+        "manifest_sha256": "dc8d0bb5759d72772512cd21f54a7edc6b030ded4f0dca1452f30af6a7e58045",
         "sanitized_sha256": "4ffdf950718a0623bbafacd0decdb672d23e6515f155dd884a8b7cd4a144c7a1",
         "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
       },
@@ -812,19 +845,25 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "routing_selection_plan"
+        ],
+        "produces_artifacts": [
+          "schema_contract_map"
+        ],
         "produces_evidence": [
-          "tool_schema_contract_report"
+          "protocol_validation_cases"
         ],
         "requires_context": [
-          "routing_selection_plan"
+          "tool_or_protocol_schema",
+          "arguments_or_payload"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "f97c66b6dfcf6360a3dd2c6205cbb754137b646842ec4cb6bad14e1fd433dc0e",
+        "manifest_sha256": "6e8d9af58c147850e22dc459b2f21a77131d4f96ba29e223447469babeb75ea9",
         "sanitized_sha256": "d105aea8ae5d8446d2a4ea7d7cd54dce1e569f4761034e5a49a1e7b7ecc7cbee",
         "source_sha256": "8f348a217dd395e8b3b8122050fa2628ce76df4616299cf06c08b4a4ac466145"
       },
@@ -1589,19 +1628,25 @@
           "tokens": 1
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "task_brief"
+        ],
         "produces_artifacts": [
-          "requirements_brief"
+          "requirements_brief",
+          "acceptance_criteria",
+          "assumptions_and_open_questions"
         ],
         "requires_context": [
-          "task_brief"
+          "business_goal",
+          "stakeholders",
+          "constraints"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "ba75393b728ec515e0f2d5aa3dc386413391cf1d891a5ffb2e640c2610c44d4f",
+        "manifest_sha256": "66d8322ce2bcb957a80588009c76fb3c4189864427d4a3e67bafccd3104a804d",
         "sanitized_sha256": "2e802eb01d54ce6569692116c98662f5e019696023ccf187bbec7f293901018a",
         "source_sha256": "d012b81bda16b8d5ff0535b685806196a870436dbbfee6e1fd1b6c888e06f28b"
       },
@@ -1872,22 +1917,27 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "change_request"
+        ],
         "produces_artifacts": [
-          "refactor_scope_map"
+          "refactor_scope_map",
+          "impacted_symbol_list"
         ],
         "produces_evidence": [
-          "symbol_reference_check"
+          "verification_command_plan"
         ],
         "requires_context": [
-          "change_request"
+          "codebase_context",
+          "refactor_target",
+          "behavior_constraints"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "faa00b5d3e51f0fa221cdf131e3679682d3bf6df563aa15b15d2504595c5690a",
+        "manifest_sha256": "9f6cfaec1f0248cb4b6308fc725f391cecc10c1f379b31ada1a4c6f5d4631d0b",
         "sanitized_sha256": "dc9d9107d239bcb8d2470ca81b9c91cce9318934a7b21225b5f3dacaa6d38731",
         "source_sha256": "9d4befd7337a96bee73d4083e1dae474a77dc698abc5a51757df5cf243576a49"
       },
@@ -1984,22 +2034,27 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "codebase_map"
+        ],
         "produces_artifacts": [
-          "cleanup_candidate_list"
+          "cleanup_candidate_list",
+          "removal_recommendation"
         ],
         "produces_evidence": [
-          "reference_search_evidence"
+          "reference_search_evidence",
+          "verification_plan"
         ],
         "requires_context": [
-          "codebase_map"
+          "codebase_context",
+          "cleanup_candidates"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "1a0558cd2e88499fba936da8c7939d85f872042b257fa56db8fa95fce516dcf2",
+        "manifest_sha256": "7f3d1f72ac888982353b58db6c6245e990bccca81bb7f9f654d2ae22353b1834",
         "sanitized_sha256": "e5b76e0f5a1941fd8f180689d7be00bd64517e7b63325643ed7d00586e149eee",
         "source_sha256": "46ff88848b2d86642576d0291b9a9f267bbf11906253b82e3c1841d1b9736ab4"
       },
@@ -2057,7 +2112,9 @@
     },
     {
       "contract": {
-        "approval_classes": [],
+        "approval_classes": [
+          "shell_execution"
+        ],
         "capability_vector": [
           "code.debug"
         ],
@@ -2067,22 +2124,28 @@
           "tokens": 2
         },
         "idempotent": false,
-        "optional_context": [],
+        "optional_context": [
+          "failure_evidence"
+        ],
         "produces_artifacts": [
-          "debug_fix_plan"
+          "root_cause_summary",
+          "scoped_code_change"
         ],
         "produces_evidence": [
-          "focused_test_evidence"
+          "regression_test_evidence",
+          "verification_evidence"
         ],
         "requires_context": [
-          "failure_evidence"
+          "python_failure",
+          "expected_behavior",
+          "reproduction_context"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "execution"
       },
       "hashes": {
-        "manifest_sha256": "bad820dc171cceb4aacd5eb0eb637a8f7692cc325b402b08e51b369f117071d2",
+        "manifest_sha256": "87f8de9609d761badc068eaf37eeb6de134fd253dc3537088761c6ad9f7f6492",
         "sanitized_sha256": "0e9bcc45df3bee0793bd92dac5b6949c4ede00747262a4163f68eb986db40b4f",
         "source_sha256": "3bff531dffd66fda53b60e82c5667c8fdc2e345d553d0b5c09f708adbfd60c4d"
       },
@@ -2123,20 +2186,22 @@
         "idempotent": true,
         "optional_context": [],
         "produces_artifacts": [
-          "risk_review_report"
+          "code_review_findings"
         ],
         "produces_evidence": [
-          "review_findings"
+          "missing_test_notes",
+          "residual_risk_summary"
         ],
         "requires_context": [
-          "change_set"
+          "change_set",
+          "review_scope"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "7a6bc32e2dc663039434890156fa232048d966d2b46c84310efe8b2170be4bcd",
+        "manifest_sha256": "fdc76e9432bbceab1737e3b04556158cc64656df5fdffdb7d4ee834ad32493f0",
         "sanitized_sha256": "e0075ddcaa3e33add5ea5b0a363211b65e001df8574c45156623fa1ea1c14bdb",
         "source_sha256": "d15096f5f9f453ddef5edbd8eae0bbe729223174cd55691f5178f44eb5547a52"
       },
@@ -2175,22 +2240,27 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "codebase_map"
+        ],
         "produces_artifacts": [
           "simplification_plan"
         ],
         "produces_evidence": [
-          "behavior_preservation_notes"
+          "regression_verification_plan",
+          "rollback_notes"
         ],
         "requires_context": [
-          "codebase_map"
+          "codebase_context",
+          "simplification_target",
+          "behavior_invariants"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "188fda0234566a299323ee501e2aef1a6fd7c909d02d0f0d4f070bca57593b36",
+        "manifest_sha256": "2980b49b35999720ddce5078c8f1831558673968617a2c47fbf4c7fbf25d4920",
         "sanitized_sha256": "ed9fea6688aa3a2231518daa527fd653527724d23e25ac0d3ab696ecf951277d",
         "source_sha256": "a2dd7ff863a7df02084f0e20ef39681aba8cd8db8731ec71e7aee8e9d8df2017"
       },
@@ -2219,7 +2289,9 @@
     },
     {
       "contract": {
-        "approval_classes": [],
+        "approval_classes": [
+          "shell_execution"
+        ],
         "capability_vector": [
           "code.test"
         ],
@@ -2230,7 +2302,9 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "routing_selection_plan"
+        ],
         "produces_artifacts": [
           "regression_test_plan"
         ],
@@ -2238,14 +2312,15 @@
           "regression_test_evidence"
         ],
         "requires_context": [
-          "routing_selection_plan"
+          "behavior_or_change_under_test",
+          "regression_scope"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "7deeb9509a8f82e61aa78f748f0715369924c6539b4da62439b3b3c79b187a95",
+        "manifest_sha256": "b6f91261dc349689a6b3afbe49ed3c5b2c4dd33e9c2ebca789579c0662345f31",
         "sanitized_sha256": "60e9c0237617a047c487b233da9cb5eaad87a0ae26db1bcedcb73d8b2616ae6e",
         "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
       },
@@ -2284,22 +2359,27 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "workspace_context"
+        ],
         "produces_artifacts": [
-          "codebase_map"
+          "codebase_map",
+          "change_surface_map"
         ],
         "produces_evidence": [
-          "repository_inventory"
+          "repository_inventory",
+          "unresolved_assumptions"
         ],
         "requires_context": [
-          "workspace_context"
+          "repository",
+          "change_goal"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "source"
       },
       "hashes": {
-        "manifest_sha256": "072bc85a691aadd6962b8901581bdbc0b051ebc708ace8d505dc8118f0e5655f",
+        "manifest_sha256": "e0c7d5d60e3df4f3e75d14844b96b125dde6f3fc0ecce508536666b37041bbad",
         "sanitized_sha256": "8db14ae97ba5d8fe2bbd733232ba7c3f2167b17b90e1ce30eb45c52a3c17e679",
         "source_sha256": "dd7d7e077a8e1dd3226538fa363ff4d54a90b1f66a9db94dbd94f4d567a030ea"
       },
@@ -3208,19 +3288,25 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "requirements_brief",
+          "source_material"
+        ],
         "produces_artifacts": [
-          "seo_copy"
+          "seo_content_brief",
+          "claim_risk_notes"
         ],
         "requires_context": [
-          "requirements_brief"
+          "topic",
+          "audience",
+          "search_goal"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "936d9fbf76dd853c4f639b2caa8519b6049973c8a6bb82629a136f635470f2da",
+        "manifest_sha256": "82b03cc0d2505570c110b264461ec7ff67089ca2e2376bdacebbcb77bce6e818",
         "sanitized_sha256": "98555332f20c1125e1439551a0b5ed6c7182477697a45013eac6edf0c323e2ed",
         "source_sha256": "ac5e5582f4911c2f2a043db250b318476b19db59faeb1338359366fa260a10c0"
       },
@@ -3260,19 +3346,27 @@
           "tokens": 1
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "seo_copy",
+          "source_material"
+        ],
         "produces_artifacts": [
-          "social_post_copy"
+          "social_post_variants",
+          "source_fact_notes",
+          "channel_fit_notes"
         ],
         "requires_context": [
-          "seo_copy"
+          "topic",
+          "audience",
+          "facts",
+          "channel_constraints"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "5db77db47e22f3cd290325ad22098053f580abd2b4d198d5ae0a02e277a66313",
+        "manifest_sha256": "cb7327fe8daaa01659d4c9ec954ca1cdd32523cffd3fb9c7dde2cd699266731d",
         "sanitized_sha256": "9907c0e719e4d7e755d6d5cf37086aaae2bf115567058aeffb84421572969486",
         "source_sha256": "816151ea8e709afb38891ca035fabc6f4ba7ea9a82f78e3ece6b7271dd8509cd"
       },
@@ -3342,20 +3436,22 @@
         "idempotent": true,
         "optional_context": [],
         "produces_artifacts": [
-          "rag_pipeline_plan"
+          "rag_pipeline_map"
         ],
         "produces_evidence": [
-          "retrieval_grounding_notes"
+          "grounding_and_evaluation_notes"
         ],
         "requires_context": [
-          "knowledge_sources"
+          "application_goal",
+          "knowledge_sources",
+          "retrieval_requirements"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "adbea1d8001c34a44b1f73172f0b872c49ec5153026139850d83dfbdf9d63ac3",
+        "manifest_sha256": "dea0a76d00de8353e843df58e79e965485c422391e45274cba3eac769fe9dffa",
         "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
         "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
       },
@@ -3402,14 +3498,16 @@
           "extraction_quality_notes"
         ],
         "requires_context": [
-          "source_documents"
+          "source_pdf",
+          "conversion_output",
+          "quality_criteria"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "19114d0123145c504179c62b025b78ec9c65a73383e46c57b19c841b8a5dfd2e",
+        "manifest_sha256": "78c777f6942f8ebae57edae80e8f888c1d76163137c984dcc66b1543ea2872ba",
         "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
         "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
       },
@@ -3456,14 +3554,15 @@
           "conversion_report"
         ],
         "requires_context": [
-          "source_documents"
+          "source_files",
+          "conversion_requirements"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "execution"
       },
       "hashes": {
-        "manifest_sha256": "f8cde87c1036e4ab7aceb9b835d720ce753aec7ef152afd7fa9606f69d4d043d",
+        "manifest_sha256": "6e35a4fcb3ffb1a0c030c9a26b265aee84c20b446880157f7a84eb3b208e2dfe",
         "sanitized_sha256": "8c63709c028c08f23611f3e3df987de92098ea486be6b8a1eeaace0213df3c0c",
         "source_sha256": "f5a023b31314e3d488a1c87244c3574592860ffc8452a804640b604cf7e8733b"
       },
@@ -3510,14 +3609,16 @@
           "retrieval_quality_notes"
         ],
         "requires_context": [
-          "retrieval_requirements"
+          "retrieval_corpus",
+          "query_requirements",
+          "metadata_filters"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "7b3a15fe9b4f3eebcefe2b8e793446071a3028a11aab755d5d864bc4388f73a6",
+        "manifest_sha256": "ca760335359488ad48ad85b96ccf3333030fdd1494712671b99b9f1839d323c5",
         "sanitized_sha256": "070df168c4036c32e63228bfa32f2f416836ff0a30e592fc327c2b8b160fee60",
         "source_sha256": "fc6a662dde8dd74bd7f6bbd81e12f9a0eabb35973ba3395ec3dd2a5ef63ebe01"
       },
@@ -3709,14 +3810,15 @@
           "partition_quality_report"
         ],
         "requires_context": [
-          "source_documents"
+          "source_documents",
+          "partition_requirements"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "execution"
       },
       "hashes": {
-        "manifest_sha256": "b765a4686a338b2ac65830a9bd7eaf70f348a436c8dafbab77e8338c2b32415a",
+        "manifest_sha256": "38ed35422d67a904c22569c5724ed6d99efd5b69bede36a0daa5e7e03c4b1088",
         "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
         "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
       },
@@ -3856,21 +3958,25 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
-        "produces_evidence": [
-          "motion_polish_report"
-        ],
-        "requires_context": [
+        "optional_context": [
           "requirements_brief",
           "build_artifact",
           "ui_review_report"
+        ],
+        "produces_evidence": [
+          "motion_polish_plan",
+          "motion_polish_report"
+        ],
+        "requires_context": [
+          "interface_under_review",
+          "interaction_goals"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "980d0833e55008ea2bf826b5c57a5d4e018bb68343eadcba05b27ad8a54256a6",
+        "manifest_sha256": "01b4d04f66985bfd475eb3efc51e7b4a1983d3b88a1361c0ceef2e1275ef9915",
         "sanitized_sha256": "9e5d6471343581814b7e9d10f63e6185e8ac6fe285c193bd4784e43d4439290b",
         "source_sha256": "c166662fd2ea04b63f370d46b5b4115f4333ae44255ed6dceff4b56d5afa1c17"
       },
@@ -3910,21 +4016,26 @@
           "tokens": 3
         },
         "idempotent": true,
-        "optional_context": [],
-        "produces_evidence": [
-          "premium_landing_report"
-        ],
-        "requires_context": [
+        "optional_context": [
           "requirements_brief",
           "seo_copy",
           "build_artifact"
+        ],
+        "produces_evidence": [
+          "premium_landing_plan",
+          "premium_landing_report"
+        ],
+        "requires_context": [
+          "landing_page_goal",
+          "audience",
+          "brand_constraints"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "0ff1224ac52b788da882c9dab75f01aad7824d41a38d084b01aac1c42ff8c758",
+        "manifest_sha256": "1eb3e91345cc02524954a376b021dba46f0ffc07c0accb1ec12283d9774a5a10",
         "sanitized_sha256": "0f92486465848c30e781baee8a1335289b6944212c39cfa02ee1c523544854b2",
         "source_sha256": "b166f2248338d51162d3a1cb913d07f1044044d686abc9350a49058b467bc4a9"
       },
@@ -3993,20 +4104,24 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "requirements_brief",
+          "build_artifact"
+        ],
         "produces_evidence": [
+          "design_system_change_targets",
           "design_system_report"
         ],
         "requires_context": [
-          "requirements_brief",
-          "build_artifact"
+          "interface_scope",
+          "design_tokens_or_components"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "66c46b3d2d5e1b85ca76f6164d1c6e9bc27319ddf2d5794d9b105d3db2a7dcb1",
+        "manifest_sha256": "fca1174f8cdae694c1aea33aaf971a8e90a970ae545fb35c092f15beca10ea67",
         "sanitized_sha256": "3e584d8866708f8693b1a5d8b4733176023107ac98a25d3538bb6e67cc73a496",
         "source_sha256": "6d76b7490d836997a0216bc11ee49745d90033056516850e77679f0bea80a50b"
       },
@@ -4046,20 +4161,24 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "requirements_brief",
+          "build_artifact"
+        ],
         "produces_evidence": [
+          "component_system_plan",
           "tailwind_radix_system_report"
         ],
         "requires_context": [
-          "requirements_brief",
-          "build_artifact"
+          "react_project",
+          "component_system_requirements"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "02beb886c8b1f2cf3f16b6531f14e1bcbd71359a5390fcb0545d0a9a7ca04d7a",
+        "manifest_sha256": "966e037ebfa9f98d4b0ac7da8d0e6529443d44aa38e36b17460b2cfb2ddf4041",
         "sanitized_sha256": "a1442ce4a5b0bba5a988ef854121551d29c154ffec7ab19f6d52322da75c8e17",
         "source_sha256": "8529cd5a2b8415b80ccd21a6385d7cc17260024114828df28c5e5a5efe6fe7ee"
       },
@@ -4099,20 +4218,25 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "requirements_brief",
+          "build_artifact"
+        ],
         "produces_evidence": [
+          "ui_review_findings",
           "ui_review_report"
         ],
         "requires_context": [
-          "requirements_brief",
-          "build_artifact"
+          "interface_under_review",
+          "user_goals",
+          "viewport_targets"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "2516a3265e0d4b7b5ce05cc4bc97ca0343fe02bb62600091c734d98b7daa0c29",
+        "manifest_sha256": "de8629b55ef9780848d605bac2cc2af5f618c61173ca9eeeeb074d724c7291a5",
         "sanitized_sha256": "22a8ebbcc112ea5bf446d37358822873ce585f6be3ca28ca9cc81e318e3804c9",
         "source_sha256": "a43ea63e3339c6b698873a8cf4fc35d029d5eca618b5155989a0ba7dc30bb7ad"
       },
@@ -4152,21 +4276,26 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
-        "produces_evidence": [
-          "visual_quality_report"
-        ],
-        "requires_context": [
+        "optional_context": [
           "requirements_brief",
           "build_artifact",
           "ui_review_report"
+        ],
+        "produces_evidence": [
+          "visual_quality_change_targets",
+          "visual_quality_report"
+        ],
+        "requires_context": [
+          "interface_under_review",
+          "product_domain",
+          "viewport_targets"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "b0120381494b3ae2f930fb4efe2045dd0acfe65641a3c7d45dda936d730f7973",
+        "manifest_sha256": "c9eaca6cb12a8fa8105c68fd9b4de31f0fe8b991c8f549a15e23b6b804b5b5c2",
         "sanitized_sha256": "a12fb2d03e7c3df96d5069a2f4231459d45046127334c20410b68d148d5b638a",
         "source_sha256": "865e08fee3b2450b713ef572b949363ff842bfee9c693849f87e00994cdd801e"
       },
@@ -4208,22 +4337,28 @@
           "tokens": 2
         },
         "idempotent": false,
-        "optional_context": [],
+        "optional_context": [
+          "requirements_brief"
+        ],
         "produces_artifacts": [
-          "build_artifact"
+          "build_artifact",
+          "release_handoff_notes"
         ],
         "produces_evidence": [
-          "build_readiness_report"
+          "build_readiness_report",
+          "smoke_test_result"
         ],
         "requires_context": [
-          "requirements_brief"
+          "project_context",
+          "build_command",
+          "release_target"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "execution"
       },
       "hashes": {
-        "manifest_sha256": "f77231eccc73b536635c02815494863135476b9957f5f4aedf554573990a60ba",
+        "manifest_sha256": "62abcb4d9c5adf34839c2b2df3020b0ece5ca4951d50f408fb0d079ec29d5b11",
         "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
         "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
       },
@@ -4265,19 +4400,26 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "regression_test_plan"
+        ],
+        "produces_artifacts": [
+          "ci_fix_plan"
+        ],
         "produces_evidence": [
           "ci_check_report"
         ],
         "requires_context": [
-          "regression_test_plan"
+          "pipeline_failure",
+          "ci_logs",
+          "pipeline_configuration"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "5d85728fe9db973a8ec59b0675ae78f70a7e5129f7f07a86dd4f4c9dfbd9cd48",
+        "manifest_sha256": "88bac8fd443aeceb0955fe654640cb8d20417048f683732ef9ac84fcd957361d",
         "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
         "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
       },
@@ -4406,20 +4548,24 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "build_artifact",
+          "ui_review_report"
+        ],
         "produces_evidence": [
+          "browser_action_summary",
           "browser_check_report"
         ],
         "requires_context": [
-          "build_artifact",
-          "ui_review_report"
+          "target_page_or_flow",
+          "browser_check_criteria"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "3411a5541350e7bd2a1a34ec9fcb0f108c64ab6821bd0e014040c835bbe7ffbb",
+        "manifest_sha256": "26f86710fb87a8b9e7d11b842f117c8f15d82e59c710095256bba0c21968ca87",
         "sanitized_sha256": "460bc4fba7f2006fe2081127351f503ef8f5985c37a20d81a07a5e291b2c5c2f",
         "source_sha256": "ea0eb409a616a037176ddcbffc396f1ec8547f93945cd558806470595b04d1d9"
       },
@@ -4462,20 +4608,26 @@
           "tokens": 3
         },
         "idempotent": true,
-        "optional_context": [],
-        "produces_evidence": [
-          "browser_agent_plan"
-        ],
-        "requires_context": [
+        "optional_context": [
           "requirements_brief",
           "build_artifact"
+        ],
+        "produces_evidence": [
+          "browser_task_plan",
+          "navigation_evidence",
+          "blocked_action_list"
+        ],
+        "requires_context": [
+          "web_task",
+          "target_sites",
+          "allowed_actions"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "db07a3d13d9cad2db159346a35d6de7bb0674b54d19033b1f3a6f370f2746a85",
+        "manifest_sha256": "534b5a5b2190257f197c8b5c01424e0e5d65db7c68fe4c5b64897cef17410efb",
         "sanitized_sha256": "e7663b9d4a7b65e3c63bead301d546d7e60cd64cfca2e3230c6754697411a723",
         "source_sha256": "90028dfc3b518c5092c30da8fafd584e21496186ba64eb57bd6a802b61e3264e"
       },
@@ -4647,21 +4799,26 @@
           "tokens": 3
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "build_artifact",
+          "ui_review_report"
+        ],
         "produces_evidence": [
+          "browser_verification_plan",
           "browser_automation_report",
           "browser_check_report"
         ],
         "requires_context": [
-          "build_artifact",
-          "ui_review_report"
+          "target_url",
+          "browser_assertions",
+          "allowed_actions"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "933f0f668ef040c1215567db516ef72bf06c23a585ad7dac96d88f3441eb0fbf",
+        "manifest_sha256": "cb54e282838e8b78baf1dd55e098b764dbb70274f96187b320a8b1236bfc758d",
         "sanitized_sha256": "6870023e80141f3f8bfbad5c4990cdbbc891d6252b9659ae788cf0f3e5ab9907",
         "source_sha256": "a683c4c1bd29677bb6d983051c934491d1f0964de342c4aad3342d818c52860b"
       },
@@ -4690,9 +4847,7 @@
     },
     {
       "contract": {
-        "approval_classes": [
-          "publication"
-        ],
+        "approval_classes": [],
         "capability_vector": [
           "execution.publish_check"
         ],
@@ -4705,19 +4860,20 @@
         "idempotent": true,
         "optional_context": [],
         "produces_evidence": [
+          "publish_readiness_checklist",
           "publish_readiness_report"
         ],
         "requires_context": [
-          "requirements_brief",
-          "ui_review_report",
-          "browser_check_report"
+          "release_candidate",
+          "release_criteria",
+          "verification_evidence"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "8b026a6b291b0c1254053658e259bcda78b4538bfc52ee8a9680cd979035a6f2",
+        "manifest_sha256": "716d1d4ce4cca40242463da27edb62be3bb7856ffd7dccd9ce3d3b81a9afa2d4",
         "sanitized_sha256": "e1600c4868599dfd83b65fcec7f3d8095ebe89fea416b4308faf41432624e1e8",
         "source_sha256": "55c003e53bc282b1ab8bb92064a351b1982e28c2c7449c8465812aa357f63c18"
       },
@@ -5462,14 +5618,15 @@
           "claim_source_mapping"
         ],
         "requires_context": [
-          "claims_to_verify"
+          "claims_to_verify",
+          "source_requirements"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "7fc028d58c45ce8999b84b7b30cd2a8ff3aa0f1d73283f90196f5a6339b091e5",
+        "manifest_sha256": "c06e221b362cfee1307b23d45683145a7d45644add69a7ffad20e6d6660fd1d7",
         "sanitized_sha256": "ebcfc0b49dfde45a231e2c825aac9c26b3220038246fa85be846bc2b53f45bb3",
         "source_sha256": "6e4498e8804857bafc1994ec32d3fbf1cc97446745f6828a8f8146fe937f3e8b"
       },
@@ -5566,7 +5723,9 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "output_contract"
+        ],
         "produces_artifacts": [
           "validation_contract"
         ],
@@ -5574,14 +5733,16 @@
           "guardrail_validation_report"
         ],
         "requires_context": [
-          "output_contract"
+          "output_under_review",
+          "validation_rules",
+          "failure_policy"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "4bbd217e7aa0b3c07fa9e0138f0362c188335b719fd4c4b624ea9486b92f3c26",
+        "manifest_sha256": "d7f5b875e97a9cad24aa899a7338873c30b32b3611765f22bc2d765612d94476",
         "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
         "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
       },
@@ -5628,14 +5789,15 @@
           "redaction_decision_log"
         ],
         "requires_context": [
-          "agent_io_boundaries"
+          "agent_io_boundaries",
+          "scan_policy"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "16440984b41c00f9ad3c00ff8146f8ef0a71775cfae1e0d3800987cea0e69e82",
+        "manifest_sha256": "bab0e51c1f0a0849b32648b4171dff9069f5555cf98b74d1ca460e8dd4c72637",
         "sanitized_sha256": "c0005c155384ed3ef6a7fc7c64f13b74285945f7730ace3903c33c813df24dc2",
         "source_sha256": "b34a564b300023407053a45d02e9a9aa662add202ecb5663faf218909af02c34"
       },
@@ -5703,7 +5865,9 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "prompt_or_skill_source"
+        ],
         "produces_artifacts": [
           "prompt_injection_review"
         ],
@@ -5711,14 +5875,15 @@
           "policy_conformance_findings"
         ],
         "requires_context": [
-          "prompt_or_skill_source"
+          "prompt_or_agent_instructions",
+          "authority_boundary"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "99f5653e4219e2596d07c05817e0dbb25399e6d225f9569c328116551035edb7",
+        "manifest_sha256": "16e1380a9e0793e1599f38516d30b556ef51bff6a4c5f57cc4c0d599c3a80079",
         "sanitized_sha256": "8e303e1dc3b88bbeedbe025d533ef50fe6aa22e588e0778ee581d21be78eb56f",
         "source_sha256": "8fb186df92da0dfc902b990c5a9b27de2aca1aa682ea27123e83e14f7ccddbfa"
       },
@@ -5787,19 +5952,27 @@
           "tokens": 2
         },
         "idempotent": true,
-        "optional_context": [],
+        "optional_context": [
+          "routing_selection_plan"
+        ],
+        "produces_artifacts": [
+          "supply_chain_risk_summary",
+          "allowed_use_recommendation"
+        ],
         "produces_evidence": [
           "supply_chain_review_report"
         ],
         "requires_context": [
-          "routing_selection_plan"
+          "source_or_package_metadata",
+          "provenance_record",
+          "intended_use"
         ],
         "retry_policy": "host_decides",
         "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "e63b2f02d441a72ae5865cb730a0ef40be67e6410f8d5ae1491cb168a856242f",
+        "manifest_sha256": "daff59908726c238767c7e65c51a5a87a5a8d618b101216351145f8f49be4ffc",
         "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
         "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
       },

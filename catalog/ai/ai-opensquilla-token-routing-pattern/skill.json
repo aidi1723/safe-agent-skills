@@ -15,15 +15,20 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "workflow_review_scope"
+    ],
     "produces_artifacts": [
-      "routing_selection_plan"
+      "task_pack_selection_plan"
     ],
     "produces_evidence": [
-      "skill_selection_notes"
+      "skill_selection_rationale",
+      "context_budget_review"
     ],
     "requires_context": [
-      "workflow_review_scope"
+      "agent_task",
+      "trusted_skill_catalog",
+      "context_budget"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -31,7 +36,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "bd482cf3726e5a5fc640609d8a72642380b3b1c943224f722cb42b1bbde3ec29",
+    "manifest_sha256": "8ad9b145f47fdbf8936e5deb8de1110ba7f1972bfd2a74296c629cf63ad2fbf9",
     "sanitized_sha256": "36086d4ab5063843cde2d9776f9c475910ae3775bd5c7e1ad30378332e965a7d",
     "source_sha256": "ee8814bb349ca4a647d47b5b92b51a7aa5e667e418785062f4276998e8060adb"
   },

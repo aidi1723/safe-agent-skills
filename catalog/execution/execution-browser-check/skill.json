@@ -16,13 +16,17 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "build_artifact",
+      "ui_review_report"
+    ],
     "produces_evidence": [
+      "browser_action_summary",
       "browser_check_report"
     ],
     "requires_context": [
-      "build_artifact",
-      "ui_review_report"
+      "target_page_or_flow",
+      "browser_check_criteria"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -30,7 +34,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "3411a5541350e7bd2a1a34ec9fcb0f108c64ab6821bd0e014040c835bbe7ffbb",
+    "manifest_sha256": "26f86710fb87a8b9e7d11b842f117c8f15d82e59c710095256bba0c21968ca87",
     "sanitized_sha256": "460bc4fba7f2006fe2081127351f503ef8f5985c37a20d81a07a5e291b2c5c2f",
     "source_sha256": "ea0eb409a616a037176ddcbffc396f1ec8547f93945cd558806470595b04d1d9"
   },

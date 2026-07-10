@@ -15,16 +15,21 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
-    "produces_artifacts": [
-      "workflow_review_scope"
-    ],
-    "produces_evidence": [
-      "bundle_quality_notes"
-    ],
-    "requires_context": [
+    "optional_context": [
       "user_request",
       "workspace_context"
+    ],
+    "produces_artifacts": [
+      "repeated_task_summary",
+      "metaskill_or_bundle_plan"
+    ],
+    "produces_evidence": [
+      "verification_gate_plan"
+    ],
+    "requires_context": [
+      "repeated_task",
+      "expected_artifact",
+      "verification_requirements"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -32,7 +37,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "c5c27dbe5f8fe71d7f902ad49c6c60996d079f854fb9aade644522ff651f3a83",
+    "manifest_sha256": "1e78511f481633d5129abcd012535aa919d3a5a8a7fc39dcb6b7a6bf19f2606a",
     "sanitized_sha256": "c67b142344ddd90996a2863bc9eac8dedcf50d8b60db0f9af211e81df1b1d0ca",
     "source_sha256": "6559127e7dd44d4dbb8cdd26009fe5b6e54cc8287f2fea8bc284311061b086ca"
   },

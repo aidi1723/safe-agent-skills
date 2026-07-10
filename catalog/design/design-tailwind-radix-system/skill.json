@@ -14,13 +14,17 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "requirements_brief",
+      "build_artifact"
+    ],
     "produces_evidence": [
+      "component_system_plan",
       "tailwind_radix_system_report"
     ],
     "requires_context": [
-      "requirements_brief",
-      "build_artifact"
+      "react_project",
+      "component_system_requirements"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -28,7 +32,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "02beb886c8b1f2cf3f16b6531f14e1bcbd71359a5390fcb0545d0a9a7ca04d7a",
+    "manifest_sha256": "966e037ebfa9f98d4b0ac7da8d0e6529443d44aa38e36b17460b2cfb2ddf4041",
     "sanitized_sha256": "a1442ce4a5b0bba5a988ef854121551d29c154ffec7ab19f6d52322da75c8e17",
     "source_sha256": "8529cd5a2b8415b80ccd21a6385d7cc17260024114828df28c5e5a5efe6fe7ee"
   },

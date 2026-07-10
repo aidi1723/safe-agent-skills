@@ -14,14 +14,19 @@
       "tokens": 3
     },
     "idempotent": true,
-    "optional_context": [],
-    "produces_evidence": [
-      "premium_landing_report"
-    ],
-    "requires_context": [
+    "optional_context": [
       "requirements_brief",
       "seo_copy",
       "build_artifact"
+    ],
+    "produces_evidence": [
+      "premium_landing_plan",
+      "premium_landing_report"
+    ],
+    "requires_context": [
+      "landing_page_goal",
+      "audience",
+      "brand_constraints"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +34,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "0ff1224ac52b788da882c9dab75f01aad7824d41a38d084b01aac1c42ff8c758",
+    "manifest_sha256": "1eb3e91345cc02524954a376b021dba46f0ffc07c0accb1ec12283d9774a5a10",
     "sanitized_sha256": "0f92486465848c30e781baee8a1335289b6944212c39cfa02ee1c523544854b2",
     "source_sha256": "b166f2248338d51162d3a1cb913d07f1044044d686abc9350a49058b467bc4a9"
   },

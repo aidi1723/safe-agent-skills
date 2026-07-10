@@ -14,12 +14,18 @@
       "tokens": 1
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "task_brief"
+    ],
     "produces_artifacts": [
-      "requirements_brief"
+      "requirements_brief",
+      "acceptance_criteria",
+      "assumptions_and_open_questions"
     ],
     "requires_context": [
-      "task_brief"
+      "business_goal",
+      "stakeholders",
+      "constraints"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -27,7 +33,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "ba75393b728ec515e0f2d5aa3dc386413391cf1d891a5ffb2e640c2610c44d4f",
+    "manifest_sha256": "66d8322ce2bcb957a80588009c76fb3c4189864427d4a3e67bafccd3104a804d",
     "sanitized_sha256": "2e802eb01d54ce6569692116c98662f5e019696023ccf187bbec7f293901018a",
     "source_sha256": "d012b81bda16b8d5ff0535b685806196a870436dbbfee6e1fd1b6c888e06f28b"
   },

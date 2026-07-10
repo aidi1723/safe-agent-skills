@@ -3,9 +3,7 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
   "contract": {
-    "approval_classes": [
-      "publication"
-    ],
+    "approval_classes": [],
     "capability_vector": [
       "execution.publish_check"
     ],
@@ -18,12 +16,13 @@
     "idempotent": true,
     "optional_context": [],
     "produces_evidence": [
+      "publish_readiness_checklist",
       "publish_readiness_report"
     ],
     "requires_context": [
-      "requirements_brief",
-      "ui_review_report",
-      "browser_check_report"
+      "release_candidate",
+      "release_criteria",
+      "verification_evidence"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -31,7 +30,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "8b026a6b291b0c1254053658e259bcda78b4538bfc52ee8a9680cd979035a6f2",
+    "manifest_sha256": "716d1d4ce4cca40242463da27edb62be3bb7856ffd7dccd9ce3d3b81a9afa2d4",
     "sanitized_sha256": "e1600c4868599dfd83b65fcec7f3d8095ebe89fea416b4308faf41432624e1e8",
     "source_sha256": "55c003e53bc282b1ab8bb92064a351b1982e28c2c7449c8465812aa357f63c18"
   },

@@ -21,7 +21,8 @@
       "redaction_decision_log"
     ],
     "requires_context": [
-      "agent_io_boundaries"
+      "agent_io_boundaries",
+      "scan_policy"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +30,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "16440984b41c00f9ad3c00ff8146f8ef0a71775cfae1e0d3800987cea0e69e82",
+    "manifest_sha256": "bab0e51c1f0a0849b32648b4171dff9069f5555cf98b74d1ca460e8dd4c72637",
     "sanitized_sha256": "c0005c155384ed3ef6a7fc7c64f13b74285945f7730ace3903c33c813df24dc2",
     "source_sha256": "b34a564b300023407053a45d02e9a9aa662add202ecb5663faf218909af02c34"
   },

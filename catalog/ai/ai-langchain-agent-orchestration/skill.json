@@ -15,15 +15,21 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "workflow_review_scope"
+    ],
     "produces_artifacts": [
-      "agent_workflow_map"
+      "agent_workflow_map",
+      "tool_routing_plan"
     ],
     "produces_evidence": [
-      "orchestration_notes"
+      "validation_checkpoint_plan"
     ],
     "requires_context": [
-      "workflow_review_scope"
+      "agent_task",
+      "available_tools",
+      "data_sources",
+      "allowed_actions"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -31,7 +37,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "148c809a32d1d90d3b05c260702247241c0c54fe8c7044f1841c61b2b309d188",
+    "manifest_sha256": "4e5b3f588b7d2e480bab5448e4e964a8ce57e93b4d573d6cd72cb79a7a2ee434",
     "sanitized_sha256": "c6d80969d90e023528dc6684e04bd64c029a95bb252b6957dcabfab05e78855f",
     "source_sha256": "f3da5086b6bffa6fb5a36657bc3780e748435415c4fd72ffd60bfac70093ab77"
   },

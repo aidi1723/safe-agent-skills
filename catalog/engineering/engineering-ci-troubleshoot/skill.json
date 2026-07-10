@@ -16,12 +16,19 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "regression_test_plan"
+    ],
+    "produces_artifacts": [
+      "ci_fix_plan"
+    ],
     "produces_evidence": [
       "ci_check_report"
     ],
     "requires_context": [
-      "regression_test_plan"
+      "pipeline_failure",
+      "ci_logs",
+      "pipeline_configuration"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +36,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "5d85728fe9db973a8ec59b0675ae78f70a7e5129f7f07a86dd4f4c9dfbd9cd48",
+    "manifest_sha256": "88bac8fd443aeceb0955fe654640cb8d20417048f683732ef9ac84fcd957361d",
     "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
     "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
   },

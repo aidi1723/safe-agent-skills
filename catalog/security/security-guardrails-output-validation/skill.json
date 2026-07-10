@@ -13,7 +13,9 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "output_contract"
+    ],
     "produces_artifacts": [
       "validation_contract"
     ],
@@ -21,7 +23,9 @@
       "guardrail_validation_report"
     ],
     "requires_context": [
-      "output_contract"
+      "output_under_review",
+      "validation_rules",
+      "failure_policy"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +33,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "4bbd217e7aa0b3c07fa9e0138f0362c188335b719fd4c4b624ea9486b92f3c26",
+    "manifest_sha256": "d7f5b875e97a9cad24aa899a7338873c30b32b3611765f22bc2d765612d94476",
     "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
     "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
   },

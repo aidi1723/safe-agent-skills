@@ -16,15 +16,21 @@
       "tokens": 2
     },
     "idempotent": false,
-    "optional_context": [],
+    "optional_context": [
+      "requirements_brief"
+    ],
     "produces_artifacts": [
-      "build_artifact"
+      "build_artifact",
+      "release_handoff_notes"
     ],
     "produces_evidence": [
-      "build_readiness_report"
+      "build_readiness_report",
+      "smoke_test_result"
     ],
     "requires_context": [
-      "requirements_brief"
+      "project_context",
+      "build_command",
+      "release_target"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -32,7 +38,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f77231eccc73b536635c02815494863135476b9957f5f4aedf554573990a60ba",
+    "manifest_sha256": "62abcb4d9c5adf34839c2b2df3020b0ece5ca4951d50f408fb0d079ec29d5b11",
     "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
     "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
   },

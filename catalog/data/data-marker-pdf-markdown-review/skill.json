@@ -21,7 +21,9 @@
       "extraction_quality_notes"
     ],
     "requires_context": [
-      "source_documents"
+      "source_pdf",
+      "conversion_output",
+      "quality_criteria"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +31,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "19114d0123145c504179c62b025b78ec9c65a73383e46c57b19c841b8a5dfd2e",
+    "manifest_sha256": "78c777f6942f8ebae57edae80e8f888c1d76163137c984dcc66b1543ea2872ba",
     "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
     "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
   },

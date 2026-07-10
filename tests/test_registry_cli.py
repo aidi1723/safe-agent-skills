@@ -93,6 +93,7 @@ class RegistryCliTest(unittest.TestCase):
             )
 
         payload = json.loads(out.getvalue())
+        self.assertNotRegex(out.getvalue(), r"\b(?:NaN|Infinity|-Infinity)\b")
         self.assertEqual(exit_code, 2)
         self.assertEqual(len(payload["scenario_ids"]), 8)
         self.assertLess(payload["coverage_ratio"], 1.0)
@@ -110,6 +111,23 @@ class RegistryCliTest(unittest.TestCase):
                     "1.1",
                 ]
             )
+
+    def test_contract_check_rejects_nonfinite_thresholds_without_json_output(self):
+        for value in ["nan", "inf", "-inf"]:
+            with self.subTest(value=value):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out), self.assertRaises(SystemExit):
+                    main(
+                        [
+                            "contract-check",
+                            "--registry",
+                            "catalog",
+                            "--bundles",
+                            "bundles/index.json",
+                            f"--minimum-ratio={value}",
+                        ]
+                    )
+                self.assertEqual(out.getvalue(), "")
         with self.assertRaises(SystemExit):
             main(
                 [
@@ -4239,6 +4257,8 @@ class RegistryCliTest(unittest.TestCase):
         for skill in payload["skills"]:
             self.assertNotIn("schema_version", skill.get("contract", {}))
             self.assertNotIn("approval_classes", skill.get("contract", {}))
+            if skill["name"] == "codebase-explore-map":
+                self.assertNotIn("contract", skill)
         self.assertEqual(payload_shape_sha256(payload), ROUTER_SCHEMA_V1_SHAPE_SHA256)
 
     def test_task_pack_mesh_schema_v1_preserves_current_contract_shape(self):

@@ -57,6 +57,31 @@ class ValidationTest(unittest.TestCase):
         self.assertIn("schema-invalid-contract-stage", issue_ids)
         self.assertIn("schema-invalid-contract-capability", issue_ids)
 
+    def test_validate_contract_rejects_boolean_and_float_integer_fields(self):
+        invalid_contracts = [
+            {"schema_version": True, "stage_hint": "review", "capability_vector": ["code.review"]},
+            {"schema_version": 2.0, "stage_hint": "review", "capability_vector": ["code.review"]},
+            {"schema_version": 2, "stage_hint": "review", "capability_vector": ["code.review"], "cost_weight": True},
+            {
+                "schema_version": 2,
+                "stage_hint": "review",
+                "capability_vector": ["code.review"],
+                "estimated_cost": {"time": True, "tokens": 1, "runtime": 0},
+            },
+            {
+                "schema_version": 2,
+                "stage_hint": "review",
+                "capability_vector": ["code.review"],
+                "estimated_cost": {"time": 2.0, "tokens": 1, "runtime": 0},
+            },
+        ]
+
+        for contract in invalid_contracts:
+            with self.subTest(contract=contract):
+                issues: list[dict] = []
+                validate_contract({"name": "example-skill", "contract": contract}, Path("skill.json"), issues)
+                self.assertTrue(issues)
+
     def test_sanitization_report_allows_metadata_only_manifest_reseal(self):
         issues: list[dict] = []
         shared = {

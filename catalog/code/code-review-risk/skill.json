@@ -15,13 +15,15 @@
     "idempotent": true,
     "optional_context": [],
     "produces_artifacts": [
-      "risk_review_report"
+      "code_review_findings"
     ],
     "produces_evidence": [
-      "review_findings"
+      "missing_test_notes",
+      "residual_risk_summary"
     ],
     "requires_context": [
-      "change_set"
+      "change_set",
+      "review_scope"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +31,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "7a6bc32e2dc663039434890156fa232048d966d2b46c84310efe8b2170be4bcd",
+    "manifest_sha256": "fdc76e9432bbceab1737e3b04556158cc64656df5fdffdb7d4ee834ad32493f0",
     "sanitized_sha256": "e0075ddcaa3e33add5ea5b0a363211b65e001df8574c45156623fa1ea1c14bdb",
     "source_sha256": "d15096f5f9f453ddef5edbd8eae0bbe729223174cd55691f5178f44eb5547a52"
   },

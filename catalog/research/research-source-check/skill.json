@@ -23,7 +23,8 @@
       "claim_source_mapping"
     ],
     "requires_context": [
-      "claims_to_verify"
+      "claims_to_verify",
+      "source_requirements"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -31,7 +32,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "7fc028d58c45ce8999b84b7b30cd2a8ff3aa0f1d73283f90196f5a6339b091e5",
+    "manifest_sha256": "c06e221b362cfee1307b23d45683145a7d45644add69a7ffad20e6d6660fd1d7",
     "sanitized_sha256": "ebcfc0b49dfde45a231e2c825aac9c26b3220038246fa85be846bc2b53f45bb3",
     "source_sha256": "6e4498e8804857bafc1994ec32d3fbf1cc97446745f6828a8f8146fe937f3e8b"
   },

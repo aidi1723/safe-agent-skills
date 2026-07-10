@@ -13,7 +13,9 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "prompt_or_skill_source"
+    ],
     "produces_artifacts": [
       "prompt_injection_review"
     ],
@@ -21,7 +23,8 @@
       "policy_conformance_findings"
     ],
     "requires_context": [
-      "prompt_or_skill_source"
+      "prompt_or_agent_instructions",
+      "authority_boundary"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +32,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "99f5653e4219e2596d07c05817e0dbb25399e6d225f9569c328116551035edb7",
+    "manifest_sha256": "16e1380a9e0793e1599f38516d30b556ef51bff6a4c5f57cc4c0d599c3a80079",
     "sanitized_sha256": "8e303e1dc3b88bbeedbe025d533ef50fe6aa22e588e0778ee581d21be78eb56f",
     "source_sha256": "8fb186df92da0dfc902b990c5a9b27de2aca1aa682ea27123e83e14f7ccddbfa"
   },

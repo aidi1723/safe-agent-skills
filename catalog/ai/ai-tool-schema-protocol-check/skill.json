@@ -15,12 +15,18 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "routing_selection_plan"
+    ],
+    "produces_artifacts": [
+      "schema_contract_map"
+    ],
     "produces_evidence": [
-      "tool_schema_contract_report"
+      "protocol_validation_cases"
     ],
     "requires_context": [
-      "routing_selection_plan"
+      "tool_or_protocol_schema",
+      "arguments_or_payload"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -28,7 +34,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f97c66b6dfcf6360a3dd2c6205cbb754137b646842ec4cb6bad14e1fd433dc0e",
+    "manifest_sha256": "6e8d9af58c147850e22dc459b2f21a77131d4f96ba29e223447469babeb75ea9",
     "sanitized_sha256": "d105aea8ae5d8446d2a4ea7d7cd54dce1e569f4761034e5a49a1e7b7ecc7cbee",
     "source_sha256": "8f348a217dd395e8b3b8122050fa2628ce76df4616299cf06c08b4a4ac466145"
   },

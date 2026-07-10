@@ -21,7 +21,8 @@
       "partition_quality_report"
     ],
     "requires_context": [
-      "source_documents"
+      "source_documents",
+      "partition_requirements"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +30,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "b765a4686a338b2ac65830a9bd7eaf70f348a436c8dafbab77e8338c2b32415a",
+    "manifest_sha256": "38ed35422d67a904c22569c5724ed6d99efd5b69bede36a0daa5e7e03c4b1088",
     "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
     "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
   },

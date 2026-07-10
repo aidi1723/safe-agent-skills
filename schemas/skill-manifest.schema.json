@@ -63,7 +63,7 @@
         },
         "subcategory": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)?$"
+          "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z][a-z0-9_-]*)?$"
         },
         "task_intent": {
           "type": "string"
@@ -297,8 +297,31 @@
       }
     },
     "contract": {
+      "oneOf": [
+        {
+          "$ref": "https://onecode.dev/schemas/contract-v2.schema.json"
+        },
+        {
+          "$ref": "#/$defs/legacyContract"
+        }
+      ]
+    },
+    "approved_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "approval_note": {
+      "type": "string"
+    }
+  },
+  "$defs": {
+    "legacyContract": {
       "type": "object",
       "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 1
+        },
         "requires_context": {
           "type": "array",
           "items": {
@@ -342,6 +365,20 @@
           },
           "uniqueItems": true
         },
+        "excludes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
+        "requires_after": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "uniqueItems": true
+        },
         "cost_weight": {
           "type": "integer",
           "minimum": 1,
@@ -349,13 +386,6 @@
         }
       },
       "additionalProperties": false
-    },
-    "approved_at": {
-      "type": "string",
-      "format": "date-time"
-    },
-    "approval_note": {
-      "type": "string"
     }
   },
   "additionalProperties": false

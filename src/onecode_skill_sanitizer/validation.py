@@ -334,7 +334,9 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
         if field not in allowed_fields:
             add_issue(issues, "schema-invalid-contract-field", path, f"contract.{field} is not supported")
     contract_version = contract.get("schema_version")
-    if contract_version not in {None, 1, 2}:
+    if contract_version is not None and (
+        not isinstance(contract_version, int) or isinstance(contract_version, bool) or contract_version not in {1, 2}
+    ):
         add_issue(issues, "schema-invalid-contract-version", path, "contract.schema_version must be 1 or 2")
     validate_string_list(contract.get("requires_context"), path, issues, "requires_context", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
     validate_string_list(contract.get("optional_context"), path, issues, "optional_context", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
@@ -367,7 +369,9 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
     if payload.get("name") in requires_after:
         add_issue(issues, "schema-invalid-contract-conflict", path, "contract.requires_after cannot include the skill itself")
     cost_weight = contract.get("cost_weight")
-    if cost_weight is not None and (not isinstance(cost_weight, int) or cost_weight < 1 or cost_weight > 10):
+    if cost_weight is not None and (
+        not isinstance(cost_weight, int) or isinstance(cost_weight, bool) or cost_weight < 1 or cost_weight > 10
+    ):
         add_issue(issues, "schema-invalid-contract-cost", path, "contract.cost_weight must be an integer from 1 to 10")
     approval_classes = validate_string_list(
         contract.get("approval_classes"),

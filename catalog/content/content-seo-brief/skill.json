@@ -14,12 +14,18 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "requirements_brief",
+      "source_material"
+    ],
     "produces_artifacts": [
-      "seo_copy"
+      "seo_content_brief",
+      "claim_risk_notes"
     ],
     "requires_context": [
-      "requirements_brief"
+      "topic",
+      "audience",
+      "search_goal"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -27,7 +33,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "936d9fbf76dd853c4f639b2caa8519b6049973c8a6bb82629a136f635470f2da",
+    "manifest_sha256": "82b03cc0d2505570c110b264461ec7ff67089ca2e2376bdacebbcb77bce6e818",
     "sanitized_sha256": "98555332f20c1125e1439551a0b5ed6c7182477697a45013eac6edf0c323e2ed",
     "source_sha256": "ac5e5582f4911c2f2a043db250b318476b19db59faeb1338359366fa260a10c0"
   },

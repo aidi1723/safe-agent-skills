@@ -3,6 +3,7 @@ from __future__ import annotations
 import argparse
 import html
 import json
+import math
 import re
 import tempfile
 from datetime import datetime, timezone
@@ -718,7 +719,7 @@ def build_task_pack(
     task_taxonomy = classify_skill("task", task).to_json()
     candidate_limit = max(top, max_skills or top) if router_mode in {"scenario", "mesh"} else top
     selected = select_skills_for_task(registry_dir, task_taxonomy, task, include_review_required)[:candidate_limit]
-    skills = [load_skill_pack_item(registry_dir, entry) for entry in selected]
+    skills = [project_legacy_contracts(load_skill_pack_item(registry_dir, entry)) for entry in selected]
     bundles = []
     if include_bundles:
         bundle_index_path = bundles_path or Path("bundles/index.json")
@@ -727,7 +728,7 @@ def build_task_pack(
         bundle_index_path = bundles_path or Path("bundles/index.json")
         bundles_index = load_bundles_index(bundle_index_path)
         selected_by_name = {skill["name"]: skill for skill in skills}
-        for skill in load_trusted_skill_pack_items(registry_dir):
+        for skill in project_legacy_contracts(load_trusted_skill_pack_items(registry_dir)):
             selected_by_name.setdefault(skill["name"], skill)
         resolved_overlap_path = resolve_overlap_groups_path(registry_dir, overlap_groups_path)
         overlap_groups = load_overlap_groups(resolved_overlap_path) if resolved_overlap_path is not None else None
@@ -1336,6 +1337,364 @@ LEGACY_CONTRACT_FIELDS = {
     "requires_after",
     "cost_weight",
 }
+LEGACY_CONTRACTS = {
+    "ai-langchain-agent-orchestration": {
+        "capability_vector": [
+            "ai.orchestration",
+            "ai.workflow"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+            "agent_workflow_map"
+        ],
+        "produces_evidence": [
+            "orchestration_notes"
+        ],
+        "requires_context": [
+            "workflow_review_scope"
+        ],
+        "stage_hint": "planning"
+    },
+    "ai-opensquilla-metaskill-workflow": {
+        "capability_vector": [
+            "ai.metaskill",
+            "ai.bundle_quality"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+            "workflow_review_scope"
+        ],
+        "produces_evidence": [
+            "bundle_quality_notes"
+        ],
+        "requires_context": [
+            "user_request",
+            "workspace_context"
+        ],
+        "stage_hint": "preflight"
+    },
+    "ai-opensquilla-token-routing-pattern": {
+        "capability_vector": [
+            "ai.routing",
+            "ai.skill_selection"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+            "routing_selection_plan"
+        ],
+        "produces_evidence": [
+            "skill_selection_notes"
+        ],
+        "requires_context": [
+            "workflow_review_scope"
+        ],
+        "stage_hint": "planning"
+    },
+    "ai-output-schema-eval": {
+        "capability_vector": [
+            "ai.eval",
+            "ai.output_schema"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "output_schema_eval_report"
+        ],
+        "requires_context": [
+            "routing_selection_plan"
+        ],
+        "stage_hint": "review"
+    },
+    "ai-rule-failure-log-synthesis": {
+        "capability_vector": [
+            "ai.rule_synthesis"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "failure_rule_synthesis_report"
+        ],
+        "requires_context": [
+            "tool_schema_contract_report",
+            "output_schema_eval_report",
+            "regression_test_evidence",
+            "ci_check_report"
+        ],
+        "stage_hint": "verification"
+    },
+    "ai-tool-schema-protocol-check": {
+        "capability_vector": [
+            "ai.tool_schema",
+            "ai.routing_contract"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "tool_schema_contract_report"
+        ],
+        "requires_context": [
+            "routing_selection_plan"
+        ],
+        "stage_hint": "review"
+    },
+    "business-requirements-brief": {
+        "capability_vector": [
+            "business.requirements"
+        ],
+        "cost_weight": 1,
+        "produces_artifacts": [
+            "requirements_brief"
+        ],
+        "requires_context": [
+            "task_brief"
+        ],
+        "stage_hint": "planning"
+    },
+    "code-test-regression": {
+        "capability_vector": [
+            "code.test"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+            "regression_test_plan"
+        ],
+        "produces_evidence": [
+            "regression_test_evidence"
+        ],
+        "requires_context": [
+            "routing_selection_plan"
+        ],
+        "stage_hint": "verification"
+    },
+    "content-seo-brief": {
+        "capability_vector": [
+            "content.seo"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+            "seo_copy"
+        ],
+        "requires_context": [
+            "requirements_brief"
+        ],
+        "stage_hint": "planning"
+    },
+    "content-social-post": {
+        "capability_vector": [
+            "content.social"
+        ],
+        "cost_weight": 1,
+        "produces_artifacts": [
+            "social_post_copy"
+        ],
+        "requires_context": [
+            "seo_copy"
+        ],
+        "stage_hint": "review"
+    },
+    "design-motion-interaction-polish": {
+        "capability_vector": [
+            "design.motion_polish"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "motion_polish_report"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "build_artifact",
+            "ui_review_report"
+        ],
+        "stage_hint": "review"
+    },
+    "design-premium-landing-page": {
+        "capability_vector": [
+            "design.premium_landing"
+        ],
+        "cost_weight": 3,
+        "produces_evidence": [
+            "premium_landing_report"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "seo_copy",
+            "build_artifact"
+        ],
+        "stage_hint": "review"
+    },
+    "design-system-consistency": {
+        "capability_vector": [
+            "design.system_consistency"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "design_system_report"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "build_artifact"
+        ],
+        "stage_hint": "review"
+    },
+    "design-tailwind-radix-system": {
+        "capability_vector": [
+            "design.tailwind_radix_system"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "tailwind_radix_system_report"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "build_artifact"
+        ],
+        "stage_hint": "review"
+    },
+    "design-ui-review": {
+        "capability_vector": [
+            "design.ui_review"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "ui_review_report"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "build_artifact"
+        ],
+        "stage_hint": "review"
+    },
+    "design-visual-quality-review": {
+        "capability_vector": [
+            "design.visual_quality"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "visual_quality_report"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "build_artifact",
+            "ui_review_report"
+        ],
+        "stage_hint": "review"
+    },
+    "engineering-build-release": {
+        "capability_vector": [
+            "engineering.build_release"
+        ],
+        "cost_weight": 2,
+        "produces_artifacts": [
+            "build_artifact"
+        ],
+        "produces_evidence": [
+            "build_readiness_report"
+        ],
+        "requires_context": [
+            "requirements_brief"
+        ],
+        "stage_hint": "execution"
+    },
+    "engineering-ci-troubleshoot": {
+        "capability_vector": [
+            "engineering.ci"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "ci_check_report"
+        ],
+        "requires_context": [
+            "regression_test_plan"
+        ],
+        "stage_hint": "verification"
+    },
+    "execution-browser-check": {
+        "capability_vector": [
+            "execution.browser_check"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "browser_check_report"
+        ],
+        "requires_context": [
+            "build_artifact",
+            "ui_review_report"
+        ],
+        "stage_hint": "verification"
+    },
+    "execution-browser-use-web-task": {
+        "capability_vector": [
+            "execution.browser_agent"
+        ],
+        "cost_weight": 3,
+        "produces_evidence": [
+            "browser_agent_plan"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "build_artifact"
+        ],
+        "stage_hint": "verification"
+    },
+    "execution-playwright-browser-automation": {
+        "capability_vector": [
+            "execution.playwright_browser"
+        ],
+        "cost_weight": 3,
+        "produces_evidence": [
+            "browser_automation_report",
+            "browser_check_report"
+        ],
+        "requires_context": [
+            "build_artifact",
+            "ui_review_report"
+        ],
+        "stage_hint": "verification"
+    },
+    "execution-publish-check": {
+        "capability_vector": [
+            "execution.publish_check"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "publish_readiness_report"
+        ],
+        "requires_context": [
+            "requirements_brief",
+            "ui_review_report",
+            "browser_check_report"
+        ],
+        "stage_hint": "verification"
+    },
+    "security-supply-chain-review": {
+        "capability_vector": [
+            "security.supply_chain"
+        ],
+        "cost_weight": 2,
+        "produces_evidence": [
+            "supply_chain_review_report"
+        ],
+        "requires_context": [
+            "routing_selection_plan"
+        ],
+        "stage_hint": "review"
+    }
+}
+NEW_V2_CONTRACT_SKILLS = {
+    "ai-llamaindex-rag-knowledge-workflow",
+    "code-ast-refactor-safety",
+    "code-dead-path-cleanup-review",
+    "code-python-debug",
+    "code-review-risk",
+    "code-simplify-refactor-plan",
+    "codebase-explore-map",
+    "data-haystack-rag-pipeline",
+    "data-marker-pdf-markdown-review",
+    "data-markitdown-file-to-markdown",
+    "data-qdrant-vector-retrieval",
+    "data-unstructured-document-partition",
+    "research-source-check",
+    "security-guardrails-output-validation",
+    "security-llm-guard-io-scanning",
+    "security-prompt-injection-review",
+}
 
 
 def project_legacy_contracts(value: object) -> object:
@@ -1346,7 +1705,13 @@ def project_legacy_contracts(value: object) -> object:
     projected = {key: project_legacy_contracts(item) for key, item in value.items()}
     contract = projected.get("contract")
     if isinstance(contract, dict):
-        projected["contract"] = {key: item for key, item in contract.items() if key in LEGACY_CONTRACT_FIELDS}
+        name = projected.get("name")
+        if name in NEW_V2_CONTRACT_SKILLS:
+            projected.pop("contract")
+        elif name in LEGACY_CONTRACTS:
+            projected["contract"] = LEGACY_CONTRACTS[name]
+        else:
+            projected["contract"] = {key: item for key, item in contract.items() if key in LEGACY_CONTRACT_FIELDS}
     return projected
 
 
@@ -1603,7 +1968,7 @@ def contract_check_command(args: argparse.Namespace) -> int:
         raise SystemExit(str(exc)) from exc
     result["minimum_ratio"] = args.minimum_ratio
     result["status"] = "ok" if result["coverage_ratio"] >= args.minimum_ratio else "failed"
-    print(json.dumps(result, indent=2, sort_keys=True))
+    print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
     return 0 if result["status"] == "ok" else 2
 
 
@@ -3250,7 +3615,7 @@ def ratio(value: str) -> float:
         parsed = float(value)
     except ValueError as exc:
         raise argparse.ArgumentTypeError("must be a number from 0 to 1") from exc
-    if parsed < 0 or parsed > 1:
+    if not math.isfinite(parsed) or parsed < 0 or parsed > 1:
         raise argparse.ArgumentTypeError("must be from 0 to 1")
     return parsed
 

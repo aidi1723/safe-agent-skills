@@ -13,15 +13,20 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "workspace_context"
+    ],
     "produces_artifacts": [
-      "codebase_map"
+      "codebase_map",
+      "change_surface_map"
     ],
     "produces_evidence": [
-      "repository_inventory"
+      "repository_inventory",
+      "unresolved_assumptions"
     ],
     "requires_context": [
-      "workspace_context"
+      "repository",
+      "change_goal"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +34,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "072bc85a691aadd6962b8901581bdbc0b051ebc708ace8d505dc8118f0e5655f",
+    "manifest_sha256": "e0c7d5d60e3df4f3e75d14844b96b125dde6f3fc0ecce508536666b37041bbad",
     "sanitized_sha256": "8db14ae97ba5d8fe2bbd733232ba7c3f2167b17b90e1ce30eb45c52a3c17e679",
     "source_sha256": "dd7d7e077a8e1dd3226538fa363ff4d54a90b1f66a9db94dbd94f4d567a030ea"
   },

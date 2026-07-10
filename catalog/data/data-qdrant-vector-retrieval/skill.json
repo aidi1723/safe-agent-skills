@@ -21,7 +21,9 @@
       "retrieval_quality_notes"
     ],
     "requires_context": [
-      "retrieval_requirements"
+      "retrieval_corpus",
+      "query_requirements",
+      "metadata_filters"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +31,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "7b3a15fe9b4f3eebcefe2b8e793446071a3028a11aab755d5d864bc4388f73a6",
+    "manifest_sha256": "ca760335359488ad48ad85b96ccf3333030fdd1494712671b99b9f1839d323c5",
     "sanitized_sha256": "070df168c4036c32e63228bfa32f2f416836ff0a30e592fc327c2b8b160fee60",
     "source_sha256": "fc6a662dde8dd74bd7f6bbd81e12f9a0eabb35973ba3395ec3dd2a5ef63ebe01"
   },

@@ -14,15 +14,21 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
-    "produces_evidence": [
-      "failure_rule_synthesis_report"
-    ],
-    "requires_context": [
+    "optional_context": [
       "tool_schema_contract_report",
       "output_schema_eval_report",
       "regression_test_evidence",
       "ci_check_report"
+    ],
+    "produces_artifacts": [
+      "candidate_rule_set"
+    ],
+    "produces_evidence": [
+      "false_positive_risk_review"
+    ],
+    "requires_context": [
+      "sanitized_failure_logs",
+      "failed_rules_or_verifiers"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -37,7 +43,7 @@
     }
   ],
   "hashes": {
-    "manifest_sha256": "9d1a26722db22ce414d74942ca23e07e4a2bc97497e9146f6945a6f8a0f4b74e",
+    "manifest_sha256": "dc8d0bb5759d72772512cd21f54a7edc6b030ded4f0dca1452f30af6a7e58045",
     "sanitized_sha256": "4ffdf950718a0623bbafacd0decdb672d23e6515f155dd884a8b7cd4a144c7a1",
     "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
   },

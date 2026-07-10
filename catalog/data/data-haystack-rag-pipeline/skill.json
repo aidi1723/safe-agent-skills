@@ -15,13 +15,15 @@
     "idempotent": true,
     "optional_context": [],
     "produces_artifacts": [
-      "rag_pipeline_plan"
+      "rag_pipeline_map"
     ],
     "produces_evidence": [
-      "retrieval_grounding_notes"
+      "grounding_and_evaluation_notes"
     ],
     "requires_context": [
-      "knowledge_sources"
+      "application_goal",
+      "knowledge_sources",
+      "retrieval_requirements"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +31,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "adbea1d8001c34a44b1f73172f0b872c49ec5153026139850d83dfbdf9d63ac3",
+    "manifest_sha256": "dea0a76d00de8353e843df58e79e965485c422391e45274cba3eac769fe9dffa",
     "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
     "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
   },

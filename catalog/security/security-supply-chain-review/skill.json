@@ -14,12 +14,20 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
+    "optional_context": [
+      "routing_selection_plan"
+    ],
+    "produces_artifacts": [
+      "supply_chain_risk_summary",
+      "allowed_use_recommendation"
+    ],
     "produces_evidence": [
       "supply_chain_review_report"
     ],
     "requires_context": [
-      "routing_selection_plan"
+      "source_or_package_metadata",
+      "provenance_record",
+      "intended_use"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -27,7 +35,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e63b2f02d441a72ae5865cb730a0ef40be67e6410f8d5ae1491cb168a856242f",
+    "manifest_sha256": "daff59908726c238767c7e65c51a5a87a5a8d618b101216351145f8f49be4ffc",
     "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
     "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
   },

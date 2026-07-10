@@ -14,14 +14,18 @@
       "tokens": 2
     },
     "idempotent": true,
-    "optional_context": [],
-    "produces_evidence": [
-      "motion_polish_report"
-    ],
-    "requires_context": [
+    "optional_context": [
       "requirements_brief",
       "build_artifact",
       "ui_review_report"
+    ],
+    "produces_evidence": [
+      "motion_polish_plan",
+      "motion_polish_report"
+    ],
+    "requires_context": [
+      "interface_under_review",
+      "interaction_goals"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +33,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "980d0833e55008ea2bf826b5c57a5d4e018bb68343eadcba05b27ad8a54256a6",
+    "manifest_sha256": "01b4d04f66985bfd475eb3efc51e7b4a1983d3b88a1361c0ceef2e1275ef9915",
     "sanitized_sha256": "9e5d6471343581814b7e9d10f63e6185e8ac6fe285c193bd4784e43d4439290b",
     "source_sha256": "c166662fd2ea04b63f370d46b5b4115f4333ae44255ed6dceff4b56d5afa1c17"
   },

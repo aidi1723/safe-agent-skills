@@ -21,7 +21,8 @@
       "conversion_report"
     ],
     "requires_context": [
-      "source_documents"
+      "source_files",
+      "conversion_requirements"
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
@@ -29,7 +30,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f8cde87c1036e4ab7aceb9b835d720ce753aec7ef152afd7fa9606f69d4d043d",
+    "manifest_sha256": "6e35a4fcb3ffb1a0c030c9a26b265aee84c20b446880157f7a84eb3b208e2dfe",
     "sanitized_sha256": "8c63709c028c08f23611f3e3df987de92098ea486be6b8a1eeaace0213df3c0c",
     "source_sha256": "f5a023b31314e3d488a1c87244c3574592860ffc8452a804640b604cf7e8733b"
   },

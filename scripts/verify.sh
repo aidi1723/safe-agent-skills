@@ -70,6 +70,36 @@ python3 -m json.tool schemas/sanitization-report.schema.json >/dev/null
 python3 -m json.tool schemas/registry-index.schema.json >/dev/null
 python3 -m json.tool schemas/verify-report.schema.json >/dev/null
 python3 -m json.tool schemas/contract-v2.schema.json >/dev/null
+PYTHONPATH=src python3 - <<'PY'
+import json
+from pathlib import Path
+
+from jsonschema import Draft202012Validator, validators
+from referencing import Registry, Resource
+
+contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
+manifest_schema = json.loads(Path("schemas/skill-manifest.schema.json").read_text(encoding="utf-8"))
+Draft202012Validator.check_schema(contract_schema)
+Draft202012Validator.check_schema(manifest_schema)
+registry = Registry().with_resource(contract_schema["$id"], Resource.from_contents(contract_schema))
+strict_type_checker = Draft202012Validator.TYPE_CHECKER.redefine(
+    "integer", lambda checker, value: isinstance(value, int) and not isinstance(value, bool)
+)
+strict_validator = validators.extend(Draft202012Validator, type_checker=strict_type_checker)
+contract_validator = strict_validator(contract_schema)
+manifest_validator = strict_validator(manifest_schema, registry=registry)
+validated = 0
+for manifest_path in sorted(Path("catalog").glob("*/*/skill.json")):
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    contract = manifest.get("contract")
+    if not isinstance(contract, dict) or contract.get("schema_version") != 2:
+        continue
+    contract_validator.validate(contract)
+    manifest_validator.validate(manifest)
+    validated += 1
+if validated < 39:
+    raise SystemExit(f"expected at least 39 Contract v2 manifests, validated {validated}")
+PY
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null
