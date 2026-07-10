@@ -3904,6 +3904,31 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("- evidence fields: `status`, `evidence`, `failed_checks`, `unresolved_assumptions`, `residual_risks`", markdown)
         self.assertIn("method-only", markdown.lower())
 
+    def test_smart_schema_v1_preserves_current_contract(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    "build a landing page and prepare launch checks",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--schema-version",
+                    "1",
+                    "--format",
+                    "json",
+                ]
+            )
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["schema_version"], 1)
+        self.assertEqual(payload["router"]["mode"], "deterministic_mesh_router")
+        self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
+        self.assertIn("selection_trace", payload)
+        self.assertIn("completion_contract", payload)
+
     def test_task_pack_simple_router_remains_backward_compatible(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

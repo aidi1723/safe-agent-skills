@@ -2798,6 +2798,7 @@ def build_parser() -> argparse.ArgumentParser:
     task_pack_parser.add_argument("--invariants", action="append")
     task_pack_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
     task_pack_parser.add_argument("--overlap-groups")
+    task_pack_parser.add_argument("--schema-version", type=int, choices=[1])
     task_pack_parser.set_defaults(func=task_pack_command)
 
     smart_parser = subparsers.add_parser("smart")
@@ -2809,6 +2810,7 @@ def build_parser() -> argparse.ArgumentParser:
     smart_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
     smart_parser.add_argument("--max-skills", type=int, default=8)
     smart_parser.add_argument("--format", choices=["json", "markdown"], default="json")
+    smart_parser.add_argument("--schema-version", type=int, choices=[1])
     smart_parser.set_defaults(func=smart_command)
 
     verify_parser = subparsers.add_parser("verify")

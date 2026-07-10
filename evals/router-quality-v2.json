@@ -1,0 +1,617 @@
+{
+  "schema_version": 2,
+  "dataset": "router-quality-v2-baseline",
+  "split": "regression",
+  "case_count": 43,
+  "cases": [
+    {
+      "id": "website-launch",
+      "task": "build a product website and prepare launch checks",
+      "router": "scenario",
+      "expected_scenario": "website-build-launch",
+      "expected_task_type": "website_build",
+      "expected_skills": [
+        "business-requirements-brief",
+        "design-ui-review",
+        "execution-publish-check"
+      ]
+    },
+    {
+      "id": "code-review-hardening",
+      "task": "review generated code and harden tests before accepting the PR",
+      "router": "scenario",
+      "expected_scenario": "code-review-hardening",
+      "expected_task_type": "code_review",
+      "expected_skills": [
+        "code-review-risk",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "ai-interface-design-polish",
+      "task": "用 UI-UX-Pro-Max 定设计系统，Visual Designer 把控视觉，CSS 动画工具提升 AI 界面质感",
+      "router": "scenario",
+      "expected_scenario": "website-build-launch",
+      "expected_task_type": "website_build",
+      "expected_skills": [
+        "design-ui-review",
+        "design-system-consistency",
+        "design-motion-interaction-polish"
+      ]
+    },
+    {
+      "id": "codebase-change-lifecycle",
+      "task": "Explore 摸清项目地图，Code Review 把关质量，Debugger 定位疑难 bug，Test Engineer 和 Simplify 完善工程全流程",
+      "router": "scenario",
+      "expected_scenario": "codebase-change-lifecycle",
+      "expected_task_type": "codebase_change_lifecycle",
+      "expected_skills": [
+        "ecc-agent-coding-safety",
+        "code-python-debug",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "codebase-project-wide-review-cn",
+      "task": "审查整个项目，看是否还有需要优化和完善的地方",
+      "router": "scenario",
+      "expected_scenario": "codebase-change-lifecycle",
+      "expected_task_type": "codebase_change_lifecycle",
+      "expected_skills": [
+        "codebase-explore-map",
+        "code-review-risk",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "codebase-graph-intelligence",
+      "task": "use an MCP code graph index for call graph exploration and git diff impact analysis",
+      "router": "scenario",
+      "expected_scenario": "codebase-graph-intelligence",
+      "expected_task_type": "codebase_graph_intelligence",
+      "expected_skills": [
+        "code-codebase-graph-index-boundary",
+        "codebase-explore-map",
+        "ai-tool-schema-protocol-check"
+      ]
+    },
+    {
+      "id": "agent-planning-orchestration",
+      "task": "Deep Interview 厘清模糊需求，Plan 和 RALPlan 做方案拆解，Team 实现多 Agent 协同",
+      "router": "scenario",
+      "expected_scenario": "agent-planning-orchestration",
+      "expected_task_type": "agent_planning_orchestration",
+      "expected_skills": [
+        "business-requirements-brief",
+        "ai-opensquilla-metaskill-workflow",
+        "ai-autogen-multi-agent-review"
+      ]
+    },
+    {
+      "id": "content-video-production",
+      "task": "Copywriting 写文案，Content Strategy 规划内容矩阵，Remotion 实现一句话灵感到成片",
+      "router": "scenario",
+      "expected_scenario": "content-video-production",
+      "expected_task_type": "content_video_production",
+      "expected_skills": [
+        "content-strategy-matrix",
+        "media-remotion-video-production-boundary",
+        "media-video-script-review"
+      ]
+    },
+    {
+      "id": "agentic-media-production",
+      "task": "analyze a reference TikTok video, estimate media production cost, and plan an agentic Remotion render QA gate",
+      "router": "scenario",
+      "expected_scenario": "agentic-media-production",
+      "expected_task_type": "agentic_media_production",
+      "expected_skills": [
+        "media-agentic-video-pipeline-plan",
+        "media-remotion-video-production-boundary",
+        "media-asset-review"
+      ]
+    },
+    {
+      "id": "rag-agent",
+      "task": "design a RAG document agent with vector retrieval and citation checks",
+      "router": "scenario",
+      "expected_scenario": "rag-agent-knowledge-app",
+      "expected_task_type": "rag_agent",
+      "expected_skills": [
+        "ai-langchain-agent-orchestration",
+        "data-qdrant-vector-retrieval",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "agent-long-term-memory-governance",
+      "task": "design long-term graph memory for agents with remember recall forget improve and tenant isolation",
+      "router": "scenario",
+      "expected_scenario": "agent-long-term-memory-governance",
+      "expected_task_type": "agent_long_term_memory_governance",
+      "expected_skills": [
+        "ai-graph-memory-contract",
+        "data-rag-namespace-boundary-check",
+        "compliance-privacy-check"
+      ]
+    },
+    {
+      "id": "multi-platform-research-discovery",
+      "task": "用 Agent-Reach 做 Reddit、YouTube、GitHub 和小红书的全平台搜索采集，并输出带引用的研究简报",
+      "router": "scenario",
+      "expected_scenario": "multi-platform-research-discovery",
+      "expected_task_type": "multi_platform_research_discovery",
+      "expected_skills": [
+        "research-multi-platform-search-boundary",
+        "research-source-check",
+        "research-citation-evidence-map"
+      ]
+    },
+    {
+      "id": "investment-research-diligence",
+      "task": "参考 ai-berkshire 四大师方法论做价值投资研究，输出反方观点、估值假设和决策边界",
+      "router": "scenario",
+      "expected_scenario": "investment-research-diligence",
+      "expected_task_type": "investment_research_diligence",
+      "expected_skills": [
+        "business-value-investment-research-framework",
+        "business-investment-memo-review",
+        "compliance-regulated-industry-boundary"
+      ]
+    },
+    {
+      "id": "agent-role-library-governance",
+      "task": "借鉴 agency-agents 的全栈智能体团队服务，治理专家角色库、handoff 和多 agent 编排",
+      "router": "scenario",
+      "expected_scenario": "agent-role-library-governance",
+      "expected_task_type": "agent_role_library_governance",
+      "expected_skills": [
+        "ai-agent-role-library-governance",
+        "ai-langchain-agent-orchestration",
+        "security-supply-chain-review"
+      ]
+    },
+    {
+      "id": "design-md-system-governance",
+      "task": "按 Google design.md 规范整理 DESIGN.md，统一设计系统 token、组件状态和可访问性检查",
+      "router": "scenario",
+      "expected_scenario": "design-md-system-governance",
+      "expected_task_type": "design_md_system_governance",
+      "expected_skills": [
+        "design-design-md-system-contract",
+        "design-system-consistency",
+        "design-accessibility-check"
+      ]
+    },
+    {
+      "id": "private-communication-governance",
+      "task": "参考 SimpleX Chat 的隐私通讯模型，设计无用户标识、端到端加密和元数据最小化边界",
+      "router": "scenario",
+      "expected_scenario": "private-communication-governance",
+      "expected_task_type": "private_communication_governance",
+      "expected_skills": [
+        "compliance-private-communication-boundary",
+        "compliance-privacy-check",
+        "security-supply-chain-review"
+      ]
+    },
+    {
+      "id": "document-knowledge-base",
+      "task": "turn PDF and office documents into markdown chunks for a knowledge base",
+      "router": "scenario",
+      "expected_scenario": "document-to-knowledge-base",
+      "expected_task_type": "document_knowledge_base",
+      "expected_skills": [
+        "data-markitdown-file-to-markdown",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "data-analysis-report",
+      "task": "clean this spreadsheet dataset, analyze tables, and prepare chart report notes",
+      "router": "scenario",
+      "expected_scenario": "data-analysis-report",
+      "expected_task_type": "data_analysis",
+      "expected_skills": [
+        "data-quality-audit",
+        "data-table-analysis",
+        "data-visualization-plan"
+      ]
+    },
+    {
+      "id": "commerce-growth",
+      "task": "prepare marketplace listing keywords and buyer inquiry replies",
+      "router": "scenario",
+      "expected_scenario": "commerce-listing-growth",
+      "expected_task_type": "commerce_growth",
+      "expected_skills": [
+        "commerce-icbu-listing",
+        "commerce-product-keyword-plan",
+        "commerce-inquiry-reply"
+      ]
+    },
+    {
+      "id": "public-content-seo",
+      "task": "draft and fact check an SEO blog post with social copy",
+      "router": "scenario",
+      "expected_scenario": "content-seo-publication",
+      "expected_task_type": "content_seo",
+      "expected_skills": [
+        "content-seo-brief",
+        "research-source-check",
+        "content-editorial-review"
+      ]
+    },
+    {
+      "id": "agent-security",
+      "task": "review an agent workflow for prompt injection, connector permission, and sandbox guardrails",
+      "router": "scenario",
+      "expected_scenario": "security-agent-guardrails",
+      "expected_task_type": "agent_security",
+      "expected_skills": [
+        "security-prompt-injection-review",
+        "security-llm-guard-io-scanning",
+        "compliance-privacy-check"
+      ]
+    },
+    {
+      "id": "skill-router-review",
+      "task": "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
+      "router": "mesh",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ],
+      "expected_trace_selected": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ],
+      "expected_trace_required": [
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression",
+        "security-supply-chain-review"
+      ]
+    },
+    {
+      "id": "skill-router-mesh-trace-pruning",
+      "task": "优化技能库的自动推荐和任务编排能力",
+      "router": "mesh",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ],
+      "expected_trace_selected": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ],
+      "expected_trace_required": [
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression",
+        "security-supply-chain-review"
+      ],
+      "expected_trace_pruned": [
+        "execution-browser-check",
+        "execution-browser-use-web-task"
+      ]
+    },
+    {
+      "id": "skill-router-audit-followup",
+      "task": "继续，按照步骤，完成全部任务，以及审计报告给出的，更智能的解决方法",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-chinese-synonyms",
+      "task": "优化技能库的自动推荐和任务编排能力",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-typo-orchestration-followup",
+      "task": "继续，优化和编排sikll，继续补充和优化，做好记录和测试",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-update-record-followup",
+      "task": "写好更新记录后，继续优化任务",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "skill-router-project-release-followup",
+      "task": "继续项目复查收尾，写好更新日志和 GitHub 更新说明，验证后发布",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "execution-publish-check",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "claude-skills-backlog-coverage",
+      "task": "把剩余 claude-skills reference-only backlog 候选 skill 优化编排并纳入体系",
+      "router": "scenario",
+      "expected_scenario": "claude-skills-backlog-coverage",
+      "expected_task_type": "claude_skills_backlog_coverage",
+      "expected_skills": [
+        "business-claude-skills-backlog-orchestration",
+        "engineering-claude-skills-operations-review",
+        "compliance-claude-skills-regulated-review"
+      ]
+    },
+    {
+      "id": "claude-skills-candidate-map-coverage",
+      "task": "评估 claude skills candidate map 是否全部覆盖到 trusted 本地技能",
+      "router": "scenario",
+      "expected_scenario": "claude-skills-backlog-coverage",
+      "expected_task_type": "claude_skills_backlog_coverage",
+      "expected_skills": [
+        "ai-claude-skills-meta-workflow-review",
+        "security-supply-chain-review"
+      ]
+    },
+    {
+      "id": "skill-router-traditional-orchestration",
+      "task": "完善 skill 選擇與執行編排，避免錯誤調用不相關技能",
+      "router": "scenario",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_task_type": "skill_router_review",
+      "expected_skills": [
+        "ai-opensquilla-metaskill-workflow",
+        "ai-opensquilla-token-routing-pattern",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "website-cn-launch",
+      "task": "构建产品官网并准备上线发布检查",
+      "router": "scenario",
+      "expected_scenario": "website-build-launch",
+      "expected_task_type": "website_build",
+      "expected_skills": [
+        "business-requirements-brief",
+        "design-ui-review",
+        "execution-publish-check"
+      ]
+    },
+    {
+      "id": "rag-cn-agent",
+      "task": "设计一个带向量检索和引用检查的 RAG 知识代理",
+      "router": "scenario",
+      "expected_scenario": "rag-agent-knowledge-app",
+      "expected_task_type": "rag_agent",
+      "expected_skills": [
+        "ai-langchain-agent-orchestration",
+        "data-qdrant-vector-retrieval",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "document-cn-knowledge-base",
+      "task": "把 PDF 文档转成知识库并做引用检查",
+      "router": "scenario",
+      "expected_scenario": "document-to-knowledge-base",
+      "expected_task_type": "document_knowledge_base",
+      "expected_skills": [
+        "data-markitdown-file-to-markdown",
+        "research-source-check"
+      ]
+    },
+    {
+      "id": "code-review-cn-hardening",
+      "task": "代码审查生成代码，补强测试后再合并 PR",
+      "router": "scenario",
+      "expected_scenario": "code-review-hardening",
+      "expected_task_type": "code_review",
+      "expected_skills": [
+        "code-review-risk",
+        "code-test-regression"
+      ]
+    },
+    {
+      "id": "commerce-cn-growth",
+      "task": "优化商品 listing 关键词，并准备买家询盘回复",
+      "router": "scenario",
+      "expected_scenario": "commerce-listing-growth",
+      "expected_task_type": "commerce_growth",
+      "expected_skills": [
+        "commerce-icbu-listing",
+        "commerce-product-keyword-plan",
+        "commerce-inquiry-reply"
+      ]
+    },
+    {
+      "id": "industry-cn-solution-pack",
+      "task": "为医疗、金融、教育、制造和房地产客户设计一套行业 AI 应用方案，包含合规边界、数据质量和交付计划",
+      "router": "scenario",
+      "expected_scenario": "industry-application-orchestration",
+      "expected_task_type": "industry_application_orchestration",
+      "expected_skills": [
+        "vertical-industry-intake-orchestration",
+        "compliance-regulated-industry-boundary",
+        "vertical-industry-solution-packaging"
+      ]
+    },
+    {
+      "id": "industry-en-solution-pack",
+      "task": "build an industry solution pack for healthcare, legal, finance, education, manufacturing, and SaaS users",
+      "router": "scenario",
+      "expected_scenario": "industry-application-orchestration",
+      "expected_task_type": "industry_application_orchestration",
+      "expected_skills": [
+        "vertical-industry-intake-orchestration",
+        "compliance-regulated-industry-boundary",
+        "vertical-industry-solution-packaging"
+      ]
+    },
+    {
+      "id": "unsupported-vague-task",
+      "task": "帮我看一下这个事情是否合理",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": [],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
+      ],
+      "max_skill_count": 3
+    },
+    {
+      "id": "unsupported-vague-continue-optimization",
+      "task": "继续优化任务",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": [],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
+      ],
+      "max_skill_count": 3
+    },
+    {
+      "id": "stale-history-vague-current-intent",
+      "task": "历史上下文：构建产品官网并准备上线发布检查。当前请求：继续优化任务",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": [],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
+      ],
+      "max_skill_count": 3
+    },
+    {
+      "id": "structured-context-stale-history-vague-current-intent",
+      "task": "当前意图：继续优化任务\n历史摘要：构建产品官网并准备发布检查\n过期上下文：发布、浏览器、官网",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": [],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
+      ],
+      "max_skill_count": 3
+    },
+    {
+      "id": "unsupported-vague-stepwise-continue-optimization-lightweight",
+      "task": "可以，按照步骤，继续优化",
+      "router": "scenario",
+      "expected_scenario": "",
+      "expected_task_type": "general",
+      "expected_skills": [
+        "execution-file-batch",
+        "execution-rollback-checkpoint-plan"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "forbidden_skill_prefixes": [
+        "execution-browser",
+        "execution-playwright"
+      ],
+      "forbidden_skill_subcategories": [
+        "execution.browser",
+        "execution.browser_agent",
+        "execution.browser_test"
+      ],
+      "expected_trace_reason_codes": [
+        "no_trusted_scenario_match",
+        "low_signal_task_profile",
+        "direct_skill_selection_fallback"
+      ],
+      "max_skill_count": 3
+    }
+  ]
+}
