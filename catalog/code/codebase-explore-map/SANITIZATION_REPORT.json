@@ -6,8 +6,8 @@
   ],
   "findings": [],
   "hashes": {
-    "manifest_sha256": "42b717aff86031af75f518d002cbaec3f2cf3f314db33ec1e801dae1ed0ce156",
-    "sanitized_sha256": "8db14ae97ba5d8fe2bbd733232ba7c3f2167b17b90e1ce30eb45c52a3c17e679",
+    "manifest_sha256": "dff6a2405dd99d6267b6625b9e49124587610fcc70f4604d9ae11b4c95f0d11b",
+    "sanitized_sha256": "d4bbeb8dc1ac294dafc1359eae48098e9f742aaacfd0a07d1f0526304ea618c0",
     "source_sha256": "dd7d7e077a8e1dd3226538fa363ff4d54a90b1f66a9db94dbd94f4d567a030ea"
   },
   "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",

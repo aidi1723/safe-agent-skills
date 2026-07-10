@@ -25,6 +25,38 @@ files or inventing architecture from guesses.
 6. Stop exploration when the implementation surface is clear enough; avoid
    broad inventory work that does not affect the task.
 
+## Decision Guidance
+
+Classify the exploration as `orientation`, `change_mapping`,
+`incident_mapping`, or `architecture_review`. Orientation identifies how to
+build, test, and navigate the project. Change mapping traces only the contracts
+and consumers relevant to a requested modification. Incident mapping follows a
+failure from its observed boundary toward the responsible owner. Architecture
+review may examine broader ownership and dependency structure, but still needs
+an explicit question and evidence limit.
+
+Treat repository instructions and executable manifests as stronger evidence
+than filenames or directory names. Confirm entry points through imports,
+configuration, scripts, routes, registrations, or tests. Stop when the relevant
+entry point, owner, data flow, contract, test surface, generated boundaries,
+and unresolved risks are clear enough for the next task.
+
+## Evidence Minimum
+
+- repository instructions and their scope or precedence
+- package, build, test, lint, formatting, and release entry points
+- runtime entry points, major owners, relevant data flow, and shared contracts
+- generated, vendor, cache, fixture, migration, and artifact directories
+- targeted search terms and files that support the map
+- likely change surface, downstream consumers, and verification commands
+- assumptions, conflicting evidence, unresolved ownership, and stopping reason
+
+## References
+
+Load [the repository evidence map](references/repository-evidence-map.md) for
+large repositories, unfamiliar frameworks, cross-module changes, incidents,
+generated code, multiple runtimes, or unclear ownership boundaries.
+
 ## Expected Output
 
 - compact repository map
@@ -44,4 +76,5 @@ files or inventing architecture from guesses.
 
 If repository structure is ambiguous or generated code cannot be separated from
 source code, mark the risky paths and ask for ownership guidance before editing
-them.
+them. Do not edit files, install dependencies, execute unapproved commands, or
+infer architecture from naming alone.

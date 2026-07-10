@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T23:19:25Z",
+  "generated_at": "2026-07-10T23:39:14Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -2381,8 +2381,9 @@
         "stage_hint": "source"
       },
       "hashes": {
-        "manifest_sha256": "e0c7d5d60e3df4f3e75d14844b96b125dde6f3fc0ecce508536666b37041bbad",
-        "sanitized_sha256": "8db14ae97ba5d8fe2bbd733232ba7c3f2167b17b90e1ce30eb45c52a3c17e679",
+        "auxiliary_sha256": "35289db1ee860e0d050b98e42884673f7daf5143159df5d28dc43c423df1b9a1",
+        "manifest_sha256": "dff6a2405dd99d6267b6625b9e49124587610fcc70f4604d9ae11b4c95f0d11b",
+        "sanitized_sha256": "d4bbeb8dc1ac294dafc1359eae48098e9f742aaacfd0a07d1f0526304ea618c0",
         "source_sha256": "dd7d7e077a8e1dd3226538fa363ff4d54a90b1f66a9db94dbd94f4d567a030ea"
       },
       "name": "codebase-explore-map",
