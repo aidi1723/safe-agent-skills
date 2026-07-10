@@ -56,6 +56,78 @@ class CompatibilityTest(unittest.TestCase):
         changed["current"] = "audit router api_key=[REDACTED]"
         self.assertNotEqual(build_route_id(first), build_route_id(changed))
 
+    def test_route_identity_redacts_bare_credentials_without_erasing_intent(self):
+        secret_variants = [
+            "sk-alpha1234567890",
+            "sk-proj-alpha1234567890",
+            "ghp_alpha1234567890",
+            "github_pat_alpha1234567890",
+            "AKIAABCDEFGHIJKLMNOP",
+            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMjM0NTY3ODkwIn0.signature",
+            "https://user:first-password@example.com/deploy",
+        ]
+        replacement_variants = [
+            "sk-beta0987654321",
+            "sk-proj-beta0987654321",
+            "ghp_beta0987654321",
+            "github_pat_beta0987654321",
+            "AKIAQRSTUVWXYZABCDEF",
+            "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiI5ODc2NTQzMjEwIn0.other-signature",
+            "https://user:second-password@example.com/deploy",
+        ]
+
+        for first_secret, second_secret in zip(secret_variants, replacement_variants):
+            with self.subTest(secret=first_secret):
+                first = build_route_identity_payload(
+                    current=f"deploy release using {first_secret}",
+                    history="",
+                    stale="",
+                    stale_policy="ignore",
+                    invariants=[],
+                    strategy="balanced",
+                    provider_identifier="none",
+                    catalog_content_hash="sha256:catalog",
+                    bundle_content_hash="sha256:bundle",
+                    overlap_content_hash="none",
+                    router_version="v2",
+                    package_version="v2",
+                )
+                second = build_route_identity_payload(
+                    current=f"deploy release using {second_secret}",
+                    history="",
+                    stale="",
+                    stale_policy="ignore",
+                    invariants=[],
+                    strategy="balanced",
+                    provider_identifier="none",
+                    catalog_content_hash="sha256:catalog",
+                    bundle_content_hash="sha256:bundle",
+                    overlap_content_hash="none",
+                    router_version="v2",
+                    package_version="v2",
+                )
+                self.assertEqual(build_route_id(first), build_route_id(second))
+                self.assertNotIn(first_secret, json.dumps(first))
+
+        ordinary = build_route_identity_payload(
+            current="review responsive-layout and release-candidate notes",
+            history="",
+            stale="",
+            stale_policy="ignore",
+            invariants=[],
+            strategy="balanced",
+            provider_identifier="none",
+            catalog_content_hash="sha256:catalog",
+            bundle_content_hash="sha256:bundle",
+            overlap_content_hash="none",
+            router_version="v2",
+            package_version="v2",
+        )
+        changed_host = dict(first)
+        changed_host["current"] = "deploy release using https://user:[REDACTED]@other.example/deploy"
+        self.assertIn("responsive-layout", ordinary["current"])
+        self.assertNotEqual(build_route_id(first), build_route_id(changed_host))
+
     def test_route_id_changes_when_material_routing_input_changes(self):
         base = {"task": {"current": "build site"}, "strategy": "balanced"}
         changed = {"task": {"current": "audit router"}, "strategy": "balanced"}

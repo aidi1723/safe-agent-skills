@@ -24,7 +24,7 @@ development dependencies.
 | --- | ---: | --- |
 | `python3 --version` | 0 | Python 3.12.12 |
 | `python3 -m ruff check .` | 0 | `All checks passed!` |
-| `bash scripts/verify.sh` | 0 | 308 tests passed; schemas, maintenance, v1 eval, v2 eval, contract gate, and smoke routes passed |
+| `bash scripts/verify.sh` | 0 | 312 tests passed; schemas, maintenance, v1 eval, v2 eval, contract gate, invariant safeguard acceptance, and smoke routes passed |
 | `PYTHONPATH=src python3 -m onecode_skill_sanitizer smart "构建官网，同时审计 skill 路由器，验证通过后发布更新" --schema-version 2 --format json` | 0 | Complete route with three required scenarios and an acyclic ready graph |
 | `PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 --eval evals/multi-intent-gold.json --registry catalog --bundles bundles/index.json` | 0 | 100 cases evaluated; metrics recorded below |
 | `PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check --registry catalog --bundles bundles/index.json --scenario website-build-launch --scenario code-review-hardening --scenario codebase-change-lifecycle --scenario skill-router-quality-review --scenario open-source-release --scenario rag-agent-knowledge-app --scenario document-to-knowledge-base --scenario security-agent-guardrails --minimum-ratio 0.80` | 0 | 39/48 core skills covered; 81.25% |
@@ -66,6 +66,22 @@ i2 verification -> i3 execution-publish-check
 The host protocol was `method_only`. Provider fields were `requested: none`,
 `used: none`, with
 `semantic_provider_not_enabled_in_first_milestone` as the fallback placeholder.
+
+## Invariant Hardening
+
+Schema v2 now parses invariant capabilities through the existing deterministic
+mapping and resolves only trusted safeguard skills. Secret redaction is placed
+as a graph preflight, while public-claims compliance and responsive checking
+are placed as review/verification safeguards before host handoff. The invariant
+capability records are explicit in `capability_resolution`; an unavailable
+required safeguard produces `missing` coverage and an `incomplete` route rather
+than a false `complete` result.
+
+Route identity sanitization now also removes bare OpenAI-style keys, common
+GitHub token prefixes, AWS access keys, JWT-like strings, and URI passwords while
+preserving material task and host semantics. Schema v2 `smart` and `task-pack`
+commands return bounded exit-code-2 JSON or Markdown errors for expected asset
+and registry failures without tracebacks, absolute paths, or credential values.
 
 ## Contract Coverage
 

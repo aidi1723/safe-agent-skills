@@ -33,6 +33,8 @@ Current delivery scope is intentionally bounded:
 | Runtime permission boundary | Ready |
 | GitHub release notes | Ready |
 | Schema v2 default and v1 compatibility | Ready |
+| Schema v2 invariant safeguard enforcement | Ready |
+| Schema v2 bounded CLI failure output | Ready |
 | Deterministic multi-intent composition | Structurally complete |
 | Core Contract v2 coverage | Ready at 81.25% |
 | Curated 100-case v2 evaluation | Ready for structural evidence |
@@ -44,9 +46,16 @@ Current delivery scope is intentionally bounded:
 
 ## Current Verified Baseline
 
-Fresh milestone verification on 2026-07-10 records 308 passing tests, clean
-Ruff lint, a passing `scripts/verify.sh`, 81.25% core Contract v2 coverage, and
-43/43 passing Schema v1 regression cases.
+Fresh milestone verification on 2026-07-10 records 312 passing tests, clean
+Ruff lint, a passing `scripts/verify.sh`, explicit v2 invariant safeguard graph
+acceptance, 81.25% core Contract v2 coverage, and 43/43 passing Schema v1
+regression cases.
+
+The v2 default now fails closed to `incomplete` when a required parsed invariant
+cannot be covered by a trusted safeguard skill. Expected malformed or missing
+routing assets return stable exit-code-2 JSON or Markdown errors without
+tracebacks, absolute temporary paths, or credential values. Schema v1 behavior
+remains explicitly covered by its existing compatibility tests.
 
 The manually curated 100-case v2 evaluator currently reports:
 

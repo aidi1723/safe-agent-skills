@@ -25,7 +25,9 @@ from .router_eval_v2 import DatasetValidationError
 from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_v2
-from .router import build_task_profile, route_mesh_task, route_scenario_task
+from .router import CAPABILITY_SKILL_PREFERENCES
+from .router import build_task_profile, capability_skill_names, parse_invariant_capabilities
+from .router import route_mesh_task, route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
 from .validation import SOURCE_DEFAULT_USAGE_BY_TYPE
@@ -866,8 +868,19 @@ def build_task_pack_v2(
     candidates = retrieve_scenario_candidates(intent_graph, bundles_index, trusted_names)
     composition = compose_scenarios(intent_graph, candidates, bundles_index, trusted_names)
     execution_graph = compile_execution_graph(intent_graph, composition, bundles_index, trusted_names)
+    invariant_capabilities = parse_invariant_capabilities(invariants)
+    invariant_skill_names = capability_skill_names(invariant_capabilities, trusted_names)
+    execution_graph = _extend_v2_graph_with_invariants(
+        execution_graph,
+        invariant_capabilities,
+        invariant_skill_names,
+    )
 
-    trusted_items = {item["name"]: item for item in load_trusted_skill_pack_items(registry_dir)}
+    trusted_items = {
+        item["name"]: item
+        for item in load_trusted_skill_pack_items(registry_dir)
+        if item["name"] in trusted_names
+    }
     required_skill_names = []
     for node in execution_graph["nodes"]:
         skill_name = node["skill"]
@@ -899,7 +912,10 @@ def build_task_pack_v2(
         for selection in composition.selections
     ]
     capability_resolution = _build_v2_capability_resolution(
-        bundles_index, selected_scenarios, set(required_skill_names)
+        bundles_index,
+        selected_scenarios,
+        set(required_skill_names),
+        invariant_capabilities,
     )
     routing_status = _routing_status(composition.status, capability_resolution, execution_graph)
     provider = {
@@ -981,7 +997,10 @@ def build_task_pack_v2(
 
 
 def _build_v2_capability_resolution(
-    bundles_index: dict, selected_scenarios: list[dict], selected_skill_names: set[str]
+    bundles_index: dict,
+    selected_scenarios: list[dict],
+    selected_skill_names: set[str],
+    invariant_capabilities: list[str] | None = None,
 ) -> dict:
     bundles = {bundle["id"]: bundle for bundle in bundles_index.get("bundles", []) if isinstance(bundle, dict)}
     capabilities = []
@@ -1000,6 +1019,22 @@ def _build_v2_capability_resolution(
                     "skills": matched,
                 }
             )
+    for capability in invariant_capabilities or []:
+        matched = [
+            name
+            for name in CAPABILITY_SKILL_PREFERENCES.get(capability, [])
+            if name in selected_skill_names
+        ][:1]
+        capabilities.append(
+            {
+                "scenario_id": "",
+                "capability": capability,
+                "required": True,
+                "status": "covered" if matched else "missing",
+                "skills": matched,
+                "source": "invariant",
+            }
+        )
     missing_required = [
         item for item in capabilities if item["required"] and item["status"] == "missing"
     ]
@@ -1008,6 +1043,91 @@ def _build_v2_capability_resolution(
         "capabilities": capabilities,
         "missing_required_count": len(missing_required),
     }
+
+
+def _extend_v2_graph_with_invariants(
+    execution_graph: dict,
+    invariant_capabilities: list[str],
+    invariant_skill_names: list[str],
+) -> dict:
+    graph = dict(execution_graph)
+    nodes = [dict(node) for node in execution_graph.get("nodes", [])]
+    edges = [dict(edge) for edge in execution_graph.get("edges", [])]
+    capability_by_skill = {
+        skill_name: capability
+        for capability in invariant_capabilities
+        for skill_name in CAPABILITY_SKILL_PREFERENCES.get(capability, [])
+        if skill_name in invariant_skill_names
+    }
+    if not capability_by_skill:
+        return graph
+
+    original_node_ids = {node["id"] for node in nodes}
+    incoming = {edge["to"] for edge in edges if edge["to"] in original_node_ids}
+    outgoing = {edge["from"] for edge in edges if edge["from"] in original_node_ids}
+    roots = sorted(original_node_ids - incoming)
+    terminals = sorted(original_node_ids - outgoing)
+    intent_ids = sorted(
+        {
+            intent_id
+            for node in nodes
+            for intent_id in node.get("intent_ids", [])
+            if isinstance(intent_id, str)
+        }
+    )
+    stage_by_capability = {
+        "secret_redaction": "preflight",
+        "claims_compliance": "review",
+        "responsive_check": "verification",
+    }
+    preflight_ids = []
+    handoff_ids = []
+    for skill_name in invariant_skill_names:
+        capability = capability_by_skill[skill_name]
+        node_id = f"invariant:{capability}:{skill_name}"
+        nodes.append(
+            {
+                "id": node_id,
+                "intent_ids": intent_ids,
+                "scenario_ids": [],
+                "skill": skill_name,
+                "stage": stage_by_capability.get(capability, "review"),
+                "host_action": False,
+                "invariant_capability": capability,
+            }
+        )
+        if capability == "secret_redaction":
+            preflight_ids.append(node_id)
+        else:
+            handoff_ids.append(node_id)
+
+    for source, target in zip(preflight_ids, preflight_ids[1:]):
+        edges.append({"from": source, "to": target, "type": "invariant_safeguard"})
+    if preflight_ids:
+        edges.extend(
+            {"from": preflight_ids[-1], "to": root, "type": "invariant_safeguard"}
+            for root in roots
+        )
+    for source, target in zip(handoff_ids, handoff_ids[1:]):
+        edges.append({"from": source, "to": target, "type": "invariant_safeguard"})
+    if handoff_ids:
+        edges.extend(
+            {"from": terminal, "to": handoff_ids[0], "type": "invariant_safeguard"}
+            for terminal in terminals
+        )
+
+    graph["nodes"] = nodes
+    graph["edges"] = sorted(
+        {
+            (edge["from"], edge["to"], edge["type"])
+            for edge in edges
+        }
+    )
+    graph["edges"] = [
+        {"from": source, "to": target, "type": edge_type}
+        for source, target, edge_type in graph["edges"]
+    ]
+    return graph
 
 
 def _routing_status(
@@ -1721,19 +1841,7 @@ def project_legacy_contracts(value: object) -> object:
 
 def task_pack_command(args: argparse.Namespace) -> int:
     if args.schema_version == 2:
-        overlap_groups_path = resolve_overlap_groups_path(
-            resolve_project_asset_path(args.registry),
-            resolve_project_asset_path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
-        )
-        task_pack = build_task_pack_v2(
-            resolve_project_asset_path(args.registry),
-            args.task,
-            resolve_project_asset_path(args.bundles),
-            args.max_skills,
-            args.invariants if getattr(args, "invariants", None) else None,
-            getattr(args, "strategy", "balanced"),
-            overlap_groups_path,
-        )
+        return _run_v2_task_pack_command(args)
     else:
         task_pack = build_task_pack(
             resolve_project_asset_path(args.registry),
@@ -1758,19 +1866,7 @@ def task_pack_command(args: argparse.Namespace) -> int:
 
 def smart_command(args: argparse.Namespace) -> int:
     if args.schema_version == 2:
-        overlap_groups_path = resolve_overlap_groups_path(
-            resolve_project_asset_path(args.registry),
-            resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
-        )
-        task_pack = build_task_pack_v2(
-            resolve_project_asset_path(args.registry),
-            args.task,
-            resolve_project_asset_path(args.bundles),
-            args.max_skills,
-            args.invariants,
-            args.strategy,
-            overlap_groups_path,
-        )
+        return _run_v2_task_pack_command(args)
     else:
         task_pack = build_task_pack(
             resolve_project_asset_path(args.registry),
@@ -1787,10 +1883,74 @@ def smart_command(args: argparse.Namespace) -> int:
         )
         task_pack = project_legacy_contracts(task_pack)
     if args.format == "markdown":
-        print(render_task_pack_v2_markdown(task_pack) if args.schema_version == 2 else render_task_pack_markdown(task_pack))
+        print(render_task_pack_markdown(task_pack))
     else:
         print(json.dumps(task_pack, indent=2, sort_keys=True))
     return 0
+
+
+def _run_v2_task_pack_command(args: argparse.Namespace) -> int:
+    try:
+        overlap_groups_path = resolve_overlap_groups_path(
+            resolve_project_asset_path(args.registry),
+            resolve_project_asset_path(args.overlap_groups)
+            if getattr(args, "overlap_groups", None)
+            else None,
+        )
+        task_pack = build_task_pack_v2(
+            resolve_project_asset_path(args.registry),
+            args.task,
+            resolve_project_asset_path(args.bundles),
+            args.max_skills,
+            args.invariants if getattr(args, "invariants", None) else None,
+            getattr(args, "strategy", "balanced"),
+            overlap_groups_path,
+        )
+    except (json.JSONDecodeError, OSError, ValueError, SystemExit) as exc:
+        error = _safe_v2_error(exc)
+        if args.format == "markdown":
+            print(
+                "\n".join(
+                    [
+                        "# OneCode Task Pack v2 Error",
+                        "",
+                        f"- code: `{error['code']}`",
+                        f"- message: {error['message']}",
+                    ]
+                )
+            )
+        else:
+            print(
+                json.dumps(
+                    {"schema_version": 2, "status": "error", "error": error},
+                    indent=2,
+                    sort_keys=True,
+                )
+            )
+        return 2
+    if args.format == "markdown":
+        print(render_task_pack_v2_markdown(task_pack))
+    else:
+        print(json.dumps(task_pack, indent=2, sort_keys=True))
+    return 0
+
+
+def _safe_v2_error(exc: BaseException) -> dict[str, str]:
+    if isinstance(exc, json.JSONDecodeError):
+        return {"code": "invalid_json", "message": "A routing asset contains invalid JSON."}
+    if isinstance(exc, FileNotFoundError):
+        return {"code": "asset_not_found", "message": "A required routing asset was not found."}
+    if isinstance(exc, OSError):
+        return {"code": "asset_read_error", "message": "A required routing asset could not be read."}
+    message = str(exc)
+    if "registry verification failed" in message:
+        return {
+            "code": "registry_verification_failed",
+            "message": "Registry verification failed; task pack generation was refused.",
+        }
+    if isinstance(exc, SystemExit):
+        return {"code": "invalid_asset", "message": "A required routing asset is missing or invalid."}
+    return {"code": "invalid_input", "message": "Routing input or assets are invalid."}
 
 
 def verify_registry(registry_dir: Path) -> dict:

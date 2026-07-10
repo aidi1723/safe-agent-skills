@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from jsonschema import Draft202012Validator
 from referencing import Registry
@@ -301,7 +302,7 @@ class RegistryCliTest(unittest.TestCase):
     def test_smart_missing_overlap_file_exits_concisely(self):
         missing = "/tmp/onecode-missing-overlap-groups.json"
         with self.assertRaises(SystemExit) as raised:
-            main(["smart", "build site", "--overlap-groups", missing, "--schema-version", "2"])
+            main(["smart", "build site", "--overlap-groups", missing, "--schema-version", "1"])
         self.assertEqual(str(raised.exception), f"overlap groups file not found: {missing}")
 
     def test_import_sanitizes_all_incoming_skills_and_writes_index(self):
@@ -4871,6 +4872,133 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(coverage["responsive_check"]["status"], "covered")
         self.assertTrue(task_pack["execution_graph"]["acyclic"])
 
+    def test_v2_enforces_invariant_safeguards_in_selected_skills_and_graph(self):
+        invariant_text = "不能泄露密钥；公开文案必须合规；必须响应式验证"
+        payloads = {}
+        for schema_version in (1, 2):
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(
+                    main(
+                        [
+                            "smart",
+                            "build a landing page and prepare launch checks",
+                            "--schema-version",
+                            str(schema_version),
+                            "--invariants",
+                            invariant_text,
+                            "--format",
+                            "json",
+                        ]
+                    ),
+                    0,
+                )
+            payloads[schema_version] = json.loads(out.getvalue())
+
+        expected = {
+            "secret_redaction": "security-secret-context-redaction",
+            "claims_compliance": "content-claims-compliance-filter",
+            "responsive_check": "design-responsive-viewport-check",
+        }
+        v1_names = {skill["name"] for skill in payloads[1]["skills"]}
+        v2_names = {skill["name"] for skill in payloads[2]["selected_skills"]}
+        graph_names = {node["skill"] for node in payloads[2]["execution_graph"]["nodes"]}
+        invariant_records = {
+            item["capability"]: item
+            for item in payloads[2]["capability_resolution"]["capabilities"]
+            if item.get("source") == "invariant"
+        }
+
+        self.assertTrue(set(expected.values()).issubset(v1_names))
+        self.assertTrue(set(expected.values()).issubset(v2_names))
+        self.assertTrue(set(expected.values()).issubset(graph_names))
+        self.assertEqual(set(invariant_records), set(expected))
+        self.assertTrue(all(item["status"] == "covered" for item in invariant_records.values()))
+        self.assertEqual(payloads[2]["routing_status"], "complete")
+
+    def test_v2_missing_invariant_safeguard_is_reported_incomplete(self):
+        import onecode_skill_sanitizer.cli as cli_module
+
+        trusted = cli_module.trusted_skill_names(Path("catalog"))
+        trusted -= {
+            "security-secret-context-redaction",
+            "security-llm-guard-io-scanning",
+        }
+        out = io.StringIO()
+        with patch("onecode_skill_sanitizer.cli.trusted_skill_names", return_value=trusted):
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(
+                    main(
+                        [
+                            "smart",
+                            "build a landing page",
+                            "--schema-version",
+                            "2",
+                            "--invariants",
+                            "不能泄露密钥",
+                            "--format",
+                            "json",
+                        ]
+                    ),
+                    0,
+                )
+        payload = json.loads(out.getvalue())
+        record = next(
+            item
+            for item in payload["capability_resolution"]["capabilities"]
+            if item.get("source") == "invariant" and item["capability"] == "secret_redaction"
+        )
+        self.assertEqual(record["status"], "missing")
+        self.assertEqual(record["skills"], [])
+        self.assertEqual(payload["capability_resolution"]["status"], "incomplete")
+        self.assertEqual(payload["routing_status"], "incomplete")
+
+    def test_v2_cli_returns_safe_bounded_errors_for_invalid_assets(self):
+        cases = []
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            malformed_bundles = root / "malformed-bundles.json"
+            malformed_bundles.write_text("{not-json", encoding="utf-8")
+            malformed_catalog = root / "catalog"
+            malformed_catalog.mkdir()
+            (malformed_catalog / "index.json").write_text("{not-json", encoding="utf-8")
+            cases.extend(
+                [
+                    ["smart", "build site", "--schema-version", "2", "--bundles", str(malformed_bundles)],
+                    [
+                        "task-pack",
+                        "build site",
+                        "--registry",
+                        "catalog",
+                        "--schema-version",
+                        "2",
+                        "--bundles",
+                        str(root / "missing-bundles.json"),
+                    ],
+                    ["smart", "build site", "--schema-version", "2", "--overlap-groups", str(root / "missing-overlap.json")],
+                    ["smart", "build site", "--schema-version", "2", "--registry", str(malformed_catalog)],
+                ]
+            )
+            for argv in cases:
+                for output_format in ("json", "markdown"):
+                    with self.subTest(argv=argv, output_format=output_format):
+                        out = io.StringIO()
+                        err = io.StringIO()
+                        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                            exit_code = main([*argv, "--format", output_format])
+                        output = out.getvalue()
+                        self.assertEqual(exit_code, 2)
+                        self.assertEqual(err.getvalue(), "")
+                        self.assertNotIn("Traceback", output)
+                        self.assertNotIn(str(root), output)
+                        if output_format == "json":
+                            payload = json.loads(output)
+                            self.assertEqual(payload["schema_version"], 2)
+                            self.assertEqual(payload["status"], "error")
+                            self.assertIn("code", payload["error"])
+                            self.assertIn("message", payload["error"])
+                        else:
+                            self.assertIn("# OneCode Task Pack v2 Error", output)
     def test_smart_defaults_resolve_repository_assets_from_environment(self):
         original_cwd = Path.cwd()
         original_home = os.environ.get("SAFE_AGENT_SKILLS_HOME")

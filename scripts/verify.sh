@@ -69,7 +69,32 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
   --minimum-ratio 0.80 >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "build a landing page and prepare launch checks" \
-  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" >/dev/null
+  --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" \
+  --format json | PYTHONPATH=src python3 -c '
+import json
+import sys
+
+payload = json.load(sys.stdin)
+expected = {
+    "secret_redaction": "security-secret-context-redaction",
+    "claims_compliance": "content-claims-compliance-filter",
+    "responsive_check": "design-responsive-viewport-check",
+}
+skills = {item["name"] for item in payload["selected_skills"]}
+graph_skills = {node["skill"] for node in payload["execution_graph"]["nodes"]}
+records = {
+    item["capability"]: item
+    for item in payload["capability_resolution"]["capabilities"]
+    if item.get("source") == "invariant"
+}
+if payload["routing_status"] != "complete":
+    raise SystemExit("v2 invariant acceptance route is not complete")
+for capability, skill in expected.items():
+    if skill not in skills or skill not in graph_skills:
+        raise SystemExit(f"missing invariant safeguard skill: {skill}")
+    if records.get(capability, {}).get("status") != "covered":
+        raise SystemExit(f"invariant capability is not covered: {capability}")
+'
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标" >/dev/null
 python3 -m json.tool schemas/skill-manifest.schema.json >/dev/null

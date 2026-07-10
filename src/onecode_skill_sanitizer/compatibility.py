@@ -29,6 +29,14 @@ _SECRET_ASSIGNMENT_RE = re.compile(
     re.IGNORECASE,
 )
 _BEARER_RE = re.compile(r"\bBearer\s+[A-Za-z0-9._~+/=-]+", re.IGNORECASE)
+_URI_CREDENTIAL_RE = re.compile(
+    r"(?P<scheme>\b[a-z][a-z0-9+.-]*://)(?P<user>[^\s/@:]+):(?P<password>[^\s/@]+)@",
+    re.IGNORECASE,
+)
+_OPENAI_KEY_RE = re.compile(r"\bsk-(?:proj-)?[A-Za-z0-9_-]{10,}\b")
+_GITHUB_TOKEN_RE = re.compile(r"\b(?:ghp_|github_pat_)[A-Za-z0-9_]{10,}\b")
+_AWS_ACCESS_KEY_RE = re.compile(r"\bAKIA[A-Z0-9]{16}\b")
+_JWT_RE = re.compile(r"\b[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\.[A-Za-z0-9_-]{8,}\b")
 
 
 def build_route_id(inputs: dict) -> str:
@@ -76,11 +84,18 @@ def build_route_identity_payload(
 
 def redact_route_identity_text(value: Any) -> str:
     text = value if isinstance(value, str) else ""
+    text = _URI_CREDENTIAL_RE.sub(
+        lambda match: f"{match.group('scheme')}{match.group('user')}:[REDACTED]@",
+        text,
+    )
     text = _BEARER_RE.sub("Bearer [REDACTED]", text)
-    return _SECRET_ASSIGNMENT_RE.sub(
+    text = _SECRET_ASSIGNMENT_RE.sub(
         lambda match: f"{match.group('label')}{match.group('separator')}[REDACTED]",
         text,
     )
+    for pattern in (_OPENAI_KEY_RE, _GITHUB_TOKEN_RE, _AWS_ACCESS_KEY_RE, _JWT_RE):
+        text = pattern.sub("[REDACTED]", text)
+    return text
 
 
 def build_canonical_content_hash(value: Any) -> str:
