@@ -900,6 +900,27 @@ def build_task_profile(task: str) -> dict:
     }
 
 
+def build_profile_for_task_type(task: str, task_type: str) -> dict:
+    profile = build_task_profile(task)
+    if profile["task_type"] == task_type:
+        return profile
+    configured = next(
+        (item for item in SCENARIO_PROFILES if item["task_type"] == task_type),
+        None,
+    )
+    if configured is None:
+        return profile
+    return {
+        "task_type": configured["task_type"],
+        "primary_domain": configured["primary_domain"],
+        "secondary_domains": list(configured["secondary_domains"]),
+        "artifact_types": list(configured["artifact_types"]),
+        "risk_flags": list(configured["risk_flags"]),
+        "required_capabilities": list(configured["required_capabilities"]),
+        "matched_signal_score": max(1, profile["matched_signal_score"]),
+    }
+
+
 def score_bundle_for_profile(bundle: dict, task_profile: dict) -> int:
     if task_profile.get("task_type") == "general" or task_profile.get("matched_signal_score", 0) <= 0:
         return 0
