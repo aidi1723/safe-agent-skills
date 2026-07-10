@@ -133,6 +133,32 @@ class BatchLifecycleTest(unittest.TestCase):
         self.assertTrue(rebuilt["items"][0]["compacted"])
         self.assertEqual(rebuilt["items"][0]["source_commit"], "abc123")
 
+    def test_rebuild_preserves_compacted_record_after_catalog_evolves(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            batches = root / "batches"
+            catalog = root / "catalog"
+            write_skill(batches, "batch-a", "same-skill", "same\n")
+            canonical = write_catalog_skill(catalog, "code", "same-skill", "same\n")
+            inventory = build_batch_index(batches, catalog, source_commit="abc123")
+            compact_promoted_bodies(inventory, batches, catalog)
+            (canonical / "SKILL.md").write_text("expanded\n", encoding="utf-8")
+
+            rebuilt = build_batch_index(
+                batches,
+                catalog,
+                source_commit="def456",
+                previous_index=inventory,
+            )
+            issues = validate_batch_index(rebuilt, batches, catalog)
+
+        self.assertEqual(rebuilt["item_count"], 1)
+        self.assertTrue(rebuilt["items"][0]["compacted"])
+        self.assertFalse(rebuilt["items"][0]["content_match"])
+        self.assertNotEqual(rebuilt["items"][0]["source_sha256"], rebuilt["items"][0]["catalog_sha256"])
+        self.assertEqual(rebuilt["items"][0]["source_commit"], "abc123")
+        self.assertEqual(issues, [])
+
 
 if __name__ == "__main__":
     unittest.main()

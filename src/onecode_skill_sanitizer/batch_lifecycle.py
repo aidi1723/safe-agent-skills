@@ -91,9 +91,10 @@ def build_batch_index(
         canonical_path = catalog_root / canonical_value
         if not promotion_path.is_file() or not canonical_path.is_file():
             continue
-        if file_sha256(canonical_path) != previous.get("catalog_sha256"):
-            continue
-        items.append(dict(previous))
+        restored = dict(previous)
+        restored["catalog_sha256"] = file_sha256(canonical_path)
+        restored["content_match"] = restored.get("source_sha256") == restored["catalog_sha256"]
+        items.append(restored)
     items.sort(key=lambda item: (item["batch"], item["name"]))
     lifecycle_counts = {
         lifecycle: sum(item["lifecycle"] == lifecycle for item in items)
@@ -170,8 +171,8 @@ def validate_batch_index(index: dict, batch_root: Path, catalog_root: Path) -> l
                 promotion_path = body_path.with_name("PROMOTED.md")
                 if body_path.exists() or not promotion_path.is_file():
                     issues.append({"id": "batch-index-invalid-compaction", "path": path})
-                if not item.get("content_match") or item.get("source_sha256") != item.get("catalog_sha256"):
-                    issues.append({"id": "batch-index-unsafe-compaction", "path": path})
+                elif promotion_path.read_text(encoding="utf-8") != _promotion_record(item):
+                    issues.append({"id": "batch-index-promotion-record-mismatch", "path": path})
             elif not body_path.is_file():
                 issues.append({"id": "batch-index-missing-body", "path": path})
         elif not body_path.is_file():
