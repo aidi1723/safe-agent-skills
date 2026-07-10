@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T23:39:14Z",
+  "generated_at": "2026-07-10T23:40:52Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -4571,8 +4571,9 @@
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "26f86710fb87a8b9e7d11b842f117c8f15d82e59c710095256bba0c21968ca87",
-        "sanitized_sha256": "460bc4fba7f2006fe2081127351f503ef8f5985c37a20d81a07a5e291b2c5c2f",
+        "auxiliary_sha256": "dd75ba817d08b82126f914fa832536f6b018b1a3a816e10fc7373bf9c2dfedc5",
+        "manifest_sha256": "e0245e41ca35231f6a759f074b8fb8cf77a7966e737eeb93ce712cbfd0a4f2b8",
+        "sanitized_sha256": "8d940caf74f57b93c70e13c3d449a008d1acb7e69404f730caa038c554c4b59a",
         "source_sha256": "ea0eb409a616a037176ddcbffc396f1ec8547f93945cd558806470595b04d1d9"
       },
       "name": "execution-browser-check",
