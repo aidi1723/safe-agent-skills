@@ -5130,7 +5130,7 @@ class RegistryCliTest(unittest.TestCase):
             "security-llm-guard-io-scanning",
         }
         out = io.StringIO()
-        with patch("onecode_skill_sanitizer.cli.trusted_skill_names", return_value=trusted):
+        with patch("onecode_skill_sanitizer.task_packs.trusted_skill_names", return_value=trusted):
             with contextlib.redirect_stdout(out):
                 self.assertEqual(
                     main(
