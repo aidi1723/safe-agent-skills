@@ -35,8 +35,9 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "b6f91261dc349689a6b3afbe49ed3c5b2c4dd33e9c2ebca789579c0662345f31",
-    "sanitized_sha256": "60e9c0237617a047c487b233da9cb5eaad87a0ae26db1bcedcb73d8b2616ae6e",
+    "auxiliary_sha256": "6911807209fab53fc36aad0009c91b09717d746253a3b57f74d5b2c53078be06",
+    "manifest_sha256": "102d39174d6535f31eef847680d81cf7fbbee5dadf2bb934be32236a0082b1bf",
+    "sanitized_sha256": "b0829091df277a21679aa8c7f0b4a3eba21cb5e0868efbf1d34f3037792be721",
     "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
   },
   "name": "code-test-regression",
