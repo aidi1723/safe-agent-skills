@@ -47,6 +47,29 @@ OneCode kernel baseline and the public AgentCore OS product baseline. Connector,
 Knowledge Vault, and publishing integrations are adapter targets, not required
 assumptions of this sanitizer core.
 
+## Current Module Boundaries
+
+The public console entry remains `onecode_skill_sanitizer.cli:main`, but the
+implementation is split by ownership:
+
+- `cli.py`: parser wiring, argument validation, compatibility exports, and main
+- `commands.py`: command handlers and command-level orchestration
+- `registry.py`: registry IO, indexing, trust status, verification, and resealing
+- `rendering.py`: Schema v1 and v2 Markdown rendering
+- `bulk.py`: metadata-only candidate planning, drafts, and assessment
+- `task_packs.py`: trusted selection and Schema v1/v2 task-pack assembly
+- `router_evaluation.py`: deterministic router evaluation and quality summaries
+- `routing_profiles.py`: normalization, signals, profiles, and capability selection
+- `routing_execution.py`: stages, approvals, selection trace, and contract graphs
+- `batch_lifecycle.py`: non-runtime batch inventory and promotion validation
+
+`cli.py` and `router.py` are compatibility facades. New implementation belongs
+in the owner module above rather than growing the facade.
+
+`catalog/` is the only runtime-selectable registry. `batches/` is an intake and
+provenance workspace governed by `batches/index.json`; byte-identical promoted
+bodies may be represented by a hash-preserving `PROMOTED.md` record.
+
 ## Components
 
 ### Host Adapter

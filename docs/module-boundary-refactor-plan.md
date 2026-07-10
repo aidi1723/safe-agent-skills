@@ -42,6 +42,15 @@ cost of the large `cli.py`, `router.py`, and registry test modules.
 
 ## Progress
 
+- 2026-07-11: Extracted rendering, bulk workflows, registry ownership,
+  task-pack assembly, router evaluation, command handlers, routing profiles,
+  and execution-graph construction into focused owner modules while preserving
+  `cli.py` and `router.py` compatibility exports.
+- 2026-07-11: Split the 5,417-line registry CLI regression module into focused
+  registry, bulk, catalog maintenance, router, router-eval, and Schema v2 files.
+- 2026-07-11: Added machine-readable batch lifecycle validation and compacted
+  byte-identical promoted batch bodies without modifying catalog content.
+
 - 2026-07-04: Extracted repository asset path resolution into
   `onecode_skill_sanitizer.paths` with focused regression coverage. This is a
   low-risk boundary split used by CLI read-only commands and router checks.

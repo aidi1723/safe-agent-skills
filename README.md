@@ -87,6 +87,9 @@ Current public baseline:
 For a domain-oriented map of the catalog and example router commands, see
 [Catalog Overview](docs/catalog-overview.md).
 
+For the maintained entry point to architecture, operator guidance, catalog
+authoring, and historical records, see the [Documentation Index](docs/index.md).
+
 For the maintainer workflow for smarter skill selection, orchestration traces,
 scenario contracts, and router regression tests, see
 [Router Development Guide](docs/router-development.md).
@@ -97,84 +100,10 @@ For the current feature surface, category counts, and scenario bundles, see
 See [Open Source Statement](docs/open-source-statement.md) for the full project
 positioning and contribution stance.
 
-Latest update statement:
-[Structured Context Routing](docs/updates/2026-07-04-structured-context-routing.md).
-
-Previous update statement:
-[Current Intent Routing](docs/updates/2026-07-04-current-intent-routing.md).
-
-Earlier update statement:
-[Requires After Contract Ordering](docs/updates/2026-07-04-requires-after-contract-ordering.md).
-
-Latest closure report:
-[Hybrid Router v2 Final Closure Report](docs/hybrid-router-v2-final-closure-report-2026-07-10.md).
-
-Project launch article:
-[社区 Skill 太多、太乱、还不安全？只安装一个可信路由 Skill 就够了](docs/blog-one-trusted-skill-router-2026-07-10.md).
-
-Earlier closure report:
-[Maintenance Optimization Closure Report](docs/maintenance-optimization-closure-report-2026-07-04.md).
-
-Latest stage acceptance:
-[Stage Acceptance Report](docs/stage-acceptance-report-2026-07-04.md).
-
-GitHub update summary:
-[GitHub Update Summary](docs/github-update-summary-2026-07-03.md).
-
-Latest delivery readiness:
-[Delivery Readiness Report](docs/delivery-readiness-report.md).
-
-Earlier update:
-[Reference Pattern Expansion](docs/updates/2026-07-03-reference-pattern-expansion.md).
-
-Earlier same-day update:
-[Agentic Reference Patterns](docs/updates/2026-07-03-agentic-reference-patterns.md).
-
-Industry update:
-[Industry Application Orchestration](docs/updates/2026-07-03-industry-application-orchestration.md).
-
-Previous closure report:
-[Reference Pattern Expansion Closure Report](docs/reference-pattern-expansion-closure-report.md).
-
-Latest maintenance log:
-[Maintenance Log](docs/maintenance-log.md).
-
-Latest feature log:
-[Feature Log](docs/feature-log.md).
-
-Previous closure:
-[Smart Router And Claude Skills Closure Report](docs/smart-router-claude-skills-closure-report.md).
-
-Previous audit:
-[Claude Skills Expansion Audit](docs/claude-skills-expansion-audit.md).
-
-Previous update:
-[Claude Skills Expansion](docs/updates/2026-07-02-claude-skills-expansion.md).
-
-Earlier update:
-[Auto Orchestration Pipeline Plan](docs/updates/2026-06-27-auto-orchestration-pipeline-plan.md).
-
-Earlier update:
-[Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md).
-
-Earlier update:
-[Scenario System Expansion](docs/updates/2026-06-16-scenario-system-expansion.md).
-
-Prior closure:
-[Headroom Agent I/O Compression Closure Report](docs/headroom-agent-io-compression-closure-report.md).
-
-Earlier update:
-[CLAUDE.md Reference Closure Report](docs/claude-md-reference-closure-report.md).
-
-Phase 001 is closed and ready for public maintenance. See
-[Phase 001 Closure Report](docs/phase-001-closure-report.md).
-
-Phase 002 scenario routing is closed for today's delivery. See
-[Phase 002 Scenario Router Closure Report](docs/phase-002-scenario-router-closure-report.md).
-
-The audit hardening cycle is closed. See
-[Audit Hardening Closure Report](docs/audit-hardening-closure-report.md) and
-[Next Development Plan](docs/next-development-plan.md).
+Current status and chronological evidence are separated intentionally. Use the
+[Feature Log](docs/feature-log.md) for maintained capabilities and the
+[Historical Documentation Map](docs/history.md) for dated updates, batch notes,
+plans, acceptance records, and closure reports.
 
 ## Core Position
 
@@ -426,49 +355,12 @@ onecode skills approve pdf
 
 ## Project Docs
 
-- [Hybrid Router v2 Final Closure Report](docs/hybrid-router-v2-final-closure-report-2026-07-10.md)
-- [社区 Skill 太多、太乱、还不安全？只安装一个可信路由 Skill 就够了](docs/blog-one-trusted-skill-router-2026-07-10.md)
-- [Hybrid Router v2 First Milestone Report](docs/hybrid-router-v2-first-milestone-report.md)
-- [Delivery Readiness Report](docs/delivery-readiness-report.md)
-- [Workspace Boundary](docs/workspace-boundary.md)
-- [Source Baseline](docs/source-baseline.md)
-- [Smart Skill Router](docs/smart-skill-router.md)
-- [Auto Orchestration Pipeline Plan](docs/updates/2026-06-27-auto-orchestration-pipeline-plan.md)
-- [Auto Orchestration Pipeline Plan Closure Report](docs/auto-orchestration-pipeline-plan-closure-report.md)
-- [Manifest Integrity and Contract Router Hardening](docs/updates/2026-06-18-manifest-contract-router-hardening.md)
-- [Audit Hardening Closure Report](docs/audit-hardening-closure-report.md)
-- [Next Development Plan](docs/next-development-plan.md)
-- [External Reference Roadmap](docs/external-reference-roadmap.md)
-- [Scheduler Hardening Roadmap](docs/scheduler-hardening-roadmap.md)
-- [Latest Domain Guardrails Update](docs/updates/2026-06-05-domain-guardrails.md)
-- [Latest Verification Hardening Update](docs/updates/2026-06-05-verification-hardening.md)
-- [Latest Router Skill Update](docs/updates/2026-06-05-router-skill-single-entry.md)
-- [Router Skill Primary Entry](docs/router-skill-primary-entry.md)
-- [Scenario Skill Router Update](docs/updates/2026-06-04-scenario-skill-router.md)
-- [Phase 002 Scenario Router Closure Report](docs/phase-002-scenario-router-closure-report.md)
-- [Previous Update Statement](docs/updates/2026-06-04-bundle-aware-task-pack-opensquilla.md)
-- [Agent Task Pack](docs/agent-task-pack.md)
-- [Agent-Compatible Skill Bundles](docs/agent-compatible-skill-bundles.md)
-- [Safe Agent Router Skill Integration](docs/router-skill-integration.md)
-- [Standalone Tool Open Source Statement](docs/standalone-tool-open-source.md)
-- [Phase 001 Closure Report](docs/phase-001-closure-report.md)
+- [Documentation Index](docs/index.md)
 - [Architecture](docs/architecture.md)
-- [Skill Taxonomy](docs/skill-taxonomy.md)
-- [Skill Index](docs/skill-index.md)
-- [Skill Bundles](docs/skill-bundles.md)
-- [Sanitization Policy](docs/sanitization-policy.md)
-- [MVP Roadmap](docs/mvp-roadmap.md)
-- [Implementation Plan](docs/implementation-plan.md)
 - [Operator Guide](docs/operator-guide.md)
-- [Catalog Status](docs/catalog-status.md)
 - [Maintenance Guide](docs/maintenance-guide.md)
-- [Open Source Statement](docs/open-source-statement.md)
-- [Skill Manifest Schema](schemas/skill-manifest.schema.json)
-- [Registry Index Schema](schemas/registry-index.schema.json)
-- [Verify Report Schema](schemas/verify-report.schema.json)
-- [Example Sanitization Report](examples/sanitization-report.example.json)
-- [Example Registry Index](examples/registry-index.example.json)
-- [Example Verify Report](examples/verify-report.example.json)
+- [Catalog Overview](docs/catalog-overview.md)
+- [Historical Documentation Map](docs/history.md)
 
 ## Verify
 
