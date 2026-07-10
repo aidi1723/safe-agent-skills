@@ -3,12 +3,16 @@
 from __future__ import annotations
 
 from collections import defaultdict
+import re
 from typing import Any
 
 from .candidates import referenced_skill_names, validate_bundles_index
 from .composer import ScenarioComposition
 from .intent import IntentGraph
 from .router import pipeline_stage_for_skill
+
+
+_INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 
 
 def compile_execution_graph(
@@ -18,7 +22,9 @@ def compile_execution_graph(
     trusted_skill_names: set[str],
 ) -> dict[str, Any]:
     reason_codes: list[str] = []
-    intents = _validated_intents(intent_graph, reason_codes)
+    details: list[str] = []
+    _validate_intent_graph_boundary(intent_graph, reason_codes, details)
+    intents = _validated_intents(intent_graph, reason_codes, details)
     selections = _validated_selections(composition, intents, reason_codes)
     bundles = _validated_bundles(bundles_index, reason_codes)
     trusted_names = (
@@ -53,8 +59,8 @@ def compile_execution_graph(
             continue
         scenario_orders[scenario_id] = tuple(execution_order)
 
-    if reason_codes:
-        return _result(False, [], [], reason_codes)
+    if _has_fatal_precompile_reason(reason_codes):
+        return _result(False, [], [], reason_codes, details)
 
     selected_for_intent: dict[str, str] = {}
     for selection in selections:
@@ -67,13 +73,13 @@ def compile_execution_graph(
     expected_intents = set(intents)
     if set(selected_for_intent) != expected_intents:
         _add_reason(reason_codes, "incomplete_composition")
-    if reason_codes:
-        return _result(False, [], [], reason_codes)
+    if _has_fatal_precompile_reason(reason_codes):
+        return _result(False, [], [], reason_codes, details)
 
     nodes: list[dict[str, Any]] = []
     edges: list[dict[str, str]] = []
     roots: dict[str, str] = {}
-    terminals: dict[str, str] = {}
+    verification_anchors: dict[str, tuple[str, ...]] = {}
     for intent_id in sorted(intents, key=_intent_sort_key):
         scenario_id = selected_for_intent[intent_id]
         node_ids: list[str] = []
@@ -91,7 +97,9 @@ def compile_execution_graph(
                 }
             )
         roots[intent_id] = node_ids[0]
-        terminals[intent_id] = node_ids[-1]
+        verification_anchors[intent_id] = _terminal_verification_nodes(
+            node_ids, nodes
+        )
         edges.extend(
             {"from": source, "to": target, "type": "scenario_order"}
             for source, target in zip(node_ids, node_ids[1:])
@@ -100,12 +108,17 @@ def compile_execution_graph(
     for intent_id in sorted(intents, key=_intent_sort_key):
         dependencies = intents[intent_id].depends_on
         for dependency_id in sorted(set(dependencies), key=_intent_sort_key):
-            edges.append(
+            anchors = verification_anchors[dependency_id]
+            if not anchors:
+                _add_reason(reason_codes, "missing_intent_verification")
+                continue
+            edges.extend(
                 {
-                    "from": terminals[dependency_id],
+                    "from": anchor_id,
                     "to": roots[intent_id],
                     "type": "intent_dependency",
                 }
+                for anchor_id in anchors
             )
 
     nodes.sort(key=lambda node: _node_sort_key(node, scenario_orders))
@@ -113,10 +126,49 @@ def compile_execution_graph(
     acyclic = _is_acyclic(nodes, edges)
     if not acyclic:
         _add_reason(reason_codes, "dependency_cycle")
-    return _result(acyclic, nodes, edges, reason_codes)
+    return _result(acyclic, nodes, edges, reason_codes, details)
 
 
-def _validated_intents(intent_graph: IntentGraph, reason_codes: list[str]) -> dict[str, Any]:
+def _validate_intent_graph_boundary(
+    intent_graph: IntentGraph,
+    reason_codes: list[str],
+    details: list[str],
+) -> None:
+    try:
+        validation_issues = intent_graph.validate()
+    except (AttributeError, TypeError, ValueError):
+        validation_issues = ["intent graph validation failed"]
+    if isinstance(validation_issues, list):
+        details.extend(issue for issue in validation_issues if isinstance(issue, str))
+    elif validation_issues:
+        details.append("intent graph validation returned malformed issues")
+
+    unresolved = getattr(intent_graph, "unresolved_dependencies", ())
+    if isinstance(unresolved, (tuple, list)):
+        details.extend(
+            f"unresolved dependency: {dependency}"
+            for dependency in unresolved
+            if isinstance(dependency, str) and dependency
+        )
+    elif unresolved is not None:
+        details.append("unresolved_dependencies must contain nonempty strings")
+
+    raw_intents = getattr(intent_graph, "intents", ())
+    if isinstance(raw_intents, (tuple, list)):
+        for intent in raw_intents:
+            intent_id = getattr(intent, "id", None)
+            if not isinstance(intent_id, str) or not _INTENT_ID_RE.fullmatch(intent_id):
+                details.append(f"invalid intent id: {intent_id}")
+
+    if details:
+        _add_reason(reason_codes, "invalid_intent_graph")
+
+
+def _validated_intents(
+    intent_graph: IntentGraph,
+    reason_codes: list[str],
+    details: list[str],
+) -> dict[str, Any]:
     raw_intents = getattr(intent_graph, "intents", ())
     if not isinstance(raw_intents, (tuple, list)) or not raw_intents:
         _add_reason(reason_codes, "malformed_intent_graph")
@@ -125,7 +177,8 @@ def _validated_intents(intent_graph: IntentGraph, reason_codes: list[str]) -> di
     for intent in raw_intents:
         intent_id = getattr(intent, "id", None)
         if not isinstance(intent_id, str) or not intent_id:
-            _add_reason(reason_codes, "malformed_intent_id")
+            _add_reason(reason_codes, "invalid_intent_graph")
+            details.append(f"invalid intent id: {intent_id}")
             continue
         if intent_id in intents:
             _add_reason(reason_codes, "duplicate_intent_id")
@@ -205,6 +258,21 @@ def _is_acyclic(nodes: list[dict[str, Any]], edges: list[dict[str, str]]) -> boo
     return visited == len(node_ids)
 
 
+def _terminal_verification_nodes(
+    node_ids: list[str], nodes: list[dict[str, Any]]
+) -> tuple[str, ...]:
+    stage_by_id = {node["id"]: node["stage"] for node in nodes}
+    verification_ids = [
+        node_id for node_id in node_ids if stage_by_id[node_id] == "verification"
+    ]
+    if not verification_ids:
+        return ()
+    last_position = max(node_ids.index(node_id) for node_id in verification_ids)
+    return tuple(
+        node_id for node_id in verification_ids if node_ids.index(node_id) == last_position
+    )
+
+
 def _deduplicate_and_sort_edges(edges: list[dict[str, str]]) -> list[dict[str, str]]:
     unique = {(edge["from"], edge["to"], edge["type"]) for edge in edges}
     return [
@@ -235,17 +303,25 @@ def _result(
     nodes: list[dict[str, Any]],
     edges: list[dict[str, str]],
     reason_codes: list[str],
+    details: list[str],
 ) -> dict[str, Any]:
-    return {
+    result = {
         "schema_version": 2,
         "status": "ready" if acyclic and not reason_codes else "blocked",
         "acyclic": acyclic and not reason_codes,
         "nodes": nodes,
         "edges": edges,
-        "reason_codes": reason_codes,
+        "reason_codes": sorted(set(reason_codes)),
     }
+    if details:
+        result["details"] = sorted(set(details))
+    return result
 
 
 def _add_reason(reason_codes: list[str], reason_code: str) -> None:
     if reason_code not in reason_codes:
         reason_codes.append(reason_code)
+
+
+def _has_fatal_precompile_reason(reason_codes: list[str]) -> bool:
+    return any(reason_code != "invalid_intent_graph" for reason_code in reason_codes)

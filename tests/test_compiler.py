@@ -55,7 +55,16 @@ class CompilerTest(unittest.TestCase):
         }
         self.assertEqual(
             incoming,
-            {self.terminal_node(compiled, "i1"), self.terminal_node(compiled, "i2")},
+            {
+                self.terminal_verification_node(compiled, "i1"),
+                self.terminal_verification_node(compiled, "i2"),
+            },
+        )
+        incoming_nodes = {
+            node["id"]: node for node in compiled["nodes"] if node["id"] in incoming
+        }
+        self.assertEqual(
+            {node["stage"] for node in incoming_nodes.values()}, {"verification"}
         )
         node = compiled["nodes"][0]
         self.assertEqual(
@@ -75,11 +84,19 @@ class CompilerTest(unittest.TestCase):
         composition = self.composition(("i1",), ("i2",))
         bundles = {"bundles": [self.bundle("first"), self.bundle("second")]}
 
-        compiled = compile_execution_graph(graph, composition, bundles, {"skill-a"})
+        compiled = compile_execution_graph(
+            graph, composition, bundles, {"execution-publish-check"}
+        )
 
         self.assertEqual(compiled["status"], "blocked")
         self.assertFalse(compiled["acyclic"])
-        self.assertEqual(compiled["reason_codes"], ["dependency_cycle"])
+        self.assertEqual(
+            compiled["reason_codes"], ["dependency_cycle", "invalid_intent_graph"]
+        )
+        self.assertEqual(
+            compiled["details"],
+            ["intent dependency cycle detected: i1 -> i2 -> i1"],
+        )
         self.assertNotIn("fallback_reason", compiled)
 
     def test_node_and_edge_ordering_is_deterministic_for_reordered_inputs(self):
@@ -100,8 +117,8 @@ class CompilerTest(unittest.TestCase):
         )
         bundles = {
             "bundles": [
-                self.bundle("second", ["skill-c", "skill-d"]),
-                self.bundle("first", ["skill-a", "skill-b"]),
+                self.bundle("second", ["skill-c", "execution-browser-check", "skill-d"]),
+                self.bundle("first", ["skill-a", "execution-publish-check", "skill-b"]),
             ]
         }
         before = copy.deepcopy(bundles)
@@ -123,8 +140,10 @@ class CompilerTest(unittest.TestCase):
             [node["id"] for node in first["nodes"]],
             [
                 "skill:i1:skill-a",
+                "skill:i1:execution-publish-check",
                 "skill:i1:skill-b",
                 "skill:i2:skill-c",
+                "skill:i2:execution-browser-check",
                 "skill:i2:skill-d",
             ],
         )
@@ -162,7 +181,9 @@ class CompilerTest(unittest.TestCase):
         composition = self.composition(("i1",), ("i2",))
         bundles = {"bundles": [self.bundle("first"), self.bundle("second")]}
 
-        compiled = compile_execution_graph(graph, composition, bundles, {"skill-a"})
+        compiled = compile_execution_graph(
+            graph, composition, bundles, {"execution-publish-check"}
+        )
 
         edge_keys = [(edge["from"], edge["to"], edge["type"]) for edge in compiled["edges"]]
         self.assertEqual(len(edge_keys), len(set(edge_keys)))
@@ -173,7 +194,7 @@ class CompilerTest(unittest.TestCase):
         quarantined = {"bundles": [{**self.bundle("first"), "status": "quarantined"}]}
 
         untrusted_bundle = compile_execution_graph(
-            graph, composition, quarantined, {"skill-a"}
+            graph, composition, quarantined, {"execution-publish-check"}
         )
         untrusted_skill = compile_execution_graph(
             graph,
@@ -193,7 +214,13 @@ class CompilerTest(unittest.TestCase):
         unknown = ScenarioComposition(
             (ScenarioSelection("first", ("i9",), 1.0, 1),), (), "complete"
         )
-        duplicate_bundle = {"bundles": [self.bundle("first", ["skill-a", "skill-a"])]}
+        duplicate_bundle = {
+            "bundles": [
+                self.bundle(
+                    "first", ["execution-publish-check", "execution-publish-check"]
+                )
+            ]
+        }
         malformed_graph = IntentGraph((self.intent("i1", depends_on=None),), ())
 
         cases = [
@@ -203,13 +230,19 @@ class CompilerTest(unittest.TestCase):
             ),
             (
                 compile_execution_graph(
-                    graph, unknown, {"bundles": [self.bundle("first")]}, {"skill-a"}
+                    graph,
+                    unknown,
+                    {"bundles": [self.bundle("first")]},
+                    {"execution-publish-check"},
                 ),
                 "unknown_intent_id",
             ),
             (
                 compile_execution_graph(
-                    graph, self.composition(("i1",)), duplicate_bundle, {"skill-a"}
+                    graph,
+                    self.composition(("i1",)),
+                    duplicate_bundle,
+                    {"execution-publish-check"},
                 ),
                 "duplicate_skill_name",
             ),
@@ -218,7 +251,7 @@ class CompilerTest(unittest.TestCase):
                     malformed_graph,
                     self.composition(("i1",)),
                     {"bundles": [self.bundle("first")]},
-                    {"skill-a"},
+                    {"execution-publish-check"},
                 ),
                 "malformed_intent_dependency",
             ),
@@ -228,6 +261,101 @@ class CompilerTest(unittest.TestCase):
             with self.subTest(reason_code=reason_code):
                 self.assertEqual(compiled["status"], "blocked")
                 self.assertIn(reason_code, compiled["reason_codes"])
+
+    def test_dependency_without_verification_anchor_is_blocked(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent("i2", depends_on=("i1",)),
+            ),
+            unresolved_dependencies=(),
+        )
+        composition = self.composition(("i1",), ("i2",))
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+
+        compiled = compile_execution_graph(
+            graph, composition, bundles, {"skill-a", "execution-publish-check"}
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
+
+    def test_intent_graph_validation_issues_and_unresolved_dependencies_block(self):
+        graph = IntentGraph(
+            intents=(self.intent("i1"),),
+            unresolved_dependencies=("release target unresolved", "artifact unresolved"),
+        )
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",)),
+            {"bundles": [self.bundle("first")]},
+            {"execution-publish-check"},
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+        self.assertEqual(
+            compiled["details"],
+            [
+                "unresolved dependency: artifact unresolved",
+                "unresolved dependency: release target unresolved",
+            ],
+        )
+
+    def test_compiler_boundary_rejects_invalid_intent_id_pattern(self):
+        graph = IntentGraph((self.intent("intent-1"),), ())
+        composition = ScenarioComposition(
+            (ScenarioSelection("first", ("intent-1",), 1.0, 1),), (), "complete"
+        )
+
+        compiled = compile_execution_graph(
+            graph,
+            composition,
+            {"bundles": [self.bundle("first")]},
+            {"execution-publish-check"},
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+        self.assertEqual(compiled["details"], ["invalid intent id: intent-1"])
+
+    def test_reason_codes_and_details_are_sorted_independent_of_selection_order(self):
+        graph = IntentGraph(
+            intents=(self.intent("i1"), self.intent("i2")),
+            unresolved_dependencies=("z unresolved", "a unresolved"),
+        )
+        selections = (
+            ScenarioSelection("missing-z", ("i2",), 1.0, 1),
+            ScenarioSelection("missing-a", ("i1",), 1.0, 1),
+        )
+
+        first = compile_execution_graph(
+            graph,
+            ScenarioComposition(selections, (), "complete"),
+            {"bundles": []},
+            set(),
+        )
+        second = compile_execution_graph(
+            graph,
+            ScenarioComposition(tuple(reversed(selections)), (), "complete"),
+            {"bundles": []},
+            set(),
+        )
+
+        self.assertEqual(first, second)
+        self.assertEqual(
+            first["reason_codes"], ["invalid_intent_graph", "missing_scenario_bundle"]
+        )
+        self.assertEqual(
+            first["details"],
+            ["unresolved dependency: a unresolved", "unresolved dependency: z unresolved"],
+        )
 
     @staticmethod
     def intent(intent_id, depends_on=()):
@@ -244,7 +372,7 @@ class CompilerTest(unittest.TestCase):
 
     @staticmethod
     def bundle(bundle_id, execution_order=None):
-        order = ["skill-a"] if execution_order is None else execution_order
+        order = ["execution-publish-check"] if execution_order is None else execution_order
         return {
             "id": bundle_id,
             "name": bundle_id,
@@ -292,6 +420,24 @@ class CompilerTest(unittest.TestCase):
             for node_id in reversed(node_ids)
             if not any(
                 edge["from"] == node_id and edge["type"] == "scenario_order"
+                for edge in compiled["edges"]
+            )
+        )
+
+    @staticmethod
+    def terminal_verification_node(compiled, intent_id):
+        verification_ids = [
+            node["id"]
+            for node in compiled["nodes"]
+            if node["intent_ids"] == [intent_id] and node["stage"] == "verification"
+        ]
+        return next(
+            node_id
+            for node_id in reversed(verification_ids)
+            if not any(
+                edge["from"] == node_id
+                and edge["to"] in verification_ids
+                and edge["type"] == "scenario_order"
                 for edge in compiled["edges"]
             )
         )
