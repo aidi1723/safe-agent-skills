@@ -127,7 +127,11 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
         "match_score": entry.get("match_score", 0),
         "taxonomy": entry["taxonomy"],
         "source": entry["source"],
-        "hashes": entry["hashes"],
+        "hashes": {
+            key: entry["hashes"][key]
+            for key in ["source_sha256", "sanitized_sha256", "manifest_sha256"]
+            if key in entry["hashes"]
+        },
         "registry_path": entry["registry_path"],
         "description": extract_frontmatter_description(skill_text),
         "when_to_use": sections.get("When To Use", ""),
