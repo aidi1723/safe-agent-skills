@@ -4629,6 +4629,59 @@ class RegistryCliTest(unittest.TestCase):
                         else:
                             self.assertIn("# OneCode Task Pack v2 Error", output)
 
+    def test_v2_overlap_group_id_type_failures_are_bounded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            for index, group_id in enumerate(({}, 123)):
+                overlap_path = root / f"invalid-id-{index}.json"
+                overlap_path.write_text(
+                    json.dumps(
+                        {
+                            "schema_version": 1,
+                            "group_count": 1,
+                            "groups": [
+                                {
+                                    "id": group_id,
+                                    "status": "trusted",
+                                    "primary_skill": "design-ui-review",
+                                }
+                            ],
+                        }
+                    ),
+                    encoding="utf-8",
+                )
+                commands = [
+                    ["smart", "build site", "--schema-version", "2", "--overlap-groups", str(overlap_path)],
+                    [
+                        "task-pack",
+                        "build site",
+                        "--registry",
+                        "catalog",
+                        "--schema-version",
+                        "2",
+                        "--overlap-groups",
+                        str(overlap_path),
+                    ],
+                ]
+                for argv in commands:
+                    for output_format in ("json", "markdown"):
+                        with self.subTest(group_id=group_id, argv=argv, output_format=output_format):
+                            out = io.StringIO()
+                            err = io.StringIO()
+                            with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                                exit_code = main([*argv, "--format", output_format])
+                            output = out.getvalue()
+                            self.assertEqual(exit_code, 2)
+                            self.assertEqual(err.getvalue(), "")
+                            self.assertNotIn("Traceback", output)
+                            self.assertNotIn(str(root), output)
+                            if output_format == "json":
+                                payload = json.loads(output)
+                                self.assertEqual(payload["schema_version"], 2)
+                                self.assertEqual(payload["status"], "error")
+                            else:
+                                self.assertIn("# OneCode Task Pack v2 Error", output)
+
     def test_smart_schema_v2_marks_missing_required_capability_incomplete(self):
         with tempfile.TemporaryDirectory() as tmp:
             bundles_path = Path(tmp) / "bundles.json"

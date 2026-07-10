@@ -3408,6 +3408,15 @@ def validate_overlap_groups(
     for group_index, group in enumerate(groups):
         group_id = group.get("id", f"group-{group_index}")
         group_path = f"{overlap_path.as_posix()}#/groups/{group_index}"
+        if not isinstance(group_id, str) or not group_id.strip():
+            issues.append(
+                {
+                    "id": "overlap-invalid-group-id",
+                    "severity": "high",
+                    "path": group_path,
+                }
+            )
+            continue
         if group_id in seen_group_ids:
             issues.append(
                 {

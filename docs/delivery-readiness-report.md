@@ -46,7 +46,7 @@ Current delivery scope is intentionally bounded:
 
 ## Current Verified Baseline
 
-Fresh milestone verification on 2026-07-10 records 317 passing tests, clean
+Fresh milestone verification on 2026-07-10 records 318 passing tests, clean
 Ruff lint, a passing `scripts/verify.sh`, explicit v2 invariant safeguard graph
 acceptance, 81.25% core Contract v2 coverage, and 43/43 passing Schema v1
 regression cases.
@@ -64,6 +64,8 @@ When overlap groups are configured, v2 now validates their structure, trusted
 status, and trusted skill references before canonical route hashing. The current
 composer does not apply overlap pruning, so the output explicitly records
 `routing_metrics.overlap_policy: validated_not_applied`.
+Overlap group IDs must be nonempty strings; malformed ID types fail through the
+same bounded v2 JSON or Markdown error path.
 
 The manually curated 100-case v2 evaluator currently reports:
 
