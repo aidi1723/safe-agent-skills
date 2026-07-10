@@ -431,5 +431,8 @@ onecode skills approve pdf
 ## Verify
 
 ```bash
+python3 -m pip install -e ".[dev]"
 bash scripts/verify.sh
 ```
+
+`jsonschema` is required by the verification suite. Install development checks with: `python3 -m pip install -e ".[dev]"` before running `bash scripts/verify.sh`.

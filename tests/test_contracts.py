@@ -4,7 +4,6 @@ import unittest
 from pathlib import Path
 
 from jsonschema import Draft202012Validator, validators
-from referencing import Registry, Resource
 
 from onecode_skill_sanitizer.contracts import contract_coverage
 
@@ -76,9 +75,7 @@ def contract_validator():
 
 def manifest_validator():
     schema = json.loads(Path("schemas/skill-manifest.schema.json").read_text(encoding="utf-8"))
-    contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
-    registry = Registry().with_resource(contract_schema["$id"], Resource.from_contents(contract_schema))
-    return StrictDraft202012Validator(schema, registry=registry)
+    return StrictDraft202012Validator(schema)
 
 
 class ContractCoverageTest(unittest.TestCase):
@@ -124,6 +121,66 @@ class ContractCoverageTest(unittest.TestCase):
         }
 
         self.assertEqual(list(validator.iter_errors(manifest)), [])
+
+    def test_embedded_contract_v2_schema_matches_standalone_core(self):
+        manifest_schema = json.loads(Path("schemas/skill-manifest.schema.json").read_text(encoding="utf-8"))
+        standalone = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
+        embedded = manifest_schema["$defs"]["contractV2"]
+
+        for field in ["type", "additionalProperties", "required", "properties", "$defs"]:
+            self.assertEqual(embedded[field], standalone[field], field)
+
+    def test_contract_coverage_rejects_malformed_registry_and_bundle_inputs(self):
+        valid_registry = {
+            "skills": [{"name": "alpha", "status": "trusted", "registry_path": "code/alpha"}]
+        }
+        valid_bundles = {"bundles": [{"id": "core", "skills": ["alpha"]}]}
+        cases = [
+            ([], valid_bundles, None, "registry index must be an object"),
+            ({"skills": "abc"}, valid_bundles, None, "registry index skills must be an array"),
+            ({"skills": ["alpha"]}, valid_bundles, None, "registry skill entry 0 must be an object"),
+            (
+                {"skills": [{"name": "alpha", "status": "unknown", "registry_path": "code/alpha"}]},
+                valid_bundles,
+                None,
+                "registry skill alpha status is not supported: unknown",
+            ),
+            (
+                {"skills": [{"name": "alpha", "status": "trusted", "registry_path": "../alpha"}]},
+                valid_bundles,
+                None,
+                "registry skill alpha registry_path must be a safe relative path",
+            ),
+            (
+                {"skills": [{"name": "alpha", "status": "trusted", "registry_path": "code/alpha"}, {"name": "alpha", "status": "trusted", "registry_path": "code/beta"}]},
+                valid_bundles,
+                None,
+                "registry skill names must be unique: alpha",
+            ),
+            (valid_registry, [], None, "bundles index must be an object"),
+            (valid_registry, {"bundles": "abc"}, None, "bundles index bundles must be an array"),
+            (valid_registry, {"bundles": ["core"]}, None, "bundle entry 0 must be an object"),
+            (valid_registry, {"bundles": [{"id": "core", "skills": "abc"}]}, None, "bundle core skills must be a nonempty string array"),
+            (valid_registry, {"bundles": [{"id": "core", "skills": []}]}, None, "bundle core skills must be a nonempty string array"),
+            (
+                valid_registry,
+                {"bundles": [{"id": "core", "skills": ["alpha", "alpha"]}]},
+                None,
+                "bundle core skills must be unique",
+            ),
+            (
+                valid_registry,
+                {"bundles": [{"id": "core", "skills": ["alpha"]}, {"id": "core", "skills": ["alpha"]}]},
+                None,
+                "bundle ids must be unique: core",
+            ),
+            (valid_registry, {"bundles": []}, None, "no scenarios are available for contract coverage"),
+            (valid_registry, valid_bundles, [], "no scenarios were selected for contract coverage"),
+        ]
+
+        for registry, bundles, scenario_ids, message in cases:
+            with self.subTest(message=message), self.assertRaisesRegex(ValueError, f"^{message}$"):
+                contract_coverage(registry, bundles, scenario_ids)
 
     def test_authoritative_manifest_schema_validates_all_migrated_manifests(self):
         validator = manifest_validator()

@@ -1958,14 +1958,24 @@ def contract_check_command(args: argparse.Namespace) -> int:
     registry_dir = resolve_project_asset_path(args.registry)
     bundles_path = resolve_project_asset_path(args.bundles)
     try:
+        registry_index_path = registry_dir / "index.json"
+        try:
+            registry = json.loads(registry_index_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raise ValueError(f"invalid registry index JSON: {registry_index_path}")
+        try:
+            bundles_index = json.loads(bundles_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            raise ValueError(f"invalid bundles index JSON: {bundles_path}")
         result = contract_coverage(
-            load_registry_index(registry_dir),
-            load_bundles_index(bundles_path),
+            registry,
+            bundles_index,
             args.scenario,
             registry_root=registry_dir,
         )
     except ValueError as exc:
-        raise SystemExit(str(exc)) from exc
+        print(json.dumps({"status": "error", "error": str(exc)}, indent=2, sort_keys=True, allow_nan=False))
+        return 2
     result["minimum_ratio"] = args.minimum_ratio
     result["status"] = "ok" if result["coverage_ratio"] >= args.minimum_ratio else "failed"
     print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))

@@ -111,6 +111,23 @@ class RegistryCliTest(unittest.TestCase):
                     "1.1",
                 ]
             )
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "contract-check",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--scenario",
+                    "not-a-scenario",
+                ]
+            )
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["status"], "error")
+        self.assertEqual(payload["error"], "unknown scenario ids: not-a-scenario")
 
     def test_contract_check_rejects_nonfinite_thresholds_without_json_output(self):
         for value in ["nan", "inf", "-inf"]:
@@ -128,18 +145,63 @@ class RegistryCliTest(unittest.TestCase):
                         ]
                     )
                 self.assertEqual(out.getvalue(), "")
-        with self.assertRaises(SystemExit):
-            main(
-                [
-                    "contract-check",
-                    "--registry",
-                    "catalog",
-                    "--bundles",
-                    "bundles/index.json",
-                    "--scenario",
-                    "not-a-scenario",
-                ]
-            )
+
+    def test_contract_check_returns_json_error_for_malformed_inputs(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry = root / "catalog"
+            registry.mkdir()
+            (registry / "index.json").write_text(json.dumps({"skills": "abc"}), encoding="utf-8")
+            bundles = root / "bundles.json"
+            bundles.write_text(json.dumps({"bundles": []}), encoding="utf-8")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    [
+                        "contract-check",
+                        "--registry",
+                        str(registry),
+                        "--bundles",
+                        str(bundles),
+                    ]
+                )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["status"], "error")
+        self.assertEqual(payload["error"], "registry index skills must be an array")
+
+    def test_contract_check_returns_json_error_for_malformed_bundle_file(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry = root / "catalog"
+            registry.mkdir()
+            (registry / "index.json").write_text(json.dumps({"skills": []}), encoding="utf-8")
+            bundles = root / "bundles.json"
+            bundles.write_text("{not-json", encoding="utf-8")
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                exit_code = main(["contract-check", "--registry", str(registry), "--bundles", str(bundles)])
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["status"], "error")
+        self.assertEqual(payload["error"], f"invalid bundles index JSON: {bundles}")
+
+    def test_contract_check_returns_json_error_for_missing_index_files(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            registry = root / "catalog"
+            registry.mkdir()
+            bundles = root / "bundles.json"
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                exit_code = main(["contract-check", "--registry", str(registry), "--bundles", str(bundles)])
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["status"], "error")
+        self.assertEqual(payload["error"], f"invalid registry index JSON: {registry / 'index.json'}")
 
     def test_v2_routing_status_precedence_is_blocked_then_incomplete_then_complete(self):
         complete_capabilities = {"status": "complete", "missing_required_count": 0}

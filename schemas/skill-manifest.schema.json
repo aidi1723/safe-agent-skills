@@ -31,15 +31,30 @@
     },
     "status": {
       "type": "string",
-      "enum": ["quarantined", "review_required", "trusted", "rejected", "disabled"]
+      "enum": [
+        "quarantined",
+        "review_required",
+        "trusted",
+        "rejected",
+        "disabled"
+      ]
     },
     "risk_level": {
       "type": "string",
-      "enum": ["low", "medium", "high", "critical"]
+      "enum": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ]
     },
     "taxonomy": {
       "type": "object",
-      "required": ["category", "subcategory", "collection_priority"],
+      "required": [
+        "category",
+        "subcategory",
+        "collection_priority"
+      ],
       "properties": {
         "category": {
           "type": "string",
@@ -73,7 +88,12 @@
         },
         "collection_priority": {
           "type": "string",
-          "enum": ["P0", "P1", "P2", "P3"]
+          "enum": [
+            "P0",
+            "P1",
+            "P2",
+            "P3"
+          ]
         }
       },
       "additionalProperties": false
@@ -101,7 +121,10 @@
           "if": {
             "properties": {
               "type": {
-                "enum": ["github_reference", "web_reference"]
+                "enum": [
+                  "github_reference",
+                  "web_reference"
+                ]
               }
             }
           },
@@ -117,7 +140,11 @@
           "if": {
             "properties": {
               "type": {
-                "enum": ["archive", "git", "community_index"]
+                "enum": [
+                  "archive",
+                  "git",
+                  "community_index"
+                ]
               }
             }
           },
@@ -191,7 +218,11 @@
     },
     "hashes": {
       "type": "object",
-      "required": ["source_sha256", "sanitized_sha256", "manifest_sha256"],
+      "required": [
+        "source_sha256",
+        "sanitized_sha256",
+        "manifest_sha256"
+      ],
       "properties": {
         "source_sha256": {
           "type": "string",
@@ -224,26 +255,42 @@
     },
     "policy": {
       "type": "object",
-      "required": ["filesystem", "network", "approval"],
+      "required": [
+        "filesystem",
+        "network",
+        "approval"
+      ],
       "properties": {
         "filesystem": {
           "type": "object",
-          "required": ["scope"],
+          "required": [
+            "scope"
+          ],
           "properties": {
             "scope": {
               "type": "string",
-              "enum": ["workspace_only", "read_only_workspace", "none"]
+              "enum": [
+                "workspace_only",
+                "read_only_workspace",
+                "none"
+              ]
             }
           },
           "additionalProperties": false
         },
         "network": {
           "type": "object",
-          "required": ["scope"],
+          "required": [
+            "scope"
+          ],
           "properties": {
             "scope": {
               "type": "string",
-              "enum": ["none", "approved_hosts", "onecode_api_only"]
+              "enum": [
+                "none",
+                "approved_hosts",
+                "onecode_api_only"
+              ]
             },
             "approved_hosts": {
               "type": "array",
@@ -257,7 +304,9 @@
         },
         "approval": {
           "type": "object",
-          "required": ["required_for"],
+          "required": [
+            "required_for"
+          ],
           "properties": {
             "required_for": {
               "type": "array",
@@ -276,18 +325,32 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["id", "severity", "status"],
+        "required": [
+          "id",
+          "severity",
+          "status"
+        ],
         "properties": {
           "id": {
             "type": "string"
           },
           "severity": {
             "type": "string",
-            "enum": ["low", "medium", "high", "critical"]
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
           },
           "status": {
             "type": "string",
-            "enum": ["removed", "rewritten", "waived", "unresolved"]
+            "enum": [
+              "removed",
+              "rewritten",
+              "waived",
+              "unresolved"
+            ]
           },
           "summary": {
             "type": "string"
@@ -299,7 +362,7 @@
     "contract": {
       "oneOf": [
         {
-          "$ref": "https://onecode.dev/schemas/contract-v2.schema.json"
+          "$ref": "#/$defs/contractV2"
         },
         {
           "$ref": "#/$defs/legacyContract"
@@ -356,7 +419,14 @@
         },
         "stage_hint": {
           "type": "string",
-          "enum": ["preflight", "source", "planning", "review", "execution", "verification"]
+          "enum": [
+            "preflight",
+            "source",
+            "planning",
+            "review",
+            "execution",
+            "verification"
+          ]
         },
         "conflicts_with": {
           "type": "array",
@@ -386,6 +456,151 @@
         }
       },
       "additionalProperties": false
+    },
+    "contractV2": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "schema_version",
+        "stage_hint",
+        "capability_vector"
+      ],
+      "properties": {
+        "schema_version": {
+          "type": "integer",
+          "const": 2
+        },
+        "stage_hint": {
+          "enum": [
+            "preflight",
+            "source",
+            "planning",
+            "review",
+            "execution",
+            "verification"
+          ]
+        },
+        "capability_vector": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"
+          }
+        },
+        "requires_context": {
+          "$ref": "#/$defs/artifacts"
+        },
+        "optional_context": {
+          "$ref": "#/$defs/artifacts"
+        },
+        "produces_artifacts": {
+          "$ref": "#/$defs/artifacts"
+        },
+        "produces_evidence": {
+          "$ref": "#/$defs/artifacts"
+        },
+        "requires_after": {
+          "$ref": "#/$defs/names"
+        },
+        "conflicts_with": {
+          "$ref": "#/$defs/names"
+        },
+        "excludes": {
+          "$ref": "#/$defs/names"
+        },
+        "cost_weight": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 10
+        },
+        "approval_classes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "browser_automation",
+              "network_access",
+              "publication",
+              "shell_execution",
+              "dependency_install",
+              "paid_provider",
+              "destructive_action"
+            ]
+          }
+        },
+        "estimated_cost": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "time",
+            "tokens",
+            "runtime"
+          ],
+          "properties": {
+            "time": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "tokens": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            },
+            "runtime": {
+              "type": "integer",
+              "minimum": 0,
+              "maximum": 5
+            }
+          }
+        },
+        "idempotent": {
+          "type": "boolean"
+        },
+        "retry_policy": {
+          "enum": [
+            "host_decides",
+            "never",
+            "safe_once"
+          ]
+        }
+      },
+      "$defs": {
+        "artifacts": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]{1,80}$"
+          }
+        },
+        "names": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        }
+      }
+    },
+    "artifacts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{1,80}$"
+      }
+    },
+    "names": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      }
     }
   },
   "additionalProperties": false
