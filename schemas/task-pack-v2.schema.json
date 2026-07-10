@@ -1,0 +1,107 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/task-pack-v2.schema.json",
+  "title": "OneCode Task Pack v2",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "route_id",
+    "routing_mode",
+    "routing_status",
+    "provider",
+    "normalized_task",
+    "intent_graph",
+    "scenario_candidates",
+    "selected_scenarios",
+    "uncovered_intents",
+    "selected_skills",
+    "capability_resolution",
+    "execution_graph",
+    "host_execution_protocol",
+    "routing_metrics",
+    "registry_verification",
+    "compatibility"
+  ],
+  "properties": {
+    "schema_version": {"const": 2},
+    "generated_at": {"type": "string", "minLength": 1},
+    "route_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "routing_mode": {"const": "hybrid"},
+    "routing_status": {"enum": ["blocked", "incomplete", "complete"]},
+    "provider": {
+      "type": "object",
+      "required": ["requested", "used", "fallback_reason"],
+      "properties": {
+        "requested": {"const": "none"},
+        "used": {"const": "none"},
+        "fallback_reason": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "normalized_task": {
+      "type": "object",
+      "required": ["raw", "current", "history", "stale", "stale_policy"],
+      "properties": {
+        "raw": {"type": "string"},
+        "current": {"type": "string"},
+        "history": {"type": "string"},
+        "stale": {"type": "string"},
+        "stale_policy": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "intent_graph": {"$ref": "intent-graph.schema.json"},
+    "scenario_candidates": {
+      "type": "array",
+      "items": {"type": "object", "additionalProperties": true}
+    },
+    "selected_scenarios": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["scenario_id", "intent_ids", "score", "score_breakdown"],
+        "properties": {
+          "scenario_id": {"type": "string", "minLength": 1},
+          "intent_ids": {"type": "array", "items": {"type": "string"}},
+          "score": {"type": "number", "minimum": 0, "maximum": 1},
+          "score_breakdown": {"type": "object", "additionalProperties": true}
+        },
+        "additionalProperties": false
+      }
+    },
+    "uncovered_intents": {"type": "array", "items": {"type": "string"}},
+    "selected_skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "status", "registry_path"],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "status": {"const": "trusted"},
+          "registry_path": {"type": "string", "minLength": 1}
+        },
+        "additionalProperties": true
+      }
+    },
+    "capability_resolution": {"type": "object", "additionalProperties": true},
+    "execution_graph": {"type": "object", "additionalProperties": true},
+    "host_execution_protocol": {
+      "type": "object",
+      "required": ["mode", "runtime_boundary", "node_statuses"],
+      "properties": {
+        "mode": {"const": "method_only"},
+        "runtime_boundary": {"const": "The host runtime controls permissions and execution."},
+        "node_statuses": {
+          "type": "array",
+          "items": {"enum": ["pending", "ready", "running", "waiting_approval", "completed", "failed", "blocked", "skipped"]}
+        }
+      },
+      "additionalProperties": false
+    },
+    "routing_metrics": {"type": "object", "additionalProperties": true},
+    "registry_verification": {"type": "object", "additionalProperties": true},
+    "compatibility": {"type": "object", "additionalProperties": true}
+  },
+  "additionalProperties": false
+}

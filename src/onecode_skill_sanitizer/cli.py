@@ -7,6 +7,11 @@ import tempfile
 from datetime import datetime, timezone
 from pathlib import Path
 
+from .candidates import retrieve_scenario_candidates
+from .compatibility import build_route_id, to_legacy_v1
+from .compiler import compile_execution_graph
+from .composer import compose_scenarios
+from .intent import decompose_task, normalize_task
 from .paths import resolve_project_asset_path
 from .references import validate_external_references
 from .router import build_task_profile, route_mesh_task, route_scenario_task
@@ -830,6 +835,168 @@ def build_task_pack(
     return task_pack
 
 
+def build_task_pack_v2(
+    registry_dir: Path,
+    task: str,
+    bundles_path: Path,
+    max_skills: int | None = None,
+    invariants: list[str] | None = None,
+    strategy: str = "balanced",
+) -> dict:
+    verification = verify_registry(registry_dir)
+    if verification["status"] != "ok":
+        raise SystemExit("registry verification failed; refusing to build task pack")
+
+    bundles_index = load_bundles_index(bundles_path)
+    trusted_names = trusted_skill_names(registry_dir)
+    normalized_task = normalize_task(task)
+    intent_graph = decompose_task(task)
+    candidates = retrieve_scenario_candidates(intent_graph, bundles_index, trusted_names)
+    composition = compose_scenarios(intent_graph, candidates, bundles_index, trusted_names)
+    execution_graph = compile_execution_graph(intent_graph, composition, bundles_index, trusted_names)
+
+    trusted_items = {item["name"]: item for item in load_trusted_skill_pack_items(registry_dir)}
+    required_skill_names = []
+    for node in execution_graph["nodes"]:
+        skill_name = node["skill"]
+        if skill_name not in required_skill_names:
+            required_skill_names.append(skill_name)
+    selected_skills = [trusted_items[name] for name in required_skill_names if name in trusted_items]
+    missing_graph_skills = [name for name in required_skill_names if name not in trusted_items]
+    if missing_graph_skills:
+        execution_graph = dict(execution_graph)
+        execution_graph["status"] = "blocked"
+        execution_graph["acyclic"] = False
+        execution_graph["reason_codes"] = sorted(
+            set(execution_graph.get("reason_codes", [])) | {"missing_trusted_skill_pack_item"}
+        )
+        execution_graph["details"] = [
+            f"missing trusted skill pack item: {name}" for name in missing_graph_skills
+        ]
+
+    selected_scenarios = [
+        {
+            "scenario_id": selection.scenario_id,
+            "intent_ids": list(selection.intent_ids),
+            "score": selection.score,
+            "score_breakdown": {
+                "deterministic_signal": selection.score,
+                "deterministic_score": selection.deterministic_score,
+            },
+        }
+        for selection in composition.selections
+    ]
+    capability_resolution = _build_v2_capability_resolution(
+        bundles_index, selected_scenarios, set(required_skill_names)
+    )
+    routing_status = _routing_status(composition.status, execution_graph)
+    provider = {
+        "requested": "none",
+        "used": "none",
+        "fallback_reason": "semantic_provider_not_enabled_in_first_milestone",
+    }
+    host_protocol = {
+        "mode": "method_only",
+        "runtime_boundary": "The host runtime controls permissions and execution.",
+        "node_statuses": [
+            "pending",
+            "ready",
+            "running",
+            "waiting_approval",
+            "completed",
+            "failed",
+            "blocked",
+            "skipped",
+        ],
+    }
+    route_inputs = {
+        "normalized_task": normalized_task.to_json(),
+        "invariants": invariants or [],
+        "strategy": strategy,
+        "provider": {"mode": provider["used"], "model": "none"},
+        "catalog_index_route_id": _json_asset_route_id(registry_dir / "index.json"),
+        "bundle_index_route_id": _json_asset_route_id(bundles_path),
+        "router_version": "0.2.0",
+    }
+    payload = {
+        "schema_version": 2,
+        "generated_at": utc_now(),
+        "route_id": build_route_id(route_inputs),
+        "routing_mode": "hybrid",
+        "routing_status": routing_status,
+        "provider": provider,
+        "normalized_task": normalized_task.to_json(),
+        "intent_graph": intent_graph.to_json(),
+        "scenario_candidates": [candidate.to_json() for candidate in candidates],
+        "selected_scenarios": selected_scenarios,
+        "uncovered_intents": list(composition.uncovered_intents),
+        "selected_skills": selected_skills,
+        "capability_resolution": capability_resolution,
+        "execution_graph": execution_graph,
+        "host_execution_protocol": host_protocol,
+        "routing_metrics": {
+            "intent_count": len(intent_graph.intents),
+            "candidate_count": len(candidates),
+            "selected_scenario_count": len(selected_scenarios),
+            "required_skill_count": len(required_skill_names),
+            "selected_skill_count": len(selected_skills),
+            "optional_skill_limit": max(0, max_skills or 0),
+            "optional_skills_selected": 0,
+            "required_skills_omitted": missing_graph_skills,
+        },
+        "registry_verification": verification,
+        "compatibility": {},
+    }
+    payload["compatibility"] = {
+        "legacy_schema_version": 1,
+        "compatibility_loss": to_legacy_v1(payload)["compatibility_loss"],
+    }
+    return payload
+
+
+def _build_v2_capability_resolution(
+    bundles_index: dict, selected_scenarios: list[dict], selected_skill_names: set[str]
+) -> dict:
+    bundles = {bundle["id"]: bundle for bundle in bundles_index.get("bundles", []) if isinstance(bundle, dict)}
+    capabilities = []
+    for selection in selected_scenarios:
+        scenario_id = selection["scenario_id"]
+        bundle = bundles.get(scenario_id, {})
+        for capability in bundle.get("required_capabilities", []):
+            preferred = capability.get("preferred_skills", [])
+            matched = [name for name in preferred if name in selected_skill_names]
+            capabilities.append(
+                {
+                    "scenario_id": scenario_id,
+                    "capability": capability.get("id", ""),
+                    "required": bool(capability.get("required")),
+                    "status": "covered" if matched else "missing",
+                    "skills": matched,
+                }
+            )
+    missing_required = [
+        item for item in capabilities if item["required"] and item["status"] == "missing"
+    ]
+    return {
+        "status": "complete" if not missing_required else "incomplete",
+        "capabilities": capabilities,
+        "missing_required_count": len(missing_required),
+    }
+
+
+def _routing_status(composition_status: str, execution_graph: dict) -> str:
+    blocking_reasons = set(execution_graph.get("reason_codes", [])) - {"incomplete_composition"}
+    if blocking_reasons:
+        return "blocked"
+    if composition_status != "complete":
+        return "incomplete"
+    return "complete" if execution_graph.get("status") == "ready" else "blocked"
+
+
+def _json_asset_route_id(path: Path) -> str:
+    return build_route_id(json.loads(path.read_text(encoding="utf-8")))
+
+
 def render_task_pack_markdown(task_pack: dict) -> str:
     lines = [
         "# OneCode Agent Task Pack",
@@ -1059,43 +1226,110 @@ def render_task_pack_markdown(task_pack: dict) -> str:
     return "\n".join(lines)
 
 
-def task_pack_command(args: argparse.Namespace) -> int:
-    task_pack = build_task_pack(
-        resolve_project_asset_path(args.registry),
-        args.task,
-        args.top,
-        args.include_review_required,
-        args.include_bundles,
-        resolve_project_asset_path(args.bundles) if args.bundles else None,
-        args.router,
-        args.max_skills,
-        args.invariants if getattr(args, "invariants", None) else None,
-        getattr(args, "strategy", "balanced"),
-        resolve_project_asset_path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
+def render_task_pack_v2_markdown(task_pack: dict) -> str:
+    lines = [
+        "# OneCode Agent Task Pack v2",
+        "",
+        f"Route ID: `{task_pack['route_id']}`",
+        f"Routing status: `{task_pack['routing_status']}`",
+        "",
+        "## Intents",
+        "",
+    ]
+    for intent in task_pack["intent_graph"]["intents"]:
+        dependencies = ", ".join(intent["depends_on"]) or "none"
+        lines.append(
+            f"- `{intent['id']}` `{intent['task_type']}`: {intent['summary']} (depends on: {dependencies})"
+        )
+    lines.extend(["", "## Selected Scenarios", ""])
+    if task_pack["selected_scenarios"]:
+        for scenario in task_pack["selected_scenarios"]:
+            lines.append(
+                f"- `{scenario['scenario_id']}` for `{', '.join(scenario['intent_ids'])}`; score `{scenario['score']}`"
+            )
+    else:
+        lines.append("- none")
+    lines.extend(["", "## Uncovered Intents", ""])
+    if task_pack["uncovered_intents"]:
+        lines.extend(f"- `{intent_id}`" for intent_id in task_pack["uncovered_intents"])
+    else:
+        lines.append("- none")
+    lines.extend(
+        [
+            "",
+            "## Execution Graph",
+            "",
+            f"- status: `{task_pack['execution_graph']['status']}`",
+            f"- nodes: `{len(task_pack['execution_graph']['nodes'])}`",
+            f"- edges: `{len(task_pack['execution_graph']['edges'])}`",
+            "",
+            "## Safety Boundary",
+            "",
+            f"- mode: `{task_pack['host_execution_protocol']['mode']}`",
+            f"- {task_pack['host_execution_protocol']['runtime_boundary']}",
+            "",
+        ]
     )
+    return "\n".join(lines)
+
+
+def task_pack_command(args: argparse.Namespace) -> int:
+    if args.schema_version == 2:
+        task_pack = build_task_pack_v2(
+            resolve_project_asset_path(args.registry),
+            args.task,
+            resolve_project_asset_path(args.bundles),
+            args.max_skills,
+            args.invariants if getattr(args, "invariants", None) else None,
+            getattr(args, "strategy", "balanced"),
+        )
+    else:
+        task_pack = build_task_pack(
+            resolve_project_asset_path(args.registry),
+            args.task,
+            args.top,
+            args.include_review_required,
+            args.include_bundles,
+            resolve_project_asset_path(args.bundles) if args.bundles else None,
+            args.router,
+            args.max_skills,
+            args.invariants if getattr(args, "invariants", None) else None,
+            getattr(args, "strategy", "balanced"),
+            resolve_project_asset_path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
+        )
     if args.format == "markdown":
-        print(render_task_pack_markdown(task_pack))
+        print(render_task_pack_v2_markdown(task_pack) if args.schema_version == 2 else render_task_pack_markdown(task_pack))
     else:
         print(json.dumps(task_pack, indent=2, sort_keys=True))
     return 0
 
 
 def smart_command(args: argparse.Namespace) -> int:
-    task_pack = build_task_pack(
-        resolve_project_asset_path(args.registry),
-        args.task,
-        args.max_skills,
-        False,
-        True,
-        resolve_project_asset_path(args.bundles) if args.bundles else None,
-        "mesh",
-        args.max_skills,
-        args.invariants,
-        args.strategy,
-        resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
-    )
+    if args.schema_version == 2:
+        task_pack = build_task_pack_v2(
+            resolve_project_asset_path(args.registry),
+            args.task,
+            resolve_project_asset_path(args.bundles),
+            args.max_skills,
+            args.invariants,
+            args.strategy,
+        )
+    else:
+        task_pack = build_task_pack(
+            resolve_project_asset_path(args.registry),
+            args.task,
+            args.max_skills,
+            False,
+            True,
+            resolve_project_asset_path(args.bundles) if args.bundles else None,
+            "mesh",
+            args.max_skills,
+            args.invariants,
+            args.strategy,
+            resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
+        )
     if args.format == "markdown":
-        print(render_task_pack_markdown(task_pack))
+        print(render_task_pack_v2_markdown(task_pack) if args.schema_version == 2 else render_task_pack_markdown(task_pack))
     else:
         print(json.dumps(task_pack, indent=2, sort_keys=True))
     return 0

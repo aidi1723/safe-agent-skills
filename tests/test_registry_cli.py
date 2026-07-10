@@ -2103,6 +2103,8 @@ class RegistryCliTest(unittest.TestCase):
                 task_pack_code = main(
                     [
                         "task-pack",
+                        "--schema-version",
+                        "1",
                         "polish this dashboard interface",
                         "--registry",
                         str(registry),
@@ -2194,6 +2196,8 @@ class RegistryCliTest(unittest.TestCase):
                 task_pack_code = main(
                     [
                         "task-pack",
+                        "--schema-version",
+                        "1",
                         "review security risk",
                         "--registry",
                         str(registry),
@@ -2268,6 +2272,8 @@ class RegistryCliTest(unittest.TestCase):
                 task_pack_code = main(
                     [
                         "task-pack",
+                        "--schema-version",
+                        "1",
                         "review security risk",
                         "--registry",
                         str(registry),
@@ -2387,6 +2393,8 @@ class RegistryCliTest(unittest.TestCase):
                 task_pack_code = main(
                     [
                         "task-pack",
+                        "--schema-version",
+                        "1",
                         "design a RAG document agent with vector retrieval and citation checks",
                         "--registry",
                         str(registry),
@@ -3313,6 +3321,8 @@ class RegistryCliTest(unittest.TestCase):
                 task_pack_code = main(
                     [
                         "task-pack",
+                        "--schema-version",
+                        "1",
                         "build a product website and prepare launch checks",
                         "--registry",
                         str(registry),
@@ -3488,6 +3498,8 @@ class RegistryCliTest(unittest.TestCase):
                 task_pack_code = main(
                     [
                         "smart",
+                        "--schema-version",
+                        "1",
                         "build a landing page and prepare launch checks",
                         "--registry",
                         str(registry),
@@ -3513,6 +3525,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "帮我看一下这个事情是否合理",
                     "--registry",
                     "catalog",
@@ -3541,6 +3555,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "smart",
+                    "--schema-version",
+                    "1",
                     "帮我看一下这个事情是否合理",
                     "--registry",
                     "catalog",
@@ -3566,6 +3582,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "prepare a meeting brief",
                     "--registry",
                     "catalog",
@@ -3591,6 +3609,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
                     "--registry",
                     "catalog",
@@ -3630,6 +3650,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "smart",
+                    "--schema-version",
+                    "1",
                     "polish a premium website landing page with design system, motion polish, SEO copy, browser verification, and publish readiness",
                     "--registry",
                     "catalog",
@@ -3677,6 +3699,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "复查 skill-router-quality-review 的 supply_chain_review coverage 缺口",
                     "--registry",
                     "catalog",
@@ -3728,8 +3752,9 @@ class RegistryCliTest(unittest.TestCase):
 
         self.assertEqual(result.returncode, 0, result.stderr)
         task_pack = json.loads(result.stdout)
-        self.assertEqual(task_pack["router"]["mode"], "deterministic_mesh_router")
-        self.assertEqual(task_pack["selected_scenario"]["id"], "skill-router-quality-review")
+        self.assertEqual(task_pack["schema_version"], 2)
+        self.assertEqual(task_pack["routing_mode"], "hybrid")
+        self.assertEqual(task_pack["selected_scenarios"][0]["scenario_id"], "skill-router-quality-review")
         self.assertIn("execution_graph", task_pack)
 
     def test_real_catalog_scenario_router_routes_audit_followup_to_skill_router_bundle(self):
@@ -3738,6 +3763,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "继续，按照步骤，完成全部任务，以及审计报告给出的，更智能的解决方法",
                     "--registry",
                     "catalog",
@@ -3767,6 +3794,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "把剩余 claude-skills reference-only backlog 候选 skill 优化编排并纳入体系",
                     "--registry",
                     "catalog",
@@ -3916,6 +3945,8 @@ class RegistryCliTest(unittest.TestCase):
                     task_pack_code = main(
                         [
                             "task-pack",
+                            "--schema-version",
+                            "1",
                             task,
                             "--registry",
                             "catalog",
@@ -3945,6 +3976,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "smart",
+                    "--schema-version",
+                    "1",
                     "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
                     "--registry",
                     "catalog",
@@ -3979,6 +4012,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "smart",
+                    "--schema-version",
+                    "1",
                     "复查 safe-agent-skills 项目是否达到智能选择和自动搭配 skill 的目标",
                     "--registry",
                     "catalog",
@@ -4054,13 +4089,13 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
         self.assertEqual(payload_shape_sha256(payload), ROUTER_SCHEMA_V1_SHAPE_SHA256)
 
-    def test_smart_schema_v2_temporarily_returns_current_v1_contract(self):
+    def test_smart_schema_v2_routes_compound_task(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             exit_code = main(
                 [
                     "smart",
-                    "build a landing page and prepare launch checks",
+                    "构建官网，同时审计 skill 路由器，验证通过后发布更新",
                     "--registry",
                     "catalog",
                     "--bundles",
@@ -4073,11 +4108,31 @@ class RegistryCliTest(unittest.TestCase):
             )
         payload = json.loads(out.getvalue())
         self.assertEqual(exit_code, 0)
-        self.assertEqual(payload["schema_version"], 1)
-        self.assertEqual(payload["router"]["mode"], "deterministic_mesh_router")
-        self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
+        self.assertEqual(payload["schema_version"], 2)
+        self.assertEqual(
+            [scenario["scenario_id"] for scenario in payload["selected_scenarios"]],
+            ["website-build-launch", "skill-router-quality-review", "open-source-release"],
+        )
+        self.assertEqual(payload["execution_graph"]["status"], "ready")
+        self.assertEqual(payload["routing_status"], "complete")
+        self.assertEqual(payload["provider"]["used"], "none")
+        self.assertEqual(payload["host_execution_protocol"]["mode"], "method_only")
+        graph_skills = {node["skill"] for node in payload["execution_graph"]["nodes"]}
+        selected_skills = {skill["name"] for skill in payload["selected_skills"]}
+        self.assertLessEqual(payload["routing_metrics"]["optional_skill_limit"], 8)
+        self.assertTrue(graph_skills.issubset(selected_skills))
 
-    def test_task_pack_schema_v2_temporarily_returns_current_v1_contract(self):
+    def test_smart_schema_v2_marks_vague_task_incomplete(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(["smart", "help me with this", "--schema-version", "2", "--format", "json"])
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["routing_status"], "incomplete")
+        self.assertEqual(payload["selected_scenarios"], [])
+        self.assertEqual(payload["uncovered_intents"], ["i1"])
+
+    def test_task_pack_schema_v2_returns_v2_contract(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
             exit_code = main(
@@ -4098,8 +4153,69 @@ class RegistryCliTest(unittest.TestCase):
             )
         payload = json.loads(out.getvalue())
         self.assertEqual(exit_code, 0)
-        self.assertEqual(payload["schema_version"], 1)
-        self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
+        self.assertEqual(payload["schema_version"], 2)
+        self.assertEqual(payload["routing_mode"], "hybrid")
+        self.assertIn("selected_scenarios", payload)
+
+    def test_smart_schema_v2_default_and_low_max_skills_keep_graph_consistent(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    "构建官网，同时审计 skill 路由器，验证通过后发布更新",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--max-skills",
+                    "1",
+                    "--format",
+                    "json",
+                ]
+            )
+        payload = json.loads(out.getvalue())
+        graph_skills = {node["skill"] for node in payload["execution_graph"]["nodes"]}
+        selected_skills = {skill["name"] for skill in payload["selected_skills"]}
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["schema_version"], 2)
+        self.assertTrue(graph_skills.issubset(selected_skills))
+        self.assertGreater(len(selected_skills), 1)
+
+    def test_smart_schema_v2_route_id_is_stable_and_changes_with_task(self):
+        route_ids = []
+        for task in ["build a landing page", "build a landing page", "audit the skill router"]:
+            out = io.StringIO()
+            with contextlib.redirect_stdout(out):
+                self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)
+            route_ids.append(json.loads(out.getvalue())["route_id"])
+        self.assertEqual(route_ids[0], route_ids[1])
+        self.assertNotEqual(route_ids[0], route_ids[2])
+
+    def test_smart_schema_v2_matches_strict_top_level_schema_and_markdown(self):
+        json_out = io.StringIO()
+        with contextlib.redirect_stdout(json_out):
+            self.assertEqual(
+                main(["smart", "build a landing page", "--schema-version", "2", "--format", "json"]),
+                0,
+            )
+        payload = json.loads(json_out.getvalue())
+        schema = json.loads(Path("schemas/task-pack-v2.schema.json").read_text(encoding="utf-8"))
+        self.assertFalse(schema["additionalProperties"])
+        self.assertEqual(set(payload), set(schema["required"]))
+
+        markdown_out = io.StringIO()
+        with contextlib.redirect_stdout(markdown_out):
+            self.assertEqual(
+                main(["smart", "help me with this", "--schema-version", "2", "--format", "markdown"]),
+                0,
+            )
+        markdown = markdown_out.getvalue()
+        self.assertIn("## Intents", markdown)
+        self.assertIn("## Selected Scenarios", markdown)
+        self.assertIn("## Uncovered Intents", markdown)
+        self.assertIn("## Execution Graph", markdown)
+        self.assertIn("## Safety Boundary", markdown)
 
     def test_task_pack_simple_router_remains_backward_compatible(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -4151,6 +4267,8 @@ class RegistryCliTest(unittest.TestCase):
                 task_pack_code = main(
                     [
                         "task-pack",
+                        "--schema-version",
+                        "1",
                         "polish this dashboard interface",
                         "--registry",
                         str(registry),
@@ -4171,6 +4289,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "build a product website and prepare launch checks",
                     "--registry",
                     "catalog",
@@ -4203,6 +4323,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "可以，按照步骤，继续优化",
                     "--registry",
                     "catalog",
@@ -4235,6 +4357,8 @@ class RegistryCliTest(unittest.TestCase):
             smart_code = main(
                 [
                     "smart",
+                    "--schema-version",
+                    "1",
                     "可以，按照步骤，继续优化",
                     "--max-skills",
                     "8",
@@ -4255,6 +4379,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "可以，按照步骤，继续优化",
                     "--registry",
                     "catalog",
@@ -4283,6 +4409,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "smart",
+                    "--schema-version",
+                    "1",
                     "build a landing page and prepare launch checks",
                     "--invariants",
                     "不能泄露密钥；公开文案必须合规；必须响应式验证",
@@ -4321,6 +4449,8 @@ class RegistryCliTest(unittest.TestCase):
                     task_pack_code = main(
                         [
                             "smart",
+                            "--schema-version",
+                            "1",
                             "审查整个项目，看是否还有需要优化和完善的地方",
                             "--max-skills",
                             "8",
@@ -4344,6 +4474,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "design a RAG document agent with vector retrieval and citation checks",
                     "--registry",
                     "catalog",
@@ -4370,6 +4502,8 @@ class RegistryCliTest(unittest.TestCase):
             task_pack_code = main(
                 [
                     "task-pack",
+                    "--schema-version",
+                    "1",
                     "为医疗、金融、教育、制造和房地产客户设计一套行业 AI 应用方案，包含合规边界、数据质量和交付计划",
                     "--registry",
                     "catalog",
