@@ -25,6 +25,31 @@ DEPENDENCY_EDGE_TYPES = {
     "intent_completion_dependency",
 }
 EXPECTED_STATUSES = {"complete", "incomplete", "blocked"}
+TRUSTED_SCENARIO_IDS = {
+    "agent-long-term-memory-governance",
+    "agent-planning-orchestration",
+    "agent-role-library-governance",
+    "agentic-media-production",
+    "claude-skills-backlog-coverage",
+    "code-review-hardening",
+    "codebase-change-lifecycle",
+    "codebase-graph-intelligence",
+    "commerce-listing-growth",
+    "content-seo-publication",
+    "content-video-production",
+    "data-analysis-report",
+    "design-md-system-governance",
+    "document-to-knowledge-base",
+    "industry-application-orchestration",
+    "investment-research-diligence",
+    "multi-platform-research-discovery",
+    "open-source-release",
+    "private-communication-governance",
+    "rag-agent-knowledge-app",
+    "security-agent-guardrails",
+    "skill-router-quality-review",
+    "website-build-launch",
+}
 REQUIRED_FIELDS = {
     "id",
     "category",
@@ -35,6 +60,12 @@ REQUIRED_FIELDS = {
     "forbidden_scenarios",
 }
 OPTIONAL_FIELDS = {"expected_status"}
+EXPECTED_LABELING = {
+    "method": "manual_review",
+    "reviewer_role": "independent_dataset_review",
+    "generated_from_router": False,
+    "reviewed_at": "2026-07-10",
+}
 
 
 class DatasetValidationError(ValueError):
@@ -45,19 +76,30 @@ class EvaluatorError(RuntimeError):
     pass
 
 
-def load_eval_dataset_v2(path: Path) -> list[dict[str, Any]]:
+def load_eval_dataset_v2(
+    path: Path,
+    known_scenarios: set[str] | None = None,
+) -> list[dict[str, Any]]:
+    allowed_scenarios = TRUSTED_SCENARIO_IDS if known_scenarios is None else known_scenarios
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
     except OSError as exc:
         raise DatasetValidationError(f"unable to read evaluation dataset: {exc}") from exc
     except json.JSONDecodeError as exc:
         raise DatasetValidationError(f"invalid evaluation JSON: {exc}") from exc
-    if not isinstance(payload, dict) or set(payload) != {"cases"}:
-        raise DatasetValidationError("evaluation dataset must be an object containing only cases")
+    if not isinstance(payload, dict) or set(payload) != {"labeling", "cases"}:
+        raise DatasetValidationError(
+            "evaluation dataset must be an object containing only labeling and cases"
+        )
+    if payload["labeling"] != EXPECTED_LABELING:
+        raise DatasetValidationError("evaluation dataset labeling metadata is invalid")
     cases = payload["cases"]
     if not isinstance(cases, list):
         raise DatasetValidationError("cases must be a list")
-    validated = [_validate_case(case, index) for index, case in enumerate(cases)]
+    validated = [
+        _validate_case(case, index, allowed_scenarios)
+        for index, case in enumerate(cases)
+    ]
     if len(validated) != EXPECTED_CASE_COUNT:
         raise DatasetValidationError(
             f"expected exactly {EXPECTED_CASE_COUNT} cases, found {len(validated)}"
@@ -74,7 +116,11 @@ def load_eval_dataset_v2(path: Path) -> list[dict[str, Any]]:
     return validated
 
 
-def _validate_case(case: object, index: int) -> dict[str, Any]:
+def _validate_case(
+    case: object,
+    index: int,
+    known_scenarios: set[str] | None,
+) -> dict[str, Any]:
     prefix = f"cases[{index}]"
     if not isinstance(case, dict):
         raise DatasetValidationError(f"{prefix} must be an object")
@@ -91,12 +137,20 @@ def _validate_case(case: object, index: int) -> dict[str, Any]:
     if not isinstance(category, str) or category not in CATEGORY_DISTRIBUTION:
         raise DatasetValidationError(f"{prefix}.category is invalid")
     _require_string_list(case["expected_intents"], f"{prefix}.expected_intents", nonempty=True)
+    if len(set(case["expected_intents"])) != len(case["expected_intents"]):
+        raise DatasetValidationError(f"{prefix}.expected_intents must not contain duplicates")
     _require_string_list(case["expected_scenarios"], f"{prefix}.expected_scenarios")
     _require_string_list(case["forbidden_scenarios"], f"{prefix}.forbidden_scenarios")
     if len(set(case["expected_scenarios"])) != len(case["expected_scenarios"]):
         raise DatasetValidationError(f"{prefix}.expected_scenarios must not contain duplicates")
     if len(set(case["forbidden_scenarios"])) != len(case["forbidden_scenarios"]):
         raise DatasetValidationError(f"{prefix}.forbidden_scenarios must not contain duplicates")
+    if known_scenarios is not None:
+        unknown = sorted(set(case["expected_scenarios"]) - known_scenarios)
+        if unknown:
+            raise DatasetValidationError(
+                f"{prefix}.expected_scenarios contains unknown ids: {', '.join(unknown)}"
+            )
     overlap = set(case["expected_scenarios"]) & set(case["forbidden_scenarios"])
     if overlap:
         raise DatasetValidationError(f"{prefix} expected and forbidden scenarios overlap")
@@ -110,6 +164,12 @@ def _validate_case(case: object, index: int) -> dict[str, Any]:
             raise DatasetValidationError(f"{edge_prefix} must be a two-item list")
         _require_nonempty_string(edge[0], f"{edge_prefix}[0]")
         _require_nonempty_string(edge[1], f"{edge_prefix}[1]")
+        if edge[0] == edge[1]:
+            raise DatasetValidationError(f"{edge_prefix} must not be a self edge")
+        if edge[0] not in case["expected_intents"] or edge[1] not in case["expected_intents"]:
+            raise DatasetValidationError(
+                f"{edge_prefix} endpoints must exist in expected_intents"
+            )
         normalized_edges.append([edge[0], edge[1]])
     if len({tuple(edge) for edge in normalized_edges}) != len(normalized_edges):
         raise DatasetValidationError(f"{prefix}.required_dependency_edges has duplicates")
@@ -246,7 +306,10 @@ def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
     expected_edges = {tuple(edge) for edge in case["required_dependency_edges"]}
     dag_is_valid = _dag_is_valid(route, case.get("expected_status"))
     topology_acyclic = _graph_topology_is_acyclic(route)
-    if not topology_acyclic and case.get("expected_status") != "blocked":
+    graph_status = route["execution_graph"].get("status")
+    if case.get("expected_status") != "blocked" and (
+        not topology_acyclic or graph_status == "blocked"
+    ):
         raise EvaluatorError(f"unexpected invalid DAG for case {case['id']}")
 
     issues = []
@@ -352,8 +415,8 @@ def _dag_is_valid(route: dict[str, Any], expected_status: str | None) -> bool:
     routing_status = route.get("routing_status")
     if not isinstance(acyclic, bool) or not isinstance(status, str):
         raise EvaluatorError("execution graph status and acyclic fields are malformed")
-    if expected_status == "blocked" and status == "blocked":
-        return True
+    if expected_status == "blocked":
+        return status == "blocked"
     return acyclic and status == "ready" and routing_status in {"complete", "incomplete"}
 
 

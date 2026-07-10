@@ -1,4 +1,10 @@
 {
+  "labeling": {
+    "method": "manual_review",
+    "reviewer_role": "independent_dataset_review",
+    "generated_from_router": false,
+    "reviewed_at": "2026-07-10"
+  },
   "cases": [
     {
       "id": "compound-website-code-review",
@@ -55,16 +61,16 @@
       "expected_status": "complete"
     },
     {
-      "id": "compound-research-investment",
+      "id": "compound-investment-role",
       "category": "compound",
-      "task": "Run multi-platform public-source research；prepare a value-investing memo with a bear case",
+      "task": "Prepare a value-investing memo with a bear case；govern the expert agent role library",
       "expected_intents": [
-        "multi_platform_research_discovery",
-        "investment_research_diligence"
+        "investment_research_diligence",
+        "agent_role_library_governance"
       ],
       "expected_scenarios": [
-        "multi-platform-research-discovery",
-        "investment-research-diligence"
+        "investment-research-diligence",
+        "agent-role-library-governance"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [
@@ -199,16 +205,16 @@
       "expected_status": "complete"
     },
     {
-      "id": "compound-website-security",
+      "id": "compound-research-video",
       "category": "compound",
-      "task": "Create an official site and launch checklist；audit tool permissions and sandbox guardrails",
+      "task": "Run a multi-platform search across Reddit, YouTube, and GitHub；draft a short-video content matrix",
       "expected_intents": [
-        "website_build",
-        "agent_security"
+        "multi_platform_research_discovery",
+        "content_video_production"
       ],
       "expected_scenarios": [
-        "website-build-launch",
-        "security-agent-guardrails"
+        "multi-platform-research-discovery",
+        "content-video-production"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [
@@ -219,7 +225,7 @@
     {
       "id": "compound-review-lifecycle",
       "category": "compound",
-      "task": "Review the generated code and bug fix；map the whole project and regression test the change",
+      "task": "Review the pull request and regression tests；map the code lifecycle and debug change impact",
       "expected_intents": [
         "code_review",
         "codebase_change_lifecycle"
@@ -291,14 +297,14 @@
     {
       "id": "compound-investment-data",
       "category": "compound",
-      "task": "Prepare valuation assumptions and a bear case；analyze the dataset and produce charts",
+      "task": "Write an SEO article for public content；prepare a value-investing memo with a bear case",
       "expected_intents": [
-        "investment_research_diligence",
-        "data_analysis"
+        "content_seo",
+        "investment_research_diligence"
       ],
       "expected_scenarios": [
-        "investment-research-diligence",
-        "data-analysis-report"
+        "content-seo-publication",
+        "investment-research-diligence"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [
@@ -325,16 +331,16 @@
       "expected_status": "complete"
     },
     {
-      "id": "compound-private-security",
+      "id": "compound-graph-backlog",
       "category": "compound",
-      "task": "Assess private messaging identifier minimization；review connector prompt-injection defenses",
+      "task": "Build a code symbol graph and architecture query；assess the remaining claude-skills backlog coverage",
       "expected_intents": [
-        "private_communication_governance",
-        "agent_security"
+        "codebase_graph_intelligence",
+        "claude_skills_backlog_coverage"
       ],
       "expected_scenarios": [
-        "private-communication-governance",
-        "security-agent-guardrails"
+        "codebase-graph-intelligence",
+        "claude-skills-backlog-coverage"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [
@@ -379,15 +385,15 @@
       "expected_status": "complete"
     },
     {
-      "id": "compound-release-router",
+      "id": "compound-seo-router",
       "category": "compound",
-      "task": "Prepare an open-source GitHub release；review automatic skill composition quality",
+      "task": "Write an SEO article for public content；audit automatic skill selection and composition quality",
       "expected_intents": [
-        "open_source_release",
+        "content_seo",
         "skill_router_review"
       ],
       "expected_scenarios": [
-        "open-source-release",
+        "content-seo-publication",
         "skill-router-quality-review"
       ],
       "required_dependency_edges": [],
@@ -417,14 +423,14 @@
     {
       "id": "compound-commerce-research",
       "category": "compound",
-      "task": "Optimize buyer marketplace keywords；run multi-platform competitor research",
+      "task": "Run a multi-platform search across Reddit, YouTube, and GitHub；assess the remaining claude-skills backlog coverage",
       "expected_intents": [
-        "commerce_growth",
-        "multi_platform_research_discovery"
+        "multi_platform_research_discovery",
+        "claude_skills_backlog_coverage"
       ],
       "expected_scenarios": [
-        "commerce-listing-growth",
-        "multi-platform-research-discovery"
+        "multi-platform-research-discovery",
+        "claude-skills-backlog-coverage"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [
@@ -613,16 +619,18 @@
       "expected_status": "complete"
     },
     {
-      "id": "compound-website-seo",
+      "id": "compound-commerce-investment-research",
       "category": "compound",
-      "task": "Build the company website；write SEO copy and public blog content",
+      "task": "Optimize marketplace listings and buyer inquiries；prepare a value-investing memo with a bear case；run a multi-platform search across Reddit, YouTube, and GitHub",
       "expected_intents": [
-        "website_build",
-        "content_seo"
+        "commerce_growth",
+        "investment_research_diligence",
+        "multi_platform_research_discovery"
       ],
       "expected_scenarios": [
-        "website-build-launch",
-        "content-seo-publication"
+        "commerce-listing-growth",
+        "investment-research-diligence",
+        "multi-platform-research-discovery"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [
@@ -792,7 +800,7 @@
     {
       "id": "sequential-graph-release",
       "category": "sequential",
-      "task": "Build the code graph and impact report then release the package",
+      "task": "Build and verify a code symbol graph with impact analysis, then release the reviewed package",
       "expected_intents": [
         "codebase_graph_intelligence",
         "open_source_release"
@@ -859,20 +867,20 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-research-release",
+      "id": "sequential-review-release-variant",
       "category": "sequential",
-      "task": "Finish multi-platform public-source research then release the package",
+      "task": "Review the release candidate code, regression tests, and supply-chain risks, then release the approved package",
       "expected_intents": [
-        "multi_platform_research_discovery",
+        "code_review",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "multi-platform-research-discovery",
+        "code-review-hardening",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "multi_platform_research_discovery",
+          "code_review",
           "open_source_release"
         ]
       ],
@@ -882,20 +890,20 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-investment-release",
+      "id": "sequential-role-release-variant",
       "category": "sequential",
-      "task": "Approve the investment memo and bear case then release the package",
+      "task": "Verify the expert agent role library and ownership handoffs, then release the approved package",
       "expected_intents": [
-        "investment_research_diligence",
+        "agent_role_library_governance",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "investment-research-diligence",
+        "agent-role-library-governance",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "investment_research_diligence",
+          "agent_role_library_governance",
           "open_source_release"
         ]
       ],
@@ -974,20 +982,20 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-docs-release",
+      "id": "sequential-video-release-variant",
       "category": "sequential",
-      "task": "Finish the PDF knowledge base conversion then release the package",
+      "task": "Verify the short-video content production plan, then release the approved package",
       "expected_intents": [
-        "document_knowledge_base",
+        "content_video_production",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "document-to-knowledge-base",
+        "content-video-production",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "document_knowledge_base",
+          "content_video_production",
           "open_source_release"
         ]
       ],
@@ -1043,20 +1051,20 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-data-release",
+      "id": "sequential-lifecycle-release-variant",
       "category": "sequential",
-      "task": "Validate the spreadsheet analysis and charts then release the package",
+      "task": "Map the code lifecycle and regression-test the change, then release the approved package",
       "expected_intents": [
-        "data_analysis",
+        "codebase_change_lifecycle",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "data-analysis-report",
+        "codebase-change-lifecycle",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "data_analysis",
+          "codebase_change_lifecycle",
           "open_source_release"
         ]
       ],
@@ -1066,20 +1074,20 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-seo-release",
+      "id": "sequential-security-release-variant",
       "category": "sequential",
-      "task": "Approve the SEO article and public copy then release the package",
+      "task": "Verify prompt-injection guardrails and connector permissions, then release the approved package",
       "expected_intents": [
-        "content_seo",
+        "agent_security",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "content-seo-publication",
+        "security-agent-guardrails",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "content_seo",
+          "agent_security",
           "open_source_release"
         ]
       ],
@@ -1089,20 +1097,20 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-rag-release",
+      "id": "sequential-design-release-variant",
       "category": "sequential",
-      "task": "Verify the citation-grounded RAG agent then release the package",
+      "task": "Validate DESIGN.md tokens and component states, then release the approved package",
       "expected_intents": [
-        "rag_agent",
+        "design_md_system_governance",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "rag-agent-knowledge-app",
+        "design-md-system-governance",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "rag_agent",
+          "design_md_system_governance",
           "open_source_release"
         ]
       ],
@@ -1158,20 +1166,20 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-commerce-release",
+      "id": "sequential-router-release-variant",
       "category": "sequential",
-      "task": "Approve the marketplace listing and keyword plan then release the package",
+      "task": "Complete the smart skill router quality audit, then release the approved package",
       "expected_intents": [
-        "commerce_growth",
+        "skill_router_review",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "commerce-listing-growth",
+        "skill-router-quality-review",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "commerce_growth",
+          "skill_router_review",
           "open_source_release"
         ]
       ],
@@ -1231,7 +1239,7 @@
     {
       "id": "vague-fuzzy-plan",
       "category": "vague_context",
-      "task": "The requirements are fuzzy; interview me and make a plan",
+      "task": "Interview me about the fuzzy requirements and create a multi-agent implementation plan",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -1273,7 +1281,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-look",
@@ -1288,7 +1296,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-do-better",
@@ -1303,7 +1311,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-proceed",
@@ -1318,7 +1326,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-context-stale",
@@ -1333,7 +1341,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-that-one",
@@ -1348,7 +1356,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-polish",
@@ -1363,7 +1371,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-unspecified-review",
@@ -1378,7 +1386,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-fix-it",
@@ -1393,7 +1401,7 @@
         "open-source-release",
         "website-build-launch"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "vague-context-only",
@@ -1478,7 +1486,7 @@
       "forbidden_scenarios": [
         "content-video-production"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "negative-no-rag",
@@ -1548,7 +1556,7 @@
       "forbidden_scenarios": [
         "multi-platform-research-discovery"
       ],
-      "expected_status": "incomplete"
+      "expected_status": "blocked"
     },
     {
       "id": "multi-cn-website",
@@ -1633,7 +1641,7 @@
     {
       "id": "multi-typo-rag",
       "category": "multilingual_typo_paraphrase",
-      "task": "Build a retrival vecter agent with citatons",
+      "task": "Build a retrival vecter RAG agent with vector citations",
       "expected_intents": [
         "rag_agent"
       ],
@@ -1649,7 +1657,7 @@
     {
       "id": "multi-typo-design",
       "category": "multilingual_typo_paraphrase",
-      "task": "Govern desgin md tokens and componant states",
+      "task": "Govern DESIGN.md desgin tokens and componant states",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1665,7 +1673,7 @@
     {
       "id": "multi-paraphrase-graph",
       "category": "multilingual_typo_paraphrase",
-      "task": "Create a structural symbol map to trace change impact",
+      "task": "Create a code symbol graph and trace change impact",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -1729,16 +1737,16 @@
       "expected_status": "complete"
     },
     {
-      "id": "safety-investment-research",
+      "id": "safety-investment-security",
       "category": "safety_sensitive",
-      "task": "Research public sources for a company；prepare an investment memo with bear-case assumptions",
+      "task": "Prepare a value-investing memo with bear-case assumptions；audit prompt-injection and connector permissions",
       "expected_intents": [
-        "multi_platform_research_discovery",
-        "investment_research_diligence"
+        "investment_research_diligence",
+        "agent_security"
       ],
       "expected_scenarios": [
-        "multi-platform-research-discovery",
-        "investment-research-diligence"
+        "investment-research-diligence",
+        "security-agent-guardrails"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [

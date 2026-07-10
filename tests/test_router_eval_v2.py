@@ -19,6 +19,29 @@ EXPECTED_CATEGORIES = {
     "multilingual_typo_paraphrase": 10,
     "safety_sensitive": 5,
 }
+EXPECTED_LABELING = {
+    "method": "manual_review",
+    "reviewer_role": "independent_dataset_review",
+    "generated_from_router": False,
+    "reviewed_at": "2026-07-10",
+}
+
+
+def bundle_scenario_ids() -> set[str]:
+    bundles = json.loads(
+        (ROOT / "bundles" / "index.json").read_text(encoding="utf-8")
+    )["bundles"]
+    return {bundle["id"] for bundle in bundles}
+
+
+def gold_payload() -> dict:
+    return json.loads(EVAL_PATH.read_text(encoding="utf-8"))
+
+
+def write_payload(temp_dir: str, payload: dict) -> Path:
+    path = Path(temp_dir) / "dataset.json"
+    path.write_text(json.dumps(payload), encoding="utf-8")
+    return path
 
 
 def synthetic_route(
@@ -81,23 +104,81 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(Counter(case["category"] for case in cases), EXPECTED_CATEGORIES)
         self.assertEqual(len({case["id"] for case in cases}), 100)
 
+    def test_gold_dataset_has_independent_manual_labeling_metadata(self):
+        payload = gold_payload()
+
+        self.assertEqual(payload["labeling"], EXPECTED_LABELING)
+        actual_fields = {
+            key
+            for case in payload["cases"]
+            for key in case
+            if key.startswith("actual_")
+        }
+        self.assertEqual(actual_fields, set())
+        for case in payload["cases"]:
+            for expected_field in (
+                "expected_intents",
+                "expected_scenarios",
+                "required_dependency_edges",
+            ):
+                copied_field = expected_field.replace("expected_", "actual_").replace(
+                    "required_", "actual_"
+                )
+                self.assertNotIn(copied_field, case)
+
     def test_gold_dataset_covers_all_bundle_scenarios(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
         cases = load_eval_dataset_v2(EVAL_PATH)
-        bundles = json.loads(
-            (ROOT / "bundles" / "index.json").read_text(encoding="utf-8")
-        )["bundles"]
-        expected_scenarios = {
-            scenario
-            for case in cases
-            for scenario in case["expected_scenarios"]
-        }
-
-        self.assertEqual(
-            expected_scenarios,
-            {bundle["id"] for bundle in bundles},
+        scenario_counts = Counter(
+            scenario for case in cases for scenario in case["expected_scenarios"]
         )
+
+        self.assertEqual(set(scenario_counts), bundle_scenario_ids())
+        self.assertGreaterEqual(min(scenario_counts.values()), 5)
+
+    def test_loader_rejects_incorrect_labeling_metadata(self):
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
+
+        payload = gold_payload()
+        payload["labeling"]["generated_from_router"] = True
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with self.assertRaises(DatasetValidationError):
+                load_eval_dataset_v2(write_payload(temp_dir, payload), bundle_scenario_ids())
+
+    def test_loader_rejects_strict_case_contract_violations(self):
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
+
+        mutations = {
+            "duplicate intents": lambda case: case.update(expected_intents=["x", "x"]),
+            "empty scenario": lambda case: case.update(expected_scenarios=[""]),
+            "unknown scenario": lambda case: case.update(expected_scenarios=["not-known"]),
+            "duplicate forbidden": lambda case: case.update(forbidden_scenarios=["x", "x"]),
+            "overlap": lambda case: case.update(
+                forbidden_scenarios=[case["expected_scenarios"][0]]
+            ),
+            "duplicate edge": lambda case: case.update(
+                expected_intents=["a", "b"],
+                required_dependency_edges=[["a", "b"], ["a", "b"]],
+            ),
+            "self edge": lambda case: case.update(
+                expected_intents=["a"], required_dependency_edges=[["a", "a"]]
+            ),
+            "unknown edge endpoint": lambda case: case.update(
+                expected_intents=["a"], required_dependency_edges=[["a", "b"]]
+            ),
+            "bad status": lambda case: case.update(expected_status="ready"),
+            "bad category": lambda case: case.update(category="other"),
+            "extra field": lambda case: case.update(actual_intents=[]),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temp_dir:
+                payload = gold_payload()
+                mutate(payload["cases"][0])
+                with self.assertRaises(DatasetValidationError):
+                    load_eval_dataset_v2(write_payload(temp_dir, payload))
 
     def test_malformed_dataset_fails_closed(self):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
@@ -220,6 +301,70 @@ class RouterEvalV2Tests(unittest.TestCase):
         with self.assertRaises(EvaluatorError):
             evaluate_router_v2([case], route_builder=lambda item: route)
 
+    def test_unexpected_blocked_graph_is_an_evaluator_error_for_nonblocked_case(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        for expected_status in ("complete", "incomplete"):
+            case = {
+                "id": expected_status,
+                "category": "compound",
+                "task": "task",
+                "expected_intents": ["alpha"],
+                "expected_scenarios": ["s1"],
+                "required_dependency_edges": [],
+                "forbidden_scenarios": [],
+                "expected_status": expected_status,
+            }
+            with self.subTest(expected_status=expected_status), self.assertRaises(EvaluatorError):
+                evaluate_router_v2(
+                    [case],
+                    route_builder=lambda current: synthetic_route(
+                        current["expected_intents"],
+                        current["expected_scenarios"],
+                        graph_status="blocked",
+                        routing_status="blocked",
+                    ),
+                )
+
+    def test_expected_blocked_case_accepts_blocked_graph_and_scores_ready_as_mismatch(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked",
+            "category": "sequential",
+            "task": "impossible dependency",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        blocked = evaluate_router_v2(
+            [case],
+            route_builder=lambda current: synthetic_route(
+                current["expected_intents"],
+                current["expected_scenarios"],
+                graph_status="blocked",
+                routing_status="blocked",
+            ),
+        )
+        ready = evaluate_router_v2(
+            [case],
+            route_builder=lambda current: synthetic_route(
+                current["expected_intents"],
+                current["expected_scenarios"],
+                graph_status="ready",
+                routing_status="complete",
+            ),
+        )
+
+        self.assertTrue(blocked["cases"][0]["dag_valid"])
+        self.assertFalse(ready["cases"][0]["dag_valid"])
+        self.assertIn(
+            "status_mismatch", {issue["id"] for issue in ready["cases"][0]["issues"]}
+        )
+
     def test_real_command_prints_json_without_failing_on_low_metrics(self):
         completed = subprocess.run(
             [
@@ -304,6 +449,25 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         self.assertEqual(completed.returncode, 2)
         json.loads(completed.stdout)
+
+    def test_command_uses_catalog_and_bundle_defaults(self):
+        completed = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "onecode_skill_sanitizer",
+                "router-eval-v2",
+                "--eval",
+                str(EVAL_PATH),
+            ],
+            cwd=ROOT,
+            env={"PYTHONPATH": str(ROOT / "src")},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertNotEqual(completed.returncode, 2, completed.stdout + completed.stderr)
 
     def test_evaluator_has_no_label_generation_helper(self):
         import onecode_skill_sanitizer.router_eval_v2 as evaluator

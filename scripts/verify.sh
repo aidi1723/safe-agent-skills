@@ -53,9 +53,7 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
   --registry catalog \
   --bundles bundles/index.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
-  --eval evals/multi-intent-gold.json \
-  --registry catalog \
-  --bundles bundles/index.json >/dev/null
+  --eval evals/multi-intent-gold.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalog >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
   --registry catalog \

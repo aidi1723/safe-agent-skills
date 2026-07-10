@@ -2496,13 +2496,13 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
     registry_dir = resolve_project_asset_path(args.registry)
     bundles_path = resolve_project_asset_path(args.bundles)
     try:
-        cases = load_eval_dataset_v2(eval_path)
         bundles_index = load_bundles_index(bundles_path)
         known_scenarios = {
             bundle["id"]
             for bundle in bundles_index.get("bundles", [])
             if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
         }
+        cases = load_eval_dataset_v2(eval_path, known_scenarios)
         result = evaluate_router_v2(
             cases,
             route_builder=lambda case: build_task_pack_v2(
@@ -3626,8 +3626,8 @@ def build_parser() -> argparse.ArgumentParser:
 
     router_eval_v2_parser = subparsers.add_parser("router-eval-v2")
     router_eval_v2_parser.add_argument("--eval", required=True)
-    router_eval_v2_parser.add_argument("--registry", required=True)
-    router_eval_v2_parser.add_argument("--bundles", required=True)
+    router_eval_v2_parser.add_argument("--registry", default="catalog")
+    router_eval_v2_parser.add_argument("--bundles", default="bundles/index.json")
     router_eval_v2_parser.set_defaults(func=router_eval_v2_command)
 
     claude_skills_bulk_plan_parser = subparsers.add_parser("claude-skills-bulk-plan")
