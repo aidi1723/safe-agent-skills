@@ -483,9 +483,9 @@ def _dag_assessment(
                 }
             )
         if has_cycle_reason:
-            if topology_acyclic:
+            if _source_intent_graph_is_acyclic(route):
                 issues.append(
-                    {"id": "dependency_cycle_topology_mismatch", "computed": True}
+                    {"id": "dependency_cycle_source_mismatch", "computed": True}
                 )
         else:
             nodes = graph.get("nodes")
@@ -514,6 +514,54 @@ def _dag_assessment(
         and routing_status in {"complete", "incomplete"}
     )
     return valid, issues
+
+
+def _source_intent_graph_is_acyclic(route: dict[str, Any]) -> bool:
+    intent_graph = route.get("intent_graph")
+    if not isinstance(intent_graph, dict):
+        raise EvaluatorError("intent_graph must be an object")
+    intents = intent_graph.get("intents")
+    if not isinstance(intents, list):
+        raise EvaluatorError("intent_graph.intents must be a list")
+    intent_ids: list[str] = []
+    dependencies: dict[str, list[str]] = {}
+    for intent in intents:
+        if not isinstance(intent, dict):
+            raise EvaluatorError("intent must be an object")
+        intent_id = intent.get("id")
+        depends_on = intent.get("depends_on")
+        if not isinstance(intent_id, str) or not intent_id:
+            raise EvaluatorError("intent id must be nonempty")
+        if not isinstance(depends_on, list) or not all(
+            isinstance(dependency_id, str) and dependency_id
+            for dependency_id in depends_on
+        ):
+            raise EvaluatorError("intent depends_on must be a list of nonempty strings")
+        intent_ids.append(intent_id)
+        dependencies[intent_id] = depends_on
+    if len(intent_ids) != len(set(intent_ids)):
+        raise EvaluatorError("intent ids must be unique")
+    known_ids = set(intent_ids)
+    for dependency_ids in dependencies.values():
+        unknown = set(dependency_ids) - known_ids
+        if unknown:
+            raise EvaluatorError("intent dependency references an unknown intent")
+    indegree = {intent_id: 0 for intent_id in intent_ids}
+    outgoing: dict[str, list[str]] = defaultdict(list)
+    for intent_id, dependency_ids in dependencies.items():
+        for dependency_id in set(dependency_ids):
+            outgoing[dependency_id].append(intent_id)
+            indegree[intent_id] += 1
+    ready = deque(sorted(intent_id for intent_id, degree in indegree.items() if degree == 0))
+    visited = 0
+    while ready:
+        intent_id = ready.popleft()
+        visited += 1
+        for dependent_id in sorted(outgoing[intent_id]):
+            indegree[dependent_id] -= 1
+            if indegree[dependent_id] == 0:
+                ready.append(dependent_id)
+    return visited == len(intent_ids)
 
 
 def _graph_topology_is_acyclic(route: dict[str, Any]) -> bool:
