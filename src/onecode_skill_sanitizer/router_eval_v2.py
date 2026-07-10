@@ -459,14 +459,6 @@ def _dag_assessment(
     ):
         raise EvaluatorError("execution graph reason_codes must be nonempty strings")
     issues: list[dict[str, Any]] = []
-    if declared_acyclic != topology_acyclic:
-        issues.append(
-            {
-                "id": "acyclic_flag_mismatch",
-                "declared": declared_acyclic,
-                "computed": topology_acyclic,
-            }
-        )
     if expected_status == "blocked":
         if status != "blocked" or routing_status != "blocked":
             issues.append(
@@ -481,7 +473,40 @@ def _dag_assessment(
             issues.append(
                 {"id": "missing_recognized_blocking_reason", "reason_codes": reason_codes}
             )
+        has_cycle_reason = "dependency_cycle" in recognized_reasons
+        if declared_acyclic:
+            issues.append(
+                {
+                    "id": "acyclic_flag_mismatch",
+                    "declared": declared_acyclic,
+                    "expected": False,
+                }
+            )
+        if has_cycle_reason:
+            if topology_acyclic:
+                issues.append(
+                    {"id": "dependency_cycle_topology_mismatch", "computed": True}
+                )
+        else:
+            nodes = graph.get("nodes")
+            edges = graph.get("edges")
+            if nodes or edges:
+                issues.append(
+                    {
+                        "id": "blocked_boundary_graph_not_empty",
+                        "node_count": len(nodes) if isinstance(nodes, list) else None,
+                        "edge_count": len(edges) if isinstance(edges, list) else None,
+                    }
+                )
         return not issues, issues
+    if declared_acyclic != topology_acyclic:
+        issues.append(
+            {
+                "id": "acyclic_flag_mismatch",
+                "declared": declared_acyclic,
+                "computed": topology_acyclic,
+            }
+        )
     valid = (
         not issues
         and topology_acyclic

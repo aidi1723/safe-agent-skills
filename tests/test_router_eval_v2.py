@@ -378,13 +378,23 @@ class RouterEvalV2Tests(unittest.TestCase):
         }
         blocked = evaluate_router_v2(
             [case],
-            route_builder=lambda current: synthetic_route(
-                current["expected_intents"],
-                current["expected_scenarios"],
-                graph_status="blocked",
-                routing_status="blocked",
-                reason_codes=["missing_intent_verification"],
-            ),
+            route_builder=lambda current: {
+                **synthetic_route(
+                    current["expected_intents"],
+                    current["expected_scenarios"],
+                    graph_status="blocked",
+                    acyclic=False,
+                    routing_status="blocked",
+                    reason_codes=["missing_intent_verification"],
+                ),
+                "execution_graph": {
+                    "status": "blocked",
+                    "acyclic": False,
+                    "nodes": [],
+                    "edges": [],
+                    "reason_codes": ["missing_intent_verification"],
+                },
+            },
         )
         ready = evaluate_router_v2(
             [case],
@@ -463,6 +473,141 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertIn("acyclic_flag_mismatch", issue_ids)
+
+    def test_noncycle_blocked_boundary_allows_empty_acyclic_topology(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked-boundary",
+            "category": "sequential",
+            "task": "missing scenario",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha"],
+            ["s1"],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="blocked",
+            reason_codes=["missing_scenario_bundle"],
+        )
+        route["execution_graph"]["nodes"] = []
+        route["execution_graph"]["edges"] = []
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertTrue(report["cases"][0]["dag_valid"])
+        self.assertTrue(report["cases"][0]["topology_acyclic"])
+        self.assertEqual(report["cases"][0]["issues"], [])
+
+    def test_noncycle_blocked_payload_with_emitted_graph_is_invalid(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked-boundary",
+            "category": "sequential",
+            "task": "missing scenario",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha"],
+            ["s1"],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="blocked",
+            reason_codes=["missing_scenario_bundle"],
+        )
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        self.assertIn("blocked_boundary_graph_not_empty", issue_ids)
+
+    def test_real_compiler_missing_scenario_payload_is_valid_blocked_boundary(self):
+        from onecode_skill_sanitizer.compiler import compile_execution_graph
+        from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
+        from onecode_skill_sanitizer.intent import Intent, IntentGraph
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        graph = IntentGraph(
+            intents=(
+                Intent(
+                    id="i1",
+                    summary="missing scenario",
+                    task_type="alpha",
+                    required_artifacts=(),
+                    risk_flags=(),
+                    depends_on=(),
+                    source="deterministic",
+                    confidence=1.0,
+                ),
+            ),
+            unresolved_dependencies=(),
+        )
+        composition = ScenarioComposition(
+            selections=(ScenarioSelection("missing", ("i1",), 1.0, 1),),
+            uncovered_intents=(),
+            status="complete",
+        )
+        compiled = compile_execution_graph(graph, composition, {"bundles": []}, set())
+        route = {
+            "routing_status": "blocked",
+            "intent_graph": {
+                "intents": [
+                    {"id": "i1", "task_type": "alpha", "depends_on": []},
+                ]
+            },
+            "selected_scenarios": [{"scenario_id": "missing", "intent_ids": ["i1"]}],
+            "execution_graph": compiled,
+        }
+        case = {
+            "id": "real-blocked-boundary",
+            "category": "sequential",
+            "task": "missing scenario",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["missing"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertEqual(compiled["reason_codes"], ["missing_scenario_bundle"])
+        self.assertEqual(compiled["nodes"], [])
+        self.assertEqual(compiled["edges"], [])
+        self.assertTrue(report["cases"][0]["dag_valid"])
+
+    def test_ready_graph_requires_true_flag_and_acyclic_topology(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "ready",
+            "category": "compound",
+            "task": "ready",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        coherent = synthetic_route(["alpha"], ["s1"])
+        contradictory = synthetic_route(["alpha"], ["s1"], acyclic=False)
+
+        report = evaluate_router_v2([case], route_builder=lambda current: coherent)
+        self.assertTrue(report["cases"][0]["dag_valid"])
+        with self.assertRaises(EvaluatorError):
+            evaluate_router_v2([case], route_builder=lambda current: contradictory)
 
     def test_blocked_graph_requires_blocked_route_and_recognized_reason(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
