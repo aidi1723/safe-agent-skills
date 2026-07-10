@@ -2,6 +2,27 @@
 
 Date: 2026-07-11
 
+## 2026-07-11 High-Frequency Specialist Batch 1
+
+Deepened three established high-frequency skills without adding duplicate
+skills, scenarios, or router behavior:
+
+- `code-review-risk` now covers review reachability, data and state boundaries,
+  compatibility, severity evidence, missing tests, and residual risk.
+- `code-test-regression` now covers test-boundary selection, observed RED/GREEN
+  evidence, behavioral assertions, fixture and snapshot reliability, flaky
+  tests, and verification scope.
+- `research-source-check` now covers source strength, claim status, dynamic
+  freshness, conflicting evidence, citation records, and inaccessible sources.
+
+Each skill has one protected on-demand reference and remains in its existing
+trusted bundle and overlap roles. The batch raises the catalog to 7 specialists
+and 7 specialist reference assets while retaining 165 routing cards.
+
+Final feature-branch verification: `bash scripts/verify.sh` exited 0 with 347
+tests passing, 43 of 43 router evaluation cases passing, 172 catalog skills,
+166 trusted, 0 tampered, 0 unknown provenance, and no batch/depth/schema issues.
+
 ## 2026-07-11 Structural Maintainability Redesign
 
 Completed the module, batch, documentation, and skill-depth governance pass.

@@ -22,7 +22,7 @@ gates.
 | batch items | 471 implicit directories | 471 indexed lifecycle records |
 | compacted promoted bodies | 0 | 167 |
 | depth-governed catalog skills | 0 | 172 |
-| specialist reference assets | 0 | 4 |
+| specialist reference assets | 0 | 7 |
 
 The split implementation modules are intentionally cohesive rather than
 uniformly tiny. The largest current owners are `task_packs.py` at 1,160 lines,
@@ -45,13 +45,13 @@ uniformly tiny. The largest current owners are `task_packs.py` at 1,160 lines,
 
 `batches/index.json` records 471 items: 303 `active_draft` and 168 `promoted`.
 There are 167 historical byte-identical compactions represented by
-`PROMOTED.md`. Five promoted records no longer match the current catalog: the
-pre-existing `ai-litellm-gateway-cost-control` mismatch and four catalog skills
-deliberately deepened during this redesign and its high-frequency UI follow-up.
-Their original source hashes, promotion records, and current catalog hashes
-remain explicit and validated.
+`PROMOTED.md`. Eight promoted records no longer match the current catalog: the
+pre-existing `ai-litellm-gateway-cost-control` mismatch and seven catalog
+skills deliberately deepened during this redesign and its high-frequency
+follow-up batches. Their original source hashes, promotion records, and current
+catalog hashes remain explicit and validated.
 
-Documentation was not bulk-deleted. The repository contains 159 Markdown files
+Documentation was not bulk-deleted. The repository contains 161 Markdown files
 compared with 152 at the starting commit because this redesign adds maintained
 policy, index, history, plan, and closure records. `docs/index.md` is the
 current source-of-truth entry, `docs/history.md` routes dated evidence, and the
@@ -59,7 +59,7 @@ README no longer exposes dozens of historical reports as peer entry points.
 
 ## Skill Depth
 
-The depth policy classifies 168 catalog entries as `routing_card` and four as
+The depth policy classifies 165 catalog entries as `routing_card` and seven as
 `specialist`. The following specialists now include decision criteria,
 evidence minimums, failure/escalation paths, and an on-demand reference guide:
 
@@ -67,6 +67,9 @@ evidence minimums, failure/escalation paths, and an on-demand reference guide:
 - `compliance-privacy-check`
 - `engineering-build-release`
 - `design-ui-review`
+- `code-review-risk`
+- `code-test-regression`
+- `research-source-check`
 
 Auxiliary content under `references/` and `scripts/` is covered by an optional
 canonical SHA-256 manifest field. Registry verification detects auxiliary
@@ -80,7 +83,7 @@ The final feature-branch verification command was:
 PATH=/tmp/safe-agent-skills-structural-venv/bin:$PATH bash scripts/verify.sh
 ```
 
-Result: exit 0, 344 tests passed. Ruff, compilation, catalog maintenance,
+Result: exit 0, 347 tests passed. Ruff, compilation, catalog maintenance,
 private-path scanning, router evaluation v1 and v2, manifest and task-pack
 schemas, registry verification, batch lifecycle, depth policy, contract
 coverage, JSON syntax, and documentation links all passed.
@@ -98,7 +101,7 @@ audit passed 172 skills with 0 errors and 0 warnings. Batch validation passed
   them from being mistaken for production catalog entries but do not remove
   the review backlog.
 - The depth audit measures deterministic structure, not semantic expertise.
-  Only four representative skills were promoted to specialist depth.
+  Only seven representative skills were promoted to specialist depth.
 - Historical documentation remains sizable. The index/history split reduces
   discovery noise, but periodic archival review is still required.
 - Static scanning, hashes, and schemas support review; they do not replace host

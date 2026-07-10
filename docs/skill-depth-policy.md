@@ -15,7 +15,9 @@ Repeated high-frequency use is also a valid promotion signal. A routing card
 may become a specialist when real tasks repeatedly need decision criteria,
 state coverage, evidence expectations, or an on-demand reference that would be
 too heavy for every routing context. `design-ui-review` is the first specialist
-promoted explicitly on this basis.
+promoted explicitly on this basis. The first high-frequency specialist batch
+extends the same policy to code review, regression testing, and source
+verification while retaining their established scenario and overlap roles.
 
 The `depth-check` command treats missing required sections and invalid policy
 classes as errors. Word count, missing examples, missing decision guidance,
@@ -37,6 +39,12 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
   catalog/security/security-supply-chain-review
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
   catalog/design/design-ui-review
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
+  catalog/code/code-review-risk
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
+  catalog/code/code-test-regression
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
+  catalog/research/research-source-check
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reindex --registry catalog
 ```
 
