@@ -133,4 +133,3 @@ runtime boundary.
 - Production quality gate: **FAIL / further remediation required**
 - Release statement: suitable for repository publication with the limitations
   in this report explicitly retained
-
