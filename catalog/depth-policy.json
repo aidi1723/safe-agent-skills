@@ -2,6 +2,7 @@
   "default_depth_class": "routing_card",
   "schema_version": 1,
   "skills": {
+    "code-review-risk": "specialist",
     "compliance-privacy-check": "specialist",
     "design-ui-review": "specialist",
     "engineering-build-release": "specialist",

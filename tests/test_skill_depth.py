@@ -16,22 +16,28 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class SkillDepthTest(unittest.TestCase):
-    def test_real_ui_review_is_specialist_with_protected_reference(self):
+    def assert_real_specialist(self, name: str):
         report = audit_catalog_depth(ROOT / "catalog", ROOT / "catalog/depth-policy.json")
-        ui_report = next(item for item in report["skills"] if item["name"] == "design-ui-review")
-        skill_dir = ROOT / "catalog/design/design-ui-review"
+        skill_report = next(item for item in report["skills"] if item["name"] == name)
+        skill_dir = next((ROOT / "catalog").glob(f"*/{name}"))
         manifest = json.loads((skill_dir / "skill.json").read_text(encoding="utf-8"))
 
-        self.assertEqual(ui_report["depth_class"], "specialist")
-        self.assertEqual(ui_report["reference_count"], 1)
-        self.assertIn("Decision Guidance", ui_report["sections"])
-        self.assertIn("Evidence Minimum", ui_report["sections"])
-        self.assertIn("References", ui_report["sections"])
-        self.assertEqual(ui_report["warnings"], [])
+        self.assertEqual(skill_report["depth_class"], "specialist")
+        self.assertEqual(skill_report["reference_count"], 1)
+        self.assertIn("Decision Guidance", skill_report["sections"])
+        self.assertIn("Evidence Minimum", skill_report["sections"])
+        self.assertIn("References", skill_report["sections"])
+        self.assertEqual(skill_report["warnings"], [])
         self.assertEqual(
             manifest["hashes"]["auxiliary_sha256"],
             auxiliary_content_sha256(skill_dir),
         )
+
+    def test_real_ui_review_is_specialist_with_protected_reference(self):
+        self.assert_real_specialist("design-ui-review")
+
+    def test_real_code_review_is_specialist_with_protected_reference(self):
+        self.assert_real_specialist("code-review-risk")
 
     def test_depth_check_command_returns_warnings_without_failure(self):
         with tempfile.TemporaryDirectory() as temp_dir:

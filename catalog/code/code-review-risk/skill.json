@@ -31,8 +31,9 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "fdc76e9432bbceab1737e3b04556158cc64656df5fdffdb7d4ee834ad32493f0",
-    "sanitized_sha256": "e0075ddcaa3e33add5ea5b0a363211b65e001df8574c45156623fa1ea1c14bdb",
+    "auxiliary_sha256": "374e3545a5060eba0e29b1bca4822527ba1cdace7af144f581ec83ee68f111c2",
+    "manifest_sha256": "e3fdacf600b6adf9025e12ead6fbed7a1c159726ca456167b1174143e1d6662b",
+    "sanitized_sha256": "44073cb6937c4b62e4a13fc4c0fef521abce745f7acf80337f7c79596d094c6c",
     "source_sha256": "d15096f5f9f453ddef5edbd8eae0bbe729223174cd55691f5178f44eb5547a52"
   },
   "name": "code-review-risk",
