@@ -100,6 +100,9 @@ Earlier update statement:
 [Requires After Contract Ordering](docs/updates/2026-07-04-requires-after-contract-ordering.md).
 
 Latest closure report:
+[Hybrid Router v2 Final Closure Report](docs/hybrid-router-v2-final-closure-report-2026-07-10.md).
+
+Earlier closure report:
 [Maintenance Optimization Closure Report](docs/maintenance-optimization-closure-report-2026-07-04.md).
 
 Latest stage acceptance:
@@ -413,6 +416,9 @@ onecode skills approve pdf
 
 ## Project Docs
 
+- [Hybrid Router v2 Final Closure Report](docs/hybrid-router-v2-final-closure-report-2026-07-10.md)
+- [Hybrid Router v2 First Milestone Report](docs/hybrid-router-v2-first-milestone-report.md)
+- [Delivery Readiness Report](docs/delivery-readiness-report.md)
 - [Workspace Boundary](docs/workspace-boundary.md)
 - [Source Baseline](docs/source-baseline.md)
 - [Smart Skill Router](docs/smart-skill-router.md)
