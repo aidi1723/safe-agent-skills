@@ -24,7 +24,7 @@ development dependencies.
 | --- | ---: | --- |
 | `python3 --version` | 0 | Python 3.12.12 |
 | `python3 -m ruff check .` | 0 | `All checks passed!` |
-| `bash scripts/verify.sh` | 0 | 315 tests passed; schemas, maintenance, v1 eval, v2 eval, contract gate, five-capability invariant stage/edge acceptance, and smoke routes passed |
+| `bash scripts/verify.sh` | 0 | 317 tests passed; schemas, maintenance, v1 eval, v2 eval, contract gate, invariant stage/edge and overlap-policy acceptance, and smoke routes passed |
 | `PYTHONPATH=src python3 -m onecode_skill_sanitizer smart "构建官网，同时审计 skill 路由器，验证通过后发布更新" --schema-version 2 --format json` | 0 | Complete route with three required scenarios and an acyclic ready graph |
 | `PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 --eval evals/multi-intent-gold.json --registry catalog --bundles bundles/index.json` | 0 | 100 cases evaluated; metrics recorded below |
 | `PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check --registry catalog --bundles bundles/index.json --scenario website-build-launch --scenario code-review-hardening --scenario codebase-change-lifecycle --scenario skill-router-quality-review --scenario open-source-release --scenario rag-agent-knowledge-app --scenario document-to-knowledge-base --scenario security-agent-guardrails --minimum-ratio 0.80` | 0 | 39/48 core skills covered; 81.25% |
@@ -84,6 +84,13 @@ without redacting benign token-like routing text. Schema v2 `smart` and
 `task-pack` commands return bounded exit-code-2 JSON or Markdown errors for
 malformed JSON and valid-JSON wrong-shape asset or registry failures without
 tracebacks, absolute paths, or credential values.
+
+Configured overlap groups are now structurally loaded and fully checked for
+trusted status and trusted skill references before route construction. Route
+identity hashes the validated parsed object canonically. Because Schema v2 does
+not yet apply overlap pruning, `routing_metrics.overlap_policy` explicitly
+reports `validated_not_applied` rather than implying the policy changed skill
+selection.
 
 ## Contract Coverage
 

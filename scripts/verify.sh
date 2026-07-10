@@ -94,6 +94,8 @@ records = {
 }
 if payload["routing_status"] != "complete":
     raise SystemExit("v2 invariant acceptance route is not complete")
+if payload["routing_metrics"].get("overlap_policy") != "validated_not_applied":
+    raise SystemExit("v2 overlap policy must be validated_not_applied")
 for capability, skill in expected.items():
     if skill not in skills or skill not in graph_skills:
         raise SystemExit(f"missing invariant safeguard skill: {skill}")

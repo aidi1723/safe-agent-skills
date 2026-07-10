@@ -877,6 +877,18 @@ def build_task_pack_v2(
         raise SystemExit("registry verification failed; refusing to build task pack")
 
     bundles_index = load_bundles_index(bundles_path)
+    overlap_groups = None
+    overlap_policy = "not_configured"
+    if overlap_groups_path is not None:
+        overlap_groups = load_overlap_groups(overlap_groups_path)
+        overlap_validation = validate_overlap_groups(
+            registry_dir,
+            overlap_groups_path,
+            overlap_groups,
+        )
+        if overlap_validation["issues"]:
+            raise ValueError("overlap groups validation failed")
+        overlap_policy = "validated_not_applied"
     trusted_names = trusted_skill_names(registry_dir)
     normalized_task = normalize_task(task)
     intent_graph = decompose_task(task)
@@ -977,7 +989,7 @@ def build_task_pack_v2(
         catalog_content_hash=_json_asset_content_hash(registry_dir / "index.json"),
         bundle_content_hash=_json_asset_content_hash(bundles_path),
         overlap_content_hash=(
-            _json_asset_content_hash(overlap_groups_path) if overlap_groups_path is not None else "none"
+            build_canonical_content_hash(overlap_groups) if overlap_groups is not None else "none"
         ),
         router_version="hybrid-router-v2-first-milestone",
         package_version=__version__,
@@ -1007,6 +1019,7 @@ def build_task_pack_v2(
             "optional_skill_limit": max(0, max_skills or 0),
             "optional_skills_selected": 0,
             "required_skills_omitted": missing_graph_skills,
+            "overlap_policy": overlap_policy,
         },
         "registry_verification": verification,
         "compatibility": {},
@@ -3349,14 +3362,23 @@ def load_overlap_groups(overlap_path: Path) -> dict:
     if not overlap_path.exists():
         raise SystemExit(f"missing overlap groups: {overlap_path}")
     payload = json.loads(overlap_path.read_text(encoding="utf-8"))
-    if not isinstance(payload.get("groups"), list):
-        raise SystemExit(f"invalid overlap groups: {overlap_path}")
+    if not isinstance(payload, dict):
+        raise ValueError("overlap groups index must be an object")
+    groups = payload.get("groups")
+    if not isinstance(groups, list):
+        raise ValueError("overlap groups must be an array")
+    if any(not isinstance(group, dict) for group in groups):
+        raise ValueError("overlap group entries must be objects")
     return payload
 
 
-def validate_overlap_groups(registry_dir: Path, overlap_path: Path) -> dict:
+def validate_overlap_groups(
+    registry_dir: Path,
+    overlap_path: Path,
+    overlap_index: dict | None = None,
+) -> dict:
     issues = []
-    overlap_index = load_overlap_groups(overlap_path)
+    overlap_index = overlap_index if overlap_index is not None else load_overlap_groups(overlap_path)
     index = load_registry_index(registry_dir)
     statuses = {entry["name"]: entry.get("status") for entry in index["skills"]}
     groups = overlap_index["groups"]

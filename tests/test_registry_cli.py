@@ -4550,6 +4550,85 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(route_ids[0], route_ids[1])
         self.assertNotEqual(route_ids[0], route_ids[2])
 
+    def test_v2_validates_overlap_groups_and_records_not_applied_policy(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(
+                main(["smart", "build a landing page", "--schema-version", "2", "--format", "json"]),
+                0,
+            )
+        payload = json.loads(out.getvalue())
+        self.assertEqual(payload["routing_metrics"]["overlap_policy"], "validated_not_applied")
+
+    def test_v2_overlap_structure_and_trust_failures_are_bounded(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            invalid_payloads = [
+                [],
+                {},
+                {"schema_version": 1, "groups": ["not-an-object"]},
+                {
+                    "schema_version": 1,
+                    "group_count": 1,
+                    "groups": [
+                        {
+                            "id": "untrusted",
+                            "status": "review_required",
+                            "primary_skill": "design-ui-review",
+                        }
+                    ],
+                },
+                {
+                    "schema_version": 1,
+                    "group_count": 1,
+                    "groups": [
+                        {
+                            "id": "unknown-reference",
+                            "status": "trusted",
+                            "primary_skill": "missing-skill",
+                        }
+                    ],
+                },
+            ]
+            cases = []
+            for index, payload in enumerate(invalid_payloads):
+                overlap_path = root / f"overlap-{index}.json"
+                overlap_path.write_text(json.dumps(payload), encoding="utf-8")
+                cases.extend(
+                    [
+                        ["smart", "build site", "--schema-version", "2", "--overlap-groups", str(overlap_path)],
+                        [
+                            "task-pack",
+                            "build site",
+                            "--registry",
+                            "catalog",
+                            "--schema-version",
+                            "2",
+                            "--overlap-groups",
+                            str(overlap_path),
+                        ],
+                    ]
+                )
+
+            for argv in cases:
+                for output_format in ("json", "markdown"):
+                    with self.subTest(argv=argv, output_format=output_format):
+                        out = io.StringIO()
+                        err = io.StringIO()
+                        with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                            exit_code = main([*argv, "--format", output_format])
+                        output = out.getvalue()
+                        self.assertEqual(exit_code, 2)
+                        self.assertEqual(err.getvalue(), "")
+                        self.assertNotIn("Traceback", output)
+                        self.assertNotIn(str(root), output)
+                        if output_format == "json":
+                            payload = json.loads(output)
+                            self.assertEqual(payload["schema_version"], 2)
+                            self.assertEqual(payload["status"], "error")
+                        else:
+                            self.assertIn("# OneCode Task Pack v2 Error", output)
+
     def test_smart_schema_v2_marks_missing_required_capability_incomplete(self):
         with tempfile.TemporaryDirectory() as tmp:
             bundles_path = Path(tmp) / "bundles.json"
