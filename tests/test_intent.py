@@ -42,6 +42,29 @@ class IntentTest(unittest.TestCase):
         self.assertEqual(graph.intents[2].risk_flags, ("public_release",))
         self.assertEqual(graph.validate(), [])
 
+    def test_release_boundary_without_object_depends_on_website_build(self):
+        graph = decompose_task("构建官网，验证通过后发布")
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["website_build", "open_source_release"],
+        )
+        self.assertEqual(graph.intents[1].depends_on, ("i1",))
+
+    def test_test_passed_go_live_boundary_creates_release_dependency(self):
+        graph = decompose_task("完成测试，测试通过后上线")
+
+        self.assertEqual(len(graph.intents), 2)
+        self.assertEqual(graph.intents[1].task_type, "open_source_release")
+        self.assertEqual(graph.intents[1].depends_on, ("i1",))
+
+    def test_completed_build_push_boundary_creates_release_dependency(self):
+        graph = decompose_task("完成构建，完成后推送")
+
+        self.assertEqual(len(graph.intents), 2)
+        self.assertEqual(graph.intents[1].task_type, "open_source_release")
+        self.assertEqual(graph.intents[1].depends_on, ("i1",))
+
     def test_does_not_over_split_code_review_lifecycle(self):
         graph = decompose_task("审查代码并补强测试后合并 PR")
 

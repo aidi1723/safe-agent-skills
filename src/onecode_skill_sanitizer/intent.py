@@ -239,7 +239,8 @@ def _is_release_action(clause: str) -> bool:
     if _RELEASE_NEGATION_RE.search(clause) or _RELEASE_PRECONDITION_RE.search(clause):
         return False
     return bool(
-        _CHINESE_RELEASE_ACTION_RE.search(clause)
+        _RELEASE_BOUNDARY_RE.search(clause)
+        or _CHINESE_RELEASE_ACTION_RE.search(clause)
         or _ENGLISH_RELEASE_ACTION_RE.search(clause)
     )
 
