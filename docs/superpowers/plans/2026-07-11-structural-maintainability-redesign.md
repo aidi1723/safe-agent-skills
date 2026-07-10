@@ -13,7 +13,7 @@
 Run all commands from the structural worktree:
 
 ```bash
-cd /Users/aidi/大字典/safe-agent-skills/.worktrees/structural-maintainability
+cd .worktrees/structural-maintainability
 export PATH=/tmp/safe-agent-skills-structural-venv/bin:$PATH
 ```
 

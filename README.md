@@ -90,6 +90,10 @@ For a domain-oriented map of the catalog and example router commands, see
 For the maintained entry point to architecture, operator guidance, catalog
 authoring, and historical records, see the [Documentation Index](docs/index.md).
 
+The latest structural baseline, verification evidence, and remaining
+maintenance risks are recorded in the
+[Structural Maintainability Closure Report](docs/structural-maintainability-closure-report-2026-07-11.md).
+
 For the maintainer workflow for smarter skill selection, orchestration traces,
 scenario contracts, and router regression tests, see
 [Router Development Guide](docs/router-development.md).

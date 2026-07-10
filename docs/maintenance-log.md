@@ -1,6 +1,28 @@
 # Maintenance Log
 
-Date: 2026-07-04
+Date: 2026-07-11
+
+## 2026-07-11 Structural Maintainability Redesign
+
+Completed the module, batch, documentation, and skill-depth governance pass.
+
+- Reduced `cli.py` from 4,010 to 348 lines and `router.py` from 2,408 to 381
+  lines while preserving their public facade imports.
+- Split the 5,417-line CLI regression module into focused test owners; the
+  compatibility entry is now 277 lines and the largest split is 1,483 lines.
+- Indexed 471 batch items, retained 303 active drafts and 168 promoted records,
+  and replaced 167 historical duplicate bodies with promotion records.
+- Added maintained documentation navigation and reduced README Markdown links
+  from 79 to 25.
+- Added depth governance for all 172 catalog skills and deepened three
+  representative specialists with auxiliary-content integrity protection.
+
+Final feature-branch verification: `bash scripts/verify.sh` exited 0 with 343
+tests passing, 43 of 43 router evaluation cases passing, 172 catalog skills,
+166 trusted, 0 tampered, 0 unknown provenance, and no batch/depth/schema issues.
+
+Full evidence and residual risks:
+[Structural Maintainability Closure Report](structural-maintainability-closure-report-2026-07-11.md).
 
 ## Current Maintained Baseline
 
