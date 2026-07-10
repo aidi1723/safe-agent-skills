@@ -14,10 +14,14 @@ Completed the module, batch, documentation, and skill-depth governance pass.
   and replaced 167 historical duplicate bodies with promotion records.
 - Added maintained documentation navigation and reduced README Markdown links
   from 79 to 25.
-- Added depth governance for all 172 catalog skills and deepened three
+- Added depth governance for all 172 catalog skills and deepened four
   representative specialists with auxiliary-content integrity protection.
+- Promoted `design-ui-review` as the first specialist chosen explicitly from
+  high-frequency usage, with a focused UI design playbook covering product and
+  framework fit, shared design sources, interaction states, responsive
+  behavior, accessibility, and rendered verification.
 
-Final feature-branch verification: `bash scripts/verify.sh` exited 0 with 343
+Final feature-branch verification: `bash scripts/verify.sh` exited 0 with 344
 tests passing, 43 of 43 router evaluation cases passing, 172 catalog skills,
 166 trusted, 0 tampered, 0 unknown provenance, and no batch/depth/schema issues.
 
