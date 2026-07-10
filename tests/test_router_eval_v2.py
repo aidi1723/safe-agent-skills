@@ -510,6 +510,37 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertIn("dependency_cycle_source_mismatch", issue_ids)
 
+    def test_cyclic_source_with_noncycle_blocking_reason_is_invalid(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked-cycle",
+            "category": "sequential",
+            "task": "cyclic dependency",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha", "beta"],
+            ["s1", "s2"],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="blocked",
+            reason_codes=["invalid_intent_graph"],
+            intent_dependencies=[["i2"], ["i1"]],
+        )
+        route["execution_graph"]["nodes"] = []
+        route["execution_graph"]["edges"] = []
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        self.assertIn("missing_dependency_cycle_reason", issue_ids)
+
     def test_real_compiler_cyclic_intent_graph_is_valid_blocked(self):
         from onecode_skill_sanitizer.compiler import compile_execution_graph
         from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
@@ -631,7 +662,36 @@ class RouterEvalV2Tests(unittest.TestCase):
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
-        self.assertIn("blocked_boundary_graph_not_empty", issue_ids)
+        self.assertIn("blocked_graph_not_empty", issue_ids)
+
+    def test_cycle_blocked_payload_with_emitted_graph_is_invalid(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked-cycle",
+            "category": "sequential",
+            "task": "cyclic dependency",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha", "beta"],
+            ["s1", "s2"],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="blocked",
+            reason_codes=["dependency_cycle", "invalid_intent_graph"],
+            intent_dependencies=[["i2"], ["i1"]],
+        )
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        self.assertIn("blocked_graph_not_empty", issue_ids)
 
     def test_real_compiler_missing_scenario_payload_is_valid_blocked_boundary(self):
         from onecode_skill_sanitizer.compiler import compile_execution_graph

@@ -474,6 +474,7 @@ def _dag_assessment(
                 {"id": "missing_recognized_blocking_reason", "reason_codes": reason_codes}
             )
         has_cycle_reason = "dependency_cycle" in recognized_reasons
+        source_intent_acyclic = _source_intent_graph_is_acyclic(route)
         if declared_acyclic:
             issues.append(
                 {
@@ -482,22 +483,22 @@ def _dag_assessment(
                     "expected": False,
                 }
             )
-        if has_cycle_reason:
-            if _source_intent_graph_is_acyclic(route):
-                issues.append(
-                    {"id": "dependency_cycle_source_mismatch", "computed": True}
-                )
-        else:
-            nodes = graph.get("nodes")
-            edges = graph.get("edges")
-            if nodes or edges:
-                issues.append(
-                    {
-                        "id": "blocked_boundary_graph_not_empty",
-                        "node_count": len(nodes) if isinstance(nodes, list) else None,
-                        "edge_count": len(edges) if isinstance(edges, list) else None,
-                    }
-                )
+        if has_cycle_reason and source_intent_acyclic:
+            issues.append(
+                {"id": "dependency_cycle_source_mismatch", "computed": True}
+            )
+        if not has_cycle_reason and not source_intent_acyclic:
+            issues.append({"id": "missing_dependency_cycle_reason"})
+        nodes = graph.get("nodes")
+        edges = graph.get("edges")
+        if nodes or edges:
+            issues.append(
+                {
+                    "id": "blocked_graph_not_empty",
+                    "node_count": len(nodes) if isinstance(nodes, list) else None,
+                    "edge_count": len(edges) if isinstance(edges, list) else None,
+                }
+            )
         return not issues, issues
     if declared_acyclic != topology_acyclic:
         issues.append(
