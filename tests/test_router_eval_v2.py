@@ -748,6 +748,133 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(compiled["edges"], [])
         self.assertTrue(report["cases"][0]["dag_valid"])
 
+    def test_real_compiler_missing_verification_diagnostic_graph_is_valid_blocked(self):
+        from onecode_skill_sanitizer.compiler import compile_execution_graph
+        from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
+        from onecode_skill_sanitizer.intent import Intent, IntentGraph
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        def intent(intent_id: str, depends_on: tuple[str, ...] = ()) -> Intent:
+            return Intent(
+                id=intent_id,
+                summary=intent_id,
+                task_type=intent_id,
+                required_artifacts=(),
+                risk_flags=(),
+                depends_on=depends_on,
+                source="deterministic",
+                confidence=1.0,
+            )
+
+        graph = IntentGraph(
+            intents=(intent("i1"), intent("i2", ("i1",))),
+            unresolved_dependencies=(),
+        )
+        composition = ScenarioComposition(
+            selections=(
+                ScenarioSelection("first", ("i1",), 1.0, 1),
+                ScenarioSelection("second", ("i2",), 1.0, 1),
+            ),
+            uncovered_intents=(),
+            status="complete",
+        )
+        bundles = {
+            "bundles": [
+                {
+                    "id": "first",
+                    "name": "first",
+                    "scenario": "first",
+                    "status": "trusted",
+                    "task_signals": [],
+                    "required_capabilities": [],
+                    "execution_order": ["skill-a", "skill-b"],
+                    "skills": ["skill-a", "skill-b"],
+                    "expected_output": [],
+                    "safety_boundary": "method only",
+                },
+                {
+                    "id": "second",
+                    "name": "second",
+                    "scenario": "second",
+                    "status": "trusted",
+                    "task_signals": [],
+                    "required_capabilities": [],
+                    "execution_order": ["execution-publish-check"],
+                    "skills": ["execution-publish-check"],
+                    "expected_output": [],
+                    "safety_boundary": "method only",
+                },
+            ]
+        }
+        compiled = compile_execution_graph(
+            graph,
+            composition,
+            bundles,
+            {"skill-a", "skill-b", "execution-publish-check"},
+        )
+        route = {
+            "routing_status": "blocked",
+            "intent_graph": {
+                "intents": [
+                    {"id": intent.id, "task_type": intent.task_type, "depends_on": list(intent.depends_on)}
+                    for intent in graph.intents
+                ]
+            },
+            "selected_scenarios": [
+                {"scenario_id": "first", "intent_ids": ["i1"]},
+                {"scenario_id": "second", "intent_ids": ["i2"]},
+            ],
+            "execution_graph": compiled,
+        }
+        case = {
+            "id": "missing-verification",
+            "category": "sequential",
+            "task": "missing verification",
+            "expected_intents": ["i1", "i2"],
+            "expected_scenarios": ["first", "second"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
+        self.assertTrue(compiled["nodes"])
+        self.assertTrue(compiled["edges"])
+        self.assertEqual({edge["type"] for edge in compiled["edges"]}, {"scenario_order"})
+        self.assertTrue(report["cases"][0]["dag_valid"])
+
+    def test_missing_verification_rejects_dependent_intent_edges(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "missing-verification",
+            "category": "sequential",
+            "task": "missing verification",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha", "beta"],
+            ["s1", "s2"],
+            dependency_pairs=[("alpha", "beta")],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="blocked",
+            reason_codes=["missing_intent_verification"],
+            intent_dependencies=[[], ["i1"]],
+        )
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        self.assertIn("blocked_dependent_intent_edges", issue_ids)
+
     def test_ready_graph_requires_true_flag_and_acyclic_topology(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2

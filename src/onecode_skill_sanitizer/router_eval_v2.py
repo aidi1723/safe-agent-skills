@@ -32,7 +32,6 @@ COMPILER_BLOCKING_REASONS = {
     "empty_execution_order",
     "incomplete_composition",
     "invalid_intent_graph",
-    "invalid_scenario_selection",
     "malformed_bundles_index",
     "malformed_composition",
     "malformed_execution_order",
@@ -45,6 +44,9 @@ COMPILER_BLOCKING_REASONS = {
     "unknown_intent_dependency",
     "unknown_intent_id",
     "untrusted_scenario",
+}
+FAIL_CLOSED_EMPTY_GRAPH_REASONS = COMPILER_BLOCKING_REASONS - {
+    "missing_intent_verification",
 }
 EXPECTED_STATUSES = {"complete", "incomplete", "blocked"}
 TRUSTED_SCENARIO_IDS = {
@@ -491,14 +493,31 @@ def _dag_assessment(
             issues.append({"id": "missing_dependency_cycle_reason"})
         nodes = graph.get("nodes")
         edges = graph.get("edges")
-        if nodes or edges:
+        fail_closed_reasons = sorted(
+            set(recognized_reasons) & FAIL_CLOSED_EMPTY_GRAPH_REASONS
+        )
+        if fail_closed_reasons and (nodes or edges):
             issues.append(
                 {
                     "id": "blocked_graph_not_empty",
+                    "fail_closed_reasons": fail_closed_reasons,
                     "node_count": len(nodes) if isinstance(nodes, list) else None,
                     "edge_count": len(edges) if isinstance(edges, list) else None,
                 }
             )
+        if "missing_intent_verification" in recognized_reasons and isinstance(edges, list):
+            dependent_edges = [
+                edge
+                for edge in edges
+                if isinstance(edge, dict) and edge.get("type") in DEPENDENCY_EDGE_TYPES
+            ]
+            if dependent_edges:
+                issues.append(
+                    {
+                        "id": "blocked_dependent_intent_edges",
+                        "edge_count": len(dependent_edges),
+                    }
+                )
         return not issues, issues
     if declared_acyclic != topology_acyclic:
         issues.append(
