@@ -36,8 +36,9 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "88bac8fd443aeceb0955fe654640cb8d20417048f683732ef9ac84fcd957361d",
-    "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
+    "auxiliary_sha256": "b4dee9cf7a0fe98b0535b094e0251e2509734f114ee760566647d1ba9a9fb129",
+    "manifest_sha256": "1a71842fde7cacd87a71f5776a85c6e2015dfde6380ff64518903f621d353f50",
+    "sanitized_sha256": "ad3b924ecc5e1399e950335c3af13d9db710eec60dd8234433140cd1a0583b96",
     "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
   },
   "name": "engineering-ci-troubleshoot",
