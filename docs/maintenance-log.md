@@ -2,6 +2,31 @@
 
 Date: 2026-07-11
 
+## 2026-07-11 High-Frequency Specialist Coverage Completion
+
+Completed the remaining eight high-frequency specialist upgrades in three
+verified batches:
+
+- Engineering diagnosis: `codebase-explore-map`, `execution-browser-check`,
+  and `engineering-ci-troubleshoot`.
+- Document and data delivery: `office-pdf-report`, `office-docx-brief`, and
+  `data-table-analysis`.
+- Content publication: `content-seo-brief` and `execution-publish-check`.
+
+Each skill received decision guidance, evidence minimums, failure and approval
+boundaries, one protected on-demand reference, a real-catalog depth regression,
+content resealing, and independent validation before commit. Existing names,
+contracts, bundles, overlap groups, and router behavior were preserved.
+
+The catalog now contains 157 routing cards and 15 specialists with 15 protected
+reference assets. Batch history remains at 471 items and 167 historical
+compactions; 16 promoted records explicitly retain an older source body while
+tracking an evolved canonical catalog body.
+
+Final feature-branch verification: `bash scripts/verify.sh` exited 0 with 355
+tests passing, 43 of 43 router evaluation cases passing, 172 catalog skills,
+166 trusted, 0 tampered, 0 unknown provenance, and no batch/depth/schema issues.
+
 ## 2026-07-11 High-Frequency Specialist Batch 1
 
 Deepened three established high-frequency skills without adding duplicate

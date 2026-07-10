@@ -18,6 +18,10 @@ too heavy for every routing context. `design-ui-review` is the first specialist
 promoted explicitly on this basis. The first high-frequency specialist batch
 extends the same policy to code review, regression testing, and source
 verification while retaining their established scenario and overlap roles.
+The remaining high-frequency batches apply the same rule to repository
+exploration, browser and CI verification, PDF and DOCX delivery, table
+analysis, SEO briefing, and publication readiness. These promotions deepen
+existing roles; they do not create duplicate skills or new scenario bundles.
 
 The `depth-check` command treats missing required sections and invalid policy
 classes as errors. Word count, missing examples, missing decision guidance,
@@ -45,6 +49,12 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
   catalog/code/code-test-regression
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
   catalog/research/research-source-check
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
+  catalog/code/codebase-explore-map
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
+  catalog/execution/execution-browser-check
+PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
+  catalog/engineering/engineering-ci-troubleshoot
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reindex --registry catalog
 ```
 
