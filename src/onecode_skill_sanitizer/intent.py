@@ -9,21 +9,38 @@ from typing import Any
 from .router import build_task_profile, split_current_intent_text
 
 
-_LIST_ITEM_RE = re.compile(
-    r"(?m)^\s*(?:\d+[.)、]|[-*+]\s*\[[ xX]\]\s+|[-*+]\s+)\s*(.+?)\s*$"
+_LIST_MARKER_RE = re.compile(
+    r"^\s*(?:\d+[.)、]|[-*+]\s*\[[ xX]\]|[-*+])\s+(.+?)\s*$"
 )
-_CLAUSE_SEPARATOR_RE = re.compile(r"\s*(?:[；;]|，?同时|，?以及|\band\b)\s*", re.IGNORECASE)
+_CLAUSE_SEPARATOR_RE = re.compile(r"\s*(?:[；;]|，?同时|，?以及|\bthen\b)\s*", re.IGNORECASE)
 _RELEASE_BOUNDARY_RE = re.compile(
     r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?(?:发布|上线|推送)"
 )
-_RELEASE_RE = re.compile(
-    r"(?:发布|上线|推送|release|publish|开源发布)",
+_CHINESE_RELEASE_ACTION_RE = re.compile(
+    r"(?:发布|上线|推送)(?:更新|结果|版本|新版本|软件包|包|项目|网站|应用|代码|变更|到\S+)"
+)
+_ENGLISH_RELEASE_ACTION_RE = re.compile(
+    r"\b(?:publish|release)\b\s+(?:the\s+|an?\s+)?(?:update|results?|package|version|project|website|app|code|changes?)\b",
     re.IGNORECASE,
 )
-_CODE_REVIEW_LIFECYCLE_RE = re.compile(
-    r"(?:审查|审核|review).*(?:代码|code).*(?:测试|test).*(?:合并\s*(?:pr|pull request)|merge)",
+_RELEASE_NEGATION_RE = re.compile(
+    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*(?:发布|上线|推送)|\b(?:do\s+not|don't|never)\s+(?:publish|release)\b",
     re.IGNORECASE,
 )
+_RELEASE_PRECONDITION_RE = re.compile(
+    r"(?:发布|上线|推送)前|\bbefore\s+(?:publishing|releasing|publish|release)\b",
+    re.IGNORECASE,
+)
+_NON_ACTION_RELEASE_TERM_RE = re.compile(
+    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*(?:发布|上线|推送)|"
+    r"(?:发布|上线|推送)前|"
+    r"\brelease\s+notes\b|\bpublishable\b|"
+    r"\b(?:do\s+not|don't|never)\s+(?:publish|release)\b|"
+    r"\bbefore\s+(?:publishing|releasing|publish|release)\b",
+    re.IGNORECASE,
+)
+_INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
+_INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
 
 
 @dataclass(frozen=True)
@@ -63,13 +80,53 @@ class IntentGraph:
 
     def validate(self) -> list[str]:
         errors: list[str] = []
+        if not self.intents:
+            return ["intent graph is empty"]
+
+        duplicate_ids = _duplicate_intent_ids(self.intents)
+        if duplicate_ids:
+            return [f"duplicate intent id: {intent_id}" for intent_id in duplicate_ids]
+
         intent_ids = {intent.id for intent in self.intents}
-        dependencies = {intent.id: intent.depends_on for intent in self.intents}
+        dependencies = {
+            intent.id: intent.depends_on
+            if isinstance(intent.depends_on, (tuple, list))
+            else ()
+            for intent in self.intents
+        }
 
         for intent in self.intents:
-            for dependency in intent.depends_on:
-                if dependency not in intent_ids:
-                    errors.append(f"intent {intent.id} depends on unknown intent {dependency}")
+            if not isinstance(intent.id, str) or not _INTENT_ID_RE.fullmatch(intent.id):
+                errors.append(f"invalid intent id: {intent.id}")
+            if not isinstance(intent.summary, str) or not intent.summary.strip():
+                errors.append(f"intent {intent.id} summary must be nonempty")
+            if not isinstance(intent.task_type, str) or not intent.task_type.strip():
+                errors.append(f"intent {intent.id} task_type must be nonempty")
+            if not _contains_only_nonempty_strings(intent.required_artifacts):
+                errors.append(
+                    f"intent {intent.id} required_artifacts must contain nonempty strings"
+                )
+            if not _contains_only_nonempty_strings(intent.risk_flags):
+                errors.append(f"intent {intent.id} risk_flags must contain nonempty strings")
+            if not isinstance(intent.depends_on, (tuple, list)):
+                errors.append(f"intent {intent.id} depends_on must contain valid intent IDs")
+            else:
+                for dependency in intent.depends_on:
+                    if not isinstance(dependency, str) or not _INTENT_ID_RE.fullmatch(dependency):
+                        errors.append(f"intent {intent.id} has invalid dependency id: {dependency}")
+                    if dependency not in intent_ids:
+                        errors.append(f"intent {intent.id} depends on unknown intent {dependency}")
+            if intent.source not in _INTENT_SOURCES:
+                errors.append(f"intent {intent.id} has invalid source: {intent.source}")
+            if (
+                isinstance(intent.confidence, bool)
+                or not isinstance(intent.confidence, (int, float))
+                or not 0 <= intent.confidence <= 1
+            ):
+                errors.append(f"intent {intent.id} confidence must be between 0 and 1")
+
+        if not _contains_only_nonempty_strings(self.unresolved_dependencies):
+            errors.append("unresolved_dependencies must contain nonempty strings")
 
         cycle = _find_dependency_cycle(dependencies, intent_ids)
         if cycle:
@@ -94,29 +151,48 @@ def split_task_clauses(task: str) -> list[str]:
     text = normalized.current.strip()
     if not text:
         return []
-    if _CODE_REVIEW_LIFECYCLE_RE.search(text):
-        return [text]
 
-    list_items = [match.group(1).strip() for match in _LIST_ITEM_RE.finditer(text)]
+    list_items = _split_list_items(text)
     if len(list_items) > 1:
         return list_items
 
-    release_match = _RELEASE_BOUNDARY_RE.search(text)
-    release_split = [text]
-    if release_match and release_match.start() > 0:
-        release_split = [text[: release_match.start()], text[release_match.start() :]]
     clauses: list[str] = []
-    for part in release_split:
-        clauses.extend(_CLAUSE_SEPARATOR_RE.split(part))
+    for candidate in _CLAUSE_SEPARATOR_RE.split(text):
+        candidate = candidate.strip(" \t\n,，。")
+        if not candidate:
+            continue
+        release_match = _RELEASE_BOUNDARY_RE.search(candidate)
+        if release_match and release_match.start() > 0:
+            clauses.extend([candidate[: release_match.start()], candidate[release_match.start() :]])
+        else:
+            clauses.append(candidate)
     return [clause.strip(" \t\n,，。") for clause in clauses if clause.strip(" \t\n,，。")]
 
 
+def _split_list_items(text: str) -> list[str]:
+    items: list[str] = []
+    for raw_line in text.splitlines():
+        line = raw_line.strip()
+        if not line:
+            continue
+        marker = _LIST_MARKER_RE.match(raw_line)
+        if marker:
+            items.append(marker.group(1).strip())
+        elif items:
+            items[-1] = f"{items[-1]} {line}"
+        else:
+            return []
+    return items
+
+
 def classify_intent(clause: str, index: int) -> Intent:
-    profile = build_task_profile(clause)
+    release_action = _is_release_action(clause)
+    routing_clause = clause if release_action else _routing_clause_without_non_action_release_terms(clause)
+    profile = build_task_profile(routing_clause)
     task_type = profile["task_type"]
     required_artifacts = tuple(profile["artifact_types"])
     risk_flags = tuple(profile["risk_flags"])
-    if _RELEASE_RE.search(clause):
+    if release_action:
         task_type = "open_source_release"
         required_artifacts = ("release_record",)
         risk_flags = ("public_release",)
@@ -159,6 +235,19 @@ def _deterministic_confidence(matched_signal_score: int, task_type: str) -> floa
     return min(1.0, 0.6 + matched_signal_score / 20)
 
 
+def _is_release_action(clause: str) -> bool:
+    if _RELEASE_NEGATION_RE.search(clause) or _RELEASE_PRECONDITION_RE.search(clause):
+        return False
+    return bool(
+        _CHINESE_RELEASE_ACTION_RE.search(clause)
+        or _ENGLISH_RELEASE_ACTION_RE.search(clause)
+    )
+
+
+def _routing_clause_without_non_action_release_terms(clause: str) -> str:
+    return _NON_ACTION_RELEASE_TERM_RE.sub(" ", clause).strip(" \t\n,，。")
+
+
 def _json_compatible(value: Any) -> Any:
     if isinstance(value, tuple):
         return [_json_compatible(item) for item in value]
@@ -167,6 +256,22 @@ def _json_compatible(value: Any) -> Any:
     if isinstance(value, dict):
         return {key: _json_compatible(item) for key, item in value.items()}
     return value
+
+
+def _duplicate_intent_ids(intents: tuple[Intent, ...]) -> list[str]:
+    seen: set[str] = set()
+    duplicates: list[str] = []
+    for intent in intents:
+        if intent.id in seen and intent.id not in duplicates:
+            duplicates.append(intent.id)
+        seen.add(intent.id)
+    return duplicates
+
+
+def _contains_only_nonempty_strings(values: Any) -> bool:
+    return isinstance(values, (tuple, list)) and all(
+        isinstance(value, str) and bool(value) for value in values
+    )
 
 
 def _find_dependency_cycle(
