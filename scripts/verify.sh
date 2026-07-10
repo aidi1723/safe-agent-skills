@@ -102,8 +102,10 @@ for capability, skill in expected.items():
     if records.get(capability, {}).get("status") != "covered":
         raise SystemExit(f"invariant capability is not covered: {capability}")
     node = next(node for node in nodes.values() if node.get("invariant_capability") == capability)
-    contract_stage = skills[skill]["contract"]["stage_hint"]
-    if node["stage"] != contract_stage or records[capability].get("stage") != contract_stage:
+    contract = skills[skill].get("contract")
+    if isinstance(contract, dict) and node["stage"] != contract["stage_hint"]:
+        raise SystemExit(f"invariant contract stage mismatch: {capability}")
+    if records[capability].get("stage") != node["stage"]:
         raise SystemExit(f"invariant stage mismatch: {capability}")
 for edge in payload["execution_graph"]["edges"]:
     if stage_rank[nodes[edge["from"]]["stage"]] > stage_rank[nodes[edge["to"]]["stage"]]:
@@ -166,6 +168,16 @@ task_pack = build_task_pack_v2(
 )
 task_pack_validator.validate(task_pack)
 intent_graph_validator.validate(task_pack["intent_graph"])
+for skill in task_pack["selected_skills"]:
+    contract = skill.get("contract")
+    if isinstance(contract, dict):
+        contract_validator.validate(contract)
+try:
+    build_task_pack_v2(Path("catalog"), "", Path("bundles/index.json"))
+except ValueError:
+    pass
+else:
+    raise SystemExit("empty v2 task must fail before task-pack serialization")
 PY
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null

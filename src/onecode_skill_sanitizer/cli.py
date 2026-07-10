@@ -872,6 +872,8 @@ def build_task_pack_v2(
     strategy: str = "balanced",
     overlap_groups_path: Path | None = None,
 ) -> dict:
+    if not task.strip():
+        raise ValueError("task must not be empty")
     verification = verify_registry(registry_dir)
     if verification["status"] != "ok":
         raise SystemExit("registry verification failed; refusing to build task pack")
@@ -899,7 +901,7 @@ def build_task_pack_v2(
     invariant_skill_names = capability_skill_names(invariant_capabilities, trusted_names)
 
     trusted_items = {
-        item["name"]: _with_v2_effective_stage(item)
+        item["name"]: item
         for item in load_trusted_skill_pack_items(registry_dir)
         if item["name"] in trusted_names
     }
@@ -907,12 +909,21 @@ def build_task_pack_v2(
         name: _v2_skill_stage(item)
         for name, item in trusted_items.items()
     }
-    execution_graph = _normalize_v2_graph_stages(execution_graph, stage_by_skill)
+    host_action_by_skill = {
+        name: _v2_skill_host_action(item)
+        for name, item in trusted_items.items()
+    }
+    execution_graph = _normalize_v2_graph_stages(
+        execution_graph,
+        stage_by_skill,
+        host_action_by_skill,
+    )
     execution_graph = _extend_v2_graph_with_invariants(
         execution_graph,
         invariant_capabilities,
         invariant_skill_names,
         stage_by_skill,
+        host_action_by_skill,
     )
     required_skill_names = []
     for node in execution_graph["nodes"]:
@@ -1087,6 +1098,7 @@ def _extend_v2_graph_with_invariants(
     invariant_capabilities: list[str],
     invariant_skill_names: list[str],
     stage_by_skill: dict[str, str],
+    host_action_by_skill: dict[str, bool],
 ) -> dict:
     graph = dict(execution_graph)
     nodes = [dict(node) for node in execution_graph.get("nodes", [])]
@@ -1131,7 +1143,7 @@ def _extend_v2_graph_with_invariants(
                 "scenario_ids": [],
                 "skill": skill_name,
                 "stage": stage,
-                "host_action": False,
+                "host_action": host_action_by_skill.get(skill_name, False),
                 "invariant_capability": capability,
             }
         )
@@ -1198,18 +1210,23 @@ def _v2_skill_stage(skill: dict) -> str:
     return pipeline_stage_for_skill(skill.get("name", ""))
 
 
-def _with_v2_effective_stage(skill: dict) -> dict:
-    projected = dict(skill)
-    contract = dict(skill.get("contract")) if isinstance(skill.get("contract"), dict) else {}
-    contract["stage_hint"] = _v2_skill_stage(skill)
-    projected["contract"] = contract
-    return projected
+def _v2_skill_host_action(skill: dict) -> bool:
+    contract = skill.get("contract")
+    return bool(contract.get("approval_classes")) if isinstance(contract, dict) else False
 
 
-def _normalize_v2_graph_stages(execution_graph: dict, stage_by_skill: dict[str, str]) -> dict:
+def _normalize_v2_graph_stages(
+    execution_graph: dict,
+    stage_by_skill: dict[str, str],
+    host_action_by_skill: dict[str, bool],
+) -> dict:
     graph = dict(execution_graph)
     nodes = [
-        {**node, "stage": stage_by_skill.get(node.get("skill", ""), node.get("stage", "production"))}
+        {
+            **node,
+            "stage": stage_by_skill.get(node.get("skill", ""), node.get("stage", "production")),
+            "host_action": host_action_by_skill.get(node.get("skill", ""), False),
+        }
         for node in execution_graph.get("nodes", [])
     ]
     rank_by_stage = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}

@@ -46,7 +46,7 @@ Current delivery scope is intentionally bounded:
 
 ## Current Verified Baseline
 
-Fresh milestone verification on 2026-07-10 records 318 passing tests, clean
+Fresh milestone verification on 2026-07-10 records 321 passing tests, clean
 Ruff lint, a passing `scripts/verify.sh`, explicit v2 invariant safeguard graph
 acceptance, 81.25% core Contract v2 coverage, and 43/43 passing Schema v1
 regression cases.
@@ -67,6 +67,11 @@ composer does not apply overlap pruning, so the output explicitly records
 `routing_metrics.overlap_policy: validated_not_applied`.
 Overlap group IDs must be nonempty strings; malformed ID types fail through the
 same bounded v2 JSON or Markdown error path.
+
+Selected Skill Contracts are preserved rather than synthesized or rewritten in
+task-pack output. Graph `host_action` flags derive from Contract v2 approval
+classes, and empty v2 tasks fail through the bounded error path before an
+invalid empty Intent Graph can be serialized.
 
 The manually curated 100-case v2 evaluator currently reports:
 

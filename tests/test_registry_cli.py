@@ -4386,6 +4386,79 @@ class RegistryCliTest(unittest.TestCase):
         self.assertLessEqual(payload["routing_metrics"]["optional_skill_limit"], 8)
         self.assertTrue(graph_skills.issubset(selected_skills))
 
+    def test_smart_schema_v2_marks_contract_approval_nodes_as_host_actions(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(
+                main(
+                    [
+                        "smart",
+                        "构建官网，同时验证通过后发布更新",
+                        "--schema-version",
+                        "2",
+                        "--format",
+                        "json",
+                    ]
+                ),
+                0,
+            )
+        payload = json.loads(out.getvalue())
+        nodes = {node["skill"]: node for node in payload["execution_graph"]["nodes"]}
+
+        self.assertTrue(nodes["engineering-build-release"]["host_action"])
+        self.assertTrue(nodes["research-source-check"]["host_action"])
+
+    def test_smart_schema_v2_preserves_selected_skill_contracts(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            self.assertEqual(
+                main(
+                    [
+                        "smart",
+                        "构建官网，同时验证通过后发布更新",
+                        "--schema-version",
+                        "2",
+                        "--format",
+                        "json",
+                    ]
+                ),
+                0,
+            )
+        payload = json.loads(out.getvalue())
+        selected = {skill["name"]: skill for skill in payload["selected_skills"]}
+
+        self.assertEqual(selected["engineering-build-release"]["contract"]["stage_hint"], "execution")
+        self.assertNotIn("contract", selected["compliance-terms-review"])
+        self.assertNotIn("contract", selected["content-editorial-review"])
+
+        contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
+        validator = Draft202012Validator(contract_schema)
+        for skill in selected.values():
+            if "contract" in skill:
+                self.assertEqual(list(validator.iter_errors(skill["contract"])), [])
+
+    def test_v2_empty_task_returns_bounded_error(self):
+        for command in ("smart", "task-pack"):
+            for output_format in ("json", "markdown"):
+                with self.subTest(command=command, output_format=output_format):
+                    out = io.StringIO()
+                    err = io.StringIO()
+                    argv = [command, "", "--schema-version", "2", "--format", output_format]
+                    if command == "task-pack":
+                        argv.extend(["--registry", "catalog", "--bundles", "bundles/index.json"])
+                    with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
+                        exit_code = main(argv)
+                    output = out.getvalue()
+                    self.assertEqual(exit_code, 2)
+                    self.assertEqual(err.getvalue(), "")
+                    self.assertNotIn("Traceback", output)
+                    if output_format == "json":
+                        payload = json.loads(output)
+                        self.assertEqual(payload["status"], "error")
+                        self.assertEqual(payload["error"]["code"], "invalid_input")
+                    else:
+                        self.assertIn("# OneCode Task Pack v2 Error", output)
+
     def test_smart_schema_v2_marks_vague_task_incomplete(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
@@ -5194,6 +5267,7 @@ class RegistryCliTest(unittest.TestCase):
 
     def test_v2_all_invariant_nodes_follow_contract_stages_and_forward_edges(self):
         from onecode_skill_sanitizer.router import PIPELINE_STAGE_ORDER
+        from onecode_skill_sanitizer.router import pipeline_stage_for_skill
 
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
@@ -5232,8 +5306,13 @@ class RegistryCliTest(unittest.TestCase):
             set(selected) & {node["skill"] for node in invariant_nodes},
         )
         for node in invariant_nodes:
-            contract_stage = selected[node["skill"]]["contract"]["stage_hint"]
-            self.assertEqual(node["stage"], contract_stage)
+            contract = selected[node["skill"]].get("contract")
+            expected_stage = (
+                contract["stage_hint"]
+                if isinstance(contract, dict) and contract.get("stage_hint") in PIPELINE_STAGE_ORDER
+                else pipeline_stage_for_skill(node["skill"])
+            )
+            self.assertEqual(node["stage"], expected_stage)
             self.assertEqual(records[node["invariant_capability"]]["stage"], node["stage"])
         for edge in payload["execution_graph"]["edges"]:
             source_stage = nodes[edge["from"]]["stage"]
