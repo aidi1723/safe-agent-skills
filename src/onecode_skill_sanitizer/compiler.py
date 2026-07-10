@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import defaultdict, deque
 import re
 from typing import Any
 
@@ -25,6 +25,10 @@ def compile_execution_graph(
     details: list[str] = []
     _validate_intent_graph_boundary(intent_graph, reason_codes, details)
     intents = _validated_intents(intent_graph, reason_codes, details)
+    if "invalid_intent_graph" in reason_codes:
+        if intents and not _intent_dependencies_are_acyclic(intents):
+            _add_reason(reason_codes, "dependency_cycle")
+        return _result(False, [], [], reason_codes, details)
     selections = _validated_selections(composition, intents, reason_codes)
     bundles = _validated_bundles(bundles_index, reason_codes)
     trusted_names = (
@@ -80,6 +84,7 @@ def compile_execution_graph(
     edges: list[dict[str, str]] = []
     roots: dict[str, str] = {}
     verification_anchors: dict[str, tuple[str, ...]] = {}
+    completion_anchors: dict[str, tuple[str, ...]] = {}
     for intent_id in sorted(intents, key=_intent_sort_key):
         scenario_id = selected_for_intent[intent_id]
         node_ids: list[str] = []
@@ -100,6 +105,7 @@ def compile_execution_graph(
         verification_anchors[intent_id] = _terminal_verification_nodes(
             node_ids, nodes
         )
+        completion_anchors[intent_id] = (node_ids[-1],)
         edges.extend(
             {"from": source, "to": target, "type": "scenario_order"}
             for source, target in zip(node_ids, node_ids[1:])
@@ -116,12 +122,26 @@ def compile_execution_graph(
                 {
                     "from": anchor_id,
                     "to": roots[intent_id],
-                    "type": "intent_dependency",
+                    "type": "intent_verification_dependency",
                 }
                 for anchor_id in anchors
             )
+            edges.extend(
+                {
+                    "from": anchor_id,
+                    "to": roots[intent_id],
+                    "type": "intent_completion_dependency",
+                }
+                for anchor_id in completion_anchors[dependency_id]
+            )
 
-    nodes.sort(key=lambda node: _node_sort_key(node, scenario_orders))
+    scenario_ranks = {
+        scenario_id: {
+            skill_name: rank for rank, skill_name in enumerate(execution_order)
+        }
+        for scenario_id, execution_order in scenario_orders.items()
+    }
+    nodes.sort(key=lambda node: _node_sort_key(node, scenario_ranks))
     edges = _deduplicate_and_sort_edges(edges)
     acyclic = _is_acyclic(nodes, edges)
     if not acyclic:
@@ -137,21 +157,27 @@ def _validate_intent_graph_boundary(
     try:
         validation_issues = intent_graph.validate()
     except (AttributeError, TypeError, ValueError):
-        validation_issues = ["intent graph validation failed"]
-    if isinstance(validation_issues, list):
-        details.extend(issue for issue in validation_issues if isinstance(issue, str))
-    elif validation_issues:
-        details.append("intent graph validation returned malformed issues")
+        validation_issues = None
+    if not isinstance(validation_issues, (list, tuple)) or not all(
+        isinstance(issue, str) and issue.strip() for issue in validation_issues
+    ):
+        details.append("malformed intent graph validation result")
+    else:
+        details.extend(validation_issues)
 
     unresolved = getattr(intent_graph, "unresolved_dependencies", ())
-    if isinstance(unresolved, (tuple, list)):
+    if not isinstance(unresolved, (tuple, list)) or not all(
+        isinstance(dependency, str) and dependency.strip()
+        for dependency in unresolved
+    ):
+        details.append(
+            "unresolved_dependencies must be a list or tuple of nonempty strings"
+        )
+    else:
         details.extend(
             f"unresolved dependency: {dependency}"
             for dependency in unresolved
-            if isinstance(dependency, str) and dependency
         )
-    elif unresolved is not None:
-        details.append("unresolved_dependencies must contain nonempty strings")
 
     raw_intents = getattr(intent_graph, "intents", ())
     if isinstance(raw_intents, (tuple, list)):
@@ -245,31 +271,52 @@ def _is_acyclic(nodes: list[dict[str, Any]], edges: list[dict[str, str]]) -> boo
     for edge in edges:
         outgoing[edge["from"]].append(edge["to"])
         indegree[edge["to"]] += 1
-    ready = sorted(node_id for node_id, degree in indegree.items() if degree == 0)
+    ready = deque(sorted(node_id for node_id, degree in indegree.items() if degree == 0))
     visited = 0
     while ready:
-        node_id = ready.pop(0)
+        node_id = ready.popleft()
         visited += 1
         for target_id in sorted(outgoing[node_id]):
             indegree[target_id] -= 1
             if indegree[target_id] == 0:
                 ready.append(target_id)
-                ready.sort()
     return visited == len(node_ids)
+
+
+def _intent_dependencies_are_acyclic(intents: dict[str, Any]) -> bool:
+    indegree = {intent_id: 0 for intent_id in intents}
+    outgoing: dict[str, list[str]] = defaultdict(list)
+    for intent_id, intent in intents.items():
+        for dependency_id in set(intent.depends_on):
+            if dependency_id not in intents:
+                return False
+            outgoing[dependency_id].append(intent_id)
+            indegree[intent_id] += 1
+    ready = deque(sorted(intent_id for intent_id, degree in indegree.items() if degree == 0))
+    visited = 0
+    while ready:
+        intent_id = ready.popleft()
+        visited += 1
+        for dependent_id in sorted(outgoing[intent_id]):
+            indegree[dependent_id] -= 1
+            if indegree[dependent_id] == 0:
+                ready.append(dependent_id)
+    return visited == len(intents)
 
 
 def _terminal_verification_nodes(
     node_ids: list[str], nodes: list[dict[str, Any]]
 ) -> tuple[str, ...]:
     stage_by_id = {node["id"]: node["stage"] for node in nodes}
+    rank_by_id = {node_id: rank for rank, node_id in enumerate(node_ids)}
     verification_ids = [
         node_id for node_id in node_ids if stage_by_id[node_id] == "verification"
     ]
     if not verification_ids:
         return ()
-    last_position = max(node_ids.index(node_id) for node_id in verification_ids)
+    last_position = max(rank_by_id[node_id] for node_id in verification_ids)
     return tuple(
-        node_id for node_id in verification_ids if node_ids.index(node_id) == last_position
+        node_id for node_id in verification_ids if rank_by_id[node_id] == last_position
     )
 
 
@@ -282,12 +329,12 @@ def _deduplicate_and_sort_edges(edges: list[dict[str, str]]) -> list[dict[str, s
 
 
 def _node_sort_key(
-    node: dict[str, Any], scenario_orders: dict[str, tuple[str, ...]]
+    node: dict[str, Any], scenario_ranks: dict[str, dict[str, int]]
 ) -> tuple[Any, ...]:
     scenario_id = node["scenario_ids"][0]
     return (
         _intent_sort_key(node["intent_ids"][0]),
-        scenario_orders[scenario_id].index(node["skill"]),
+        scenario_ranks[scenario_id][node["skill"]],
         node["id"],
     )
 

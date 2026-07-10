@@ -2,6 +2,7 @@ import copy
 import json
 from pathlib import Path
 import unittest
+from unittest.mock import patch
 
 from onecode_skill_sanitizer.compiler import compile_execution_graph
 from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
@@ -48,23 +49,36 @@ class CompilerTest(unittest.TestCase):
         self.assertTrue(compiled["acyclic"])
         self.assertEqual(compiled["reason_codes"], [])
         release_root = self.root_node(compiled, "i3")
-        incoming = {
+        incoming_verification = {
             edge["from"]
             for edge in compiled["edges"]
-            if edge["to"] == release_root and edge["type"] == "intent_dependency"
+            if edge["to"] == release_root
+            and edge["type"] == "intent_verification_dependency"
         }
         self.assertEqual(
-            incoming,
+            incoming_verification,
             {
                 self.terminal_verification_node(compiled, "i1"),
                 self.terminal_verification_node(compiled, "i2"),
             },
         )
         incoming_nodes = {
-            node["id"]: node for node in compiled["nodes"] if node["id"] in incoming
+            node["id"]: node
+            for node in compiled["nodes"]
+            if node["id"] in incoming_verification
         }
         self.assertEqual(
             {node["stage"] for node in incoming_nodes.values()}, {"verification"}
+        )
+        incoming_completion = {
+            edge["from"]
+            for edge in compiled["edges"]
+            if edge["to"] == release_root
+            and edge["type"] == "intent_completion_dependency"
+        }
+        self.assertEqual(
+            incoming_completion,
+            {self.terminal_node(compiled, "i1"), self.terminal_node(compiled, "i2")},
         )
         node = compiled["nodes"][0]
         self.assertEqual(
@@ -97,6 +111,8 @@ class CompilerTest(unittest.TestCase):
             compiled["details"],
             ["intent dependency cycle detected: i1 -> i2 -> i1"],
         )
+        self.assertEqual(compiled["nodes"], [])
+        self.assertEqual(compiled["edges"], [])
         self.assertNotIn("fallback_reason", compiled)
 
     def test_node_and_edge_ordering_is_deterministic_for_reordered_inputs(self):
@@ -285,6 +301,126 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["status"], "blocked")
         self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
 
+    def test_verification_followed_by_review_adds_evidence_and_completion_edges(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent("i2", depends_on=("i1",)),
+            ),
+            unresolved_dependencies=(),
+        )
+        bundles = {
+            "bundles": [
+                self.bundle(
+                    "first",
+                    ["execution-publish-check", "content-editorial-review"],
+                ),
+                self.bundle("second", ["execution-browser-check"]),
+            ]
+        }
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            bundles,
+            self.skill_names(bundles),
+        )
+
+        dependent_root = self.root_node(compiled, "i2")
+        incoming = {
+            (edge["from"], edge["type"])
+            for edge in compiled["edges"]
+            if edge["to"] == dependent_root
+        }
+        self.assertEqual(
+            incoming,
+            {
+                (
+                    "skill:i1:execution-publish-check",
+                    "intent_verification_dependency",
+                ),
+                (
+                    "skill:i1:content-editorial-review",
+                    "intent_completion_dependency",
+                ),
+            },
+        )
+
+    def test_boundary_invalid_graph_returns_empty_nodes_and_edges(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent("i2", depends_on=("i1",)),
+            ),
+            unresolved_dependencies=("unresolved release",),
+        )
+        bundles = {
+            "bundles": [
+                self.bundle("first"),
+                self.bundle("second"),
+            ]
+        }
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            bundles,
+            self.skill_names(bundles),
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+        self.assertEqual(compiled["nodes"], [])
+        self.assertEqual(compiled["edges"], [])
+
+    def test_malformed_validate_return_fails_closed(self):
+        graph = IntentGraph((self.intent("i1"),), ())
+
+        for malformed in [
+            None,
+            "issue",
+            ["valid", 3],
+            [""],
+            [" "],
+            ("valid", None),
+        ]:
+            with self.subTest(malformed=malformed):
+                with patch.object(IntentGraph, "validate", return_value=malformed):
+                    compiled = compile_execution_graph(
+                        graph,
+                        self.composition(("i1",)),
+                        {"bundles": [self.bundle("first")]},
+                        {"execution-publish-check"},
+                    )
+
+                self.assertEqual(compiled["status"], "blocked")
+                self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+                self.assertEqual(compiled["nodes"], [])
+                self.assertEqual(compiled["edges"], [])
+                self.assertIn("malformed intent graph validation result", compiled["details"])
+
+    def test_malformed_unresolved_dependencies_fail_closed(self):
+        graph = IntentGraph((self.intent("i1"),), ())
+
+        for malformed in [None, "issue", ("valid", 3), ("",), (" ",)]:
+            with self.subTest(malformed=malformed):
+                object.__setattr__(graph, "unresolved_dependencies", malformed)
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(("i1",)),
+                    {"bundles": [self.bundle("first")]},
+                    {"execution-publish-check"},
+                )
+
+                self.assertEqual(compiled["status"], "blocked")
+                self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+                self.assertEqual(compiled["nodes"], [])
+                self.assertEqual(compiled["edges"], [])
+                self.assertIn(
+                    "unresolved_dependencies must be a list or tuple of nonempty strings",
+                    compiled["details"],
+                )
+
     def test_intent_graph_validation_issues_and_unresolved_dependencies_block(self):
         graph = IntentGraph(
             intents=(self.intent("i1"),),
@@ -328,11 +464,11 @@ class CompilerTest(unittest.TestCase):
     def test_reason_codes_and_details_are_sorted_independent_of_selection_order(self):
         graph = IntentGraph(
             intents=(self.intent("i1"), self.intent("i2")),
-            unresolved_dependencies=("z unresolved", "a unresolved"),
+            unresolved_dependencies=(),
         )
         selections = (
             ScenarioSelection("missing-z", ("i2",), 1.0, 1),
-            ScenarioSelection("missing-a", ("i1",), 1.0, 1),
+            ScenarioSelection("", ("i1",), 1.0, 1),
         )
 
         first = compile_execution_graph(
@@ -350,12 +486,10 @@ class CompilerTest(unittest.TestCase):
 
         self.assertEqual(first, second)
         self.assertEqual(
-            first["reason_codes"], ["invalid_intent_graph", "missing_scenario_bundle"]
+            first["reason_codes"],
+            ["malformed_scenario_id", "missing_scenario_bundle"],
         )
-        self.assertEqual(
-            first["details"],
-            ["unresolved dependency: a unresolved", "unresolved dependency: z unresolved"],
-        )
+        self.assertNotIn("details", first)
 
     @staticmethod
     def intent(intent_id, depends_on=()):
