@@ -7,6 +7,8 @@ from pathlib import Path
 from .commands import _run_v2_task_pack_command as _run_v2_task_pack_command
 from .commands import approve_command as approve_command
 from .commands import audit_command as audit_command
+from .commands import batch_check_command as batch_check_command
+from .commands import batch_compact_command as batch_compact_command
 from .commands import build_manifest as build_manifest
 from .commands import build_scan_report as build_scan_report
 from .commands import build_source_record as build_source_record
@@ -274,6 +276,19 @@ def build_parser() -> argparse.ArgumentParser:
     claude_skills_bulk_assess_parser.add_argument("--draft-root", required=True)
     claude_skills_bulk_assess_parser.add_argument("--registry", required=True)
     claude_skills_bulk_assess_parser.set_defaults(func=claude_skills_bulk_assess_command)
+
+    batch_check_parser = subparsers.add_parser("batch-check")
+    batch_check_parser.add_argument("--batches", required=True)
+    batch_check_parser.add_argument("--catalog", required=True)
+    batch_check_parser.add_argument("--index", required=True)
+    batch_check_parser.set_defaults(func=batch_check_command)
+
+    batch_compact_parser = subparsers.add_parser("batch-compact")
+    batch_compact_parser.add_argument("--batches", required=True)
+    batch_compact_parser.add_argument("--catalog", required=True)
+    batch_compact_parser.add_argument("--index", required=True)
+    batch_compact_parser.add_argument("--source-commit", required=True)
+    batch_compact_parser.set_defaults(func=batch_compact_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

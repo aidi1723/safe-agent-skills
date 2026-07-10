@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/batch-index.schema.json",
+  "title": "Safe-Agent-Skills Batch Lifecycle Index",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "item_count",
+    "batch_count",
+    "lifecycle_counts",
+    "batches",
+    "items"
+  ],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "item_count": {"type": "integer", "minimum": 0},
+    "batch_count": {"type": "integer", "minimum": 0},
+    "lifecycle_counts": {"$ref": "#/$defs/lifecycleCounts"},
+    "batches": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "item_count", "lifecycle_counts"],
+        "properties": {
+          "id": {"type": "string", "pattern": "^batch-[a-z0-9-]+$"},
+          "item_count": {"type": "integer", "minimum": 0},
+          "lifecycle_counts": {"$ref": "#/$defs/lifecycleCounts"}
+        },
+        "additionalProperties": false
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "batch",
+          "lifecycle",
+          "body_path",
+          "canonical_path",
+          "source_sha256",
+          "catalog_sha256",
+          "content_match",
+          "source_commit",
+          "compacted"
+        ],
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "batch": {"type": "string", "pattern": "^batch-[a-z0-9-]+$"},
+          "lifecycle": {
+            "type": "string",
+            "enum": ["active_draft", "review_ready", "promoted", "superseded"]
+          },
+          "body_path": {"type": "string", "pattern": "^batch-[^/]+/[^/]+/SKILL\\.md$"},
+          "canonical_path": {
+            "oneOf": [
+              {"type": "null"},
+              {"type": "string", "pattern": "^[^/]+/[^/]+/SKILL\\.md$"}
+            ]
+          },
+          "source_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "catalog_sha256": {
+            "oneOf": [
+              {"type": "null"},
+              {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+            ]
+          },
+          "content_match": {"type": "boolean"},
+          "source_commit": {"type": "string", "minLength": 1},
+          "compacted": {"type": "boolean"}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "$defs": {
+    "lifecycleCounts": {
+      "type": "object",
+      "properties": {
+        "active_draft": {"type": "integer", "minimum": 0},
+        "review_ready": {"type": "integer", "minimum": 0},
+        "promoted": {"type": "integer", "minimum": 0},
+        "superseded": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

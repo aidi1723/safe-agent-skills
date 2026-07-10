@@ -55,6 +55,10 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
   --eval evals/multi-intent-gold.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalog >/dev/null
+PYTHONPATH=src python3 -m onecode_skill_sanitizer batch-check \
+  --batches batches \
+  --catalog catalog \
+  --index batches/index.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
   --registry catalog \
   --bundles bundles/index.json \
@@ -120,6 +124,7 @@ python3 -m json.tool schemas/verify-report.schema.json >/dev/null
 python3 -m json.tool schemas/contract-v2.schema.json >/dev/null
 python3 -m json.tool schemas/intent-graph.schema.json >/dev/null
 python3 -m json.tool schemas/task-pack-v2.schema.json >/dev/null
+python3 -m json.tool schemas/batch-index.schema.json >/dev/null
 PYTHONPATH=src python3 - <<'PY'
 import json
 from pathlib import Path

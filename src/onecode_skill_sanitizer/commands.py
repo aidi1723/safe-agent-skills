@@ -5,6 +5,9 @@ import json
 import tempfile
 from pathlib import Path
 
+from .batch_lifecycle import build_batch_index
+from .batch_lifecycle import compact_promoted_bodies
+from .batch_lifecycle import validate_batch_index
 from .bulk import claude_skills_candidate_action as claude_skills_candidate_action
 from .bulk import claude_skills_candidate_sort_key as claude_skills_candidate_sort_key
 from .bulk import compact_claude_skills_candidate as compact_claude_skills_candidate
@@ -103,6 +106,47 @@ from .validation import validate_manifest_schema
 from .validation import validate_registry_index_schema
 from .validation import validate_sanitization_report_schema
 from .validation import validate_verify_report_schema
+
+
+def batch_check_command(args: argparse.Namespace) -> int:
+    batch_root = Path(args.batches)
+    catalog_root = Path(args.catalog)
+    index_path = Path(args.index)
+    index = json.loads(index_path.read_text(encoding="utf-8"))
+    issues = validate_batch_index(index, batch_root, catalog_root)
+    result = {
+        "schema_version": 1,
+        "status": "failed" if issues else "ok",
+        "item_count": index.get("item_count", 0),
+        "compacted_count": sum(bool(item.get("compacted")) for item in index.get("items", [])),
+        "issues": issues,
+    }
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if not issues else 2
+
+
+def batch_compact_command(args: argparse.Namespace) -> int:
+    batch_root = Path(args.batches)
+    catalog_root = Path(args.catalog)
+    index_path = Path(args.index)
+    previous_index = None
+    if index_path.is_file():
+        previous_index = json.loads(index_path.read_text(encoding="utf-8"))
+    index = build_batch_index(batch_root, catalog_root, args.source_commit, previous_index=previous_index)
+    result = compact_promoted_bodies(index, batch_root, catalog_root)
+    write_json(index_path, index)
+    output = {
+        "schema_version": 1,
+        "status": "ok",
+        "item_count": index["item_count"],
+        "lifecycle_counts": index["lifecycle_counts"],
+        "compacted_count": len(result["compacted"]),
+        "skipped_count": len(result["skipped"]),
+        "compacted": result["compacted"],
+        "skipped": result["skipped"],
+    }
+    print(json.dumps(output, indent=2, sort_keys=True))
+    return 0
 
 
 def load_optional_skill_json(source_dir: Path) -> dict:
