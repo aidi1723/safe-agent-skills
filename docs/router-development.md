@@ -124,9 +124,10 @@ schemas inside `selection_trace`.
 
 Hybrid Router v2 contributions must satisfy these gates:
 
-- Gold labels must be independently reviewed. The evaluator must not generate
-  or repair its own expected labels.
-- Every trusted scenario must have at least five independent dataset cases.
+- Gold labels must be manually curated, repository-declared as not generated
+  from router output, and separately reviewed before production approval. The
+  evaluator must not generate or repair its own expected labels.
+- Every trusted scenario must have at least five curated dataset cases.
 - Decomposition changes require focused multi-intent fixtures, including
   dependency ordering and an over-splitting negative case.
 - New skills added to a core scenario require Contract v2 coverage and must
@@ -156,9 +157,13 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
   --bundles bundles/index.json
 ```
 
-The v2 dataset is independent of `evals/router-quality-v2.json`. Its metadata
-must keep the manual independent labeling method, reviewer identity, label
-provenance, fixed 100-case count, category distribution, and scenario coverage.
+The v2 dataset is a separate corpus from `evals/router-quality-v2.json`. Its
+labels are manually curated and repository-declared as not generated from
+router output. The current literal metadata values are enforced by the existing
+loader, but they do not evidence an external reviewer identity or persisted
+external review artifact. Independent external review remains a
+production-readiness gate. Keep the fixed 100-case count, category distribution,
+scenario coverage, and no-`actual_*` label contract.
 Track `multi_intent_exact_match`, `scenario_precision`, `scenario_recall`,
 `scenario_f1`, `dependency_edge_recall`,
 `forbidden_scenario_false_positive_rate`, and `dag_validity`.

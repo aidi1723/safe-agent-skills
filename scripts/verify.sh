@@ -84,6 +84,9 @@ import json
 from pathlib import Path
 
 from jsonschema import Draft202012Validator, validators
+from referencing import Registry, Resource
+
+from onecode_skill_sanitizer.cli import build_task_pack_v2
 
 contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
 intent_graph_schema = json.loads(Path("schemas/intent-graph.schema.json").read_text(encoding="utf-8"))
@@ -99,6 +102,12 @@ strict_type_checker = Draft202012Validator.TYPE_CHECKER.redefine(
 strict_validator = validators.extend(Draft202012Validator, type_checker=strict_type_checker)
 contract_validator = strict_validator(contract_schema)
 manifest_validator = strict_validator(manifest_schema)
+schema_registry = Registry().with_resource(
+    intent_graph_schema["$id"],
+    Resource.from_contents(intent_graph_schema),
+)
+task_pack_validator = strict_validator(task_pack_schema, registry=schema_registry)
+intent_graph_validator = strict_validator(intent_graph_schema)
 validated = 0
 for manifest_path in sorted(Path("catalog").glob("*/*/skill.json")):
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
@@ -110,6 +119,14 @@ for manifest_path in sorted(Path("catalog").glob("*/*/skill.json")):
     validated += 1
 if validated < 39:
     raise SystemExit(f"expected at least 39 Contract v2 manifests, validated {validated}")
+
+task_pack = build_task_pack_v2(
+    Path("catalog"),
+    "构建官网，同时审计 skill 路由器，验证通过后发布更新",
+    Path("bundles/index.json"),
+)
+task_pack_validator.validate(task_pack)
+intent_graph_validator.validate(task_pack["intent_graph"])
 PY
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null

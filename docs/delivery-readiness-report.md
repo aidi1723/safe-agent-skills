@@ -35,7 +35,8 @@ Current delivery scope is intentionally bounded:
 | Schema v2 default and v1 compatibility | Ready |
 | Deterministic multi-intent composition | Structurally complete |
 | Core Contract v2 coverage | Ready at 81.25% |
-| Independent 100-case v2 evaluation | Ready |
+| Curated 100-case v2 evaluation | Ready for structural evidence |
+| Independent external label review | Not evidenced |
 | Production router quality gate | Not ready |
 | Routing-quality remediation | Required before semantic providers |
 | Semantic providers | Pending |
@@ -47,7 +48,7 @@ Fresh milestone verification on 2026-07-10 records 308 passing tests, clean
 Ruff lint, a passing `scripts/verify.sh`, 81.25% core Contract v2 coverage, and
 43/43 passing Schema v1 regression cases.
 
-The independent 100-case v2 evaluator currently reports:
+The manually curated 100-case v2 evaluator currently reports:
 
 | Metric | Current | Target | Status |
 | --- | ---: | ---: | --- |
@@ -64,6 +65,8 @@ production readiness.
 Production approval also remains blocked because task-type macro F1 and
 required-capability recall are not yet reported. A deterministic routing-quality
 remediation iteration should precede semantic-provider implementation.
+Independent external review of the dataset labels is also not evidenced by a
+persisted repository artifact and remains required for production approval.
 
 ## Required Quality Remediation
 
@@ -74,6 +77,7 @@ iteration that:
 - reduces forbidden scenario or skill false positives to at most 0.5%;
 - reaches 1.0 DAG validity;
 - improves dependency-edge recall as an additional diagnostic gap.
+- obtains and persists independent external review of the curated labels.
 
 ## Other Follow-Up Work
 

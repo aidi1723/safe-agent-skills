@@ -18,7 +18,8 @@ The upgraded system must:
 - preserve deterministic trust, policy, capability, overlap, and approval gates
 - compile selected skills into a validated global execution DAG
 - expose a machine-readable host execution and replanning protocol
-- provide calibrated, independently measured routing quality
+- provide calibrated routing quality, with independent external evaluation
+  required before production-ready approval
 - retain a bounded Schema v1 compatibility path
 
 ## Product Boundary
@@ -657,7 +658,7 @@ Every replan produces a new route revision linked to the previous `route_id`.
 
 ## Evaluation System
 
-The evaluation suite is expanded into independent datasets:
+The evaluation suite is expanded into separate datasets:
 
 ```text
 evals/
@@ -696,6 +697,11 @@ Evaluation reports:
 Gold-set changes require separate review from router rule changes. CI reports
 metric regressions rather than only per-case pass or fail.
 
+Repository metadata may declare that labels were manually curated and were not
+generated from router output. Such declarations do not prove independent
+external review. Production-ready approval requires persisted reviewer
+provenance or an equivalent external-review artifact.
+
 ## Acceptance Criteria
 
 Acceptance is split into two gates. Structural closure proves that the
@@ -712,7 +718,7 @@ This gate may pass before production-ready approval. It requires:
   depends on both preceding intent paths.
 - `host_execution_protocol.mode` is `method_only`.
 - Core bundle Contract v2 coverage is at least 80%.
-- `router-eval-v2` executes against the independent dataset contract and emits
+- `router-eval-v2` executes against the curated dataset contract and emits
   present, finite metrics. Structural closure does not require every production
   threshold to pass.
 - Schema v1 compatibility and its regression evaluation remain available.
@@ -732,11 +738,14 @@ The first production-ready Schema v2 release must meet:
 | High-confidence error rate | at most 2% |
 | Provider-failure deterministic fallback | 100% |
 | Core bundle contract coverage | at least 80% |
+| Independent external label review | persisted provenance or review artifact |
 
 The first-milestone evaluator does not yet report task-type macro F1 or
 required-capability recall. Those missing metrics fail production-ready
 approval until implemented and measured. Dependency-edge recall is an
 additional diagnostic quality metric; it does not replace any production gate.
+Independent external review of the curated labels must also be evidenced before
+production-ready approval.
 
 The compound request below is a mandatory acceptance fixture:
 

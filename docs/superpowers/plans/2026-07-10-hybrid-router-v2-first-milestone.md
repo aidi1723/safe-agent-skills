@@ -2,7 +2,7 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Deliver Schema v2, deterministic multi-intent routing, multi-scenario composition, a validated global DAG, Schema v1 compatibility, independent evaluation, and at least 80% contract coverage for core scenario skills.
+**Goal:** Deliver Schema v2, deterministic multi-intent routing, multi-scenario composition, a validated global DAG, Schema v1 compatibility, a manually curated evaluation corpus declared as not generated from router output, and at least 80% contract coverage for core scenario skills.
 
 **Architecture:** Preserve the current v1 deterministic router while adding focused v2 modules. `intent.py` decomposes tasks, `candidates.py` retrieves trusted scenarios, `composer.py` selects multiple scenarios, `compiler.py` creates the global DAG, and `compatibility.py` supplies stable identity and v1 conversion. `cli.py` chooses the v1 or v2 pipeline through `--schema-version`; runtime execution remains owned by the host.
 
@@ -21,7 +21,7 @@ Included:
 - explicit incomplete and blocked routes
 - Schema v1 compatibility
 - Contract v2 validation and coverage gates
-- 100 independently reviewed multi-intent cases
+- 100 manually curated multi-intent cases declared as not generated from router output
 
 Excluded until follow-on plans:
 
@@ -628,7 +628,7 @@ git commit -m "feat: add contract v2 coverage gate"
 
 ---
 
-### Task 7: Add Independent Multi-Intent Evaluation
+### Task 7: Add Curated Multi-Intent Evaluation
 
 **Files:**
 - Create: `evals/multi-intent-gold.json`
@@ -636,7 +636,7 @@ git commit -m "feat: add contract v2 coverage gate"
 - Modify: `src/onecode_skill_sanitizer/cli.py`
 - Modify: `scripts/verify.sh`
 
-- [ ] **Step 1: Create exactly 100 independently reviewed cases**
+- [ ] **Step 1: Create exactly 100 manually curated cases**
 
 Distribution:
 
@@ -649,7 +649,8 @@ Distribution:
 
 Each case contains ID, task, ordered expected intents, expected scenarios,
 required dependency edges, and forbidden scenarios. Labels must not be generated
-from router output.
+from router output. Repository metadata alone does not prove independent
+external review; persist a separate review artifact before production approval.
 
 - [ ] **Step 2: Write failing evaluator tests**
 
@@ -691,7 +692,7 @@ PYTHONPATH=src python3 -m unittest tests.test_router_eval_v2 -v
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 --eval evals/multi-intent-gold.json --registry catalog --bundles bundles/index.json
 bash scripts/verify.sh
 git add evals/multi-intent-gold.json tests/test_router_eval_v2.py src/onecode_skill_sanitizer/cli.py scripts/verify.sh
-git commit -m "test: add independent multi-intent evaluation"
+git commit -m "test: add curated multi-intent evaluation"
 ```
 
 ---
@@ -728,9 +729,10 @@ scenarios.
 
 - [ ] **Step 3: Document contributor gates**
 
-Require independent gold labels, multi-intent fixtures for decomposition
-changes, contract coverage for new bundle skills, deterministic tests without a
-provider, and blocked output for cyclic graphs.
+Require manually curated gold labels declared as not generated from router
+output, independent external review before production approval, multi-intent
+fixtures for decomposition changes, contract coverage for new bundle skills,
+deterministic tests without a provider, and blocked output for cyclic graphs.
 
 - [ ] **Step 4: Finish verification coverage**
 
@@ -782,6 +784,8 @@ assert contract["status"] == "ok"
 assert contract["coverage_ratio"] >= 0.80
 assert evaluation["case_count"] == 100
 assert len(dataset["cases"]) == 100
+assert dataset["labeling"]["generated_from_router"] is False
+# Legacy literal metadata is loader-enforced but is not external-review proof.
 assert dataset["labeling"] == {
     "method": "manual_review",
     "reviewer_role": "independent_dataset_review",
@@ -821,6 +825,7 @@ if metrics["multi_intent_exact_match"] < 0.80:
     )
 if metrics["dag_validity"] < 1.0:
     production_failures.append(f"dag_validity: {metrics['dag_validity']:.4f} < 1.0")
+production_failures.append("independent_external_label_review: not evidenced")
 
 print("structural first-milestone acceptance: PASS")
 print("production-ready quality gate: " + ("PASS" if not production_failures else "FAIL"))
@@ -862,7 +867,8 @@ The implementation/structural milestone is complete only when:
 - Vague tasks are incomplete rather than falsely routed.
 - Cyclic global graphs are blocked.
 - Core scenario Contract coverage is at least 80%.
-- The independent dataset contains exactly 100 cases.
+- The curated dataset contains exactly 100 cases and declares that labels were
+  not generated from router output.
 - New schemas, tests, lint, maintenance checks, v1 evaluation, v2 evaluation,
   and verification commands pass.
 - The v2 evaluator dataset contract is valid and every required metric is
@@ -888,7 +894,8 @@ Production approval additionally requires the design thresholds, including:
 This gate currently fails because forbidden-scenario false positives are
 8.18%, DAG validity is 0.89, and task-type macro F1 and required-capability
 recall are not yet reported. Dependency-edge recall near 0.1429 is an
-additional diagnostic gap.
+additional diagnostic gap. Independent external label review is not evidenced
+by a persisted repository artifact and is another production-readiness gap.
 
 ## Follow-On Plans
 

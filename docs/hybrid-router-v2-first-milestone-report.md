@@ -74,13 +74,17 @@ Contract v2 metadata: **81.25%**, above the required 80% gate. Nine referenced
 skills remain outside complete Contract v2 coverage and are reported by
 `contract-check`; future additions to core bundles must preserve the gate.
 
-## Independent Evaluator
+## Curated Evaluator
 
-`evals/multi-intent-gold.json` contains exactly 100 manually labeled cases and
-is independent of the copied v1 regression corpus. Its metadata records
-`method: manual_review`, `reviewer_role: independent_dataset_review`,
-`generated_from_router: false`, and `reviewed_at: 2026-07-10`. Scenario
-coverage includes every bundle scenario with at least five expected examples.
+`evals/multi-intent-gold.json` contains exactly 100 manually curated cases in a
+separate corpus from the copied v1 regression data. The repository declares
+`generated_from_router: false`. Its currently enforced literal metadata also
+contains `method: manual_review`, `reviewer_role: independent_dataset_review`,
+and `reviewed_at: 2026-07-10`; those strings are not evidence of a named or
+external reviewer, and no persisted external-review artifact exists in this
+repository. Independent external label review remains a production-readiness
+gap. Scenario coverage includes every bundle scenario with at least five
+expected examples.
 
 | Metric | Current | Target | Assessment |
 | --- | ---: | ---: | --- |
@@ -103,7 +107,7 @@ metrics without pretending the quality targets passed.
 The corrected acceptance commands and assertion block from the implementation
 plan were rerun exactly after standardizing selected scenario records on
 `scenario_id`. The block also validates 81.25% Contract v2 coverage, both
-release dependency paths, the 100-case independent labeling contract, and
+release dependency paths, the 100-case curated dataset contract, and
 finite evaluator output without asserting that the current DAG metric is
 already 1.0.
 
@@ -114,12 +118,13 @@ production-ready quality gate: FAIL
 - required_capability_recall: not reported
 - forbidden_scenario_false_positive_rate: 8.1818% > 0.5%
 - dag_validity: 0.8900 < 1.0
+- independent_external_label_review: not evidenced
 diagnostic dependency_edge_recall: 0.1429
 ```
 
 Scenario F1 is 0.9448 and multi-intent exact match is 0.85, so those measured
 production thresholds pass. Production approval still fails because of the
-listed false-positive, DAG, and missing-metric gates.
+listed false-positive, DAG, missing-metric, and external-review evidence gates.
 
 ## Compatibility And Safety
 
@@ -142,6 +147,8 @@ represented as ready execution graphs.
 - Routing-quality remediation: add task-type macro F1 and required-capability
   recall, reduce forbidden false positives, reach 1.0 DAG validity, and improve
   dependency-edge recall before semantic-provider implementation.
+- Independent external dataset review: persist reviewer provenance or a review
+  artifact rather than inferring independence from repository metadata labels.
 - Semantic providers: strict provider protocol, privacy policy, structured
   output, semantic reranking, deterministic fallback, and calibration.
 - Host replanning: execution-event schema, transition validation, ready-node
