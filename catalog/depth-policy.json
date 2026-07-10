@@ -6,6 +6,7 @@
     "code-test-regression": "specialist",
     "codebase-explore-map": "specialist",
     "compliance-privacy-check": "specialist",
+    "data-table-analysis": "specialist",
     "design-ui-review": "specialist",
     "engineering-build-release": "specialist",
     "engineering-ci-troubleshoot": "specialist",

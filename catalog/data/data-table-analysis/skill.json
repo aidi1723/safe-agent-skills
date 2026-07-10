@@ -4,8 +4,9 @@
   "approved_at": "2026-06-04T07:05:34Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "643484425276f32756c070b0f1678147371c66a7b9f09a486ee579ac82c7d04f",
-    "sanitized_sha256": "607acc05e6702165f73ab809f968c241253daeac94b63d8c74c8631c30ddf78f",
+    "auxiliary_sha256": "c2aef217bbcad474461cbce2a52b78f72508757d7b3256eaab1331d952d3726f",
+    "manifest_sha256": "2aa95c0029e6eaed74d000f6254c4d030376ad69a67c5748e890f803a10398d0",
+    "sanitized_sha256": "0974ec28ce2153192dd511a589dda9ad50599d405a57cc598476ebe4af77474d",
     "source_sha256": "718da8eb550b947211605894d823c991e48c834609aae89a512a82c93ea09861"
   },
   "name": "data-table-analysis",
