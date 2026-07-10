@@ -24,6 +24,28 @@ DEPENDENCY_EDGE_TYPES = {
     "intent_verification_dependency",
     "intent_completion_dependency",
 }
+COMPILER_BLOCKING_REASONS = {
+    "dependency_cycle",
+    "duplicate_intent_id",
+    "duplicate_intent_selection",
+    "duplicate_skill_name",
+    "empty_execution_order",
+    "incomplete_composition",
+    "invalid_intent_graph",
+    "invalid_scenario_selection",
+    "malformed_bundles_index",
+    "malformed_composition",
+    "malformed_execution_order",
+    "malformed_intent_dependency",
+    "malformed_intent_graph",
+    "malformed_scenario_id",
+    "malformed_selection_intents",
+    "missing_intent_verification",
+    "missing_scenario_bundle",
+    "unknown_intent_dependency",
+    "unknown_intent_id",
+    "untrusted_scenario",
+}
 EXPECTED_STATUSES = {"complete", "incomplete", "blocked"}
 TRUSTED_SCENARIO_IDS = {
     "agent-long-term-memory-governance",
@@ -151,6 +173,12 @@ def _validate_case(
             raise DatasetValidationError(
                 f"{prefix}.expected_scenarios contains unknown ids: {', '.join(unknown)}"
             )
+        unknown_forbidden = sorted(set(case["forbidden_scenarios"]) - known_scenarios)
+        if unknown_forbidden:
+            raise DatasetValidationError(
+                f"{prefix}.forbidden_scenarios contains unknown ids: "
+                f"{', '.join(unknown_forbidden)}"
+            )
     overlap = set(case["expected_scenarios"]) & set(case["forbidden_scenarios"])
     if overlap:
         raise DatasetValidationError(f"{prefix} expected and forbidden scenarios overlap")
@@ -275,8 +303,10 @@ def evaluate_router_v2(
             ),
         },
         "dag_definition": (
-            "Valid means an acyclic ready execution graph for complete routes, or a blocked "
-            "execution graph when expected_status explicitly declares blocked."
+            "Valid means graph.acyclic matches topology computed from nodes and edges. "
+            "Complete or incomplete cases require an acyclic ready graph. Blocked cases "
+            "require blocked routing and execution statuses plus a recognized compiler "
+            "reason; a coherent dependency cycle is valid with topology_acyclic false."
         ),
         "cases": results,
     }
@@ -304,15 +334,19 @@ def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
     forbidden_set = set(case["forbidden_scenarios"])
     actual_edges = _dependency_pairs(route, intents)
     expected_edges = {tuple(edge) for edge in case["required_dependency_edges"]}
-    dag_is_valid = _dag_is_valid(route, case.get("expected_status"))
     topology_acyclic = _graph_topology_is_acyclic(route)
+    dag_is_valid, dag_issues = _dag_assessment(
+        route,
+        case.get("expected_status"),
+        topology_acyclic,
+    )
     graph_status = route["execution_graph"].get("status")
     if case.get("expected_status") != "blocked" and (
-        not topology_acyclic or graph_status == "blocked"
+        not dag_is_valid or not topology_acyclic or graph_status == "blocked"
     ):
         raise EvaluatorError(f"unexpected invalid DAG for case {case['id']}")
 
-    issues = []
+    issues = list(dag_issues)
     if actual_intents != expected_intents:
         issues.append(
             {"id": "intent_order_mismatch", "expected": expected_intents, "actual": actual_intents}
@@ -406,18 +440,55 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
     return pairs
 
 
-def _dag_is_valid(route: dict[str, Any], expected_status: str | None) -> bool:
+def _dag_assessment(
+    route: dict[str, Any],
+    expected_status: str | None,
+    topology_acyclic: bool,
+) -> tuple[bool, list[dict[str, Any]]]:
     graph = route.get("execution_graph")
     if not isinstance(graph, dict):
         raise EvaluatorError("execution_graph must be an object")
     status = graph.get("status")
-    acyclic = graph.get("acyclic")
+    declared_acyclic = graph.get("acyclic")
     routing_status = route.get("routing_status")
-    if not isinstance(acyclic, bool) or not isinstance(status, str):
+    reason_codes = graph.get("reason_codes")
+    if not isinstance(declared_acyclic, bool) or not isinstance(status, str):
         raise EvaluatorError("execution graph status and acyclic fields are malformed")
+    if not isinstance(reason_codes, list) or not all(
+        isinstance(reason, str) and reason for reason in reason_codes
+    ):
+        raise EvaluatorError("execution graph reason_codes must be nonempty strings")
+    issues: list[dict[str, Any]] = []
+    if declared_acyclic != topology_acyclic:
+        issues.append(
+            {
+                "id": "acyclic_flag_mismatch",
+                "declared": declared_acyclic,
+                "computed": topology_acyclic,
+            }
+        )
     if expected_status == "blocked":
-        return status == "blocked"
-    return acyclic and status == "ready" and routing_status in {"complete", "incomplete"}
+        if status != "blocked" or routing_status != "blocked":
+            issues.append(
+                {
+                    "id": "blocked_status_incoherent",
+                    "execution_graph_status": status,
+                    "routing_status": routing_status,
+                }
+            )
+        recognized_reasons = sorted(set(reason_codes) & COMPILER_BLOCKING_REASONS)
+        if not recognized_reasons:
+            issues.append(
+                {"id": "missing_recognized_blocking_reason", "reason_codes": reason_codes}
+            )
+        return not issues, issues
+    valid = (
+        not issues
+        and topology_acyclic
+        and status == "ready"
+        and routing_status in {"complete", "incomplete"}
+    )
+    return valid, issues
 
 
 def _graph_topology_is_acyclic(route: dict[str, Any]) -> bool:

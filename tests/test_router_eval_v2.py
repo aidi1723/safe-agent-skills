@@ -52,6 +52,7 @@ def synthetic_route(
     graph_status: str = "ready",
     acyclic: bool = True,
     routing_status: str = "complete",
+    reason_codes: list[str] | None = None,
 ) -> dict:
     intents = [
         {"id": f"i{index}", "task_type": task_type, "depends_on": []}
@@ -90,6 +91,7 @@ def synthetic_route(
             "acyclic": acyclic,
             "nodes": nodes,
             "edges": edges,
+            "reason_codes": reason_codes or [],
         },
     }
 
@@ -137,6 +139,37 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(set(scenario_counts), bundle_scenario_ids())
         self.assertGreaterEqual(min(scenario_counts.values()), 5)
 
+    def test_gold_sequential_cases_have_dependency_target_and_phrase_diversity(self):
+        cases = [case for case in gold_payload()["cases"] if case["category"] == "sequential"]
+        edges = [edge for case in cases for edge in case["required_dependency_edges"]]
+        targets = Counter(target for _, target in edges)
+        chain_cases = [case for case in cases if len(case["expected_intents"]) >= 3]
+        normalized_tasks = [" ".join(case["task"].lower().split()) for case in cases]
+
+        self.assertEqual(len(cases), 20)
+        self.assertLessEqual(targets["open_source_release"], 6)
+        self.assertGreaterEqual(len(targets), 10)
+        self.assertGreaterEqual(len(chain_cases), 5)
+        self.assertEqual(len(set(normalized_tasks)), 20)
+
+    def test_gold_sequential_cases_cover_required_semantic_patterns(self):
+        cases = [case for case in gold_payload()["cases"] if case["category"] == "sequential"]
+        edges = {tuple(edge) for case in cases for edge in case["required_dependency_edges"]}
+        required_patterns = {
+            ("multi_platform_research_discovery", "investment_research_diligence"),
+            ("document_knowledge_base", "rag_agent"),
+            ("agent_planning_orchestration", "website_build"),
+            ("agent_security", "open_source_release"),
+            ("data_analysis", "content_seo"),
+            ("content_video_production", "agentic_media_production"),
+            ("code_review", "website_build"),
+            ("multi_platform_research_discovery", "content_seo"),
+            ("agent_role_library_governance", "agent_planning_orchestration"),
+            ("agent_long_term_memory_governance", "rag_agent"),
+        }
+
+        self.assertTrue(required_patterns.issubset(edges))
+
     def test_loader_rejects_incorrect_labeling_metadata(self):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
@@ -155,6 +188,9 @@ class RouterEvalV2Tests(unittest.TestCase):
             "duplicate intents": lambda case: case.update(expected_intents=["x", "x"]),
             "empty scenario": lambda case: case.update(expected_scenarios=[""]),
             "unknown scenario": lambda case: case.update(expected_scenarios=["not-known"]),
+            "unknown forbidden scenario": lambda case: case.update(
+                forbidden_scenarios=["website-build-launc"]
+            ),
             "duplicate forbidden": lambda case: case.update(forbidden_scenarios=["x", "x"]),
             "overlap": lambda case: case.update(
                 forbidden_scenarios=[case["expected_scenarios"][0]]
@@ -347,6 +383,7 @@ class RouterEvalV2Tests(unittest.TestCase):
                 current["expected_scenarios"],
                 graph_status="blocked",
                 routing_status="blocked",
+                reason_codes=["missing_intent_verification"],
             ),
         )
         ready = evaluate_router_v2(
@@ -364,6 +401,101 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn(
             "status_mismatch", {issue["id"] for issue in ready["cases"][0]["issues"]}
         )
+
+    def test_coherent_blocked_self_cycle_is_valid_and_records_cyclic_topology(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked-cycle",
+            "category": "sequential",
+            "task": "cyclic dependency",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha"],
+            ["s1"],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="blocked",
+            reason_codes=["dependency_cycle"],
+        )
+        route["execution_graph"]["edges"] = [
+            {"from": "node-1", "to": "node-1", "type": "skill_order"}
+        ]
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertTrue(report["cases"][0]["dag_valid"])
+        self.assertFalse(report["cases"][0]["topology_acyclic"])
+        self.assertEqual(report["cases"][0]["issues"], [])
+
+    def test_incoherent_blocked_self_cycle_is_invalid_with_flag_issue(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked-cycle",
+            "category": "sequential",
+            "task": "cyclic dependency",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha"],
+            ["s1"],
+            graph_status="blocked",
+            acyclic=True,
+            routing_status="blocked",
+            reason_codes=["dependency_cycle"],
+        )
+        route["execution_graph"]["edges"] = [
+            {"from": "node-1", "to": "node-1", "type": "skill_order"}
+        ]
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        self.assertIn("acyclic_flag_mismatch", issue_ids)
+
+    def test_blocked_graph_requires_blocked_route_and_recognized_reason(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blocked",
+            "category": "sequential",
+            "task": "blocked",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        routes = [
+            synthetic_route(
+                ["alpha"], ["s1"], graph_status="blocked", routing_status="complete",
+                reason_codes=["missing_intent_verification"],
+            ),
+            synthetic_route(
+                ["alpha"], ["s1"], graph_status="blocked", routing_status="blocked",
+                reason_codes=[],
+            ),
+            synthetic_route(
+                ["alpha"], ["s1"], graph_status="blocked", routing_status="blocked",
+                reason_codes=["invented_reason"],
+            ),
+        ]
+
+        for route in routes:
+            with self.subTest(route=route):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                self.assertFalse(report["cases"][0]["dag_valid"])
 
     def test_real_command_prints_json_without_failing_on_low_metrics(self):
         completed = subprocess.run(

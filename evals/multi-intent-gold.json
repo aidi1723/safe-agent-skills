@@ -729,101 +729,96 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-website-release",
+      "id": "sequential-research-investment-data",
       "category": "sequential",
-      "task": "Build and verify the product website then release the package",
+      "task": "Workstream order: run a multi-platform search across Reddit, YouTube, and GitHub; prepare a value-investing memo with a bear case; validate the spreadsheet and charts",
       "expected_intents": [
-        "website_build",
-        "open_source_release"
+        "multi_platform_research_discovery",
+        "investment_research_diligence",
+        "data_analysis"
       ],
       "expected_scenarios": [
-        "website-build-launch",
-        "open-source-release"
+        "multi-platform-research-discovery",
+        "investment-research-diligence",
+        "data-analysis-report"
       ],
       "required_dependency_edges": [
+        [
+          "multi_platform_research_discovery",
+          "investment_research_diligence"
+        ],
+        [
+          "investment_research_diligence",
+          "data_analysis"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-documents-rag-security",
+      "category": "sequential",
+      "task": "Turn PDF documents into a knowledge base；build a citation-grounded RAG agent with vector retrieval；audit prompt-injection guardrails",
+      "expected_intents": [
+        "document_knowledge_base",
+        "rag_agent",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "rag-agent-knowledge-app",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [
+        [
+          "document_knowledge_base",
+          "rag_agent"
+        ],
+        [
+          "rag_agent",
+          "agent_security"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-planning-website-review",
+      "category": "sequential",
+      "task": "Decompose fuzzy requirements into a multi-agent implementation plan；build a responsive product website；review the pull request and tests",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "website_build",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_planning_orchestration",
+          "website_build"
+        ],
         [
           "website_build",
-          "open_source_release"
+          "code_review"
         ]
       ],
       "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-review-release",
-      "category": "sequential",
-      "task": "Review the pull request and tests then release the package",
-      "expected_intents": [
-        "code_review",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "code-review-hardening",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "code_review",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-lifecycle-release",
-      "category": "sequential",
-      "task": "Debug and regression-test the codebase change then release the package",
-      "expected_intents": [
-        "codebase_change_lifecycle",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "codebase-change-lifecycle",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "codebase_change_lifecycle",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-graph-release",
-      "category": "sequential",
-      "task": "Build and verify a code symbol graph with impact analysis, then release the reviewed package",
-      "expected_intents": [
-        "codebase_graph_intelligence",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "codebase-graph-intelligence",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "codebase_graph_intelligence",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
+        "investment-research-diligence"
       ],
       "expected_status": "complete"
     },
     {
       "id": "sequential-security-release",
       "category": "sequential",
-      "task": "Audit prompt injection and tool permissions then release the package",
+      "task": "Audit prompt-injection guardrails and connector permissions, then release the approved package",
       "expected_intents": [
         "agent_security",
         "open_source_release"
@@ -844,136 +839,50 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-planning-release",
+      "id": "sequential-data-seo-video",
       "category": "sequential",
-      "task": "Complete the multi-agent implementation plan then release the package",
+      "task": "Analyze campaign spreadsheets and charts; turn the findings into an SEO article; adapt the content plan into short-video production",
       "expected_intents": [
-        "agent_planning_orchestration",
-        "open_source_release"
+        "data_analysis",
+        "content_seo",
+        "content_video_production"
       ],
       "expected_scenarios": [
-        "agent-planning-orchestration",
-        "open-source-release"
+        "data-analysis-report",
+        "content-seo-publication",
+        "content-video-production"
       ],
       "required_dependency_edges": [
         [
-          "agent_planning_orchestration",
-          "open_source_release"
+          "data_analysis",
+          "content_seo"
+        ],
+        [
+          "content_seo",
+          "content_video_production"
         ]
       ],
       "forbidden_scenarios": [
-        "private-communication-governance"
+        "open-source-release"
       ],
       "expected_status": "complete"
     },
     {
-      "id": "sequential-review-release-variant",
+      "id": "sequential-video-agentic-media",
       "category": "sequential",
-      "task": "Review the release candidate code, regression tests, and supply-chain risks, then release the approved package",
+      "task": "内容策略清单：先做短视频选题与脚本，再把参考视频接入 agentic media production workflow",
       "expected_intents": [
-        "code_review",
-        "open_source_release"
+        "content_video_production",
+        "agentic_media_production"
       ],
       "expected_scenarios": [
-        "code-review-hardening",
-        "open-source-release"
+        "content-video-production",
+        "agentic-media-production"
       ],
       "required_dependency_edges": [
         [
-          "code_review",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-role-release-variant",
-      "category": "sequential",
-      "task": "Verify the expert agent role library and ownership handoffs, then release the approved package",
-      "expected_intents": [
-        "agent_role_library_governance",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "agent-role-library-governance",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "agent_role_library_governance",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-roles-release",
-      "category": "sequential",
-      "task": "Approve the expert agent role library then release the package",
-      "expected_intents": [
-        "agent_role_library_governance",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "agent-role-library-governance",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "agent_role_library_governance",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-design-release",
-      "category": "sequential",
-      "task": "Validate DESIGN.md tokens and component states then release the package",
-      "expected_intents": [
-        "design_md_system_governance",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "design-md-system-governance",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "design_md_system_governance",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-private-release",
-      "category": "sequential",
-      "task": "Approve the E2EE metadata privacy review then release the package",
-      "expected_intents": [
-        "private_communication_governance",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "private-communication-governance",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "private_communication_governance",
-          "open_source_release"
+          "content_video_production",
+          "agentic_media_production"
         ]
       ],
       "forbidden_scenarios": [
@@ -982,21 +891,50 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-video-release-variant",
+      "id": "sequential-review-lifecycle-release",
       "category": "sequential",
-      "task": "Verify the short-video content production plan, then release the approved package",
+      "task": "Review the pull request and regression tests, then map the code lifecycle change, then release the verified package",
       "expected_intents": [
-        "content_video_production",
+        "code_review",
+        "codebase_change_lifecycle",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "content-video-production",
+        "code-review-hardening",
+        "codebase-change-lifecycle",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "content_video_production",
+          "code_review",
+          "codebase_change_lifecycle"
+        ],
+        [
+          "codebase_change_lifecycle",
           "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-source-publication",
+      "category": "sequential",
+      "task": "Run public-source search across Reddit and GitHub; prepare an SEO publication brief and readiness checklist",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [
+        [
+          "multi_platform_research_discovery",
+          "content_seo"
         ]
       ],
       "forbidden_scenarios": [
@@ -1005,21 +943,160 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-video-release",
+      "id": "sequential-role-planning",
       "category": "sequential",
-      "task": "Approve the short-video content production plan then release the package",
+      "task": "Govern the expert agent role library before decomposing fuzzy requirements into a multi-agent implementation plan",
       "expected_intents": [
-        "content_video_production",
-        "open_source_release"
+        "agent_role_library_governance",
+        "agent_planning_orchestration"
       ],
       "expected_scenarios": [
-        "content-video-production",
-        "open-source-release"
+        "agent-role-library-governance",
+        "agent-planning-orchestration"
       ],
       "required_dependency_edges": [
         [
-          "content_video_production",
-          "open_source_release"
+          "agent_role_library_governance",
+          "agent_planning_orchestration"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-memory-rag",
+      "category": "sequential",
+      "task": "Define long-term memory retention and forgetting governance before building a citation-grounded RAG agent with vector retrieval",
+      "expected_intents": [
+        "agent_long_term_memory_governance",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_long_term_memory_governance",
+          "rag_agent"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-design-website-review",
+      "category": "sequential",
+      "task": "Validate DESIGN.md tokens and component states; build the official website; review the implementation and tests",
+      "expected_intents": [
+        "design_md_system_governance",
+        "website_build",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance",
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "design_md_system_governance",
+          "website_build"
+        ],
+        [
+          "website_build",
+          "code_review"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-private-documents-rag",
+      "category": "sequential",
+      "task": "Review E2EE metadata privacy；turn PDF documents into a knowledge base；build a citation-grounded RAG agent",
+      "expected_intents": [
+        "private_communication_governance",
+        "document_knowledge_base",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "document-to-knowledge-base",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [
+        [
+          "private_communication_governance",
+          "document_knowledge_base"
+        ],
+        [
+          "document_knowledge_base",
+          "rag_agent"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-backlog-router-review",
+      "category": "sequential",
+      "task": "Assess the remaining claude-skills backlog; audit smart skill-router composition; review the resulting code and tests",
+      "expected_intents": [
+        "claude_skills_backlog_coverage",
+        "skill_router_review",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage",
+        "skill-router-quality-review",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "claude_skills_backlog_coverage",
+          "skill_router_review"
+        ],
+        [
+          "skill_router_review",
+          "code_review"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-data-commerce-seo",
+      "category": "sequential",
+      "task": "Analyze the sales spreadsheet and charts；optimize marketplace listings and buyer inquiries；write an SEO article for public content",
+      "expected_intents": [
+        "data_analysis",
+        "commerce_growth",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "commerce-listing-growth",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [
+        [
+          "data_analysis",
+          "commerce_growth"
+        ],
+        [
+          "commerce_growth",
+          "content_seo"
         ]
       ],
       "forbidden_scenarios": [
@@ -1028,18 +1105,105 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-media-release",
+      "id": "sequential-industry-planning-data",
       "category": "sequential",
-      "task": "Verify the agentic reference-video render then release the package",
+      "task": "Package a healthcare industry AI solution；decompose fuzzy requirements into a multi-agent implementation plan；analyze the pilot spreadsheet and charts",
       "expected_intents": [
+        "industry_application_orchestration",
+        "agent_planning_orchestration",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "agent-planning-orchestration",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [
+        [
+          "industry_application_orchestration",
+          "agent_planning_orchestration"
+        ],
+        [
+          "agent_planning_orchestration",
+          "data_analysis"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-graph-lifecycle-review",
+      "category": "sequential",
+      "task": "Build a code symbol graph for impact analysis；map the code lifecycle and regression-test the change；review the pull request and tests",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "codebase_change_lifecycle",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "codebase-change-lifecycle",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "codebase_graph_intelligence",
+          "codebase_change_lifecycle"
+        ],
+        [
+          "codebase_change_lifecycle",
+          "code_review"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-investment-security",
+      "category": "sequential",
+      "task": "Prepare a value-investing memo with a bear case；audit prompt-injection guardrails and connector permissions",
+      "expected_intents": [
+        "investment_research_diligence",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [
+        [
+          "investment_research_diligence",
+          "agent_security"
+        ]
+      ],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "expected_status": "complete"
+    },
+    {
+      "id": "sequential-video-media-release",
+      "category": "sequential",
+      "task": "Draft a short-video content matrix；build an agentic media pipeline from a reference video；prepare an open-source release",
+      "expected_intents": [
+        "content_video_production",
         "agentic_media_production",
         "open_source_release"
       ],
       "expected_scenarios": [
+        "content-video-production",
         "agentic-media-production",
         "open-source-release"
       ],
       "required_dependency_edges": [
+        [
+          "content_video_production",
+          "agentic_media_production"
+        ],
         [
           "agentic_media_production",
           "open_source_release"
@@ -1051,140 +1215,60 @@
       "expected_status": "complete"
     },
     {
-      "id": "sequential-lifecycle-release-variant",
+      "id": "sequential-private-role-planning",
       "category": "sequential",
-      "task": "Map the code lifecycle and regression-test the change, then release the approved package",
+      "task": "Review E2EE metadata privacy；govern the expert agent role library；decompose fuzzy requirements into a multi-agent implementation plan",
       "expected_intents": [
-        "codebase_change_lifecycle",
-        "open_source_release"
+        "private_communication_governance",
+        "agent_role_library_governance",
+        "agent_planning_orchestration"
       ],
       "expected_scenarios": [
-        "codebase-change-lifecycle",
-        "open-source-release"
+        "private-communication-governance",
+        "agent-role-library-governance",
+        "agent-planning-orchestration"
       ],
       "required_dependency_edges": [
         [
-          "codebase_change_lifecycle",
-          "open_source_release"
+          "private_communication_governance",
+          "agent_role_library_governance"
+        ],
+        [
+          "agent_role_library_governance",
+          "agent_planning_orchestration"
         ]
       ],
       "forbidden_scenarios": [
-        "private-communication-governance"
+        "commerce-listing-growth"
       ],
       "expected_status": "complete"
     },
     {
-      "id": "sequential-security-release-variant",
+      "id": "sequential-website-review-release",
       "category": "sequential",
-      "task": "Verify prompt-injection guardrails and connector permissions, then release the approved package",
+      "task": "Review the pull request and CI tests；build a responsive product website；prepare an open-source release",
       "expected_intents": [
-        "agent_security",
+        "code_review",
+        "website_build",
         "open_source_release"
       ],
       "expected_scenarios": [
-        "security-agent-guardrails",
+        "code-review-hardening",
+        "website-build-launch",
         "open-source-release"
       ],
       "required_dependency_edges": [
         [
-          "agent_security",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-design-release-variant",
-      "category": "sequential",
-      "task": "Validate DESIGN.md tokens and component states, then release the approved package",
-      "expected_intents": [
-        "design_md_system_governance",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "design-md-system-governance",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
+          "code_review",
+          "website_build"
+        ],
         [
-          "design_md_system_governance",
+          "website_build",
           "open_source_release"
         ]
       ],
       "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-memory-release",
-      "category": "sequential",
-      "task": "Approve long-term memory retention governance then release the package",
-      "expected_intents": [
-        "agent_long_term_memory_governance",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "agent-long-term-memory-governance",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "agent_long_term_memory_governance",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-router-release",
-      "category": "sequential",
-      "task": "Complete the smart skill router quality audit then release the package",
-      "expected_intents": [
-        "skill_router_review",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "skill-router-quality-review",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "skill_router_review",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
-      ],
-      "expected_status": "complete"
-    },
-    {
-      "id": "sequential-router-release-variant",
-      "category": "sequential",
-      "task": "Complete the smart skill router quality audit, then release the approved package",
-      "expected_intents": [
-        "skill_router_review",
-        "open_source_release"
-      ],
-      "expected_scenarios": [
-        "skill-router-quality-review",
-        "open-source-release"
-      ],
-      "required_dependency_edges": [
-        [
-          "skill_router_review",
-          "open_source_release"
-        ]
-      ],
-      "forbidden_scenarios": [
-        "private-communication-governance"
+        "investment-research-diligence"
       ],
       "expected_status": "complete"
     },
