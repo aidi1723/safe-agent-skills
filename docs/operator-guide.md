@@ -17,8 +17,10 @@ bash scripts/verify.sh
 `jsonschema` is required by the verification suite. Install development checks with: `python3 -m pip install -e ".[dev]"` before running `bash scripts/verify.sh`.
 
 Hybrid Router v2 also requires the development install for `ruff` and schema
-validation. Schema v2 is the default; request Schema v1 only for a legacy
-consumer and review its explicit compatibility loss.
+validation. Schema v2 is the default; request Schema v1 only when the consumer
+requires the frozen, independently executed v1 routing behavior. Do not treat
+that selection as equivalent to the v2 payload's lossy `to_legacy_v1`
+projection or its `compatibility_loss` migration information.
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \

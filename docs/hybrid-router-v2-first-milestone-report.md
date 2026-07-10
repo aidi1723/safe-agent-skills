@@ -156,10 +156,13 @@ listed false-positive, DAG, missing-metric, and external-review evidence gates.
 
 ## Compatibility And Safety
 
-Schema v2 is the default. Explicit Schema v1 remains available, and the v1
-regression corpus passes 43/43 cases. Migration to v1 is intentionally lossy:
-the compatibility view retains one primary scenario and drops secondary
-intents, secondary scenarios, and cross-scenario dependency edges.
+Schema v2 is the default. Explicit Schema v1 remains available as the frozen,
+independently executed v1 router, and its regression corpus passes 43/43 cases.
+It is not defined as the same selection as a v2 projection. Within the v2
+payload, `compatibility_loss` describes the intentionally lossy
+`to_legacy_v1` programmatic projection, which retains one primary v2 scenario
+and drops secondary intents, secondary scenarios, and cross-scenario dependency
+edges.
 
 `route_id` is a canonical SHA-256 correlation identity, not an authorization
 token. Recognized secret assignments and bearer values are redacted before

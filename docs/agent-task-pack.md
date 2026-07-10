@@ -51,9 +51,11 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
   --schema-version 1 --format json
 ```
 
-The v1 migration is intentionally lossy: it retains one primary scenario and
-drops secondary intents, secondary scenarios, and cross-scenario dependency
-edges. Read `compatibility_loss` before accepting the downgrade.
+This explicit Schema v1 command runs the frozen v1 router independently; its
+selection is not defined as a projection of the v2 result. For migration code
+that projects a v2 payload with `to_legacy_v1`, read the v2
+`compatibility_loss`: that projection retains one primary v2 scenario and drops
+secondary intents, secondary scenarios, and cross-scenario dependency edges.
 
 ## Goal
 

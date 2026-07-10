@@ -32,7 +32,7 @@ Current delivery scope is intentionally bounded:
 | External references remain metadata-only | Ready |
 | Runtime permission boundary | Ready |
 | GitHub release notes | Ready |
-| Schema v2 default and v1 compatibility | Ready |
+| Schema v2 default and frozen independent v1 behavior | Ready |
 | Schema v2 invariant safeguard enforcement | Ready |
 | Schema v2 bounded CLI failure output | Ready |
 | Deterministic multi-intent composition | Structurally complete |
@@ -57,8 +57,9 @@ capabilities use effective skill contract stages, and acceptance checks reject
 backward pipeline-stage edges. Expected malformed, missing, or structurally
 invalid routing assets return stable exit-code-2 JSON or Markdown errors without
 tracebacks, absolute temporary paths, or credential values. Credential matching
-also avoids redacting benign token-like routing text. Schema v1 behavior remains
-explicitly covered by its existing compatibility tests.
+also avoids redacting benign token-like routing text. Frozen Schema v1 behavior
+remains explicitly covered by its existing regression tests and runs
+independently rather than as the v2 payload's `to_legacy_v1` projection.
 
 When overlap groups are configured, v2 now validates their structure, trusted
 status, and trusted skill references before canonical route hashing. The current

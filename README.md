@@ -324,9 +324,11 @@ onecode-skill-sanitizer router-eval-v2 --eval evals/multi-intent-gold.json \
   --registry catalog --bundles bundles/index.json
 ```
 
-Explicit Schema v1 is a lossy migration view: it keeps one primary scenario
-and drops secondary intents, secondary scenarios, and cross-scenario dependency
-edges. See [Smart Skill Router](docs/smart-skill-router.md),
+Explicit Schema v1 preserves the frozen, independently executed v1 routing
+behavior; it is not the same selection as projecting a v2 result. Schema v2
+separately reports `compatibility_loss`, and its `to_legacy_v1` projection keeps
+one primary scenario while dropping secondary intents, secondary scenarios, and
+cross-scenario dependency edges. See [Smart Skill Router](docs/smart-skill-router.md),
 [Agent Task Pack](docs/agent-task-pack.md), and
 [Hybrid Router v2 First Milestone Report](docs/hybrid-router-v2-first-milestone-report.md).
 

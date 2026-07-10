@@ -54,7 +54,8 @@ Schema v2 fields are:
 - `capability_resolution`, `execution_graph`, and `host_execution_protocol`
   for method ordering, graph state, and the fixed host-owned runtime boundary.
 - `routing_metrics`, `registry_verification`, and `compatibility` for
-  diagnostics, registry evidence, and explicit v1 loss reporting.
+  diagnostics, registry evidence, and explicit v2-to-v1 projection loss
+  reporting.
 
 `routing_status` has three meanings:
 
@@ -76,8 +77,10 @@ private text in tasks. Markdown output escapes headings, lists, links, HTML,
 quotes, code fences, and newlines from task-controlled values so supplied text
 cannot forge trusted sections.
 
-Schema v1 remains available only for compatibility. Its migration keeps one
-primary scenario and explicitly reports `compatibility_loss`, including
+Schema v1 remains available as the frozen, independently executed v1 router;
+its selection is not defined as a projection of the v2 route. Schema v2
+separately reports migration information through `compatibility_loss`. The
+programmatic `to_legacy_v1` projection keeps one primary v2 scenario and reports
 `multi_intent_dropped`, `scenarios_dropped`, and
 `cross_scenario_edges_dropped`.
 
