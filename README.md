@@ -29,6 +29,13 @@ Users do not need to install or combine every catalog skill manually. Install
 this one router skill, then let it select the right OneCode-verified trusted
 skills and scenario bundle for each task.
 
+中文项目发布文章：
+
+> [社区 Skill 太多、太乱、还不安全？只安装一个可信路由 Skill 就够了](docs/blog-one-trusted-skill-router-2026-07-10.md)
+
+文章从实际使用痛点出发，介绍单一可信入口、Skill 供应链治理、多意图
+路由、场景组合、DAG 编排、验证数据和当前能力边界。
+
 ```bash
 integrations/skills/safe-agent-router/scripts/install.sh ~/.codex/skills
 ```
@@ -101,6 +108,9 @@ Earlier update statement:
 
 Latest closure report:
 [Hybrid Router v2 Final Closure Report](docs/hybrid-router-v2-final-closure-report-2026-07-10.md).
+
+Project launch article:
+[社区 Skill 太多、太乱、还不安全？只安装一个可信路由 Skill 就够了](docs/blog-one-trusted-skill-router-2026-07-10.md).
 
 Earlier closure report:
 [Maintenance Optimization Closure Report](docs/maintenance-optimization-closure-report-2026-07-04.md).
@@ -417,6 +427,7 @@ onecode skills approve pdf
 ## Project Docs
 
 - [Hybrid Router v2 Final Closure Report](docs/hybrid-router-v2-final-closure-report-2026-07-10.md)
+- [社区 Skill 太多、太乱、还不安全？只安装一个可信路由 Skill 就够了](docs/blog-one-trusted-skill-router-2026-07-10.md)
 - [Hybrid Router v2 First Milestone Report](docs/hybrid-router-v2-first-milestone-report.md)
 - [Delivery Readiness Report](docs/delivery-readiness-report.md)
 - [Workspace Boundary](docs/workspace-boundary.md)
