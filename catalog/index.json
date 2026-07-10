@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T23:48:30Z",
+  "generated_at": "2026-07-10T23:51:04Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -3310,8 +3310,9 @@
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "82b03cc0d2505570c110b264461ec7ff67089ca2e2376bdacebbcb77bce6e818",
-        "sanitized_sha256": "98555332f20c1125e1439551a0b5ed6c7182477697a45013eac6edf0c323e2ed",
+        "auxiliary_sha256": "8e4838b50cd0f542b29337ab6e465135a8a4b619c948c64eb8825efeff130e23",
+        "manifest_sha256": "f726b21920083017b221729703c6710d53de2a87c4b6a47837b6a0ff853c2e5f",
+        "sanitized_sha256": "41b4dee64c3b73f156e5be2ba6e3c80d38e893213e3ef2b9cc21b90254b5a296",
         "source_sha256": "ac5e5582f4911c2f2a043db250b318476b19db59faeb1338359366fa260a10c0"
       },
       "name": "content-seo-brief",
