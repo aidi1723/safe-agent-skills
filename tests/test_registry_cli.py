@@ -3929,6 +3929,53 @@ class RegistryCliTest(unittest.TestCase):
         self.assertIn("selection_trace", payload)
         self.assertIn("completion_contract", payload)
 
+    def test_smart_schema_v2_temporarily_returns_current_v1_contract(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    "build a landing page and prepare launch checks",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["schema_version"], 1)
+        self.assertEqual(payload["router"]["mode"], "deterministic_mesh_router")
+        self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
+
+    def test_task_pack_schema_v2_temporarily_returns_current_v1_contract(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "task-pack",
+                    "build a landing page and prepare launch checks",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "scenario",
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["schema_version"], 1)
+        self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
+
     def test_task_pack_simple_router_remains_backward_compatible(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
