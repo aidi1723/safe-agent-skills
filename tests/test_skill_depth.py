@@ -42,6 +42,9 @@ class SkillDepthTest(unittest.TestCase):
     def test_real_regression_testing_is_specialist_with_protected_reference(self):
         self.assert_real_specialist("code-test-regression")
 
+    def test_real_source_check_is_specialist_with_protected_reference(self):
+        self.assert_real_specialist("research-source-check")
+
     def test_depth_check_command_returns_warnings_without_failure(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             root = Path(temp_dir)

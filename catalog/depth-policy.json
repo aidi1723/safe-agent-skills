@@ -7,6 +7,7 @@
     "compliance-privacy-check": "specialist",
     "design-ui-review": "specialist",
     "engineering-build-release": "specialist",
+    "research-source-check": "specialist",
     "security-supply-chain-review": "specialist"
   }
 }
