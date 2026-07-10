@@ -122,6 +122,47 @@ schemas inside `selection_trace`.
 
 ## Adding Or Changing A Scenario
 
+Hybrid Router v2 contributions must satisfy these gates:
+
+- Gold labels must be independently reviewed. The evaluator must not generate
+  or repair its own expected labels.
+- Every trusted scenario must have at least five independent dataset cases.
+- Decomposition changes require focused multi-intent fixtures, including
+  dependency ordering and an over-splitting negative case.
+- New skills added to a core scenario require Contract v2 coverage and must
+  keep the eight-scenario `contract-check` ratio at or above `0.80`.
+- Tests must be deterministic and provider-free. The first milestone must pass
+  with `provider.requested: none` and `provider.used: none`.
+- Cyclic intent graphs and incoherent blocked graphs must fail closed. A cycle
+  is represented as blocked semantics, not as a ready DAG.
+- Sequential fixtures must assert required dependency edges, not merely intent
+  or scenario selection.
+
+Run the release gates after installing development dependencies:
+
+```bash
+python3 -m pip install -e ".[dev]"
+python3 -m ruff check .
+bash scripts/verify.sh
+PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
+  --registry catalog --bundles bundles/index.json \
+  --scenario website-build-launch --scenario code-review-hardening \
+  --scenario codebase-change-lifecycle --scenario skill-router-quality-review \
+  --scenario open-source-release --scenario rag-agent-knowledge-app \
+  --scenario document-to-knowledge-base --scenario security-agent-guardrails \
+  --minimum-ratio 0.80
+PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
+  --eval evals/multi-intent-gold.json --registry catalog \
+  --bundles bundles/index.json
+```
+
+The v2 dataset is independent of `evals/router-quality-v2.json`. Its metadata
+must keep the manual independent labeling method, reviewer identity, label
+provenance, fixed 100-case count, category distribution, and scenario coverage.
+Track `multi_intent_exact_match`, `scenario_precision`, `scenario_recall`,
+`scenario_f1`, `dependency_edge_recall`,
+`forbidden_scenario_false_positive_rate`, and `dag_validity`.
+
 Change these files together:
 
 - `src/onecode_skill_sanitizer/router.py`

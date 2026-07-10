@@ -1,5 +1,60 @@
 # Agent Task Pack
 
+## Schema v2 Contract
+
+Schema v2 is the default for both `task-pack` and `smart`:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "构建官网，同时审计 skill 路由器，验证通过后发布更新" \
+  --registry catalog --bundles bundles/index.json \
+  --schema-version 2 --format json
+```
+
+Schema v2 decomposes and composes multiple trusted workflows, but remains
+method-only. It does not execute selected skills or grant runtime permissions.
+It is not an autonomous runtime and is not a semantic router yet.
+
+The required top-level fields are `schema_version`, `generated_at`, `route_id`,
+`routing_mode`, `routing_status`, `provider`, `normalized_task`, `intent_graph`,
+`scenario_candidates`, `selected_scenarios`, `uncovered_intents`,
+`selected_skills`, `capability_resolution`, `execution_graph`,
+`host_execution_protocol`, `routing_metrics`, `registry_verification`, and
+`compatibility`. Intent records contain `id`, `summary`, `task_type`,
+`required_artifacts`, `risk_flags`, `depends_on`, `source`, and `confidence`.
+Selected scenario records contain `scenario_id`, `intent_ids`, `score`, and
+`score_breakdown`.
+
+State examples:
+
+- Complete: all intents are covered and `execution_graph.status` is `ready`.
+- Incomplete: at least one intent or required capability is uncovered; the
+  pack remains partial and must not be represented as complete.
+- Blocked: the graph cannot be safely compiled. Cycles produce a blocked graph
+  with a reason such as `dependency_cycle`.
+
+`provider.requested` and `provider.used` are both `none` in this milestone;
+`fallback_reason` is a forward-compatible placeholder for later semantic
+provider work. `host_execution_protocol.mode` is always `method_only`.
+
+`route_id` is safe for correlation, not a permission token. Its canonical
+identity input redacts recognized secret assignments and bearer values. Do not
+put credentials or unnecessary private content in task text. Markdown output
+escapes task-controlled syntax so it cannot inject headings, links, HTML, code
+fences, lists, or safety-boundary sections.
+
+For legacy consumers:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer task-pack \
+  "build a product website" --registry catalog --bundles bundles/index.json \
+  --schema-version 1 --format json
+```
+
+The v1 migration is intentionally lossy: it retains one primary scenario and
+drops secondary intents, secondary scenarios, and cross-scenario dependency
+edges. Read `compatibility_loss` before accepting the downgrade.
+
 ## Goal
 
 `smart` is the recommended default skill-selection interface for agents.

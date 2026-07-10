@@ -21,6 +21,66 @@ It builds a verified task pack from:
 It does not call an external model, install skills, execute tools, or grant
 runtime permissions.
 
+## Hybrid Router v2 First Milestone
+
+Schema v2 is the default. It decomposes and composes multiple trusted
+workflows, but remains method-only. It does not execute selected skills or
+grant runtime permissions. The first milestone is deterministic: it is not an
+autonomous runtime and is not a semantic router yet.
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "构建官网，同时审计 skill 路由器，验证通过后发布更新" \
+  --schema-version 2 --format json
+
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "build a product website" --schema-version 1 --format json
+```
+
+Schema v2 fields are:
+
+- `schema_version`, `generated_at`, `route_id`, `routing_mode`, and
+  `routing_status` for the envelope and route identity.
+- `provider` with `requested`, `used`, and `fallback_reason`. The first
+  milestone uses `none`/`none` and the explicit fallback placeholder
+  `semantic_provider_not_enabled_in_first_milestone`.
+- `normalized_task` with `raw`, `current`, `history`, `stale`, and
+  `stale_policy`.
+- `intent_graph` with `intents` and `unresolved_dependencies`. Every intent has
+  `id`, `summary`, `task_type`, `required_artifacts`, `risk_flags`,
+  `depends_on`, `source`, and `confidence`.
+- `scenario_candidates`, `selected_scenarios`, `uncovered_intents`, and
+  `selected_skills` for deterministic retrieval and trusted composition.
+- `capability_resolution`, `execution_graph`, and `host_execution_protocol`
+  for method ordering, graph state, and the fixed host-owned runtime boundary.
+- `routing_metrics`, `registry_verification`, and `compatibility` for
+  diagnostics, registry evidence, and explicit v1 loss reporting.
+
+`routing_status` has three meanings:
+
+```json
+{"routing_status":"complete","uncovered_intents":[],"execution_graph":{"status":"ready","acyclic":true}}
+{"routing_status":"incomplete","uncovered_intents":["i1"],"execution_graph":{"status":"ready","acyclic":true}}
+{"routing_status":"blocked","uncovered_intents":[],"execution_graph":{"status":"blocked","acyclic":false,"reason_codes":["dependency_cycle"]}}
+```
+
+Complete means every intent has a trusted scenario and required capability
+coverage. Incomplete means the method pack is partial, such as a vague or
+unsupported intent. Blocked means compilation cannot safely produce a ready
+graph; cyclic intent dependencies must be blocked, never silently reordered.
+
+`route_id` is a stable SHA-256 identity over canonical routing inputs and
+catalog assets. Secret-like assignments and bearer values are redacted before
+hashing, but operators must still avoid placing credentials or unnecessary
+private text in tasks. Markdown output escapes headings, lists, links, HTML,
+quotes, code fences, and newlines from task-controlled values so supplied text
+cannot forge trusted sections.
+
+Schema v1 remains available only for compatibility. Its migration keeps one
+primary scenario and explicitly reports `compatibility_loss`, including
+`multi_intent_dropped`, `scenarios_dropped`, and
+`cross_scenario_edges_dropped`.
+
 ## Design References
 
 `smart` adopts the practical shape of modern open tool orchestration without
@@ -79,6 +139,10 @@ the task text does not contain a trusted scenario signal. In that case:
 This is intentional. For vague or unsupported repository-maintenance tasks, the
 safer behavior is to return a smaller pack than to attach an unrelated workflow
 such as website launch or public publishing.
+
+Under Schema v2, the equivalent safe state is `routing_status: incomplete`
+with the affected IDs in `uncovered_intents`; it is not a successful complete
+route.
 
 Markdown output:
 

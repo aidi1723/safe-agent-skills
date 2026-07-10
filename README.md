@@ -307,6 +307,29 @@ provenance, capability coverage, and a deterministic mesh execution graph. It
 does not grant filesystem, network, connector, shell, or production permissions;
 those remain controlled by the host runtime.
 
+Schema v2 is now the default for `smart` and `task-pack`. It decomposes and
+composes multiple trusted workflows, but remains method-only. It does not
+execute selected skills or grant runtime permissions. This deterministic first
+milestone is not an autonomous runtime and is not a semantic router yet.
+
+```bash
+onecode-skill-sanitizer smart "构建官网，同时审计 skill 路由器，验证通过后发布更新" \
+  --schema-version 2 --format json
+onecode-skill-sanitizer smart "build a product website" \
+  --schema-version 1 --format json
+onecode-skill-sanitizer contract-check --registry catalog \
+  --bundles bundles/index.json --scenario website-build-launch \
+  --minimum-ratio 0.80
+onecode-skill-sanitizer router-eval-v2 --eval evals/multi-intent-gold.json \
+  --registry catalog --bundles bundles/index.json
+```
+
+Explicit Schema v1 is a lossy migration view: it keeps one primary scenario
+and drops secondary intents, secondary scenarios, and cross-scenario dependency
+edges. See [Smart Skill Router](docs/smart-skill-router.md),
+[Agent Task Pack](docs/agent-task-pack.md), and
+[Hybrid Router v2 First Milestone Report](docs/hybrid-router-v2-first-milestone-report.md).
+
 The `smart` name is a convenience label: selection is deterministic, non-LLM
 routing over trusted catalog metadata, scenario signals, overlap groups, and
 invariant hints:
@@ -317,9 +340,9 @@ onecode-skill-sanitizer smart \
   --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证"
 ```
 
-`smart` returns the same task-pack structure plus a mesh execution graph with
-stage gates and parallel-group hints, invariant capability coverage, and an
-overlap-pruned skill list. See
+Schema v1 `smart` returns the legacy task-pack structure plus a mesh execution
+graph with stage gates and parallel-group hints, invariant capability coverage,
+and an overlap-pruned skill list. See
 [Smart Skill Router](docs/smart-skill-router.md).
 
 For vague or unsupported repository-maintenance tasks, `smart` is conservative:

@@ -16,6 +16,27 @@ bash scripts/verify.sh
 
 `jsonschema` is required by the verification suite. Install development checks with: `python3 -m pip install -e ".[dev]"` before running `bash scripts/verify.sh`.
 
+Hybrid Router v2 also requires the development install for `ruff` and schema
+validation. Schema v2 is the default; request Schema v1 only for a legacy
+consumer and review its explicit compatibility loss.
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "构建官网，同时审计 skill 路由器，验证通过后发布更新" \
+  --schema-version 2 --format json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "build a product website" --schema-version 1 --format json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
+  --eval evals/multi-intent-gold.json --registry catalog \
+  --bundles bundles/index.json
+```
+
+Interpret v2 states conservatively: `complete` is fully covered, `incomplete`
+requires host clarification or additional method coverage, and `blocked` must
+not execute. `route_id` is only a privacy-aware correlation hash, never an
+authorization token. The provider fields remain `none` with a semantic-provider
+fallback placeholder in this deterministic milestone.
+
 ## Folder Layout
 
 ```text
@@ -146,6 +167,9 @@ and `disabled` entries are still excluded.
 The task pack is safe to hand to any host agent as method guidance. It does not
 grant runtime permissions; shell, filesystem, network, connector, and
 production actions remain controlled by the host runtime.
+
+Markdown task packs escape task-controlled Markdown and HTML syntax. Operators
+should still treat task text as untrusted input and avoid embedding secrets.
 
 ## Verification
 

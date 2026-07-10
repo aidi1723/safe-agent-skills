@@ -248,6 +248,40 @@ The local MVP exposes:
 
 ## Runtime Flow
 
+## Hybrid Router v2 Modular Flow
+
+The deterministic first milestone is organized as separate method-only stages:
+
+```text
+task normalization
+  -> deterministic intent decomposition
+  -> trusted scenario candidate retrieval
+  -> scenario composition and uncovered-intent detection
+  -> capability and Contract v2 resolution
+  -> execution-graph compilation
+  -> Schema v2 JSON or Markdown serialization
+  -> host-owned planning, approval, execution, and verification
+```
+
+The router owns task-pack construction only. It does not execute selected
+skills, mutate host state, grant permissions, or automatically recover from
+runtime failures. `host_execution_protocol.mode` is `method_only` and the host
+runtime remains the authority for every node transition.
+
+Two boundaries are intentionally reserved for later work:
+
+- Semantic-provider boundary: a future provider may propose decomposition or
+  reranking through a strict protocol, privacy policy, structured output, and
+  deterministic fallback. The current provider is `none`; this milestone is
+  not a semantic router yet.
+- Host-replanning boundary: future host integration may submit execution
+  events and request a method-only replan. The current router does not observe
+  runtime events, retry work, approve actions, or replan automatically.
+
+Cycles are a compiler boundary. A cyclic intent graph is emitted as blocked
+semantics with no executable ready graph. Incomplete coverage is distinct from
+blocked topology and remains visible to the host.
+
 When a trusted skill is used:
 
 ```text

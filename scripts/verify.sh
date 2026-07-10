@@ -77,6 +77,8 @@ python3 -m json.tool schemas/sanitization-report.schema.json >/dev/null
 python3 -m json.tool schemas/registry-index.schema.json >/dev/null
 python3 -m json.tool schemas/verify-report.schema.json >/dev/null
 python3 -m json.tool schemas/contract-v2.schema.json >/dev/null
+python3 -m json.tool schemas/intent-graph.schema.json >/dev/null
+python3 -m json.tool schemas/task-pack-v2.schema.json >/dev/null
 PYTHONPATH=src python3 - <<'PY'
 import json
 from pathlib import Path
@@ -84,9 +86,13 @@ from pathlib import Path
 from jsonschema import Draft202012Validator, validators
 
 contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
+intent_graph_schema = json.loads(Path("schemas/intent-graph.schema.json").read_text(encoding="utf-8"))
 manifest_schema = json.loads(Path("schemas/skill-manifest.schema.json").read_text(encoding="utf-8"))
+task_pack_schema = json.loads(Path("schemas/task-pack-v2.schema.json").read_text(encoding="utf-8"))
 Draft202012Validator.check_schema(contract_schema)
+Draft202012Validator.check_schema(intent_graph_schema)
 Draft202012Validator.check_schema(manifest_schema)
+Draft202012Validator.check_schema(task_pack_schema)
 strict_type_checker = Draft202012Validator.TYPE_CHECKER.redefine(
     "integer", lambda checker, value: isinstance(value, int) and not isinstance(value, bool)
 )

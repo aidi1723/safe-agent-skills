@@ -1,11 +1,12 @@
 # Delivery Readiness Report
 
-Date: 2026-07-03
+Date: 2026-07-10
 
 ## Summary
 
-The project is ready for public handoff as a local, deterministic
-Safe-Agent-Skills catalog, router, sanitizer, and verification toolkit.
+The deterministic multi-intent Hybrid Router v2 first-milestone structure is
+implemented and release-verifiable as a method-only task-pack builder. The
+production-ready router quality gate is **not met**.
 
 Current delivery scope is intentionally bounded:
 
@@ -31,20 +32,33 @@ Current delivery scope is intentionally bounded:
 | External references remain metadata-only | Ready |
 | Runtime permission boundary | Ready |
 | GitHub release notes | Ready |
+| Schema v2 default and v1 compatibility | Ready |
+| Deterministic multi-intent composition | Structurally complete |
+| Core Contract v2 coverage | Ready at 81.25% |
+| Independent 100-case v2 evaluation | Ready |
+| Production router quality gate | Not ready |
+| Semantic providers | Pending |
+| Host runtime replanning | Pending |
 
 ## Current Verified Baseline
 
-```text
-catalog skills: 172
-trusted skills: 166
-trusted scenario bundles: 23
-external references: 19
-trusted overlap groups: 7
-tracked claude-skills candidates: 336
-covered claude-skills candidates: 336
-router eval cases: 42
-full verification tests: 162
-```
+Fresh milestone verification on 2026-07-10 records 308 passing tests, clean
+Ruff lint, a passing `scripts/verify.sh`, 81.25% core Contract v2 coverage, and
+43/43 passing Schema v1 regression cases.
+
+The independent 100-case v2 evaluator currently reports:
+
+| Metric | Current | Target | Status |
+| --- | ---: | ---: | --- |
+| Multi-intent exact match | 0.85 | 0.80 | Above target |
+| Scenario F1 | 0.9448 | 0.90 | Above target |
+| Dependency-edge recall | 0.1429 | 0.90 | Major gap |
+| DAG validity | 0.89 | 1.00 | Below target |
+| Forbidden-scenario false-positive rate | 8.18% | 0.5% maximum | Above limit |
+
+The structural milestone can be complete while the production-ready quality
+gate remains unmet. No delivery statement may claim 100% DAG validity or
+production readiness.
 
 ## Non-Blocking Follow-Up Work
 
@@ -53,6 +67,10 @@ local-catalog delivery boundary:
 
 - networked `source-import` command that captures upstream content directly;
 - host semantic gateway and compact context-record integration;
+- semantic provider protocol, privacy controls, reranking, fallback, and
+  confidence calibration;
+- host execution events, state transitions, approval propagation, and
+  method-only replanning;
 - documentation consolidation to reduce historical baseline duplication.
 
 Same-day follow-up status: router false-positive / false-negative
@@ -70,6 +88,7 @@ detector, live upstream sync service, browser automation platform, connector
 runtime, or production deployment system.
 
 Skills remain method guidance. Runtime permissions remain host-owned.
+Schema v2 is not an autonomous runtime and is not a semantic router yet.
 
 ## Verification Targets
 
@@ -79,3 +98,5 @@ Skills remain method guidance. Runtime permissions remain host-owned.
 - `PYTHONPATH=src python3 -m onecode_skill_sanitizer maintain-check --registry catalog --bundles bundles/index.json --references external-references/index.json --claude-skills-candidate-map docs/claude-skills-candidate-map.json`
 - `PYTHONPATH=src python3 -m onecode_skill_sanitizer verify --registry catalog`
 - `git diff --check`
+- `PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check --registry catalog --bundles bundles/index.json --scenario website-build-launch --scenario code-review-hardening --scenario codebase-change-lifecycle --scenario skill-router-quality-review --scenario open-source-release --scenario rag-agent-knowledge-app --scenario document-to-knowledge-base --scenario security-agent-guardrails --minimum-ratio 0.80`
+- `PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 --eval evals/multi-intent-gold.json --registry catalog --bundles bundles/index.json`
