@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T05:44:39Z",
+  "generated_at": "2026-07-10T22:25:57Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -2843,8 +2843,9 @@
     },
     {
       "hashes": {
-        "manifest_sha256": "93e6f9dba536fae4ff85f25f3e8e4ecc828373fa7be9ea76454a33762c1159c6",
-        "sanitized_sha256": "ea53796a10f62ac0ad81dec80c2e98d69bdea8bef7197eba1af8f2647d5e18c5",
+        "auxiliary_sha256": "4498f9d5c2996bc5cec1e6c19a136decf6298b4669fa7c3c5e40092a29654306",
+        "manifest_sha256": "5b2c653c35edc1aa17d87142c8521c071d547f70b8ed00309ca442eaee2e04da",
+        "sanitized_sha256": "e1ee2da26234264ea86abb041504f48deaf3da595883d7a48ba8342254156094",
         "source_sha256": "544e0255bb143d3aee738e77b8e38f2aaeb407908d0946f72287b2291d7d844e"
       },
       "name": "compliance-privacy-check",
@@ -4358,8 +4359,9 @@
         "stage_hint": "execution"
       },
       "hashes": {
-        "manifest_sha256": "62abcb4d9c5adf34839c2b2df3020b0ece5ca4951d50f408fb0d079ec29d5b11",
-        "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
+        "auxiliary_sha256": "c0dfe6493a25c61eafbd81cd9f12de3b3cde0d415bea87b12994cefda3c62b27",
+        "manifest_sha256": "25eab3cb015d82d2bce8694248173ae421a77dc362e021a1b0a2c94d8709fe81",
+        "sanitized_sha256": "18b1ce5d2cedef80085f0ba2784180195d784a09f09db70e6bd2d419c0c2771e",
         "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
       },
       "name": "engineering-build-release",
@@ -5972,8 +5974,9 @@
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "daff59908726c238767c7e65c51a5a87a5a8d618b101216351145f8f49be4ffc",
-        "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
+        "auxiliary_sha256": "50af9e23975700224e02d142b1a966fd05c9658a4f9386f5c887f18f68f6ea27",
+        "manifest_sha256": "cce58696f4dc1ecdd648196645d1f1c35417426105fb75883b7cffcdd1569dae",
+        "sanitized_sha256": "cdd395935130e165d3849e667a4c6b6ceccb8a3cd05950d2b5e11bcd5ac4be5d",
         "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
       },
       "name": "security-supply-chain-review",

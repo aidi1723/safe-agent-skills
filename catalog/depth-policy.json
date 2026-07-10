@@ -1,0 +1,9 @@
+{
+  "default_depth_class": "routing_card",
+  "schema_version": 1,
+  "skills": {
+    "compliance-privacy-check": "specialist",
+    "engineering-build-release": "specialist",
+    "security-supply-chain-review": "specialist"
+  }
+}

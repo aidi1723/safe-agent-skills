@@ -35,8 +35,9 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "daff59908726c238767c7e65c51a5a87a5a8d618b101216351145f8f49be4ffc",
-    "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
+    "auxiliary_sha256": "50af9e23975700224e02d142b1a966fd05c9658a4f9386f5c887f18f68f6ea27",
+    "manifest_sha256": "cce58696f4dc1ecdd648196645d1f1c35417426105fb75883b7cffcdd1569dae",
+    "sanitized_sha256": "cdd395935130e165d3849e667a4c6b6ceccb8a3cd05950d2b5e11bcd5ac4be5d",
     "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
   },
   "name": "security-supply-chain-review",

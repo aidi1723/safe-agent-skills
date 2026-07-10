@@ -39,6 +39,7 @@ from .registry import load_registry_index as load_registry_index
 from .registry import manifest_index_entry as manifest_index_entry
 from .registry import registry_index_staleness as registry_index_staleness
 from .registry import registry_root_for_skill_dir as registry_root_for_skill_dir
+from .registry import reseal_skill_content as reseal_skill_content
 from .registry import seal_manifest_file as seal_manifest_file
 from .registry import seal_registry_manifests as seal_registry_manifests
 from .registry import set_status_command as set_status_command
@@ -68,6 +69,7 @@ from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_v2
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
+from .skill_depth import audit_catalog_depth
 from .taxonomy import classify_skill, taxonomy_from_manifest
 from .task_packs import TASK_PROFILE_CATEGORY_VALUES as TASK_PROFILE_CATEGORY_VALUES
 from .task_packs import _build_v2_capability_resolution as _build_v2_capability_resolution
@@ -146,6 +148,24 @@ def batch_compact_command(args: argparse.Namespace) -> int:
         "skipped": result["skipped"],
     }
     print(json.dumps(output, indent=2, sort_keys=True))
+    return 0
+
+
+def depth_check_command(args: argparse.Namespace) -> int:
+    report = audit_catalog_depth(Path(args.catalog), Path(args.policy))
+    print(json.dumps(report, indent=2, sort_keys=True))
+    return 0 if report["status"] == "ok" else 2
+
+
+def reseal_content_command(args: argparse.Namespace) -> int:
+    manifest = reseal_skill_content(Path(args.skill_dir))
+    result = {
+        "schema_version": 1,
+        "name": manifest["name"],
+        "status": manifest["status"],
+        "hashes": manifest["hashes"],
+    }
+    print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
 

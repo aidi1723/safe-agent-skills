@@ -33,6 +33,36 @@ policy, audit preparation, or data sharing decisions.
 - approval requirement check
 - disclaimer and escalation check
 
+## Decision Guidance
+
+Separate operational handling advice from legal interpretation. First decide
+whether the workflow can proceed with ordinary controls, requires minimization
+or redaction, requires an approved restricted environment, or must stop for a
+privacy owner. Escalate whenever purpose, jurisdiction, data-subject category,
+retention authority, transfer destination, or policy owner is unknown and the
+task would disclose or transform personal or sensitive data.
+
+Prefer the least-data path that still satisfies the stated purpose. A claimed
+business need is not evidence of consent, lawful authority, retention rights,
+or cross-border transfer approval. Never treat anonymization as complete when
+records can still be linked through identifiers, free text, timestamps, small
+cohorts, or external datasets.
+
+## Evidence Minimum
+
+- data categories and sensitivity classification
+- purpose, recipient, processing location, and retention period
+- applicable internal policy and accountable owner
+- minimization, redaction, access, and deletion controls
+- unresolved jurisdiction, consent, contract, or transfer questions
+- approval or escalation record when required
+
+## References
+
+Load [the privacy evidence guide](references/privacy-evidence-guide.md) for
+dataset transfers, customer-record analysis, retention decisions, or workflows
+that combine multiple sources of personal data.
+
 ## Failure Handling
 
 If jurisdiction, policy, or data classification is unknown, keep the result

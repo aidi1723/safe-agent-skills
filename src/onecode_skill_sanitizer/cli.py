@@ -14,6 +14,7 @@ from .commands import build_scan_report as build_scan_report
 from .commands import build_source_record as build_source_record
 from .commands import contract_check_command as contract_check_command
 from .commands import disable_command as disable_command
+from .commands import depth_check_command as depth_check_command
 from .commands import import_command as import_command
 from .commands import inspect_command as inspect_command
 from .commands import list_command as list_command
@@ -22,6 +23,7 @@ from .commands import maintain_check as maintain_check
 from .commands import maintain_check_command as maintain_check_command
 from .commands import reference_check_command as reference_check_command
 from .commands import reindex_command as reindex_command
+from .commands import reseal_content_command as reseal_content_command
 from .commands import reject_command as reject_command
 from .commands import router_eval_command as router_eval_command
 from .commands import router_eval_v2_command as router_eval_v2_command
@@ -66,6 +68,7 @@ from .registry import load_registry_index as load_registry_index
 from .registry import manifest_index_entry as manifest_index_entry
 from .registry import registry_index_staleness as registry_index_staleness
 from .registry import registry_root_for_skill_dir as registry_root_for_skill_dir
+from .registry import reseal_skill_content as reseal_skill_content
 from .registry import seal_manifest_file as seal_manifest_file
 from .registry import seal_registry_manifests as seal_registry_manifests
 from .registry import set_status_command as set_status_command
@@ -289,6 +292,15 @@ def build_parser() -> argparse.ArgumentParser:
     batch_compact_parser.add_argument("--index", required=True)
     batch_compact_parser.add_argument("--source-commit", required=True)
     batch_compact_parser.set_defaults(func=batch_compact_command)
+
+    depth_check_parser = subparsers.add_parser("depth-check")
+    depth_check_parser.add_argument("--catalog", required=True)
+    depth_check_parser.add_argument("--policy", required=True)
+    depth_check_parser.set_defaults(func=depth_check_command)
+
+    reseal_content_parser = subparsers.add_parser("reseal-content")
+    reseal_content_parser.add_argument("skill_dir")
+    reseal_content_parser.set_defaults(func=reseal_content_command)
 
     reindex_parser = subparsers.add_parser("reindex")
     reindex_parser.add_argument("--registry", required=True)

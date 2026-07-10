@@ -4,8 +4,9 @@
   "approved_at": "2026-06-04T07:10:07Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "93e6f9dba536fae4ff85f25f3e8e4ecc828373fa7be9ea76454a33762c1159c6",
-    "sanitized_sha256": "ea53796a10f62ac0ad81dec80c2e98d69bdea8bef7197eba1af8f2647d5e18c5",
+    "auxiliary_sha256": "4498f9d5c2996bc5cec1e6c19a136decf6298b4669fa7c3c5e40092a29654306",
+    "manifest_sha256": "5b2c653c35edc1aa17d87142c8521c071d547f70b8ed00309ca442eaee2e04da",
+    "sanitized_sha256": "e1ee2da26234264ea86abb041504f48deaf3da595883d7a48ba8342254156094",
     "source_sha256": "544e0255bb143d3aee738e77b8e38f2aaeb407908d0946f72287b2291d7d844e"
   },
   "name": "compliance-privacy-check",

@@ -34,6 +34,24 @@ class RegistryBoundaryTest(unittest.TestCase):
         self.assertEqual(report["hashes"]["sanitized_sha256"], manifest["hashes"]["sanitized_sha256"])
         self.assertEqual(report["hashes"]["manifest_sha256"], manifest["hashes"]["manifest_sha256"])
 
+    def test_seal_registry_manifests_leaves_valid_entries_unchanged(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            source = ROOT / "catalog/commerce/commerce-product-keyword-plan"
+            skill_dir = Path(temp_dir) / "catalog" / "commerce" / source.name
+            shutil.copytree(source, skill_dir)
+            report_path = skill_dir / "SANITIZATION_REPORT.json"
+            report = json.loads(report_path.read_text(encoding="utf-8"))
+            report["hashes"]["manifest_sha256"] = "report-sentinel"
+            report_path.write_text(json.dumps(report, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+            manifest_path = skill_dir / "skill.json"
+            manifest_before = manifest_path.read_bytes()
+            report_before = report_path.read_bytes()
+
+            registry.seal_registry_manifests(Path(temp_dir) / "catalog")
+
+            self.assertEqual(manifest_path.read_bytes(), manifest_before)
+            self.assertEqual(report_path.read_bytes(), report_before)
+
 
 if __name__ == "__main__":
     unittest.main()

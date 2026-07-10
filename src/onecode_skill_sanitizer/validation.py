@@ -86,6 +86,23 @@ def text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
+def auxiliary_content_sha256(skill_dir: Path) -> str | None:
+    files = []
+    for directory in ["references", "scripts"]:
+        root = skill_dir / directory
+        if root.is_dir():
+            files.extend(path for path in root.rglob("*") if path.is_file())
+    if not files:
+        return None
+    digest = hashlib.sha256()
+    for path in sorted(files, key=lambda item: item.relative_to(skill_dir).as_posix()):
+        digest.update(path.relative_to(skill_dir).as_posix().encode("utf-8"))
+        digest.update(b"\0")
+        digest.update(path.read_bytes())
+        digest.update(b"\0")
+    return digest.hexdigest()
+
+
 def canonical_json_sha256(payload: dict) -> str:
     return text_sha256(json.dumps(payload, sort_keys=True, separators=(",", ":"), ensure_ascii=False))
 

@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from .validation import SOURCE_PROVENANCE_FIELDS
+from .validation import auxiliary_content_sha256
 from .validation import manifest_sha256
 from .validation import seal_manifest
 from .validation import text_sha256
@@ -50,7 +51,7 @@ def seal_registry_manifests(registry_dir: Path) -> None:
         issues: list[dict] = []
         validate_manifest_schema(manifest, manifest_path, issues)
         sealable_issue_ids = {"schema-missing-manifest-hash", "schema-manifest-hash-mismatch"}
-        if all(issue["id"] in sealable_issue_ids for issue in issues):
+        if issues and all(issue["id"] in sealable_issue_ids for issue in issues):
             seal_manifest(manifest)
             write_json(manifest_path, manifest)
             report_path = manifest_path.parent / "SANITIZATION_REPORT.json"
@@ -144,6 +145,21 @@ def verify_registry(registry_dir: Path) -> dict:
                         "path": skill_path.as_posix(),
                     }
                 )
+
+        expected_auxiliary_hash = manifest.get("hashes", {}).get("auxiliary_sha256")
+        actual_auxiliary_hash = auxiliary_content_sha256(skill_dir)
+        if actual_auxiliary_hash != expected_auxiliary_hash and (
+            actual_auxiliary_hash is not None or expected_auxiliary_hash is not None
+        ):
+            tampered_count += 1
+            issues.append(
+                {
+                    "id": "auxiliary-content-mismatch",
+                    "severity": "critical",
+                    "skill": name,
+                    "path": skill_dir.as_posix(),
+                }
+            )
 
         source = manifest.get("source", {})
         if any(source.get(field, "unknown") == "unknown" for field in SOURCE_PROVENANCE_FIELDS):
@@ -244,6 +260,11 @@ def reseal_skill_content(skill_dir: Path) -> dict:
     if not skill_path.is_file():
         raise ValueError(f"missing skill body: {skill_path}")
     manifest["hashes"]["sanitized_sha256"] = text_sha256(skill_path.read_text(encoding="utf-8"))
+    auxiliary_hash = auxiliary_content_sha256(skill_dir)
+    if auxiliary_hash is None:
+        manifest["hashes"].pop("auxiliary_sha256", None)
+    else:
+        manifest["hashes"]["auxiliary_sha256"] = auxiliary_hash
     seal_manifest(manifest)
     write_json(skill_dir / "skill.json", manifest)
     report_path = skill_dir / "SANITIZATION_REPORT.json"
@@ -253,4 +274,3 @@ def reseal_skill_content(skill_dir: Path) -> dict:
         report["hashes"]["manifest_sha256"] = manifest["hashes"]["manifest_sha256"]
         write_json(report_path, report)
     return manifest
-
