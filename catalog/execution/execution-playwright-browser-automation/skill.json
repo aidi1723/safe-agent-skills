@@ -3,10 +3,20 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T10:13:15Z",
   "contract": {
+    "approval_classes": [
+      "browser_automation"
+    ],
     "capability_vector": [
       "execution.playwright_browser"
     ],
     "cost_weight": 3,
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 3,
+      "tokens": 3
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "browser_automation_report",
       "browser_check_report"
@@ -15,11 +25,13 @@
       "build_artifact",
       "ui_review_report"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "verification"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "3ee0424f5c68c17a4de1fbf5ff07a28a29703e40d288cd5d242570d6ec5e8d7e",
+    "manifest_sha256": "933f0f668ef040c1215567db516ef72bf06c23a585ad7dac96d88f3441eb0fbf",
     "sanitized_sha256": "6870023e80141f3f8bfbad5c4990cdbbc891d6252b9659ae788cf0f3e5ab9907",
     "source_sha256": "a683c4c1bd29677bb6d983051c934491d1f0964de342c4aad3342d818c52860b"
   },

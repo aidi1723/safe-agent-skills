@@ -3,21 +3,31 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "content.social"
     ],
     "cost_weight": 1,
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 1,
+      "tokens": 1
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_artifacts": [
       "social_post_copy"
     ],
     "requires_context": [
       "seo_copy"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "review"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "fb7ebb5bbde117a22912982d7d1d43826e0f7435c1185ebff23f8ba78033c745",
+    "manifest_sha256": "5db77db47e22f3cd290325ad22098053f580abd2b4d198d5ae0a02e277a66313",
     "sanitized_sha256": "9907c0e719e4d7e755d6d5cf37086aaae2bf115567058aeffb84421572969486",
     "source_sha256": "816151ea8e709afb38891ca035fabc6f4ba7ea9a82f78e3ece6b7271dd8509cd"
   },

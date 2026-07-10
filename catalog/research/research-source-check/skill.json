@@ -2,9 +2,36 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:05:34Z",
+  "contract": {
+    "approval_classes": [
+      "network_access"
+    ],
+    "capability_vector": [
+      "research.source"
+    ],
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
+    "produces_artifacts": [
+      "source_verification_report"
+    ],
+    "produces_evidence": [
+      "claim_source_mapping"
+    ],
+    "requires_context": [
+      "claims_to_verify"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "verification"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "43b71bd704ea7772241333c1b879def687d57ad572ea14fbae9964d292934c39",
+    "manifest_sha256": "7fc028d58c45ce8999b84b7b30cd2a8ff3aa0f1d73283f90196f5a6339b091e5",
     "sanitized_sha256": "ebcfc0b49dfde45a231e2c825aac9c26b3220038246fa85be846bc2b53f45bb3",
     "source_sha256": "6e4498e8804857bafc1994ec32d3fbf1cc97446745f6828a8f8146fe937f3e8b"
   },

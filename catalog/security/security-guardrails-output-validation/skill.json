@@ -2,9 +2,34 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T09:25:12Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "security.guardrails"
+    ],
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
+    "produces_artifacts": [
+      "validation_contract"
+    ],
+    "produces_evidence": [
+      "guardrail_validation_report"
+    ],
+    "requires_context": [
+      "output_contract"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "verification"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "4b46099ececf411c4ed2afcf1639169fa0d9a619f63b4cde06ea4822b1d4952b",
+    "manifest_sha256": "4bbd217e7aa0b3c07fa9e0138f0362c188335b719fd4c4b624ea9486b92f3c26",
     "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
     "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
   },

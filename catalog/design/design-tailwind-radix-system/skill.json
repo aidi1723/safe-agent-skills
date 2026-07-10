@@ -3,10 +3,18 @@
   "approval_note": "Approved by local operator after design-skill inclusion review.",
   "approved_at": "2026-06-11T06:36:20Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "design.tailwind_radix_system"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "tailwind_radix_system_report"
     ],
@@ -14,11 +22,13 @@
       "requirements_brief",
       "build_artifact"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "review"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "87a8f090df223cc983b8db93393fe53f70035f13f85abde1b9c6cdf5dc1195ed",
+    "manifest_sha256": "02beb886c8b1f2cf3f16b6531f14e1bcbd71359a5390fcb0545d0a9a7ca04d7a",
     "sanitized_sha256": "a1442ce4a5b0bba5a988ef854121551d29c154ffec7ab19f6d52322da75c8e17",
     "source_sha256": "8529cd5a2b8415b80ccd21a6385d7cc17260024114828df28c5e5a5efe6fe7ee"
   },

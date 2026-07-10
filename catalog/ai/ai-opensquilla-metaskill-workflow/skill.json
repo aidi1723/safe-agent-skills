@@ -3,11 +3,19 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T12:58:26Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "ai.metaskill",
       "ai.bundle_quality"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_artifacts": [
       "workflow_review_scope"
     ],
@@ -18,11 +26,13 @@
       "user_request",
       "workspace_context"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "preflight"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "dc2c9605d7bac17abc7012bbebe80adb0a190abc3d59270078348bf1148f86ac",
+    "manifest_sha256": "c5c27dbe5f8fe71d7f902ad49c6c60996d079f854fb9aade644522ff651f3a83",
     "sanitized_sha256": "c67b142344ddd90996a2863bc9eac8dedcf50d8b60db0f9af211e81df1b1d0ca",
     "source_sha256": "6559127e7dd44d4dbb8cdd26009fe5b6e54cc8287f2fea8bc284311061b086ca"
   },

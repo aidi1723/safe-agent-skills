@@ -3,10 +3,18 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-16T09:36:29Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "design.visual_quality"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "visual_quality_report"
     ],
@@ -15,11 +23,13 @@
       "build_artifact",
       "ui_review_report"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "review"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "8879ab67440a6af48a6e2684a5f06b7c331b909324b8b9e368554e0ef1cd2707",
+    "manifest_sha256": "b0120381494b3ae2f930fb4efe2045dd0acfe65641a3c7d45dda936d730f7973",
     "sanitized_sha256": "a12fb2d03e7c3df96d5069a2f4231459d45046127334c20410b68d148d5b638a",
     "source_sha256": "865e08fee3b2450b713ef572b949363ff842bfee9c693849f87e00994cdd801e"
   },

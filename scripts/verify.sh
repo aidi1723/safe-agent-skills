@@ -48,6 +48,18 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
   --registry catalog \
   --bundles bundles/index.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalog >/dev/null
+PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
+  --registry catalog \
+  --bundles bundles/index.json \
+  --scenario website-build-launch \
+  --scenario code-review-hardening \
+  --scenario codebase-change-lifecycle \
+  --scenario skill-router-quality-review \
+  --scenario open-source-release \
+  --scenario rag-agent-knowledge-app \
+  --scenario document-to-knowledge-base \
+  --scenario security-agent-guardrails \
+  --minimum-ratio 0.80 >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "build a landing page and prepare launch checks" \
   --invariants "不能泄露密钥；公开文案必须合规；必须响应式验证" >/dev/null
@@ -57,6 +69,7 @@ python3 -m json.tool schemas/skill-manifest.schema.json >/dev/null
 python3 -m json.tool schemas/sanitization-report.schema.json >/dev/null
 python3 -m json.tool schemas/registry-index.schema.json >/dev/null
 python3 -m json.tool schemas/verify-report.schema.json >/dev/null
+python3 -m json.tool schemas/contract-v2.schema.json >/dev/null
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null

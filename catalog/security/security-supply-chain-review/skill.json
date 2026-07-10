@@ -3,21 +3,31 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "security.supply_chain"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "supply_chain_review_report"
     ],
     "requires_context": [
       "routing_selection_plan"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "review"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "2e76aa00d531dedfa18655c01c687fb9bea7b614a762895dd86ce4bf58454f8f",
+    "manifest_sha256": "e63b2f02d441a72ae5865cb730a0ef40be67e6410f8d5ae1491cb168a856242f",
     "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
     "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
   },

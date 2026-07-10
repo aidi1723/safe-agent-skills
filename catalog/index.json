@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-09T02:14:16Z",
+  "generated_at": "2026-07-10T05:10:58Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -208,11 +208,19 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "ai.orchestration",
           "ai.workflow"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_artifacts": [
           "agent_workflow_map"
         ],
@@ -222,10 +230,12 @@
         "requires_context": [
           "workflow_review_scope"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "4d60648fdf6f7f8951b38c2a53495c43d889fe12d94e6755bfa6839790631c6e",
+        "manifest_sha256": "148c809a32d1d90d3b05c260702247241c0c54fe8c7044f1841c61b2b309d188",
         "sanitized_sha256": "c6d80969d90e023528dc6684e04bd64c029a95bb252b6957dcabfab05e78855f",
         "source_sha256": "f3da5086b6bffa6fb5a36657bc3780e748435415c4fd72ffd60bfac70093ab77"
       },
@@ -311,8 +321,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "ai.rag"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "rag_workflow_plan"
+        ],
+        "produces_evidence": [
+          "citation_policy_notes"
+        ],
+        "requires_context": [
+          "knowledge_sources"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "planning"
+      },
       "hashes": {
-        "manifest_sha256": "2b53690c1de9875060ef0506e0d91c77f87bad4b82742ea3f707e7184093608b",
+        "manifest_sha256": "ea4212540844b7fcf1534db51241791f358fffc8e4b975d019cd0b3a83820467",
         "sanitized_sha256": "164a6e8d0b6f32d3ffb93bf4cb128d7eeaf3de8f32fb3d4783be07f572e7e8c8",
         "source_sha256": "3ce32a4629294a00bd8f815d0bdc109e41c3e3d49bb5d5f30a53308a112a36c7"
       },
@@ -399,11 +434,19 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "ai.metaskill",
           "ai.bundle_quality"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_artifacts": [
           "workflow_review_scope"
         ],
@@ -414,10 +457,12 @@
           "user_request",
           "workspace_context"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "preflight"
       },
       "hashes": {
-        "manifest_sha256": "dc2c9605d7bac17abc7012bbebe80adb0a190abc3d59270078348bf1148f86ac",
+        "manifest_sha256": "c5c27dbe5f8fe71d7f902ad49c6c60996d079f854fb9aade644522ff651f3a83",
         "sanitized_sha256": "c67b142344ddd90996a2863bc9eac8dedcf50d8b60db0f9af211e81df1b1d0ca",
         "source_sha256": "6559127e7dd44d4dbb8cdd26009fe5b6e54cc8287f2fea8bc284311061b086ca"
       },
@@ -446,11 +491,19 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "ai.routing",
           "ai.skill_selection"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_artifacts": [
           "routing_selection_plan"
         ],
@@ -460,10 +513,12 @@
         "requires_context": [
           "workflow_review_scope"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "8546ae995b745343aeeecb68f69badd8bc0ac6a2d6242d387b0e28ed346c3144",
+        "manifest_sha256": "bd482cf3726e5a5fc640609d8a72642380b3b1c943224f722cb42b1bbde3ec29",
         "sanitized_sha256": "36086d4ab5063843cde2d9776f9c475910ae3775bd5c7e1ad30378332e965a7d",
         "source_sha256": "ee8814bb349ca4a647d47b5b92b51a7aa5e667e418785062f4276998e8060adb"
       },
@@ -521,21 +576,31 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "ai.eval",
           "ai.output_schema"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "output_schema_eval_report"
         ],
         "requires_context": [
           "routing_selection_plan"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "e59e032e1d994c0a4118a5d2a152a9db3d4ac60c2e8f8894d9eeb4f3b8f1baae",
+        "manifest_sha256": "33573cd2a0c6ceaf184fcd5eea9ccab2c51b8c69be4823610f7433c69d68b7ad",
         "sanitized_sha256": "2fce3196b4f9ae19e6d12a78ed9242464038f7adec2d9de7c29bbd23e7ed461b",
         "source_sha256": "364bcf0a17ff8fa007072e36f135105f0247090c98db29f94c4cbe038ce98675"
       },
@@ -622,10 +687,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "ai.rule_synthesis"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "failure_rule_synthesis_report"
         ],
@@ -635,10 +708,12 @@
           "regression_test_evidence",
           "ci_check_report"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "2dfdb47e28f9f85c9f6961aaece19c407d664e57b027ef0f31b12f53f9cec853",
+        "manifest_sha256": "9d1a26722db22ce414d74942ca23e07e4a2bc97497e9146f6945a6f8a0f4b74e",
         "sanitized_sha256": "4ffdf950718a0623bbafacd0decdb672d23e6515f155dd884a8b7cd4a144c7a1",
         "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
       },
@@ -725,21 +800,31 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "ai.tool_schema",
           "ai.routing_contract"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "tool_schema_contract_report"
         ],
         "requires_context": [
           "routing_selection_plan"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "00ac166021c29a777ee4f96e8f9fc3d59b363b8a08d8d6c9535aac10744623d5",
+        "manifest_sha256": "f97c66b6dfcf6360a3dd2c6205cbb754137b646842ec4cb6bad14e1fd433dc0e",
         "sanitized_sha256": "d105aea8ae5d8446d2a4ea7d7cd54dce1e569f4761034e5a49a1e7b7ecc7cbee",
         "source_sha256": "8f348a217dd395e8b3b8122050fa2628ce76df4616299cf06c08b4a4ac466145"
       },
@@ -1493,20 +1578,30 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "business.requirements"
         ],
         "cost_weight": 1,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 1,
+          "tokens": 1
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_artifacts": [
           "requirements_brief"
         ],
         "requires_context": [
           "task_brief"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "a46f05b84eb6e5e2078e8d0de352a4ffb6e5613508b79dee47a4e5ef64de1aa1",
+        "manifest_sha256": "ba75393b728ec515e0f2d5aa3dc386413391cf1d891a5ffb2e640c2610c44d4f",
         "sanitized_sha256": "2e802eb01d54ce6569692116c98662f5e019696023ccf187bbec7f293901018a",
         "source_sha256": "d012b81bda16b8d5ff0535b685806196a870436dbbfee6e1fd1b6c888e06f28b"
       },
@@ -1766,8 +1861,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "code.refactor"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "refactor_scope_map"
+        ],
+        "produces_evidence": [
+          "symbol_reference_check"
+        ],
+        "requires_context": [
+          "change_request"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "planning"
+      },
       "hashes": {
-        "manifest_sha256": "62acd7c56f1e6a3f7c51ea2c428c1a7e8bd822658d0fc1dc2c37532f242d91e4",
+        "manifest_sha256": "faa00b5d3e51f0fa221cdf131e3679682d3bf6df563aa15b15d2504595c5690a",
         "sanitized_sha256": "dc9d9107d239bcb8d2470ca81b9c91cce9318934a7b21225b5f3dacaa6d38731",
         "source_sha256": "9d4befd7337a96bee73d4083e1dae474a77dc698abc5a51757df5cf243576a49"
       },
@@ -1853,8 +1973,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "code.cleanup"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "cleanup_candidate_list"
+        ],
+        "produces_evidence": [
+          "reference_search_evidence"
+        ],
+        "requires_context": [
+          "codebase_map"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "63c841a56ffcc4912d08f0dcaad2585c5b51da209a7b51546aaea1b727d0487b",
+        "manifest_sha256": "1a0558cd2e88499fba936da8c7939d85f872042b257fa56db8fa95fce516dcf2",
         "sanitized_sha256": "e5b76e0f5a1941fd8f180689d7be00bd64517e7b63325643ed7d00586e149eee",
         "source_sha256": "46ff88848b2d86642576d0291b9a9f267bbf11906253b82e3c1841d1b9736ab4"
       },
@@ -1911,8 +2056,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "code.debug"
+        ],
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": false,
+        "optional_context": [],
+        "produces_artifacts": [
+          "debug_fix_plan"
+        ],
+        "produces_evidence": [
+          "focused_test_evidence"
+        ],
+        "requires_context": [
+          "failure_evidence"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "execution"
+      },
       "hashes": {
-        "manifest_sha256": "069bcf51b2e9f9fe9c82cc06e941e0f3536eda2f7dfe0cc4172197529cf23dea",
+        "manifest_sha256": "bad820dc171cceb4aacd5eb0eb637a8f7692cc325b402b08e51b369f117071d2",
         "sanitized_sha256": "0e9bcc45df3bee0793bd92dac5b6949c4ede00747262a4163f68eb986db40b4f",
         "source_sha256": "3bff531dffd66fda53b60e82c5667c8fdc2e345d553d0b5c09f708adbfd60c4d"
       },
@@ -1940,8 +2110,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "code.review"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "risk_review_report"
+        ],
+        "produces_evidence": [
+          "review_findings"
+        ],
+        "requires_context": [
+          "change_set"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "8bf000c6226b2cfcba969b6d9db67a4ccd5ad4af51767b6b58e7440ec4f1ef08",
+        "manifest_sha256": "7a6bc32e2dc663039434890156fa232048d966d2b46c84310efe8b2170be4bcd",
         "sanitized_sha256": "e0075ddcaa3e33add5ea5b0a363211b65e001df8574c45156623fa1ea1c14bdb",
         "source_sha256": "d15096f5f9f453ddef5edbd8eae0bbe729223174cd55691f5178f44eb5547a52"
       },
@@ -1969,8 +2164,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "code.refactor"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "simplification_plan"
+        ],
+        "produces_evidence": [
+          "behavior_preservation_notes"
+        ],
+        "requires_context": [
+          "codebase_map"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "planning"
+      },
       "hashes": {
-        "manifest_sha256": "77ac70bc0e6378bd0949507aa3aa2f86f120b8306c52f33bc705f3f31b66c20c",
+        "manifest_sha256": "188fda0234566a299323ee501e2aef1a6fd7c909d02d0f0d4f070bca57593b36",
         "sanitized_sha256": "ed9fea6688aa3a2231518daa527fd653527724d23e25ac0d3ab696ecf951277d",
         "source_sha256": "a2dd7ff863a7df02084f0e20ef39681aba8cd8db8731ec71e7aee8e9d8df2017"
       },
@@ -1999,10 +2219,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "code.test"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_artifacts": [
           "regression_test_plan"
         ],
@@ -2012,10 +2240,12 @@
         "requires_context": [
           "routing_selection_plan"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "32271baa11dc420a9eb5d44c32d7577b8223eae909dfb2e426362b2a143cbee1",
+        "manifest_sha256": "7deeb9509a8f82e61aa78f748f0715369924c6539b4da62439b3b3c79b187a95",
         "sanitized_sha256": "60e9c0237617a047c487b233da9cb5eaad87a0ae26db1bcedcb73d8b2616ae6e",
         "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
       },
@@ -2043,8 +2273,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "code.explore"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "codebase_map"
+        ],
+        "produces_evidence": [
+          "repository_inventory"
+        ],
+        "requires_context": [
+          "workspace_context"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "source"
+      },
       "hashes": {
-        "manifest_sha256": "42b717aff86031af75f518d002cbaec3f2cf3f314db33ec1e801dae1ed0ce156",
+        "manifest_sha256": "072bc85a691aadd6962b8901581bdbc0b051ebc708ace8d505dc8118f0e5655f",
         "sanitized_sha256": "8db14ae97ba5d8fe2bbd733232ba7c3f2167b17b90e1ce30eb45c52a3c17e679",
         "source_sha256": "dd7d7e077a8e1dd3226538fa363ff4d54a90b1f66a9db94dbd94f4d567a030ea"
       },
@@ -2942,20 +3197,30 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "content.seo"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_artifacts": [
           "seo_copy"
         ],
         "requires_context": [
           "requirements_brief"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "planning"
       },
       "hashes": {
-        "manifest_sha256": "6a3de55a744a9a5d03e4a7abcd69b98b4b0514d2697fed6bcd929b7a4e7a43d7",
+        "manifest_sha256": "936d9fbf76dd853c4f639b2caa8519b6049973c8a6bb82629a136f635470f2da",
         "sanitized_sha256": "98555332f20c1125e1439551a0b5ed6c7182477697a45013eac6edf0c323e2ed",
         "source_sha256": "ac5e5582f4911c2f2a043db250b318476b19db59faeb1338359366fa260a10c0"
       },
@@ -2984,20 +3249,30 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "content.social"
         ],
         "cost_weight": 1,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 1,
+          "tokens": 1
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_artifacts": [
           "social_post_copy"
         ],
         "requires_context": [
           "seo_copy"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "fb7ebb5bbde117a22912982d7d1d43826e0f7435c1185ebff23f8ba78033c745",
+        "manifest_sha256": "5db77db47e22f3cd290325ad22098053f580abd2b4d198d5ae0a02e277a66313",
         "sanitized_sha256": "9907c0e719e4d7e755d6d5cf37086aaae2bf115567058aeffb84421572969486",
         "source_sha256": "816151ea8e709afb38891ca035fabc6f4ba7ea9a82f78e3ece6b7271dd8509cd"
       },
@@ -3054,8 +3329,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "data.rag_pipeline"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "rag_pipeline_plan"
+        ],
+        "produces_evidence": [
+          "retrieval_grounding_notes"
+        ],
+        "requires_context": [
+          "knowledge_sources"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "planning"
+      },
       "hashes": {
-        "manifest_sha256": "1ca4bf0ed97efc929e3ab07119a91fc255ed6971b2a3a9d00f1437c2756b4afa",
+        "manifest_sha256": "adbea1d8001c34a44b1f73172f0b872c49ec5153026139850d83dfbdf9d63ac3",
         "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
         "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
       },
@@ -3083,8 +3383,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "data.pdf_markdown"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "pdf_markdown_review"
+        ],
+        "produces_evidence": [
+          "extraction_quality_notes"
+        ],
+        "requires_context": [
+          "source_documents"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "d5efe768c87def3b4b2b2a426a6784c7c1a8a732404de581d792ab14642e0d01",
+        "manifest_sha256": "19114d0123145c504179c62b025b78ec9c65a73383e46c57b19c841b8a5dfd2e",
         "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
         "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
       },
@@ -3112,8 +3437,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "data.markdown_conversion"
+        ],
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": false,
+        "optional_context": [],
+        "produces_artifacts": [
+          "markdown_corpus"
+        ],
+        "produces_evidence": [
+          "conversion_report"
+        ],
+        "requires_context": [
+          "source_documents"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "execution"
+      },
       "hashes": {
-        "manifest_sha256": "533eabb838915281fa7984d5cd66de0941640ea373307cbe35c25a2a90c0e2a4",
+        "manifest_sha256": "f8cde87c1036e4ab7aceb9b835d720ce753aec7ef152afd7fa9606f69d4d043d",
         "sanitized_sha256": "8c63709c028c08f23611f3e3df987de92098ea486be6b8a1eeaace0213df3c0c",
         "source_sha256": "f5a023b31314e3d488a1c87244c3574592860ffc8452a804640b604cf7e8733b"
       },
@@ -3141,8 +3491,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "data.vector_retrieval"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "vector_retrieval_plan"
+        ],
+        "produces_evidence": [
+          "retrieval_quality_notes"
+        ],
+        "requires_context": [
+          "retrieval_requirements"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "planning"
+      },
       "hashes": {
-        "manifest_sha256": "b4014c4ba982f73884272f7be0eab96c55c77d472c5c9eb47f2f241c455b2c6f",
+        "manifest_sha256": "7b3a15fe9b4f3eebcefe2b8e793446071a3028a11aab755d5d864bc4388f73a6",
         "sanitized_sha256": "070df168c4036c32e63228bfa32f2f416836ff0a30e592fc327c2b8b160fee60",
         "source_sha256": "fc6a662dde8dd74bd7f6bbd81e12f9a0eabb35973ba3395ec3dd2a5ef63ebe01"
       },
@@ -3315,8 +3690,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "data.document_partition"
+        ],
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": false,
+        "optional_context": [],
+        "produces_artifacts": [
+          "partitioned_document_corpus"
+        ],
+        "produces_evidence": [
+          "partition_quality_report"
+        ],
+        "requires_context": [
+          "source_documents"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "execution"
+      },
       "hashes": {
-        "manifest_sha256": "adeb8dee11ff62cb90f0c04452d5997d2d73e2358ea410bc3f97d279d9e42581",
+        "manifest_sha256": "b765a4686a338b2ac65830a9bd7eaf70f348a436c8dafbab77e8338c2b32415a",
         "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
         "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
       },
@@ -3445,10 +3845,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "design.motion_polish"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "motion_polish_report"
         ],
@@ -3457,10 +3865,12 @@
           "build_artifact",
           "ui_review_report"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "ddadfe5d491e2169c51606f14f938880b3392067a87a2343a015fc7f39a04055",
+        "manifest_sha256": "980d0833e55008ea2bf826b5c57a5d4e018bb68343eadcba05b27ad8a54256a6",
         "sanitized_sha256": "9e5d6471343581814b7e9d10f63e6185e8ac6fe285c193bd4784e43d4439290b",
         "source_sha256": "c166662fd2ea04b63f370d46b5b4115f4333ae44255ed6dceff4b56d5afa1c17"
       },
@@ -3489,10 +3899,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "design.premium_landing"
         ],
         "cost_weight": 3,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 3,
+          "tokens": 3
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "premium_landing_report"
         ],
@@ -3501,10 +3919,12 @@
           "seo_copy",
           "build_artifact"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "743030ce172f1f8aa63d3f532e22360d0814161a532767be097165843b48e655",
+        "manifest_sha256": "0ff1224ac52b788da882c9dab75f01aad7824d41a38d084b01aac1c42ff8c758",
         "sanitized_sha256": "0f92486465848c30e781baee8a1335289b6944212c39cfa02ee1c523544854b2",
         "source_sha256": "b166f2248338d51162d3a1cb913d07f1044044d686abc9350a49058b467bc4a9"
       },
@@ -3562,10 +3982,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "design.system_consistency"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "design_system_report"
         ],
@@ -3573,10 +4001,12 @@
           "requirements_brief",
           "build_artifact"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "e367e084372251f9746194995a0c4570567e3b677f8807060515570cb86d89d2",
+        "manifest_sha256": "66c46b3d2d5e1b85ca76f6164d1c6e9bc27319ddf2d5794d9b105d3db2a7dcb1",
         "sanitized_sha256": "3e584d8866708f8693b1a5d8b4733176023107ac98a25d3538bb6e67cc73a496",
         "source_sha256": "6d76b7490d836997a0216bc11ee49745d90033056516850e77679f0bea80a50b"
       },
@@ -3605,10 +4035,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "design.tailwind_radix_system"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "tailwind_radix_system_report"
         ],
@@ -3616,10 +4054,12 @@
           "requirements_brief",
           "build_artifact"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "87a8f090df223cc983b8db93393fe53f70035f13f85abde1b9c6cdf5dc1195ed",
+        "manifest_sha256": "02beb886c8b1f2cf3f16b6531f14e1bcbd71359a5390fcb0545d0a9a7ca04d7a",
         "sanitized_sha256": "a1442ce4a5b0bba5a988ef854121551d29c154ffec7ab19f6d52322da75c8e17",
         "source_sha256": "8529cd5a2b8415b80ccd21a6385d7cc17260024114828df28c5e5a5efe6fe7ee"
       },
@@ -3648,10 +4088,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "design.ui_review"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "ui_review_report"
         ],
@@ -3659,10 +4107,12 @@
           "requirements_brief",
           "build_artifact"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "3d584976e103621c005b7a1225be41604ca8672dff30c863c73c6114a8cdbc82",
+        "manifest_sha256": "2516a3265e0d4b7b5ce05cc4bc97ca0343fe02bb62600091c734d98b7daa0c29",
         "sanitized_sha256": "22a8ebbcc112ea5bf446d37358822873ce585f6be3ca28ca9cc81e318e3804c9",
         "source_sha256": "a43ea63e3339c6b698873a8cf4fc35d029d5eca618b5155989a0ba7dc30bb7ad"
       },
@@ -3691,10 +4141,18 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "design.visual_quality"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "visual_quality_report"
         ],
@@ -3703,10 +4161,12 @@
           "build_artifact",
           "ui_review_report"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "8879ab67440a6af48a6e2684a5f06b7c331b909324b8b9e368554e0ef1cd2707",
+        "manifest_sha256": "b0120381494b3ae2f930fb4efe2045dd0acfe65641a3c7d45dda936d730f7973",
         "sanitized_sha256": "a12fb2d03e7c3df96d5069a2f4231459d45046127334c20410b68d148d5b638a",
         "source_sha256": "865e08fee3b2450b713ef572b949363ff842bfee9c693849f87e00994cdd801e"
       },
@@ -3735,10 +4195,20 @@
     },
     {
       "contract": {
+        "approval_classes": [
+          "shell_execution"
+        ],
         "capability_vector": [
           "engineering.build_release"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": false,
+        "optional_context": [],
         "produces_artifacts": [
           "build_artifact"
         ],
@@ -3748,10 +4218,12 @@
         "requires_context": [
           "requirements_brief"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "execution"
       },
       "hashes": {
-        "manifest_sha256": "124940912570f7cba5b1892f23fdca603696b802ecb2fbc06aa1786695e7f75d",
+        "manifest_sha256": "f77231eccc73b536635c02815494863135476b9957f5f4aedf554573990a60ba",
         "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
         "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
       },
@@ -3780,20 +4252,32 @@
     },
     {
       "contract": {
+        "approval_classes": [
+          "shell_execution"
+        ],
         "capability_vector": [
           "engineering.ci"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "ci_check_report"
         ],
         "requires_context": [
           "regression_test_plan"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "521d8200e1c2d4021fca764b6181d77490dd5945a7bf8cb3a956818a402d9889",
+        "manifest_sha256": "5d85728fe9db973a8ec59b0675ae78f70a7e5129f7f07a86dd4f4c9dfbd9cd48",
         "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
         "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
       },
@@ -3909,10 +4393,20 @@
     },
     {
       "contract": {
+        "approval_classes": [
+          "browser_automation"
+        ],
         "capability_vector": [
           "execution.browser_check"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "browser_check_report"
         ],
@@ -3920,10 +4414,12 @@
           "build_artifact",
           "ui_review_report"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "b5a20a15161e334d276cea08d65c5c779fd8592c939fa64d41cc3f6b3f27ed84",
+        "manifest_sha256": "3411a5541350e7bd2a1a34ec9fcb0f108c64ab6821bd0e014040c835bbe7ffbb",
         "sanitized_sha256": "460bc4fba7f2006fe2081127351f503ef8f5985c37a20d81a07a5e291b2c5c2f",
         "source_sha256": "ea0eb409a616a037176ddcbffc396f1ec8547f93945cd558806470595b04d1d9"
       },
@@ -3952,10 +4448,21 @@
     },
     {
       "contract": {
+        "approval_classes": [
+          "browser_automation",
+          "network_access"
+        ],
         "capability_vector": [
           "execution.browser_agent"
         ],
         "cost_weight": 3,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 3,
+          "tokens": 3
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "browser_agent_plan"
         ],
@@ -3963,10 +4470,12 @@
           "requirements_brief",
           "build_artifact"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "88781070e65d5917a15c837220de185d8f469d75c3b77a1f104ac635440e0c0e",
+        "manifest_sha256": "db07a3d13d9cad2db159346a35d6de7bb0674b54d19033b1f3a6f370f2746a85",
         "sanitized_sha256": "e7663b9d4a7b65e3c63bead301d546d7e60cd64cfca2e3230c6754697411a723",
         "source_sha256": "90028dfc3b518c5092c30da8fafd584e21496186ba64eb57bd6a802b61e3264e"
       },
@@ -4125,10 +4634,20 @@
     },
     {
       "contract": {
+        "approval_classes": [
+          "browser_automation"
+        ],
         "capability_vector": [
           "execution.playwright_browser"
         ],
         "cost_weight": 3,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 3,
+          "tokens": 3
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "browser_automation_report",
           "browser_check_report"
@@ -4137,10 +4656,12 @@
           "build_artifact",
           "ui_review_report"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "3ee0424f5c68c17a4de1fbf5ff07a28a29703e40d288cd5d242570d6ec5e8d7e",
+        "manifest_sha256": "933f0f668ef040c1215567db516ef72bf06c23a585ad7dac96d88f3441eb0fbf",
         "sanitized_sha256": "6870023e80141f3f8bfbad5c4990cdbbc891d6252b9659ae788cf0f3e5ab9907",
         "source_sha256": "a683c4c1bd29677bb6d983051c934491d1f0964de342c4aad3342d818c52860b"
       },
@@ -4169,10 +4690,20 @@
     },
     {
       "contract": {
+        "approval_classes": [
+          "publication"
+        ],
         "capability_vector": [
           "execution.publish_check"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "publish_readiness_report"
         ],
@@ -4181,10 +4712,12 @@
           "ui_review_report",
           "browser_check_report"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "verification"
       },
       "hashes": {
-        "manifest_sha256": "0378d14ebd851e5c2ce5b9b6b67274dff26abc42734e842491f00c1604c9f4f5",
+        "manifest_sha256": "8b026a6b291b0c1254053658e259bcda78b4538bfc52ee8a9680cd979035a6f2",
         "sanitized_sha256": "e1600c4868599dfd83b65fcec7f3d8095ebe89fea416b4308faf41432624e1e8",
         "source_sha256": "55c003e53bc282b1ab8bb92064a351b1982e28c2c7449c8465812aa357f63c18"
       },
@@ -4908,8 +5441,35 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [
+          "network_access"
+        ],
+        "capability_vector": [
+          "research.source"
+        ],
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "source_verification_report"
+        ],
+        "produces_evidence": [
+          "claim_source_mapping"
+        ],
+        "requires_context": [
+          "claims_to_verify"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "verification"
+      },
       "hashes": {
-        "manifest_sha256": "43b71bd704ea7772241333c1b879def687d57ad572ea14fbae9964d292934c39",
+        "manifest_sha256": "7fc028d58c45ce8999b84b7b30cd2a8ff3aa0f1d73283f90196f5a6339b091e5",
         "sanitized_sha256": "ebcfc0b49dfde45a231e2c825aac9c26b3220038246fa85be846bc2b53f45bb3",
         "source_sha256": "6e4498e8804857bafc1994ec32d3fbf1cc97446745f6828a8f8146fe937f3e8b"
       },
@@ -4995,8 +5555,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "security.guardrails"
+        ],
+        "estimated_cost": {
+          "runtime": 1,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "validation_contract"
+        ],
+        "produces_evidence": [
+          "guardrail_validation_report"
+        ],
+        "requires_context": [
+          "output_contract"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "verification"
+      },
       "hashes": {
-        "manifest_sha256": "4b46099ececf411c4ed2afcf1639169fa0d9a619f63b4cde06ea4822b1d4952b",
+        "manifest_sha256": "4bbd217e7aa0b3c07fa9e0138f0362c188335b719fd4c4b624ea9486b92f3c26",
         "sanitized_sha256": "c4340e631acd6550cc51651185614ab845cecd40bf9a4dd520e91c53bbac0181",
         "source_sha256": "1da494851b0813b8cd806bcf919d2948a6df99847e5913eb680320b027c193e9"
       },
@@ -5024,8 +5609,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "security.io_scan"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "io_scanning_plan"
+        ],
+        "produces_evidence": [
+          "redaction_decision_log"
+        ],
+        "requires_context": [
+          "agent_io_boundaries"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "4b86962f582523ffce3c7efff2adca1cc4aa7b92137aba326fd2c57a688e60cd",
+        "manifest_sha256": "16440984b41c00f9ad3c00ff8146f8ef0a71775cfae1e0d3800987cea0e69e82",
         "sanitized_sha256": "c0005c155384ed3ef6a7fc7c64f13b74285945f7730ace3903c33c813df24dc2",
         "source_sha256": "b34a564b300023407053a45d02e9a9aa662add202ecb5663faf218909af02c34"
       },
@@ -5082,8 +5692,33 @@
       }
     },
     {
+      "contract": {
+        "approval_classes": [],
+        "capability_vector": [
+          "security.prompt"
+        ],
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
+        "produces_artifacts": [
+          "prompt_injection_review"
+        ],
+        "produces_evidence": [
+          "policy_conformance_findings"
+        ],
+        "requires_context": [
+          "prompt_or_skill_source"
+        ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
+        "stage_hint": "review"
+      },
       "hashes": {
-        "manifest_sha256": "b8dfb8d47d07cb238327af8e95b7a3bda36df252f346a7f0e2fc8f57c7d98058",
+        "manifest_sha256": "99f5653e4219e2596d07c05817e0dbb25399e6d225f9569c328116551035edb7",
         "sanitized_sha256": "8e303e1dc3b88bbeedbe025d533ef50fe6aa22e588e0778ee581d21be78eb56f",
         "source_sha256": "8fb186df92da0dfc902b990c5a9b27de2aca1aa682ea27123e83e14f7ccddbfa"
       },
@@ -5141,20 +5776,30 @@
     },
     {
       "contract": {
+        "approval_classes": [],
         "capability_vector": [
           "security.supply_chain"
         ],
         "cost_weight": 2,
+        "estimated_cost": {
+          "runtime": 0,
+          "time": 2,
+          "tokens": 2
+        },
+        "idempotent": true,
+        "optional_context": [],
         "produces_evidence": [
           "supply_chain_review_report"
         ],
         "requires_context": [
           "routing_selection_plan"
         ],
+        "retry_policy": "host_decides",
+        "schema_version": 2,
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "2e76aa00d531dedfa18655c01c687fb9bea7b614a762895dd86ce4bf58454f8f",
+        "manifest_sha256": "e63b2f02d441a72ae5865cb730a0ef40be67e6410f8d5ae1491cb168a856242f",
         "sanitized_sha256": "6d4a92275213afcc5883bd03c7ebb383b70baf07893dd06914129e1c44f8cade",
         "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
       },

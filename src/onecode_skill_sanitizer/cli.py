@@ -16,6 +16,7 @@ from .compatibility import build_route_identity_payload
 from .compatibility import to_legacy_v1
 from .compiler import compile_execution_graph
 from .composer import compose_scenarios
+from .contracts import contract_coverage
 from .intent import decompose_task, normalize_task
 from .paths import resolve_project_asset_path
 from .references import validate_external_references
@@ -1324,6 +1325,31 @@ def markdown_safe_line(value: object) -> str:
     return re.sub(r"([`*_{}\[\]()#+\-.!|>])", r"\\\1", escaped)
 
 
+LEGACY_CONTRACT_FIELDS = {
+    "requires_context",
+    "produces_artifacts",
+    "produces_evidence",
+    "capability_vector",
+    "stage_hint",
+    "conflicts_with",
+    "excludes",
+    "requires_after",
+    "cost_weight",
+}
+
+
+def project_legacy_contracts(value: object) -> object:
+    if isinstance(value, list):
+        return [project_legacy_contracts(item) for item in value]
+    if not isinstance(value, dict):
+        return value
+    projected = {key: project_legacy_contracts(item) for key, item in value.items()}
+    contract = projected.get("contract")
+    if isinstance(contract, dict):
+        projected["contract"] = {key: item for key, item in contract.items() if key in LEGACY_CONTRACT_FIELDS}
+    return projected
+
+
 def task_pack_command(args: argparse.Namespace) -> int:
     if args.schema_version == 2:
         overlap_groups_path = resolve_overlap_groups_path(
@@ -1353,6 +1379,7 @@ def task_pack_command(args: argparse.Namespace) -> int:
             getattr(args, "strategy", "balanced"),
             resolve_project_asset_path(args.overlap_groups) if getattr(args, "overlap_groups", None) else None,
         )
+        task_pack = project_legacy_contracts(task_pack)
     if args.format == "markdown":
         print(render_task_pack_v2_markdown(task_pack) if args.schema_version == 2 else render_task_pack_markdown(task_pack))
     else:
@@ -1389,6 +1416,7 @@ def smart_command(args: argparse.Namespace) -> int:
             args.strategy,
             resolve_project_asset_path(args.overlap_groups) if args.overlap_groups else None,
         )
+        task_pack = project_legacy_contracts(task_pack)
     if args.format == "markdown":
         print(render_task_pack_v2_markdown(task_pack) if args.schema_version == 2 else render_task_pack_markdown(task_pack))
     else:
@@ -1557,6 +1585,24 @@ def schema_check(registry_dir: Path) -> dict:
 
 def schema_check_command(args: argparse.Namespace) -> int:
     result = schema_check(resolve_project_asset_path(args.registry))
+    print(json.dumps(result, indent=2, sort_keys=True))
+    return 0 if result["status"] == "ok" else 2
+
+
+def contract_check_command(args: argparse.Namespace) -> int:
+    registry_dir = resolve_project_asset_path(args.registry)
+    bundles_path = resolve_project_asset_path(args.bundles)
+    try:
+        result = contract_coverage(
+            load_registry_index(registry_dir),
+            load_bundles_index(bundles_path),
+            args.scenario,
+            registry_root=registry_dir,
+        )
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from exc
+    result["minimum_ratio"] = args.minimum_ratio
+    result["status"] = "ok" if result["coverage_ratio"] >= args.minimum_ratio else "failed"
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
 
@@ -3145,6 +3191,13 @@ def build_parser() -> argparse.ArgumentParser:
     schema_check_parser.add_argument("--registry", required=True)
     schema_check_parser.set_defaults(func=schema_check_command)
 
+    contract_check_parser = subparsers.add_parser("contract-check")
+    contract_check_parser.add_argument("--registry", required=True)
+    contract_check_parser.add_argument("--bundles", required=True)
+    contract_check_parser.add_argument("--scenario", action="append")
+    contract_check_parser.add_argument("--minimum-ratio", type=ratio, default=0.0)
+    contract_check_parser.set_defaults(func=contract_check_command)
+
     reference_check_parser = subparsers.add_parser("reference-check")
     reference_check_parser.add_argument("--references", required=True)
     reference_check_parser.set_defaults(func=reference_check_command)
@@ -3189,6 +3242,16 @@ def positive_int(value: str) -> int:
         raise argparse.ArgumentTypeError("must be an integer greater than or equal to 1") from exc
     if parsed < 1:
         raise argparse.ArgumentTypeError("must be greater than or equal to 1")
+    return parsed
+
+
+def ratio(value: str) -> float:
+    try:
+        parsed = float(value)
+    except ValueError as exc:
+        raise argparse.ArgumentTypeError("must be a number from 0 to 1") from exc
+    if parsed < 0 or parsed > 1:
+        raise argparse.ArgumentTypeError("must be from 0 to 1")
     return parsed
 
 

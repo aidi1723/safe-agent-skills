@@ -3,10 +3,18 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:01:58Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "design.ui_review"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "ui_review_report"
     ],
@@ -14,11 +22,13 @@
       "requirements_brief",
       "build_artifact"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "review"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "3d584976e103621c005b7a1225be41604ca8672dff30c863c73c6114a8cdbc82",
+    "manifest_sha256": "2516a3265e0d4b7b5ce05cc4bc97ca0343fe02bb62600091c734d98b7daa0c29",
     "sanitized_sha256": "22a8ebbcc112ea5bf446d37358822873ce585f6be3ca28ca9cc81e318e3804c9",
     "source_sha256": "a43ea63e3339c6b698873a8cf4fc35d029d5eca618b5155989a0ba7dc30bb7ad"
   },

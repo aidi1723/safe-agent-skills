@@ -2,9 +2,34 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-16T09:36:29Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "code.refactor"
+    ],
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
+    "produces_artifacts": [
+      "simplification_plan"
+    ],
+    "produces_evidence": [
+      "behavior_preservation_notes"
+    ],
+    "requires_context": [
+      "codebase_map"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "planning"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "77ac70bc0e6378bd0949507aa3aa2f86f120b8306c52f33bc705f3f31b66c20c",
+    "manifest_sha256": "188fda0234566a299323ee501e2aef1a6fd7c909d02d0f0d4f070bca57593b36",
     "sanitized_sha256": "ed9fea6688aa3a2231518daa527fd653527724d23e25ac0d3ab696ecf951277d",
     "source_sha256": "a2dd7ff863a7df02084f0e20ef39681aba8cd8db8731ec71e7aee8e9d8df2017"
   },

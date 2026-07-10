@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.dev/schemas/contract-v2.schema.json",
+  "title": "OneCode Skill Contract v2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "stage_hint", "capability_vector"],
+  "properties": {
+    "schema_version": {"const": 2},
+    "stage_hint": {
+      "enum": ["preflight", "source", "planning", "review", "execution", "verification"]
+    },
+    "capability_vector": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+$"}
+    },
+    "requires_context": {"$ref": "#/$defs/artifacts"},
+    "optional_context": {"$ref": "#/$defs/artifacts"},
+    "produces_artifacts": {"$ref": "#/$defs/artifacts"},
+    "produces_evidence": {"$ref": "#/$defs/artifacts"},
+    "requires_after": {"$ref": "#/$defs/names"},
+    "conflicts_with": {"$ref": "#/$defs/names"},
+    "excludes": {"$ref": "#/$defs/names"},
+    "cost_weight": {"type": "integer", "minimum": 1, "maximum": 10},
+    "approval_classes": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "browser_automation",
+          "network_access",
+          "publication",
+          "shell_execution",
+          "dependency_install",
+          "paid_provider",
+          "destructive_action"
+        ]
+      }
+    },
+    "estimated_cost": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["time", "tokens", "runtime"],
+      "properties": {
+        "time": {"type": "integer", "minimum": 0, "maximum": 5},
+        "tokens": {"type": "integer", "minimum": 0, "maximum": 5},
+        "runtime": {"type": "integer", "minimum": 0, "maximum": 5}
+      }
+    },
+    "idempotent": {"type": "boolean"},
+    "retry_policy": {"enum": ["host_decides", "never", "safe_once"]}
+  },
+  "$defs": {
+    "artifacts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "pattern": "^[a-z][a-z0-9_]{1,80}$"}
+    },
+    "names": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1}
+    }
+  }
+}

@@ -2,9 +2,34 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T10:12:52Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "data.vector_retrieval"
+    ],
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
+    "produces_artifacts": [
+      "vector_retrieval_plan"
+    ],
+    "produces_evidence": [
+      "retrieval_quality_notes"
+    ],
+    "requires_context": [
+      "retrieval_requirements"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "planning"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "b4014c4ba982f73884272f7be0eab96c55c77d472c5c9eb47f2f241c455b2c6f",
+    "manifest_sha256": "7b3a15fe9b4f3eebcefe2b8e793446071a3028a11aab755d5d864bc4388f73a6",
     "sanitized_sha256": "070df168c4036c32e63228bfa32f2f416836ff0a30e592fc327c2b8b160fee60",
     "source_sha256": "fc6a662dde8dd74bd7f6bbd81e12f9a0eabb35973ba3395ec3dd2a5ef63ebe01"
   },

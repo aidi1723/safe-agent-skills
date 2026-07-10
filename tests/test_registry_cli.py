@@ -61,6 +61,68 @@ def validate_task_pack_v2(payload):
 
 
 class RegistryCliTest(unittest.TestCase):
+    def test_contract_check_outputs_json_and_exits_two_below_threshold(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "contract-check",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--scenario",
+                    "website-build-launch",
+                    "--scenario",
+                    "code-review-hardening",
+                    "--scenario",
+                    "codebase-change-lifecycle",
+                    "--scenario",
+                    "skill-router-quality-review",
+                    "--scenario",
+                    "open-source-release",
+                    "--scenario",
+                    "rag-agent-knowledge-app",
+                    "--scenario",
+                    "document-to-knowledge-base",
+                    "--scenario",
+                    "security-agent-guardrails",
+                    "--minimum-ratio",
+                    "1.0",
+                ]
+            )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(len(payload["scenario_ids"]), 8)
+        self.assertLess(payload["coverage_ratio"], 1.0)
+
+    def test_contract_check_rejects_invalid_threshold_and_scenario(self):
+        with self.assertRaises(SystemExit):
+            main(
+                [
+                    "contract-check",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--minimum-ratio",
+                    "1.1",
+                ]
+            )
+        with self.assertRaises(SystemExit):
+            main(
+                [
+                    "contract-check",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--scenario",
+                    "not-a-scenario",
+                ]
+            )
+
     def test_v2_routing_status_precedence_is_blocked_then_incomplete_then_complete(self):
         complete_capabilities = {"status": "complete", "missing_required_count": 0}
         incomplete_capabilities = {"status": "incomplete", "missing_required_count": 1}
@@ -4174,6 +4236,9 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
         self.assertIn("selection_trace", payload)
         self.assertIn("completion_contract", payload)
+        for skill in payload["skills"]:
+            self.assertNotIn("schema_version", skill.get("contract", {}))
+            self.assertNotIn("approval_classes", skill.get("contract", {}))
         self.assertEqual(payload_shape_sha256(payload), ROUTER_SCHEMA_V1_SHAPE_SHA256)
 
     def test_task_pack_mesh_schema_v1_preserves_current_contract_shape(self):

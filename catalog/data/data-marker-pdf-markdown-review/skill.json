@@ -2,9 +2,34 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T09:25:50Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "data.pdf_markdown"
+    ],
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
+    "produces_artifacts": [
+      "pdf_markdown_review"
+    ],
+    "produces_evidence": [
+      "extraction_quality_notes"
+    ],
+    "requires_context": [
+      "source_documents"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "review"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "d5efe768c87def3b4b2b2a426a6784c7c1a8a732404de581d792ab14642e0d01",
+    "manifest_sha256": "19114d0123145c504179c62b025b78ec9c65a73383e46c57b19c841b8a5dfd2e",
     "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
     "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
   },

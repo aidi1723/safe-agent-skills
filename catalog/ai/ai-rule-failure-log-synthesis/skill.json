@@ -3,10 +3,18 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-03T13:03:30Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "ai.rule_synthesis"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "failure_rule_synthesis_report"
     ],
@@ -16,6 +24,8 @@
       "regression_test_evidence",
       "ci_check_report"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "verification"
   },
   "findings": [
@@ -27,7 +37,7 @@
     }
   ],
   "hashes": {
-    "manifest_sha256": "2dfdb47e28f9f85c9f6961aaece19c407d664e57b027ef0f31b12f53f9cec853",
+    "manifest_sha256": "9d1a26722db22ce414d74942ca23e07e4a2bc97497e9146f6945a6f8a0f4b74e",
     "sanitized_sha256": "4ffdf950718a0623bbafacd0decdb672d23e6515f155dd884a8b7cd4a144c7a1",
     "source_sha256": "535735322a3b2ba79687534079239dd2cd288e170e077b1759002bf8862264bd"
   },

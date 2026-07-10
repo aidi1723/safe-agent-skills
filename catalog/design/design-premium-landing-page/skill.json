@@ -3,10 +3,18 @@
   "approval_note": "Approved by local operator after design-skill inclusion review.",
   "approved_at": "2026-06-11T06:36:20Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "design.premium_landing"
     ],
     "cost_weight": 3,
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 3,
+      "tokens": 3
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "premium_landing_report"
     ],
@@ -15,11 +23,13 @@
       "seo_copy",
       "build_artifact"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "review"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "743030ce172f1f8aa63d3f532e22360d0814161a532767be097165843b48e655",
+    "manifest_sha256": "0ff1224ac52b788da882c9dab75f01aad7824d41a38d084b01aac1c42ff8c758",
     "sanitized_sha256": "0f92486465848c30e781baee8a1335289b6944212c39cfa02ee1c523544854b2",
     "source_sha256": "b166f2248338d51162d3a1cb913d07f1044044d686abc9350a49058b467bc4a9"
   },

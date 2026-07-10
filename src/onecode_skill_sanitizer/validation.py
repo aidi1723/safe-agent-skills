@@ -61,6 +61,16 @@ NETWORK_SCOPE_VALUES = {"none", "approved_hosts", "onecode_api_only"}
 CONTRACT_STAGE_VALUES = {"preflight", "source", "planning", "review", "execution", "verification"}
 CONTRACT_CAPABILITY_PATTERN = re.compile(r"^[a-z][a-z0-9_]*(\.[a-z][a-z0-9_]*)+$")
 CONTRACT_ARTIFACT_PATTERN = re.compile(r"^[a-z][a-z0-9_]{1,80}$")
+CONTRACT_APPROVAL_CLASS_VALUES = {
+    "browser_automation",
+    "network_access",
+    "publication",
+    "shell_execution",
+    "dependency_install",
+    "paid_provider",
+    "destructive_action",
+}
+CONTRACT_RETRY_POLICY_VALUES = {"host_decides", "never", "safe_once"}
 DISALLOWED_TOOL_VALUES = {
     "account",
     "browser",
@@ -304,7 +314,9 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
         add_issue(issues, "schema-invalid-contract", path, "contract must be an object")
         return
     allowed_fields = {
+        "schema_version",
         "requires_context",
+        "optional_context",
         "produces_artifacts",
         "produces_evidence",
         "capability_vector",
@@ -313,11 +325,19 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
         "excludes",
         "requires_after",
         "cost_weight",
+        "approval_classes",
+        "estimated_cost",
+        "idempotent",
+        "retry_policy",
     }
     for field in contract:
         if field not in allowed_fields:
             add_issue(issues, "schema-invalid-contract-field", path, f"contract.{field} is not supported")
+    contract_version = contract.get("schema_version")
+    if contract_version not in {None, 1, 2}:
+        add_issue(issues, "schema-invalid-contract-version", path, "contract.schema_version must be 1 or 2")
     validate_string_list(contract.get("requires_context"), path, issues, "requires_context", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
+    validate_string_list(contract.get("optional_context"), path, issues, "optional_context", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
     validate_string_list(contract.get("produces_artifacts"), path, issues, "produces_artifacts", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
     validate_string_list(contract.get("produces_evidence"), path, issues, "produces_evidence", "schema-invalid-contract-artifact", CONTRACT_ARTIFACT_PATTERN)
     capabilities = validate_string_list(
@@ -330,9 +350,13 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
     )
     if contract.get("capability_vector") is not None and not capabilities:
         add_issue(issues, "schema-invalid-contract-capability", path, "contract.capability_vector cannot be empty")
+    if contract_version == 2 and contract.get("capability_vector") is None:
+        add_issue(issues, "schema-invalid-contract-capability", path, "contract.capability_vector is required for version 2")
     stage_hint = contract.get("stage_hint")
     if stage_hint is not None and stage_hint not in CONTRACT_STAGE_VALUES:
         add_issue(issues, "schema-invalid-contract-stage", path, "contract.stage_hint is not supported")
+    if contract_version == 2 and stage_hint is None:
+        add_issue(issues, "schema-invalid-contract-stage", path, "contract.stage_hint is required for version 2")
     conflicts = validate_string_list(contract.get("conflicts_with"), path, issues, "conflicts_with", "schema-invalid-contract-conflict")
     if payload.get("name") in conflicts:
         add_issue(issues, "schema-invalid-contract-conflict", path, "contract.conflicts_with cannot include the skill itself")
@@ -345,6 +369,50 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
     cost_weight = contract.get("cost_weight")
     if cost_weight is not None and (not isinstance(cost_weight, int) or cost_weight < 1 or cost_weight > 10):
         add_issue(issues, "schema-invalid-contract-cost", path, "contract.cost_weight must be an integer from 1 to 10")
+    approval_classes = validate_string_list(
+        contract.get("approval_classes"),
+        path,
+        issues,
+        "approval_classes",
+        "schema-invalid-contract-approval-class",
+    )
+    for approval_class in approval_classes:
+        if approval_class not in CONTRACT_APPROVAL_CLASS_VALUES:
+            add_issue(
+                issues,
+                "schema-invalid-contract-approval-class",
+                path,
+                f"contract.approval_classes entry {approval_class!r} is not supported",
+            )
+    estimated_cost = contract.get("estimated_cost")
+    if estimated_cost is not None:
+        if not isinstance(estimated_cost, dict) or set(estimated_cost) != {"time", "tokens", "runtime"}:
+            add_issue(
+                issues,
+                "schema-invalid-contract-cost",
+                path,
+                "contract.estimated_cost must contain time, tokens, and runtime",
+            )
+        else:
+            for field, value in estimated_cost.items():
+                if not isinstance(value, int) or isinstance(value, bool) or value < 0 or value > 5:
+                    add_issue(
+                        issues,
+                        "schema-invalid-contract-cost",
+                        path,
+                        f"contract.estimated_cost.{field} must be an integer from 0 to 5",
+                    )
+    idempotent = contract.get("idempotent")
+    if idempotent is not None and not isinstance(idempotent, bool):
+        add_issue(issues, "schema-invalid-contract-idempotent", path, "contract.idempotent must be a boolean")
+    retry_policy = contract.get("retry_policy")
+    if retry_policy is not None and retry_policy not in CONTRACT_RETRY_POLICY_VALUES:
+        add_issue(
+            issues,
+            "schema-invalid-contract-retry-policy",
+            path,
+            "contract.retry_policy is not supported",
+        )
 
 
 def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> None:
@@ -458,9 +526,16 @@ def validate_sanitization_report_schema(payload: dict, path: Path, manifest: dic
         if summary.get("status") != manifest.get("status") or summary.get("risk_level") != manifest.get("risk_level"):
             add_issue(issues, "schema-report-summary-mismatch", path, "report summary status and risk_level must match manifest")
 
-    for field in ["source", "hashes", "taxonomy"]:
+    for field in ["source", "taxonomy"]:
         if payload.get(field) != manifest.get(field):
             add_issue(issues, f"schema-report-{field}-mismatch", path, f"report {field} must match manifest {field}")
+    report_hashes = payload.get("hashes") if isinstance(payload.get("hashes"), dict) else {}
+    manifest_hashes = manifest.get("hashes") if isinstance(manifest.get("hashes"), dict) else {}
+    captured_hash_fields = {"source_sha256", "sanitized_sha256"}
+    if {field: report_hashes.get(field) for field in captured_hash_fields} != {
+        field: manifest_hashes.get(field) for field in captured_hash_fields
+    }:
+        add_issue(issues, "schema-report-hashes-mismatch", path, "report source and sanitized hashes must match manifest hashes")
     if payload.get("required_verifiers") != manifest.get("required_verifiers"):
         add_issue(
             issues,

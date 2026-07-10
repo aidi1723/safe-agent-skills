@@ -2,9 +2,34 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T10:12:12Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "ai.rag"
+    ],
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
+    "produces_artifacts": [
+      "rag_workflow_plan"
+    ],
+    "produces_evidence": [
+      "citation_policy_notes"
+    ],
+    "requires_context": [
+      "knowledge_sources"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "planning"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "2b53690c1de9875060ef0506e0d91c77f87bad4b82742ea3f707e7184093608b",
+    "manifest_sha256": "ea4212540844b7fcf1534db51241791f358fffc8e4b975d019cd0b3a83820467",
     "sanitized_sha256": "164a6e8d0b6f32d3ffb93bf4cb128d7eeaf3de8f32fb3d4783be07f572e7e8c8",
     "source_sha256": "3ce32a4629294a00bd8f815d0bdc109e41c3e3d49bb5d5f30a53308a112a36c7"
   },

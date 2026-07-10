@@ -3,10 +3,18 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:36Z",
   "contract": {
+    "approval_classes": [],
     "capability_vector": [
       "code.test"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_artifacts": [
       "regression_test_plan"
     ],
@@ -16,11 +24,13 @@
     "requires_context": [
       "routing_selection_plan"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "verification"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "32271baa11dc420a9eb5d44c32d7577b8223eae909dfb2e426362b2a143cbee1",
+    "manifest_sha256": "7deeb9509a8f82e61aa78f748f0715369924c6539b4da62439b3b3c79b187a95",
     "sanitized_sha256": "60e9c0237617a047c487b233da9cb5eaad87a0ae26db1bcedcb73d8b2616ae6e",
     "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
   },

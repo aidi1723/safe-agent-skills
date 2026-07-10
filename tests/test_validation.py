@@ -1,10 +1,110 @@
 import unittest
 from pathlib import Path
 
-from onecode_skill_sanitizer.validation import validate_source
+from onecode_skill_sanitizer.validation import validate_contract, validate_sanitization_report_schema, validate_source
 
 
 class ValidationTest(unittest.TestCase):
+    def test_validate_contract_accepts_complete_v2_contract(self):
+        issues: list[dict] = []
+        payload = {
+            "name": "example-skill",
+            "contract": {
+                "schema_version": 2,
+                "stage_hint": "review",
+                "capability_vector": ["code.review"],
+                "requires_context": ["change_set"],
+                "optional_context": ["test_evidence"],
+                "produces_artifacts": ["review_report"],
+                "produces_evidence": ["review_evidence"],
+                "requires_after": ["codebase-explore-map"],
+                "conflicts_with": [],
+                "excludes": [],
+                "approval_classes": [],
+                "estimated_cost": {"time": 2, "tokens": 1, "runtime": 0},
+                "idempotent": True,
+                "retry_policy": "host_decides",
+            },
+        }
+
+        validate_contract(payload, Path("skill.json"), issues)
+
+        self.assertEqual(issues, [])
+
+    def test_validate_contract_rejects_automatic_execution_retry_policy(self):
+        issues: list[dict] = []
+        payload = {
+            "name": "example-skill",
+            "contract": {
+                "schema_version": 2,
+                "stage_hint": "review",
+                "capability_vector": ["code.review"],
+                "retry_policy": "execute_automatically",
+            },
+        }
+
+        validate_contract(payload, Path("skill.json"), issues)
+
+        self.assertIn("schema-invalid-contract-retry-policy", {issue["id"] for issue in issues})
+
+    def test_validate_contract_rejects_incomplete_v2_contract(self):
+        issues: list[dict] = []
+        payload = {"name": "example-skill", "contract": {"schema_version": 2}}
+
+        validate_contract(payload, Path("skill.json"), issues)
+
+        issue_ids = {issue["id"] for issue in issues}
+        self.assertIn("schema-invalid-contract-stage", issue_ids)
+        self.assertIn("schema-invalid-contract-capability", issue_ids)
+
+    def test_sanitization_report_allows_metadata_only_manifest_reseal(self):
+        issues: list[dict] = []
+        shared = {
+            "schema_version": 1,
+            "name": "example-skill",
+            "status": "trusted",
+            "risk_level": "low",
+            "taxonomy": {"category": "code", "subcategory": "code.review", "collection_priority": "P0"},
+            "source": {
+                "type": "local_folder",
+                "usage": "local_authoring",
+                "path": "example",
+                "url": "unknown",
+                "author": "unknown",
+                "license": "unknown",
+                "reference": "unknown",
+                "collected_by": "test",
+                "captured_at": "2026-07-10T00:00:00Z",
+            },
+            "required_verifiers": [],
+        }
+        manifest = {
+            **shared,
+            "hashes": {"source_sha256": "a" * 64, "sanitized_sha256": "b" * 64, "manifest_sha256": "c" * 64},
+        }
+        report = {
+            "schema_version": 1,
+            "skill_name": "example-skill",
+            "taxonomy": shared["taxonomy"],
+            "source": shared["source"],
+            "files": ["SKILL.md"],
+            "hashes": {"source_sha256": "a" * 64, "sanitized_sha256": "b" * 64, "manifest_sha256": "d" * 64},
+            "summary": {
+                "status": "trusted",
+                "risk_level": "low",
+                "removed_fragment_count": 0,
+                "rewritten_fragment_count": 0,
+                "unresolved_finding_count": 0,
+            },
+            "findings": [],
+            "required_verifiers": [],
+            "recommendation": "trusted",
+        }
+
+        validate_sanitization_report_schema(report, Path("SANITIZATION_REPORT.json"), manifest, issues)
+
+        self.assertNotIn("schema-report-hashes-mismatch", {issue["id"] for issue in issues})
+
     def test_validate_source_rejects_usage_that_conflicts_with_source_type(self):
         issues: list[dict] = []
         payload = {

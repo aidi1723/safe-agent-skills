@@ -3,21 +3,33 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
   "contract": {
+    "approval_classes": [
+      "shell_execution"
+    ],
     "capability_vector": [
       "engineering.ci"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "ci_check_report"
     ],
     "requires_context": [
       "regression_test_plan"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "verification"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "521d8200e1c2d4021fca764b6181d77490dd5945a7bf8cb3a956818a402d9889",
+    "manifest_sha256": "5d85728fe9db973a8ec59b0675ae78f70a7e5129f7f07a86dd4f4c9dfbd9cd48",
     "sanitized_sha256": "122be0bbe8768db145faf1bb25534643dc60e85aff6c8361795ced1e40119cb4",
     "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
   },

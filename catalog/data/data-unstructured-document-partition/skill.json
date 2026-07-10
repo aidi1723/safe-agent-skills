@@ -2,9 +2,34 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T09:25:50Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "data.document_partition"
+    ],
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": false,
+    "optional_context": [],
+    "produces_artifacts": [
+      "partitioned_document_corpus"
+    ],
+    "produces_evidence": [
+      "partition_quality_report"
+    ],
+    "requires_context": [
+      "source_documents"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "adeb8dee11ff62cb90f0c04452d5997d2d73e2358ea410bc3f97d279d9e42581",
+    "manifest_sha256": "b765a4686a338b2ac65830a9bd7eaf70f348a436c8dafbab77e8338c2b32415a",
     "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
     "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
   },

@@ -2,9 +2,34 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T10:12:52Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "data.rag_pipeline"
+    ],
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
+    "produces_artifacts": [
+      "rag_pipeline_plan"
+    ],
+    "produces_evidence": [
+      "retrieval_grounding_notes"
+    ],
+    "requires_context": [
+      "knowledge_sources"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "stage_hint": "planning"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "1ca4bf0ed97efc929e3ab07119a91fc255ed6971b2a3a9d00f1437c2756b4afa",
+    "manifest_sha256": "adbea1d8001c34a44b1f73172f0b872c49ec5153026139850d83dfbdf9d63ac3",
     "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
     "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
   },

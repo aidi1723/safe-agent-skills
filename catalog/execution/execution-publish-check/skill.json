@@ -3,10 +3,20 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
   "contract": {
+    "approval_classes": [
+      "publication"
+    ],
     "capability_vector": [
       "execution.publish_check"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [],
     "produces_evidence": [
       "publish_readiness_report"
     ],
@@ -15,11 +25,13 @@
       "ui_review_report",
       "browser_check_report"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "verification"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "0378d14ebd851e5c2ce5b9b6b67274dff26abc42734e842491f00c1604c9f4f5",
+    "manifest_sha256": "8b026a6b291b0c1254053658e259bcda78b4538bfc52ee8a9680cd979035a6f2",
     "sanitized_sha256": "e1600c4868599dfd83b65fcec7f3d8095ebe89fea416b4308faf41432624e1e8",
     "source_sha256": "55c003e53bc282b1ab8bb92064a351b1982e28c2c7449c8465812aa357f63c18"
   },

@@ -3,10 +3,20 @@
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:01:58Z",
   "contract": {
+    "approval_classes": [
+      "shell_execution"
+    ],
     "capability_vector": [
       "engineering.build_release"
     ],
     "cost_weight": 2,
+    "estimated_cost": {
+      "runtime": 1,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": false,
+    "optional_context": [],
     "produces_artifacts": [
       "build_artifact"
     ],
@@ -16,11 +26,13 @@
     "requires_context": [
       "requirements_brief"
     ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
     "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "124940912570f7cba5b1892f23fdca603696b802ecb2fbc06aa1786695e7f75d",
+    "manifest_sha256": "f77231eccc73b536635c02815494863135476b9957f5f4aedf554573990a60ba",
     "sanitized_sha256": "e81935509933bc35bf57216c0bfab7bfcefcbf4c8637d822f4ee8e45ad0a0fff",
     "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
   },
