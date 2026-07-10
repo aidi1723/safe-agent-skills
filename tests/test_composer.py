@@ -90,8 +90,8 @@ class ComposerTest(unittest.TestCase):
         self.assertEqual(
             composition.selections,
             (
-                ScenarioSelection("shared", ("i1", "i3"), 1.0, 19),
-                ScenarioSelection("other", ("i2",), 1.0, 8),
+                ScenarioSelection("shared", ("i1", "i3"), 1.0, 4),
+                ScenarioSelection("other", ("i2",), 1.0, 2),
             ),
         )
 
@@ -153,6 +153,26 @@ class ComposerTest(unittest.TestCase):
         self.assertEqual(composition.uncovered_intents, ("i1",))
         self.assertEqual(composition.status, "incomplete")
 
+    def test_forged_high_score_cannot_override_authoritative_intent_match(self):
+        graph = decompose_task("构建官网")
+        legitimate = retrieve_scenario_candidates(
+            graph, self.bundles_index, self.trusted_skill_names, top_n=1
+        )[0]
+        forged = ScenarioCandidate("i1", "open-source-release", 1.0, 999999)
+
+        composition = compose_scenarios(
+            graph,
+            (forged, legitimate),
+            self.bundles_index,
+            self.trusted_skill_names,
+        )
+
+        self.assertEqual(composition.status, "complete")
+        self.assertEqual(
+            [selection.scenario_id for selection in composition.selections],
+            ["website-build-launch"],
+        )
+
     @staticmethod
     def intent(intent_id):
         return Intent(
@@ -175,7 +195,9 @@ class ComposerTest(unittest.TestCase):
             "scenario": bundle_id,
             "status": "trusted",
             "task_signals": [],
-            "required_capabilities": [],
+            "required_capabilities": [
+                {"id": "requirements", "preferred_skills": []}
+            ],
             "skills": skills,
             "execution_order": list(skills),
         }

@@ -24,10 +24,14 @@ class ScenarioCandidate:
     def __post_init__(self) -> None:
         if not math.isfinite(self.score):
             raise ValueError("score must be finite")
+        if not 0 <= self.score <= 1:
+            raise ValueError("score must be between 0 and 1")
         if isinstance(self.deterministic_score, bool) or not isinstance(
             self.deterministic_score, int
         ):
             raise ValueError("deterministic_score must be an integer")
+        if self.deterministic_score < 0:
+            raise ValueError("deterministic_score must be nonnegative")
 
     def to_json(self) -> dict[str, Any]:
         return asdict(self)

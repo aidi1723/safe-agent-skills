@@ -7,6 +7,7 @@ from typing import Any
 
 from .candidates import ScenarioCandidate, trusted_scenario_map
 from .intent import IntentGraph
+from .router import build_profile_for_task_type, score_bundle_for_profile
 
 
 @dataclass(frozen=True)
@@ -37,24 +38,35 @@ def compose_scenarios(
     trusted_skill_names: set[str],
 ) -> ScenarioComposition:
     valid_scenarios = trusted_scenario_map(bundles_index, trusted_skill_names)
-    by_intent: dict[str, list[tuple[int, ScenarioCandidate]]] = {}
-    for index, candidate in enumerate(candidates):
-        if candidate.scenario_id not in valid_scenarios:
-            continue
-        by_intent.setdefault(candidate.intent_id, []).append((index, candidate))
-
     selected_by_intent: list[ScenarioCandidate] = []
     uncovered_intents: list[str] = []
     for intent in intent_graph.intents:
-        available = by_intent.get(intent.id, [])
+        profile = build_profile_for_task_type(intent.summary, intent.task_type)
+        authoritative = [
+            (
+                score_bundle_for_profile(valid_scenarios[candidate.scenario_id], profile),
+                candidate.scenario_id,
+            )
+            for candidate in candidates
+            if candidate.intent_id == intent.id
+            and candidate.scenario_id in valid_scenarios
+        ]
+        available = [item for item in authoritative if item[0] > 0]
         if not available:
             uncovered_intents.append(intent.id)
             continue
-        _, selected = min(
-            available,
-            key=lambda item: (-item[1].deterministic_score, item[1].scenario_id),
+        deterministic_score, scenario_id = min(
+            available, key=lambda item: (-item[0], item[1])
         )
-        selected_by_intent.append(selected)
+        maximum_score = max(item[0] for item in available)
+        selected_by_intent.append(
+            ScenarioCandidate(
+                intent_id=intent.id,
+                scenario_id=scenario_id,
+                score=deterministic_score / maximum_score,
+                deterministic_score=deterministic_score,
+            )
+        )
 
     merged: dict[str, dict[str, Any]] = {}
     for selected in selected_by_intent:

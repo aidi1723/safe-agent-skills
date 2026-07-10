@@ -271,6 +271,19 @@ class CandidateTest(unittest.TestCase):
                 ):
                     ScenarioCandidate("i1", "scenario", 1.0, deterministic_score)
 
+    def test_candidate_rejects_scores_outside_contract_range(self):
+        for score in [-0.01, 1.01]:
+            with self.subTest(score=score):
+                with self.assertRaisesRegex(
+                    ValueError, "^score must be between 0 and 1$"
+                ):
+                    ScenarioCandidate("i1", "scenario", score, 1)
+
+        with self.assertRaisesRegex(
+            ValueError, "^deterministic_score must be nonnegative$"
+        ):
+            ScenarioCandidate("i1", "scenario", 1.0, -1)
+
     def test_candidate_is_frozen_json_safe_and_does_not_mutate_inputs(self):
         graph = decompose_task("构建官网")
         bundles_index = copy.deepcopy(self.bundles_index)
