@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-07-10T22:25:57Z",
+  "generated_at": "2026-07-10T22:55:36Z",
   "schema_version": 1,
   "skill_count": 172,
   "skills": [
@@ -4237,8 +4237,9 @@
         "stage_hint": "review"
       },
       "hashes": {
-        "manifest_sha256": "de8629b55ef9780848d605bac2cc2af5f618c61173ca9eeeeb074d724c7291a5",
-        "sanitized_sha256": "22a8ebbcc112ea5bf446d37358822873ce585f6be3ca28ca9cc81e318e3804c9",
+        "auxiliary_sha256": "c50c90b6b7999f0a51fe47ca4de8f8a601288d9dd828ded2de12f84b1f6f4012",
+        "manifest_sha256": "d1e176c6a21713e2c8dd8f2de40476b30d0e3d3835c8399ce9c6f27be7c19bcc",
+        "sanitized_sha256": "d6447c1cb5d0254b2a67a630a5f273a1968e43151779e7406fce2c658db8367c",
         "source_sha256": "a43ea63e3339c6b698873a8cf4fc35d029d5eca618b5155989a0ba7dc30bb7ad"
       },
       "name": "design-ui-review",

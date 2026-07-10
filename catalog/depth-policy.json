@@ -3,6 +3,7 @@
   "schema_version": 1,
   "skills": {
     "compliance-privacy-check": "specialist",
+    "design-ui-review": "specialist",
     "engineering-build-release": "specialist",
     "security-supply-chain-review": "specialist"
   }
