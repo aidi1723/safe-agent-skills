@@ -27,9 +27,9 @@ def load_optional_skill_json(source_dir: Path) -> dict:
 
 
 def load_registry_index(registry_dir: Path) -> dict:
-    from .cli import load_registry_index as load_cli_registry_index
+    from .registry import load_registry_index as load_registry
 
-    return load_cli_registry_index(registry_dir)
+    return load_registry(registry_dir)
 
 
 def claude_skills_candidate_action(candidate: dict) -> str:

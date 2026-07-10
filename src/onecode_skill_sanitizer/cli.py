@@ -5,7 +5,6 @@ import json
 import math
 import re
 import tempfile
-from datetime import datetime, timezone
 from pathlib import Path
 
 from . import __version__
@@ -42,6 +41,20 @@ from .contracts import contract_coverage
 from .intent import decompose_task, normalize_task
 from .paths import resolve_project_asset_path
 from .references import validate_external_references
+from .registry import build_registry_index as build_registry_index
+from .registry import comparable_registry_index as comparable_registry_index
+from .registry import load_manifest as load_manifest
+from .registry import load_registry_index as load_registry_index
+from .registry import manifest_index_entry as manifest_index_entry
+from .registry import registry_index_staleness as registry_index_staleness
+from .registry import registry_root_for_skill_dir as registry_root_for_skill_dir
+from .registry import seal_manifest_file as seal_manifest_file
+from .registry import seal_registry_manifests as seal_registry_manifests
+from .registry import set_status_command as set_status_command
+from .registry import utc_now as utc_now
+from .registry import verify_registry as verify_registry
+from .registry import write_json as write_json
+from .registry import write_registry_index as write_registry_index
 from .rendering import markdown_safe_line as markdown_safe_line
 from .rendering import project_legacy_contracts
 from .rendering import render_task_pack_markdown
@@ -58,10 +71,8 @@ from .router import route_mesh_task, route_scenario_task
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .taxonomy import classify_skill, taxonomy_from_manifest
 from .validation import SOURCE_DEFAULT_USAGE_BY_TYPE
-from .validation import SOURCE_PROVENANCE_FIELDS
 from .validation import SOURCE_USAGE_VALUES
 from .validation import add_issue
-from .validation import manifest_sha256
 from .validation import seal_manifest
 from .validation import text_sha256
 from .validation import validate_manifest_schema
@@ -84,14 +95,6 @@ def build_claude_skills_bulk_drafts(
         batch_index,
         write_json,
     )
-
-def utc_now() -> str:
-    return datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z")
-
-
-def write_json(path: Path, payload: dict) -> None:
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-
 
 def load_optional_skill_json(source_dir: Path) -> dict:
     manifest_path = source_dir / "skill.json"
@@ -243,88 +246,6 @@ def sanitize_command(args: argparse.Namespace) -> int:
         raise SystemExit(f"source must be an existing directory: {source_dir}")
     sanitize_to_dir(source_dir, Path(args.out), args)
     return 0
-
-
-def load_manifest(skill_dir: Path) -> dict:
-    manifest_path = skill_dir / "skill.json"
-    if not manifest_path.exists():
-        raise SystemExit(f"missing skill manifest: {manifest_path}")
-    return json.loads(manifest_path.read_text(encoding="utf-8"))
-
-
-def manifest_index_entry(manifest: dict, registry_path: Path) -> dict:
-    entry = {
-        "name": manifest["name"],
-        "status": manifest["status"],
-        "risk_level": manifest["risk_level"],
-        "taxonomy": manifest["taxonomy"],
-        "source": manifest["source"],
-        "hashes": manifest["hashes"],
-        "registry_path": registry_path.as_posix(),
-    }
-    if isinstance(manifest.get("contract"), dict):
-        entry["contract"] = manifest["contract"]
-    return entry
-
-
-def seal_manifest_file(manifest_path: Path) -> dict:
-    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-    seal_manifest(manifest)
-    write_json(manifest_path, manifest)
-    return manifest
-
-
-def seal_registry_manifests(registry_dir: Path) -> None:
-    for manifest_path in sorted(registry_dir.glob("*/*/skill.json")):
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        issues: list[dict] = []
-        validate_manifest_schema(manifest, manifest_path, issues)
-        sealable_issue_ids = {"schema-missing-manifest-hash", "schema-manifest-hash-mismatch"}
-        if all(issue["id"] in sealable_issue_ids for issue in issues):
-            seal_manifest(manifest)
-            write_json(manifest_path, manifest)
-            report_path = manifest_path.parent / "SANITIZATION_REPORT.json"
-            if report_path.exists():
-                report = json.loads(report_path.read_text(encoding="utf-8"))
-                report.setdefault("hashes", {})["manifest_sha256"] = manifest["hashes"]["manifest_sha256"]
-                write_json(report_path, report)
-
-
-def write_registry_index(registry_dir: Path, seal_manifests: bool = False) -> dict:
-    if seal_manifests:
-        seal_registry_manifests(registry_dir)
-    index = build_registry_index(registry_dir)
-    registry_dir.mkdir(parents=True, exist_ok=True)
-    write_json(registry_dir / "index.json", index)
-    return index
-
-
-def build_registry_index(registry_dir: Path) -> dict:
-    skills = []
-    for manifest_path in sorted(registry_dir.glob("*/*/skill.json")):
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        skills.append(manifest_index_entry(manifest, manifest_path.parent.relative_to(registry_dir)))
-    return {
-        "schema_version": 1,
-        "generated_at": utc_now(),
-        "skill_count": len(skills),
-        "skills": skills,
-    }
-
-
-def load_registry_index(registry_dir: Path) -> dict:
-    index_path = registry_dir / "index.json"
-    if not index_path.exists():
-        return write_registry_index(registry_dir)
-    payload = json.loads(index_path.read_text(encoding="utf-8"))
-    if not isinstance(payload, dict):
-        raise ValueError("registry index must be an object")
-    skills = payload.get("skills")
-    if not isinstance(skills, list):
-        raise ValueError("registry index skills must be an array")
-    if any(not isinstance(entry, dict) for entry in skills):
-        raise ValueError("registry index skill entries must be objects")
-    return payload
 
 
 def import_command(args: argparse.Namespace) -> int:
@@ -1444,117 +1365,10 @@ def _safe_v2_error(exc: BaseException) -> dict[str, str]:
     return {"code": "invalid_input", "message": "Routing input or assets are invalid."}
 
 
-def verify_registry(registry_dir: Path) -> dict:
-    issues = []
-    trusted_count = 0
-    tampered_count = 0
-    unknown_provenance_count = 0
-    skill_count = 0
-    for manifest_path in sorted(registry_dir.glob("*/*/skill.json")):
-        skill_count += 1
-        skill_dir = manifest_path.parent
-        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        name = manifest.get("name", skill_dir.name)
-        if manifest.get("status") == "trusted":
-            trusted_count += 1
-
-        expected_manifest_hash = manifest.get("hashes", {}).get("manifest_sha256")
-        actual_manifest_hash = manifest_sha256(manifest)
-        if expected_manifest_hash != actual_manifest_hash:
-            tampered_count += 1
-            issues.append(
-                {
-                    "id": "manifest-hash-mismatch",
-                    "severity": "critical",
-                    "skill": name,
-                    "path": manifest_path.as_posix(),
-                }
-            )
-
-        skill_path = skill_dir / "SKILL.md"
-        expected_hash = manifest.get("hashes", {}).get("sanitized_sha256")
-        if not skill_path.exists():
-            tampered_count += 1
-            issues.append(
-                {
-                    "id": "sanitized-skill-missing",
-                    "severity": "critical",
-                    "skill": name,
-                    "path": skill_path.as_posix(),
-                }
-            )
-        else:
-            actual_hash = text_sha256(skill_path.read_text(encoding="utf-8"))
-            if actual_hash != expected_hash:
-                tampered_count += 1
-                issues.append(
-                    {
-                        "id": "sanitized-hash-mismatch",
-                        "severity": "critical",
-                        "skill": name,
-                        "path": skill_path.as_posix(),
-                    }
-                )
-
-        source = manifest.get("source", {})
-        if any(source.get(field, "unknown") == "unknown" for field in SOURCE_PROVENANCE_FIELDS):
-            unknown_provenance_count += 1
-            issues.append(
-                {
-                    "id": "unknown-provenance",
-                    "severity": "medium",
-                    "skill": name,
-                    "path": manifest_path.as_posix(),
-                }
-            )
-
-    return {
-        "schema_version": 1,
-        "generated_at": utc_now(),
-        "status": "failed" if issues else "ok",
-        "skill_count": skill_count,
-        "trusted_count": trusted_count,
-        "tampered_count": tampered_count,
-        "unknown_provenance_count": unknown_provenance_count,
-        "issues": issues,
-    }
-
-
 def verify_command(args: argparse.Namespace) -> int:
     result = verify_registry(resolve_project_asset_path(args.registry))
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0 if result["status"] == "ok" else 2
-
-
-def comparable_registry_index(index: dict) -> dict:
-    payload = dict(index)
-    payload.pop("generated_at", None)
-    return payload
-
-
-def registry_index_staleness(registry_dir: Path) -> list[dict]:
-    index_path = registry_dir / "index.json"
-    if not index_path.exists():
-        return [
-            {
-                "id": "registry-index-missing",
-                "severity": "high",
-                "path": index_path.as_posix(),
-            }
-        ]
-    existing = json.loads(index_path.read_text(encoding="utf-8"))
-    expected = build_registry_index(registry_dir)
-    if comparable_registry_index(existing) == comparable_registry_index(expected):
-        return []
-    return [
-        {
-            "id": "registry-index-stale",
-            "severity": "high",
-            "path": index_path.as_posix(),
-            "expected_skill_count": expected["skill_count"],
-            "actual_skill_count": existing.get("skill_count"),
-        }
-    ]
 
 
 def schema_check(registry_dir: Path) -> dict:
@@ -2608,49 +2422,6 @@ def audit_command(args: argparse.Namespace) -> int:
 
 def approve_command(args: argparse.Namespace) -> int:
     return set_status_command(args, "trusted")
-
-
-def registry_root_for_skill_dir(skill_dir: Path) -> Path | None:
-    if len(skill_dir.parts) < 2:
-        return None
-    registry_dir = skill_dir.parent.parent
-    if (registry_dir / "index.json").exists():
-        return registry_dir
-    return None
-
-
-def set_status_command(args: argparse.Namespace, status: str) -> int:
-    skill_dir = Path(args.skill_dir)
-    manifest = load_manifest(skill_dir)
-    now = utc_now()
-    manifest["status"] = status
-    if status == "trusted":
-        manifest["approved_at"] = now
-        manifest["approval_note"] = "Approved by local operator."
-    elif status == "rejected":
-        manifest["rejected_at"] = now
-        manifest["rejection_note"] = "Rejected by local operator."
-    elif status == "disabled":
-        manifest["disabled_at"] = now
-        manifest["disable_note"] = "Disabled by local operator."
-    seal_manifest(manifest)
-    write_json(skill_dir / "skill.json", manifest)
-    report_path = skill_dir / "SANITIZATION_REPORT.json"
-    if report_path.exists():
-        report = json.loads(report_path.read_text(encoding="utf-8"))
-        report["summary"]["status"] = status
-        report.setdefault("hashes", {})["manifest_sha256"] = manifest["hashes"]["manifest_sha256"]
-        if status == "trusted":
-            report["approved_at"] = manifest["approved_at"]
-        elif status == "rejected":
-            report["rejected_at"] = manifest["rejected_at"]
-        elif status == "disabled":
-            report["disabled_at"] = manifest["disabled_at"]
-        write_json(report_path, report)
-    registry_dir = registry_root_for_skill_dir(skill_dir)
-    if registry_dir is not None:
-        write_registry_index(registry_dir)
-    return 0
 
 
 def reject_command(args: argparse.Namespace) -> int:
