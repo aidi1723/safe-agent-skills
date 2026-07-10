@@ -1276,10 +1276,29 @@ def load_router_eval(eval_path: Path) -> dict:
     if not eval_path.exists():
         raise SystemExit(f"missing router eval file: {eval_path}")
     payload = json.loads(eval_path.read_text(encoding="utf-8"))
-    if payload.get("schema_version") != 1:
+    schema_version = payload.get("schema_version")
+    if schema_version not in {1, 2}:
         raise SystemExit(f"invalid router eval schema_version: {eval_path}")
     if not isinstance(payload.get("cases"), list):
         raise SystemExit(f"invalid router eval cases: {eval_path}")
+    if schema_version == 2:
+        dataset = payload.get("dataset")
+        if not isinstance(dataset, str) or not dataset:
+            raise SystemExit(f"invalid router eval dataset: {eval_path}")
+        split = payload.get("split")
+        if split != "regression":
+            raise SystemExit(f"invalid router eval split: {eval_path}")
+        case_count = payload.get("case_count")
+        if (
+            not isinstance(case_count, int)
+            or isinstance(case_count, bool)
+            or case_count != len(payload["cases"])
+        ):
+            raise SystemExit(f"invalid router eval case_count: {eval_path}")
+        case_ids = [case.get("id") if isinstance(case, dict) else None for case in payload["cases"]]
+        invalid_case_id = any(not isinstance(case_id, str) or not case_id for case_id in case_ids)
+        if invalid_case_id or len(case_ids) != len(set(case_ids)):
+            raise SystemExit(f"invalid router eval unique case id: {eval_path}")
     return payload
 
 

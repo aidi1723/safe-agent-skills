@@ -1,4 +1,5 @@
 import contextlib
+import hashlib
 import io
 import json
 import os
@@ -9,7 +10,39 @@ import unittest
 from pathlib import Path
 
 from onecode_skill_sanitizer.cli import claude_skills_candidate_sort_key
+from onecode_skill_sanitizer.cli import load_router_eval
 from onecode_skill_sanitizer.cli import main
+
+
+ROUTER_SCHEMA_V1_SHAPE_SHA256 = "c44cfd737c181a670152ee5400379c3686d428c877d2ba823b71d326804185e2"
+
+
+def normalized_payload_shape(value):
+    if isinstance(value, dict):
+        return {
+            key: normalized_payload_shape(item)
+            for key, item in sorted(value.items())
+            if key != "generated_at"
+        }
+    if isinstance(value, list):
+        return [normalized_payload_shape(item) for item in value]
+    if value is None:
+        return "null"
+    if isinstance(value, bool):
+        return "bool"
+    if isinstance(value, int):
+        return "int"
+    if isinstance(value, float):
+        return "float"
+    if isinstance(value, str):
+        return "str"
+    raise TypeError(f"unsupported payload value: {type(value).__name__}")
+
+
+def payload_shape_sha256(payload):
+    normalized = normalized_payload_shape(payload)
+    encoded = json.dumps(normalized, sort_keys=True, separators=(",", ":")).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()
 
 
 class RegistryCliTest(unittest.TestCase):
@@ -1814,6 +1847,68 @@ class RegistryCliTest(unittest.TestCase):
         result = json.loads(eval_out.getvalue())
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["failed_count"], 0)
+
+    def test_router_eval_v2_regression_envelope_runs_all_cases(self):
+        eval_path = Path("evals/router-quality-v2.json")
+        payload = load_router_eval(eval_path)
+
+        self.assertEqual(payload["schema_version"], 2)
+        self.assertEqual(payload["dataset"], "router-quality-v2-baseline")
+        self.assertEqual(payload["split"], "regression")
+        self.assertEqual(payload["case_count"], 43)
+        self.assertEqual(len(payload["cases"]), 43)
+
+        eval_out = io.StringIO()
+        with contextlib.redirect_stdout(eval_out):
+            eval_code = main(
+                [
+                    "router-eval",
+                    "--eval",
+                    str(eval_path),
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--max-skills",
+                    "10",
+                ]
+            )
+
+        self.assertEqual(eval_code, 0)
+        result = json.loads(eval_out.getvalue())
+        self.assertEqual(result["status"], "ok")
+        self.assertEqual(result["case_count"], 43)
+        self.assertEqual(result["passed_count"], 43)
+        self.assertEqual(result["failed_count"], 0)
+
+    def test_load_router_eval_v2_requires_valid_regression_envelope(self):
+        valid_case = {
+            "id": "website-launch",
+            "task": "build a product website and prepare launch checks",
+            "router": "scenario",
+        }
+        valid_payload = {
+            "schema_version": 2,
+            "dataset": "router-quality-v2-baseline",
+            "split": "regression",
+            "case_count": 1,
+            "cases": [valid_case],
+        }
+        invalid_payloads = {
+            "dataset": ({key: value for key, value in valid_payload.items() if key != "dataset"}, "dataset"),
+            "split": ({key: value for key, value in valid_payload.items() if key != "split"}, "split"),
+            "non_regression_split": ({**valid_payload, "split": "training"}, "split"),
+            "case_count": ({**valid_payload, "case_count": 2}, "case_count"),
+            "unique_ids": ({**valid_payload, "case_count": 2, "cases": [valid_case, dict(valid_case)]}, "unique case id"),
+        }
+
+        with tempfile.TemporaryDirectory() as tmp:
+            for name, (payload, expected_error) in invalid_payloads.items():
+                with self.subTest(name=name):
+                    eval_path = Path(tmp) / f"{name}.json"
+                    eval_path.write_text(json.dumps(payload), encoding="utf-8")
+                    with self.assertRaisesRegex(SystemExit, expected_error):
+                        load_router_eval(eval_path)
 
     def test_verify_registry_reports_tamper_and_unknown_provenance(self):
         with tempfile.TemporaryDirectory() as tmp:
@@ -3928,6 +4023,36 @@ class RegistryCliTest(unittest.TestCase):
         self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
         self.assertIn("selection_trace", payload)
         self.assertIn("completion_contract", payload)
+        self.assertEqual(payload_shape_sha256(payload), ROUTER_SCHEMA_V1_SHAPE_SHA256)
+
+    def test_task_pack_mesh_schema_v1_preserves_current_contract_shape(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "task-pack",
+                    "build a landing page and prepare launch checks",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                    "--router",
+                    "mesh",
+                    "--max-skills",
+                    "8",
+                    "--include-bundles",
+                    "--schema-version",
+                    "1",
+                    "--format",
+                    "json",
+                ]
+            )
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["schema_version"], 1)
+        self.assertEqual(payload["router"]["mode"], "deterministic_mesh_router")
+        self.assertEqual(payload["selected_scenario"]["id"], "website-build-launch")
+        self.assertEqual(payload_shape_sha256(payload), ROUTER_SCHEMA_V1_SHAPE_SHA256)
 
     def test_smart_schema_v2_temporarily_returns_current_v1_contract(self):
         out = io.StringIO()
