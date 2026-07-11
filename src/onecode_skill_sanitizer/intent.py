@@ -13,6 +13,7 @@ from .intent_spans import (
     split_profile_enumeration,
 )
 from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
+from .routing_profiles import MAX_SCAN_CHARACTERS, is_design_governance_composite
 
 
 _LIST_MARKER_RE = re.compile(
@@ -57,6 +58,9 @@ _NON_ACTION_RELEASE_TERM_RE = re.compile(
     r"\bbefore\s+(?:pushing|push)(?:\s+(?:changes\s+to\s+github|"
     r"the\s+repository(?:\s+to\s+github)?|to\s+github))?\b",
     re.IGNORECASE,
+)
+_RELEASE_POLARITY_BOUNDARY_RE = re.compile(
+    r"\bbut\b|但是|但要", re.IGNORECASE
 )
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
@@ -228,11 +232,15 @@ def _split_list_items(text: str) -> list[str]:
 
 
 def classify_intent(clause: str, index: int) -> Intent:
-    release_action = _is_release_action(clause)
-    routing_clause = clause if release_action else _routing_clause_without_non_action_release_terms(clause)
+    scanned_clause = clause[:MAX_SCAN_CHARACTERS]
+    release_action = _is_release_action(scanned_clause)
+    routing_clause = (
+        scanned_clause
+        if release_action
+        else _routing_clause_without_non_action_release_terms(scanned_clause)
+    )
     profile = build_task_profile(routing_clause)
-    lowered_clause = routing_clause.lower()
-    if "design system" in lowered_clause and "component states" in lowered_clause:
+    if is_design_governance_composite(routing_clause):
         profile = build_profile_for_task_type(
             routing_clause, "design_md_system_governance"
         )
@@ -256,7 +264,9 @@ def classify_intent(clause: str, index: int) -> Intent:
 
 
 def decompose_task_detailed(task: str) -> TaskDecomposition:
-    broad_clauses = split_task_clauses(task)
+    current = normalize_task(task).current
+    task_scan_limit_exceeded = len(current) > MAX_SCAN_CHARACTERS
+    broad_clauses = split_task_clauses(current[:MAX_SCAN_CHARACTERS])
     clauses: list[str] = []
     observed_candidate_count = 0
     candidate_signal_limit_exceeded = False
@@ -314,6 +324,8 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
         intents.append(intent)
     intent_graph = IntentGraph(intents=tuple(intents), unresolved_dependencies=())
     reason_codes: list[str] = []
+    if task_scan_limit_exceeded:
+        reason_codes.append("task_scan_limit_exceeded")
     if candidate_signal_limit_exceeded:
         reason_codes.append("candidate_signal_limit_exceeded")
     if intent_limit_exceeded:
@@ -348,14 +360,19 @@ def _deterministic_confidence(matched_signal_score: int, task_type: str) -> floa
 
 
 def _is_release_action(clause: str) -> bool:
-    if _RELEASE_NEGATION_RE.search(clause) or _RELEASE_PRECONDITION_RE.search(clause):
-        return False
-    return bool(
-        _RELEASE_BOUNDARY_RE.search(clause)
-        or _CHINESE_RELEASE_ACTION_RE.search(clause)
-        or _ENGLISH_RELEASE_ACTION_RE.search(clause)
-        or _EXPLICIT_PUSH_ACTION_RE.search(clause)
-    )
+    for segment in _RELEASE_POLARITY_BOUNDARY_RE.split(clause):
+        if _RELEASE_NEGATION_RE.search(segment) or _RELEASE_PRECONDITION_RE.search(
+            segment
+        ):
+            continue
+        if (
+            _RELEASE_BOUNDARY_RE.search(segment)
+            or _CHINESE_RELEASE_ACTION_RE.search(segment)
+            or _ENGLISH_RELEASE_ACTION_RE.search(segment)
+            or _EXPLICIT_PUSH_ACTION_RE.search(segment)
+        ):
+            return True
+    return False
 
 
 def _routing_clause_without_non_action_release_terms(clause: str) -> str:

@@ -146,6 +146,28 @@ class IntentSpansTest(unittest.TestCase):
             ],
         )
 
+    def test_unicode_case_expansion_preserves_original_offsets_and_summaries(self):
+        result = decompose_task_detailed("İİİİİ landing page, code review")
+
+        self.assertEqual(
+            [intent.task_type for intent in result.intent_graph.intents],
+            ["website_build", "code_review"],
+        )
+        self.assertIn("landing page", result.intent_graph.intents[0].summary)
+        self.assertIn("code review", result.intent_graph.intents[1].summary)
+
+    def test_unmatched_connector_local_requirement_attaches_to_preceding_intent(self):
+        result = decompose_task_detailed(
+            "Build a landing page, with dark mode, and analyze a spreadsheet"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in result.intent_graph.intents],
+            ["website_build", "data_analysis"],
+        )
+        self.assertIn("dark mode", result.intent_graph.intents[0].summary)
+        self.assertIn("spreadsheet", result.intent_graph.intents[1].summary)
+
     def test_merge_same_profile_spans_combines_adjacent_or_overlapping_spans(self):
         spans = (
             ProfileSignalSpan(0, 9, "website_build", "ui design", 4),
@@ -251,6 +273,18 @@ class IntentSpansTest(unittest.TestCase):
                     ["website_build", "data_analysis"],
                 )
 
+    def test_additional_chinese_negators_have_bounded_scope(self):
+        for negator in ["不做", "不需要"]:
+            task = f"构建网站，{negator}代码审查，分析表格"
+            with self.subTest(task=task):
+                self.assertEqual(
+                    [
+                        intent.task_type
+                        for intent in decompose_task_detailed(task).intent_graph.intents
+                    ],
+                    ["website_build", "data_analysis"],
+                )
+
     def test_candidate_signal_limit_is_explicit_and_incomplete(self):
         task = ", ".join(["SEO"] * 129)
         result = decompose_task_detailed(task)
@@ -313,6 +347,45 @@ class IntentSpansTest(unittest.TestCase):
         self.assertEqual(observed, 129)
         self.assertTrue(exceeded)
         self.assertLessEqual(constructed, 129)
+
+    def test_no_match_scan_attempts_and_diagnostics_are_bounded(self):
+        class CountingText(str):
+            scan_attempts = 0
+
+            def lower(self):
+                return self
+
+            def __getitem__(self, key):
+                value = super().__getitem__(key)
+                return type(self)(value) if isinstance(key, slice) else value
+
+            def __iter__(self):
+                for character in super().__iter__():
+                    type(self).scan_attempts += 1
+                    yield character
+
+        text = CountingText("x" * 25001)
+
+        self.assertEqual(list(routing_profiles.iter_profile_signal_matches(text)), [])
+        self.assertLessEqual(CountingText.scan_attempts, 20000)
+
+        result = decompose_task_detailed(str(text))
+        self.assertEqual(result.diagnostics.reason_codes, ("task_scan_limit_exceeded",))
+        self.assertEqual(result.diagnostics.status, "incomplete")
+
+    def test_scan_limit_is_global_across_strong_clauses(self):
+        task = f"{'x' * 10001}; {'y' * 10001}, landing page, code review"
+        result = decompose_task_detailed(task)
+
+        self.assertNotIn(
+            "website_build",
+            [intent.task_type for intent in result.intent_graph.intents],
+        )
+        self.assertNotIn(
+            "code_review",
+            [intent.task_type for intent in result.intent_graph.intents],
+        )
+        self.assertIn("task_scan_limit_exceeded", result.diagnostics.reason_codes)
 
     def test_intent_limit_keeps_at_most_twelve_and_is_explicit(self):
         task = ", ".join(

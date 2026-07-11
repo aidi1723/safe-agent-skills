@@ -791,6 +791,13 @@ PROFILE_SIGNAL_ALIASES = {
     "document_knowledge_base": ("docx", "DOCX", "PDF/DOCX"),
 }
 
+MAX_SCAN_CHARACTERS = 20_000
+
+
+def is_design_governance_composite(text: str) -> bool:
+    lowered = text.lower()
+    return "design system" in lowered and "component states" in lowered
+
 
 def _build_profile_signals_by_prefix() -> dict[str, tuple[tuple[str, str, int, int], ...]]:
     by_prefix: dict[str, list[tuple[str, str, int, int]]] = {}
@@ -825,13 +832,16 @@ _PROFILE_SIGNALS_BY_PREFIX = _build_profile_signals_by_prefix()
 
 def iter_profile_signal_matches(text: str) -> Iterator[dict[str, object]]:
     """Return deterministic configured-profile matches with source offsets."""
-    lowered = text.lower()
-    for start, prefix in enumerate(lowered):
+    source = text[:MAX_SCAN_CHARACTERS]
+    for start, source_character in enumerate(source):
+        prefix = source_character.lower()
+        if len(prefix) != 1:
+            continue
         for signal, task_type, score, _ in _PROFILE_SIGNALS_BY_PREFIX.get(prefix, ()):
-            if not lowered.startswith(signal, start):
-                continue
             end = start + len(signal)
-            if not _short_ascii_signal_has_boundaries(lowered, start, end, signal):
+            if end > len(source) or source[start:end].lower() != signal:
+                continue
+            if not _short_ascii_signal_has_boundaries(source, start, end, signal):
                 continue
             yield _profile_signal_match_item(start, end, task_type, signal, score)
 

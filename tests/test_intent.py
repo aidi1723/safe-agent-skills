@@ -180,6 +180,18 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(intent.task_type, "open_source_release")
                 self.assertEqual(intent.required_artifacts, ("release_record",))
 
+    def test_mixed_release_polarity_is_evaluated_per_adversative_segment(self):
+        for task in [
+            "Do not push to GitHub, but publish the update",
+            "Publish the update, but do not push to GitHub",
+            "不要推送 GitHub，但是发布更新",
+            "发布更新，但要不推送 GitHub",
+        ]:
+            with self.subTest(task=task):
+                intent = decompose_task(task).intents[0]
+                self.assertEqual(intent.task_type, "open_source_release")
+                self.assertEqual(intent.required_artifacts, ("release_record",))
+
     def test_ambiguous_english_and_phrases_remain_single_intents(self):
         for task in [
             "Research and Development roadmap",

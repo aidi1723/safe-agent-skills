@@ -3,7 +3,11 @@
 from dataclasses import dataclass
 import re
 
-from .routing_profiles import SCENARIO_PROFILES, iter_profile_signal_matches
+from .routing_profiles import (
+    SCENARIO_PROFILES,
+    is_design_governance_composite,
+    iter_profile_signal_matches,
+)
 
 
 MAX_CANDIDATE_SIGNALS = 128
@@ -35,7 +39,7 @@ _CONNECTOR_RE = re.compile(
     re.IGNORECASE,
 )
 _NEGATION_MARKER_RE = re.compile(
-    r"\b(?:do\s+not|don't|never)\b|(?:不要|不得|禁止|无需|暂不|先不|别)",
+    r"\b(?:do\s+not|don't|never)\b|(?:不需要|不要|不得|禁止|无需|暂不|先不|不做|别)",
     re.IGNORECASE,
 )
 _PUNCTUATION_BOUNDARY_RE = re.compile(r"[,，;；]")
@@ -135,8 +139,7 @@ def split_profile_enumeration(
         clause, candidate_limit
     )
     spans = merge_same_profile_spans(spans)
-    lowered = clause.lower()
-    if "design system" in lowered and "component states" in lowered:
+    if is_design_governance_composite(clause):
         spans = tuple(
             span
             for span in spans
@@ -164,38 +167,72 @@ def split_profile_enumeration(
     if start < len(clause):
         pieces.append((start, len(clause), clause[start:].strip()))
 
-    assigned: list[tuple[int, int, str, str]] = []
+    negation_ranges = _coordinated_negation_ranges(clause)
+    piece_assignments: list[str] = []
     for piece_start, piece_end, text in pieces:
         if not text:
+            piece_assignments.append("")
             continue
         piece_spans = [
             span
             for span in spans
             if span.start < piece_end and span.end > piece_start
         ]
-        task_type = _unique_piece_winner(piece_spans)
-        if task_type:
-            assigned.append((piece_start, piece_end, text, task_type))
+        piece_assignments.append(_unique_piece_winner(piece_spans))
 
-    if len({item[3] for item in assigned}) < 2:
+    for piece_index, (piece_start, piece_end, _) in enumerate(pieces):
+        if piece_assignments[piece_index] or _range_is_negated(
+            piece_start, piece_end, negation_ranges
+        ):
+            continue
+        preceding = next(
+            (
+                piece_assignments[index]
+                for index in range(piece_index - 1, -1, -1)
+                if piece_assignments[index]
+            ),
+            "",
+        )
+        following = next(
+            (
+                piece_assignments[index]
+                for index in range(piece_index + 1, len(pieces))
+                if piece_assignments[index]
+            ),
+            "",
+        )
+        piece_assignments[piece_index] = preceding or following
+
+    assigned = [
+        (piece_index, piece_start, piece_end, text, piece_assignments[piece_index])
+        for piece_index, (piece_start, piece_end, text) in enumerate(pieces)
+        if piece_assignments[piece_index]
+    ]
+
+    if len({item[4] for item in assigned}) < 2:
         return SpanDecomposition((clause,), observed, candidate_limit_exceeded, False)
 
-    local_groups: list[tuple[int, int, str, str]] = []
-    for piece_start, piece_end, text, task_type in assigned:
-        if local_groups and local_groups[-1][3] == task_type:
-            group_start, _, _, _ = local_groups[-1]
+    local_groups: list[tuple[int, int, int, str, str]] = []
+    for piece_index, piece_start, piece_end, text, task_type in assigned:
+        if (
+            local_groups
+            and local_groups[-1][4] == task_type
+            and local_groups[-1][0] == piece_index - 1
+        ):
+            _, group_start, _, _, _ = local_groups[-1]
             local_groups[-1] = (
+                piece_index,
                 group_start,
                 piece_end,
                 clause[group_start:piece_end].strip(),
                 task_type,
             )
         else:
-            local_groups.append((piece_start, piece_end, text, task_type))
+            local_groups.append((piece_index, piece_start, piece_end, text, task_type))
 
     task_order: list[str] = []
     summaries: dict[str, list[str]] = {}
-    for _, _, text, task_type in local_groups:
+    for _, _, _, text, task_type in local_groups:
         if task_type not in summaries:
             task_order.append(task_type)
             summaries[task_type] = []
@@ -253,7 +290,7 @@ def _is_negated_enumeration(clause: str) -> bool:
     stripped = clause.lstrip()
     return bool(
         re.match(r"(?:do\s+not|don't|never)\b", stripped, re.IGNORECASE)
-        or re.match(r"(?:不要|不得|禁止|无需|暂不|先不|别)", stripped)
+        or re.match(r"(?:不需要|不要|不得|禁止|无需|暂不|先不|不做|别)", stripped)
     )
 
 
@@ -281,6 +318,12 @@ def _coordinated_negation_ranges(clause: str) -> tuple[tuple[int, int], ...]:
 
 def _offset_is_negated(start: int, ranges: tuple[tuple[int, int], ...]) -> bool:
     return any(range_start <= start < range_end for range_start, range_end in ranges)
+
+
+def _range_is_negated(
+    start: int, end: int, ranges: tuple[tuple[int, int], ...]
+) -> bool:
+    return any(start < range_end and end > range_start for range_start, range_end in ranges)
 
 
 def _positive_prefix_before_coordinated_negation(clause: str) -> str:
