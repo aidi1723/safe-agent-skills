@@ -4,12 +4,13 @@ from __future__ import annotations
 
 from collections import defaultdict, deque
 import re
+from types import MappingProxyType
 from typing import Any
 
 from .candidates import referenced_skill_names, validate_bundles_index
 from .composer import ScenarioComposition
 from .intent import IntentGraph, IntentRelation
-from .router import pipeline_stage_for_skill
+from .router import PIPELINE_STAGE_ORDER, pipeline_stage_for_skill
 from .routing_profiles import SCENARIO_PROFILES
 
 
@@ -22,6 +23,7 @@ def compile_execution_graph(
     composition: ScenarioComposition,
     bundles_index: dict,
     trusted_skill_names: set[str],
+    stage_by_skill: dict[str, str] | MappingProxyType | None = None,
 ) -> dict[str, Any]:
     reason_codes: list[str] = []
     details: list[str] = []
@@ -39,6 +41,10 @@ def compile_execution_graph(
         and all(isinstance(name, str) for name in trusted_skill_names)
         else set()
     )
+    validated_stages = _validated_stage_map(stage_by_skill, trusted_names)
+    if validated_stages is None:
+        _add_reason(reason_codes, "invalid_stage_map")
+        return _result(False, [], [], reason_codes, details)
 
     scenario_orders: dict[str, tuple[str, ...]] = {}
     for selection in selections:
@@ -63,6 +69,19 @@ def compile_execution_graph(
         ):
             _add_reason(reason_codes, "untrusted_scenario")
             continue
+        if stage_by_skill is not None:
+            original_rank = {name: rank for rank, name in enumerate(execution_order)}
+            stage_rank = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}
+            execution_order = sorted(
+                execution_order,
+                key=lambda name: (
+                    stage_rank[
+                        validated_stages.get(name, pipeline_stage_for_skill(name))
+                    ],
+                    original_rank[name],
+                    name,
+                ),
+            )
         scenario_orders[scenario_id] = tuple(execution_order)
 
     if _has_fatal_precompile_reason(reason_codes):
@@ -100,7 +119,9 @@ def compile_execution_graph(
                     "intent_ids": [intent_id],
                     "scenario_ids": [scenario_id],
                     "skill": skill_name,
-                    "stage": pipeline_stage_for_skill(skill_name),
+                    "stage": validated_stages.get(
+                        skill_name, pipeline_stage_for_skill(skill_name)
+                    ),
                     "host_action": skill_name.startswith("execution-"),
                 }
             )
@@ -154,6 +175,31 @@ def compile_execution_graph(
     if not acyclic:
         _add_reason(reason_codes, "dependency_cycle")
     return _result(acyclic, nodes, edges, reason_codes, details)
+
+
+def _validated_stage_map(
+    stage_by_skill: dict[str, str] | MappingProxyType | None,
+    trusted_skill_names: set[str],
+) -> dict[str, str] | None:
+    if stage_by_skill is None:
+        return {}
+    if type(stage_by_skill) not in {dict, MappingProxyType}:
+        return None
+    if set(stage_by_skill) != trusted_skill_names:
+        return None
+    stages = set(PIPELINE_STAGE_ORDER)
+    result: dict[str, str] = {}
+    for skill_name, stage in stage_by_skill.items():
+        if (
+            type(skill_name) is not str
+            or not skill_name.strip()
+            or skill_name not in trusted_skill_names
+            or type(stage) is not str
+            or stage not in stages
+        ):
+            return None
+        result[skill_name] = stage
+    return result
 
 
 def _requires_verified_dependency(

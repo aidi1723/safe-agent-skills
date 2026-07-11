@@ -97,7 +97,6 @@ from .task_packs import TASK_PROFILE_CATEGORY_VALUES as TASK_PROFILE_CATEGORY_VA
 from .task_packs import _build_v2_capability_resolution as _build_v2_capability_resolution
 from .task_packs import _extend_v2_graph_with_invariants as _extend_v2_graph_with_invariants
 from .task_packs import _json_asset_content_hash as _json_asset_content_hash
-from .task_packs import _normalize_v2_graph_stages as _normalize_v2_graph_stages
 from .task_packs import _routing_status as _routing_status
 from .task_packs import _safe_v2_error as _safe_v2_error
 from .task_packs import _v2_skill_host_action as _v2_skill_host_action

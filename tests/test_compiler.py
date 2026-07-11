@@ -494,6 +494,77 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["status"], "blocked")
         self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
 
+    def test_trusted_contract_stage_map_supplies_release_verification_anchor(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent(
+                    "i2", depends_on=("i1",), task_type="open_source_release"
+                ),
+            ),
+            unresolved_dependencies=(),
+        )
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["research-source-check"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+        trusted = {"research-source-check", "execution-publish-check"}
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            bundles,
+            trusted,
+            stage_by_skill={
+                "research-source-check": "verification",
+                "execution-publish-check": "verification",
+            },
+        )
+
+        self.assertEqual(compiled["status"], "ready")
+        self.assertTrue(compiled["acyclic"])
+        self.assertEqual(compiled["reason_codes"], [])
+        self.assertIn(
+            {
+                "from": "skill:i1:research-source-check",
+                "to": "skill:i2:execution-publish-check",
+                "type": "intent_verification_dependency",
+            },
+            compiled["edges"],
+        )
+        self.assertEqual(compiled["nodes"][0]["stage"], "verification")
+
+    def test_contract_stage_map_boundary_rejects_malformed_or_untrusted_entries(self):
+        graph = IntentGraph((self.intent("i1"),), ())
+        bundles = {"bundles": [self.bundle("first", ["research-source-check"])]}
+        trusted = {"research-source-check"}
+        cases = [
+            True,
+            [],
+            {},
+            {"research-source-check": True},
+            {"research-source-check": "unknown-stage"},
+            {"untrusted-source-check": "verification"},
+            {"": "verification"},
+        ]
+
+        for stage_by_skill in cases:
+            with self.subTest(stage_by_skill=stage_by_skill):
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(("i1",)),
+                    bundles,
+                    trusted,
+                    stage_by_skill=stage_by_skill,
+                )
+
+                self.assertEqual(compiled["status"], "blocked")
+                self.assertEqual(compiled["reason_codes"], ["invalid_stage_map"])
+                self.assertEqual(compiled["nodes"], [])
+                self.assertEqual(compiled["edges"], [])
+
     def test_release_target_rejects_false_internal_verification_metadata(self):
         graph = IntentGraph(
             intents=(

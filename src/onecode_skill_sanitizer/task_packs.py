@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from types import MappingProxyType
 
 from . import __version__
 from .candidates import retrieve_scenario_candidates
@@ -12,7 +13,10 @@ from .compatibility import build_route_identity_payload
 from .compatibility import to_legacy_v1
 from .compiler import compile_execution_graph
 from .composer import compose_scenarios
-from .intent import decompose_task, normalize_task
+from .intent import DecompositionDiagnostics
+from .intent import IntentGraph
+from .intent import TaskDecomposition
+from .intent import decompose_task_detailed, normalize_task
 from .registry import load_registry_index
 from .registry import manifest_index_entry
 from .registry import utc_now
@@ -572,31 +576,32 @@ def build_task_pack_v2(
         overlap_policy = "validated_not_applied"
     trusted_names = trusted_skill_names(registry_dir)
     normalized_task = normalize_task(task)
-    intent_graph = decompose_task(task)
+    decomposition = decompose_task_detailed(task)
+    intent_graph, decomposition_diagnostics = _validated_decomposition(decomposition)
     candidates = retrieve_scenario_candidates(intent_graph, bundles_index, trusted_names)
     composition = compose_scenarios(intent_graph, candidates, bundles_index, trusted_names)
-    execution_graph = compile_execution_graph(intent_graph, composition, bundles_index, trusted_names)
-    invariant_capabilities = parse_invariant_capabilities(invariants)
-    invariant_skill_names = capability_skill_names(invariant_capabilities, trusted_names)
-
     trusted_items = {
         item["name"]: item
         for item in load_trusted_skill_pack_items(registry_dir)
         if item["name"] in trusted_names
     }
-    stage_by_skill = {
-        name: _v2_skill_stage(item)
-        for name, item in trusted_items.items()
-    }
+    stage_by_skill = MappingProxyType(
+        {name: _v2_skill_stage(item) for name, item in trusted_items.items()}
+    )
     host_action_by_skill = {
         name: _v2_skill_host_action(item)
         for name, item in trusted_items.items()
     }
-    execution_graph = _normalize_v2_graph_stages(
-        execution_graph,
+    execution_graph = compile_execution_graph(
+        intent_graph,
+        composition,
+        bundles_index,
+        trusted_names,
         stage_by_skill,
-        host_action_by_skill,
     )
+    execution_graph = _apply_v2_graph_host_actions(execution_graph, host_action_by_skill)
+    invariant_capabilities = parse_invariant_capabilities(invariants)
+    invariant_skill_names = capability_skill_names(invariant_capabilities, trusted_names)
     execution_graph = _extend_v2_graph_with_invariants(
         execution_graph,
         invariant_capabilities,
@@ -641,7 +646,12 @@ def build_task_pack_v2(
         invariant_capabilities,
         stage_by_skill,
     )
-    routing_status = _routing_status(composition.status, capability_resolution, execution_graph)
+    routing_status = _routing_status(
+        composition.status,
+        capability_resolution,
+        execution_graph,
+        decomposition.diagnostics.status,
+    )
     provider = {
         "requested": "none",
         "used": "none",
@@ -681,7 +691,7 @@ def build_task_pack_v2(
         overlap_content_hash=(
             build_canonical_content_hash(overlap_groups) if overlap_groups is not None else "none"
         ),
-        router_version="hybrid-router-v2-first-milestone",
+        router_version="hybrid-router-v2-quality-remediation",
         package_version=__version__,
     )
     payload = {
@@ -710,6 +720,7 @@ def build_task_pack_v2(
             "optional_skills_selected": 0,
             "required_skills_omitted": missing_graph_skills,
             "overlap_policy": overlap_policy,
+            "decomposition": decomposition_diagnostics,
         },
         "registry_verification": verification,
         "compatibility": {},
@@ -881,70 +892,37 @@ def _extend_v2_graph_with_invariants(
 
 def _v2_skill_stage(skill: dict) -> str:
     contract = skill.get("contract")
-    if isinstance(contract, dict) and contract.get("stage_hint") in PIPELINE_STAGE_ORDER:
-        return contract["stage_hint"]
+    if isinstance(contract, dict):
+        stage_hint = contract.get("stage_hint")
+        if stage_hint == "execution":
+            return "production"
+        if stage_hint in PIPELINE_STAGE_ORDER:
+            return stage_hint
     return pipeline_stage_for_skill(skill.get("name", ""))
 
 def _v2_skill_host_action(skill: dict) -> bool:
     contract = skill.get("contract")
     return bool(contract.get("approval_classes")) if isinstance(contract, dict) else False
 
-def _normalize_v2_graph_stages(
+def _apply_v2_graph_host_actions(
     execution_graph: dict,
-    stage_by_skill: dict[str, str],
     host_action_by_skill: dict[str, bool],
 ) -> dict:
     graph = dict(execution_graph)
-    nodes = [
+    graph["nodes"] = [
         {
             **node,
-            "stage": stage_by_skill.get(node.get("skill", ""), node.get("stage", "production")),
             "host_action": host_action_by_skill.get(node.get("skill", ""), False),
         }
         for node in execution_graph.get("nodes", [])
     ]
-    rank_by_stage = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}
-    original_rank = {node["id"]: rank for rank, node in enumerate(nodes)}
-    nodes_by_intent: dict[str, list[dict]] = {}
-    for node in nodes:
-        intent_ids = node.get("intent_ids", [])
-        if len(intent_ids) == 1:
-            nodes_by_intent.setdefault(intent_ids[0], []).append(node)
-    edges = [
-        dict(edge)
-        for edge in execution_graph.get("edges", [])
-        if edge.get("type") != "scenario_order"
-    ]
-    for intent_id in sorted(nodes_by_intent):
-        ordered = sorted(
-            nodes_by_intent[intent_id],
-            key=lambda node: (
-                rank_by_stage.get(node["stage"], len(rank_by_stage)),
-                original_rank[node["id"]],
-                node["id"],
-            ),
-        )
-        edges.extend(
-            {"from": source["id"], "to": target["id"], "type": "scenario_order"}
-            for source, target in zip(ordered, ordered[1:])
-        )
-    graph["nodes"] = nodes
-    graph["edges"] = sorted(
-        (
-            {"from": source, "to": target, "type": edge_type}
-            for source, target, edge_type in {
-                (edge["from"], edge["to"], edge["type"])
-                for edge in edges
-            }
-        ),
-        key=lambda edge: (edge["from"], edge["to"], edge["type"]),
-    )
     return graph
 
 def _routing_status(
     composition_status: str,
     capability_resolution: dict,
     execution_graph: dict,
+    decomposition_status: str = "complete",
 ) -> str:
     reason_codes = set(execution_graph.get("reason_codes", []))
     composition_only_block = reason_codes == {"incomplete_composition"} and composition_status != "complete"
@@ -952,11 +930,69 @@ def _routing_status(
         return "blocked"
     if (
         composition_status != "complete"
+        or decomposition_status != "complete"
         or capability_resolution.get("status") != "complete"
         or capability_resolution.get("missing_required_count", 0) > 0
     ):
         return "incomplete"
     return "complete" if execution_graph.get("status") == "ready" else "blocked"
+
+
+def _validated_decomposition(
+    decomposition: TaskDecomposition,
+) -> tuple[IntentGraph, dict]:
+    if type(decomposition) is not TaskDecomposition:
+        raise ValueError("detailed decomposition must use the TaskDecomposition contract")
+    if type(decomposition.intent_graph) is not IntentGraph:
+        raise ValueError("detailed decomposition must contain an IntentGraph")
+    diagnostics = decomposition.diagnostics
+    if type(diagnostics) is not DecompositionDiagnostics:
+        raise ValueError("detailed decomposition must contain decomposition diagnostics")
+
+    payload = diagnostics.to_json()
+    expected_keys = {
+        "mode",
+        "observed_candidate_count",
+        "emitted_intent_count",
+        "candidate_signal_limit_exceeded",
+        "intent_limit_exceeded",
+        "reason_codes",
+    }
+    if set(payload) != expected_keys:
+        raise ValueError("decomposition diagnostics shape is invalid")
+    if payload["mode"] not in {"single_clause", "strong_clauses", "profile_spans"}:
+        raise ValueError("decomposition diagnostics mode is invalid")
+    for key in ("observed_candidate_count", "emitted_intent_count"):
+        maximum = 129 if key == "observed_candidate_count" else 12
+        if type(payload[key]) is not int or not 0 <= payload[key] <= maximum:
+            raise ValueError("decomposition diagnostics count is invalid")
+    if payload["emitted_intent_count"] != len(decomposition.intent_graph.intents):
+        raise ValueError("decomposition diagnostics intent count is inconsistent")
+    if payload["emitted_intent_count"] > 12:
+        raise ValueError("decomposition diagnostics intent count exceeds the limit")
+    for key in ("candidate_signal_limit_exceeded", "intent_limit_exceeded"):
+        if type(payload[key]) is not bool:
+            raise ValueError("decomposition diagnostics limit flag is invalid")
+
+    reason_codes = payload["reason_codes"]
+    reason_order = (
+        "task_scan_limit_exceeded",
+        "candidate_signal_limit_exceeded",
+        "intent_limit_exceeded",
+        "ambiguous_profile_enumeration",
+    )
+    if (
+        not isinstance(reason_codes, list)
+        or reason_codes != [code for code in reason_order if code in reason_codes]
+    ):
+        raise ValueError("decomposition diagnostics reason codes are invalid")
+    if payload["candidate_signal_limit_exceeded"] != (
+        "candidate_signal_limit_exceeded" in reason_codes
+    ):
+        raise ValueError("decomposition diagnostics candidate limit is inconsistent")
+    if payload["intent_limit_exceeded"] != ("intent_limit_exceeded" in reason_codes):
+        raise ValueError("decomposition diagnostics intent limit is inconsistent")
+    return decomposition.intent_graph, payload
 
 def _json_asset_content_hash(path: Path) -> str:
     return build_canonical_content_hash(json.loads(path.read_text(encoding="utf-8")))

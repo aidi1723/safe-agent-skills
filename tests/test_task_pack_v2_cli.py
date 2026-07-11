@@ -5,6 +5,7 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from jsonschema import Draft202012Validator
@@ -52,6 +53,24 @@ class TaskPackV2CliTest(unittest.TestCase):
         self.assertEqual(
             _routing_status("complete", complete_capabilities, {"status": "ready", "reason_codes": []}),
             "complete",
+        )
+        self.assertEqual(
+            _routing_status(
+                "complete",
+                complete_capabilities,
+                {"status": "ready", "reason_codes": []},
+                "incomplete",
+            ),
+            "incomplete",
+        )
+        self.assertEqual(
+            _routing_status(
+                "complete",
+                complete_capabilities,
+                {"status": "blocked", "reason_codes": ["dependency_cycle"]},
+                "incomplete",
+            ),
+            "blocked",
         )
 
     def test_v2_markdown_escapes_untrusted_structure_in_single_lines(self):
@@ -302,6 +321,123 @@ class TaskPackV2CliTest(unittest.TestCase):
         selected_skills = {skill["name"] for skill in payload["selected_skills"]}
         self.assertLessEqual(payload["routing_metrics"]["optional_skill_limit"], 8)
         self.assertTrue(graph_skills.issubset(selected_skills))
+
+    def test_smart_schema_v2_exposes_high_frequency_decomposition_diagnostics(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    "优化高频场景：UI 设计、代码审查、浏览器验证、CI 排障、PDF/DOCX 文档、表格分析、SEO，验证后推送 GitHub",
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        payload = json.loads(out.getvalue())
+        decomposition = payload["routing_metrics"]["decomposition"]
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(decomposition["mode"], "profile_spans")
+        self.assertEqual(decomposition["emitted_intent_count"], 6)
+        self.assertEqual(decomposition["reason_codes"], [])
+        self.assertEqual(payload["routing_status"], "complete")
+        self.assertEqual(payload["execution_graph"]["status"], "ready")
+        self.assertTrue(payload["execution_graph"]["acyclic"])
+        self.assertEqual(payload["execution_graph"]["reason_codes"], [])
+        release_root = next(
+            node["id"]
+            for node in payload["execution_graph"]["nodes"]
+            if node["intent_ids"] == ["i6"]
+        )
+        verification_sources = {
+            edge["from"]
+            for edge in payload["execution_graph"]["edges"]
+            if edge["to"] == release_root
+            and edge["type"] == "intent_verification_dependency"
+        }
+        for intent_id in ("i3", "i4", "i5"):
+            self.assertIn(
+                f"skill:{intent_id}:research-source-check",
+                verification_sources,
+            )
+
+    def test_smart_schema_v2_marks_intent_limit_decomposition_incomplete(self):
+        task = ", ".join(
+            [
+                "landing page",
+                "code lifecycle",
+                "call graph",
+                "copywriting",
+                "agentic video",
+                "deep interview",
+                "multi-platform search",
+                "value investing",
+                "role library",
+                "design tokens",
+                "simplex",
+                "pull request",
+                "prompt injection",
+            ]
+        )
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(["smart", task, "--schema-version", "2", "--format", "json"])
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["routing_status"], "incomplete")
+        self.assertIn(
+            "intent_limit_exceeded",
+            payload["routing_metrics"]["decomposition"]["reason_codes"],
+        )
+        self.assertLessEqual(len(payload["intent_graph"]["intents"]), 12)
+
+    def test_smart_schema_v2_exposes_bounded_candidate_limit_diagnostics(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    ", ".join(["SEO"] * 129),
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        payload = json.loads(out.getvalue())
+        decomposition = payload["routing_metrics"]["decomposition"]
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["routing_status"], "incomplete")
+        self.assertEqual(decomposition["observed_candidate_count"], 129)
+        self.assertEqual(
+            decomposition["reason_codes"],
+            ["candidate_signal_limit_exceeded"],
+        )
+
+    def test_smart_schema_v2_fails_closed_at_malformed_detailed_decomposition_boundary(self):
+        malformed = SimpleNamespace(
+            intent_graph=SimpleNamespace(intents=(), to_json=lambda: {"intents": []}),
+            diagnostics=SimpleNamespace(
+                status="complete",
+                to_json=lambda: {"mode": object()},
+            ),
+        )
+        out = io.StringIO()
+        with patch(
+            "onecode_skill_sanitizer.task_packs.decompose_task_detailed",
+            return_value=malformed,
+        ), contextlib.redirect_stdout(out):
+            exit_code = main(
+                ["smart", "build a website", "--schema-version", "2", "--format", "json"]
+            )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["error"]["code"], "invalid_input")
 
     def test_smart_schema_v2_routes_chinese_review_brief_release_task(self):
         out = io.StringIO()
