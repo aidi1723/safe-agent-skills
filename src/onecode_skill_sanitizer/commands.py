@@ -33,6 +33,7 @@ from .contracts import contract_coverage
 from .paths import resolve_project_asset_path
 from .references import validate_external_references
 from .registry import build_registry_index as build_registry_index
+from .registry import build_verified_registry_snapshot as build_verified_registry_snapshot
 from .registry import comparable_registry_index as comparable_registry_index
 from .registry import load_manifest as load_manifest
 from .registry import load_registry_index as load_registry_index
@@ -553,6 +554,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
     registry_dir = resolve_project_asset_path(args.registry)
     bundles_path = resolve_project_asset_path(args.bundles)
     try:
+        snapshot = build_verified_registry_snapshot(registry_dir)
         bundles_index = load_bundles_index(bundles_path)
         known_scenarios = {
             bundle["id"]
@@ -560,14 +562,28 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
         }
         cases = load_eval_dataset_v2(eval_path, known_scenarios)
+        capability_context = _bundle_required_capability_context(bundles_index)
+        contract_result = contract_coverage(
+            snapshot.index(),
+            bundles_index,
+            CORE_CONTRACT_SCENARIOS,
+            registry_root=registry_dir,
+            snapshot=snapshot,
+        )
         result = evaluate_router_v2(
             cases,
             route_builder=lambda case: build_task_pack_v2(
                 registry_dir,
                 case["task"],
                 bundles_path,
+                snapshot=snapshot,
             ),
             known_scenarios=known_scenarios,
+            bundle_required_capabilities=capability_context,
+            core_bundle_contract_counts=(
+                contract_result["covered_skill_count"],
+                contract_result["total_skill_count"],
+            ),
         )
     except (DatasetValidationError, EvaluatorError, ValueError, OSError, SystemExit) as exc:
         print(
@@ -581,6 +597,53 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         return 2
     print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
     return 0
+
+
+CORE_CONTRACT_SCENARIOS = [
+    "website-build-launch",
+    "code-review-hardening",
+    "codebase-change-lifecycle",
+    "skill-router-quality-review",
+    "open-source-release",
+    "rag-agent-knowledge-app",
+    "document-to-knowledge-base",
+    "security-agent-guardrails",
+]
+
+
+def _bundle_required_capability_context(bundles_index: object) -> dict[str, tuple[str, ...]]:
+    if not isinstance(bundles_index, dict) or not isinstance(bundles_index.get("bundles"), list):
+        raise ValueError("bundles index must contain a bundles list")
+    context: dict[str, tuple[str, ...]] = {}
+    for bundle in bundles_index["bundles"]:
+        if not isinstance(bundle, dict) or not isinstance(bundle.get("id"), str) or not bundle["id"].strip():
+            raise ValueError("bundle id must be a nonempty string")
+        bundle_id = bundle["id"]
+        if bundle_id in context:
+            raise ValueError(f"bundle ids must be unique: {bundle_id}")
+        capabilities = bundle.get("required_capabilities")
+        if not isinstance(capabilities, list):
+            raise ValueError(f"bundle {bundle_id} required_capabilities must be a list")
+        required = []
+        observed = set()
+        for capability in capabilities:
+            valid = (
+                isinstance(capability, dict)
+                and isinstance(capability.get("id"), str)
+                and bool(capability["id"].strip())
+                and capability["id"] == capability["id"].strip()
+                and type(capability.get("required")) is bool
+            )
+            if not valid:
+                raise ValueError(f"bundle {bundle_id} required capability is malformed")
+            capability_id = capability["id"]
+            if capability_id in observed:
+                raise ValueError(f"bundle {bundle_id} capability ids must be unique")
+            observed.add(capability_id)
+            if capability["required"]:
+                required.append(capability_id)
+        context[bundle_id] = tuple(required)
+    return dict(sorted(context.items()))
 
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []

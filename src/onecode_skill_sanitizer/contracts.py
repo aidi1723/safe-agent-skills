@@ -5,6 +5,7 @@ from pathlib import Path
 from pathlib import PurePosixPath
 
 from .validation import validate_contract
+from .registry import VerifiedRegistrySnapshot
 
 
 REGISTRY_STATUS_VALUES = {"quarantined", "review_required", "trusted", "rejected", "disabled"}
@@ -92,8 +93,17 @@ def contract_coverage(
     scenario_ids: list[str] | None = None,
     *,
     registry_root: Path = Path("catalog"),
+    snapshot: VerifiedRegistrySnapshot | None = None,
 ) -> dict:
     entries = _validate_registry_index(registry)
+    snapshot_manifests: dict[str, dict] | None = None
+    if snapshot is not None:
+        if snapshot.index() != registry:
+            raise ValueError("registry snapshot does not match registry index")
+        snapshot_manifests = {
+            skill.entry()["name"]: skill.manifest()
+            for skill in snapshot.skills
+        }
     bundles, bundles_by_id = _validate_bundles_index(bundles_index)
     available_ids = set(bundles_by_id)
     if scenario_ids is not None and not scenario_ids:
@@ -121,12 +131,18 @@ def contract_coverage(
         if not entry or entry.get("status") != "trusted":
             missing_names.append(name)
             continue
-        manifest_path = registry_root / entry["registry_path"] / "skill.json"
-        try:
-            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
-        except (OSError, json.JSONDecodeError):
-            missing_names.append(name)
-            continue
+        if snapshot_manifests is not None:
+            manifest = snapshot_manifests.get(name)
+            if manifest is None:
+                missing_names.append(name)
+                continue
+        else:
+            manifest_path = registry_root / entry["registry_path"] / "skill.json"
+            try:
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            except (OSError, json.JSONDecodeError):
+                missing_names.append(name)
+                continue
         if usable_contract(manifest.get("contract"), skill_name=name):
             covered_names.append(name)
         else:

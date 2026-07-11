@@ -10,6 +10,9 @@ from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
+from .router_quality_metrics import finite_ratio
+from .router_quality_metrics import macro_classification_metrics
+
 
 CATEGORY_DISTRIBUTION = {
     "compound": 40,
@@ -63,7 +66,7 @@ REQUIRED_FIELDS = {
     "required_dependency_edges",
     "forbidden_scenarios",
 }
-OPTIONAL_FIELDS = {"expected_status"}
+OPTIONAL_FIELDS = {"expected_status", "forbidden_skills"}
 EXPECTED_LABELING = {
     "method": "manual_review",
     "reviewer_role": "independent_dataset_review",
@@ -178,6 +181,13 @@ def _validate_case(
         raise DatasetValidationError(f"{prefix}.expected_intents must not contain duplicates")
     _require_string_list(case["expected_scenarios"], f"{prefix}.expected_scenarios")
     _require_string_list(case["forbidden_scenarios"], f"{prefix}.forbidden_scenarios")
+    forbidden_skills = case.get("forbidden_skills", [])
+    if not isinstance(forbidden_skills, list) or not all(
+        _is_exact_nonblank_string(name) for name in forbidden_skills
+    ):
+        raise DatasetValidationError(f"{prefix}.forbidden_skills must be a list of exact nonempty strings")
+    if len(set(forbidden_skills)) != len(forbidden_skills):
+        raise DatasetValidationError(f"{prefix}.forbidden_skills must not contain duplicates")
     if len(set(case["expected_scenarios"])) != len(case["expected_scenarios"]):
         raise DatasetValidationError(f"{prefix}.expected_scenarios must not contain duplicates")
     if len(set(case["forbidden_scenarios"])) != len(case["forbidden_scenarios"]):
@@ -216,7 +226,7 @@ def _validate_case(
         not isinstance(expected_status, str) or expected_status not in EXPECTED_STATUSES
     ):
         raise DatasetValidationError(f"{prefix}.expected_status is invalid")
-    return dict(case)
+    return {**case, "forbidden_skills": list(forbidden_skills)}
 
 
 def _require_nonempty_string(value: object, field: str) -> None:
@@ -236,7 +246,14 @@ def evaluate_router_v2(
     *,
     route_builder: Callable[[dict[str, Any]], dict[str, Any]],
     known_scenarios: set[str] | None = None,
+    bundle_required_capabilities: dict[str, tuple[str, ...]] | None = None,
+    core_bundle_contract_counts: tuple[int, int] = (0, 0),
 ) -> dict[str, Any]:
+    capability_context = _validate_bundle_required_capabilities(bundle_required_capabilities or {})
+    core_contract_covered, core_contract_total = _validate_support_counts(
+        core_bundle_contract_counts,
+        "core bundle contract",
+    )
     intent_exact = 0
     scenario_true_positive = 0
     scenario_predicted = 0
@@ -245,13 +262,22 @@ def evaluate_router_v2(
     forbidden_total = 0
     dependency_hits = 0
     dependency_total = 0
+    dependency_predicted = 0
+    required_capability_hits = 0
+    required_capability_total = 0
+    forbidden_skill_hits = 0
+    forbidden_skill_total = 0
+    high_confidence_error_cases = 0
+    high_confidence_cases = 0
     dag_valid = 0
     results = []
+    expected_task_types: list[set[str]] = []
+    actual_task_types: list[set[str]] = []
 
     for case in cases:
         try:
             route = route_builder(case)
-            result = _evaluate_case(case, route)
+            result = _evaluate_case(case, route, capability_context)
         except EvaluatorError:
             raise
         except Exception as exc:
@@ -265,21 +291,59 @@ def evaluate_router_v2(
         forbidden_total += counts["forbidden_total"]
         dependency_hits += counts["dependency_hits"]
         dependency_total += counts["dependency_total"]
+        dependency_predicted += counts["dependency_predicted"]
+        required_capability_hits += counts["required_capability_hits"]
+        required_capability_total += counts["required_capability_total"]
+        forbidden_skill_hits += counts["forbidden_skill_hits"]
+        forbidden_skill_total += counts["forbidden_skill_total"]
+        high_confidence_error_cases += counts["high_confidence_error"]
+        high_confidence_cases += counts["high_confidence_case"]
         dag_valid += counts["dag_valid"]
+        expected_task_types.append(set(case["expected_intents"]))
+        actual_task_types.append(set(result["actual_intents"]))
         results.append(result)
 
     case_count = len(cases)
     precision = _quality_ratio(scenario_true_positive, scenario_predicted, scenario_expected)
     recall = _quality_ratio(scenario_true_positive, scenario_expected, scenario_predicted)
     f1 = 0.0 if precision + recall == 0 else 2 * precision * recall / (precision + recall)
+    task_type_metrics = macro_classification_metrics(expected_task_types, actual_task_types)
     metrics = {
         "multi_intent_exact_match": _ratio(intent_exact, case_count, empty=1.0),
         "scenario_precision": precision,
         "scenario_recall": recall,
         "scenario_f1": f1,
+        "task_type_macro_precision": task_type_metrics["precision"],
+        "task_type_macro_recall": task_type_metrics["recall"],
+        "task_type_macro_f1": task_type_metrics["f1"],
+        "required_capability_recall": finite_ratio(
+            required_capability_hits,
+            required_capability_total,
+            empty=1.0,
+        ),
         "forbidden_scenario_false_positive_rate": _ratio(forbidden_hits, forbidden_total, empty=0.0),
-        "dependency_edge_recall": _ratio(dependency_hits, dependency_total, empty=1.0),
+        "forbidden_skill_false_positive_rate": finite_ratio(
+            forbidden_skill_hits,
+            forbidden_skill_total,
+            empty=0.0,
+        ),
+        "dependency_edge_precision": finite_ratio(
+            dependency_hits,
+            dependency_predicted,
+            empty=1.0 if dependency_total == 0 else 0.0,
+        ),
+        "dependency_edge_recall": finite_ratio(dependency_hits, dependency_total, empty=1.0),
         "dag_validity": _ratio(dag_valid, case_count, empty=1.0),
+        "high_confidence_error_rate": finite_ratio(
+            high_confidence_error_cases,
+            high_confidence_cases,
+            empty=0.0,
+        ),
+        "core_bundle_contract_coverage": finite_ratio(
+            core_contract_covered,
+            core_contract_total,
+            empty=1.0,
+        ),
     }
     if not all(math.isfinite(value) for value in metrics.values()):
         raise EvaluatorError("metrics must be finite")
@@ -297,7 +361,17 @@ def evaluate_router_v2(
             "forbidden_hits": forbidden_hits,
             "forbidden_total": forbidden_total,
             "dependency_hits": dependency_hits,
+            "dependency_predicted": dependency_predicted,
             "dependency_total": dependency_total,
+            "required_capability_hits": required_capability_hits,
+            "required_capability_total": required_capability_total,
+            "forbidden_skill_hits": forbidden_skill_hits,
+            "forbidden_skill_total": forbidden_skill_total,
+            "high_confidence_error_cases": high_confidence_error_cases,
+            "high_confidence_cases": high_confidence_cases,
+            "task_type_label_count": len(task_type_metrics["per_label"]),
+            "core_bundle_contract_covered": core_contract_covered,
+            "core_bundle_contract_total": core_contract_total,
             "dag_valid_cases": dag_valid,
         },
         "scenario_coverage": {
@@ -313,7 +387,11 @@ def evaluate_router_v2(
     }
 
 
-def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
+def _evaluate_case(
+    case: dict[str, Any],
+    route: object,
+    bundle_required_capabilities: dict[str, tuple[str, ...]],
+) -> dict[str, Any]:
     if not isinstance(route, dict):
         raise EvaluatorError("route must be an object")
     intents = _route_intents(route)
@@ -333,6 +411,14 @@ def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
     actual_scenario_set = set(actual_scenarios)
     expected_scenario_set = set(case["expected_scenarios"])
     forbidden_set = set(case["forbidden_scenarios"])
+    actual_skill_names = _selected_skill_names(route)
+    forbidden_skill_set = set(case.get("forbidden_skills", []))
+    expected_capabilities = {
+        (scenario_id, capability)
+        for scenario_id in case["expected_scenarios"]
+        for capability in bundle_required_capabilities.get(scenario_id, ())
+    }
+    covered_capabilities = _covered_capabilities(route)
     actual_edges = _dependency_pairs(route, intents)
     expected_edges = {tuple(edge) for edge in case["required_dependency_edges"]}
     topology_acyclic = _graph_topology_is_acyclic(route)
@@ -364,6 +450,12 @@ def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
         issues.append({"id": "status_mismatch", "expected": expected_status, "actual": actual_status})
     if not dag_is_valid:
         issues.append({"id": "expected_blocked_dag"})
+    forbidden_skills_selected = sorted(actual_skill_names & forbidden_skill_set)
+    if forbidden_skills_selected:
+        issues.append({"id": "forbidden_skills_selected", "skills": forbidden_skills_selected})
+
+    high_confidence_case = any(intent["confidence"] >= 0.80 for intent in intents)
+    high_confidence_error = high_confidence_case and set(actual_intents) != set(expected_intents)
 
     return {
         "id": case["id"],
@@ -383,7 +475,14 @@ def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
             "forbidden_hits": len(actual_scenario_set & forbidden_set),
             "forbidden_total": len(forbidden_set),
             "dependency_hits": len(actual_edges & expected_edges),
+            "dependency_predicted": len(actual_edges),
             "dependency_total": len(expected_edges),
+            "required_capability_hits": len(expected_capabilities & covered_capabilities),
+            "required_capability_total": len(expected_capabilities),
+            "forbidden_skill_hits": len(actual_skill_names & forbidden_skill_set),
+            "forbidden_skill_total": len(forbidden_skill_set),
+            "high_confidence_error": int(high_confidence_error),
+            "high_confidence_case": int(high_confidence_case),
             "dag_valid": int(dag_is_valid),
         },
     }
@@ -401,7 +500,84 @@ def _route_intents(route: dict[str, Any]) -> list[dict[str, Any]]:
             raise EvaluatorError("intent id must be nonempty")
         if not _is_exact_nonblank_string(intent.get("task_type")):
             raise EvaluatorError("intent task_type must be nonempty")
+        confidence = intent.get("confidence")
+        if type(confidence) not in {int, float} or not math.isfinite(confidence) or not 0.0 <= confidence <= 1.0:
+            raise EvaluatorError("intent confidence must be a finite number between zero and one")
     return intents
+
+
+def _selected_skill_names(route: dict[str, Any]) -> set[str]:
+    selected_skills = route.get("selected_skills")
+    if not isinstance(selected_skills, list):
+        raise EvaluatorError("selected_skills must be a list")
+    names = []
+    for selected_skill in selected_skills:
+        if not isinstance(selected_skill, dict) or not _is_exact_nonblank_string(selected_skill.get("name")):
+            raise EvaluatorError("selected skill name must be an exact nonempty string")
+        names.append(selected_skill["name"])
+    if len(names) != len(set(names)):
+        raise EvaluatorError("selected skill names must be unique")
+    return set(names)
+
+
+def _covered_capabilities(route: dict[str, Any]) -> set[tuple[str, str]]:
+    resolution = route.get("capability_resolution")
+    if not isinstance(resolution, dict):
+        raise EvaluatorError("capability_resolution must be an object")
+    capabilities = resolution.get("capabilities")
+    if not isinstance(capabilities, list):
+        raise EvaluatorError("capability_resolution.capabilities must be a list")
+    covered: set[tuple[str, str]] = set()
+    observed: set[tuple[str, str]] = set()
+    for item in capabilities:
+        valid = (
+            isinstance(item, dict)
+            and _is_exact_nonblank_string(item.get("scenario_id"))
+            and _is_exact_nonblank_string(item.get("capability"))
+            and type(item.get("required")) is bool
+            and item.get("status") in {"covered", "missing"}
+            and isinstance(item.get("skills"), list)
+            and all(_is_exact_nonblank_string(name) for name in item["skills"])
+        )
+        if not valid:
+            raise EvaluatorError("capability resolution entry is malformed")
+        key = (item["scenario_id"], item["capability"])
+        if key in observed:
+            raise EvaluatorError("capability resolution entries must be unique")
+        observed.add(key)
+        if item["status"] == "covered":
+            covered.add(key)
+    return covered
+
+
+def _validate_bundle_required_capabilities(
+    context: object,
+) -> dict[str, tuple[str, ...]]:
+    if not isinstance(context, dict):
+        raise EvaluatorError("bundle required capability context must be an object")
+    validated: dict[str, tuple[str, ...]] = {}
+    for scenario_id, capabilities in context.items():
+        if not _is_exact_nonblank_string(scenario_id):
+            raise EvaluatorError("bundle capability scenario id must be an exact nonempty string")
+        if type(capabilities) is not tuple or not all(
+            _is_exact_nonblank_string(capability) for capability in capabilities
+        ):
+            raise EvaluatorError("bundle required capabilities must be tuples of exact nonempty strings")
+        if len(capabilities) != len(set(capabilities)):
+            raise EvaluatorError("bundle required capabilities must be unique")
+        validated[scenario_id] = capabilities
+    return dict(sorted(validated.items()))
+
+
+def _validate_support_counts(counts: object, label: str) -> tuple[int, int]:
+    if type(counts) is not tuple or len(counts) != 2:
+        raise EvaluatorError(f"{label} counts must be a two-item tuple")
+    numerator, denominator = counts
+    try:
+        finite_ratio(numerator, denominator, empty=1.0)
+    except ValueError as exc:
+        raise EvaluatorError(f"{label} counts are invalid: {exc}") from exc
+    return numerator, denominator
 
 
 def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> set[tuple[str, str]]:

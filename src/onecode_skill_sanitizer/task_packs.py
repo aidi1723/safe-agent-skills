@@ -581,10 +581,12 @@ def build_task_pack_v2(
     invariants: list[str] | None = None,
     strategy: str = "balanced",
     overlap_groups_path: Path | None = None,
+    *,
+    snapshot: VerifiedRegistrySnapshot | None = None,
 ) -> dict:
     if not task.strip():
         raise ValueError("task must not be empty")
-    snapshot = build_verified_registry_snapshot(registry_dir)
+    snapshot = snapshot or build_verified_registry_snapshot(registry_dir)
     verification = snapshot.verification()
 
     bundles_index = load_bundles_index(bundles_path)

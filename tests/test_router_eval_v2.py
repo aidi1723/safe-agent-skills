@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 import subprocess
 import sys
 import tempfile
@@ -57,12 +58,16 @@ def synthetic_route(
     routing_status: str = "complete",
     reason_codes: list[str] | None = None,
     intent_dependencies: list[list[str]] | None = None,
+    intent_confidences: list[float] | None = None,
+    selected_skills: list[str] | None = None,
+    capability_resolution: list[dict] | None = None,
 ) -> dict:
     intents = [
         {
             "id": f"i{index}",
             "task_type": task_type,
             "depends_on": (intent_dependencies or [[] for _ in intent_types])[index - 1],
+            "confidence": (intent_confidences or [0.5 for _ in intent_types])[index - 1],
         }
         for index, task_type in enumerate(intent_types, start=1)
     ]
@@ -88,6 +93,12 @@ def synthetic_route(
         "routing_status": routing_status,
         "intent_graph": {"intents": intents},
         "selected_scenarios": [{"scenario_id": scenario_id, "intent_ids": []} for scenario_id in scenarios],
+        "selected_skills": [{"name": name} for name in selected_skills or []],
+        "capability_resolution": {
+            "status": "complete",
+            "capabilities": capability_resolution or [],
+            "missing_required_count": 0,
+        },
         "execution_graph": {
             "status": graph_status,
             "acyclic": acyclic,
@@ -107,6 +118,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(len(cases), 100)
         self.assertEqual(Counter(case["category"] for case in cases), EXPECTED_CATEGORIES)
         self.assertEqual(len({case["id"] for case in cases}), 100)
+        self.assertTrue(all(case["forbidden_skills"] == [] for case in cases))
 
     def test_gold_dataset_has_independent_manual_labeling_metadata(self):
         payload = gold_payload()
@@ -246,6 +258,9 @@ class RouterEvalV2Tests(unittest.TestCase):
             "bad status": lambda case: case.update(expected_status="ready"),
             "bad category": lambda case: case.update(category="other"),
             "extra field": lambda case: case.update(actual_intents=[]),
+            "non-list forbidden skills": lambda case: case.update(forbidden_skills="skill"),
+            "blank forbidden skill": lambda case: case.update(forbidden_skills=[""]),
+            "duplicate forbidden skill": lambda case: case.update(forbidden_skills=["skill", "skill"]),
         }
         for label, mutate in mutations.items():
             with self.subTest(label=label), tempfile.TemporaryDirectory() as temp_dir:
@@ -350,6 +365,209 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(report["metrics"]["dependency_edge_recall"], 1.0)
         self.assertEqual(report["metrics"]["forbidden_scenario_false_positive_rate"], 0.0)
         json.dumps(report, allow_nan=False)
+
+    def test_new_task_type_metrics_match_hand_calculation_without_changing_old_metrics(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        cases = [
+            {
+                "id": case_id,
+                "category": "compound",
+                "task": case_id,
+                "expected_intents": expected,
+                "expected_scenarios": [],
+                "required_dependency_edges": [],
+                "forbidden_scenarios": [],
+                "forbidden_skills": [],
+            }
+            for case_id, expected in (("one", ["a"]), ("two", ["a"]), ("three", ["b"]))
+        ]
+        routes = {
+            "one": synthetic_route(["a"], []),
+            "two": synthetic_route(["b"], []),
+            "three": synthetic_route(["b"], []),
+        }
+
+        report = evaluate_router_v2(cases, route_builder=lambda case: routes[case["id"]])
+
+        self.assertEqual(report["metrics"]["task_type_macro_precision"], 0.75)
+        self.assertEqual(report["metrics"]["task_type_macro_recall"], 0.75)
+        self.assertAlmostEqual(report["metrics"]["task_type_macro_f1"], 2 / 3)
+        self.assertEqual(report["metrics"]["multi_intent_exact_match"], 2 / 3)
+        self.assertEqual(report["counts"]["task_type_label_count"], 2)
+
+    def test_required_capability_recall_counts_only_covered_expected_capabilities(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "capabilities",
+            "category": "compound",
+            "task": "capabilities",
+            "expected_intents": ["a"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "forbidden_skills": [],
+        }
+        route = synthetic_route(
+            ["a"],
+            ["s1", "s2"],
+            capability_resolution=[
+                {"scenario_id": "s1", "capability": "c1", "required": True, "status": "covered", "skills": ["x"]},
+                {"scenario_id": "s1", "capability": "c2", "required": True, "status": "covered", "skills": ["x"]},
+                {"scenario_id": "s2", "capability": "c3", "required": True, "status": "covered", "skills": ["x"]},
+                {"scenario_id": "s2", "capability": "c4", "required": True, "status": "missing", "skills": []},
+            ],
+        )
+
+        report = evaluate_router_v2(
+            [case],
+            route_builder=lambda current: route,
+            bundle_required_capabilities={"s1": ("c1", "c2"), "s2": ("c3", "c4")},
+        )
+
+        self.assertEqual(report["metrics"]["required_capability_recall"], 0.75)
+        self.assertEqual(report["counts"]["required_capability_hits"], 3)
+        self.assertEqual(report["counts"]["required_capability_total"], 4)
+
+    def test_core_bundle_contract_coverage_is_finite_and_has_support_counts(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "contracts",
+            "category": "compound",
+            "task": "contracts",
+            "expected_intents": ["a"],
+            "expected_scenarios": [],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "forbidden_skills": [],
+        }
+
+        report = evaluate_router_v2(
+            [case],
+            route_builder=lambda current: synthetic_route(["a"], []),
+            core_bundle_contract_counts=(4, 5),
+        )
+
+        self.assertEqual(report["metrics"]["core_bundle_contract_coverage"], 0.8)
+        self.assertEqual(report["counts"]["core_bundle_contract_covered"], 4)
+        self.assertEqual(report["counts"]["core_bundle_contract_total"], 5)
+
+    def test_dependency_precision_and_recall_use_deduplicated_logical_pairs(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "dependencies",
+            "category": "sequential",
+            "task": "dependencies",
+            "expected_intents": ["a", "b", "c"],
+            "expected_scenarios": [],
+            "required_dependency_edges": [["a", "b"], ["b", "c"]],
+            "forbidden_scenarios": [],
+            "forbidden_skills": [],
+        }
+        route = synthetic_route(
+            ["a", "b", "c"],
+            [],
+            dependency_pairs=[("a", "b"), ("a", "c")],
+        )
+        route["execution_graph"]["edges"].append(
+            {**route["execution_graph"]["edges"][0], "type": "intent_verification_dependency"}
+        )
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertEqual(report["metrics"]["dependency_edge_precision"], 0.5)
+        self.assertEqual(report["metrics"]["dependency_edge_recall"], 0.5)
+        self.assertEqual(report["counts"]["dependency_hits"], 1)
+        self.assertEqual(report["counts"]["dependency_predicted"], 2)
+        self.assertEqual(report["counts"]["dependency_total"], 2)
+
+    def test_forbidden_skill_false_positive_rate_has_explicit_four_label_support(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "skills",
+            "category": "negative",
+            "task": "skills",
+            "expected_intents": ["a"],
+            "expected_scenarios": [],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "forbidden_skills": ["bad-1", "bad-2", "bad-3", "bad-4"],
+        }
+        route = synthetic_route(["a"], [], selected_skills=["good", "bad-2"])
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertEqual(report["metrics"]["forbidden_skill_false_positive_rate"], 0.25)
+        self.assertEqual(report["counts"]["forbidden_skill_hits"], 1)
+        self.assertEqual(report["counts"]["forbidden_skill_total"], 4)
+
+    def test_high_confidence_error_rate_counts_cases_and_uses_set_errors(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        cases = [
+            {
+                "id": case_id,
+                "category": "compound",
+                "task": case_id,
+                "expected_intents": expected,
+                "expected_scenarios": [],
+                "required_dependency_edges": [],
+                "forbidden_scenarios": [],
+                "forbidden_skills": [],
+            }
+            for case_id, expected in (("correct", ["a", "b"]), ("wrong", ["a", "b"]), ("low", ["a"]))
+        ]
+        routes = {
+            "correct": synthetic_route(["b", "a"], [], intent_confidences=[0.8, 0.7]),
+            "wrong": synthetic_route(["a", "c"], [], intent_confidences=[0.7, 0.9]),
+            "low": synthetic_route(["wrong"], [], intent_confidences=[0.79]),
+        }
+
+        report = evaluate_router_v2(cases, route_builder=lambda case: routes[case["id"]])
+
+        self.assertEqual(report["metrics"]["high_confidence_error_rate"], 0.5)
+        self.assertEqual(report["counts"]["high_confidence_error_cases"], 1)
+        self.assertEqual(report["counts"]["high_confidence_cases"], 2)
+
+    def test_new_metric_zero_denominators_are_finite_and_malformed_routes_fail_closed(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "empty",
+            "category": "negative",
+            "task": "empty",
+            "expected_intents": ["a"],
+            "expected_scenarios": [],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "forbidden_skills": [],
+        }
+        report = evaluate_router_v2([case], route_builder=lambda current: synthetic_route(["a"], []))
+        for value in report["metrics"].values():
+            self.assertTrue(math.isfinite(value))
+
+        malformed_routes = []
+        for field, value in (("confidence", float("nan")), ("confidence", True)):
+            route = synthetic_route(["a"], [])
+            route["intent_graph"]["intents"][0][field] = value
+            malformed_routes.append(route)
+        missing_skill_name = synthetic_route(["a"], [])
+        missing_skill_name["selected_skills"] = [{}]
+        malformed_routes.append(missing_skill_name)
+        bad_resolution = synthetic_route(["a"], [])
+        bad_resolution["capability_resolution"]["capabilities"] = [
+            {"scenario_id": "", "capability": "c", "required": True, "status": "covered", "skills": []}
+        ]
+        malformed_routes.append(bad_resolution)
+
+        for route in malformed_routes:
+            with self.subTest(route=route), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
 
     def test_unexpected_cycle_is_an_evaluator_error(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
@@ -1117,11 +1335,18 @@ class RouterEvalV2Tests(unittest.TestCase):
             "routing_status": "blocked",
             "intent_graph": {
                 "intents": [
-                    {"id": intent.id, "task_type": intent.task_type, "depends_on": list(intent.depends_on)}
+                    {
+                        "id": intent.id,
+                        "task_type": intent.task_type,
+                        "depends_on": list(intent.depends_on),
+                        "confidence": intent.confidence,
+                    }
                     for intent in graph.intents
                 ]
             },
             "selected_scenarios": [],
+            "selected_skills": [],
+            "capability_resolution": {"status": "complete", "capabilities": [], "missing_required_count": 0},
             "execution_graph": compiled,
         }
         case = {
@@ -1264,10 +1489,12 @@ class RouterEvalV2Tests(unittest.TestCase):
             "routing_status": "blocked",
             "intent_graph": {
                 "intents": [
-                    {"id": "i1", "task_type": "alpha", "depends_on": []},
+                    {"id": "i1", "task_type": "alpha", "depends_on": [], "confidence": 1.0},
                 ]
             },
             "selected_scenarios": [{"scenario_id": "missing", "intent_ids": ["i1"]}],
+            "selected_skills": [],
+            "capability_resolution": {"status": "complete", "capabilities": [], "missing_required_count": 0},
             "execution_graph": compiled,
         }
         case = {
@@ -1358,7 +1585,12 @@ class RouterEvalV2Tests(unittest.TestCase):
             "routing_status": "blocked",
             "intent_graph": {
                 "intents": [
-                    {"id": intent.id, "task_type": intent.task_type, "depends_on": list(intent.depends_on)}
+                    {
+                        "id": intent.id,
+                        "task_type": intent.task_type,
+                        "depends_on": list(intent.depends_on),
+                        "confidence": intent.confidence,
+                    }
                     for intent in graph.intents
                 ]
             },
@@ -1366,6 +1598,8 @@ class RouterEvalV2Tests(unittest.TestCase):
                 {"scenario_id": "first", "intent_ids": ["i1"]},
                 {"scenario_id": "second", "intent_ids": ["i2"]},
             ],
+            "selected_skills": [],
+            "capability_resolution": {"status": "complete", "capabilities": [], "missing_required_count": 0},
             "execution_graph": compiled,
         }
         case = {
@@ -1521,8 +1755,64 @@ class RouterEvalV2Tests(unittest.TestCase):
                 "forbidden_scenario_false_positive_rate",
                 "dependency_edge_recall",
                 "dag_validity",
+                "task_type_macro_precision",
+                "task_type_macro_recall",
+                "task_type_macro_f1",
+                "required_capability_recall",
+                "forbidden_skill_false_positive_rate",
+                "dependency_edge_precision",
+                "high_confidence_error_rate",
+                "core_bundle_contract_coverage",
             },
         )
+
+    def test_bundle_capability_context_is_deterministic_and_required_only(self):
+        from onecode_skill_sanitizer.commands import _bundle_required_capability_context
+
+        bundles = {
+            "bundles": [
+                {
+                    "id": "zeta",
+                    "required_capabilities": [
+                        {"id": "optional", "required": False, "preferred_skills": ["x"]},
+                        {"id": "required-b", "required": True, "preferred_skills": ["x"]},
+                    ],
+                },
+                {
+                    "id": "alpha",
+                    "required_capabilities": [
+                        {"id": "required-a", "required": True, "preferred_skills": ["x"]},
+                    ],
+                },
+            ]
+        }
+
+        self.assertEqual(
+            _bundle_required_capability_context(bundles),
+            {"alpha": ("required-a",), "zeta": ("required-b",)},
+        )
+
+    def test_bundle_capability_context_rejects_malformed_or_duplicate_required_capabilities(self):
+        from onecode_skill_sanitizer.commands import _bundle_required_capability_context
+
+        malformed = [
+            {"bundles": [{"id": "s", "required_capabilities": "bad"}]},
+            {"bundles": [{"id": "s", "required_capabilities": [{"id": "c", "required": 1}]}]},
+            {
+                "bundles": [
+                    {
+                        "id": "s",
+                        "required_capabilities": [
+                            {"id": "c", "required": True},
+                            {"id": "c", "required": True},
+                        ],
+                    }
+                ]
+            },
+        ]
+        for bundles in malformed:
+            with self.subTest(bundles=bundles), self.assertRaises(ValueError):
+                _bundle_required_capability_context(bundles)
 
     def test_command_returns_two_for_schema_errors(self):
         with tempfile.TemporaryDirectory() as temp_dir:
