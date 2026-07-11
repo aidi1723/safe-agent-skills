@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+import hashlib
+import json
 import re
 from typing import Any
 
@@ -13,6 +15,7 @@ RELEASE_MODES = frozenset({"none", "readiness", "action"})
 RELATION_MODES = frozenset(
     {"single", "enumeration", "parallel", "explicit_sequence"}
 )
+MAX_MATCHED_SCORE = 512
 RELEASE_READINESS_SIGNALS = frozenset({"发布清单", "release checklist"})
 RELEASE_ACTION_SIGNALS = frozenset(
     {
@@ -57,12 +60,25 @@ class IntentEvidence:
     relation_mode: str
     matched_signals: tuple[str, ...]
     matched_score: int
+    provenance: str = ""
+
+
+def bind_intent_evidence(
+    evidence: tuple[IntentEvidence, ...], source: str
+) -> tuple[IntentEvidence, ...]:
+    """Bind generated evidence to the exact bounded source and field values."""
+    from dataclasses import replace
+
+    return tuple(
+        replace(item, provenance=_evidence_provenance(item, source))
+        for item in evidence
+    )
 
 
 def validate_intent_evidence(
     evidence: Any,
     expected_task_types: tuple[str, ...],
-    source_summaries: tuple[str, ...] = (),
+    evidence_source: str = "",
 ) -> list[str]:
     """Validate internal evidence without accepting lookalike records."""
     if not isinstance(evidence, tuple):
@@ -71,8 +87,8 @@ def validate_intent_evidence(
         return []
     if len(evidence) != len(expected_task_types):
         return ["intent evidence count must match intent count"]
-    if source_summaries and len(source_summaries) != len(expected_task_types):
-        return ["intent evidence source count must match intent count"]
+    if not isinstance(evidence_source, str):
+        return ["intent evidence source must be a string"]
 
     errors: list[str] = []
     for index, (item, task_type) in enumerate(
@@ -83,28 +99,62 @@ def validate_intent_evidence(
             continue
         if item.task_type != task_type:
             errors.append(f"intent evidence {index} task type does not match intent")
-        if item.context not in EVIDENCE_CONTEXTS:
-            errors.append(f"intent evidence {index} has invalid context")
-        if item.polarity not in EVIDENCE_POLARITIES:
-            errors.append(f"intent evidence {index} has invalid polarity")
-        if item.release_mode not in RELEASE_MODES:
-            errors.append(f"intent evidence {index} has invalid release mode")
-        if item.relation_mode not in RELATION_MODES:
-            errors.append(f"intent evidence {index} has invalid relation mode")
-        if not isinstance(item.matched_signals, tuple) or any(
-            not isinstance(signal, str) or not signal
+        context_valid = isinstance(item.context, str) and item.context in EVIDENCE_CONTEXTS
+        polarity_valid = (
+            isinstance(item.polarity, str)
+            and item.polarity in EVIDENCE_POLARITIES
+        )
+        release_mode_valid = (
+            isinstance(item.release_mode, str)
+            and item.release_mode in RELEASE_MODES
+        )
+        relation_mode_valid = (
+            isinstance(item.relation_mode, str)
+            and item.relation_mode in RELATION_MODES
+        )
+        signals_valid = isinstance(item.matched_signals, tuple) and all(
+            isinstance(signal, str) and bool(signal)
             for signal in item.matched_signals
-        ):
+        )
+        score_valid = (
+            not isinstance(item.matched_score, bool)
+            and isinstance(item.matched_score, int)
+            and 0 <= item.matched_score <= MAX_MATCHED_SCORE
+        )
+        if not context_valid:
+            errors.append(f"intent evidence {index} has invalid context")
+        if not polarity_valid:
+            errors.append(f"intent evidence {index} has invalid polarity")
+        if not release_mode_valid:
+            errors.append(f"intent evidence {index} has invalid release mode")
+        if not relation_mode_valid:
+            errors.append(f"intent evidence {index} has invalid relation mode")
+        if not signals_valid:
             errors.append(f"intent evidence {index} has invalid matched signals")
-        if (
-            isinstance(item.matched_score, bool)
-            or not isinstance(item.matched_score, int)
-            or item.matched_score < 0
-        ):
+        if not score_valid:
             errors.append(f"intent evidence {index} has invalid matched score")
-        if type(item) is IntentEvidence:
-            summary = source_summaries[index - 1] if source_summaries else ""
-            errors.extend(_semantic_errors(item, summary, index))
+        fields_valid = all(
+            (
+                isinstance(item.task_type, str),
+                context_valid,
+                polarity_valid,
+                release_mode_valid,
+                relation_mode_valid,
+                signals_valid,
+                score_valid,
+                isinstance(item.provenance, str),
+            )
+        )
+        if fields_valid:
+            if not evidence_source or not item.provenance:
+                errors.append(
+                    f"intent evidence {index} must be bound to its source"
+                )
+            elif item.provenance != _evidence_provenance(item, evidence_source):
+                errors.append(
+                    f"intent evidence {index} does not match its source binding"
+                )
+            errors.extend(_semantic_errors(item, evidence_source, index))
     return errors
 
 
@@ -203,3 +253,20 @@ def _signal_in_source(source: str, signal: str) -> bool:
             source.casefold(),
         ) is not None
     return signal in source.casefold()
+
+
+def _evidence_provenance(item: IntentEvidence, source: str) -> str:
+    payload = {
+        "source": source,
+        "task_type": item.task_type,
+        "context": item.context,
+        "polarity": item.polarity,
+        "release_mode": item.release_mode,
+        "relation_mode": item.relation_mode,
+        "matched_signals": item.matched_signals,
+        "matched_score": item.matched_score,
+    }
+    encoded = json.dumps(
+        payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+    ).encode("utf-8")
+    return hashlib.sha256(encoded).hexdigest()

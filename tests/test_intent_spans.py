@@ -80,6 +80,59 @@ class IntentSpansTest(unittest.TestCase):
                     [intent.task_type for intent in result.intent_graph.intents],
                 )
 
+    def test_how_to_context_is_local_to_adversative_segment(self):
+        negative_cases = [
+            "how to push to GitHub + code review",
+            "learn how to push to GitHub + code review",
+        ]
+        positive_cases = [
+            "Research how to configure tests, but push changes to GitHub",
+            "Write a guide about Git, but push changes to GitHub",
+        ]
+
+        for task in negative_cases:
+            with self.subTest(task=task):
+                result = decompose_task_detailed(task)
+                self.assertNotIn(
+                    "open_source_release",
+                    [intent.task_type for intent in result.intent_graph.intents],
+                )
+        for task in positive_cases:
+            with self.subTest(task=task):
+                result = decompose_task_detailed(task)
+                self.assertIn(
+                    "open_source_release",
+                    [intent.task_type for intent in result.intent_graph.intents],
+                )
+
+    def test_task_scan_boundary_excludes_tail_relation_markers(self):
+        inside = "code review"
+        padded = inside + "x" * (routing_profiles.MAX_SCAN_CHARACTERS - len(inside))
+        outside = padded + " then publish update; in parallel analyze a spreadsheet"
+
+        base = decompose_task_detailed(padded)
+        tailed = decompose_task_detailed(outside)
+        self.assertEqual(
+            [intent.task_type for intent in tailed.intent_graph.intents],
+            [intent.task_type for intent in base.intent_graph.intents],
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in tailed.intent_graph.intents],
+            [intent.depends_on for intent in base.intent_graph.intents],
+        )
+
+        suffix = " then publish update"
+        exact = (
+            "code review"
+            + "x" * (routing_profiles.MAX_SCAN_CHARACTERS - len("code review") - len(suffix))
+            + suffix
+        )
+        exact_result = decompose_task_detailed(exact)
+        self.assertIn(
+            "open_source_release",
+            [intent.task_type for intent in exact_result.intent_graph.intents],
+        )
+
     def test_decomposition_records_structured_internal_evidence(self):
         result = decompose_task_detailed(
             "代码审查 + 老板简报 + 发布清单"

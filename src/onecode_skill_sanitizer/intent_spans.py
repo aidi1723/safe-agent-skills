@@ -63,7 +63,8 @@ _DESCRIPTIVE_LIST_PREFIX_RE = re.compile(
     re.IGNORECASE,
 )
 _DESCRIPTIVE_RELEASE_ACTION_RE = re.compile(
-    r"(?:\bresearch\s+how\s+to\b|\bwrite\s+(?:a\s+)?guide\s+(?:about|to)\b|"
+    r"(?:\b(?:research\s+|learn\s+)?how\s+to\b|"
+    r"\bwrite\s+(?:a\s+)?guide\s+(?:about|to)\b|"
     r"\bhow[-\s]+to\s+guide\b|\bguide\s+(?:about|to)\b)"
     r"[\s\S]{0,80}\b(?:push|publish|release)\b|"
     r"(?:研究|指南|教程)[\s\S]{0,80}(?:推送|发布|上线)",
@@ -187,6 +188,18 @@ def split_profile_enumeration(
         clause, candidate_limit
     )
     spans = merge_same_profile_spans(spans)
+    descriptive_release_ranges = _descriptive_release_ranges(clause)
+    if descriptive_release_ranges:
+        spans = tuple(
+            span
+            for span in spans
+            if not (
+                span.task_type == "open_source_release"
+                and _range_overlaps(
+                    span.start, span.end, descriptive_release_ranges
+                )
+            )
+        )
     relation_mode = relation_mode_for_text(clause)
     polarity = _clause_polarity(clause, spans)
     if is_design_governance_composite(clause):
@@ -207,7 +220,7 @@ def split_profile_enumeration(
             polarity,
             relation_mode,
         )
-    if _DESCRIPTIVE_RELEASE_ACTION_RE.search(clause):
+    if descriptive_release_ranges and not spans:
         return _suppressed_decomposition(
             clause,
             observed,
@@ -522,6 +535,21 @@ def _has_positive_release_action(clause: str) -> bool:
         if source_supports_release_action(segment):
             return True
     return False
+
+
+def _descriptive_release_ranges(clause: str) -> tuple[tuple[int, int], ...]:
+    """Return release-description ranges without crossing adversative boundaries."""
+    ranges: list[tuple[int, int]] = []
+    start = 0
+    for boundary in _ADVERSATIVE_BOUNDARY_RE.finditer(clause):
+        segment = clause[start : boundary.start()]
+        if _DESCRIPTIVE_RELEASE_ACTION_RE.search(segment):
+            ranges.append((start, boundary.start()))
+        start = boundary.end()
+    segment = clause[start:]
+    if _DESCRIPTIVE_RELEASE_ACTION_RE.search(segment):
+        ranges.append((start, len(clause)))
+    return tuple(ranges)
 
 
 def _plus_segments_have_profile_evidence(

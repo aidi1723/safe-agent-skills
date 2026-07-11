@@ -1,7 +1,11 @@
+import dataclasses
 import unittest
 
 from onecode_skill_sanitizer.intent import Intent, decompose_task
-from onecode_skill_sanitizer.intent_evidence import IntentEvidence
+from onecode_skill_sanitizer.intent_evidence import (
+    IntentEvidence,
+    bind_intent_evidence,
+)
 from onecode_skill_sanitizer.intent_dependencies import (
     IntentRelation,
     apply_intent_relations,
@@ -10,6 +14,62 @@ from onecode_skill_sanitizer.intent_dependencies import (
 
 
 class IntentDependenciesTest(unittest.TestCase):
+    def test_direct_relation_inference_ignores_markers_after_scan_boundary(self):
+        intents = (
+            self.intent("i1", "review code"),
+            self.intent("i2", "build website"),
+        )
+        text = "x" * 20_000 + " then"
+
+        self.assertEqual(infer_intent_relations(text, intents), ())
+
+    def test_unordered_bullets_remain_parallel_but_numbered_steps_chain(self):
+        unordered = decompose_task("- code review\n- build a website")
+        numbered = decompose_task("1. code review\n2. build a website")
+
+        self.assertEqual(
+            [intent.depends_on for intent in unordered.intents], [(), ()]
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in numbered.intents], [(), ("i1",)]
+        )
+
+    def test_mixed_sequence_only_chains_intents_before_parallel_scope(self):
+        graph = decompose_task(
+            "first code review, then build a website; "
+            "in parallel analyze a spreadsheet"
+        )
+
+        self.assertEqual(
+            [intent.depends_on for intent in graph.intents],
+            [(), ("i1",), ()],
+        )
+        self.assertEqual(
+            [item.relation_mode for item in graph.intent_evidence],
+            ["explicit_sequence", "explicit_sequence", "parallel"],
+        )
+
+    def test_plain_plus_cannot_forge_explicit_relation_metadata(self):
+        graph = decompose_task("code review + analyze a spreadsheet")
+        forged = tuple(
+            dataclasses.replace(item, relation_mode="explicit_sequence")
+            for item in graph.intent_evidence
+        )
+        forged = bind_intent_evidence(
+            forged, "code review + analyze a spreadsheet"
+        )
+        forged_graph = dataclasses.replace(graph, intent_evidence=forged)
+
+        self.assertTrue(forged_graph.validate())
+        self.assertEqual(
+            infer_intent_relations(
+                "code review + analyze a spreadsheet",
+                forged_graph.intents,
+                forged,
+            ),
+            (),
+        )
+
     def test_malformed_structured_evidence_fails_closed_without_relations(self):
         intents = (
             self.intent("i1", "review code", "code_review"),

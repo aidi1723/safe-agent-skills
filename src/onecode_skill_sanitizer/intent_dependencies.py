@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Iterable, Sequence
 
 from .intent import IntentRelation
 from .intent_evidence import IntentEvidence, validate_intent_evidence
+from .routing_profiles import MAX_SCAN_CHARACTERS
 
 if TYPE_CHECKING:
     from .intent import Intent
@@ -92,14 +93,17 @@ def infer_intent_relations(
     intent_evidence: tuple[IntentEvidence, ...] = (),
 ) -> tuple[IntentRelation, ...]:
     """Infer only dependencies stated by explicit ordering or release markers."""
+    current_text = current_text[:MAX_SCAN_CHARACTERS]
     if len(intents) < 2:
         return ()
 
-    structured_evidence = _validated_evidence(intent_evidence, intents)
+    structured_evidence = _validated_evidence(
+        intent_evidence, intents, current_text
+    )
     if structured_evidence is None:
         return ()
     relations: list[IntentRelation] = []
-    evidence_parallel_start = (
+    parallel_start = (
         next(
             (
                 index
@@ -109,11 +113,7 @@ def infer_intent_relations(
             len(intents),
         )
         if structured_evidence
-        else len(intents)
-    )
-    parallel_start = min(
-        evidence_parallel_start,
-        _parallel_start_index(current_text, intents),
+        else 0 if _PARALLEL_RE.search(current_text) else len(intents)
     )
     ordered_intents = intents[:parallel_start]
 
@@ -191,16 +191,22 @@ def infer_intent_relations(
 
 
 def _validated_evidence(
-    evidence: tuple[IntentEvidence, ...], intents: Sequence[Intent]
+    evidence: tuple[IntentEvidence, ...],
+    intents: Sequence[Intent],
+    current_text: str,
 ) -> tuple[IntentEvidence, ...] | None:
+    from .intent import _canonical_intent_evidence
+
     if evidence == ():
         return ()
     errors = validate_intent_evidence(
         evidence,
         tuple(intent.task_type for intent in intents),
-        tuple(intent.summary for intent in intents),
+        current_text,
     )
     if errors:
+        return None
+    if evidence != _canonical_intent_evidence(current_text):
         return None
     return evidence
 
@@ -238,6 +244,7 @@ def infer_unresolved_dependencies(
     current_text: str, intents: Sequence[Intent]
 ) -> tuple[str, ...]:
     """Record an explicit completion reference when no prerequisite intent exists."""
+    current_text = current_text[:MAX_SCAN_CHARACTERS]
     if len(intents) != 1:
         return ()
     match = _UNKNOWN_PREFIX_GATE_RE.search(current_text)
@@ -301,21 +308,6 @@ def _append_semicolon_relations(
             relations.append(
                 IntentRelation(source.id, target.id, "semicolon_sequence")
             )
-
-
-def _parallel_start_index(current_text: str, intents: Sequence[Intent]) -> int:
-    marker = _PARALLEL_RE.search(current_text)
-    if marker is None:
-        return len(intents)
-    if not current_text[: marker.start()].strip(" \t\n,，;；:："):
-        return 0
-
-    suffix = current_text[marker.end() :].casefold()
-    for index, intent in enumerate(intents):
-        anchor = _PARALLEL_RE.sub("", intent.summary).strip(" \t\n,，;；:：")
-        if anchor and anchor.casefold() in suffix:
-            return index
-    return len(intents)
 
 
 def _deduplicate_relations(

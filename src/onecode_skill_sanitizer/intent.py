@@ -6,7 +6,11 @@ from dataclasses import asdict, dataclass, replace
 import re
 from typing import Any
 
-from .intent_evidence import IntentEvidence, validate_intent_evidence
+from .intent_evidence import (
+    IntentEvidence,
+    bind_intent_evidence,
+    validate_intent_evidence,
+)
 from .intent_spans import (
     MAX_CANDIDATE_SIGNALS,
     MAX_EMITTED_INTENTS,
@@ -20,6 +24,11 @@ from .routing_profiles import MAX_SCAN_CHARACTERS
 
 _LIST_MARKER_RE = re.compile(
     r"^\s*(?:\d+[.)、]|[-*+]\s*\[[ xX]\]|[-*+])\s+(.+?)\s*$"
+)
+_ORDERED_LIST_MARKER_RE = re.compile(r"^\s*\d+[.)、]\s+")
+_UNORDERED_LIST_MARKER_RE = re.compile(r"^\s*[-*+](?:\s*\[[ xX]\])?\s+")
+_PARALLEL_MARKER_RE = re.compile(
+    r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE
 )
 _CLAUSE_SEPARATOR_RE = re.compile(
     r"\s*(?:[；;]|，?同时|，?以及|，\s*再|\bthen\b)\s*",
@@ -109,6 +118,7 @@ class IntentGraph:
     unresolved_dependencies: tuple[str, ...]
     dependency_relations: tuple[IntentRelation, ...] = ()
     intent_evidence: tuple[IntentEvidence, ...] = ()
+    evidence_source: str = ""
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -127,7 +137,11 @@ class IntentGraph:
                     self.dependency_relations, {}, set()
                 )
             )
-            errors.extend(validate_intent_evidence(self.intent_evidence, ()))
+            errors.extend(
+                validate_intent_evidence(
+                    self.intent_evidence, (), self.evidence_source
+                )
+            )
             return errors
 
         duplicate_ids = _duplicate_intent_ids(self.intents)
@@ -180,13 +194,32 @@ class IntentGraph:
                 self.dependency_relations, dependencies, intent_ids
             )
         )
+        bounded_evidence_source = (
+            self.evidence_source[:MAX_SCAN_CHARACTERS]
+            if isinstance(self.evidence_source, str)
+            else self.evidence_source
+        )
         errors.extend(
             validate_intent_evidence(
                 self.intent_evidence,
                 tuple(intent.task_type for intent in self.intents),
-                tuple(intent.summary for intent in self.intents),
+                bounded_evidence_source,
             )
         )
+        if (
+            self.intent_evidence
+            and isinstance(self.evidence_source, str)
+            and self.evidence_source
+        ):
+            if len(self.evidence_source) > MAX_SCAN_CHARACTERS:
+                errors.append("intent evidence source exceeds scan boundary")
+            canonical = _parse_bounded_intent_source(
+                self.evidence_source[:MAX_SCAN_CHARACTERS]
+            )
+            if self.intent_evidence != canonical.intent_evidence:
+                errors.append(
+                    "intent evidence does not match canonical source analysis"
+                )
 
         cycle = _find_dependency_cycle(dependencies, intent_ids)
         if cycle:
@@ -217,9 +250,24 @@ class TaskDecomposition:
     diagnostics: DecompositionDiagnostics
 
 
+@dataclass(frozen=True)
+class _ParsedIntentSource:
+    clauses: tuple[str, ...]
+    intent_evidence: tuple[IntentEvidence, ...]
+    observed_candidate_count: int
+    candidate_signal_limit_exceeded: bool
+    intent_limit_exceeded: bool
+    used_profile_spans: bool
+
+
 def normalize_task(task: str) -> NormalizedTask:
-    context = split_current_intent_text(task)
-    current = context["current_intent_text"] if context["current_intent_detected"] else task.strip()
+    bounded_task = task[:MAX_SCAN_CHARACTERS]
+    context = split_current_intent_text(bounded_task)
+    current = (
+        context["current_intent_text"]
+        if context["current_intent_detected"]
+        else bounded_task.strip()
+    )
     return NormalizedTask(
         raw=task,
         current=current,
@@ -339,16 +387,10 @@ def classify_intent(
     )
 
 
-def decompose_task_detailed(task: str) -> TaskDecomposition:
-    from .intent_dependencies import (
-        apply_intent_relations,
-        infer_intent_relations,
-        infer_unresolved_dependencies,
-    )
-
-    current = normalize_task(task).current
-    task_scan_limit_exceeded = len(current) > MAX_SCAN_CHARACTERS
-    broad_clauses = split_task_clauses(current[:MAX_SCAN_CHARACTERS])
+def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
+    """Build canonical clauses and evidence from an already bounded source."""
+    current = source[:MAX_SCAN_CHARACTERS]
+    broad_clauses = split_task_clauses(current)
     clauses: list[str] = []
     observed_candidate_count = 0
     candidate_signal_limit_exceeded = False
@@ -378,7 +420,9 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
             candidate_budget = max(
                 0, MAX_CANDIDATE_SIGNALS - observed_candidate_count
             )
-            decomposition = split_profile_enumeration(broad_clause, candidate_budget)
+            decomposition = split_profile_enumeration(
+                broad_clause, candidate_budget
+            )
         observed_candidate_count = min(
             129,
             observed_candidate_count + decomposition.observed_candidate_count,
@@ -387,15 +431,21 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
             candidate_signal_limit_exceeded
             or decomposition.candidate_signal_limit_exceeded
         )
-        intent_limit_exceeded = intent_limit_exceeded or decomposition.intent_limit_exceeded
-        used_profile_spans = used_profile_spans or len(decomposition.clauses) > 1
+        intent_limit_exceeded = (
+            intent_limit_exceeded or decomposition.intent_limit_exceeded
+        )
+        used_profile_spans = (
+            used_profile_spans or len(decomposition.clauses) > 1
+        )
         remaining = MAX_EMITTED_INTENTS - len(clauses)
         if len(decomposition.clauses) > remaining:
             intent_limit_exceeded = True
         if remaining > 0:
             emitted = decomposition.clauses[:remaining]
             clauses.extend(emitted)
-            clause_evidence.extend(decomposition.intent_evidence[: len(emitted)])
+            clause_evidence.extend(
+                decomposition.intent_evidence[: len(emitted)]
+            )
         if (
             len(clauses) >= MAX_EMITTED_INTENTS
             and clause_index < len(broad_clauses) - 1
@@ -403,54 +453,120 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
             intent_limit_exceeded = True
             break
 
+    clause_evidence = _apply_source_relation_modes(
+        current, clauses, clause_evidence
+    )
+    return _ParsedIntentSource(
+        clauses=tuple(clauses),
+        intent_evidence=bind_intent_evidence(tuple(clause_evidence), current),
+        observed_candidate_count=observed_candidate_count,
+        candidate_signal_limit_exceeded=candidate_signal_limit_exceeded,
+        intent_limit_exceeded=intent_limit_exceeded,
+        used_profile_spans=used_profile_spans,
+    )
+
+
+def _canonical_intent_evidence(source: str) -> tuple[IntentEvidence, ...]:
+    return _parse_bounded_intent_source(
+        source[:MAX_SCAN_CHARACTERS]
+    ).intent_evidence
+
+
+def decompose_task_detailed(task: str) -> TaskDecomposition:
+    from .intent_dependencies import (
+        apply_intent_relations,
+        infer_intent_relations,
+        infer_unresolved_dependencies,
+    )
+
+    task_scan_limit_exceeded = len(task) > MAX_SCAN_CHARACTERS
+    current = normalize_task(task).current
+    parsed = _parse_bounded_intent_source(current)
+    clauses = parsed.clauses
+    bound_evidence = parsed.intent_evidence
+
     intents: list[Intent] = []
-    if (
-        relation_mode_for_text(current) == "explicit_sequence"
-        or len(_split_list_items(current)) > 1
-    ):
-        clause_evidence = [
-            replace(evidence, relation_mode="explicit_sequence")
-            for evidence in clause_evidence
-        ]
     for index, clause in enumerate(clauses, start=1):
-        evidence = clause_evidence[index - 1]
+        evidence = bound_evidence[index - 1]
         intents.append(classify_intent(clause, index, evidence))
-    relations = infer_intent_relations(current, intents, tuple(clause_evidence))
+    relations = infer_intent_relations(current, intents, bound_evidence)
     final_intents = apply_intent_relations(intents, relations)
     intent_graph = IntentGraph(
         intents=final_intents,
         unresolved_dependencies=infer_unresolved_dependencies(current, final_intents),
         dependency_relations=relations,
-        intent_evidence=tuple(clause_evidence),
+        intent_evidence=bound_evidence,
+        evidence_source=current,
     )
     reason_codes: list[str] = []
     if task_scan_limit_exceeded:
         reason_codes.append("task_scan_limit_exceeded")
-    if candidate_signal_limit_exceeded:
+    if parsed.candidate_signal_limit_exceeded:
         reason_codes.append("candidate_signal_limit_exceeded")
-    if intent_limit_exceeded:
+    if parsed.intent_limit_exceeded:
         reason_codes.append("intent_limit_exceeded")
     if any(
         evidence.task_type == "general"
         and evidence.context in {"descriptive", "how_to", "ambiguous"}
-        for evidence in clause_evidence
+        for evidence in bound_evidence
     ):
         reason_codes.append("ambiguous_profile_enumeration")
     diagnostics = DecompositionDiagnostics(
         mode=(
             "profile_spans"
-            if used_profile_spans
+            if parsed.used_profile_spans
             else "strong_clauses"
-            if len(broad_clauses) > 1
+            if len(split_task_clauses(current)) > 1
             else "single_clause"
         ),
-        observed_candidate_count=observed_candidate_count,
+        observed_candidate_count=parsed.observed_candidate_count,
         emitted_intent_count=len(intents),
-        candidate_signal_limit_exceeded=candidate_signal_limit_exceeded,
-        intent_limit_exceeded=intent_limit_exceeded,
+        candidate_signal_limit_exceeded=parsed.candidate_signal_limit_exceeded,
+        intent_limit_exceeded=parsed.intent_limit_exceeded,
         reason_codes=tuple(reason_codes),
     )
     return TaskDecomposition(intent_graph=intent_graph, diagnostics=diagnostics)
+
+
+def _apply_source_relation_modes(
+    source: str,
+    clauses: list[str],
+    evidence: list[IntentEvidence],
+) -> list[IntentEvidence]:
+    list_mode = _list_relation_mode(source)
+    if list_mode is not None:
+        return [replace(item, relation_mode=list_mode) for item in evidence]
+    if relation_mode_for_text(source) != "explicit_sequence":
+        return evidence
+
+    parallel = _PARALLEL_MARKER_RE.search(source)
+    if parallel is None:
+        return [
+            replace(item, relation_mode="explicit_sequence") for item in evidence
+        ]
+
+    source_folded = source.casefold()
+    search_start = 0
+    result: list[IntentEvidence] = []
+    for clause, item in zip(clauses, evidence, strict=True):
+        position = source_folded.find(clause.casefold(), search_start)
+        if position < 0:
+            position = search_start
+        search_start = position + len(clause)
+        mode = "parallel" if position >= parallel.start() else "explicit_sequence"
+        result.append(replace(item, relation_mode=mode))
+    return result
+
+
+def _list_relation_mode(source: str) -> str | None:
+    lines = [line for line in source.splitlines() if line.strip()]
+    if len(lines) < 2:
+        return None
+    if all(_ORDERED_LIST_MARKER_RE.match(line) for line in lines):
+        return "explicit_sequence"
+    if all(_UNORDERED_LIST_MARKER_RE.match(line) for line in lines):
+        return "parallel"
+    return None
 
 
 def decompose_task(task: str) -> IntentGraph:

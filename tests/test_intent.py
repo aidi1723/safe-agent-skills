@@ -12,7 +12,10 @@ from onecode_skill_sanitizer.intent import (
     normalize_task,
     split_task_clauses,
 )
-from onecode_skill_sanitizer.intent_evidence import IntentEvidence
+from onecode_skill_sanitizer.intent_evidence import (
+    IntentEvidence,
+    bind_intent_evidence,
+)
 
 
 class IntentTest(unittest.TestCase):
@@ -216,6 +219,128 @@ class IntentTest(unittest.TestCase):
             ),
             graph.validate(),
         )
+
+    def test_intent_evidence_validation_is_total_for_arbitrary_field_types(self):
+        intent = self.intent("i1")
+        valid = IntentEvidence(
+            "general", "action", "positive", "none", "single", (), 0
+        )
+        mutations = {
+            "task_type": [None, [], {}],
+            "context": [None, [], {}],
+            "polarity": [None, [], {}],
+            "release_mode": [None, [], {}],
+            "relation_mode": [None, [], {}],
+            "matched_signals": [None, [], (1,), ("ok", None)],
+            "matched_score": [True, "2", float("nan"), float("inf"), -1, 513],
+        }
+
+        for field, values in mutations.items():
+            for value in values:
+                with self.subTest(field=field, value=value):
+                    evidence = dataclasses.replace(valid, **{field: value})
+                    graph = IntentGraph((intent,), (), intent_evidence=(evidence,))
+                    errors = graph.validate()
+                    self.assertTrue(errors)
+                    self.assertTrue(all(isinstance(error, str) for error in errors))
+
+    def test_intent_evidence_rejects_source_bound_forgery(self):
+        cases = [
+            (
+                dataclasses.replace(
+                    self.intent("i1"),
+                    task_type="open_source_release",
+                    summary="do not push to GitHub",
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "action",
+                    "explicit_sequence",
+                    ("push to github",),
+                    999,
+                ),
+            ),
+            (
+                dataclasses.replace(
+                    self.intent("i1"), task_type="code_review", summary="code review"
+                ),
+                IntentEvidence(
+                    "code_review",
+                    "action",
+                    "positive",
+                    "none",
+                    "single",
+                    ("website",),
+                    0,
+                ),
+            ),
+        ]
+
+        for intent, evidence in cases:
+            with self.subTest(summary=intent.summary):
+                graph = IntentGraph(
+                    (intent,),
+                    (),
+                    intent_evidence=(evidence,),
+                    evidence_source=intent.summary,
+                )
+                self.assertTrue(graph.validate())
+
+    def test_intent_evidence_rejects_valid_typed_field_forgery(self):
+        graph = decompose_task("code review + analyze a spreadsheet")
+        original = graph.intent_evidence[0]
+        mutations = {
+            "context": "descriptive",
+            "polarity": "negative",
+            "relation_mode": "explicit_sequence",
+            "matched_signals": ("website",),
+            "matched_score": original.matched_score + 1,
+        }
+
+        for field, value in mutations.items():
+            with self.subTest(field=field):
+                forged = dataclasses.replace(original, **{field: value})
+                rebound = bind_intent_evidence(
+                    (forged, *graph.intent_evidence[1:]),
+                    graph.evidence_source,
+                )
+                forged_graph = dataclasses.replace(
+                    graph,
+                    intent_evidence=rebound,
+                )
+                self.assertTrue(forged_graph.validate())
+
+    def test_negated_release_cannot_forge_positive_action_with_valid_binding(self):
+        intent = dataclasses.replace(
+            self.intent("i1"),
+            task_type="open_source_release",
+            summary="do not push to GitHub",
+        )
+        source = intent.summary
+        forged = bind_intent_evidence(
+            (
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "action",
+                    "single",
+                    ("push to github",),
+                    4,
+                ),
+            ),
+            source,
+        )
+        graph = IntentGraph(
+            (intent,),
+            (),
+            intent_evidence=forged,
+            evidence_source=source,
+        )
+
+        self.assertTrue(graph.validate())
 
     def test_explicit_sequences_create_dependency_chains(self):
         cases = [
