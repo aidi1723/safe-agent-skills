@@ -66,9 +66,11 @@ from .router_evaluation import router_eval_trace_summary as router_eval_trace_su
 from .router_evaluation import run_router_eval as run_router_eval
 from .router_evaluation import validate_router_eval_case as validate_router_eval_case
 from .router_eval_v2 import DatasetValidationError
+from .router_eval_v2 import dataset_identity_v2
 from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_v2
+from .router_quality_gate import build_quality_gate
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
 from .taxonomy import classify_skill, taxonomy_from_manifest
@@ -585,6 +587,12 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
                 contract_result["total_skill_count"],
             ),
         )
+        result["quality_gate"] = build_quality_gate(
+            result["metrics"],
+            support_counts={**result["counts"], "case_count": result["case_count"]},
+            dataset_identity=dataset_identity_v2(result["case_count"]),
+            review_identity={},
+        )
     except (DatasetValidationError, EvaluatorError, ValueError, OSError, SystemExit) as exc:
         print(
             json.dumps(
@@ -596,6 +604,8 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         )
         return 2
     print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
+    if getattr(args, "require_production_ready", False) and not result["quality_gate"]["production_ready"]:
+        return 2
     return 0
 
 

@@ -259,6 +259,7 @@ def build_parser() -> argparse.ArgumentParser:
     router_eval_v2_parser.add_argument("--eval", required=True)
     router_eval_v2_parser.add_argument("--registry", default="catalog")
     router_eval_v2_parser.add_argument("--bundles", default="bundles/index.json")
+    router_eval_v2_parser.add_argument("--require-production-ready", action="store_true")
     router_eval_v2_parser.set_defaults(func=router_eval_v2_command)
 
     claude_skills_bulk_plan_parser = subparsers.add_parser("claude-skills-bulk-plan")

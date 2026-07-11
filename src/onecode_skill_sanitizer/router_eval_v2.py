@@ -157,6 +157,20 @@ def load_eval_dataset_v2(
     return validated
 
 
+def dataset_identity_v2(case_count: int) -> dict[str, object]:
+    """Return stable identity fields for an already validated v2 dataset."""
+
+    if type(case_count) is not int or case_count <= 0:
+        raise DatasetValidationError("dataset identity case_count must be a positive integer")
+    return {
+        "case_count": case_count,
+        "labeling_generated_from_router": EXPECTED_LABELING["generated_from_router"],
+        "labeling_method": EXPECTED_LABELING["method"],
+        "labeling_reviewed_at": EXPECTED_LABELING["reviewed_at"],
+        "labeling_reviewer_role": EXPECTED_LABELING["reviewer_role"],
+    }
+
+
 def _validate_case(
     case: object,
     index: int,

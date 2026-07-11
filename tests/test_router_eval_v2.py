@@ -1821,6 +1821,28 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
         report = json.loads(completed.stdout)
         self.assertEqual(report["case_count"], 100)
+        self.assertFalse(report["quality_gate"]["production_ready"])
+        self.assertIn(
+            "forbidden_scenario_false_positive_rate",
+            report["quality_gate"]["failed_gates"],
+        )
+        self.assertIn("high_confidence_error_rate", report["quality_gate"]["failed_gates"])
+        self.assertIn(
+            "forbidden_skill_false_positive_rate",
+            report["quality_gate"]["missing_gates"],
+        )
+        self.assertIn("independent_label_review", report["quality_gate"]["missing_gates"])
+        self.assertEqual(
+            report["quality_gate"]["dataset_identity"],
+            {
+                "case_count": 100,
+                "labeling_generated_from_router": False,
+                "labeling_method": "manual_review",
+                "labeling_reviewed_at": "2026-07-10",
+                "labeling_reviewer_role": "independent_dataset_review",
+            },
+        )
+        self.assertEqual(report["quality_gate"]["review_identity"], {})
         self.assertEqual(report["metrics"]["dag_validity"], 1.0)
         self.assertGreaterEqual(report["metrics"]["dependency_edge_recall"], 0.90)
         self.assertEqual(
@@ -1874,6 +1896,33 @@ class RouterEvalV2Tests(unittest.TestCase):
             report["metrics"]["task_type_macro_f1"],
             sum(item[2] for item in per_label) / len(per_label),
         )
+
+    def test_real_command_requires_production_ready_only_when_requested(self):
+        completed = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "onecode_skill_sanitizer",
+                "router-eval-v2",
+                "--eval",
+                str(EVAL_PATH),
+                "--registry",
+                str(ROOT / "catalog"),
+                "--bundles",
+                str(ROOT / "bundles" / "index.json"),
+                "--require-production-ready",
+            ],
+            cwd=ROOT,
+            env={"PYTHONPATH": str(ROOT / "src")},
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(completed.returncode, 2, completed.stderr)
+        report = json.loads(completed.stdout)
+        self.assertFalse(report["quality_gate"]["production_ready"])
+        self.assertIn("independent_label_review", report["quality_gate"]["missing_gates"])
 
     def test_bundle_capability_context_is_deterministic_and_required_only(self):
         from onecode_skill_sanitizer.commands import _bundle_required_capability_context
