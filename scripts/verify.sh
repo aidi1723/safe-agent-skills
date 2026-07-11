@@ -12,18 +12,10 @@ fi
 search_repo() {
   local pattern="$1"
   local exclude_path="${2:-}"
-  if command -v rg >/dev/null 2>&1; then
-    if [[ -n "$exclude_path" ]]; then
-      rg -n "$pattern" . --glob '!.git/**' --glob "!$exclude_path"
-    else
-      rg -n "$pattern" . --glob '!.git/**'
-    fi
-    return
-  fi
   if [[ -n "$exclude_path" ]]; then
-    grep -RInE --exclude-dir=.git --exclude="$(basename "$exclude_path")" -- "$pattern" .
+    git grep -n -E -- "$pattern" -- . ":(exclude)$exclude_path"
   else
-    grep -RInE --exclude-dir=.git -- "$pattern" .
+    git grep -n -E -- "$pattern" -- .
   fi
 }
 
