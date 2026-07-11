@@ -28,7 +28,14 @@ _ORDERED_BEFORE_RE = re.compile(
     re.IGNORECASE,
 )
 _ORDERED_AFTER_RE = re.compile(
-    r"\s+\bafter\b\s+(?=(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b)",
+    r"\s+\bafter\b\s+(?="
+    r"(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b|"
+    r"approval\s+of\s+(?:the\s+)?(?:pr|pull\s+request)\b|"
+    r"(?:the\s+)?(?:pr|pull\s+request)\s+is\s+approved\b)",
+    re.IGNORECASE,
+)
+_CHINESE_TARGET_FIRST_APPROVAL_RE = re.compile(
+    r"\s*在\s+(?=(?:PR|拉取请求)\s*(?:审批通过|批准|审核通过)后\s*$)",
     re.IGNORECASE,
 )
 _PUBLISHING_SITE_TARGET = (
@@ -291,6 +298,14 @@ def split_task_clauses(task: str) -> list[str]:
         ]
         if len(completion_parts) > 1:
             clauses.extend(completion_parts)
+            continue
+        target_first_approval_parts = [
+            part.strip(" \t\n,，。")
+            for part in _CHINESE_TARGET_FIRST_APPROVAL_RE.split(candidate)
+            if part.strip(" \t\n,，。")
+        ]
+        if len(target_first_approval_parts) > 1:
+            clauses.extend(target_first_approval_parts)
             continue
         preceding_parts = [
             part.strip(" \t\n,，。")

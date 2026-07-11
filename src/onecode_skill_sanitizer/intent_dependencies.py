@@ -31,7 +31,14 @@ _PREFIX_COMPLETION_RE = re.compile(
     re.IGNORECASE,
 )
 _INFIX_COMPLETION_RE = re.compile(
-    r"\bafter\s+(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b",
+    r"\bafter\s+(?:"
+    r"(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b|"
+    r"approval\s+of\s+(?:the\s+)?(?:pr|pull\s+request)\b|"
+    r"(?:the\s+)?(?:pr|pull\s+request)\s+is\s+approved\b)",
+    re.IGNORECASE,
+)
+_CHINESE_TARGET_FIRST_APPROVAL_RE = re.compile(
+    r"在\s+(?:PR|拉取请求)\s*(?:审批通过|批准|审核通过)后",
     re.IGNORECASE,
 )
 _CHINESE_COMPLETION_RE = re.compile(
@@ -91,6 +98,21 @@ def infer_intent_relations(
     if _PREFIX_BEFORE_RE.search(current_text) and len(ordered_intents) == 2:
         relations.append(
             IntentRelation(ordered_intents[1].id, ordered_intents[0].id, "before")
+        )
+    elif _CHINESE_TARGET_FIRST_APPROVAL_RE.search(current_text) and len(
+        ordered_intents
+    ) == 2:
+        source = ordered_intents[1]
+        requires_verification = _requires_verification(source.summary)
+        relations.append(
+            IntentRelation(
+                source.id,
+                ordered_intents[0].id,
+                "verification_gate"
+                if requires_verification
+                else "completion_gate",
+                requires_verification,
+            )
         )
     elif _PREFIX_COMPLETION_RE.search(current_text) or _CHINESE_COMPLETION_RE.search(
         current_text

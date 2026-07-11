@@ -213,6 +213,30 @@ class IntentDependenciesTest(unittest.TestCase):
         self.assertEqual((relation.source_id, relation.target_id), ("i2", "i1"))
         self.assertTrue(relation.requires_verification)
 
+    def test_target_first_approval_splits_reverses_and_marks_gate(self):
+        cases = [
+            "Build the website after approval of the PR",
+            "Build the website after the PR is approved",
+            "构建官网在 PR 审批通过后",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["website_build", "code_review"],
+                )
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents],
+                    [("i2",), ()],
+                )
+                relation = graph.dependency_relations[0]
+                self.assertEqual(
+                    (relation.source_id, relation.target_id), ("i2", "i1")
+                )
+                self.assertTrue(relation.requires_verification)
+
     def test_verification_gate_precedes_semicolon_inference(self):
         cases = [
             "After verifying the PR; build the website",
