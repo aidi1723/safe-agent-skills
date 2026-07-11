@@ -595,10 +595,6 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
     )
 
 
-def _canonical_intent_evidence(source: str) -> tuple[IntentEvidence, ...]:
-    return _parse_bounded_intent_source(bound_task_text(source)).intent_evidence
-
-
 def decompose_task_detailed(task: str) -> TaskDecomposition:
     from .intent_dependencies import (
         apply_intent_relations,

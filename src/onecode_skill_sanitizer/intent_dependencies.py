@@ -68,14 +68,16 @@ def infer_intent_relations(
     if intent_evidence:
         from .intent import _parse_bounded_intent_source
 
+        parsed = _parse_bounded_intent_source(current_text)
         structured_evidence = _validated_evidence(
-            intent_evidence, intents, current_text
+            intent_evidence,
+            intents,
+            current_text,
+            parsed.intent_evidence,
         )
         if structured_evidence is None:
             return ()
-        return _parse_bounded_intent_source(
-            current_text
-        ).dependency_relations
+        return parsed.dependency_relations
     return _infer_legacy_relations(current_text, intents)
 
 
@@ -185,9 +187,8 @@ def _validated_evidence(
     evidence: tuple[IntentEvidence, ...],
     intents: Sequence[Intent],
     current_text: str,
+    canonical_evidence: tuple[IntentEvidence, ...],
 ) -> tuple[IntentEvidence, ...] | None:
-    from .intent import _canonical_intent_evidence
-
     if evidence == ():
         return ()
     errors = validate_intent_evidence(
@@ -197,7 +198,7 @@ def _validated_evidence(
     )
     if errors:
         return None
-    if evidence != _canonical_intent_evidence(current_text):
+    if evidence != canonical_evidence:
         return None
     return evidence
 

@@ -1,6 +1,8 @@
 import dataclasses
 import unittest
+from unittest.mock import patch
 
+from onecode_skill_sanitizer import intent as intent_module
 from onecode_skill_sanitizer.intent import Intent, decompose_task
 from onecode_skill_sanitizer.intent_evidence import (
     IntentEvidence,
@@ -14,6 +16,22 @@ from onecode_skill_sanitizer.intent_dependencies import (
 
 
 class IntentDependenciesTest(unittest.TestCase):
+    def test_nonempty_evidence_inference_parses_canonical_source_once(self):
+        source = "code review then build a website"
+        graph = decompose_task(source)
+
+        with patch.object(
+            intent_module,
+            "_parse_bounded_intent_source",
+            wraps=intent_module._parse_bounded_intent_source,
+        ) as parser:
+            relations = infer_intent_relations(
+                source, graph.intents, graph.intent_evidence
+            )
+
+        self.assertEqual(relations, graph.dependency_relations)
+        self.assertEqual(parser.call_count, 1)
+
     def test_approval_release_variants_have_one_canonical_release_gate(self):
         tasks = (
             "在 PR 审批通过后发布更新",
