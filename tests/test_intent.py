@@ -12,9 +12,52 @@ from onecode_skill_sanitizer.intent import (
     normalize_task,
     split_task_clauses,
 )
+from onecode_skill_sanitizer.intent_evidence import IntentEvidence
 
 
 class IntentTest(unittest.TestCase):
+    def test_internal_intent_evidence_is_frozen_validated_and_nonserialized(self):
+        graph = decompose_task("代码审查 + 老板简报 + 发布清单")
+
+        self.assertEqual(graph.validate(), [])
+        self.assertTrue(graph.intent_evidence)
+        with self.assertRaises(dataclasses.FrozenInstanceError):
+            graph.intent_evidence[0].task_type = "general"
+        self.assertNotIn("intent_evidence", graph.to_json())
+        self.assertEqual(
+            IntentGraph((self.intent("i1"),), ()).validate(),
+            [],
+        )
+
+    def test_internal_intent_evidence_rejects_malformed_records(self):
+        intent = self.intent("i1")
+        valid = IntentEvidence(
+            "general", "action", "positive", "none", "single", (), 0
+        )
+        malformed_cases = [
+            (None, "intent evidence must be a tuple"),
+            ([valid], "intent evidence must be a tuple"),
+            ((object(),), "must be an IntentEvidence"),
+            (
+                (dataclasses.replace(valid, task_type="code_review"),),
+                "task type does not match intent",
+            ),
+            ((dataclasses.replace(valid, context="bad"),), "invalid context"),
+            ((dataclasses.replace(valid, polarity="bad"),), "invalid polarity"),
+            ((dataclasses.replace(valid, release_mode="bad"),), "invalid release mode"),
+            ((dataclasses.replace(valid, relation_mode="bad"),), "invalid relation mode"),
+            ((dataclasses.replace(valid, matched_signals=[]),), "invalid matched signals"),
+            ((dataclasses.replace(valid, matched_score=True),), "invalid matched score"),
+        ]
+
+        for evidence, expected in malformed_cases:
+            with self.subTest(expected=expected):
+                graph = IntentGraph((intent,), (), intent_evidence=evidence)
+                self.assertTrue(
+                    any(expected in error for error in graph.validate()),
+                    graph.validate(),
+                )
+
     def test_explicit_sequences_create_dependency_chains(self):
         cases = [
             (
@@ -77,6 +120,18 @@ class IntentTest(unittest.TestCase):
             ),
             (
                 "code review + draft release checklist",
+                ["code_review", "open_source_release"],
+            ),
+            (
+                "code review + a release checklist",
+                ["code_review", "open_source_release"],
+            ),
+            (
+                "code review + the draft release checklist",
+                ["code_review", "open_source_release"],
+            ),
+            (
+                "代码审查 + 发布清单 草案",
                 ["code_review", "open_source_release"],
             ),
         ]

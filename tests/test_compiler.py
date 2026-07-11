@@ -1,4 +1,5 @@
 import copy
+import dataclasses
 import json
 from pathlib import Path
 import unittest
@@ -8,6 +9,7 @@ from onecode_skill_sanitizer.compiler import compile_execution_graph
 from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
 from onecode_skill_sanitizer.intent import Intent, IntentGraph, decompose_task
 from onecode_skill_sanitizer.intent_dependencies import IntentRelation
+from onecode_skill_sanitizer.intent_evidence import IntentEvidence
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -15,6 +17,28 @@ COMPOUND_TASK = "构建官网，同时审计 skill 路由器，验证通过后�
 
 
 class CompilerTest(unittest.TestCase):
+    def test_malformed_internal_intent_evidence_blocks_compilation(self):
+        valid = IntentEvidence(
+            "code_review", "action", "positive", "none", "single", (), 2
+        )
+        graph = IntentGraph(
+            (self.intent("i1"),),
+            (),
+            intent_evidence=(dataclasses.replace(valid, context="bad"),),
+        )
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",)),
+            {"bundles": [self.bundle("first")]},
+            {"execution-publish-check"},
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+        self.assertEqual(compiled["nodes"], [])
+        self.assertEqual(compiled["edges"], [])
+
     @classmethod
     def setUpClass(cls):
         cls.bundles_index = json.loads(

@@ -7,7 +7,7 @@ import re
 from typing import TYPE_CHECKING, Iterable, Sequence
 
 from .intent import IntentRelation
-from .routing_profiles import is_release_readiness_request
+from .intent_evidence import IntentEvidence, validate_intent_evidence
 
 if TYPE_CHECKING:
     from .intent import Intent
@@ -54,7 +54,6 @@ _UNKNOWN_PREFIX_GATE_RE = re.compile(
     r"^\s*(?:after|once)\s+(.+?)(?:\s+is\s+(?:complete|completed|verified|approved))?\s*[,;]",
     re.IGNORECASE,
 )
-_PLUS_ENUMERATION_RE = re.compile(r"\+|＋")
 _CHINESE_SEQUENCE_RE = re.compile(r"然后|先[\s\S]*(?:再|后)")
 
 
@@ -88,14 +87,34 @@ SEMICOLON_WORKFLOW_TRANSITIONS = frozenset(
     }
 )
 def infer_intent_relations(
-    current_text: str, intents: Sequence[Intent]
+    current_text: str,
+    intents: Sequence[Intent],
+    intent_evidence: tuple[IntentEvidence, ...] = (),
 ) -> tuple[IntentRelation, ...]:
     """Infer only dependencies stated by explicit ordering or release markers."""
     if len(intents) < 2:
         return ()
 
+    structured_evidence = _validated_evidence(intent_evidence, intents)
+    if structured_evidence is None:
+        return ()
     relations: list[IntentRelation] = []
-    parallel_start = _parallel_start_index(current_text, intents)
+    evidence_parallel_start = (
+        next(
+            (
+                index
+                for index, evidence in enumerate(structured_evidence)
+                if evidence.relation_mode == "parallel"
+            ),
+            len(intents),
+        )
+        if structured_evidence
+        else len(intents)
+    )
+    parallel_start = min(
+        evidence_parallel_start,
+        _parallel_start_index(current_text, intents),
+    )
     ordered_intents = intents[:parallel_start]
 
     if _PREFIX_BEFORE_RE.search(current_text) and len(ordered_intents) == 2:
@@ -138,9 +157,14 @@ def infer_intent_relations(
         _append_source_chain(relations, ordered_intents, "first_then")
     elif _BEFORE_RE.search(current_text) or _CHINESE_PRECEDES_RE.search(current_text):
         _append_source_chain(relations, ordered_intents, "before")
-    elif _CHINESE_SEQUENCE_RE.search(current_text):
+    elif structured_evidence and any(
+        evidence.relation_mode == "explicit_sequence"
+        for evidence in structured_evidence
+    ):
         _append_source_chain(relations, ordered_intents, "explicit_sequence")
-    elif _ORDER_LEAD_IN_RE.search(current_text):
+    elif _CHINESE_SEQUENCE_RE.search(current_text) or _ORDER_LEAD_IN_RE.search(
+        current_text
+    ):
         _append_source_chain(relations, ordered_intents, "explicit_sequence")
     elif ";" in current_text or "；" in current_text:
         _append_semicolon_relations(relations, current_text, ordered_intents)
@@ -148,7 +172,15 @@ def infer_intent_relations(
     for target_index, target in enumerate(intents):
         if target.task_type != "open_source_release":
             continue
-        if _is_plain_release_readiness_enumeration(current_text, target):
+        target_evidence = (
+            structured_evidence[target_index] if structured_evidence else None
+        )
+        if (
+            target_evidence is not None
+            and target_evidence.release_mode == "readiness"
+            and target_evidence.relation_mode
+            in {"single", "enumeration", "parallel"}
+        ):
             continue
         for source in intents[:target_index]:
             relations.append(
@@ -158,28 +190,17 @@ def infer_intent_relations(
     return _deduplicate_relations(relations)
 
 
-def _is_plain_release_readiness_enumeration(
-    current_text: str, target: Intent
-) -> bool:
-    if not (
-        _PLUS_ENUMERATION_RE.search(current_text)
-        and is_release_readiness_request(target.summary)
-    ):
-        return False
-    return not any(
-        pattern.search(current_text)
-        for pattern in (
-            _FIRST_THEN_RE,
-            _BEFORE_RE,
-            _CHINESE_PRECEDES_RE,
-            _ORDER_LEAD_IN_RE,
-            _PREFIX_COMPLETION_RE,
-            _INFIX_COMPLETION_RE,
-            _CHINESE_TARGET_FIRST_APPROVAL_RE,
-            _CHINESE_COMPLETION_RE,
-            _CHINESE_SEQUENCE_RE,
-        )
+def _validated_evidence(
+    evidence: tuple[IntentEvidence, ...], intents: Sequence[Intent]
+) -> tuple[IntentEvidence, ...] | None:
+    if evidence == ():
+        return ()
+    errors = validate_intent_evidence(
+        evidence, tuple(intent.task_type for intent in intents)
     )
+    if errors:
+        return None
+    return evidence
 
 
 def apply_intent_relations(

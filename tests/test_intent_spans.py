@@ -47,6 +47,55 @@ NEGATIVE_CASES = [
 
 
 class IntentSpansTest(unittest.TestCase):
+    def test_contains_and_mentions_only_suppress_governance_enumerations(self):
+        cases = [
+            ("Build a website that contains a dashboard", ["website_build"]),
+            ("Review code that contains a security bug", ["code_review"]),
+        ]
+
+        for task, expected_task_types in cases:
+            with self.subTest(task=task):
+                result = decompose_task_detailed(task)
+                self.assertEqual(
+                    [intent.task_type for intent in result.intent_graph.intents],
+                    expected_task_types,
+                )
+                self.assertEqual(result.diagnostics.status, "complete")
+
+    def test_adversative_boundary_drops_negated_release_before_plus_enumeration(self):
+        cases = [
+            "Do not publish update, but code review + analyze a spreadsheet",
+            "不要发布更新，但是代码审查 + 老板简报",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                result = decompose_task_detailed(task)
+                self.assertEqual(
+                    [intent.task_type for intent in result.intent_graph.intents],
+                    ["code_review", "data_analysis"],
+                )
+                self.assertNotIn(
+                    "open_source_release",
+                    [intent.task_type for intent in result.intent_graph.intents],
+                )
+
+    def test_decomposition_records_structured_internal_evidence(self):
+        result = decompose_task_detailed(
+            "代码审查 + 老板简报 + 发布清单"
+        )
+
+        evidence = getattr(result.intent_graph, "intent_evidence", ())
+        self.assertTrue(evidence)
+        self.assertEqual([item.task_type for item in evidence], [
+            "code_review",
+            "data_analysis",
+            "open_source_release",
+        ])
+        self.assertEqual(evidence[-1].release_mode, "readiness")
+        self.assertTrue(all(item.relation_mode == "enumeration" for item in evidence))
+        self.assertNotIn("intent_evidence", result.intent_graph.to_json())
+
     def test_profile_enumeration_matrix_preserves_source_order(self):
         for task, expected_task_types in GOOD_CASES:
             with self.subTest(task=task):

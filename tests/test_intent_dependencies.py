@@ -1,6 +1,7 @@
 import unittest
 
 from onecode_skill_sanitizer.intent import Intent, decompose_task
+from onecode_skill_sanitizer.intent_evidence import IntentEvidence
 from onecode_skill_sanitizer.intent_dependencies import (
     IntentRelation,
     apply_intent_relations,
@@ -9,6 +10,33 @@ from onecode_skill_sanitizer.intent_dependencies import (
 
 
 class IntentDependenciesTest(unittest.TestCase):
+    def test_malformed_structured_evidence_fails_closed_without_relations(self):
+        intents = (
+            self.intent("i1", "review code", "code_review"),
+            self.intent("i2", "publish update", "open_source_release"),
+        )
+        malformed = (
+            IntentEvidence(
+                "code_review", "invalid", "positive", "none", "enumeration", (), 2
+            ),
+            IntentEvidence(
+                "open_source_release",
+                "action",
+                "positive",
+                "action",
+                "enumeration",
+                ("publish update",),
+                4,
+            ),
+        )
+
+        self.assertEqual(
+            infer_intent_relations(
+                "code review + publish update", intents, malformed
+            ),
+            (),
+        )
+
     def test_infers_first_then_and_chinese_first_then(self):
         cases = [
             (

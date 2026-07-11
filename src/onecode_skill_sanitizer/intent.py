@@ -2,18 +2,20 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, replace
 import re
 from typing import Any
 
+from .intent_evidence import IntentEvidence, validate_intent_evidence
 from .intent_spans import (
     MAX_CANDIDATE_SIGNALS,
     MAX_EMITTED_INTENTS,
     SpanDecomposition,
+    relation_mode_for_text,
     split_profile_enumeration,
 )
 from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
-from .routing_profiles import MAX_SCAN_CHARACTERS, is_design_governance_composite
+from .routing_profiles import MAX_SCAN_CHARACTERS
 
 
 _LIST_MARKER_RE = re.compile(
@@ -48,54 +50,11 @@ _BEFORE_PUBLISHING_WEBSITE_RE = re.compile(
     rf"(?P<target>{_PUBLISHING_SITE_TARGET})\s*$",
     re.IGNORECASE,
 )
-_WEBSITE_PUBLISH_PRECONDITION_RE = re.compile(
-    rf"^before\s+{_PUBLISHING_SITE_TARGET}\s*$", re.IGNORECASE
-)
 _CHINESE_PRECEDES_RE = re.compile(r"\s*先于\s*")
 _RELEASE_BOUNDARY_RE = re.compile(
     r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?(?:发布|上线|推送)"
 )
-_CHINESE_RELEASE_ACTION_RE = re.compile(
-    r"(?:发布|上线|推送)(?:更新|结果|版本|新版本|软件包|包|项目|网站|应用|代码|变更|到\S+)"
-)
-_ENGLISH_RELEASE_ACTION_RE = re.compile(
-    r"\b(?:publish|release)\b\s+(?:the\s+|an?\s+)?(?:update|results?|package|version|project|website|app|code|changes?)\b",
-    re.IGNORECASE,
-)
-_EXPLICIT_PUSH_ACTION_RE = re.compile(
-    r"推送(?:到)?\s*github|"
-    r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
-    r"to\s+github)\b",
-    re.IGNORECASE,
-)
-_RELEASE_NEGATION_RE = re.compile(
-    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*(?:发布|上线|推送)|\b(?:do\s+not|don't|never)\s+(?:publish|release|push)\b",
-    re.IGNORECASE,
-)
-_RELEASE_PRECONDITION_RE = re.compile(
-    r"(?:发布|上线|推送)前|推送(?:到)?\s*github\s*前|"
-    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
-    re.IGNORECASE,
-)
-_NON_ACTION_RELEASE_TERM_RE = re.compile(
-    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*"
-    r"(?:发布|上线|推送)(?:到?\s*github)?|"
-    r"推送(?:到)?\s*github\s*前|"
-    r"(?:发布|上线|推送)前|"
-    r"\brelease\s+notes\b|\bpublishable\b|"
-    r"\b(?:do\s+not|don't|never)\s+(?:publish|release)\b|"
-    r"\b(?:do\s+not|don't|never)\s+push(?:\s+(?:changes\s+to\s+github|"
-    r"the\s+repository(?:\s+to\s+github)?|to\s+github))?\b|"
-    r"\bbefore\s+(?:publishing|releasing|publish|release)\b|"
-    r"\bbefore\s+(?:pushing|push)(?:\s+(?:changes\s+to\s+github|"
-    r"the\s+repository(?:\s+to\s+github)?|to\s+github))?\b",
-    re.IGNORECASE,
-)
-_RELEASE_POLARITY_BOUNDARY_RE = re.compile(
-    r"\bbut\b|但是|但要", re.IGNORECASE
-)
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
-_CHINESE_CODE_REVIEW_ACTION_RE = re.compile(r"审查代码")
 _INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
 _INTENT_RELATION_REASON_REQUIREMENTS = {
     "before": False,
@@ -149,6 +108,7 @@ class IntentGraph:
     intents: tuple[Intent, ...]
     unresolved_dependencies: tuple[str, ...]
     dependency_relations: tuple[IntentRelation, ...] = ()
+    intent_evidence: tuple[IntentEvidence, ...] = ()
 
     def to_json(self) -> dict[str, Any]:
         return {
@@ -167,6 +127,7 @@ class IntentGraph:
                     self.dependency_relations, {}, set()
                 )
             )
+            errors.extend(validate_intent_evidence(self.intent_evidence, ()))
             return errors
 
         duplicate_ids = _duplicate_intent_ids(self.intents)
@@ -217,6 +178,12 @@ class IntentGraph:
         errors.extend(
             _validate_dependency_relations(
                 self.dependency_relations, dependencies, intent_ids
+            )
+        )
+        errors.extend(
+            validate_intent_evidence(
+                self.intent_evidence,
+                tuple(intent.task_type for intent in self.intents),
             )
         )
 
@@ -341,34 +308,22 @@ def _split_list_items(text: str) -> list[str]:
     return items
 
 
-def classify_intent(clause: str, index: int, force_general: bool = False) -> Intent:
+def classify_intent(
+    clause: str,
+    index: int,
+    evidence: IntentEvidence,
+) -> Intent:
     scanned_clause = clause[:MAX_SCAN_CHARACTERS]
-    website_publish_precondition = bool(
-        _WEBSITE_PUBLISH_PRECONDITION_RE.search(scanned_clause)
-    )
-    release_action = False if force_general else _is_release_action(scanned_clause)
-    if force_general:
-        routing_clause = ""
-    elif release_action:
-        routing_clause = scanned_clause
+    if evidence.task_type == "general":
+        profile = build_task_profile("")
     else:
-        routing_clause = _routing_clause_without_non_action_release_terms(
-            scanned_clause
-        )
-    profile = build_task_profile(routing_clause)
-    if is_design_governance_composite(routing_clause):
         profile = build_profile_for_task_type(
-            routing_clause, "design_md_system_governance"
+            scanned_clause, evidence.task_type
         )
-    elif website_publish_precondition:
-        profile = build_profile_for_task_type(routing_clause, "website_build")
-    elif _CHINESE_CODE_REVIEW_ACTION_RE.search(routing_clause):
-        profile = build_profile_for_task_type(routing_clause, "code_review")
-    task_type = profile["task_type"]
+    task_type = evidence.task_type
     required_artifacts = tuple(profile["artifact_types"])
     risk_flags = tuple(profile["risk_flags"])
-    if release_action:
-        task_type = "open_source_release"
+    if evidence.release_mode == "action":
         required_artifacts = ("release_record",)
         risk_flags = ("public_release",)
     return Intent(
@@ -379,7 +334,7 @@ def classify_intent(clause: str, index: int, force_general: bool = False) -> Int
         risk_flags=risk_flags,
         depends_on=(),
         source="deterministic",
-        confidence=_deterministic_confidence(profile["matched_signal_score"], task_type),
+        confidence=_deterministic_confidence(evidence.matched_score, task_type),
     )
 
 
@@ -398,7 +353,7 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
     candidate_signal_limit_exceeded = False
     intent_limit_exceeded = False
     used_profile_spans = False
-    suppressed_clause_indexes: set[int] = set()
+    clause_evidence: list[IntentEvidence] = []
     for clause_index, broad_clause in enumerate(broad_clauses):
         if candidate_signal_limit_exceeded:
             decomposition = SpanDecomposition(
@@ -406,6 +361,17 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
                 observed_candidate_count=0,
                 candidate_signal_limit_exceeded=True,
                 intent_limit_exceeded=False,
+                intent_evidence=(
+                    IntentEvidence(
+                        task_type="general",
+                        context="ambiguous",
+                        polarity="positive",
+                        release_mode="none",
+                        relation_mode="single",
+                        matched_signals=(),
+                        matched_score=0,
+                    ),
+                ),
             )
         else:
             candidate_budget = max(
@@ -427,11 +393,8 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
             intent_limit_exceeded = True
         if remaining > 0:
             emitted = decomposition.clauses[:remaining]
-            if decomposition.classification_suppressed:
-                suppressed_clause_indexes.update(
-                    range(len(clauses), len(clauses) + len(emitted))
-                )
             clauses.extend(emitted)
+            clause_evidence.extend(decomposition.intent_evidence[: len(emitted)])
         if (
             len(clauses) >= MAX_EMITTED_INTENTS
             and clause_index < len(broad_clauses) - 1
@@ -440,18 +403,24 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
             break
 
     intents: list[Intent] = []
+    if (
+        relation_mode_for_text(current) == "explicit_sequence"
+        or len(_split_list_items(current)) > 1
+    ):
+        clause_evidence = [
+            replace(evidence, relation_mode="explicit_sequence")
+            for evidence in clause_evidence
+        ]
     for index, clause in enumerate(clauses, start=1):
-        intents.append(
-            classify_intent(
-                clause, index, force_general=index - 1 in suppressed_clause_indexes
-            )
-        )
-    relations = infer_intent_relations(current, intents)
+        evidence = clause_evidence[index - 1]
+        intents.append(classify_intent(clause, index, evidence))
+    relations = infer_intent_relations(current, intents, tuple(clause_evidence))
     final_intents = apply_intent_relations(intents, relations)
     intent_graph = IntentGraph(
         intents=final_intents,
         unresolved_dependencies=infer_unresolved_dependencies(current, final_intents),
         dependency_relations=relations,
+        intent_evidence=tuple(clause_evidence),
     )
     reason_codes: list[str] = []
     if task_scan_limit_exceeded:
@@ -460,7 +429,11 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
         reason_codes.append("candidate_signal_limit_exceeded")
     if intent_limit_exceeded:
         reason_codes.append("intent_limit_exceeded")
-    if suppressed_clause_indexes:
+    if any(
+        evidence.task_type == "general"
+        and evidence.context in {"descriptive", "how_to", "ambiguous"}
+        for evidence in clause_evidence
+    ):
         reason_codes.append("ambiguous_profile_enumeration")
     diagnostics = DecompositionDiagnostics(
         mode=(
@@ -489,26 +462,6 @@ def _deterministic_confidence(matched_signal_score: int, task_type: str) -> floa
     if matched_signal_score <= 0:
         return 0.5
     return min(1.0, 0.6 + matched_signal_score / 20)
-
-
-def _is_release_action(clause: str) -> bool:
-    for segment in _RELEASE_POLARITY_BOUNDARY_RE.split(clause):
-        if _RELEASE_NEGATION_RE.search(segment) or _RELEASE_PRECONDITION_RE.search(
-            segment
-        ):
-            continue
-        if (
-            _RELEASE_BOUNDARY_RE.search(segment)
-            or _CHINESE_RELEASE_ACTION_RE.search(segment)
-            or _ENGLISH_RELEASE_ACTION_RE.search(segment)
-            or _EXPLICIT_PUSH_ACTION_RE.search(segment)
-        ):
-            return True
-    return False
-
-
-def _routing_clause_without_non_action_release_terms(clause: str) -> str:
-    return _NON_ACTION_RELEASE_TERM_RE.sub(" ", clause).strip(" \t\n,，。")
 
 
 def _json_compatible(value: Any) -> Any:

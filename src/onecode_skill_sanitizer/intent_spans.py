@@ -3,6 +3,7 @@
 from dataclasses import dataclass
 import re
 
+from .intent_evidence import IntentEvidence
 from .routing_profiles import (
     SCENARIO_PROFILES,
     is_design_governance_composite,
@@ -29,7 +30,7 @@ class SpanDecomposition:
     observed_candidate_count: int
     candidate_signal_limit_exceeded: bool
     intent_limit_exceeded: bool
-    classification_suppressed: bool = False
+    intent_evidence: tuple[IntentEvidence, ...] = ()
 
 
 _PROFILE_ORDER = {
@@ -47,6 +48,7 @@ _NEGATION_MARKER_RE = re.compile(
 _PUNCTUATION_BOUNDARY_RE = re.compile(r"[,，;；]")
 _COORDINATING_CONTINUATION_RE = re.compile(r"\s*(?:\b(?:or|and)\b|或|和)", re.IGNORECASE)
 _ADVERSATIVE_BOUNDARY_RE = re.compile(r"\bbut\b|但是|但要", re.IGNORECASE)
+_POSITIVE_AFTER_NEGATION_RE = re.compile(r"[,，]\s*(?:只|仅|改为|而要)")
 _DESCRIPTIVE_ENUMERATION_RE = re.compile(
     r"\b(?:contains?|mentions?)\b|包含", re.IGNORECASE
 )
@@ -63,6 +65,45 @@ _DESCRIPTIVE_RELEASE_ACTION_RE = re.compile(
     r"(?:研究|指南|教程)[\s\S]{0,80}(?:推送|发布|上线)",
     re.IGNORECASE,
 )
+_ENUMERATION_MARKER_RE = re.compile(r",|，|、|\+|＋|\band\b|和|或", re.IGNORECASE)
+_EXPLICIT_SEQUENCE_RE = re.compile(
+    r"\b(?:then|after|before)\b|然后|先[\s\S]*再|"
+    r"\b(?:workstream|workflow|execution)\s+order\b|"
+    r"\bin\s+(?:this\s+)?order\b|"
+    r"\b(?:ordered\s+)?(?:workflow\s+)?steps?\s*:|"
+    r"(?:工作流|流程|执行)顺序|步骤\s*[:：]",
+    re.IGNORECASE,
+)
+_PARALLEL_CONTEXT_RE = re.compile(r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE)
+_RELEASE_ACTION_CONTEXT_RE = re.compile(
+    r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?"
+    r"(?:发布|上线|推送)|"
+    r"(?:发布|上线|推送)(?:更新|结果|版本|新版本|软件包|包|项目|网站|应用|代码|变更|到\S+)|"
+    r"推送(?:代码)?(?:到)?\s*github|"
+    r"\b(?:publish|release)\b\s+(?:the\s+|an?\s+)?"
+    r"(?:update|results?|package|version|project|website|app|code|changes?)\b|"
+    r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
+    r"to\s+github)\b",
+    re.IGNORECASE,
+)
+_RELEASE_PRECONDITION_RE = re.compile(
+    r"(?:发布|上线|推送)前|推送(?:到)?\s*github\s*前|"
+    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
+    re.IGNORECASE,
+)
+_NON_ACTION_RELEASE_TERM_RE = re.compile(
+    r"推送(?:到)?\s*github\s*前|(?:发布|上线|推送)前|"
+    r"\brelease\s+notes\b|\bpublishable\b|"
+    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
+    re.IGNORECASE,
+)
+_RELEASE_READINESS_SIGNALS = frozenset({"发布清单", "release checklist"})
+_WEBSITE_PUBLISH_PRECONDITION_RE = re.compile(
+    r"^\s*before\s+publishing\s+"
+    r"(?:(?:the|a|an|our|my|your|their|its)\s+)?"
+    r"(?:(?:official|product|company)\s+)?(?:website|site)\s*$",
+    re.IGNORECASE,
+)
 
 
 def find_profile_signal_spans(
@@ -70,15 +111,18 @@ def find_profile_signal_spans(
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
 ) -> tuple[tuple[ProfileSignalSpan, ...], int, bool]:
     """Find distinctive, unambiguous spans using bounded deterministic work."""
-    if (
-        _is_negated_enumeration(clause)
-        or _DESCRIPTIVE_ENUMERATION_RE.search(clause)
-        or _DESCRIPTIVE_LIST_PREFIX_RE.search(clause)
-    ):
-        return (), 0, False
-
     candidates: list[ProfileSignalSpan] = []
-    negation_ranges = _coordinated_negation_ranges(clause)
+    negation_ranges = (
+        ((0, len(clause)),)
+        if _is_negated_enumeration(clause)
+        and _ADVERSATIVE_BOUNDARY_RE.search(clause) is None
+        and _POSITIVE_AFTER_NEGATION_RE.search(clause) is None
+        else _coordinated_negation_ranges(clause)
+    )
+    non_action_release_ranges = tuple(
+        (match.start(), match.end())
+        for match in _NON_ACTION_RELEASE_TERM_RE.finditer(clause)
+    )
     observed = 0
     limit_exceeded = False
     for item in iter_profile_signal_matches(clause):
@@ -93,7 +137,10 @@ def find_profile_signal_spans(
             signal=str(item["signal"]),
             score=int(item["score"]),
         )
-        if not _offset_is_negated(span.start, negation_ranges):
+        if not _offset_is_negated(span.start, negation_ranges) and not (
+            span.task_type in {"website_build", "open_source_release"}
+            and _range_overlaps(span.start, span.end, non_action_release_ranges)
+        ):
             candidates.append(span)
 
     resolved: list[ProfileSignalSpan] = []
@@ -144,13 +191,12 @@ def split_profile_enumeration(
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
 ) -> SpanDecomposition:
     """Split a profile-backed enumeration while preserving readable source text."""
-    if _classification_should_be_suppressed(clause):
-        return SpanDecomposition((clause,), 0, False, False, True)
-
     spans, observed, candidate_limit_exceeded = find_profile_signal_spans(
         clause, candidate_limit
     )
     spans = merge_same_profile_spans(spans)
+    relation_mode = relation_mode_for_text(clause)
+    polarity = _clause_polarity(clause, spans)
     if is_design_governance_composite(clause):
         spans = tuple(
             span
@@ -160,19 +206,47 @@ def split_profile_enumeration(
                 and span.signal == "design system"
             )
         )
+    if _is_governance_enumeration(clause, spans):
+        return _suppressed_decomposition(
+            clause,
+            observed,
+            candidate_limit_exceeded,
+            "descriptive",
+            polarity,
+            relation_mode,
+        )
+    if _DESCRIPTIVE_RELEASE_ACTION_RE.search(clause):
+        return _suppressed_decomposition(
+            clause,
+            observed,
+            candidate_limit_exceeded,
+            "how_to",
+            polarity,
+            relation_mode,
+        )
     if _PLUS_CONNECTOR_RE.search(clause) and not _plus_segments_have_profile_evidence(
         clause, spans
     ):
-        return SpanDecomposition(
-            (clause,), observed, candidate_limit_exceeded, False, True
+        return _suppressed_decomposition(
+            clause,
+            observed,
+            candidate_limit_exceeded,
+            "ambiguous",
+            polarity,
+            relation_mode,
         )
     if len({span.task_type for span in spans}) < 2:
         positive_prefix = _positive_prefix_before_coordinated_negation(clause)
+        summary = positive_prefix or clause
+        evidence = _single_clause_evidence(
+            summary, spans, polarity, relation_mode
+        )
         return SpanDecomposition(
-            (positive_prefix or clause,),
+            (summary,),
             observed,
             candidate_limit_exceeded,
             False,
+            (evidence,),
         )
 
     boundaries = list(_CONNECTOR_RE.finditer(clause))
@@ -204,8 +278,13 @@ def split_profile_enumeration(
         and not _range_is_negated(piece_start, piece_end, negation_ranges)
         for piece_index, (piece_start, piece_end, text) in enumerate(pieces)
     ):
-        return SpanDecomposition(
-            (clause,), observed, candidate_limit_exceeded, False, True
+        return _suppressed_decomposition(
+            clause,
+            observed,
+            candidate_limit_exceeded,
+            "ambiguous",
+            polarity,
+            relation_mode,
         )
 
     for piece_index, (piece_start, piece_end, _) in enumerate(pieces):
@@ -238,7 +317,13 @@ def split_profile_enumeration(
     ]
 
     if len({item[4] for item in assigned}) < 2:
-        return SpanDecomposition((clause,), observed, candidate_limit_exceeded, False)
+        return SpanDecomposition(
+            (clause,),
+            observed,
+            candidate_limit_exceeded,
+            False,
+            (_single_clause_evidence(clause, spans, polarity, relation_mode),),
+        )
 
     local_groups: list[tuple[int, int, int, str, str]] = []
     for piece_index, piece_start, piece_end, text, task_type in assigned:
@@ -260,28 +345,187 @@ def split_profile_enumeration(
 
     task_order: list[str] = []
     summaries: dict[str, list[str]] = {}
-    for _, _, _, text, task_type in local_groups:
+    evidence_spans: dict[str, list[ProfileSignalSpan]] = {}
+    for _, group_start, group_end, text, task_type in local_groups:
         if task_type not in summaries:
             task_order.append(task_type)
             summaries[task_type] = []
+            evidence_spans[task_type] = []
         summaries[task_type].append(text)
+        evidence_spans[task_type].extend(
+            span
+            for span in spans
+            if span.task_type == task_type
+            and span.start < group_end
+            and span.end > group_start
+        )
 
     clauses = tuple("; ".join(summaries[task_type]) for task_type in task_order)
+    evidence = tuple(
+        _profile_evidence(
+            task_type,
+            evidence_spans[task_type],
+            clauses[index],
+            polarity,
+            relation_mode,
+        )
+        for index, task_type in enumerate(task_order)
+    )
     intent_limit = len(clauses) > MAX_EMITTED_INTENTS
     return SpanDecomposition(
         clauses=clauses[:MAX_EMITTED_INTENTS],
         observed_candidate_count=observed,
         candidate_signal_limit_exceeded=candidate_limit_exceeded,
         intent_limit_exceeded=intent_limit,
+        intent_evidence=evidence[:MAX_EMITTED_INTENTS],
     )
 
 
-def _classification_should_be_suppressed(clause: str) -> bool:
-    return bool(
+def _suppressed_decomposition(
+    clause: str,
+    observed: int,
+    candidate_limit_exceeded: bool,
+    context: str,
+    polarity: str,
+    relation_mode: str,
+) -> SpanDecomposition:
+    return SpanDecomposition(
+        clauses=(clause,),
+        observed_candidate_count=observed,
+        candidate_signal_limit_exceeded=candidate_limit_exceeded,
+        intent_limit_exceeded=False,
+        intent_evidence=(
+            IntentEvidence(
+                task_type="general",
+                context=context,
+                polarity=polarity,
+                release_mode="none",
+                relation_mode=relation_mode,
+                matched_signals=(),
+                matched_score=0,
+            ),
+        ),
+    )
+
+
+def _single_clause_evidence(
+    clause: str,
+    spans: tuple[ProfileSignalSpan, ...],
+    polarity: str,
+    relation_mode: str,
+) -> IntentEvidence:
+    if _WEBSITE_PUBLISH_PRECONDITION_RE.fullmatch(clause):
+        return IntentEvidence(
+            task_type="website_build",
+            context="action",
+            polarity=polarity,
+            release_mode="none",
+            relation_mode=relation_mode,
+            matched_signals=("publishing site",),
+            matched_score=2,
+        )
+    if _has_positive_release_action(clause):
+        release_spans = [
+            span for span in spans if span.task_type == "open_source_release"
+        ]
+        return _profile_evidence(
+            "open_source_release",
+            release_spans,
+            clause,
+            polarity,
+            relation_mode,
+        )
+    task_types = {span.task_type for span in spans}
+    if len(task_types) != 1:
+        return IntentEvidence(
+            task_type="general",
+            context="action",
+            polarity=polarity,
+            release_mode="none",
+            relation_mode=relation_mode,
+            matched_signals=(),
+            matched_score=0,
+        )
+    task_type = next(iter(task_types))
+    return _profile_evidence(
+        task_type, list(spans), clause, polarity, relation_mode
+    )
+
+
+def _profile_evidence(
+    task_type: str,
+    spans: list[ProfileSignalSpan],
+    clause: str,
+    polarity: str,
+    relation_mode: str,
+) -> IntentEvidence:
+    signals = tuple(dict.fromkeys(span.signal for span in spans))
+    release_mode = "none"
+    if task_type == "open_source_release":
+        normalized_signals = {
+            signal.lower()
+            for combined in signals
+            for signal in combined.split(" / ")
+        }
+        if normalized_signals & _RELEASE_READINESS_SIGNALS:
+            release_mode = "readiness"
+        elif _has_positive_release_action(clause) or normalized_signals:
+            release_mode = "action"
+    return IntentEvidence(
+        task_type=task_type,
+        context="action",
+        polarity=polarity,
+        release_mode=release_mode,
+        relation_mode=relation_mode,
+        matched_signals=signals,
+        matched_score=sum(span.score for span in spans),
+    )
+
+
+def _is_governance_enumeration(
+    clause: str, spans: tuple[ProfileSignalSpan, ...]
+) -> bool:
+    has_descriptive_marker = bool(
         _DESCRIPTIVE_ENUMERATION_RE.search(clause)
         or _DESCRIPTIVE_LIST_PREFIX_RE.search(clause)
-        or _DESCRIPTIVE_RELEASE_ACTION_RE.search(clause)
     )
+    return bool(
+        has_descriptive_marker
+        and _ENUMERATION_MARKER_RE.search(clause)
+        and len({span.task_type for span in spans}) >= 2
+    )
+
+
+def relation_mode_for_text(clause: str) -> str:
+    if _EXPLICIT_SEQUENCE_RE.search(clause):
+        return "explicit_sequence"
+    if _PARALLEL_CONTEXT_RE.search(clause):
+        return "parallel"
+    if _PLUS_CONNECTOR_RE.search(clause) or _ENUMERATION_MARKER_RE.search(clause):
+        return "enumeration"
+    return "single"
+
+
+def _clause_polarity(
+    clause: str, spans: tuple[ProfileSignalSpan, ...]
+) -> str:
+    negation_ranges = _coordinated_negation_ranges(clause)
+    if not negation_ranges:
+        return "positive"
+    if spans and _ADVERSATIVE_BOUNDARY_RE.search(clause):
+        return "mixed"
+    return "negative"
+
+
+def _has_positive_release_action(clause: str) -> bool:
+    for segment in _ADVERSATIVE_BOUNDARY_RE.split(clause):
+        if _NEGATION_MARKER_RE.search(segment) or _RELEASE_PRECONDITION_RE.search(
+            segment
+        ):
+            continue
+        if _RELEASE_ACTION_CONTEXT_RE.search(segment):
+            return True
+    return False
 
 
 def _plus_segments_have_profile_evidence(
@@ -373,6 +617,12 @@ def _coordinated_negation_ranges(clause: str) -> tuple[tuple[int, int], ...]:
 
 def _offset_is_negated(start: int, ranges: tuple[tuple[int, int], ...]) -> bool:
     return any(range_start <= start < range_end for range_start, range_end in ranges)
+
+
+def _range_overlaps(
+    start: int, end: int, ranges: tuple[tuple[int, int], ...]
+) -> bool:
+    return any(start < range_end and end > range_start for range_start, range_end in ranges)
 
 
 def _range_is_negated(
