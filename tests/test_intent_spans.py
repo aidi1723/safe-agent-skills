@@ -1,4 +1,6 @@
 import unittest
+from itertools import islice
+from unittest.mock import patch
 
 from onecode_skill_sanitizer.intent import (
     DecompositionDiagnostics,
@@ -58,6 +60,40 @@ class IntentSpansTest(unittest.TestCase):
         for task in NEGATIVE_CASES:
             with self.subTest(task=task):
                 self.assertEqual(len(decompose_task_detailed(task).intent_graph.intents), 1)
+
+    def test_labeled_descriptive_lists_remain_one_intent(self):
+        cases = [
+            "Artifacts: website, pull request, PDF, spreadsheet, SEO",
+            "Objects: website, pull request, PDF, spreadsheet, SEO",
+            "Terms: website, code review, PDF, spreadsheet, SEO",
+            "产物：网站、代码审查、PDF、表格、SEO",
+            "对象：网站、代码审查、PDF、表格、SEO",
+            "术语：网站、代码审查、PDF、表格、SEO",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                self.assertEqual(len(decompose_task_detailed(task).intent_graph.intents), 1)
+
+    def test_action_enumeration_with_objects_still_splits(self):
+        result = decompose_task_detailed(
+            "Build a website, review the pull request, analyze a spreadsheet, write an SEO article"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in result.intent_graph.intents],
+            ["website_build", "code_review", "data_analysis", "content_seo"],
+        )
+
+    def test_terminology_in_action_sentence_does_not_trigger_list_guard(self):
+        result = decompose_task_detailed(
+            "Define terminology, build a website, review the pull request"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in result.intent_graph.intents],
+            ["website_build", "code_review"],
+        )
 
     def test_motivating_request_coalesces_capabilities_by_scenario(self):
         result = decompose_task_detailed(
@@ -140,6 +176,32 @@ class IntentSpansTest(unittest.TestCase):
 
         self.assertEqual(len(result.intent_graph.intents), 1)
 
+    def test_coordinated_negation_propagates_across_conjunctions(self):
+        cases = [
+            "Build a website, do not perform code review or write an SEO article",
+            "构建网站，不要代码审查和SEO文章",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                task_types = [
+                    intent.task_type
+                    for intent in decompose_task_detailed(task).intent_graph.intents
+                ]
+                self.assertNotIn("code_review", task_types)
+                self.assertNotIn("content_seo", task_types)
+                self.assertIn("website_build", task_types)
+
+    def test_negation_scope_stops_at_new_comma_delimited_action(self):
+        result = decompose_task_detailed(
+            "Build a website, do not perform code review or write an SEO article, analyze a spreadsheet"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in result.intent_graph.intents],
+            ["website_build", "data_analysis"],
+        )
+
     def test_candidate_signal_limit_is_explicit_and_incomplete(self):
         task = ", ".join(["SEO"] * 129)
         result = decompose_task_detailed(task)
@@ -148,6 +210,33 @@ class IntentSpansTest(unittest.TestCase):
         self.assertEqual(result.diagnostics.observed_candidate_count, 129)
         self.assertEqual(result.diagnostics.reason_codes, ("candidate_signal_limit_exceeded",))
         self.assertEqual(result.diagnostics.status, "incomplete")
+
+    def test_signal_iteration_is_lazy_and_span_collection_stops_at_129(self):
+        task = ", ".join(["SEO"] * 10000)
+        matches = routing_profiles.iter_profile_signal_matches(task)
+
+        self.assertNotIsInstance(matches, list)
+        self.assertEqual(len(list(islice(matches, 3))), 3)
+
+        yielded = 0
+        real_iterator = routing_profiles.iter_profile_signal_matches
+
+        def instrumented_iterator(text):
+            nonlocal yielded
+            for match in real_iterator(text):
+                yielded += 1
+                yield match
+
+        with patch.object(
+            intent_spans,
+            "iter_profile_signal_matches",
+            side_effect=instrumented_iterator,
+        ):
+            _, observed, exceeded = intent_spans.find_profile_signal_spans(task)
+
+        self.assertEqual(observed, 129)
+        self.assertTrue(exceeded)
+        self.assertEqual(yielded, 129)
 
     def test_intent_limit_keeps_at_most_twelve_and_is_explicit(self):
         task = ", ".join(

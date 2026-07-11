@@ -30,14 +30,19 @@ class SpanDecomposition:
 _PROFILE_ORDER = {
     profile["task_type"]: index for index, profile in enumerate(SCENARIO_PROFILES)
 }
-_CONNECTOR_RE = re.compile(r"\s*(?:,|，|、|/|\band\b|\bor\b|和)\s*", re.IGNORECASE)
-_NEGATION_RE = re.compile(
-    r"(?:^|[,，、;/]\s*)(?:do\s+not|don't|never)\b|"
-    r"(?:^|[,，、；;/]\s*)(?:不要|不得|禁止|无需|暂不|先不|别|不)",
+_CONNECTOR_RE = re.compile(r"\s*(?:,|，|、|/|\band\b|\bor\b|和|或)\s*", re.IGNORECASE)
+_NEGATION_MARKER_RE = re.compile(
+    r"\b(?:do\s+not|don't|never)\b|(?:不要|不得|禁止|无需|暂不|先不|别)",
     re.IGNORECASE,
 )
+_INDEPENDENT_ACTION_BOUNDARY_RE = re.compile(r"[,，;；]")
 _DESCRIPTIVE_ENUMERATION_RE = re.compile(
-    r"\b(?:contains?|mentions?|terminology)\b|(?:包含|术语)", re.IGNORECASE
+    r"\b(?:contains?|mentions?)\b|包含", re.IGNORECASE
+)
+_DESCRIPTIVE_LIST_PREFIX_RE = re.compile(
+    r"^\s*(?:(?:artifacts?|objects?|terms?|supported\s+files?|files?)|"
+    r"(?:产物|对象|术语|支持文件|文件))\s*[:：]",
+    re.IGNORECASE,
 )
 
 
@@ -46,7 +51,11 @@ def find_profile_signal_spans(
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
 ) -> tuple[tuple[ProfileSignalSpan, ...], int, bool]:
     """Find distinctive, unambiguous spans using bounded deterministic work."""
-    if _is_negated_enumeration(clause) or _DESCRIPTIVE_ENUMERATION_RE.search(clause):
+    if (
+        _is_negated_enumeration(clause)
+        or _DESCRIPTIVE_ENUMERATION_RE.search(clause)
+        or _DESCRIPTIVE_LIST_PREFIX_RE.search(clause)
+    ):
         return (), 0, False
 
     candidates: list[ProfileSignalSpan] = []
@@ -130,7 +139,13 @@ def split_profile_enumeration(
             )
         )
     if len({span.task_type for span in spans}) < 2:
-        return SpanDecomposition((clause,), observed, candidate_limit_exceeded, False)
+        positive_prefix = _positive_prefix_before_coordinated_negation(clause)
+        return SpanDecomposition(
+            (positive_prefix or clause,),
+            observed,
+            candidate_limit_exceeded,
+            False,
+        )
 
     boundaries = list(_CONNECTOR_RE.finditer(clause))
     pieces: list[tuple[int, int, str]] = []
@@ -237,6 +252,21 @@ def _is_negated_enumeration(clause: str) -> bool:
 
 def _span_is_locally_negated(clause: str, start: int) -> bool:
     preceding = clause[:start]
-    connector = list(_CONNECTOR_RE.finditer(preceding))
-    local_start = connector[-1].end() if connector else 0
-    return bool(_NEGATION_RE.search(clause[local_start:start]))
+    boundaries = list(_INDEPENDENT_ACTION_BOUNDARY_RE.finditer(preceding))
+    local_start = boundaries[-1].end() if boundaries else 0
+    return bool(_NEGATION_MARKER_RE.search(clause[local_start:start]))
+
+
+def _positive_prefix_before_coordinated_negation(clause: str) -> str:
+    negation = _NEGATION_MARKER_RE.search(clause)
+    if negation is None or negation.start() == 0:
+        return ""
+    boundaries = [
+        boundary
+        for boundary in _INDEPENDENT_ACTION_BOUNDARY_RE.finditer(
+            clause[: negation.start()]
+        )
+    ]
+    if not boundaries:
+        return ""
+    return clause[: boundaries[-1].start()].strip(" \t\n,，。")

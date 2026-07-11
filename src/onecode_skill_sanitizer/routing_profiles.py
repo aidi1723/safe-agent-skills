@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable
+import heapq
+from collections.abc import Iterable, Iterator
 
 
 SCENARIO_PROFILES = [
@@ -792,10 +793,13 @@ PROFILE_SIGNAL_ALIASES = {
 }
 
 
-def iter_profile_signal_matches(text: str) -> list[dict[str, object]]:
+def iter_profile_signal_matches(text: str) -> Iterator[dict[str, object]]:
     """Return deterministic configured-profile matches with source offsets."""
     lowered = text.lower()
-    ordered_matches: list[tuple[int, int, int, int, dict[str, object]]] = []
+    pending: list[
+        tuple[int, int, int, int, int, dict[str, object], Iterator[re.Match[str]]]
+    ] = []
+    stream_order = 0
     for profile_order, profile in enumerate(SCENARIO_PROFILES):
         signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
             profile["task_type"], ()
@@ -814,19 +818,65 @@ def iter_profile_signal_matches(text: str) -> list[dict[str, object]]:
             if len(normalized_signal) <= 3 and re.fullmatch(r"[a-z0-9]+", normalized_signal):
                 pattern = rf"(?<![a-z0-9]){pattern}(?![a-z0-9])"
             score = 4 if " " in normalized_signal else 2
-            for match in re.finditer(pattern, lowered):
-                item = {
-                    "start": match.start(),
-                    "end": match.end(),
-                    "task_type": profile["task_type"],
-                    "signal": normalized_signal,
-                    "score": score,
-                }
-                ordered_matches.append(
-                    (match.start(), -score, profile_order, match.end(), item)
-                )
-    ordered_matches.sort(key=lambda entry: entry[:4])
-    return [entry[4] for entry in ordered_matches]
+            matches = re.finditer(pattern, lowered)
+            first = next(matches, None)
+            if first is None:
+                continue
+            item = _profile_signal_match_item(
+                first, profile["task_type"], normalized_signal, score
+            )
+            heapq.heappush(
+                pending,
+                (
+                    first.start(),
+                    -score,
+                    profile_order,
+                    first.end(),
+                    stream_order,
+                    item,
+                    matches,
+                ),
+            )
+            stream_order += 1
+
+    while pending:
+        _, negative_score, profile_order, _, order, item, matches = heapq.heappop(
+            pending
+        )
+        yield item
+        following = next(matches, None)
+        if following is None:
+            continue
+        following_item = _profile_signal_match_item(
+            following,
+            str(item["task_type"]),
+            str(item["signal"]),
+            int(item["score"]),
+        )
+        heapq.heappush(
+            pending,
+            (
+                following.start(),
+                negative_score,
+                profile_order,
+                following.end(),
+                order,
+                following_item,
+                matches,
+            ),
+        )
+
+
+def _profile_signal_match_item(
+    match: re.Match[str], task_type: str, signal: str, score: int
+) -> dict[str, object]:
+    return {
+        "start": match.start(),
+        "end": match.end(),
+        "task_type": task_type,
+        "signal": signal,
+        "score": score,
+    }
 
 def _signal_score(text: str, signals: Iterable[str]) -> int:
     score = 0
