@@ -48,8 +48,8 @@ class IntentDependenciesTest(unittest.TestCase):
             ),
             (
                 IntentRelation("i1", "i2", "semicolon_sequence"),
-                IntentRelation("i1", "i3", "release_gate"),
-                IntentRelation("i2", "i3", "release_gate"),
+                IntentRelation("i1", "i3", "release_gate", True),
+                IntentRelation("i2", "i3", "release_gate", True),
             ),
         )
 
@@ -65,6 +65,17 @@ class IntentDependenciesTest(unittest.TestCase):
         )
         self.assertEqual([intent.depends_on for intent in graph.intents], [(), ()])
 
+    def test_semicolon_transition_is_consistent_with_or_without_third_stage(self):
+        cases = [
+            "Analyze the spreadsheet; write an SEO article",
+            "Analyze the spreadsheet; write an SEO article; produce a short video",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(graph.intents[1].depends_on, ("i1",))
+
     def test_parallel_marker_suppresses_ordered_nonrelease_relations(self):
         intents = (
             self.intent("i1", "review code"),
@@ -78,6 +89,24 @@ class IntentDependenciesTest(unittest.TestCase):
         ]:
             with self.subTest(text=text):
                 self.assertEqual(infer_intent_relations(text, intents), ())
+
+    def test_parallel_scope_does_not_erase_preceding_explicit_sequence(self):
+        cases = [
+            "First review the PR, then build the website; in parallel, analyze the spreadsheet",
+            "先做代码审查，再构建官网；同时分析表格",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["code_review", "website_build", "data_analysis"],
+                )
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents],
+                    [(), ("i1",), ()],
+                )
 
     def test_plain_enumeration_order_does_not_imply_relations(self):
         intents = (
@@ -170,6 +199,51 @@ class IntentDependenciesTest(unittest.TestCase):
             [intent.depends_on for intent in graph.intents], [("i2",), ()]
         )
 
+    def test_target_first_verification_splits_reverses_and_marks_gate(self):
+        graph = decompose_task("Build the website after verification of the PR")
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["website_build", "code_review"],
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in graph.intents], [("i2",), ()]
+        )
+        relation = graph.dependency_relations[0]
+        self.assertEqual((relation.source_id, relation.target_id), ("i2", "i1"))
+        self.assertTrue(relation.requires_verification)
+
+    def test_verification_gate_precedes_semicolon_inference(self):
+        cases = [
+            "After verifying the PR; build the website",
+            "PR 验证通过后；构建官网",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents], [(), ("i1",)]
+                )
+                self.assertEqual(len(graph.dependency_relations), 1)
+                self.assertTrue(
+                    graph.dependency_relations[0].requires_verification
+                )
+
+    def test_before_publishing_website_is_ordering_not_release(self):
+        graph = decompose_task("Review the PR before publishing the website")
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["code_review", "website_build"],
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in graph.intents], [(), ("i1",)]
+        )
+        self.assertTrue(
+            all(intent.task_type != "open_source_release" for intent in graph.intents)
+        )
+
     def test_first_then_release_preserves_the_preceding_action(self):
         cases = [
             "先审查代码，再发布更新",
@@ -213,8 +287,8 @@ class IntentDependenciesTest(unittest.TestCase):
             infer_intent_relations("analyze data; write article; publish update", intents),
             (
                 IntentRelation("i1", "i2", "semicolon_sequence"),
-                IntentRelation("i1", "i3", "release_gate"),
-                IntentRelation("i2", "i3", "release_gate"),
+                IntentRelation("i1", "i3", "release_gate", True),
+                IntentRelation("i2", "i3", "release_gate", True),
             ),
         )
 

@@ -7,6 +7,7 @@ import re
 from typing import Any
 
 from .intent_dependencies import (
+    IntentRelation,
     apply_intent_relations,
     infer_intent_relations,
     infer_unresolved_dependencies,
@@ -34,6 +35,11 @@ _ORDERED_BEFORE_RE = re.compile(
 )
 _ORDERED_AFTER_RE = re.compile(
     r"\s+\bafter\b\s+(?=(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b)",
+    re.IGNORECASE,
+)
+_BEFORE_PUBLISHING_WEBSITE_RE = re.compile(
+    r"^(?P<source>.+?)\s+\bbefore\b\s+"
+    r"(?P<target>publishing\s+(?:the\s+)?website)\s*$",
     re.IGNORECASE,
 )
 _CHINESE_PRECEDES_RE = re.compile(r"\s*先于\s*")
@@ -115,9 +121,15 @@ class Intent:
 class IntentGraph:
     intents: tuple[Intent, ...]
     unresolved_dependencies: tuple[str, ...]
+    dependency_relations: tuple[IntentRelation, ...] = ()
 
     def to_json(self) -> dict[str, Any]:
-        return _json_compatible(asdict(self))
+        return {
+            "intents": [intent.to_json() for intent in self.intents],
+            "unresolved_dependencies": _json_compatible(
+                self.unresolved_dependencies
+            ),
+        }
 
     def validate(self) -> list[str]:
         errors: list[str] = []
@@ -224,6 +236,15 @@ def split_task_clauses(task: str) -> list[str]:
     for candidate in _CLAUSE_SEPARATOR_RE.split(text):
         candidate = candidate.strip(" \t\n,，。")
         if not candidate:
+            continue
+        before_publishing = _BEFORE_PUBLISHING_WEBSITE_RE.match(candidate)
+        if before_publishing:
+            clauses.extend(
+                [
+                    before_publishing.group("source"),
+                    f"before {before_publishing.group('target')}",
+                ]
+            )
             continue
         ordered_parts = [
             part.strip(" \t\n,，。")
@@ -359,6 +380,7 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
     intent_graph = IntentGraph(
         intents=final_intents,
         unresolved_dependencies=infer_unresolved_dependencies(current, final_intents),
+        dependency_relations=relations,
     )
     reason_codes: list[str] = []
     if task_scan_limit_exceeded:

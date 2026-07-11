@@ -7,6 +7,7 @@ from unittest.mock import patch
 from onecode_skill_sanitizer.compiler import compile_execution_graph
 from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
 from onecode_skill_sanitizer.intent import Intent, IntentGraph, decompose_task
+from onecode_skill_sanitizer.intent_dependencies import IntentRelation
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -336,7 +337,37 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["status"], "blocked")
         self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
 
-    def test_explicit_verification_gate_without_anchor_is_blocked(self):
+    def test_release_target_ignores_false_internal_verification_metadata(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent(
+                    "i2", depends_on=("i1",), task_type="open_source_release"
+                ),
+            ),
+            unresolved_dependencies=(),
+            dependency_relations=(
+                IntentRelation("i1", "i2", "forged", False),
+            ),
+        )
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            bundles,
+            {"skill-a", "execution-publish-check"},
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
+
+    def test_manual_graph_without_metadata_does_not_reparse_gate_summary(self):
         graph = IntentGraph(
             intents=(
                 self.intent("i1"),
@@ -362,8 +393,8 @@ class CompilerTest(unittest.TestCase):
             {"skill-a", "execution-publish-check"},
         )
 
-        self.assertEqual(compiled["status"], "blocked")
-        self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
+        self.assertEqual(compiled["status"], "ready")
+        self.assertEqual(compiled["reason_codes"], [])
 
     def test_source_side_verification_gate_without_anchor_is_blocked(self):
         bundles = {
@@ -391,6 +422,37 @@ class CompilerTest(unittest.TestCase):
                 compiled = compile_execution_graph(
                     graph,
                     self.composition(("i1",), ("i2",)),
+                    bundles,
+                    {"skill-a", "execution-publish-check"},
+                )
+
+                self.assertEqual(compiled["status"], "blocked")
+                self.assertEqual(
+                    compiled["reason_codes"], ["missing_intent_verification"]
+                )
+
+    def test_semicolon_and_target_first_verification_metadata_block_without_anchor(self):
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+        cases = [
+            ("After verifying the PR; build the website", ("i1",), ("i2",)),
+            ("PR 验证通过后；构建官网", ("i1",), ("i2",)),
+            ("Build the website after verification of the PR", ("i2",), ("i1",)),
+        ]
+
+        for task, source_ids, target_ids in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(len(graph.intents), 2)
+                self.assertTrue(graph.dependency_relations[0].requires_verification)
+
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(source_ids, target_ids),
                     bundles,
                     {"skill-a", "execution-publish-check"},
                 )

@@ -16,6 +16,7 @@ class IntentRelation:
     source_id: str
     target_id: str
     reason: str
+    requires_verification: bool = False
 
 
 _PARALLEL_RE = re.compile(r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE)
@@ -41,6 +42,11 @@ _INFIX_COMPLETION_RE = re.compile(
     re.IGNORECASE,
 )
 _CHINESE_COMPLETION_RE = re.compile(r"(?:完成|验证通过|测试通过)后(?:再)?")
+_VERIFICATION_GATE_RE = re.compile(
+    r"(?:\b(?:after|once)\b[\s\S]*\bverif(?:y|ied|ying|ication)\b)|"
+    r"(?:验证通过|测试通过)",
+    re.IGNORECASE,
+)
 _UNKNOWN_PREFIX_GATE_RE = re.compile(
     r"^\s*(?:after|once)\s+(.+?)(?:\s+is\s+(?:complete|completed|verified|approved))?\s*[,;]",
     re.IGNORECASE,
@@ -76,14 +82,6 @@ SEMICOLON_WORKFLOW_TRANSITIONS = frozenset(
         ("code_review", "website_build"),
     }
 )
-_STANDALONE_SEMICOLON_WORKFLOW_TRANSITIONS = frozenset(
-    {
-        ("multi_platform_research_discovery", "content_seo"),
-        ("investment_research_diligence", "agent_security"),
-    }
-)
-
-
 def infer_intent_relations(
     current_text: str, intents: Sequence[Intent]
 ) -> tuple[IntentRelation, ...]:
@@ -92,32 +90,47 @@ def infer_intent_relations(
         return ()
 
     relations: list[IntentRelation] = []
-    is_parallel = bool(_PARALLEL_RE.search(current_text))
-    if not is_parallel:
-        if _PREFIX_BEFORE_RE.search(current_text) and len(intents) == 2:
-            relations.append(IntentRelation(intents[1].id, intents[0].id, "before"))
-        elif ";" in current_text or "；" in current_text:
-            _append_semicolon_relations(relations, current_text, intents)
-        elif _FIRST_THEN_RE.search(current_text):
-            _append_source_chain(relations, intents, "first_then")
-        elif _BEFORE_RE.search(current_text) or _CHINESE_PRECEDES_RE.search(
-            current_text
-        ):
-            _append_source_chain(relations, intents, "before")
-        elif _PREFIX_COMPLETION_RE.search(current_text) or _CHINESE_COMPLETION_RE.search(
-            current_text
-        ):
-            _append_source_chain(relations, intents, "completion_gate")
-        elif _INFIX_COMPLETION_RE.search(current_text) and len(intents) == 2:
-            relations.append(
-                IntentRelation(intents[1].id, intents[0].id, "completion_gate")
+    parallel_start = _parallel_start_index(current_text, intents)
+    ordered_intents = intents[:parallel_start]
+    verification_gate = bool(_VERIFICATION_GATE_RE.search(current_text))
+    gate_reason = "verification_gate" if verification_gate else "completion_gate"
+
+    if _PREFIX_BEFORE_RE.search(current_text) and len(ordered_intents) == 2:
+        relations.append(
+            IntentRelation(ordered_intents[1].id, ordered_intents[0].id, "before")
+        )
+    elif _PREFIX_COMPLETION_RE.search(current_text) or _CHINESE_COMPLETION_RE.search(
+        current_text
+    ):
+        _append_source_chain(
+            relations,
+            ordered_intents,
+            gate_reason,
+            requires_verification=verification_gate,
+        )
+    elif _INFIX_COMPLETION_RE.search(current_text) and len(ordered_intents) == 2:
+        relations.append(
+            IntentRelation(
+                ordered_intents[1].id,
+                ordered_intents[0].id,
+                gate_reason,
+                verification_gate,
             )
+        )
+    elif _FIRST_THEN_RE.search(current_text):
+        _append_source_chain(relations, ordered_intents, "first_then")
+    elif _BEFORE_RE.search(current_text) or _CHINESE_PRECEDES_RE.search(current_text):
+        _append_source_chain(relations, ordered_intents, "before")
+    elif ";" in current_text or "；" in current_text:
+        _append_semicolon_relations(relations, current_text, ordered_intents)
 
     for target_index, target in enumerate(intents):
         if target.task_type != "open_source_release":
             continue
         for source in intents[:target_index]:
-            relations.append(IntentRelation(source.id, target.id, "release_gate"))
+            relations.append(
+                IntentRelation(source.id, target.id, "release_gate", True)
+            )
 
     return _deduplicate_relations(relations)
 
@@ -167,11 +180,18 @@ def infer_unresolved_dependencies(
 
 
 def _append_source_chain(
-    relations: list[IntentRelation], intents: Sequence[Intent], reason: str
+    relations: list[IntentRelation],
+    intents: Sequence[Intent],
+    reason: str,
+    requires_verification: bool = False,
 ) -> None:
     for source, target in zip(intents, intents[1:]):
         if target.task_type != "open_source_release":
-            relations.append(IntentRelation(source.id, target.id, reason))
+            relations.append(
+                IntentRelation(
+                    source.id, target.id, reason, requires_verification
+                )
+            )
 
 
 def _append_semicolon_relations(
@@ -180,32 +200,29 @@ def _append_semicolon_relations(
     explicit_order = bool(
         _ORDER_LEAD_IN_RE.search(current_text) or _FIRST_THEN_RE.search(current_text)
     )
-    nonrelease_transitions = [
-        (source.task_type, target.task_type)
-        for source, target in zip(intents, intents[1:])
-        if target.task_type != "open_source_release"
-    ]
-    semantic_workflow = bool(nonrelease_transitions) and (
-        (
-            len(intents) >= 3
-            and all(
-                transition in SEMICOLON_WORKFLOW_TRANSITIONS
-                for transition in nonrelease_transitions
-            )
-        )
-        or (
-            len(intents) == 2
-            and nonrelease_transitions[0]
-            in _STANDALONE_SEMICOLON_WORKFLOW_TRANSITIONS
-        )
-    )
     for source, target in zip(intents, intents[1:]):
+        transition = (source.task_type, target.task_type)
         if target.task_type != "open_source_release" and (
-            explicit_order or semantic_workflow
+            explicit_order or transition in SEMICOLON_WORKFLOW_TRANSITIONS
         ):
             relations.append(
                 IntentRelation(source.id, target.id, "semicolon_sequence")
             )
+
+
+def _parallel_start_index(current_text: str, intents: Sequence[Intent]) -> int:
+    marker = _PARALLEL_RE.search(current_text)
+    if marker is None:
+        return len(intents)
+    if not current_text[: marker.start()].strip(" \t\n,，;；:："):
+        return 0
+
+    suffix = current_text[marker.end() :].casefold()
+    for index, intent in enumerate(intents):
+        anchor = _PARALLEL_RE.sub("", intent.summary).strip(" \t\n,，;；:：")
+        if anchor and anchor.casefold() in suffix:
+            return index
+    return len(intents)
 
 
 def _deduplicate_relations(

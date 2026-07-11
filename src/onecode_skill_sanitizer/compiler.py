@@ -15,12 +15,6 @@ from .routing_profiles import SCENARIO_PROFILES
 
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _KNOWN_TASK_TYPES = frozenset(profile["task_type"] for profile in SCENARIO_PROFILES)
-_EXPLICIT_VERIFICATION_GATE_RE = re.compile(
-    r"^\s*(?:after|once)\b.*\b"
-    r"(?:verif(?:ied|ication|ying)|approved)\b|"
-    r"(?:验证通过|测试通过|批准|审批通过|审核通过)后",
-    re.IGNORECASE,
-)
 
 
 def compile_execution_graph(
@@ -93,6 +87,7 @@ def compile_execution_graph(
     roots: dict[str, str] = {}
     verification_anchors: dict[str, tuple[str, ...]] = {}
     completion_anchors: dict[str, tuple[str, ...]] = {}
+    relation_requirements = _relation_verification_requirements(intent_graph)
     for intent_id in sorted(intents, key=_intent_sort_key):
         scenario_id = selected_for_intent[intent_id]
         node_ids: list[str] = []
@@ -124,7 +119,8 @@ def compile_execution_graph(
         for dependency_id in sorted(set(dependencies), key=_intent_sort_key):
             anchors = verification_anchors[dependency_id]
             if not anchors and _requires_verified_dependency(
-                intents[dependency_id], intents[intent_id]
+                intents[intent_id],
+                relation_requirements.get((dependency_id, intent_id)),
             ):
                 _add_reason(reason_codes, "missing_intent_verification")
                 continue
@@ -160,17 +156,34 @@ def compile_execution_graph(
     return _result(acyclic, nodes, edges, reason_codes, details)
 
 
-def _requires_verified_dependency(source_intent: Any, target_intent: Any) -> bool:
-    return (
+def _requires_verified_dependency(
+    target_intent: Any, metadata_requirement: bool | None
+) -> bool:
+    if (
         target_intent.task_type not in _KNOWN_TASK_TYPES
         or target_intent.task_type == "open_source_release"
-        or bool(
-            _EXPLICIT_VERIFICATION_GATE_RE.search(source_intent.summary)
-        )
-        or bool(
-            _EXPLICIT_VERIFICATION_GATE_RE.search(target_intent.summary)
-        )
-    )
+    ):
+        return True
+    if metadata_requirement is not None:
+        return metadata_requirement
+    return False
+
+
+def _relation_verification_requirements(
+    intent_graph: IntentGraph,
+) -> dict[tuple[str, str], bool]:
+    requirements: dict[tuple[str, str], bool] = {}
+    for relation in getattr(intent_graph, "dependency_relations", ()):
+        source_id = getattr(relation, "source_id", None)
+        target_id = getattr(relation, "target_id", None)
+        requires_verification = getattr(relation, "requires_verification", None)
+        if (
+            isinstance(source_id, str)
+            and isinstance(target_id, str)
+            and isinstance(requires_verification, bool)
+        ):
+            requirements[(source_id, target_id)] = requires_verification
+    return requirements
 
 
 def _validate_intent_graph_boundary(

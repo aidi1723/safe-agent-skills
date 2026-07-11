@@ -268,6 +268,14 @@ class IntentTest(unittest.TestCase):
         self.assertIsInstance(payload["intents"][1]["depends_on"], list)
         json.dumps(payload)
 
+    def test_internal_dependency_relations_do_not_change_json_shape(self):
+        graph = decompose_task("Once the PR is verified, build the website")
+
+        self.assertTrue(graph.dependency_relations)
+        self.assertEqual(
+            set(graph.to_json()), {"intents", "unresolved_dependencies"}
+        )
+
     def test_validate_reports_unknown_dependencies(self):
         graph = IntentGraph(
             intents=(self.intent("i1", depends_on=("i9",)),),
