@@ -84,18 +84,23 @@ def validate_intent_evidence(
     evidence_source: str = "",
 ) -> list[str]:
     """Validate internal evidence without accepting lookalike records."""
-    if isinstance(evidence_source, str):
-        evidence_source = bound_task_text(evidence_source)
     if not isinstance(evidence, tuple):
         return ["intent evidence must be a tuple of IntentEvidence records"]
     if not evidence:
         return []
     if len(evidence) != len(expected_task_types):
         return ["intent evidence count must match intent count"]
-    if not isinstance(evidence_source, str):
-        return ["intent evidence source must be a string"]
-
     errors: list[str] = []
+    source_valid = (
+        type(evidence_source) is str and bool(evidence_source.strip())
+    )
+    if source_valid:
+        evidence_source = bound_task_text(evidence_source)
+    else:
+        errors.append(
+            "intent evidence source must be an exact nonblank string"
+        )
+        evidence_source = ""
     for index, (item, task_type) in enumerate(
         zip(evidence, expected_task_types, strict=True), start=1
     ):
@@ -120,6 +125,9 @@ def validate_intent_evidence(
         gate_mode_valid = (
             isinstance(item.gate_mode, str) and item.gate_mode in GATE_MODES
         )
+        provenance_valid = (
+            type(item.provenance) is str and bool(item.provenance.strip())
+        )
         signals_valid = isinstance(item.matched_signals, tuple) and all(
             isinstance(signal, str) and bool(signal)
             for signal in item.matched_signals
@@ -139,6 +147,8 @@ def validate_intent_evidence(
             errors.append(f"intent evidence {index} has invalid relation mode")
         if not gate_mode_valid:
             errors.append(f"intent evidence {index} has invalid gate mode")
+        if not provenance_valid:
+            errors.append(f"intent evidence {index} has invalid provenance")
         if not signals_valid:
             errors.append(f"intent evidence {index} has invalid matched signals")
         if not score_valid:
@@ -153,15 +163,14 @@ def validate_intent_evidence(
                 gate_mode_valid,
                 signals_valid,
                 score_valid,
-                isinstance(item.provenance, str),
             )
         )
         if fields_valid:
-            if not evidence_source or not item.provenance:
-                errors.append(
-                    f"intent evidence {index} must be bound to its source"
-                )
-            elif item.provenance != _evidence_provenance(item, evidence_source):
+            if (
+                source_valid
+                and provenance_valid
+                and item.provenance != _evidence_provenance(item, evidence_source)
+            ):
                 errors.append(
                     f"intent evidence {index} does not match its source binding"
                 )

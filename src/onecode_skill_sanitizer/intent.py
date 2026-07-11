@@ -67,7 +67,13 @@ _PREFIX_GATE_RE = re.compile(
     r"^\s*(?:after|once)\b|^\u5f85.+(?:\u5b8c\u6210|\u9a8c\u8bc1\u901a\u8fc7)\u540e|^\u5728.+(?:\u5b8c\u6210|\u9a8c\u8bc1\u901a\u8fc7)\u540e",
     re.IGNORECASE,
 )
-_INFIX_GATE_RE = re.compile(r"\bafter\b", re.IGNORECASE)
+_INFIX_GATE_RE = re.compile(
+    r"\bafter\s+(?:"
+    r"(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b|"
+    r"approval\s+of\s+(?:the\s+)?(?:pr|pull\s+request)\b|"
+    r"(?:the\s+)?(?:pr|pull\s+request)\s+is\s+approved\b)",
+    re.IGNORECASE,
+)
 _CHINESE_GATE_RE = re.compile(
     r"(?:\u5b8c\u6210|\u9a8c\u8bc1\u901a\u8fc7|\u6d4b\u8bd5\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6279\u901a\u8fc7|\u5ba1\u6838\u901a\u8fc7)\u540e(?:\u518d)?"
 )
@@ -75,6 +81,65 @@ _GATE_VERIFICATION_RE = re.compile(
     r"\b(?:verif(?:y|ied|ying|ication)|approv(?:ed|al))\b|"
     r"(?:\u9a8c\u8bc1\u901a\u8fc7|\u6d4b\u8bd5\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6279\u901a\u8fc7|\u5ba1\u6838\u901a\u8fc7)",
     re.IGNORECASE,
+)
+_APPROVAL_RELEASE_RE = re.compile(
+    r"^\s*(?:"
+    r"(?:\u5728\s*)?(?P<cn_source>(?:PR|\u62c9\u53d6\u8bf7\u6c42)\s*"
+    r"(?:\u5ba1\u6279\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6838\u901a\u8fc7)\u540e)\s*[,\uff0c]?\s*"
+    r"(?P<cn_target>(?:\u53d1\u5e03|\u4e0a\u7ebf|\u63a8\u9001).+)|"
+    r"(?P<en_source>after\s+(?:(?:the\s+)?(?:pr|pull\s+request)\s+"
+    r"is\s+approved|(?:pr|pull\s+request)\s+approval))\s*[,\uff0c]?\s*"
+    r"(?P<en_target>(?:publish|release|push)\b.+)"
+    r")\s*$",
+    re.IGNORECASE,
+)
+_CANONICAL_PREFIX_BEFORE_RE = re.compile(
+    r"^\s*before\b|^\s*.+\u524d\s*[,\uff0c]", re.IGNORECASE
+)
+_CANONICAL_FIRST_THEN_RE = re.compile(
+    r"\bthen\b|\u5148[\s\S]*\u518d", re.IGNORECASE
+)
+_CANONICAL_BEFORE_RE = re.compile(r"\bbefore\b|\u5148\u4e8e", re.IGNORECASE)
+_CANONICAL_ORDER_LEAD_IN_RE = re.compile(
+    r"\b(?:workstream|workflow|execution)\s+order\b|"
+    r"\bin\s+(?:this\s+)?order\b|"
+    r"\b(?:ordered\s+)?(?:workflow\s+)?steps?\s*:|"
+    r"(?:\u5de5\u4f5c\u6d41|\u6d41\u7a0b|\u6267\u884c)\u987a\u5e8f|\u6b65\u9aa4\s*[:\uff1a]",
+    re.IGNORECASE,
+)
+_CANONICAL_UNKNOWN_PREFIX_GATE_RE = re.compile(
+    r"^\s*(?:after|once)\s+(.+?)"
+    r"(?:\s+is\s+(?:complete|completed|verified|approved))?\s*[,;]",
+    re.IGNORECASE,
+)
+SEMICOLON_WORKFLOW_TRANSITIONS = frozenset(
+    {
+        ("multi_platform_research_discovery", "investment_research_diligence"),
+        ("investment_research_diligence", "data_analysis"),
+        ("document_knowledge_base", "rag_agent"),
+        ("rag_agent", "agent_security"),
+        ("agent_planning_orchestration", "website_build"),
+        ("website_build", "code_review"),
+        ("data_analysis", "content_seo"),
+        ("content_seo", "content_video_production"),
+        ("code_review", "codebase_change_lifecycle"),
+        ("multi_platform_research_discovery", "content_seo"),
+        ("design_md_system_governance", "website_build"),
+        ("private_communication_governance", "document_knowledge_base"),
+        ("claude_skills_backlog_coverage", "skill_router_review"),
+        ("skill_router_review", "code_review"),
+        ("data_analysis", "commerce_growth"),
+        ("commerce_growth", "content_seo"),
+        ("industry_application_orchestration", "agent_planning_orchestration"),
+        ("agent_planning_orchestration", "data_analysis"),
+        ("codebase_graph_intelligence", "codebase_change_lifecycle"),
+        ("codebase_change_lifecycle", "code_review"),
+        ("investment_research_diligence", "agent_security"),
+        ("content_video_production", "agentic_media_production"),
+        ("private_communication_governance", "agent_role_library_governance"),
+        ("agent_role_library_governance", "agent_planning_orchestration"),
+        ("code_review", "website_build"),
+    }
 )
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
@@ -239,6 +304,24 @@ class IntentGraph:
                 errors.append(
                     "intent summaries do not match canonical source analysis"
                 )
+            actual_dependencies = tuple(
+                tuple(intent.depends_on)
+                if isinstance(intent.depends_on, (tuple, list))
+                else ()
+                for intent in self.intents
+            )
+            if actual_dependencies != canonical.intent_dependencies:
+                errors.append(
+                    "intent dependencies do not match canonical source analysis"
+                )
+            if self.dependency_relations != canonical.dependency_relations:
+                errors.append(
+                    "dependency relations do not match canonical source analysis"
+                )
+            if self.unresolved_dependencies != canonical.unresolved_dependencies:
+                errors.append(
+                    "unresolved dependencies do not match canonical source analysis"
+                )
 
         cycle = _find_dependency_cycle(dependencies, intent_ids)
         if cycle:
@@ -273,6 +356,9 @@ class TaskDecomposition:
 class _ParsedIntentSource:
     clauses: tuple[str, ...]
     intent_evidence: tuple[IntentEvidence, ...]
+    dependency_relations: tuple[IntentRelation, ...]
+    intent_dependencies: tuple[tuple[str, ...], ...]
+    unresolved_dependencies: tuple[str, ...]
     observed_candidate_count: int
     candidate_signal_limit_exceeded: bool
     intent_limit_exceeded: bool
@@ -302,6 +388,15 @@ def split_task_clauses(task: str) -> list[str]:
     text = normalized.current.strip()
     if not text:
         return []
+
+    approval_release = _APPROVAL_RELEASE_RE.fullmatch(text)
+    if approval_release:
+        return [
+            approval_release.group("cn_source")
+            or approval_release.group("en_source"),
+            approval_release.group("cn_target")
+            or approval_release.group("en_target"),
+        ]
 
     list_items = _split_list_items(text)
     if len(list_items) > 1:
@@ -479,9 +574,20 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
     clause_evidence = _apply_source_gate_modes(
         current, clauses, clause_evidence
     )
+    bound_evidence = bind_intent_evidence(tuple(clause_evidence), current)
+    dependency_relations = _canonical_relations(current, bound_evidence)
+    intent_dependencies = _canonical_dependencies(
+        len(bound_evidence), dependency_relations
+    )
+    unresolved_dependencies = _canonical_unresolved_dependencies(
+        current, len(bound_evidence)
+    )
     return _ParsedIntentSource(
         clauses=tuple(clauses),
-        intent_evidence=bind_intent_evidence(tuple(clause_evidence), current),
+        intent_evidence=bound_evidence,
+        dependency_relations=dependency_relations,
+        intent_dependencies=intent_dependencies,
+        unresolved_dependencies=unresolved_dependencies,
         observed_candidate_count=observed_candidate_count,
         candidate_signal_limit_exceeded=candidate_signal_limit_exceeded,
         intent_limit_exceeded=intent_limit_exceeded,
@@ -496,8 +602,6 @@ def _canonical_intent_evidence(source: str) -> tuple[IntentEvidence, ...]:
 def decompose_task_detailed(task: str) -> TaskDecomposition:
     from .intent_dependencies import (
         apply_intent_relations,
-        infer_intent_relations,
-        infer_unresolved_dependencies,
     )
 
     task_scan_limit_exceeded = len(task) > MAX_TASK_SCAN_CHARS
@@ -510,11 +614,11 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
     for index, clause in enumerate(clauses, start=1):
         evidence = bound_evidence[index - 1]
         intents.append(classify_intent(clause, index, evidence))
-    relations = infer_intent_relations(current, intents, bound_evidence)
+    relations = parsed.dependency_relations
     final_intents = apply_intent_relations(intents, relations)
     intent_graph = IntentGraph(
         intents=final_intents,
-        unresolved_dependencies=infer_unresolved_dependencies(current, final_intents),
+        unresolved_dependencies=parsed.unresolved_dependencies,
         dependency_relations=relations,
         intent_evidence=bound_evidence,
         evidence_source=current,
@@ -622,6 +726,153 @@ def _gate_mode_for_clause(clause: str) -> str:
         if _GATE_VERIFICATION_RE.search(bound_task_text(clause))
         else "completion"
     )
+
+
+def _canonical_relations(
+    source: str, evidence: tuple[IntentEvidence, ...]
+) -> tuple[IntentRelation, ...]:
+    source = bound_task_text(source)
+    if len(evidence) < 2:
+        return ()
+
+    relations: list[IntentRelation] = []
+    parallel_start = next(
+        (
+            index
+            for index, item in enumerate(evidence)
+            if item.relation_mode == "parallel"
+        ),
+        len(evidence),
+    )
+    ordered = evidence[:parallel_start]
+    gate_indexes = [
+        index for index, item in enumerate(ordered) if item.gate_mode != "none"
+    ]
+
+    if gate_indexes:
+        if (
+            len(ordered) == 2
+            and gate_indexes == [1]
+            and ordered[0].task_type != "open_source_release"
+        ):
+            _append_canonical_gate(relations, 1, 0, ordered[1])
+        else:
+            for index in gate_indexes:
+                if (
+                    index + 1 < len(ordered)
+                    and ordered[index + 1].task_type != "open_source_release"
+                ):
+                    _append_canonical_gate(
+                        relations, index, index + 1, ordered[index]
+                    )
+    elif _CANONICAL_PREFIX_BEFORE_RE.search(source) and len(ordered) == 2:
+        relations.append(IntentRelation("i2", "i1", "before"))
+    elif _CANONICAL_FIRST_THEN_RE.search(source):
+        _append_canonical_chain(relations, ordered, "first_then")
+    elif _CANONICAL_BEFORE_RE.search(source):
+        _append_canonical_chain(relations, ordered, "before")
+    elif any(item.relation_mode == "explicit_sequence" for item in ordered):
+        _append_canonical_chain(relations, ordered, "explicit_sequence")
+    elif ";" in source or "；" in source:
+        explicit_order = bool(
+            _CANONICAL_ORDER_LEAD_IN_RE.search(source)
+            or _CANONICAL_FIRST_THEN_RE.search(source)
+        )
+        for index, (left, right) in enumerate(zip(ordered, ordered[1:])):
+            if right.task_type != "open_source_release" and (
+                explicit_order
+                or (left.task_type, right.task_type)
+                in SEMICOLON_WORKFLOW_TRANSITIONS
+            ):
+                relations.append(
+                    IntentRelation(
+                        f"i{index + 1}", f"i{index + 2}", "semicolon_sequence"
+                    )
+                )
+
+    for target_index, target in enumerate(evidence):
+        if target.task_type != "open_source_release":
+            continue
+        if target.release_mode == "readiness" and target.relation_mode in {
+            "single",
+            "enumeration",
+            "parallel",
+        }:
+            continue
+        for source_index in range(target_index):
+            relations.append(
+                IntentRelation(
+                    f"i{source_index + 1}",
+                    f"i{target_index + 1}",
+                    "release_gate",
+                    True,
+                )
+            )
+    return _deduplicate_canonical_relations(relations)
+
+
+def _append_canonical_gate(
+    relations: list[IntentRelation],
+    source_index: int,
+    target_index: int,
+    source_evidence: IntentEvidence,
+) -> None:
+    verification = source_evidence.gate_mode == "verification"
+    relations.append(
+        IntentRelation(
+            f"i{source_index + 1}",
+            f"i{target_index + 1}",
+            "verification_gate" if verification else "completion_gate",
+            verification,
+        )
+    )
+
+
+def _append_canonical_chain(
+    relations: list[IntentRelation],
+    evidence: tuple[IntentEvidence, ...],
+    reason: str,
+) -> None:
+    for index, target in enumerate(evidence[1:]):
+        if target.task_type != "open_source_release":
+            relations.append(
+                IntentRelation(f"i{index + 1}", f"i{index + 2}", reason)
+            )
+
+
+def _deduplicate_canonical_relations(
+    relations: list[IntentRelation],
+) -> tuple[IntentRelation, ...]:
+    seen: set[tuple[str, str]] = set()
+    result: list[IntentRelation] = []
+    for relation in relations:
+        edge = (relation.source_id, relation.target_id)
+        if edge not in seen and relation.source_id != relation.target_id:
+            seen.add(edge)
+            result.append(relation)
+    return tuple(result)
+
+
+def _canonical_dependencies(
+    intent_count: int, relations: tuple[IntentRelation, ...]
+) -> tuple[tuple[str, ...], ...]:
+    dependencies = [[] for _ in range(intent_count)]
+    for relation in relations:
+        target_index = int(relation.target_id[1:]) - 1
+        dependencies[target_index].append(relation.source_id)
+    return tuple(tuple(items) for items in dependencies)
+
+
+def _canonical_unresolved_dependencies(
+    source: str, intent_count: int
+) -> tuple[str, ...]:
+    if intent_count != 1:
+        return ()
+    match = _CANONICAL_UNKNOWN_PREFIX_GATE_RE.search(bound_task_text(source))
+    if not match:
+        return ()
+    reference = match.group(1).strip()
+    return (f"unresolved dependency: {reference}",) if reference else ()
 
 
 def decompose_task(task: str) -> IntentGraph:

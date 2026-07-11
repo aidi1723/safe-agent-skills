@@ -6,7 +6,7 @@ import dataclasses
 import re
 from typing import TYPE_CHECKING, Iterable, Sequence
 
-from .intent import IntentRelation
+from .intent import IntentRelation, SEMICOLON_WORKFLOW_TRANSITIONS
 from .intent_evidence import IntentEvidence, validate_intent_evidence
 from .intent_source import bound_task_text
 
@@ -14,36 +14,36 @@ if TYPE_CHECKING:
     from .intent import Intent
 
 
-_PARALLEL_RE = re.compile(r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE)
-_FIRST_THEN_RE = re.compile(
+_LEGACY_PARALLEL_RE = re.compile(r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE)
+_LEGACY_FIRST_THEN_RE = re.compile(
     r"(?:\bthen\b|先[\s\S]*再)", re.IGNORECASE
 )
-_BEFORE_RE = re.compile(r"\bbefore\b", re.IGNORECASE)
-_PREFIX_BEFORE_RE = re.compile(r"^\s*before\b|^\s*.+前\s*[,，]", re.IGNORECASE)
-_CHINESE_PRECEDES_RE = re.compile(r"先于")
-_ORDER_LEAD_IN_RE = re.compile(
+_LEGACY_BEFORE_RE = re.compile(r"\bbefore\b", re.IGNORECASE)
+_LEGACY_PREFIX_BEFORE_RE = re.compile(r"^\s*before\b|^\s*.+前\s*[,，]", re.IGNORECASE)
+_LEGACY_CHINESE_PRECEDES_RE = re.compile(r"先于")
+_LEGACY_ORDER_LEAD_IN_RE = re.compile(
     r"\b(?:workstream|workflow|execution)\s+order\b|"
     r"\bin\s+(?:this\s+)?order\b|"
     r"\b(?:ordered\s+)?(?:workflow\s+)?steps?\s*:|"
     r"(?:工作流|流程|执行)顺序|步骤\s*[:：]",
     re.IGNORECASE,
 )
-_PREFIX_COMPLETION_RE = re.compile(
+_LEGACY_PREFIX_COMPLETION_RE = re.compile(
     r"^\s*(?:after|once)\b|^待.+(?:完成|验证通过)后|^在.+(?:完成|验证通过)后",
     re.IGNORECASE,
 )
-_INFIX_COMPLETION_RE = re.compile(
+_LEGACY_INFIX_COMPLETION_RE = re.compile(
     r"\bafter\s+(?:"
     r"(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b|"
     r"approval\s+of\s+(?:the\s+)?(?:pr|pull\s+request)\b|"
     r"(?:the\s+)?(?:pr|pull\s+request)\s+is\s+approved\b)",
     re.IGNORECASE,
 )
-_CHINESE_TARGET_FIRST_APPROVAL_RE = re.compile(
+_LEGACY_CHINESE_TARGET_FIRST_APPROVAL_RE = re.compile(
     r"在\s*(?:PR|拉取请求)\s*(?:审批通过|批准|审核通过)后",
     re.IGNORECASE,
 )
-_CHINESE_COMPLETION_RE = re.compile(
+_LEGACY_CHINESE_COMPLETION_RE = re.compile(
     r"(?:完成|验证通过|测试通过|批准|审批通过|审核通过)后(?:再)?"
 )
 _LEGACY_VERIFICATION_GATE_RE = re.compile(
@@ -51,42 +51,13 @@ _LEGACY_VERIFICATION_GATE_RE = re.compile(
     r"(?:验证通过|测试通过|批准|审批通过|审核通过)",
     re.IGNORECASE,
 )
-_UNKNOWN_PREFIX_GATE_RE = re.compile(
+_LEGACY_UNKNOWN_PREFIX_GATE_RE = re.compile(
     r"^\s*(?:after|once)\s+(.+?)(?:\s+is\s+(?:complete|completed|verified|approved))?\s*[,;]",
     re.IGNORECASE,
 )
-_CHINESE_SEQUENCE_RE = re.compile(r"然后|先[\s\S]*(?:再|后)")
+_LEGACY_CHINESE_SEQUENCE_RE = re.compile(r"然后|先[\s\S]*(?:再|后)")
 
 
-SEMICOLON_WORKFLOW_TRANSITIONS = frozenset(
-    {
-        ("multi_platform_research_discovery", "investment_research_diligence"),
-        ("investment_research_diligence", "data_analysis"),
-        ("document_knowledge_base", "rag_agent"),
-        ("rag_agent", "agent_security"),
-        ("agent_planning_orchestration", "website_build"),
-        ("website_build", "code_review"),
-        ("data_analysis", "content_seo"),
-        ("content_seo", "content_video_production"),
-        ("code_review", "codebase_change_lifecycle"),
-        ("multi_platform_research_discovery", "content_seo"),
-        ("design_md_system_governance", "website_build"),
-        ("private_communication_governance", "document_knowledge_base"),
-        ("claude_skills_backlog_coverage", "skill_router_review"),
-        ("skill_router_review", "code_review"),
-        ("data_analysis", "commerce_growth"),
-        ("commerce_growth", "content_seo"),
-        ("industry_application_orchestration", "agent_planning_orchestration"),
-        ("agent_planning_orchestration", "data_analysis"),
-        ("codebase_graph_intelligence", "codebase_change_lifecycle"),
-        ("codebase_change_lifecycle", "code_review"),
-        ("investment_research_diligence", "agent_security"),
-        ("content_video_production", "agentic_media_production"),
-        ("private_communication_governance", "agent_role_library_governance"),
-        ("agent_role_library_governance", "agent_planning_orchestration"),
-        ("code_review", "website_build"),
-    }
-)
 def infer_intent_relations(
     current_text: str,
     intents: Sequence[Intent],
@@ -94,14 +65,28 @@ def infer_intent_relations(
 ) -> tuple[IntentRelation, ...]:
     """Infer only dependencies stated by explicit ordering or release markers."""
     current_text = bound_task_text(current_text)
+    if intent_evidence:
+        from .intent import _parse_bounded_intent_source
+
+        structured_evidence = _validated_evidence(
+            intent_evidence, intents, current_text
+        )
+        if structured_evidence is None:
+            return ()
+        return _parse_bounded_intent_source(
+            current_text
+        ).dependency_relations
+    return _infer_legacy_relations(current_text, intents)
+
+
+def _infer_legacy_relations(
+    current_text: str, intents: Sequence[Intent]
+) -> tuple[IntentRelation, ...]:
+    """Compatibility inference for manual graphs without canonical evidence."""
     if len(intents) < 2:
         return ()
 
-    structured_evidence = _validated_evidence(
-        intent_evidence, intents, current_text
-    )
-    if structured_evidence is None:
-        return ()
+    structured_evidence: tuple[IntentEvidence, ...] = ()
     relations: list[IntentRelation] = []
     parallel_start = (
         next(
@@ -113,15 +98,15 @@ def infer_intent_relations(
             len(intents),
         )
         if structured_evidence
-        else 0 if _PARALLEL_RE.search(current_text) else len(intents)
+        else 0 if _LEGACY_PARALLEL_RE.search(current_text) else len(intents)
     )
     ordered_intents = intents[:parallel_start]
 
-    if _PREFIX_BEFORE_RE.search(current_text) and len(ordered_intents) == 2:
+    if _LEGACY_PREFIX_BEFORE_RE.search(current_text) and len(ordered_intents) == 2:
         relations.append(
             IntentRelation(ordered_intents[1].id, ordered_intents[0].id, "before")
         )
-    elif _CHINESE_TARGET_FIRST_APPROVAL_RE.search(current_text) and len(
+    elif _LEGACY_CHINESE_TARGET_FIRST_APPROVAL_RE.search(current_text) and len(
         ordered_intents
     ) == 2:
         source = ordered_intents[1]
@@ -138,13 +123,13 @@ def infer_intent_relations(
                 requires_verification,
             )
         )
-    elif _PREFIX_COMPLETION_RE.search(current_text) or _CHINESE_COMPLETION_RE.search(
+    elif _LEGACY_PREFIX_COMPLETION_RE.search(current_text) or _LEGACY_CHINESE_COMPLETION_RE.search(
         current_text
     ):
         _append_gate_chain(
             relations, ordered_intents, structured_evidence
         )
-    elif _INFIX_COMPLETION_RE.search(current_text) and len(ordered_intents) == 2:
+    elif _LEGACY_INFIX_COMPLETION_RE.search(current_text) and len(ordered_intents) == 2:
         source = ordered_intents[1]
         requires_verification = _gate_requires_verification(
             structured_evidence, 1, source
@@ -159,16 +144,16 @@ def infer_intent_relations(
                 requires_verification,
             )
         )
-    elif _FIRST_THEN_RE.search(current_text):
+    elif _LEGACY_FIRST_THEN_RE.search(current_text):
         _append_source_chain(relations, ordered_intents, "first_then")
-    elif _BEFORE_RE.search(current_text) or _CHINESE_PRECEDES_RE.search(current_text):
+    elif _LEGACY_BEFORE_RE.search(current_text) or _LEGACY_CHINESE_PRECEDES_RE.search(current_text):
         _append_source_chain(relations, ordered_intents, "before")
     elif structured_evidence and any(
         evidence.relation_mode == "explicit_sequence"
         for evidence in structured_evidence
     ):
         _append_source_chain(relations, ordered_intents, "explicit_sequence")
-    elif _CHINESE_SEQUENCE_RE.search(current_text) or _ORDER_LEAD_IN_RE.search(
+    elif _LEGACY_CHINESE_SEQUENCE_RE.search(current_text) or _LEGACY_ORDER_LEAD_IN_RE.search(
         current_text
     ):
         _append_source_chain(relations, ordered_intents, "explicit_sequence")
@@ -253,7 +238,7 @@ def infer_unresolved_dependencies(
     current_text = bound_task_text(current_text)
     if len(intents) != 1:
         return ()
-    match = _UNKNOWN_PREFIX_GATE_RE.search(current_text)
+    match = _LEGACY_UNKNOWN_PREFIX_GATE_RE.search(current_text)
     if not match:
         return ()
     reference = match.group(1).strip()
@@ -317,7 +302,7 @@ def _append_semicolon_relations(
     relations: list[IntentRelation], current_text: str, intents: Sequence[Intent]
 ) -> None:
     explicit_order = bool(
-        _ORDER_LEAD_IN_RE.search(current_text) or _FIRST_THEN_RE.search(current_text)
+        _LEGACY_ORDER_LEAD_IN_RE.search(current_text) or _LEGACY_FIRST_THEN_RE.search(current_text)
     )
     for source, target in zip(intents, intents[1:]):
         transition = (source.task_type, target.task_type)

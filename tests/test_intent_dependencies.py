@@ -14,6 +14,36 @@ from onecode_skill_sanitizer.intent_dependencies import (
 
 
 class IntentDependenciesTest(unittest.TestCase):
+    def test_approval_release_variants_have_one_canonical_release_gate(self):
+        tasks = (
+            "在 PR 审批通过后发布更新",
+            "在PR审批通过后发布更新",
+            "在 PR 审批通过后，发布更新",
+            "After the PR is approved, publish update",
+            "After the PR is approved，publish update",
+            "After PR approval, publish update",
+        )
+
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [item.task_type for item in graph.intents],
+                    ["code_review", "open_source_release"],
+                )
+                self.assertEqual(
+                    [item.depends_on for item in graph.intents], [(), ("i1",)]
+                )
+                self.assertEqual(
+                    graph.dependency_relations,
+                    (IntentRelation("i1", "i2", "release_gate", True),),
+                )
+                self.assertEqual(
+                    [item.gate_mode for item in graph.intent_evidence],
+                    ["verification", "none"],
+                )
+                self.assertEqual(graph.intent_evidence[1].release_mode, "action")
+                self.assertEqual(graph.validate(), [])
     def test_direct_relation_inference_ignores_markers_after_scan_boundary(self):
         intents = (
             self.intent("i1", "review code"),

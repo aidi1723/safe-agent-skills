@@ -15,11 +15,49 @@ from onecode_skill_sanitizer.intent import (
 from onecode_skill_sanitizer.intent_evidence import (
     IntentEvidence,
     bind_intent_evidence,
+    validate_intent_evidence,
 )
 from onecode_skill_sanitizer.intent_dependencies import infer_intent_relations
 
 
 class IntentTest(unittest.TestCase):
+    def test_nonempty_evidence_requires_exact_nonblank_source_and_provenance(self):
+        class StringSubclass(str):
+            pass
+
+        evidence = IntentEvidence(
+            "general", "action", "positive", "none", "single", (), 0
+        )
+        invalid_sources = (None, [], 1, {}, "", " ", StringSubclass("task"))
+        invalid_provenance = (
+            None,
+            [],
+            1,
+            {},
+            "",
+            " ",
+            StringSubclass("provenance"),
+        )
+
+        for source in invalid_sources:
+            with self.subTest(source=source):
+                errors = validate_intent_evidence(
+                    (dataclasses.replace(evidence, provenance="valid"),),
+                    ("general",),
+                    source,
+                )
+                self.assertTrue(any("source" in error for error in errors), errors)
+        for provenance in invalid_provenance:
+            with self.subTest(provenance=provenance):
+                errors = validate_intent_evidence(
+                    (dataclasses.replace(evidence, provenance=provenance),),
+                    ("general",),
+                    "general task",
+                )
+                self.assertTrue(
+                    any("provenance" in error for error in errors), errors
+                )
+
     def test_internal_intent_evidence_is_frozen_validated_and_nonserialized(self):
         graph = decompose_task("代码审查 + 老板简报 + 发布清单")
 
@@ -376,6 +414,76 @@ class IntentTest(unittest.TestCase):
         self.assertEqual(
             verification.intent_evidence[0].gate_mode, "verification"
         )
+
+    def test_canonical_relations_reject_injection_deletion_and_reason_changes(self):
+        plain = decompose_task("code review + analyze a spreadsheet")
+        injected_relation = IntentRelation(
+            "i1", "i2", "explicit_sequence", False
+        )
+        injected = dataclasses.replace(
+            plain,
+            intents=(
+                plain.intents[0],
+                dataclasses.replace(plain.intents[1], depends_on=("i1",)),
+            ),
+            dependency_relations=(injected_relation,),
+            intent_evidence=bind_intent_evidence(
+                plain.intent_evidence, plain.evidence_source
+            ),
+        )
+        injected_release = dataclasses.replace(
+            plain,
+            intents=(
+                plain.intents[0],
+                dataclasses.replace(plain.intents[1], depends_on=("i1",)),
+            ),
+            dependency_relations=(
+                IntentRelation("i1", "i2", "release_gate", True),
+            ),
+        )
+
+        sequence = decompose_task("code review then build a website")
+        deleted = dataclasses.replace(
+            sequence,
+            intents=(
+                sequence.intents[0],
+                dataclasses.replace(sequence.intents[1], depends_on=()),
+            ),
+            dependency_relations=(),
+        )
+        changed = dataclasses.replace(
+            sequence,
+            dependency_relations=(
+                IntentRelation("i1", "i2", "before", False),
+            ),
+        )
+        release_sequence = decompose_task(
+            "code review then build a website then publish update"
+        )
+        duplicated = dataclasses.replace(
+            release_sequence,
+            dependency_relations=(
+                *release_sequence.dependency_relations,
+                release_sequence.dependency_relations[0],
+            ),
+        )
+        reordered = dataclasses.replace(
+            release_sequence,
+            dependency_relations=tuple(
+                reversed(release_sequence.dependency_relations)
+            ),
+        )
+
+        for graph in (
+            injected,
+            injected_release,
+            deleted,
+            changed,
+            duplicated,
+            reordered,
+        ):
+            with self.subTest(relations=graph.dependency_relations):
+                self.assertTrue(graph.validate())
 
     def test_explicit_sequences_create_dependency_chains(self):
         cases = [
