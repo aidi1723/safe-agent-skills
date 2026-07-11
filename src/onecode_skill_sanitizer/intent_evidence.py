@@ -10,6 +10,7 @@ from typing import Any
 
 from .intent_source import (
     bound_task_text,
+    is_release_action_text,
     parse_approval_release,
     source_contains_release_action,
 )
@@ -197,7 +198,9 @@ def source_supports_release_action(
     source: str, matched_signals: tuple[str, ...] = ()
 ) -> bool:
     source = bound_task_text(source)
-    if parse_approval_release(source) is not None:
+    if parse_approval_release(source) is not None or is_release_action_text(
+        source, allow_bare=True
+    ):
         return True
     normalized = {signal.casefold() for signal in matched_signals}
     return bool(

@@ -17,6 +17,23 @@ COMPOUND_TASK = "构建官网，同时审计 skill 路由器，验证通过后�
 
 
 class CompilerTest(unittest.TestCase):
+    def test_standalone_bare_release_compiles_ready(self):
+        graph = decompose_task("release")
+        composition = ScenarioComposition(
+            selections=(
+                ScenarioSelection("open-source-release", ("i1",), 1.0, 10),
+            ),
+            uncovered_intents=(),
+            status="complete",
+        )
+
+        compiled = compile_execution_graph(
+            graph, composition, self.bundles_index, self.trusted_skill_names
+        )
+
+        self.assertEqual(compiled["status"], "ready")
+        self.assertTrue(compiled["acyclic"])
+
     def test_approval_release_compiles_ready_with_verification_anchor(self):
         composition = ScenarioComposition(
             selections=(

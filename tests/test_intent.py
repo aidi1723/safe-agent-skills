@@ -21,6 +21,32 @@ from onecode_skill_sanitizer.intent_dependencies import infer_intent_relations
 
 
 class IntentTest(unittest.TestCase):
+    def test_standalone_bare_release_actions_are_canonical(self):
+        for task in ("release", "publish", "push", "发布", "上线", "推送"):
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["open_source_release"],
+                )
+                self.assertEqual(graph.intent_evidence[0].release_mode, "action")
+                self.assertEqual(graph.validate(), [])
+
+    def test_negated_bare_release_actions_remain_nonaction(self):
+        for task in ("do not release", "不要发布"):
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertNotIn(
+                    "open_source_release",
+                    [intent.task_type for intent in graph.intents],
+                )
+                self.assertFalse(
+                    any(
+                        item.release_mode == "action"
+                        for item in graph.intent_evidence
+                    )
+                )
+
     def test_nonempty_evidence_requires_exact_nonblank_source_and_provenance(self):
         class StringSubclass(str):
             pass
