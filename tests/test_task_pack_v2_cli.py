@@ -3,6 +3,7 @@ import copy
 import hashlib
 import io
 import json
+import os
 import shutil
 import tempfile
 import unittest
@@ -29,6 +30,81 @@ from tests.registry_cli_helpers import validate_task_pack_v2
 
 
 class TaskPackV2CliTest(unittest.TestCase):
+    def test_v2_snapshot_rejects_core_file_and_directory_replacement_races(self):
+        targets = [
+            ("index", ("index.json",)),
+            ("manifest", ("research", "research-source-check", "skill.json")),
+            ("body", ("research", "research-source-check", "SKILL.md")),
+            ("category", ("research",)),
+            ("skill_directory", ("research", "research-source-check")),
+        ]
+        for label, components in targets:
+            with self.subTest(target=label), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                registry = root / "catalog"
+                shutil.copytree("catalog", registry)
+                target = registry.joinpath(*components)
+                outside = root / f"outside-{label}"
+                if target.is_dir():
+                    shutil.copytree(target, outside)
+                else:
+                    outside.write_bytes(target.read_bytes())
+                outside_files = (
+                    {
+                        (path.stat().st_dev, path.stat().st_ino)
+                        for path in outside.rglob("*")
+                        if path.is_file()
+                    }
+                    if outside.is_dir()
+                    else {(outside.stat().st_dev, outside.stat().st_ino)}
+                )
+                parent_identity = (target.parent.stat().st_dev, target.parent.stat().st_ino)
+                original_open = os.open
+                original_read = os.read
+                replaced = False
+                outside_read = False
+
+                def racing_open(path, flags, mode=0o777, *, dir_fd=None):
+                    nonlocal replaced
+                    if (
+                        not replaced
+                        and path == target.name
+                        and dir_fd is not None
+                        and (os.fstat(dir_fd).st_dev, os.fstat(dir_fd).st_ino) == parent_identity
+                    ):
+                        target.rename(target.with_name(f"{target.name}-parked"))
+                        target.symlink_to(outside, target_is_directory=outside.is_dir())
+                        replaced = True
+                    return original_open(path, flags, mode, dir_fd=dir_fd)
+
+                def guarded_read(fd: int, length: int) -> bytes:
+                    nonlocal outside_read
+                    opened = os.fstat(fd)
+                    if (opened.st_dev, opened.st_ino) in outside_files:
+                        outside_read = True
+                    return original_read(fd, length)
+
+                with patch.object(os, "open", racing_open):
+                    with patch.object(os, "read", guarded_read):
+                        with self.assertRaises(ValueError):
+                            build_verified_registry_snapshot(registry)
+
+                self.assertTrue(replaced)
+                self.assertFalse(outside_read)
+
+    def test_v2_platform_capability_failure_is_bounded(self):
+        out = io.StringIO()
+        with patch.object(os, "O_NOFOLLOW", None):
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    ["smart", "build a website", "--schema-version", "2", "--format", "json"]
+                )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["error"]["code"], "invalid_input")
+        self.assertNotIn("Traceback", json.dumps(payload))
+
     def test_v2_contract_stage_is_authoritative_and_malformed_contracts_fail_closed(self):
         manifest = json.loads(
             Path("catalog/research/research-source-check/skill.json").read_text(

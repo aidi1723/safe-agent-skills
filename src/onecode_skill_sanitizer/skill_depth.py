@@ -4,7 +4,7 @@ import json
 import re
 from pathlib import Path
 
-from .validation import UnsafeAuxiliaryContentError, read_safe_auxiliary_files
+from .validation import UnsafeAuxiliaryContentError, auxiliary_file_counts
 
 
 DEPTH_CLASSES = {"routing_card", "playbook", "specialist"}
@@ -44,18 +44,12 @@ def analyze_skill(skill_dir: Path, policy: dict) -> dict:
     if missing_sections:
         errors.append({"id": "missing-required-sections", "sections": missing_sections})
     try:
-        auxiliary_files = read_safe_auxiliary_files(skill_dir)
+        auxiliary_counts = auxiliary_file_counts(skill_dir)
     except UnsafeAuxiliaryContentError:
         errors.append({"id": "unsafe-auxiliary-content"})
-        auxiliary_files = ()
-    reference_count = sum(
-        auxiliary_file.relative_path.split("/", 1)[0] == "references"
-        for auxiliary_file in auxiliary_files
-    )
-    script_count = sum(
-        auxiliary_file.relative_path.split("/", 1)[0] == "scripts"
-        for auxiliary_file in auxiliary_files
-    )
+        auxiliary_counts = {}
+    reference_count = auxiliary_counts.get("references", 0)
+    script_count = auxiliary_counts.get("scripts", 0)
     word_count = len(re.findall(r"[\w-]+", text, flags=re.UNICODE))
     workflow_step_count = len(re.findall(r"^\d+\.\s+", text, flags=re.MULTILINE))
     has_examples = any("example" in section.lower() for section in sections)

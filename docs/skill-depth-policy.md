@@ -40,6 +40,10 @@ in those trees are rejected before content is read. After an approved body or
 auxiliary-content change, reseal the skill explicitly and rebuild the registry
 index:
 
+Descriptor-bound verification requires Unix-style `dir_fd`, fd-based
+`scandir`, `O_DIRECTORY`, and `O_NOFOLLOW` support. Unsupported hosts fail
+closed instead of falling back to path-based reads.
+
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \
   catalog/security/security-supply-chain-review

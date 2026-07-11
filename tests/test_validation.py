@@ -8,6 +8,7 @@ from pathlib import Path
 from unittest.mock import patch
 
 from onecode_skill_sanitizer import validation as validation_module
+from onecode_skill_sanitizer import safe_fs
 from onecode_skill_sanitizer.validation import (
     UnsafeAuxiliaryContentError,
     auxiliary_content_sha256,
@@ -47,6 +48,103 @@ class ValidationTest(unittest.TestCase):
 
             self.assertEqual(auxiliary_content_sha256(skill_dir), expected.hexdigest())
             self.assertIsNone(auxiliary_content_sha256(Path(temp_dir) / "empty"))
+
+    def test_auxiliary_hash_streams_large_files_with_bounded_reads(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skill_dir = Path(temp_dir) / "skill"
+            files = {
+                "references/a.txt": b"a" * 150_000,
+                "references/a/nested.txt": b"nested\n",
+                "scripts/check.sh": b"check\n" * 20_000,
+            }
+            expected = hashlib.sha256()
+            for relative, content in sorted(files.items()):
+                path = skill_dir / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+                expected.update(relative.encode("utf-8"))
+                expected.update(b"\0")
+                expected.update(content)
+                expected.update(b"\0")
+            original_read = os.read
+            requested_lengths = []
+
+            def bounded_read(fd: int, length: int) -> bytes:
+                requested_lengths.append(length)
+                return original_read(fd, length)
+
+            with patch.object(safe_fs.os, "read", bounded_read):
+                actual = auxiliary_content_sha256(skill_dir)
+
+        self.assertEqual(actual, expected.hexdigest())
+        self.assertTrue(requested_lengths)
+        self.assertLessEqual(max(requested_lengths), 64 * 1024)
+        self.assertFalse(hasattr(validation_module, "read_safe_auxiliary_files"))
+
+    def test_auxiliary_hash_fails_closed_without_descriptor_capabilities(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skill_dir = Path(temp_dir) / "skill"
+            reference = skill_dir / "references/guide.md"
+            reference.parent.mkdir(parents=True)
+            reference.write_text("guide\n", encoding="utf-8")
+
+            with patch.object(safe_fs.os, "O_NOFOLLOW", None):
+                with self.assertRaises(UnsafeAuxiliaryContentError):
+                    auxiliary_content_sha256(skill_dir)
+
+    def test_descriptor_capability_gate_rejects_every_required_primitive(self):
+        unsupported = [
+            (safe_fs.os, "O_RDONLY", None),
+            (safe_fs.os, "O_DIRECTORY", None),
+            (safe_fs.os, "O_NOFOLLOW", None),
+            (safe_fs.os, "O_CLOEXEC", None),
+            (safe_fs.os, "O_NONBLOCK", None),
+            (safe_fs.os, "fstat", None),
+            (safe_fs, "_OPEN_SUPPORTS_DIR_FD", False),
+            (safe_fs, "_STAT_SUPPORTS_DIR_FD", False),
+            (safe_fs, "_STAT_SUPPORTS_NOFOLLOW", False),
+            (safe_fs, "_SCANDIR_SUPPORTS_FD", False),
+        ]
+        for owner, attribute, value in unsupported:
+            with self.subTest(attribute=attribute):
+                with patch.object(owner, attribute, value):
+                    with self.assertRaises(safe_fs.UnsafeDescriptorAccessError):
+                        safe_fs.require_descriptor_capabilities()
+
+    def test_descriptor_visitor_exception_closes_every_opened_fd(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skill_dir = Path(temp_dir) / "skill"
+            reference = skill_dir / "references/guide.md"
+            reference.parent.mkdir(parents=True)
+            reference.write_text("guide\n", encoding="utf-8")
+            original_open = os.open
+            original_close = os.close
+            opened_fds = set()
+
+            def tracking_open(path, flags, mode=0o777, *, dir_fd=None):
+                fd = original_open(path, flags, mode, dir_fd=dir_fd)
+                opened_fds.add(fd)
+                return fd
+
+            def tracking_close(fd: int) -> None:
+                opened_fds.discard(fd)
+                original_close(fd)
+
+            def fail_visitor(_relative_path: str, _file_fd: int) -> None:
+                raise RuntimeError("visitor failed")
+
+            with patch.object(safe_fs.os, "open", tracking_open):
+                with patch.object(safe_fs.os, "close", tracking_close):
+                    with self.assertRaisesRegex(RuntimeError, "visitor failed"):
+                        with safe_fs.open_root(skill_dir) as skill_fd:
+                            self.assertIsNotNone(skill_fd)
+                            safe_fs.visit_regular_tree(
+                                skill_fd,
+                                ("references",),
+                                fail_visitor,
+                            )
+
+            self.assertEqual(opened_fds, set())
 
     def test_auxiliary_hash_rejects_symlinks_without_reading_targets(self):
         variants = [
@@ -134,8 +232,8 @@ class ValidationTest(unittest.TestCase):
                         outside_read = True
                     return original_read(fd, length)
 
-                with patch.object(validation_module.os, "open", racing_open):
-                    with patch.object(validation_module.os, "read", guarded_read):
+                with patch.object(safe_fs.os, "open", racing_open):
+                    with patch.object(safe_fs.os, "read", guarded_read):
                         with self.assertRaises(UnsafeAuxiliaryContentError):
                             auxiliary_content_sha256(skill_dir)
 
@@ -183,8 +281,8 @@ class ValidationTest(unittest.TestCase):
                         outside_read = True
                     return original_read(fd, length)
 
-                with patch.object(validation_module.os, "open", racing_open):
-                    with patch.object(validation_module.os, "read", guarded_read):
+                with patch.object(safe_fs.os, "open", racing_open):
+                    with patch.object(safe_fs.os, "read", guarded_read):
                         with self.assertRaises(UnsafeAuxiliaryContentError):
                             auxiliary_content_sha256(skill_dir)
 
@@ -215,8 +313,8 @@ class ValidationTest(unittest.TestCase):
                 opened_fds.discard(fd)
                 original_close(fd)
 
-            with patch.object(validation_module.os, "open", tracking_open):
-                with patch.object(validation_module.os, "close", tracking_close):
+            with patch.object(safe_fs.os, "open", tracking_open):
+                with patch.object(safe_fs.os, "close", tracking_close):
                     with self.assertRaises(UnsafeAuxiliaryContentError):
                         auxiliary_content_sha256(skill_dir)
 

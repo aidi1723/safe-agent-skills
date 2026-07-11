@@ -2,11 +2,10 @@ from __future__ import annotations
 
 import hashlib
 import json
-import os
 import re
-import stat
-from dataclasses import dataclass
 from pathlib import Path
+
+from . import safe_fs
 
 
 STATUS_VALUES = {"quarantined", "review_required", "trusted", "rejected", "disabled"}
@@ -86,14 +85,8 @@ DISALLOWED_TOOL_VALUES = {
 AUXILIARY_DIRECTORIES = ("assets", "references", "scripts")
 
 
-class UnsafeAuxiliaryContentError(ValueError):
-    """Raised when auxiliary content cannot be safely treated as local files."""
-
-
-@dataclass(frozen=True)
-class SafeAuxiliaryFile:
-    relative_path: str
-    content: bytes
+UnsafeAuxiliaryContentError = safe_fs.UnsafeDescriptorAccessError
+_safe_component = safe_fs.safe_component
 
 
 def _is_exact_string_enum(value: object, allowed: set[str]) -> bool:
@@ -104,173 +97,36 @@ def text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def _safe_component(name: object) -> str:
-    if (
-        not isinstance(name, str)
-        or not name
-        or name in {".", ".."}
-        or "/" in name
-        or "\0" in name
-    ):
-        raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-    return name
+def auxiliary_content_sha256_from_fd(skill_fd: int) -> str | None:
+    digest = hashlib.sha256()
+    def update_digest(relative_path: str, file_fd: int) -> None:
+        digest.update(relative_path.encode("utf-8"))
+        digest.update(b"\0")
+        for chunk in safe_fs.iter_fd_chunks(file_fd):
+            digest.update(chunk)
+        digest.update(b"\0")
 
-
-def _same_object(left: os.stat_result, right: os.stat_result) -> bool:
-    return (left.st_dev, left.st_ino) == (right.st_dev, right.st_ino)
-
-
-def _same_file_state(left: os.stat_result, right: os.stat_result) -> bool:
-    return _same_object(left, right) and (
-        left.st_size,
-        left.st_mtime_ns,
-        left.st_ctime_ns,
-    ) == (
-        right.st_size,
-        right.st_mtime_ns,
-        right.st_ctime_ns,
-    )
-
-
-def _named_stat(parent_fd: int, name: str) -> os.stat_result:
-    return os.stat(name, dir_fd=parent_fd, follow_symlinks=False)
-
-
-def _open_directory(parent_fd: int, name: str, expected: os.stat_result) -> int:
-    fd = os.open(
-        name,
-        os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC,
-        dir_fd=parent_fd,
-    )
-    try:
-        opened = os.fstat(fd)
-        if not stat.S_ISDIR(opened.st_mode) or not _same_object(expected, opened):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-        current = _named_stat(parent_fd, name)
-        if not stat.S_ISDIR(current.st_mode) or not _same_object(opened, current):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-        return fd
-    except BaseException:
-        os.close(fd)
-        raise
-
-
-def _read_regular_file(parent_fd: int, name: str, expected: os.stat_result) -> bytes:
-    fd = os.open(
-        name,
-        os.O_RDONLY | os.O_NOFOLLOW | os.O_NONBLOCK | os.O_CLOEXEC,
-        dir_fd=parent_fd,
-    )
-    try:
-        opened = os.fstat(fd)
-        if not stat.S_ISREG(opened.st_mode) or not _same_object(expected, opened):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-        current = _named_stat(parent_fd, name)
-        if not stat.S_ISREG(current.st_mode) or not _same_object(opened, current):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-        chunks = []
-        while True:
-            chunk = os.read(fd, 1024 * 1024)
-            if not chunk:
-                break
-            chunks.append(chunk)
-        finished = os.fstat(fd)
-        current = _named_stat(parent_fd, name)
-        if (
-            not stat.S_ISREG(current.st_mode)
-            or not _same_object(finished, current)
-            or not _same_file_state(opened, finished)
-        ):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-        return b"".join(chunks)
-    finally:
-        os.close(fd)
-
-
-def read_safe_auxiliary_files(skill_dir: Path) -> tuple[SafeAuxiliaryFile, ...]:
-    files: list[SafeAuxiliaryFile] = []
-    root_flags = os.O_RDONLY | os.O_DIRECTORY | os.O_NOFOLLOW | os.O_CLOEXEC
-    try:
-        root_fd = os.open(skill_dir, root_flags)
-    except FileNotFoundError:
-        return ()
-    except OSError as exc:
-        raise UnsafeAuxiliaryContentError("unsafe auxiliary content") from exc
-
-    def walk(directory_fd: int, components: tuple[str, ...]) -> None:
-        before = os.fstat(directory_fd)
-        with os.scandir(directory_fd) as scanner:
-            names = sorted(_safe_component(entry.name) for entry in scanner)
-        for name in names:
-            expected = _named_stat(directory_fd, name)
-            relative_components = (*components, name)
-            if stat.S_ISDIR(expected.st_mode):
-                child_fd = _open_directory(directory_fd, name, expected)
-                try:
-                    walk(child_fd, relative_components)
-                    finished = os.fstat(child_fd)
-                    current = _named_stat(directory_fd, name)
-                    if not stat.S_ISDIR(current.st_mode) or not _same_object(finished, current):
-                        raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-                finally:
-                    os.close(child_fd)
-            elif stat.S_ISREG(expected.st_mode):
-                files.append(
-                    SafeAuxiliaryFile(
-                        relative_path="/".join(relative_components),
-                        content=_read_regular_file(directory_fd, name, expected),
-                    )
-                )
-            else:
-                raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-        after = os.fstat(directory_fd)
-        if not _same_file_state(before, after):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-
-    try:
-        root_opened = os.fstat(root_fd)
-        if not stat.S_ISDIR(root_opened.st_mode):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-        for directory in AUXILIARY_DIRECTORIES:
-            name = _safe_component(directory)
-            try:
-                expected = _named_stat(root_fd, name)
-            except FileNotFoundError:
-                continue
-            if not stat.S_ISDIR(expected.st_mode):
-                raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-            auxiliary_fd = _open_directory(root_fd, name, expected)
-            try:
-                walk(auxiliary_fd, (name,))
-                finished = os.fstat(auxiliary_fd)
-                current = _named_stat(root_fd, name)
-                if not stat.S_ISDIR(current.st_mode) or not _same_object(finished, current):
-                    raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-            finally:
-                os.close(auxiliary_fd)
-        root_current = os.stat(skill_dir, follow_symlinks=False)
-        if not stat.S_ISDIR(root_current.st_mode) or not _same_object(root_opened, root_current):
-            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
-    except UnsafeAuxiliaryContentError:
-        raise
-    except (OSError, TypeError, ValueError) as exc:
-        raise UnsafeAuxiliaryContentError("unsafe auxiliary content") from exc
-    finally:
-        os.close(root_fd)
-    return tuple(sorted(files, key=lambda item: item.relative_path))
+    count = safe_fs.visit_regular_tree(skill_fd, AUXILIARY_DIRECTORIES, update_digest)
+    return digest.hexdigest() if count else None
 
 
 def auxiliary_content_sha256(skill_dir: Path) -> str | None:
-    files = read_safe_auxiliary_files(skill_dir)
-    if not files:
-        return None
-    digest = hashlib.sha256()
-    for auxiliary_file in files:
-        digest.update(auxiliary_file.relative_path.encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(auxiliary_file.content)
-        digest.update(b"\0")
-    return digest.hexdigest()
+    with safe_fs.open_root(skill_dir, missing_ok=True) as skill_fd:
+        if skill_fd is None:
+            return None
+        return auxiliary_content_sha256_from_fd(skill_fd)
+
+
+def auxiliary_file_counts(skill_dir: Path) -> dict[str, int]:
+    counts = {directory: 0 for directory in AUXILIARY_DIRECTORIES}
+
+    def count_file(relative_path: str, _file_fd: int) -> None:
+        counts[relative_path.split("/", 1)[0]] += 1
+
+    with safe_fs.open_root(skill_dir, missing_ok=True) as skill_fd:
+        if skill_fd is not None:
+            safe_fs.visit_regular_tree(skill_fd, AUXILIARY_DIRECTORIES, count_file)
+    return counts
 
 
 def canonical_json_sha256(payload: dict) -> str:
