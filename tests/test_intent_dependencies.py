@@ -20,6 +20,30 @@ from onecode_skill_sanitizer.intent_source import (
 
 
 class IntentDependenciesTest(unittest.TestCase):
+    def test_unicode_expansion_before_precondition_preserves_source_offsets(self):
+        tasks = (
+            "analyze a Straße spreadsheet; Before PR approval, publish update",
+            "analyze an İ spreadsheet; Before PR approval, publish update",
+            "analyze a Cafe\u0301 spreadsheet; Before PR approval, publish update",
+            "analyze a Straße spreadsheet named Straße; "
+            "Before PR approval, publish update",
+            "分析 Straße 表格；在 PR 审批前发布更新",
+        )
+
+        expected = (
+            IntentRelation("i3", "i2", "before", False),
+            IntentRelation("i1", "i3", "release_gate", True),
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [item.task_type for item in graph.intents],
+                    ["data_analysis", "code_review", "open_source_release"],
+                )
+                self.assertEqual(graph.dependency_relations, expected)
+                self.assertEqual(graph.validate(), [])
+
     def test_duplicate_precondition_clauses_bind_to_local_occurrence(self):
         tasks = (
             "PR approval; Before PR approval, publish update",

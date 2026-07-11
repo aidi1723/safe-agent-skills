@@ -691,14 +691,11 @@ def _apply_source_relation_modes(
             replace(item, relation_mode="explicit_sequence") for item in evidence
         ]
 
-    source_folded = source.casefold()
-    search_start = 0
+    positions = _clause_source_positions(source, tuple(clauses))
+    if positions is None:
+        return evidence
     result: list[IntentEvidence] = []
-    for clause, item in zip(clauses, evidence, strict=True):
-        position = source_folded.find(clause.casefold(), search_start)
-        if position < 0:
-            position = search_start
-        search_start = position + len(clause)
+    for position, item in zip(positions, evidence, strict=True):
         mode = "parallel" if position >= parallel.start() else "explicit_sequence"
         result.append(replace(item, relation_mode=mode))
     return result
@@ -867,15 +864,9 @@ def _context_clause_indexes(
 ) -> tuple[int, int] | None:
     if context is None:
         return None
-    source_folded = bound_task_text(source).casefold()
-    cursor = 0
-    positions: list[int] = []
-    for clause in clauses:
-        position = source_folded.find(clause.casefold(), cursor)
-        if position < 0:
-            return None
-        positions.append(position)
-        cursor = position + len(clause)
+    positions = _clause_source_positions(source, clauses)
+    if positions is None:
+        return None
     source_index = next(
         (
             index
@@ -895,6 +886,26 @@ def _context_clause_indexes(
     if source_index is None or target_index is None:
         return None
     return source_index, target_index
+
+
+def _clause_source_positions(
+    source: str, clauses: tuple[str, ...]
+) -> tuple[int, ...] | None:
+    bounded_source = bound_task_text(source)
+    cursor = 0
+    positions: list[int] = []
+    for clause in clauses:
+        position = bounded_source.find(clause, cursor)
+        if position < 0:
+            fallback = re.search(
+                re.escape(clause), bounded_source[cursor:], re.IGNORECASE
+            )
+            if fallback is None:
+                return None
+            position = cursor + fallback.start()
+        positions.append(position)
+        cursor = position + len(clause)
+    return tuple(positions)
 
 
 def _append_canonical_gate(
