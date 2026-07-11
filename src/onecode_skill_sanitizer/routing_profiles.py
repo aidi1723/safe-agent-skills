@@ -1,7 +1,6 @@
 from __future__ import annotations
 
 import re
-import heapq
 from collections.abc import Iterable, Iterator
 
 
@@ -793,13 +792,8 @@ PROFILE_SIGNAL_ALIASES = {
 }
 
 
-def iter_profile_signal_matches(text: str) -> Iterator[dict[str, object]]:
-    """Return deterministic configured-profile matches with source offsets."""
-    lowered = text.lower()
-    pending: list[
-        tuple[int, int, int, int, int, dict[str, object], Iterator[re.Match[str]]]
-    ] = []
-    stream_order = 0
+def _build_profile_signals_by_prefix() -> dict[str, tuple[tuple[str, str, int, int], ...]]:
+    by_prefix: dict[str, list[tuple[str, str, int, int]]] = {}
     for profile_order, profile in enumerate(SCENARIO_PROFILES):
         signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
             profile["task_type"], ()
@@ -814,69 +808,55 @@ def iter_profile_signal_matches(text: str) -> Iterator[dict[str, object]]:
             ):
                 continue
             seen_signals.add(normalized_signal)
-            pattern = re.escape(normalized_signal)
-            if len(normalized_signal) <= 3 and re.fullmatch(r"[a-z0-9]+", normalized_signal):
-                pattern = rf"(?<![a-z0-9]){pattern}(?![a-z0-9])"
             score = 4 if " " in normalized_signal else 2
-            matches = re.finditer(pattern, lowered)
-            first = next(matches, None)
-            if first is None:
-                continue
-            item = _profile_signal_match_item(
-                first, profile["task_type"], normalized_signal, score
+            by_prefix.setdefault(normalized_signal[0], []).append(
+                (normalized_signal, profile["task_type"], score, profile_order)
             )
-            heapq.heappush(
-                pending,
-                (
-                    first.start(),
-                    -score,
-                    profile_order,
-                    first.end(),
-                    stream_order,
-                    item,
-                    matches,
-                ),
-            )
-            stream_order += 1
+    return {
+        prefix: tuple(
+            sorted(definitions, key=lambda item: (-item[2], item[3], len(item[0])))
+        )
+        for prefix, definitions in by_prefix.items()
+    }
 
-    while pending:
-        _, negative_score, profile_order, _, order, item, matches = heapq.heappop(
-            pending
-        )
-        yield item
-        following = next(matches, None)
-        if following is None:
-            continue
-        following_item = _profile_signal_match_item(
-            following,
-            str(item["task_type"]),
-            str(item["signal"]),
-            int(item["score"]),
-        )
-        heapq.heappush(
-            pending,
-            (
-                following.start(),
-                negative_score,
-                profile_order,
-                following.end(),
-                order,
-                following_item,
-                matches,
-            ),
-        )
+
+_PROFILE_SIGNALS_BY_PREFIX = _build_profile_signals_by_prefix()
+
+
+def iter_profile_signal_matches(text: str) -> Iterator[dict[str, object]]:
+    """Return deterministic configured-profile matches with source offsets."""
+    lowered = text.lower()
+    for start, prefix in enumerate(lowered):
+        for signal, task_type, score, _ in _PROFILE_SIGNALS_BY_PREFIX.get(prefix, ()):
+            if not lowered.startswith(signal, start):
+                continue
+            end = start + len(signal)
+            if not _short_ascii_signal_has_boundaries(lowered, start, end, signal):
+                continue
+            yield _profile_signal_match_item(start, end, task_type, signal, score)
 
 
 def _profile_signal_match_item(
-    match: re.Match[str], task_type: str, signal: str, score: int
+    start: int, end: int, task_type: str, signal: str, score: int
 ) -> dict[str, object]:
     return {
-        "start": match.start(),
-        "end": match.end(),
+        "start": start,
+        "end": end,
         "task_type": task_type,
         "signal": signal,
         "score": score,
     }
+
+
+def _short_ascii_signal_has_boundaries(
+    text: str, start: int, end: int, signal: str
+) -> bool:
+    if len(signal) > 3 or re.fullmatch(r"[a-z0-9]+", signal) is None:
+        return True
+    return (
+        (start == 0 or not text[start - 1].isalnum() or not text[start - 1].isascii())
+        and (end == len(text) or not text[end].isalnum() or not text[end].isascii())
+    )
 
 def _signal_score(text: str, signals: Iterable[str]) -> int:
     score = 0

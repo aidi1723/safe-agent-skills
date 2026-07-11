@@ -66,9 +66,15 @@ class IntentSpansTest(unittest.TestCase):
             "Artifacts: website, pull request, PDF, spreadsheet, SEO",
             "Objects: website, pull request, PDF, spreadsheet, SEO",
             "Terms: website, code review, PDF, spreadsheet, SEO",
+            "File list: website, code review, PDF, spreadsheet, SEO",
+            "Supported files: website, code review, PDF, spreadsheet, SEO",
+            "File types: website, code review, PDF, spreadsheet, SEO",
             "产物：网站、代码审查、PDF、表格、SEO",
             "对象：网站、代码审查、PDF、表格、SEO",
             "术语：网站、代码审查、PDF、表格、SEO",
+            "文件列表：网站、代码审查、PDF、表格、SEO",
+            "支持的文件：网站、代码审查、PDF、表格、SEO",
+            "文件类型：网站、代码审查、PDF、表格、SEO",
         ]
 
         for task in cases:
@@ -88,6 +94,16 @@ class IntentSpansTest(unittest.TestCase):
     def test_terminology_in_action_sentence_does_not_trigger_list_guard(self):
         result = decompose_task_detailed(
             "Define terminology, build a website, review the pull request"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in result.intent_graph.intents],
+            ["website_build", "code_review"],
+        )
+
+    def test_file_list_words_later_in_action_sentence_do_not_trigger_guard(self):
+        result = decompose_task_detailed(
+            "Build a website, review the pull request for the supported file list"
         )
 
         self.assertEqual(
@@ -202,6 +218,39 @@ class IntentSpansTest(unittest.TestCase):
             ["website_build", "data_analysis"],
         )
 
+    def test_comma_or_continues_coordinated_negation(self):
+        cases = [
+            "Build a website, do not perform code review, or write an SEO article",
+            "构建网站，不要代码审查，或写SEO文章",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                self.assertEqual(
+                    [
+                        intent.task_type
+                        for intent in decompose_task_detailed(task).intent_graph.intents
+                    ],
+                    ["website_build"],
+                )
+
+    def test_adversative_connector_starts_new_positive_action(self):
+        cases = [
+            "Build a website, do not perform code review but analyze a spreadsheet",
+            "构建网站，不要代码审查但要分析表格",
+            "构建网站，不要代码审查但是分析表格",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                self.assertEqual(
+                    [
+                        intent.task_type
+                        for intent in decompose_task_detailed(task).intent_graph.intents
+                    ],
+                    ["website_build", "data_analysis"],
+                )
+
     def test_candidate_signal_limit_is_explicit_and_incomplete(self):
         task = ", ".join(["SEO"] * 129)
         result = decompose_task_detailed(task)
@@ -237,6 +286,33 @@ class IntentSpansTest(unittest.TestCase):
         self.assertEqual(observed, 129)
         self.assertTrue(exceeded)
         self.assertEqual(yielded, 129)
+
+    def test_large_input_constructs_at_most_129_match_records(self):
+        configured_signals = []
+        for profile in routing_profiles.SCENARIO_PROFILES:
+            configured_signals.extend(profile["signals"])
+            configured_signals.extend(
+                routing_profiles.PROFILE_SIGNAL_ALIASES.get(profile["task_type"], ())
+            )
+        task = ", ".join(configured_signals * 20)
+        constructed = 0
+        real_constructor = routing_profiles._profile_signal_match_item
+
+        def instrumented_constructor(*args, **kwargs):
+            nonlocal constructed
+            constructed += 1
+            return real_constructor(*args, **kwargs)
+
+        with patch.object(
+            routing_profiles,
+            "_profile_signal_match_item",
+            side_effect=instrumented_constructor,
+        ):
+            _, observed, exceeded = intent_spans.find_profile_signal_spans(task)
+
+        self.assertEqual(observed, 129)
+        self.assertTrue(exceeded)
+        self.assertLessEqual(constructed, 129)
 
     def test_intent_limit_keeps_at_most_twelve_and_is_explicit(self):
         task = ", ".join(

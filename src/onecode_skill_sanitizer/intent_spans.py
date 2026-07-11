@@ -30,18 +30,24 @@ class SpanDecomposition:
 _PROFILE_ORDER = {
     profile["task_type"]: index for index, profile in enumerate(SCENARIO_PROFILES)
 }
-_CONNECTOR_RE = re.compile(r"\s*(?:,|，|、|/|\band\b|\bor\b|和|或)\s*", re.IGNORECASE)
+_CONNECTOR_RE = re.compile(
+    r"\s*(?:,|，|、|/|\band\b|\bor\b|\bbut\b|但是|但要|和|或)\s*",
+    re.IGNORECASE,
+)
 _NEGATION_MARKER_RE = re.compile(
     r"\b(?:do\s+not|don't|never)\b|(?:不要|不得|禁止|无需|暂不|先不|别)",
     re.IGNORECASE,
 )
-_INDEPENDENT_ACTION_BOUNDARY_RE = re.compile(r"[,，;；]")
+_PUNCTUATION_BOUNDARY_RE = re.compile(r"[,，;；]")
+_COORDINATING_CONTINUATION_RE = re.compile(r"\s*(?:\b(?:or|and)\b|或|和)", re.IGNORECASE)
+_ADVERSATIVE_BOUNDARY_RE = re.compile(r"\bbut\b|但是|但要", re.IGNORECASE)
 _DESCRIPTIVE_ENUMERATION_RE = re.compile(
     r"\b(?:contains?|mentions?)\b|包含", re.IGNORECASE
 )
 _DESCRIPTIVE_LIST_PREFIX_RE = re.compile(
-    r"^\s*(?:(?:artifacts?|objects?|terms?|supported\s+files?|files?)|"
-    r"(?:产物|对象|术语|支持文件|文件))\s*[:：]",
+    r"^\s*(?:(?:artifacts?|objects?|terms?|file\s+lists?|supported\s+files?|"
+    r"file\s+types?|files?)|(?:产物|对象|术语|文件列表|支持的文件|"
+    r"支持文件|文件类型|文件))\s*[:：]",
     re.IGNORECASE,
 )
 
@@ -59,6 +65,7 @@ def find_profile_signal_spans(
         return (), 0, False
 
     candidates: list[ProfileSignalSpan] = []
+    negation_ranges = _coordinated_negation_ranges(clause)
     observed = 0
     limit_exceeded = False
     for item in iter_profile_signal_matches(clause):
@@ -73,7 +80,7 @@ def find_profile_signal_spans(
             signal=str(item["signal"]),
             score=int(item["score"]),
         )
-        if not _span_is_locally_negated(clause, span.start):
+        if not _offset_is_negated(span.start, negation_ranges):
             candidates.append(span)
 
     resolved: list[ProfileSignalSpan] = []
@@ -250,11 +257,30 @@ def _is_negated_enumeration(clause: str) -> bool:
     )
 
 
-def _span_is_locally_negated(clause: str, start: int) -> bool:
-    preceding = clause[:start]
-    boundaries = list(_INDEPENDENT_ACTION_BOUNDARY_RE.finditer(preceding))
-    local_start = boundaries[-1].end() if boundaries else 0
-    return bool(_NEGATION_MARKER_RE.search(clause[local_start:start]))
+def _coordinated_negation_ranges(clause: str) -> tuple[tuple[int, int], ...]:
+    ranges: list[tuple[int, int]] = []
+    for negation in _NEGATION_MARKER_RE.finditer(clause):
+        end = len(clause)
+        adversative = _ADVERSATIVE_BOUNDARY_RE.search(clause, negation.end())
+        if adversative is not None:
+            end = adversative.start()
+        for boundary in _PUNCTUATION_BOUNDARY_RE.finditer(
+            clause, negation.end(), end
+        ):
+            if boundary.group() in {";", "；"}:
+                end = boundary.start()
+                break
+            following = clause[boundary.end() : end]
+            if _COORDINATING_CONTINUATION_RE.match(following):
+                continue
+            end = boundary.start()
+            break
+        ranges.append((negation.start(), end))
+    return tuple(ranges)
+
+
+def _offset_is_negated(start: int, ranges: tuple[tuple[int, int], ...]) -> bool:
+    return any(range_start <= start < range_end for range_start, range_end in ranges)
 
 
 def _positive_prefix_before_coordinated_negation(clause: str) -> str:
@@ -263,7 +289,7 @@ def _positive_prefix_before_coordinated_negation(clause: str) -> str:
         return ""
     boundaries = [
         boundary
-        for boundary in _INDEPENDENT_ACTION_BOUNDARY_RE.finditer(
+        for boundary in _PUNCTUATION_BOUNDARY_RE.finditer(
             clause[: negation.start()]
         )
     ]

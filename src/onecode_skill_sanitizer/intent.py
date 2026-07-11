@@ -38,15 +38,20 @@ _RELEASE_NEGATION_RE = re.compile(
     re.IGNORECASE,
 )
 _RELEASE_PRECONDITION_RE = re.compile(
-    r"(?:发布|上线|推送)前|\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
+    r"(?:发布|上线|推送)前|推送\s*github\s*前|"
+    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
     re.IGNORECASE,
 )
 _NON_ACTION_RELEASE_TERM_RE = re.compile(
-    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*(?:发布|上线|推送)|"
+    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*"
+    r"(?:发布|上线|推送)(?:\s*github)?|"
+    r"推送\s*github\s*前|"
     r"(?:发布|上线|推送)前|"
     r"\brelease\s+notes\b|\bpublishable\b|"
-    r"\b(?:do\s+not|don't|never)\s+(?:publish|release|push)\b|"
-    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
+    r"\b(?:do\s+not|don't|never)\s+(?:publish|release|push)"
+    r"(?:\s+to\s+github|\s+the\s+repository)?\b|"
+    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)"
+    r"(?:\s+to\s+github|\s+the\s+repository)?\b",
     re.IGNORECASE,
 )
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
