@@ -12,6 +12,7 @@ from .compatibility import build_route_id
 from .compatibility import build_route_identity_payload
 from .compatibility import to_legacy_v1
 from .compiler import compile_execution_graph
+from .compiler import _is_acyclic as _compiler_graph_is_acyclic
 from .composer import compose_scenarios
 from .contracts import usable_contract
 from .intent import DecompositionDiagnostics
@@ -771,13 +772,34 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         [_semantic_text(item.get("id"), "intent.id") for item in intents],
         "intent ids",
     )
-    if not intent_ids:
+    if not intent_ids or len(intent_ids) > 12:
         _semantic_error("intent ids")
     intent_id_set = set(intent_ids)
+    intent_edges = []
     for intent in intents:
+        intent_id = _semantic_text(intent.get("id"), "intent.id")
         dependencies = _semantic_text_list(intent.get("depends_on"), "intent.depends_on")
-        if len(dependencies) != len(set(dependencies)) or not set(dependencies) <= intent_id_set:
+        if (
+            len(dependencies) != len(set(dependencies))
+            or intent_id in dependencies
+            or not set(dependencies) <= intent_id_set
+        ):
             _semantic_error("intent dependencies")
+        intent_edges.extend(
+            {"from": dependency_id, "to": intent_id, "type": "intent_dependency"}
+            for dependency_id in dependencies
+        )
+    if not _compiler_graph_is_acyclic(
+        [{"id": intent_id} for intent_id in intent_ids], intent_edges
+    ):
+        _semantic_error("intent dependency cycle")
+    unresolved_dependencies = _semantic_text_list(
+        intent_graph.get("unresolved_dependencies"), "unresolved dependencies"
+    )
+    if len(unresolved_dependencies) != len(set(unresolved_dependencies)):
+        _semantic_error("unresolved dependencies")
+    if unresolved_dependencies and root.get("routing_status") != "blocked":
+        _semantic_error("unresolved dependency routing status")
 
     candidates = _semantic_object_list(root.get("scenario_candidates"), "scenario_candidates")
     candidate_keys = []
@@ -796,6 +818,7 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
     )
     scenario_id_set = set(scenario_ids)
     selected_intent_ids: list[str] = []
+    selected_scenario_by_intent: dict[str, str] = {}
     candidate_key_set = set(candidate_keys)
     for selection in selections:
         scenario_id = _semantic_text(selection.get("scenario_id"), "selection.scenario_id")
@@ -809,6 +832,9 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         if any((intent_id, scenario_id) not in candidate_key_set for intent_id in selection_intents):
             _semantic_error("selected scenario candidate references")
         selected_intent_ids.extend(selection_intents)
+        selected_scenario_by_intent.update(
+            {intent_id: scenario_id for intent_id in selection_intents}
+        )
     _require_unique_semantic_keys(selected_intent_ids, "selected intent ids")
 
     uncovered_intents = _semantic_text_list(root.get("uncovered_intents"), "uncovered_intents")
@@ -876,12 +902,17 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
 
     execution_graph = _semantic_object(root.get("execution_graph"), "execution_graph")
     nodes = _semantic_object_list(execution_graph.get("nodes"), "execution_graph.nodes")
+    maximum_node_count = (len(intent_ids) + 1) * len(allowed_graph_skill_names)
+    if len(nodes) > maximum_node_count:
+        _semantic_error("execution node count")
     node_ids = _unique_semantic_values(
         [_semantic_text(item.get("id"), "execution node id") for item in nodes],
         "execution node ids",
     )
     node_id_set = set(node_ids)
     required_skill_names: list[str] = []
+    standard_node_intents: set[str] = set()
+    selected_intent_id_set = set(selected_intent_ids)
     for node in nodes:
         node_intents = _semantic_text_list(node.get("intent_ids"), "execution node intent ids")
         node_scenarios = _semantic_text_list(
@@ -889,17 +920,33 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         )
         skill_name = _semantic_text(node.get("skill"), "execution node skill")
         if (
-            len(node_intents) != len(set(node_intents))
-            or not set(node_intents) <= intent_id_set
+            not node_intents
+            or len(node_intents) != len(set(node_intents))
+            or not set(node_intents) <= selected_intent_id_set
             or len(node_scenarios) != len(set(node_scenarios))
             or not set(node_scenarios) <= scenario_id_set
             or skill_name not in allowed_graph_skill_names
         ):
             _semantic_error("execution node references")
+        if "invariant_capability" in node:
+            if set(node_intents) != selected_intent_id_set or node_scenarios:
+                _semantic_error("invariant node mapping")
+        else:
+            if (
+                len(node_intents) != 1
+                or len(node_scenarios) != 1
+                or selected_scenario_by_intent.get(node_intents[0]) != node_scenarios[0]
+            ):
+                _semantic_error("execution node mapping")
+            standard_node_intents.add(node_intents[0])
         if skill_name not in required_skill_names:
             required_skill_names.append(skill_name)
+    if nodes and standard_node_intents != selected_intent_id_set:
+        _semantic_error("execution intent coverage")
 
     edges = _semantic_object_list(execution_graph.get("edges"), "execution_graph.edges")
+    if len(edges) > 4 * len(nodes) * len(nodes):
+        _semantic_error("execution edge count")
     edge_keys = []
     for edge in edges:
         source = _semantic_text(edge.get("from"), "execution edge source")
@@ -909,6 +956,7 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
             _semantic_error("execution edge endpoint")
         edge_keys.append((source, target, edge_type))
     _require_unique_semantic_keys(edge_keys, "execution edges")
+    topology_acyclic = _compiler_graph_is_acyclic(nodes, edges)
 
     reason_codes = _semantic_text_list(execution_graph.get("reason_codes"), "reason_codes")
     if len(reason_codes) != len(set(reason_codes)):
@@ -917,9 +965,16 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
     acyclic = execution_graph.get("acyclic")
     if type(acyclic) is not bool or graph_status not in {"ready", "blocked"}:
         _semantic_error("execution graph status")
-    expected_graph_status = "ready" if acyclic and not reason_codes else "blocked"
+    expected_acyclic = bool(nodes) and topology_acyclic and not reason_codes
+    if acyclic != expected_acyclic:
+        _semantic_error("execution graph acyclic flag")
+    if nodes and not topology_acyclic and "dependency_cycle" not in reason_codes:
+        _semantic_error("execution graph cycle reason")
+    expected_graph_status = "ready" if expected_acyclic else "blocked"
     if graph_status != expected_graph_status or (graph_status == "blocked" and not reason_codes):
         _semantic_error("execution graph coherence")
+    if unresolved_dependencies and "invalid_intent_graph" not in reason_codes:
+        _semantic_error("unresolved dependency graph reason")
 
     _require_semantic_count(routing_metrics.get("intent_count"), len(intents), "intent count")
     _require_semantic_count(routing_metrics.get("candidate_count"), len(candidates), "candidate count")

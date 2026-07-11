@@ -42,6 +42,7 @@ SOURCE_IMPORT_CAPTURE_FIELDS = [
 ]
 SOURCE_IMPORT_REF_TYPE_VALUES = {"archive", "branch", "commit", "release", "tag"}
 HASH_PATTERN = re.compile(r"^[0-9a-f]{64}$")
+SOURCE_IMPORT_URL_PATTERN = re.compile(r"^https?://[^\s]+$")
 REFERENCE_REQUIRED_FIELDS = [
     "name",
     "source_url",
@@ -105,6 +106,10 @@ def _is_unique_control_safe_text_list(value: object) -> bool:
         and all(_is_control_safe_text(item) for item in value)
         and len(value) == len(set(value))
     )
+
+
+def _is_source_import_url(value: object) -> bool:
+    return type(value) is str and SOURCE_IMPORT_URL_PATTERN.fullmatch(value) is not None
 
 
 def text_sha256(text: str) -> str:
@@ -265,7 +270,7 @@ def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
                     f"source.capture.{field} is required for source_import",
                 )
         upstream_url = capture.get("upstream_url")
-        if isinstance(upstream_url, str) and upstream_url and not upstream_url.startswith(("https://", "http://")):
+        if not _is_source_import_url(upstream_url):
             add_issue(
                 issues,
                 "schema-invalid-source-import-capture",

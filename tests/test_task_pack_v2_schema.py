@@ -51,6 +51,9 @@ class TaskPackV2SchemaTest(unittest.TestCase):
             "incomplete": _smart_payload("help me with this"),
             "blocked": _smart_payload("build a landing page", "--bundles", str(bundles_path)),
         }
+        cls.compound_payload = _smart_payload(
+            "构建官网，同时审计 skill 路由器，验证通过后发布更新"
+        )
 
     @classmethod
     def tearDownClass(cls):
@@ -425,6 +428,51 @@ class TaskPackV2SchemaTest(unittest.TestCase):
                     self.assertFalse(schema_valid)
                     self.assertTrue(issues)
 
+    def test_source_import_url_runtime_matches_schema_whitespace_contract(self):
+        source = copy.deepcopy(self.payloads["complete"]["selected_skills"][0]["source"])
+        source.update(
+            type="archive",
+            usage="source_import",
+            capture={
+                "upstream_url": "https://example.test/archive%20name.tar.gz?ref=a%2Fb",
+                "upstream_ref_type": "release",
+                "upstream_ref": "v1.0.0",
+                "captured_at": "2026-07-12T00:00:00Z",
+                "license_snapshot": "Apache-2.0",
+                "upstream_sha256": "a" * 64,
+                "content_path": "skills/example",
+                "capture_method": "archive_download",
+            },
+        )
+        cases = [
+            ("https://example.test/archive%20name.tar.gz?ref=a%2Fb", True),
+            ("http://example.test/a", True),
+            ("https://", False),
+            ("ftp://example.test/a", False),
+            ("https://example.test/a b", False),
+            ("https://example.test/a\tb", False),
+            ("https://example.test/a\nb", False),
+            ("https://example.test/a\u00a0b", False),
+            ("https://example.test/a\u2003b", False),
+            ("https://example.test/a\u2028b", False),
+        ]
+        for upstream_url, expected in cases:
+            with self.subTest(upstream_url=upstream_url):
+                candidate = copy.deepcopy(source)
+                candidate["capture"]["upstream_url"] = upstream_url
+                payload = copy.deepcopy(self.payloads["complete"])
+                payload["selected_skills"][0]["source"] = candidate
+                try:
+                    validate_task_pack_v2(payload)
+                except ValidationError:
+                    schema_valid = False
+                else:
+                    schema_valid = True
+                issues = []
+                validate_source({"source": candidate}, Path("skill.json"), issues)
+                self.assertEqual(schema_valid, expected)
+                self.assertEqual(not issues, expected)
+
     def test_semantic_validator_rejects_identity_and_reference_corruption(self):
         validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
         self.assertIsNotNone(validator)
@@ -477,6 +525,101 @@ class TaskPackV2SchemaTest(unittest.TestCase):
                 mutate(payload)
                 with self.assertRaises(ValueError):
                     validator(payload)
+
+    def test_semantic_validator_rejects_intent_cycles_and_unresolved_state_forgery(self):
+        validator = task_packs.validate_task_pack_v2_semantics
+
+        self_cycle = copy.deepcopy(self.payloads["complete"])
+        self_cycle["intent_graph"]["intents"][0]["depends_on"] = ["i1"]
+
+        dependency_cycle = copy.deepcopy(self.compound_payload)
+        first_id, second_id = [
+            intent["id"] for intent in dependency_cycle["intent_graph"]["intents"][:2]
+        ]
+        dependency_cycle["intent_graph"]["intents"][0]["depends_on"] = [second_id]
+        dependency_cycle["intent_graph"]["intents"][1]["depends_on"] = [first_id]
+
+        unresolved_complete = copy.deepcopy(self.payloads["complete"])
+        unresolved_complete["intent_graph"]["unresolved_dependencies"] = ["missing target"]
+
+        unresolved_incomplete = copy.deepcopy(self.payloads["incomplete"])
+        unresolved_incomplete["intent_graph"]["unresolved_dependencies"] = ["missing target"]
+
+        unresolved_wrong_block = copy.deepcopy(self.payloads["blocked"])
+        unresolved_wrong_block["intent_graph"]["unresolved_dependencies"] = ["missing target"]
+
+        unresolved_valid_block = copy.deepcopy(unresolved_wrong_block)
+        unresolved_valid_block["execution_graph"]["reason_codes"] = ["invalid_intent_graph"]
+
+        for label, payload in {
+            "self_cycle": self_cycle,
+            "dependency_cycle": dependency_cycle,
+            "unresolved_complete": unresolved_complete,
+            "unresolved_incomplete": unresolved_incomplete,
+            "unresolved_wrong_block": unresolved_wrong_block,
+        }.items():
+            with self.subTest(label=label), self.assertRaises(ValueError):
+                validator(payload)
+        validator(unresolved_valid_block)
+
+    def test_semantic_validator_derives_graph_topology_and_node_intent_mapping(self):
+        validator = task_packs.validate_task_pack_v2_semantics
+
+        complete_cycle = copy.deepcopy(self.payloads["complete"])
+        complete_cycle["execution_graph"]["edges"].append(
+            {
+                "from": complete_cycle["execution_graph"]["nodes"][-1]["id"],
+                "to": complete_cycle["execution_graph"]["nodes"][0]["id"],
+                "type": "scenario_order",
+            }
+        )
+
+        complete_self_edge = copy.deepcopy(self.payloads["complete"])
+        complete_self_edge["execution_graph"]["edges"].append(
+            {
+                "from": complete_self_edge["execution_graph"]["nodes"][0]["id"],
+                "to": complete_self_edge["execution_graph"]["nodes"][0]["id"],
+                "type": "scenario_order",
+            }
+        )
+
+        empty_node_intents = copy.deepcopy(self.payloads["complete"])
+        empty_node_intents["execution_graph"]["nodes"][0]["intent_ids"] = []
+
+        mismatched_mapping = copy.deepcopy(self.compound_payload)
+        selected_by_intent = {
+            intent_id: selection["scenario_id"]
+            for selection in mismatched_mapping["selected_scenarios"]
+            for intent_id in selection["intent_ids"]
+        }
+        node = next(
+            item
+            for item in mismatched_mapping["execution_graph"]["nodes"]
+            if "invariant_capability" not in item
+        )
+        wrong_intent = next(
+            intent_id
+            for intent_id, scenario_id in selected_by_intent.items()
+            if scenario_id != node["scenario_ids"][0]
+        )
+        node["intent_ids"] = [wrong_intent]
+
+        incomplete_true_flag = copy.deepcopy(self.payloads["incomplete"])
+        incomplete_true_flag["execution_graph"]["acyclic"] = True
+
+        blocked_true_flag = copy.deepcopy(self.payloads["blocked"])
+        blocked_true_flag["execution_graph"]["acyclic"] = True
+
+        for label, payload in {
+            "complete_cycle": complete_cycle,
+            "complete_self_edge": complete_self_edge,
+            "empty_node_intents": empty_node_intents,
+            "mismatched_mapping": mismatched_mapping,
+            "incomplete_true_flag": incomplete_true_flag,
+            "blocked_true_flag": blocked_true_flag,
+        }.items():
+            with self.subTest(label=label), self.assertRaises(ValueError):
+                validator(payload)
 
     def test_semantic_validator_rejects_every_derivable_count_mismatch(self):
         validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
