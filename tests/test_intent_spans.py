@@ -169,6 +169,38 @@ class IntentSpansTest(unittest.TestCase):
         self.assertNotIn("data_analysis", [span.task_type for span in spans])
         self.assertNotIn("open_source_release", [span.task_type for span in spans])
 
+    def test_push_actions_disambiguate_github_as_release_profile_evidence(self):
+        cases = [
+            "代码审查 + 推送到 GitHub",
+            "代码审查 + 推送代码到 GitHub",
+            "code review + push changes to GitHub",
+            "代码审查 + 发布更新",
+            "code review + publish update",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                result = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    [intent.task_type for intent in result.intents],
+                    ["code_review", "open_source_release"],
+                )
+                self.assertEqual(result.intents[1].depends_on, ("i1",))
+
+    def test_github_research_context_remains_research_evidence(self):
+        result = decompose_task_detailed(
+            "multi-platform search on GitHub + code review"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in result.intent_graph.intents],
+            ["multi_platform_research_discovery", "code_review"],
+        )
+        github_only, _, _ = intent_spans.find_profile_signal_spans("GitHub + code review")
+        self.assertNotIn(
+            "open_source_release", [span.task_type for span in github_only]
+        )
+
     def test_same_profile_phrases_merge_and_keep_readable_summary(self):
         result = decompose_task_detailed(
             "UI design and browser verification, code review and CI troubleshooting"

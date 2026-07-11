@@ -790,7 +790,18 @@ PROFILE_SIGNAL_ALIASES = {
     "code_review": ("ci troubleshooting", "CI 排障"),
     "document_knowledge_base": ("docx", "DOCX", "PDF/DOCX"),
     "data_analysis": ("老板简报", "管理层简报", "executive brief", "management brief"),
-    "open_source_release": ("发布清单", "release checklist"),
+    "open_source_release": (
+        "发布清单",
+        "release checklist",
+        "推送 github",
+        "推送到 github",
+        "推送代码到 github",
+        "push to github",
+        "push changes to github",
+        "push the repository to github",
+        "发布更新",
+        "publish update",
+    ),
 }
 
 MAX_SCAN_CHARACTERS = 20_000

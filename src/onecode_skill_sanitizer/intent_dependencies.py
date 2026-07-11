@@ -140,6 +140,8 @@ def infer_intent_relations(
         _append_source_chain(relations, ordered_intents, "first_then")
     elif _BEFORE_RE.search(current_text) or _CHINESE_PRECEDES_RE.search(current_text):
         _append_source_chain(relations, ordered_intents, "before")
+    elif _ORDER_LEAD_IN_RE.search(current_text):
+        _append_source_chain(relations, ordered_intents, "explicit_sequence")
     elif ";" in current_text or "；" in current_text:
         _append_semicolon_relations(relations, current_text, ordered_intents)
 

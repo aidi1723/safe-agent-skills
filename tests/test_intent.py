@@ -93,6 +93,24 @@ class IntentTest(unittest.TestCase):
                     )
                 )
 
+    def test_order_lead_in_plus_enumeration_creates_complete_source_chain(self):
+        graph = decompose_task(
+            "执行顺序：代码审查 + 老板简报 + 发布清单"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["code_review", "data_analysis", "open_source_release"],
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in graph.intents],
+            [(), ("i1",), ("i1", "i2")],
+        )
+        self.assertIn(
+            IntentRelation("i1", "i2", "explicit_sequence", False),
+            graph.dependency_relations,
+        )
+
     def test_decompose_task_remains_graph_only_compatibility_wrapper(self):
         graph = decompose_task("审计 skill router")
 
