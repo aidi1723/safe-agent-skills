@@ -6,13 +6,56 @@ from pathlib import Path
 
 from onecode_skill_sanitizer import cli
 from onecode_skill_sanitizer import registry
-from onecode_skill_sanitizer.validation import manifest_sha256, text_sha256
+from onecode_skill_sanitizer.validation import (
+    UnsafeAuxiliaryContentError,
+    manifest_sha256,
+    seal_manifest,
+    text_sha256,
+)
 
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 class RegistryBoundaryTest(unittest.TestCase):
+    def test_verify_registry_reports_unsafe_auxiliary_content(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = ROOT / "catalog/commerce/commerce-product-keyword-plan"
+            registry_dir = root / "catalog"
+            skill_dir = registry_dir / "commerce" / source.name
+            shutil.copytree(source, skill_dir)
+            outside = root / "secret.txt"
+            outside.write_text("secret\n", encoding="utf-8")
+            link = skill_dir / "references/secret-link.txt"
+            link.parent.mkdir(exist_ok=True)
+            link.symlink_to(outside)
+            manifest_path = skill_dir / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["hashes"]["auxiliary_sha256"] = "0" * 64
+            seal_manifest(manifest)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+            report = registry.verify_registry(registry_dir)
+
+        self.assertEqual(report["status"], "failed")
+        self.assertIn("unsafe-auxiliary-content", [item["id"] for item in report["issues"]])
+
+    def test_reseal_rejects_unsafe_auxiliary_content(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            source = ROOT / "catalog/commerce/commerce-product-keyword-plan"
+            skill_dir = root / "skill"
+            shutil.copytree(source, skill_dir)
+            outside = root / "secret.txt"
+            outside.write_text("secret\n", encoding="utf-8")
+            link = skill_dir / "scripts/secret-link.txt"
+            link.parent.mkdir(exist_ok=True)
+            link.symlink_to(outside)
+
+            with self.assertRaises(UnsafeAuxiliaryContentError):
+                registry.reseal_skill_content(skill_dir)
+
     def test_cli_reexports_registry_operations(self):
         self.assertIs(cli.load_manifest, registry.load_manifest)
         self.assertIs(cli.build_registry_index, registry.build_registry_index)

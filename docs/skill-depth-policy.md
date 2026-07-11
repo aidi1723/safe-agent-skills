@@ -34,9 +34,11 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer depth-check \
   --policy catalog/depth-policy.json
 ```
 
-References and scripts under a catalog skill are protected by the optional
-`hashes.auxiliary_sha256` manifest field. After an approved body or reference
-change, reseal the skill explicitly and rebuild the registry index:
+Assets, references, and scripts under a catalog skill are protected by the
+optional `hashes.auxiliary_sha256` manifest field. Symlinks and special files
+in those trees are rejected before content is read. After an approved body or
+auxiliary-content change, reseal the skill explicitly and rebuild the registry
+index:
 
 ```bash
 PYTHONPATH=src python3 -m onecode_skill_sanitizer reseal-content \

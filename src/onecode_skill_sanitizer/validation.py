@@ -2,7 +2,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import stat
 from pathlib import Path
 
 
@@ -80,6 +82,11 @@ DISALLOWED_TOOL_VALUES = {
     "production",
     "shell",
 }
+AUXILIARY_DIRECTORIES = ("assets", "references", "scripts")
+
+
+class UnsafeAuxiliaryContentError(ValueError):
+    """Raised when auxiliary content cannot be safely treated as local files."""
 
 
 def _is_exact_string_enum(value: object, allowed: set[str]) -> bool:
@@ -90,16 +97,58 @@ def text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
 
-def auxiliary_content_sha256(skill_dir: Path) -> str | None:
-    files = []
-    for directory in ["references", "scripts"]:
+def iter_safe_auxiliary_files(skill_dir: Path) -> tuple[Path, ...]:
+    try:
+        skill_mode = skill_dir.lstat().st_mode
+    except FileNotFoundError:
+        skill_mode = None
+    if skill_mode is not None and (stat.S_ISLNK(skill_mode) or not stat.S_ISDIR(skill_mode)):
+        raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
+    skill_root = skill_dir.resolve(strict=False)
+    files: list[Path] = []
+
+    def validate_containment(path: Path) -> None:
+        try:
+            path.absolute().relative_to(skill_dir.absolute())
+            path.resolve(strict=True).relative_to(skill_root)
+        except (OSError, ValueError) as exc:
+            raise UnsafeAuxiliaryContentError("unsafe auxiliary content") from exc
+
+    def walk(directory: Path) -> None:
+        validate_containment(directory)
+        with os.scandir(directory) as scanner:
+            entries = sorted(scanner, key=lambda entry: entry.name)
+        for entry in entries:
+            path = Path(entry.path)
+            if entry.is_symlink():
+                raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
+            validate_containment(path)
+            mode = entry.stat(follow_symlinks=False).st_mode
+            if stat.S_ISDIR(mode):
+                walk(path)
+            elif stat.S_ISREG(mode):
+                files.append(path)
+            else:
+                raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
+
+    for directory in AUXILIARY_DIRECTORIES:
         root = skill_dir / directory
-        if root.is_dir():
-            files.extend(path for path in root.rglob("*") if path.is_file())
+        try:
+            mode = root.lstat().st_mode
+        except FileNotFoundError:
+            continue
+        if stat.S_ISLNK(mode) or not stat.S_ISDIR(mode):
+            raise UnsafeAuxiliaryContentError("unsafe auxiliary content")
+        walk(root)
+    return tuple(sorted(files, key=lambda item: item.relative_to(skill_dir).as_posix()))
+
+
+def auxiliary_content_sha256(skill_dir: Path) -> str | None:
+    files = iter_safe_auxiliary_files(skill_dir)
     if not files:
         return None
     digest = hashlib.sha256()
-    for path in sorted(files, key=lambda item: item.relative_to(skill_dir).as_posix()):
+    for path in files:
         digest.update(path.relative_to(skill_dir).as_posix().encode("utf-8"))
         digest.update(b"\0")
         digest.update(path.read_bytes())

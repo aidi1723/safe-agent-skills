@@ -8,6 +8,7 @@ from pathlib import Path
 from pathlib import PurePosixPath
 
 from .validation import SOURCE_PROVENANCE_FIELDS
+from .validation import UnsafeAuxiliaryContentError
 from .validation import auxiliary_content_sha256
 from .validation import manifest_sha256
 from .validation import seal_manifest
@@ -301,7 +302,19 @@ def verify_registry(registry_dir: Path) -> dict:
                 )
 
         expected_auxiliary_hash = manifest.get("hashes", {}).get("auxiliary_sha256")
-        actual_auxiliary_hash = auxiliary_content_sha256(skill_dir)
+        try:
+            actual_auxiliary_hash = auxiliary_content_sha256(skill_dir)
+        except UnsafeAuxiliaryContentError:
+            tampered_count += 1
+            issues.append(
+                {
+                    "id": "unsafe-auxiliary-content",
+                    "severity": "critical",
+                    "skill": name,
+                    "path": skill_dir.as_posix(),
+                }
+            )
+            actual_auxiliary_hash = expected_auxiliary_hash
         if actual_auxiliary_hash != expected_auxiliary_hash and (
             actual_auxiliary_hash is not None or expected_auxiliary_hash is not None
         ):

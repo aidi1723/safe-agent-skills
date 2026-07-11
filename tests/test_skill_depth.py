@@ -153,6 +153,22 @@ Stop when evidence is missing.
 
         self.assertIn("specialist-missing-reference", [item["id"] for item in report["warnings"]])
 
+    def test_unsafe_auxiliary_tree_is_reported_as_depth_error(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            root = Path(temp_dir)
+            skill_dir = root / "specialist"
+            skill_dir.mkdir()
+            (skill_dir / "SKILL.md").write_text("# Specialist\n", encoding="utf-8")
+            outside = root / "secret.txt"
+            outside.write_text("secret\n", encoding="utf-8")
+            link = skill_dir / "references/secret-link.txt"
+            link.parent.mkdir()
+            link.symlink_to(outside)
+
+            report = analyze_skill(skill_dir, {"depth_class": "specialist"})
+
+        self.assertIn("unsafe-auxiliary-content", [item["id"] for item in report["errors"]])
+
     def test_auxiliary_hash_changes_with_reference_content(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             skill_dir = Path(temp_dir) / "skill"

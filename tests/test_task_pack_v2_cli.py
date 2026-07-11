@@ -1,5 +1,6 @@
 import contextlib
 import copy
+import hashlib
 import io
 import json
 import shutil
@@ -350,6 +351,83 @@ class TaskPackV2CliTest(unittest.TestCase):
                 self.assertEqual(exit_code, 2)
                 self.assertEqual(payload["status"], "error")
                 self.assertEqual(payload["error"]["code"], "invalid_input")
+
+    def test_v2_registry_snapshot_rejects_hash_consistent_auxiliary_symlink(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "catalog"
+            bundles = root / "bundles.json"
+            shutil.copytree("catalog", registry)
+            shutil.copyfile("bundles/index.json", bundles)
+            skill_dir = registry / "research" / "research-source-check"
+            outside = root / "secret.txt"
+            outside_content = b"secret\n"
+            outside.write_bytes(outside_content)
+            link = skill_dir / "references/secret-link.txt"
+            link.symlink_to(outside)
+            digest = hashlib.sha256()
+            auxiliary = {
+                path.relative_to(skill_dir).as_posix(): path.read_bytes()
+                for directory in ("assets", "references", "scripts")
+                if (skill_dir / directory).is_dir()
+                for path in (skill_dir / directory).rglob("*")
+                if path.is_file() and path != link
+            }
+            auxiliary["references/secret-link.txt"] = outside_content
+            for relative, content in sorted(auxiliary.items()):
+                digest.update(relative.encode("utf-8"))
+                digest.update(b"\0")
+                digest.update(content)
+                digest.update(b"\0")
+            manifest_path = skill_dir / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["hashes"]["auxiliary_sha256"] = digest.hexdigest()
+            seal_manifest(manifest)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            index_path = registry / "index.json"
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            entry = next(
+                item for item in index["skills"] if item["name"] == manifest["name"]
+            )
+            entry["hashes"] = manifest["hashes"]
+            index_path.write_text(json.dumps(index), encoding="utf-8")
+
+            out = io.StringIO()
+            outside_read_attempted = False
+            original_read_bytes = Path.read_bytes
+
+            def guarded_read_bytes(path: Path) -> bytes:
+                nonlocal outside_read_attempted
+                if path == link:
+                    outside_read_attempted = True
+                    raise AssertionError("outside auxiliary target was read")
+                return original_read_bytes(path)
+
+            with patch.object(Path, "read_bytes", guarded_read_bytes):
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--bundles",
+                            str(bundles),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["status"], "error")
+        self.assertEqual(payload["error"]["code"], "invalid_input")
+        self.assertFalse(outside_read_attempted)
+        serialized = json.dumps(payload)
+        self.assertNotIn("Traceback", serialized)
+        self.assertNotIn(str(root), serialized)
 
     def test_v2_stage_builder_uses_only_bound_registry_snapshot_data(self):
         with tempfile.TemporaryDirectory() as tmp:

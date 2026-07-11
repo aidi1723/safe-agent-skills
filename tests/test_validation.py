@@ -1,9 +1,15 @@
 import copy
+import hashlib
 import json
+import os
+import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from onecode_skill_sanitizer.validation import (
+    UnsafeAuxiliaryContentError,
+    auxiliary_content_sha256,
     validate_contract,
     validate_manifest_schema,
     validate_registry_index_schema,
@@ -14,6 +20,73 @@ from onecode_skill_sanitizer.validation import (
 
 
 class ValidationTest(unittest.TestCase):
+    def test_auxiliary_hash_preserves_regular_file_contract(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skill_dir = Path(temp_dir) / "skill"
+            files = {
+                "references/nested/guide.md": b"guide\n",
+                "scripts/check.sh": b"#!/bin/sh\n",
+            }
+            for relative, content in files.items():
+                path = skill_dir / relative
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+            expected = hashlib.sha256()
+            for relative, content in sorted(files.items()):
+                expected.update(relative.encode("utf-8"))
+                expected.update(b"\0")
+                expected.update(content)
+                expected.update(b"\0")
+
+            self.assertEqual(auxiliary_content_sha256(skill_dir), expected.hexdigest())
+            self.assertIsNone(auxiliary_content_sha256(Path(temp_dir) / "empty"))
+
+    def test_auxiliary_hash_rejects_symlinks_without_reading_targets(self):
+        variants = [
+            ("references/file-link", "file"),
+            ("references/dir-link", "directory"),
+            ("references/nested/file-link", "file"),
+            ("scripts/file-link", "file"),
+            ("scripts/dir-link", "directory"),
+            ("assets/file-link", "file"),
+            ("assets/dir-link", "directory"),
+        ]
+        original_read_bytes = Path.read_bytes
+        for relative, target_kind in variants:
+            with self.subTest(relative=relative), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                skill_dir = root / "skill"
+                link = skill_dir / relative
+                link.parent.mkdir(parents=True)
+                outside = root / "outside"
+                if target_kind == "directory":
+                    outside.mkdir()
+                    (outside / "secret.txt").write_text("secret\n", encoding="utf-8")
+                else:
+                    outside.write_text("secret\n", encoding="utf-8")
+
+                link.symlink_to(outside, target_is_directory=target_kind == "directory")
+
+                def guarded_read_bytes(path: Path) -> bytes:
+                    if path == link or path == outside or outside in path.parents:
+                        raise AssertionError("outside auxiliary target was read")
+                    return original_read_bytes(path)
+
+                with patch.object(Path, "read_bytes", guarded_read_bytes):
+                    with self.assertRaises(UnsafeAuxiliaryContentError):
+                        auxiliary_content_sha256(skill_dir)
+
+    @unittest.skipUnless(hasattr(os, "mkfifo"), "FIFO is not supported")
+    def test_auxiliary_hash_rejects_special_files(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skill_dir = Path(temp_dir) / "skill"
+            fifo = skill_dir / "references/events.fifo"
+            fifo.parent.mkdir(parents=True)
+            os.mkfifo(fifo)
+
+            with self.assertRaises(UnsafeAuxiliaryContentError):
+                auxiliary_content_sha256(skill_dir)
+
     def test_validate_contract_accepts_complete_v2_contract(self):
         issues: list[dict] = []
         payload = {
