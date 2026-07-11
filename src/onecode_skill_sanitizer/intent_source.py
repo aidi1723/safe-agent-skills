@@ -1,5 +1,6 @@
 """Shared hard boundary and source predicates for intent parsing."""
 
+from dataclasses import dataclass
 import re
 
 
@@ -44,6 +45,14 @@ _RELEASE_PRECONDITION_RE = re.compile(
 )
 
 
+@dataclass(frozen=True)
+class SourceActionSpan:
+    source: str
+    target: str
+    source_start: int
+    target_start: int
+
+
 def bound_task_text(text: str) -> str:
     """Return the only source region intent parsers may inspect."""
     return text[:MAX_TASK_SCAN_CHARS]
@@ -65,31 +74,45 @@ def source_contains_release_action(text: str) -> bool:
 
 def parse_approval_release(text: str) -> tuple[str, str] | None:
     """Return canonical approval source and validated release target."""
+    span = parse_approval_release_span(text)
+    return (span.source, span.target) if span else None
+
+
+def parse_approval_release_span(text: str) -> SourceActionSpan | None:
+    """Return the exact source offsets for a whole approval-release task."""
     match = _APPROVAL_RELEASE_RE.fullmatch(bound_task_text(text))
-    if not match:
-        return None
-    result = (
-        match.group("cn_source") or match.group("en_source"),
-        match.group("cn_target") or match.group("en_target"),
-    )
-    return result if is_release_action_text(result[1], allow_bare=True) else None
+    return _action_span_from_match(match, 0)
 
 
 def parse_release_precondition(text: str) -> tuple[str, str] | None:
     """Return approval prerequisite and validated release target."""
     match = _RELEASE_PRECONDITION_RE.fullmatch(bound_task_text(text))
+    span = _action_span_from_match(match, 0)
+    return (span.source, span.target) if span else None
+
+
+def find_release_precondition_span(text: str) -> SourceActionSpan | None:
+    """Return exact offsets for a strict precondition segment."""
+    for segment in re.finditer(r"[^;；]+", bound_task_text(text)):
+        match = _RELEASE_PRECONDITION_RE.fullmatch(segment.group())
+        if span := _action_span_from_match(match, segment.start()):
+            return span
+    return None
+
+
+def _action_span_from_match(
+    match: re.Match[str] | None, offset: int
+) -> SourceActionSpan | None:
     if not match:
         return None
-    result = (
-        match.group("cn_source") or match.group("en_source"),
-        match.group("cn_target") or match.group("en_target"),
+    source_group = "cn_source" if match.group("cn_source") else "en_source"
+    target_group = "cn_target" if match.group("cn_target") else "en_target"
+    target = match.group(target_group)
+    if not is_release_action_text(target, allow_bare=True):
+        return None
+    return SourceActionSpan(
+        source=match.group(source_group),
+        target=target,
+        source_start=offset + match.start(source_group),
+        target_start=offset + match.start(target_group),
     )
-    return result if is_release_action_text(result[1], allow_bare=True) else None
-
-
-def find_release_precondition(text: str) -> tuple[str, str] | None:
-    """Find one strict precondition clause without consuming sibling clauses."""
-    for segment in re.split(r"[;；]", bound_task_text(text)):
-        if result := parse_release_precondition(segment):
-            return result
-    return None

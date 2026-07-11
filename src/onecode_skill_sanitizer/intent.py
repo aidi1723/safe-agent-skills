@@ -20,9 +20,11 @@ from .intent_spans import (
 )
 from .intent_source import (
     MAX_TASK_SCAN_CHARS,
+    SourceActionSpan,
     bound_task_text,
-    find_release_precondition,
+    find_release_precondition_span,
     parse_approval_release,
+    parse_approval_release_span,
     parse_release_precondition,
 )
 from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
@@ -562,13 +564,14 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
             intent_limit_exceeded = True
             break
 
-    release_context = parse_approval_release(
+    release_context = parse_approval_release_span(
         current
-    ) or find_release_precondition(current)
-    if release_context is not None:
-        source_clause, target_clause = release_context
-        source_index = clauses.index(source_clause)
-        target_index = clauses.index(target_clause)
+    ) or find_release_precondition_span(current)
+    context_indexes = _context_clause_indexes(
+        current, tuple(clauses), release_context
+    )
+    if context_indexes is not None:
+        source_index, target_index = context_indexes
         clause_evidence[source_index] = IntentEvidence(
                 task_type="code_review",
                 context="action",
@@ -771,10 +774,12 @@ def _canonical_relations(
     gate_indexes = [
         index for index, item in enumerate(ordered) if item.gate_mode != "none"
     ]
-    release_precondition = find_release_precondition(source)
-    if release_precondition is not None:
-        prerequisite_index = clauses.index(release_precondition[0])
-        release_index = clauses.index(release_precondition[1])
+    release_precondition = find_release_precondition_span(source)
+    precondition_indexes = _context_clause_indexes(
+        source, clauses, release_precondition
+    )
+    if precondition_indexes is not None:
+        prerequisite_index, release_index = precondition_indexes
         relations.append(
             IntentRelation(
                 f"i{release_index + 1}",
@@ -799,7 +804,7 @@ def _canonical_relations(
                     _append_canonical_gate(
                         relations, index, index + 1, ordered[index]
                     )
-    elif release_precondition is not None:
+    elif precondition_indexes is not None:
         pass
     elif _CANONICAL_PREFIX_BEFORE_RE.search(source) and len(ordered) == 2:
         relations.append(IntentRelation("i2", "i1", "before"))
@@ -853,6 +858,43 @@ def _canonical_relations(
                 )
             )
     return _deduplicate_canonical_relations(relations)
+
+
+def _context_clause_indexes(
+    source: str,
+    clauses: tuple[str, ...],
+    context: SourceActionSpan | None,
+) -> tuple[int, int] | None:
+    if context is None:
+        return None
+    source_folded = bound_task_text(source).casefold()
+    cursor = 0
+    positions: list[int] = []
+    for clause in clauses:
+        position = source_folded.find(clause.casefold(), cursor)
+        if position < 0:
+            return None
+        positions.append(position)
+        cursor = position + len(clause)
+    source_index = next(
+        (
+            index
+            for index, position in enumerate(positions)
+            if position == context.source_start
+        ),
+        None,
+    )
+    target_index = next(
+        (
+            index
+            for index, position in enumerate(positions)
+            if position == context.target_start
+        ),
+        None,
+    )
+    if source_index is None or target_index is None:
+        return None
+    return source_index, target_index
 
 
 def _append_canonical_gate(

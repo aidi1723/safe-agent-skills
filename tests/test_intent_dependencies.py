@@ -20,6 +20,35 @@ from onecode_skill_sanitizer.intent_source import (
 
 
 class IntentDependenciesTest(unittest.TestCase):
+    def test_duplicate_precondition_clauses_bind_to_local_occurrence(self):
+        tasks = (
+            "PR approval; Before PR approval, publish update",
+            "publish update; Before PR approval, publish update",
+            "PR 审批前；在 PR 审批前发布更新",
+        )
+
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(len(graph.intents), 3)
+                self.assertEqual(graph.intents[1].task_type, "code_review")
+                self.assertEqual(
+                    graph.intents[2].task_type, "open_source_release"
+                )
+                self.assertIn(
+                    IntentRelation("i3", "i2", "before", False),
+                    graph.dependency_relations,
+                )
+                self.assertIn(
+                    IntentRelation("i1", "i3", "release_gate", True),
+                    graph.dependency_relations,
+                )
+                self.assertNotIn(
+                    IntentRelation("i2", "i3", "release_gate", True),
+                    graph.dependency_relations,
+                )
+                self.assertEqual(graph.validate(), [])
+
     def test_release_preconditions_keep_explicit_reverse_edge_without_cycle(self):
         tasks = (
             "Before PR approval, publish update",
