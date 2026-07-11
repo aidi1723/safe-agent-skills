@@ -127,7 +127,15 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(intent.risk_flags, expected_risks)
 
     def test_release_detection_accepts_explicit_actions(self):
-        for task in ["发布更新", "发布结果", "publish update", "release the package"]:
+        for task in [
+            "发布更新",
+            "发布结果",
+            "publish update",
+            "release the package",
+            "推送 GitHub",
+            "push to GitHub",
+            "push the repository",
+        ]:
             with self.subTest(task=task):
                 intent = decompose_task(task).intents[0]
                 self.assertEqual(intent.task_type, "open_source_release")

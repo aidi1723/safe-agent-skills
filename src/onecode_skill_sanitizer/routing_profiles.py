@@ -785,6 +785,49 @@ def split_current_intent_text(task: str) -> dict:
 
 AMBIGUOUS_PROFILE_SIGNALS = {"report", "报告"}
 
+PROFILE_SIGNAL_ALIASES = {
+    "website_build": ("ui design", "UI 设计", "browser verification", "浏览器验证"),
+    "code_review": ("ci troubleshooting", "CI 排障"),
+    "document_knowledge_base": ("docx", "DOCX", "PDF/DOCX"),
+}
+
+
+def iter_profile_signal_matches(text: str) -> list[dict[str, object]]:
+    """Return deterministic configured-profile matches with source offsets."""
+    lowered = text.lower()
+    ordered_matches: list[tuple[int, int, int, int, dict[str, object]]] = []
+    for profile_order, profile in enumerate(SCENARIO_PROFILES):
+        signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
+            profile["task_type"], ()
+        )
+        seen_signals: set[str] = set()
+        for signal in signals:
+            normalized_signal = signal.lower()
+            if (
+                not normalized_signal
+                or normalized_signal in seen_signals
+                or normalized_signal in AMBIGUOUS_PROFILE_SIGNALS
+            ):
+                continue
+            seen_signals.add(normalized_signal)
+            pattern = re.escape(normalized_signal)
+            if len(normalized_signal) <= 3 and re.fullmatch(r"[a-z0-9]+", normalized_signal):
+                pattern = rf"(?<![a-z0-9]){pattern}(?![a-z0-9])"
+            score = 4 if " " in normalized_signal else 2
+            for match in re.finditer(pattern, lowered):
+                item = {
+                    "start": match.start(),
+                    "end": match.end(),
+                    "task_type": profile["task_type"],
+                    "signal": normalized_signal,
+                    "score": score,
+                }
+                ordered_matches.append(
+                    (match.start(), -score, profile_order, match.end(), item)
+                )
+    ordered_matches.sort(key=lambda entry: entry[:4])
+    return [entry[4] for entry in ordered_matches]
+
 def _signal_score(text: str, signals: Iterable[str]) -> int:
     score = 0
     distinctive_score = 0
@@ -815,12 +858,15 @@ def build_task_profile(task: str) -> dict:
     history_text = intent["history_context_text"]
 
     def profile_score(profile: dict) -> int:
-        current_score = _signal_score(text, profile["signals"])
+        signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
+            profile["task_type"], ()
+        )
+        current_score = _signal_score(text, signals)
         if not intent["current_intent_detected"]:
             return current_score
         if current_score <= 0:
             return 0
-        history_score = _signal_score(history_text, profile["signals"])
+        history_score = _signal_score(history_text, signals)
         return current_score + int(history_score * HISTORY_CONTEXT_WEIGHT)
 
     best = max(SCENARIO_PROFILES, key=lambda profile: (profile_score(profile), profile["task_type"]))

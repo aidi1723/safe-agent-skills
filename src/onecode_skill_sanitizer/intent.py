@@ -6,7 +6,13 @@ from dataclasses import asdict, dataclass
 import re
 from typing import Any
 
-from .router import build_task_profile, split_current_intent_text
+from .intent_spans import (
+    MAX_CANDIDATE_SIGNALS,
+    MAX_EMITTED_INTENTS,
+    SpanDecomposition,
+    split_profile_enumeration,
+)
+from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
 
 
 _LIST_MARKER_RE = re.compile(
@@ -23,20 +29,24 @@ _ENGLISH_RELEASE_ACTION_RE = re.compile(
     r"\b(?:publish|release)\b\s+(?:the\s+|an?\s+)?(?:update|results?|package|version|project|website|app|code|changes?)\b",
     re.IGNORECASE,
 )
+_EXPLICIT_PUSH_ACTION_RE = re.compile(
+    r"推送\s*github|\bpush\s+(?:to\s+github|the\s+repository)\b",
+    re.IGNORECASE,
+)
 _RELEASE_NEGATION_RE = re.compile(
-    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*(?:发布|上线|推送)|\b(?:do\s+not|don't|never)\s+(?:publish|release)\b",
+    r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*(?:发布|上线|推送)|\b(?:do\s+not|don't|never)\s+(?:publish|release|push)\b",
     re.IGNORECASE,
 )
 _RELEASE_PRECONDITION_RE = re.compile(
-    r"(?:发布|上线|推送)前|\bbefore\s+(?:publishing|releasing|publish|release)\b",
+    r"(?:发布|上线|推送)前|\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
     re.IGNORECASE,
 )
 _NON_ACTION_RELEASE_TERM_RE = re.compile(
     r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*(?:发布|上线|推送)|"
     r"(?:发布|上线|推送)前|"
     r"\brelease\s+notes\b|\bpublishable\b|"
-    r"\b(?:do\s+not|don't|never)\s+(?:publish|release)\b|"
-    r"\bbefore\s+(?:publishing|releasing|publish|release)\b",
+    r"\b(?:do\s+not|don't|never)\s+(?:publish|release|push)\b|"
+    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
     re.IGNORECASE,
 )
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
@@ -212,6 +222,11 @@ def classify_intent(clause: str, index: int) -> Intent:
     release_action = _is_release_action(clause)
     routing_clause = clause if release_action else _routing_clause_without_non_action_release_terms(clause)
     profile = build_task_profile(routing_clause)
+    lowered_clause = routing_clause.lower()
+    if "design system" in lowered_clause and "component states" in lowered_clause:
+        profile = build_profile_for_task_type(
+            routing_clause, "design_md_system_governance"
+        )
     task_type = profile["task_type"]
     required_artifacts = tuple(profile["artifact_types"])
     risk_flags = tuple(profile["risk_flags"])
@@ -232,7 +247,47 @@ def classify_intent(clause: str, index: int) -> Intent:
 
 
 def decompose_task_detailed(task: str) -> TaskDecomposition:
-    clauses = split_task_clauses(task)
+    broad_clauses = split_task_clauses(task)
+    clauses: list[str] = []
+    observed_candidate_count = 0
+    candidate_signal_limit_exceeded = False
+    intent_limit_exceeded = False
+    used_profile_spans = False
+    for clause_index, broad_clause in enumerate(broad_clauses):
+        if candidate_signal_limit_exceeded:
+            decomposition = SpanDecomposition(
+                clauses=(broad_clause,),
+                observed_candidate_count=0,
+                candidate_signal_limit_exceeded=True,
+                intent_limit_exceeded=False,
+            )
+        else:
+            candidate_budget = max(
+                0, MAX_CANDIDATE_SIGNALS - observed_candidate_count
+            )
+            decomposition = split_profile_enumeration(broad_clause, candidate_budget)
+        observed_candidate_count = min(
+            129,
+            observed_candidate_count + decomposition.observed_candidate_count,
+        )
+        candidate_signal_limit_exceeded = (
+            candidate_signal_limit_exceeded
+            or decomposition.candidate_signal_limit_exceeded
+        )
+        intent_limit_exceeded = intent_limit_exceeded or decomposition.intent_limit_exceeded
+        used_profile_spans = used_profile_spans or len(decomposition.clauses) > 1
+        remaining = MAX_EMITTED_INTENTS - len(clauses)
+        if len(decomposition.clauses) > remaining:
+            intent_limit_exceeded = True
+        if remaining > 0:
+            clauses.extend(decomposition.clauses[:remaining])
+        if (
+            len(clauses) >= MAX_EMITTED_INTENTS
+            and clause_index < len(broad_clauses) - 1
+        ):
+            intent_limit_exceeded = True
+            break
+
     intents: list[Intent] = []
     for index, clause in enumerate(clauses, start=1):
         intent = classify_intent(clause, index)
@@ -249,13 +304,24 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
             )
         intents.append(intent)
     intent_graph = IntentGraph(intents=tuple(intents), unresolved_dependencies=())
+    reason_codes: list[str] = []
+    if candidate_signal_limit_exceeded:
+        reason_codes.append("candidate_signal_limit_exceeded")
+    if intent_limit_exceeded:
+        reason_codes.append("intent_limit_exceeded")
     diagnostics = DecompositionDiagnostics(
-        mode="strong_clauses" if len(clauses) > 1 else "single_clause",
-        observed_candidate_count=0,
+        mode=(
+            "profile_spans"
+            if used_profile_spans
+            else "strong_clauses"
+            if len(broad_clauses) > 1
+            else "single_clause"
+        ),
+        observed_candidate_count=observed_candidate_count,
         emitted_intent_count=len(intents),
-        candidate_signal_limit_exceeded=False,
-        intent_limit_exceeded=False,
-        reason_codes=(),
+        candidate_signal_limit_exceeded=candidate_signal_limit_exceeded,
+        intent_limit_exceeded=intent_limit_exceeded,
+        reason_codes=tuple(reason_codes),
     )
     return TaskDecomposition(intent_graph=intent_graph, diagnostics=diagnostics)
 
@@ -279,6 +345,7 @@ def _is_release_action(clause: str) -> bool:
         _RELEASE_BOUNDARY_RE.search(clause)
         or _CHINESE_RELEASE_ACTION_RE.search(clause)
         or _ENGLISH_RELEASE_ACTION_RE.search(clause)
+        or _EXPLICIT_PUSH_ACTION_RE.search(clause)
     )
 
 
