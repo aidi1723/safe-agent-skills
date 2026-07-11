@@ -1643,18 +1643,22 @@
       "expected_status": "blocked"
     },
     {
-      "id": "multi-cn-website",
+      "id": "multi-cn-review-brief-release",
       "category": "multilingual_typo_paraphrase",
-      "task": "做一个响应式企业官网并检查上线",
+      "task": "代码审查 + 老板简报 + 发布清单",
       "expected_intents": [
-        "website_build"
+        "code_review",
+        "data_analysis",
+        "open_source_release"
       ],
       "expected_scenarios": [
-        "website-build-launch"
+        "code-review-hardening",
+        "data-analysis-report",
+        "open-source-release"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [
-        "open-source-release"
+        "website-build-launch"
       ],
       "expected_status": "complete"
     },

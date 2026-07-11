@@ -129,6 +129,46 @@ class IntentSpansTest(unittest.TestCase):
         )
         self.assertEqual(result.diagnostics.mode, "profile_spans")
 
+    def test_chinese_review_brief_release_enumeration_preserves_source_order(self):
+        cases = [
+            "代码审查 + 老板简报 + 发布清单",
+            "代码审查＋管理层简报＋发布清单",
+            "代码审查 ＋ 老板简报 ＋ 发布清单",
+            "code review + executive brief + release checklist",
+            "code review + management brief + release checklist",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                self.assertEqual(
+                    [
+                        intent.task_type
+                        for intent in decompose_task_detailed(task).intent_graph.intents
+                    ],
+                    ["code_review", "data_analysis", "open_source_release"],
+                )
+
+    def test_plus_connector_requires_distinct_action_profile_evidence(self):
+        cases = [
+            "术语：代码审查 + 老板简报 + 发布清单",
+            "The description mentions code review + executive brief + release checklist",
+            "计算 1 + 2 并报告结果",
+            "Calculate 12 + 30 and report the result",
+            "code review + 1 + release checklist",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                self.assertEqual(len(decompose_task_detailed(task).intent_graph.intents), 1)
+
+    def test_brief_and_checklist_are_not_unbounded_profile_aliases(self):
+        spans, _, _ = intent_spans.find_profile_signal_spans(
+            "website brief + implementation checklist"
+        )
+
+        self.assertNotIn("data_analysis", [span.task_type for span in spans])
+        self.assertNotIn("open_source_release", [span.task_type for span in spans])
+
     def test_same_profile_phrases_merge_and_keep_readable_summary(self):
         result = decompose_task_detailed(
             "UI design and browser verification, code review and CI troubleshooting"

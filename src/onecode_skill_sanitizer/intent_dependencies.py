@@ -53,6 +53,11 @@ _UNKNOWN_PREFIX_GATE_RE = re.compile(
     r"^\s*(?:after|once)\s+(.+?)(?:\s+is\s+(?:complete|completed|verified|approved))?\s*[,;]",
     re.IGNORECASE,
 )
+_PLUS_ENUMERATION_RE = re.compile(r"\+|＋")
+_RELEASE_READINESS_ALIAS_RE = re.compile(
+    r"^\s*(?:release\s+checklist|发布清单)\s*$", re.IGNORECASE
+)
+_CHINESE_SEQUENCE_RE = re.compile(r"然后|先[\s\S]*(?:再|后)")
 
 
 SEMICOLON_WORKFLOW_TRANSITIONS = frozenset(
@@ -141,12 +146,38 @@ def infer_intent_relations(
     for target_index, target in enumerate(intents):
         if target.task_type != "open_source_release":
             continue
+        if _is_plain_release_readiness_enumeration(current_text, target):
+            continue
         for source in intents[:target_index]:
             relations.append(
                 IntentRelation(source.id, target.id, "release_gate", True)
             )
 
     return _deduplicate_relations(relations)
+
+
+def _is_plain_release_readiness_enumeration(
+    current_text: str, target: Intent
+) -> bool:
+    if not (
+        _PLUS_ENUMERATION_RE.search(current_text)
+        and _RELEASE_READINESS_ALIAS_RE.fullmatch(target.summary)
+    ):
+        return False
+    return not any(
+        pattern.search(current_text)
+        for pattern in (
+            _FIRST_THEN_RE,
+            _BEFORE_RE,
+            _CHINESE_PRECEDES_RE,
+            _ORDER_LEAD_IN_RE,
+            _PREFIX_COMPLETION_RE,
+            _INFIX_COMPLETION_RE,
+            _CHINESE_TARGET_FIRST_APPROVAL_RE,
+            _CHINESE_COMPLETION_RE,
+            _CHINESE_SEQUENCE_RE,
+        )
+    )
 
 
 def apply_intent_relations(

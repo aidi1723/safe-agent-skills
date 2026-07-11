@@ -303,6 +303,38 @@ class TaskPackV2CliTest(unittest.TestCase):
         self.assertLessEqual(payload["routing_metrics"]["optional_skill_limit"], 8)
         self.assertTrue(graph_skills.issubset(selected_skills))
 
+    def test_smart_schema_v2_routes_chinese_review_brief_release_task(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    "代码审查 + 老板简报 + 发布清单",
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        payload = json.loads(out.getvalue())
+        scenario_ids = [
+            scenario["scenario_id"] for scenario in payload["selected_scenarios"]
+        ]
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(
+            [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+            ["code_review", "data_analysis", "open_source_release"],
+        )
+        self.assertEqual(
+            scenario_ids,
+            ["code-review-hardening", "data-analysis-report", "open-source-release"],
+        )
+        self.assertNotIn("website-build-launch", scenario_ids)
+        self.assertEqual(payload["routing_status"], "complete")
+        self.assertEqual(payload["execution_graph"]["status"], "ready")
+        self.assertTrue(payload["execution_graph"]["acyclic"])
+
     def test_smart_schema_v2_marks_contract_approval_nodes_as_host_actions(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):

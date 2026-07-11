@@ -57,6 +57,42 @@ class IntentTest(unittest.TestCase):
                 self.assertTrue(graph.intents)
                 self.assertTrue(all(not intent.depends_on for intent in graph.intents))
 
+    def test_plain_plus_readiness_enumerations_do_not_create_release_gates(self):
+        cases = [
+            "代码审查 + 老板简报 + 发布清单",
+            "code review ＋ management brief ＋ release checklist",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["code_review", "data_analysis", "open_source_release"],
+                )
+                self.assertTrue(all(not intent.depends_on for intent in graph.intents))
+                self.assertEqual(graph.dependency_relations, ())
+
+    def test_release_actions_and_explicit_readiness_sequences_keep_dependencies(self):
+        cases = [
+            "code review + publish update",
+            "code review + then release checklist",
+            "先代码审查，再发布清单",
+            "After code review + release checklist",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(graph.intents[-1].task_type, "open_source_release")
+                self.assertTrue(graph.intents[-1].depends_on)
+                self.assertTrue(
+                    any(
+                        relation.target_id == graph.intents[-1].id
+                        for relation in graph.dependency_relations
+                    )
+                )
+
     def test_decompose_task_remains_graph_only_compatibility_wrapper(self):
         graph = decompose_task("审计 skill router")
 

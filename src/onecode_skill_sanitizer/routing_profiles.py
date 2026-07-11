@@ -789,6 +789,8 @@ PROFILE_SIGNAL_ALIASES = {
     "website_build": ("ui design", "UI 设计", "browser verification", "浏览器验证"),
     "code_review": ("ci troubleshooting", "CI 排障"),
     "document_knowledge_base": ("docx", "DOCX", "PDF/DOCX"),
+    "data_analysis": ("老板简报", "管理层简报", "executive brief", "management brief"),
+    "open_source_release": ("发布清单", "release checklist"),
 }
 
 MAX_SCAN_CHARACTERS = 20_000
@@ -882,6 +884,18 @@ def _signal_score(text: str, signals: Iterable[str]) -> int:
         return 0
     return score
 
+
+def _longest_matching_signal(text: str, signals: Iterable[str]) -> int:
+    return max(
+        (
+            len(normalized_signal)
+            for signal in signals
+            if (normalized_signal := normalize_task_text(signal))
+            and signal_matches_text(normalized_signal, text)
+        ),
+        default=0,
+    )
+
 def signal_matches_text(signal: str, text: str) -> bool:
     if not signal:
         return False
@@ -909,7 +923,17 @@ def build_task_profile(task: str) -> dict:
         history_score = _signal_score(history_text, signals)
         return current_score + int(history_score * HISTORY_CONTEXT_WEIGHT)
 
-    best = max(SCENARIO_PROFILES, key=lambda profile: (profile_score(profile), profile["task_type"]))
+    def profile_rank(profile: dict) -> tuple[int, int, str]:
+        signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
+            profile["task_type"], ()
+        )
+        return (
+            profile_score(profile),
+            _longest_matching_signal(text, signals),
+            profile["task_type"],
+        )
+
+    best = max(SCENARIO_PROFILES, key=profile_rank)
     score = profile_score(best)
     if score <= 0:
         best = {

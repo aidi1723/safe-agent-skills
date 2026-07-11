@@ -35,9 +35,10 @@ _PROFILE_ORDER = {
     profile["task_type"]: index for index, profile in enumerate(SCENARIO_PROFILES)
 }
 _CONNECTOR_RE = re.compile(
-    r"\s*(?:,|，|、|/|\band\b|\bor\b|\bbut\b|但是|但要|和|或)\s*",
+    r"\s*(?:,|，|、|/|\+|＋|\band\b|\bor\b|\bbut\b|但是|但要|和|或)\s*",
     re.IGNORECASE,
 )
+_PLUS_CONNECTOR_RE = re.compile(r"\+|＋")
 _NEGATION_MARKER_RE = re.compile(
     r"\b(?:do\s+not|don't|never)\b|(?:不需要|不要|不得|禁止|无需|暂不|先不|不做|别)",
     re.IGNORECASE,
@@ -179,6 +180,14 @@ def split_profile_enumeration(
             if span.start < piece_end and span.end > piece_start
         ]
         piece_assignments.append(_unique_piece_winner(piece_spans))
+
+    if _PLUS_CONNECTOR_RE.search(clause) and any(
+        text
+        and not piece_assignments[piece_index]
+        and not _range_is_negated(piece_start, piece_end, negation_ranges)
+        for piece_index, (piece_start, piece_end, text) in enumerate(pieces)
+    ):
+        return SpanDecomposition((clause,), observed, candidate_limit_exceeded, False)
 
     for piece_index, (piece_start, piece_end, _) in enumerate(pieces):
         if piece_assignments[piece_index] or _range_is_negated(
