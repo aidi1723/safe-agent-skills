@@ -109,6 +109,21 @@ def synthetic_route(
     }
 
 
+def evaluate_fixture(cases: list[dict], *, route_builder, **kwargs) -> dict:
+    from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+    kwargs.setdefault(
+        "bundle_required_capabilities",
+        {
+            scenario_id: ()
+            for case in cases
+            for scenario_id in case["expected_scenarios"]
+        },
+    )
+    kwargs.setdefault("core_bundle_contract_counts", (0, 0))
+    return evaluate_router_v2(cases, route_builder=route_builder, **kwargs)
+
+
 class RouterEvalV2Tests(unittest.TestCase):
     def test_gold_dataset_has_exact_count_distribution_and_contract(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
@@ -293,7 +308,6 @@ class RouterEvalV2Tests(unittest.TestCase):
                 load_eval_dataset_v2(path)
 
     def test_metric_math_uses_micro_counts_and_explicit_zero_denominators(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         cases = [
             {
@@ -326,7 +340,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "two": synthetic_route(["wrong"], ["bad"]),
         }
 
-        report = evaluate_router_v2(cases, route_builder=lambda case: routes[case["id"]])
+        report = evaluate_fixture(cases, route_builder=lambda case: routes[case["id"]])
 
         self.assertEqual(report["metrics"]["multi_intent_exact_match"], 0.5)
         self.assertEqual(report["metrics"]["scenario_precision"], 0.25)
@@ -341,7 +355,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual([result["id"] for result in report["cases"]], ["one", "two"])
 
     def test_zero_denominators_are_finite(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         cases = [
             {
@@ -354,7 +367,7 @@ class RouterEvalV2Tests(unittest.TestCase):
                 "forbidden_scenarios": [],
             }
         ]
-        report = evaluate_router_v2(
+        report = evaluate_fixture(
             cases,
             route_builder=lambda case: synthetic_route(["general"], []),
         )
@@ -367,7 +380,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         json.dumps(report, allow_nan=False)
 
     def test_new_task_type_metrics_match_hand_calculation_without_changing_old_metrics(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         cases = [
             {
@@ -388,7 +400,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "three": synthetic_route(["b"], []),
         }
 
-        report = evaluate_router_v2(cases, route_builder=lambda case: routes[case["id"]])
+        report = evaluate_fixture(cases, route_builder=lambda case: routes[case["id"]])
 
         self.assertEqual(report["metrics"]["task_type_macro_precision"], 0.75)
         self.assertEqual(report["metrics"]["task_type_macro_recall"], 0.75)
@@ -414,7 +426,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         )
 
     def test_required_capability_recall_counts_only_covered_expected_capabilities(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "capabilities",
@@ -437,7 +448,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             ],
         )
 
-        report = evaluate_router_v2(
+        report = evaluate_fixture(
             [case],
             route_builder=lambda current: route,
             bundle_required_capabilities={"s1": ("c1", "c2"), "s2": ("c3", "c4")},
@@ -448,7 +459,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(report["counts"]["required_capability_total"], 4)
 
     def test_core_bundle_contract_coverage_is_finite_and_has_support_counts(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "contracts",
@@ -461,7 +471,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "forbidden_skills": [],
         }
 
-        report = evaluate_router_v2(
+        report = evaluate_fixture(
             [case],
             route_builder=lambda current: synthetic_route(["a"], []),
             core_bundle_contract_counts=(4, 5),
@@ -470,9 +480,97 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(report["metrics"]["core_bundle_contract_coverage"], 0.8)
         self.assertEqual(report["counts"]["core_bundle_contract_covered"], 4)
         self.assertEqual(report["counts"]["core_bundle_contract_total"], 5)
+        self.assertTrue(report["counts"]["core_bundle_contract_available"])
+
+    def test_evaluator_requires_explicit_capability_and_contract_support_context(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2 as evaluate_without_support
+
+        case = {
+            "id": "support-required",
+            "category": "compound",
+            "task": "support",
+            "expected_intents": ["a"],
+            "expected_scenarios": [],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "forbidden_skills": [],
+        }
+        def route_builder(current):
+            return synthetic_route(["a"], [])
+        malformed_calls = [
+            {},
+            {"bundle_required_capabilities": None, "core_bundle_contract_counts": (0, 0)},
+            {"bundle_required_capabilities": {}, "core_bundle_contract_counts": None},
+            {"bundle_required_capabilities": {}, "core_bundle_contract_counts": [0, 0]},
+            {"bundle_required_capabilities": {}, "core_bundle_contract_counts": (True, 1)},
+            {"bundle_required_capabilities": {"s": True}, "core_bundle_contract_counts": (0, 0)},
+        ]
+        for kwargs in malformed_calls:
+            with self.subTest(kwargs=kwargs), self.assertRaises(EvaluatorError):
+                evaluate_without_support([case], route_builder=route_builder, **kwargs)
+
+    def test_evaluator_requires_capability_context_for_every_expected_scenario(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+
+        case = {
+            "id": "missing-scenario-context",
+            "category": "compound",
+            "task": "support",
+            "expected_intents": ["a"],
+            "expected_scenarios": ["missing"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "forbidden_skills": [],
+        }
+
+        with self.assertRaisesRegex(EvaluatorError, "missing required capability context.*missing"):
+            evaluate_fixture(
+                [case],
+                route_builder=lambda current: synthetic_route(["a"], ["missing"]),
+                bundle_required_capabilities={},
+                core_bundle_contract_counts=(0, 0),
+            )
+
+    def test_explicit_empty_context_is_available_but_zero_contract_support_fails_closed(self):
+
+        case = {
+            "id": "explicit-empty",
+            "category": "negative",
+            "task": "empty",
+            "expected_intents": ["a"],
+            "expected_scenarios": [],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "forbidden_skills": [],
+        }
+
+        report = evaluate_fixture(
+            [case],
+            route_builder=lambda current: synthetic_route(["a"], []),
+            bundle_required_capabilities={},
+            core_bundle_contract_counts=(0, 0),
+        )
+
+        self.assertEqual(report["metrics"]["required_capability_recall"], 1.0)
+        self.assertTrue(report["counts"]["required_capability_context_available"])
+        self.assertEqual(report["metrics"]["core_bundle_contract_coverage"], 0.0)
+        self.assertFalse(report["counts"]["core_bundle_contract_available"])
+
+        no_required_case = {
+            **case,
+            "id": "explicit-no-required-capabilities",
+            "expected_scenarios": ["no-required-capabilities"],
+        }
+        no_required_report = evaluate_fixture(
+            [no_required_case],
+            route_builder=lambda current: synthetic_route(["a"], ["no-required-capabilities"]),
+            bundle_required_capabilities={"no-required-capabilities": []},
+        )
+        self.assertEqual(no_required_report["metrics"]["required_capability_recall"], 1.0)
+        self.assertTrue(no_required_report["counts"]["required_capability_context_available"])
 
     def test_dependency_precision_and_recall_use_deduplicated_logical_pairs(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "dependencies",
@@ -493,7 +591,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             {**route["execution_graph"]["edges"][0], "type": "intent_verification_dependency"}
         )
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertEqual(report["metrics"]["dependency_edge_precision"], 0.5)
         self.assertEqual(report["metrics"]["dependency_edge_recall"], 0.5)
@@ -502,7 +600,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(report["counts"]["dependency_total"], 2)
 
     def test_forbidden_skill_false_positive_rate_has_explicit_four_label_support(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "skills",
@@ -516,14 +613,13 @@ class RouterEvalV2Tests(unittest.TestCase):
         }
         route = synthetic_route(["a"], [], selected_skills=["good", "bad-2"])
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertEqual(report["metrics"]["forbidden_skill_false_positive_rate"], 0.25)
         self.assertEqual(report["counts"]["forbidden_skill_hits"], 1)
         self.assertEqual(report["counts"]["forbidden_skill_total"], 4)
 
     def test_high_confidence_error_rate_counts_cases_and_uses_set_errors(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         cases = [
             {
@@ -544,7 +640,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "low": synthetic_route(["wrong"], [], intent_confidences=[0.79]),
         }
 
-        report = evaluate_router_v2(cases, route_builder=lambda case: routes[case["id"]])
+        report = evaluate_fixture(cases, route_builder=lambda case: routes[case["id"]])
 
         self.assertEqual(report["metrics"]["high_confidence_error_rate"], 0.5)
         self.assertEqual(report["counts"]["high_confidence_error_cases"], 1)
@@ -552,7 +648,6 @@ class RouterEvalV2Tests(unittest.TestCase):
 
     def test_new_metric_zero_denominators_are_finite_and_malformed_routes_fail_closed(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "empty",
@@ -564,7 +659,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "forbidden_scenarios": [],
             "forbidden_skills": [],
         }
-        report = evaluate_router_v2([case], route_builder=lambda current: synthetic_route(["a"], []))
+        report = evaluate_fixture([case], route_builder=lambda current: synthetic_route(["a"], []))
         for value in report["metrics"].values():
             self.assertTrue(math.isfinite(value))
 
@@ -584,11 +679,10 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         for route in malformed_routes:
             with self.subTest(route=route), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
     def test_unexpected_cycle_is_an_evaluator_error(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "cycle",
@@ -604,11 +698,10 @@ class RouterEvalV2Tests(unittest.TestCase):
         route["execution_graph"]["edges"] = [{"from": "node-1", "to": "node-1", "type": "skill_order"}]
 
         with self.assertRaises(EvaluatorError):
-            evaluate_router_v2([case], route_builder=lambda item: route)
+            evaluate_fixture([case], route_builder=lambda item: route)
 
     def test_unexpected_blocked_graph_is_an_evaluator_error_for_nonblocked_case(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         for expected_status in ("complete", "incomplete"):
             case = {
@@ -622,7 +715,7 @@ class RouterEvalV2Tests(unittest.TestCase):
                 "expected_status": expected_status,
             }
             with self.subTest(expected_status=expected_status), self.assertRaises(EvaluatorError):
-                evaluate_router_v2(
+                evaluate_fixture(
                     [case],
                     route_builder=lambda current: synthetic_route(
                         current["expected_intents"],
@@ -633,7 +726,6 @@ class RouterEvalV2Tests(unittest.TestCase):
                 )
 
     def test_coherent_status_graph_pairs_are_valid(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         for routing_status, graph_status, expected_valid in VALID_STATUS_GRAPH_PAIRS:
             case = {
@@ -659,11 +751,10 @@ class RouterEvalV2Tests(unittest.TestCase):
                 route["execution_graph"]["edges"] = []
 
             with self.subTest(routing_status=routing_status, graph_status=graph_status):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 self.assertEqual(report["cases"][0]["dag_valid"], expected_valid)
 
     def test_fail_closed_empty_graph_accepts_only_incomplete_reasons(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "fail-closed",
@@ -687,7 +778,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             route["execution_graph"]["nodes"] = []
             route["execution_graph"]["edges"] = []
             with self.subTest(reason=reason):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 self.assertTrue(report["cases"][0]["dag_valid"])
 
         for reason in ("dependency_cycle", "missing_scenario_bundle", "invented_reason"):
@@ -702,11 +793,10 @@ class RouterEvalV2Tests(unittest.TestCase):
             route["execution_graph"]["nodes"] = []
             route["execution_graph"]["edges"] = []
             with self.subTest(reason=reason):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 self.assertFalse(report["cases"][0]["dag_valid"])
 
     def test_fail_closed_incomplete_graph_rejects_nodes_edges_and_acyclic_flag(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "incomplete",
@@ -739,11 +829,10 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         for route in (nonempty, wrong_flag):
             with self.subTest(route=route):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 self.assertFalse(report["cases"][0]["dag_valid"])
 
     def test_dependency_edge_types_collapse_to_one_logical_intent_pair(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "logical-edge",
@@ -767,14 +856,13 @@ class RouterEvalV2Tests(unittest.TestCase):
             }
         )
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertEqual(report["cases"][0]["actual_dependency_edges"], [["alpha", "beta"]])
         self.assertEqual(report["counts"]["dependency_hits"], 1)
         self.assertEqual(report["counts"]["dependency_total"], 1)
 
     def test_complete_ready_route_rejects_source_intent_cycle_despite_status_mismatch(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "source-cycle",
@@ -794,7 +882,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             intent_dependencies=[["i2"], ["i1"]],
         )
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
@@ -802,7 +890,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn("status_mismatch", issue_ids)
 
     def test_complete_ready_route_rejects_unknown_and_malformed_source_dependencies(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "source-dependencies",
@@ -823,14 +910,13 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         for label, route in routes.items():
             with self.subTest(label=label):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
                 self.assertFalse(report["cases"][0]["dag_valid"])
                 self.assertIn("source_intent_graph_invalid", issue_ids)
 
     def test_source_intent_and_matching_node_identities_reject_blank_or_padded_values(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "source-identity",
@@ -847,16 +933,15 @@ class RouterEvalV2Tests(unittest.TestCase):
             route["intent_graph"]["intents"][0]["id"] = intent_id
             route["execution_graph"]["nodes"][0]["intent_ids"] = [intent_id]
             with self.subTest(intent_id=intent_id), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
         for task_type in (" ", " code_review "):
             route = synthetic_route(["alpha"], ["s1"])
             route["intent_graph"]["intents"][0]["task_type"] = task_type
             with self.subTest(task_type=task_type), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
     def test_source_depends_on_rejects_blank_or_padded_values_as_malformed(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "dependency-identity",
@@ -871,7 +956,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         for dependency_id in (" ", " i1 "):
             route = synthetic_route(["alpha"], ["s1"], intent_dependencies=[[dependency_id]])
             with self.subTest(dependency_id=dependency_id):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 source_issue = next(
                     issue for issue in report["cases"][0]["issues"] if issue["id"] == "source_intent_graph_invalid"
                 )
@@ -879,7 +964,6 @@ class RouterEvalV2Tests(unittest.TestCase):
                 self.assertEqual(source_issue["reason"], "malformed_dependencies")
 
     def test_source_identity_accepts_canonical_intent_id_and_task_type(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "canonical-identity",
@@ -893,13 +977,12 @@ class RouterEvalV2Tests(unittest.TestCase):
         }
         route = synthetic_route(["code_review"], ["s1"])
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertEqual(route["intent_graph"]["intents"][0]["id"], "i1")
         self.assertTrue(report["cases"][0]["dag_valid"])
 
     def test_complete_ready_graph_requires_exactly_empty_reason_codes(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "complete-reasons",
@@ -922,14 +1005,13 @@ class RouterEvalV2Tests(unittest.TestCase):
         for reason_codes in invalid_reason_codes:
             route = synthetic_route(["alpha"], ["s1"], reason_codes=reason_codes)
             with self.subTest(reason_codes=reason_codes):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
                 self.assertFalse(report["cases"][0]["dag_valid"])
                 self.assertIn("unexpected_ready_graph_reason", issue_ids)
 
     def test_reason_codes_malformed_types_fail_closed(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "malformed-reasons",
@@ -945,11 +1027,10 @@ class RouterEvalV2Tests(unittest.TestCase):
             route = synthetic_route(["alpha"], ["s1"])
             route["execution_graph"]["reason_codes"] = reason_codes
             with self.subTest(reason_codes=reason_codes), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
     def test_dependency_edge_endpoint_nodes_require_strict_intent_ids(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "dependency-node",
@@ -976,7 +1057,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             )
             route["execution_graph"]["nodes"][0]["intent_ids"] = intent_ids
             with self.subTest(label=label), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
         for label, endpoint in (("empty endpoint", ""), ("unknown endpoint", "missing"), ("malformed endpoint", 1)):
             route = synthetic_route(
@@ -986,11 +1067,10 @@ class RouterEvalV2Tests(unittest.TestCase):
             )
             route["execution_graph"]["edges"][0]["from"] = endpoint
             with self.subTest(label=label), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
     def test_non_dependency_nodes_require_strict_intent_ids(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "ordinary-node",
@@ -1010,10 +1090,9 @@ class RouterEvalV2Tests(unittest.TestCase):
             route = synthetic_route(["alpha"], ["s1"])
             route["execution_graph"]["nodes"][0]["intent_ids"] = intent_ids
             with self.subTest(label=label), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
     def test_complete_ready_graph_requires_nodes_and_full_source_intent_coverage(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "execution-coverage",
@@ -1035,13 +1114,12 @@ class RouterEvalV2Tests(unittest.TestCase):
             ("missing", missing, "missing_source_intent_coverage"),
         ):
             with self.subTest(label=label):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
                 self.assertFalse(report["cases"][0]["dag_valid"])
                 self.assertIn(expected_issue, issue_ids)
 
     def test_complete_ready_graph_allows_multi_intent_node_mapping(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "multi-intent-node",
@@ -1061,12 +1139,11 @@ class RouterEvalV2Tests(unittest.TestCase):
             }
         ]
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertTrue(report["cases"][0]["dag_valid"])
 
     def test_blocked_empty_graph_rejects_empty_source_intent_graph(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "empty-source",
@@ -1087,7 +1164,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             reason_codes=["incomplete_composition"],
         )
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
@@ -1095,7 +1172,6 @@ class RouterEvalV2Tests(unittest.TestCase):
 
     def test_execution_node_ids_must_be_exact_nonblank_strings(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "node-id",
@@ -1111,11 +1187,10 @@ class RouterEvalV2Tests(unittest.TestCase):
             route = synthetic_route(["alpha"], ["s1"])
             route["execution_graph"]["nodes"][0]["id"] = node_id
             with self.subTest(node_id=node_id), self.assertRaises(EvaluatorError):
-                evaluate_router_v2([case], route_builder=lambda current: route)
+                evaluate_fixture([case], route_builder=lambda current: route)
 
     def test_dependency_edge_cannot_reference_matching_blank_node_id(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blank-dependency-node",
@@ -1136,10 +1211,9 @@ class RouterEvalV2Tests(unittest.TestCase):
         route["execution_graph"]["edges"][0]["from"] = "   "
 
         with self.assertRaises(EvaluatorError):
-            evaluate_router_v2([case], route_builder=lambda current: route)
+            evaluate_fixture([case], route_builder=lambda current: route)
 
     def test_expected_blocked_case_accepts_allowed_empty_graph_and_scores_ready_as_mismatch(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked",
@@ -1151,7 +1225,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "forbidden_scenarios": [],
             "expected_status": "blocked",
         }
-        blocked = evaluate_router_v2(
+        blocked = evaluate_fixture(
             [case],
             route_builder=lambda current: {
                 **synthetic_route(
@@ -1171,7 +1245,7 @@ class RouterEvalV2Tests(unittest.TestCase):
                 },
             },
         )
-        ready = evaluate_router_v2(
+        ready = evaluate_fixture(
             [case],
             route_builder=lambda current: synthetic_route(
                 current["expected_intents"],
@@ -1186,7 +1260,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn("status_mismatch", {issue["id"] for issue in ready["cases"][0]["issues"]})
 
     def test_blocked_source_cycle_is_invalid_even_with_empty_execution_graph(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked-cycle",
@@ -1210,7 +1283,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         route["execution_graph"]["nodes"] = []
         route["execution_graph"]["edges"] = []
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertTrue(report["cases"][0]["topology_acyclic"])
@@ -1219,7 +1292,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
     def test_incoherent_blocked_self_cycle_is_invalid_with_flag_issue(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked-cycle",
@@ -1243,14 +1315,13 @@ class RouterEvalV2Tests(unittest.TestCase):
         route["execution_graph"]["nodes"] = []
         route["execution_graph"]["edges"] = []
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertIn("acyclic_flag_mismatch", issue_ids)
 
     def test_dependency_cycle_reason_with_acyclic_source_intents_is_invalid(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked-cycle",
@@ -1274,14 +1345,13 @@ class RouterEvalV2Tests(unittest.TestCase):
         route["execution_graph"]["nodes"] = []
         route["execution_graph"]["edges"] = []
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
     def test_cyclic_source_with_noncycle_blocking_reason_is_invalid(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked-cycle",
@@ -1305,7 +1375,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         route["execution_graph"]["nodes"] = []
         route["execution_graph"]["edges"] = []
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
@@ -1316,7 +1386,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         from onecode_skill_sanitizer.compiler import compile_execution_graph
         from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
         from onecode_skill_sanitizer.intent import Intent, IntentGraph
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         def intent(intent_id: str, depends_on: tuple[str, ...]) -> Intent:
             return Intent(
@@ -1377,7 +1446,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "expected_status": "blocked",
         }
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertIn("dependency_cycle", compiled["reason_codes"])
         self.assertEqual(compiled["nodes"], [])
@@ -1388,7 +1457,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
     def test_noncycle_blocked_boundary_rejects_disallowed_reason(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked-boundary",
@@ -1411,7 +1479,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         route["execution_graph"]["nodes"] = []
         route["execution_graph"]["edges"] = []
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertTrue(report["cases"][0]["topology_acyclic"])
@@ -1419,7 +1487,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
     def test_noncycle_blocked_payload_with_emitted_graph_is_invalid(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked-boundary",
@@ -1440,14 +1507,13 @@ class RouterEvalV2Tests(unittest.TestCase):
             reason_codes=["missing_scenario_bundle"],
         )
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertIn("blocked_graph_not_empty", issue_ids)
 
     def test_cycle_blocked_payload_with_emitted_graph_is_invalid(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked-cycle",
@@ -1469,7 +1535,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             intent_dependencies=[["i2"], ["i1"]],
         )
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
@@ -1479,7 +1545,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         from onecode_skill_sanitizer.compiler import compile_execution_graph
         from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
         from onecode_skill_sanitizer.intent import Intent, IntentGraph
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         graph = IntentGraph(
             intents=(
@@ -1525,7 +1590,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "expected_status": "blocked",
         }
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertEqual(compiled["reason_codes"], ["missing_scenario_bundle"])
         self.assertEqual(compiled["nodes"], [])
@@ -1538,7 +1603,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         from onecode_skill_sanitizer.compiler import compile_execution_graph
         from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
         from onecode_skill_sanitizer.intent import Intent, IntentGraph
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         def intent(intent_id: str, depends_on: tuple[str, ...] = ()) -> Intent:
             return Intent(
@@ -1630,7 +1694,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "expected_status": "blocked",
         }
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
 
         self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
         self.assertTrue(compiled["nodes"])
@@ -1642,7 +1706,6 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn("blocked_graph_not_empty", issue_ids)
 
     def test_missing_verification_rejects_dependent_intent_edges(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "missing-verification",
@@ -1665,7 +1728,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             intent_dependencies=[[], ["i1"]],
         )
 
-        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        report = evaluate_fixture([case], route_builder=lambda current: route)
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
@@ -1674,7 +1737,6 @@ class RouterEvalV2Tests(unittest.TestCase):
 
     def test_ready_graph_requires_true_flag_and_acyclic_topology(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "ready",
@@ -1689,13 +1751,12 @@ class RouterEvalV2Tests(unittest.TestCase):
         coherent = synthetic_route(["alpha"], ["s1"])
         contradictory = synthetic_route(["alpha"], ["s1"], acyclic=False)
 
-        report = evaluate_router_v2([case], route_builder=lambda current: coherent)
+        report = evaluate_fixture([case], route_builder=lambda current: coherent)
         self.assertTrue(report["cases"][0]["dag_valid"])
         with self.assertRaises(EvaluatorError):
-            evaluate_router_v2([case], route_builder=lambda current: contradictory)
+            evaluate_fixture([case], route_builder=lambda current: contradictory)
 
     def test_blocked_graph_requires_blocked_route_and_recognized_reason(self):
-        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
             "id": "blocked",
@@ -1733,7 +1794,7 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         for route in routes:
             with self.subTest(route=route):
-                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                report = evaluate_fixture([case], route_builder=lambda current: route)
                 self.assertFalse(report["cases"][0]["dag_valid"])
 
     def test_real_command_prints_json_without_failing_on_low_metrics(self):

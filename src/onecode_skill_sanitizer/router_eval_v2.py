@@ -6,7 +6,7 @@ import json
 import math
 from collections import Counter
 from collections import defaultdict, deque
-from collections.abc import Callable
+from collections.abc import Callable, Mapping
 from pathlib import Path
 from typing import Any
 
@@ -80,6 +80,7 @@ LEGACY_ROUTER_EVAL_V2_FIELDS = {
     "case_count",
     "cases",
 }
+_MISSING_SUPPORT = object()
 
 
 class DatasetValidationError(ValueError):
@@ -246,10 +247,21 @@ def evaluate_router_v2(
     *,
     route_builder: Callable[[dict[str, Any]], dict[str, Any]],
     known_scenarios: set[str] | None = None,
-    bundle_required_capabilities: dict[str, tuple[str, ...]] | None = None,
-    core_bundle_contract_counts: tuple[int, int] = (0, 0),
+    bundle_required_capabilities: object = _MISSING_SUPPORT,
+    core_bundle_contract_counts: object = _MISSING_SUPPORT,
 ) -> dict[str, Any]:
-    capability_context = _validate_bundle_required_capabilities(bundle_required_capabilities or {})
+    capability_context = _validate_bundle_required_capabilities(bundle_required_capabilities)
+    expected_scenarios = {
+        scenario_id
+        for case in cases
+        for scenario_id in case["expected_scenarios"]
+    }
+    missing_capability_context = sorted(expected_scenarios - set(capability_context))
+    if missing_capability_context:
+        raise EvaluatorError(
+            "missing required capability context for expected scenarios: "
+            + ", ".join(missing_capability_context)
+        )
     core_contract_covered, core_contract_total = _validate_support_counts(
         core_bundle_contract_counts,
         "core bundle contract",
@@ -342,7 +354,7 @@ def evaluate_router_v2(
         "core_bundle_contract_coverage": finite_ratio(
             core_contract_covered,
             core_contract_total,
-            empty=1.0,
+            empty=0.0,
         ),
     }
     if not all(math.isfinite(value) for value in metrics.values()):
@@ -379,6 +391,8 @@ def evaluate_router_v2(
             ],
             "core_bundle_contract_covered": core_contract_covered,
             "core_bundle_contract_total": core_contract_total,
+            "core_bundle_contract_available": core_contract_total > 0,
+            "required_capability_context_available": True,
             "dag_valid_cases": dag_valid,
         },
         "scenario_coverage": {
@@ -560,23 +574,29 @@ def _covered_capabilities(route: dict[str, Any]) -> set[tuple[str, str]]:
 def _validate_bundle_required_capabilities(
     context: object,
 ) -> dict[str, tuple[str, ...]]:
-    if not isinstance(context, dict):
-        raise EvaluatorError("bundle required capability context must be an object")
+    if context is _MISSING_SUPPORT:
+        raise EvaluatorError("bundle required capability context must be provided explicitly")
+    if not isinstance(context, Mapping):
+        raise EvaluatorError("bundle required capability context must be a mapping")
     validated: dict[str, tuple[str, ...]] = {}
     for scenario_id, capabilities in context.items():
         if not _is_exact_nonblank_string(scenario_id):
             raise EvaluatorError("bundle capability scenario id must be an exact nonempty string")
-        if type(capabilities) is not tuple or not all(
+        if type(capabilities) not in {list, tuple} or not all(
             _is_exact_nonblank_string(capability) for capability in capabilities
         ):
-            raise EvaluatorError("bundle required capabilities must be tuples of exact nonempty strings")
+            raise EvaluatorError(
+                "bundle required capabilities must be lists or tuples of exact nonempty strings"
+            )
         if len(capabilities) != len(set(capabilities)):
             raise EvaluatorError("bundle required capabilities must be unique")
-        validated[scenario_id] = capabilities
+        validated[scenario_id] = tuple(capabilities)
     return dict(sorted(validated.items()))
 
 
 def _validate_support_counts(counts: object, label: str) -> tuple[int, int]:
+    if counts is _MISSING_SUPPORT:
+        raise EvaluatorError(f"{label} counts must be provided explicitly")
     if type(counts) is not tuple or len(counts) != 2:
         raise EvaluatorError(f"{label} counts must be a two-item tuple")
     numerator, denominator = counts
