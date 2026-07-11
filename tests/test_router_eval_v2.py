@@ -760,6 +760,79 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         self.assertTrue(report["cases"][0]["dag_valid"])
 
+    def test_blocked_empty_graph_rejects_empty_source_intent_graph(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "empty-source",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": [],
+            "expected_scenarios": [],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            [],
+            [],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="blocked",
+            reason_codes=["incomplete_composition"],
+        )
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        self.assertIn("source_intent_graph_invalid", issue_ids)
+
+    def test_execution_node_ids_must_be_exact_nonblank_strings(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "node-id",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        for node_id in ("", "   "):
+            route = synthetic_route(["alpha"], ["s1"])
+            route["execution_graph"]["nodes"][0]["id"] = node_id
+            with self.subTest(node_id=node_id), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
+
+    def test_dependency_edge_cannot_reference_matching_blank_node_id(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "blank-dependency-node",
+            "category": "sequential",
+            "task": "task",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [["alpha", "beta"]],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        route = synthetic_route(
+            ["alpha", "beta"],
+            ["s1", "s2"],
+            dependency_pairs=[("alpha", "beta")],
+        )
+        route["execution_graph"]["nodes"][0]["id"] = "   "
+        route["execution_graph"]["edges"][0]["from"] = "   "
+
+        with self.assertRaises(EvaluatorError):
+            evaluate_router_v2([case], route_builder=lambda current: route)
+
     def test_expected_blocked_case_accepts_allowed_empty_graph_and_scores_ready_as_mismatch(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 

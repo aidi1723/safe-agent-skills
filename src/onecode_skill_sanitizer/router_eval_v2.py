@@ -412,7 +412,7 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
     nodes_by_id: dict[str, dict[str, Any]] = {}
     node_types: dict[str, set[str]] = {}
     for node in nodes:
-        if not isinstance(node, dict) or not isinstance(node.get("id"), str):
+        if not isinstance(node, dict) or type(node.get("id")) is not str or not node["id"].strip():
             raise EvaluatorError("execution graph node is malformed")
         intent_ids = node.get("intent_ids")
         valid_ids = (
@@ -434,7 +434,7 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
             continue
         source_id = edge.get("from")
         target_id = edge.get("to")
-        if type(source_id) is not str or not source_id or type(target_id) is not str or not target_id:
+        if type(source_id) is not str or not source_id.strip() or type(target_id) is not str or not target_id.strip():
             raise EvaluatorError("dependency edge endpoints must be nonempty strings")
         if source_id not in nodes_by_id or target_id not in nodes_by_id:
             raise EvaluatorError("dependency edge references an unknown node")
@@ -533,6 +533,8 @@ def _source_intent_graph_issues(route: dict[str, Any]) -> list[dict[str, Any]]:
     intents = intent_graph.get("intents")
     if not isinstance(intents, list):
         raise EvaluatorError("intent_graph.intents must be a list")
+    if not intents:
+        return [{"id": "source_intent_graph_invalid", "reason": "empty_intent_graph"}]
     intent_ids: list[str] = []
     dependencies: dict[str, list[str]] = {}
     for intent in intents:
