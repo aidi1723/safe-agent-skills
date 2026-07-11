@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 import subprocess
@@ -128,8 +129,10 @@ class RouterEvalV2Tests(unittest.TestCase):
     def test_gold_dataset_has_exact_count_distribution_and_contract(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
-        cases = load_eval_dataset_v2(EVAL_PATH)
+        dataset = load_eval_dataset_v2(EVAL_PATH)
+        cases = dataset["cases"]
 
+        self.assertEqual(dataset["labeling"], EXPECTED_LABELING)
         self.assertEqual(len(cases), 100)
         self.assertEqual(Counter(case["category"] for case in cases), EXPECTED_CATEGORIES)
         self.assertEqual(len({case["id"] for case in cases}), 100)
@@ -153,11 +156,60 @@ class RouterEvalV2Tests(unittest.TestCase):
     def test_gold_dataset_covers_all_bundle_scenarios(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
-        cases = load_eval_dataset_v2(EVAL_PATH)
+        cases = load_eval_dataset_v2(EVAL_PATH)["cases"]
         scenario_counts = Counter(scenario for case in cases for scenario in case["expected_scenarios"])
 
         self.assertEqual(set(scenario_counts), bundle_scenario_ids())
         self.assertGreaterEqual(min(scenario_counts.values()), 5)
+
+    def test_dataset_identity_is_bound_to_canonical_validated_payload(self):
+        from onecode_skill_sanitizer.router_eval_v2 import dataset_identity_v2
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
+
+        dataset = load_eval_dataset_v2(EVAL_PATH)
+        canonical = json.dumps(
+            dataset,
+            sort_keys=True,
+            separators=(",", ":"),
+            ensure_ascii=False,
+        ).encode("utf-8")
+
+        identity = dataset_identity_v2(dataset)
+
+        self.assertEqual(
+            identity,
+            {
+                "case_count": 100,
+                "dataset_sha256": f"sha256:{hashlib.sha256(canonical).hexdigest()}",
+                "labeling_generated_from_router": False,
+                "labeling_method": "manual_review",
+                "labeling_reviewed_at": "2026-07-10",
+                "labeling_reviewer_role": "independent_dataset_review",
+            },
+        )
+
+    def test_dataset_identity_ignores_object_key_order_but_preserves_content_and_list_order(self):
+        from onecode_skill_sanitizer.router_eval_v2 import dataset_identity_v2
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
+
+        dataset = load_eval_dataset_v2(EVAL_PATH)
+        reordered = {
+            "cases": [dict(reversed(list(case.items()))) for case in dataset["cases"]],
+            "labeling": dict(reversed(list(dataset["labeling"].items()))),
+        }
+        changed_content = json.loads(json.dumps(dataset))
+        changed_content["cases"][0]["task"] += " changed"
+        changed_order = json.loads(json.dumps(dataset))
+        changed_order["cases"][0], changed_order["cases"][1] = (
+            changed_order["cases"][1],
+            changed_order["cases"][0],
+        )
+
+        original_identity = dataset_identity_v2(dataset)
+
+        self.assertEqual(dataset_identity_v2(reordered), original_identity)
+        self.assertNotEqual(dataset_identity_v2(changed_content), original_identity)
+        self.assertNotEqual(dataset_identity_v2(changed_order), original_identity)
 
     def test_gold_sequential_cases_have_dependency_target_and_phrase_diversity(self):
         cases = [case for case in gold_payload()["cases"] if case["category"] == "sequential"]
@@ -1834,12 +1886,18 @@ class RouterEvalV2Tests(unittest.TestCase):
             report["quality_gate"]["dataset_identity"],
             {
                 "case_count": 100,
+                "dataset_sha256": report["quality_gate"]["dataset_identity"]["dataset_sha256"],
+                "labeling_generated_from_router": False,
                 "labeling_method": "manual_review",
                 "labeling_reviewed_at": "2026-07-10",
                 "labeling_reviewer_role": "independent_dataset_review",
             },
         )
-        self.assertEqual(report["quality_gate"]["review_identity"], {})
+        self.assertRegex(
+            report["quality_gate"]["dataset_identity"]["dataset_sha256"],
+            r"^sha256:[0-9a-f]{64}$",
+        )
+        self.assertIsNone(report["quality_gate"]["review_identity"])
         self.assertEqual(report["metrics"]["dag_validity"], 1.0)
         self.assertGreaterEqual(report["metrics"]["dependency_edge_recall"], 0.90)
         self.assertEqual(

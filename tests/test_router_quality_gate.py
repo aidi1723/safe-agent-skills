@@ -18,6 +18,33 @@ PRODUCTION_THRESHOLDS = {
 _DEFAULT = object()
 
 
+def valid_dataset_identity():
+    return {
+        "dataset_sha256": f"sha256:{'a' * 64}",
+        "case_count": 100,
+        "labeling_method": "manual_review",
+        "labeling_reviewer_role": "independent_dataset_review",
+        "labeling_generated_from_router": False,
+        "labeling_reviewed_at": "2026-07-10",
+    }
+
+
+def valid_review_identity():
+    return {
+        "suite_id": "router-production-v1",
+        "suite_sha256": f"sha256:{'b' * 64}",
+        "reviewed_commit": "c" * 40,
+        "rule_author_id": "routing-author",
+        "reviewer_id": "independent-reviewer",
+        "reviewer_role": "independent_dataset_review",
+        "reviewed_at": "2026-07-11T00:00:00Z",
+        "decision": "accepted",
+        "independence_attestation": True,
+        "reviewed_case_count": 100,
+        "exceptions_count": 0,
+    }
+
+
 def passing_metrics():
     return {
         name: threshold if direction == "minimum" else 0.0
@@ -54,10 +81,10 @@ class RouterQualityGateTests(unittest.TestCase):
         return build_quality_gate(
             passing_metrics() if metrics is None else metrics,
             support_counts=supported_counts() if support_counts is None else support_counts,
-            dataset_identity={"dataset": "gold", "case_count": 100}
+            dataset_identity=valid_dataset_identity()
             if dataset_identity is _DEFAULT
             else dataset_identity,
-            review_identity={"review_id": "independent-1"}
+            review_identity=valid_review_identity()
             if review_identity is _DEFAULT
             else review_identity,
         )
@@ -159,8 +186,8 @@ class RouterQualityGateTests(unittest.TestCase):
 
         report = build_quality_gate(
             passing_metrics(),
-            dataset_identity={"dataset": "gold"},
-            review_identity={"review_id": "review"},
+            dataset_identity=valid_dataset_identity(),
+            review_identity=valid_review_identity(),
         )
 
         self.assertFalse(report["production_ready"])
@@ -184,6 +211,7 @@ class RouterQualityGateTests(unittest.TestCase):
         report = self.build(review_identity={})
         self.assertFalse(report["production_ready"])
         self.assertIn("independent_label_review", report["missing_gates"])
+        self.assertIsNone(report["review_identity"])
 
         invalid_identities = [
             None,
@@ -202,6 +230,67 @@ class RouterQualityGateTests(unittest.TestCase):
                 report = self.build(dataset_identity=identity)
                 self.assertIn("dataset_identity", report["missing_gates"])
                 self.assertEqual(report["dataset_identity"], {})
+
+    def test_review_identity_requires_strict_independent_acceptance_projection(self):
+        invalid_mutations = {
+            "arbitrary flat mapping": {"x": "y"},
+            "missing field": {key: value for key, value in valid_review_identity().items() if key != "suite_id"},
+            "blank suite": {**valid_review_identity(), "suite_id": " "},
+            "uppercase suite digest": {**valid_review_identity(), "suite_sha256": f"sha256:{'A' * 64}"},
+            "bare suite digest": {**valid_review_identity(), "suite_sha256": "b" * 64},
+            "non-string suite digest": {**valid_review_identity(), "suite_sha256": 1},
+            "short commit": {**valid_review_identity(), "reviewed_commit": "c" * 39},
+            "uppercase commit": {**valid_review_identity(), "reviewed_commit": "C" * 40},
+            "non-string commit": {**valid_review_identity(), "reviewed_commit": []},
+            "blank author": {**valid_review_identity(), "rule_author_id": ""},
+            "same reviewer and author": {
+                **valid_review_identity(),
+                "reviewer_id": valid_review_identity()["rule_author_id"],
+            },
+            "wrong reviewer role": {**valid_review_identity(), "reviewer_role": "dataset_review"},
+            "junk timestamp": {**valid_review_identity(), "reviewed_at": "yesterday"},
+            "non-string timestamp": {**valid_review_identity(), "reviewed_at": None},
+            "date without time": {**valid_review_identity(), "reviewed_at": "2026-07-11"},
+            "non-UTC timestamp": {**valid_review_identity(), "reviewed_at": "2026-07-11T00:00:00+08:00"},
+            "impossible timestamp": {**valid_review_identity(), "reviewed_at": "2026-02-30T00:00:00Z"},
+            "rejected decision": {**valid_review_identity(), "decision": "rejected"},
+            "false attestation": {**valid_review_identity(), "independence_attestation": False},
+            "integer attestation": {**valid_review_identity(), "independence_attestation": 1},
+            "zero reviewed cases": {**valid_review_identity(), "reviewed_case_count": 0},
+            "boolean reviewed cases": {**valid_review_identity(), "reviewed_case_count": True},
+            "negative exceptions": {**valid_review_identity(), "exceptions_count": -1},
+            "boolean exceptions": {**valid_review_identity(), "exceptions_count": False},
+            "raw review lists": {
+                **valid_review_identity(),
+                "reviewed_case_ids": ["normal-001"],
+                "exceptions": [],
+            },
+        }
+
+        for label, identity in invalid_mutations.items():
+            with self.subTest(label=label):
+                report = self.build(review_identity=identity)
+                self.assertFalse(report["production_ready"])
+                self.assertIn("independent_label_review", report["missing_gates"])
+                self.assertIsNone(report["review_identity"])
+                self.assertIsInstance(json.dumps(report, allow_nan=False), str)
+
+    def test_dataset_identity_with_non_string_digest_fails_closed(self):
+        report = self.build(dataset_identity={**valid_dataset_identity(), "dataset_sha256": 1})
+
+        self.assertFalse(report["production_ready"])
+        self.assertIn("dataset_identity", report["missing_gates"])
+        self.assertEqual(report["dataset_identity"], {})
+
+    def test_review_identity_output_is_normalized_copy_of_validated_projection(self):
+        review = dict(reversed(list(valid_review_identity().items())))
+
+        report = self.build(review_identity=review)
+        review["reviewer_id"] = "changed"
+
+        self.assertTrue(report["production_ready"])
+        self.assertEqual(list(report["review_identity"]), sorted(valid_review_identity()))
+        self.assertEqual(report["review_identity"]["reviewer_id"], "independent-reviewer")
 
     def test_all_null_and_partial_null_identities_never_count_as_evidence(self):
         for field, identity, missing_gate in (
@@ -223,16 +312,17 @@ class RouterQualityGateTests(unittest.TestCase):
                 report = self.build(**kwargs)
                 self.assertFalse(report["production_ready"])
                 self.assertIn(missing_gate, report["missing_gates"])
-                self.assertEqual(report[field], {})
+                expected = None if field == "review_identity" else {}
+                self.assertEqual(report[field], expected)
 
     def test_output_identities_are_copies_and_gate_lists_are_sorted(self):
-        dataset = {"dataset": "gold", "case_count": 100}
-        review = {"review_id": "r1"}
+        dataset = valid_dataset_identity()
+        review = valid_review_identity()
         report = self.build(dataset_identity=dataset, review_identity=review)
-        dataset["dataset"] = "changed"
-        review["review_id"] = "changed"
-        self.assertEqual(report["dataset_identity"]["dataset"], "gold")
-        self.assertEqual(report["review_identity"]["review_id"], "r1")
+        dataset["dataset_sha256"] = f"sha256:{'d' * 64}"
+        review["reviewer_id"] = "changed"
+        self.assertEqual(report["dataset_identity"]["dataset_sha256"], f"sha256:{'a' * 64}")
+        self.assertEqual(report["review_identity"]["reviewer_id"], "independent-reviewer")
         self.assertEqual(report["failed_gates"], sorted(report["failed_gates"]))
         self.assertEqual(report["missing_gates"], sorted(report["missing_gates"]))
 

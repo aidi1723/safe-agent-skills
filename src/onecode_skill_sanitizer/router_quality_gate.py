@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import math
+import re
+from datetime import datetime
 from typing import Any
 
 
@@ -37,6 +39,33 @@ _SUPPORT_REQUIREMENTS: dict[str, tuple[tuple[str, str], ...]] = {
     ),
     "dependency_edge_recall": (("dependency_total", "positive_int"),),
 }
+
+_DATASET_IDENTITY_FIELDS = {
+    "case_count",
+    "dataset_sha256",
+    "labeling_generated_from_router",
+    "labeling_method",
+    "labeling_reviewed_at",
+    "labeling_reviewer_role",
+}
+_REVIEW_IDENTITY_FIELDS = {
+    "decision",
+    "exceptions_count",
+    "independence_attestation",
+    "reviewed_at",
+    "reviewed_case_count",
+    "reviewed_commit",
+    "reviewer_id",
+    "reviewer_role",
+    "rule_author_id",
+    "suite_id",
+    "suite_sha256",
+}
+_SHA256_PATTERN = re.compile(r"sha256:[0-9a-f]{64}\Z")
+_COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}\Z")
+_UTC_TIMESTAMP_PATTERN = re.compile(
+    r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z\Z"
+)
 
 
 def build_quality_gate(
@@ -87,14 +116,13 @@ def build_quality_gate(
             "direction": direction,
         }
 
-    valid_dataset_identity = _flat_identity(dataset_identity, allow_empty=False)
+    valid_dataset_identity = _dataset_identity(dataset_identity)
     if valid_dataset_identity is None:
         missing_gates.add("dataset_identity")
         valid_dataset_identity = {}
-    valid_review_identity = _flat_identity(review_identity, allow_empty=False)
+    valid_review_identity = _review_identity(review_identity)
     if valid_review_identity is None:
         missing_gates.add("independent_label_review")
-        valid_review_identity = {}
 
     failed = sorted(failed_gates)
     missing = sorted(missing_gates)
@@ -125,22 +153,61 @@ def _valid_support(value: object, kind: str) -> bool:
     raise AssertionError(f"unknown support requirement: {kind}")
 
 
-def _flat_identity(identity: object, *, allow_empty: bool) -> dict[str, object] | None:
-    if type(identity) is not dict or (not allow_empty and not identity):
+def _dataset_identity(identity: object) -> dict[str, object] | None:
+    if type(identity) is not dict or set(identity) != _DATASET_IDENTITY_FIELDS:
         return None
-    normalized: dict[str, object] = {}
-    for key, value in identity.items():
-        if type(key) is not str or not key or key != key.strip():
+    if not _matches(identity["dataset_sha256"], _SHA256_PATTERN):
+        return None
+    if type(identity["case_count"]) is not int or identity["case_count"] <= 0:
+        return None
+    if identity["labeling_generated_from_router"] is not False:
+        return None
+    for field in ("labeling_method", "labeling_reviewed_at", "labeling_reviewer_role"):
+        if not _exact_nonblank(identity[field]):
             return None
-        if type(value) is str:
-            if not value or value != value.strip():
-                return None
-        elif type(value) is int:
-            pass
-        elif type(value) is float:
-            if not math.isfinite(value):
-                return None
-        else:
+    return {field: identity[field] for field in sorted(_DATASET_IDENTITY_FIELDS)}
+
+
+def _review_identity(identity: object) -> dict[str, object] | None:
+    if type(identity) is not dict or set(identity) != _REVIEW_IDENTITY_FIELDS:
+        return None
+    for field in ("suite_id", "rule_author_id", "reviewer_id"):
+        if not _exact_nonblank(identity[field]):
             return None
-        normalized[key] = value
-    return dict(sorted(normalized.items()))
+    if identity["reviewer_id"] == identity["rule_author_id"]:
+        return None
+    if not _matches(identity["suite_sha256"], _SHA256_PATTERN):
+        return None
+    if not _matches(identity["reviewed_commit"], _COMMIT_PATTERN):
+        return None
+    if identity["reviewer_role"] != "independent_dataset_review":
+        return None
+    if not _is_iso_utc_timestamp(identity["reviewed_at"]):
+        return None
+    if identity["decision"] != "accepted":
+        return None
+    if type(identity["independence_attestation"]) is not bool or not identity["independence_attestation"]:
+        return None
+    if type(identity["reviewed_case_count"]) is not int or identity["reviewed_case_count"] <= 0:
+        return None
+    if type(identity["exceptions_count"]) is not int or identity["exceptions_count"] < 0:
+        return None
+    return {field: identity[field] for field in sorted(_REVIEW_IDENTITY_FIELDS)}
+
+
+def _exact_nonblank(value: object) -> bool:
+    return type(value) is str and bool(value) and value == value.strip()
+
+
+def _matches(value: object, pattern: re.Pattern[str]) -> bool:
+    return type(value) is str and pattern.fullmatch(value) is not None
+
+
+def _is_iso_utc_timestamp(value: object) -> bool:
+    if type(value) is not str or _UTC_TIMESTAMP_PATTERN.fullmatch(value) is None:
+        return False
+    try:
+        datetime.fromisoformat(value.removesuffix("Z") + "+00:00")
+    except ValueError:
+        return False
+    return True

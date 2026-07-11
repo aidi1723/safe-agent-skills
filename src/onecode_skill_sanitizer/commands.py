@@ -563,7 +563,8 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             for bundle in bundles_index.get("bundles", [])
             if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
         }
-        cases = load_eval_dataset_v2(eval_path, known_scenarios)
+        dataset = load_eval_dataset_v2(eval_path, known_scenarios)
+        cases = dataset["cases"]
         capability_context = _bundle_required_capability_context(bundles_index)
         contract_result = contract_coverage(
             snapshot.index(),
@@ -590,7 +591,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         result["quality_gate"] = build_quality_gate(
             result["metrics"],
             support_counts={**result["counts"], "case_count": result["case_count"]},
-            dataset_identity=dataset_identity_v2(result["case_count"]),
+            dataset_identity=dataset_identity_v2(dataset),
             review_identity={},
         )
     except (DatasetValidationError, EvaluatorError, ValueError, OSError, SystemExit) as exc:

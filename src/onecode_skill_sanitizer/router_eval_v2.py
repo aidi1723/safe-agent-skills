@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import math
 from collections import Counter
@@ -122,7 +123,7 @@ def _is_legacy_router_eval_v2(payload: object) -> bool:
 def load_eval_dataset_v2(
     path: Path,
     known_scenarios: set[str] | None = None,
-) -> list[dict[str, Any]]:
+) -> dict[str, Any]:
     allowed_scenarios = TRUSTED_SCENARIO_IDS if known_scenarios is None else known_scenarios
     try:
         payload = json.loads(path.read_text(encoding="utf-8"))
@@ -135,6 +136,13 @@ def load_eval_dataset_v2(
             "this is a router-eval dataset; use router-eval. "
             "router-eval-v2 expects the multi-intent gold/suite contract"
         )
+    return _validate_dataset_v2(payload, allowed_scenarios)
+
+
+def _validate_dataset_v2(
+    payload: object,
+    known_scenarios: set[str] | None,
+) -> dict[str, Any]:
     if not isinstance(payload, dict) or set(payload) != {"labeling", "cases"}:
         raise DatasetValidationError("evaluation dataset must be an object containing only labeling and cases")
     if payload["labeling"] != EXPECTED_LABELING:
@@ -142,7 +150,7 @@ def load_eval_dataset_v2(
     cases = payload["cases"]
     if not isinstance(cases, list):
         raise DatasetValidationError("cases must be a list")
-    validated = [_validate_case(case, index, allowed_scenarios) for index, case in enumerate(cases)]
+    validated = [_validate_case(case, index, known_scenarios) for index, case in enumerate(cases)]
     if len(validated) != EXPECTED_CASE_COUNT:
         raise DatasetValidationError(f"expected exactly {EXPECTED_CASE_COUNT} cases, found {len(validated)}")
     ids = [case["id"] for case in validated]
@@ -154,16 +162,23 @@ def load_eval_dataset_v2(
         raise DatasetValidationError(
             f"category distribution must be {CATEGORY_DISTRIBUTION}, found {dict(distribution)}"
         )
-    return validated
+    return {"labeling": dict(EXPECTED_LABELING), "cases": validated}
 
 
-def dataset_identity_v2(case_count: int) -> dict[str, object]:
+def dataset_identity_v2(dataset: dict[str, Any]) -> dict[str, object]:
     """Return stable identity fields for an already validated v2 dataset."""
 
-    if type(case_count) is not int or case_count <= 0:
-        raise DatasetValidationError("dataset identity case_count must be a positive integer")
+    validated = _validate_dataset_v2(dataset, None)
+    canonical = json.dumps(
+        validated,
+        sort_keys=True,
+        separators=(",", ":"),
+        ensure_ascii=False,
+    ).encode("utf-8")
     return {
-        "case_count": case_count,
+        "case_count": len(validated["cases"]),
+        "dataset_sha256": f"sha256:{hashlib.sha256(canonical).hexdigest()}",
+        "labeling_generated_from_router": EXPECTED_LABELING["generated_from_router"],
         "labeling_method": EXPECTED_LABELING["method"],
         "labeling_reviewed_at": EXPECTED_LABELING["reviewed_at"],
         "labeling_reviewer_role": EXPECTED_LABELING["reviewer_role"],
