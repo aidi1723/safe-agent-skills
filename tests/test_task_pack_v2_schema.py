@@ -54,6 +54,9 @@ class TaskPackV2SchemaTest(unittest.TestCase):
         cls.compound_payload = _smart_payload(
             "构建官网，同时审计 skill 路由器，验证通过后发布更新"
         )
+        cls.invariant_ready_payload = _smart_payload(
+            "build a landing page", "--invariants", "不能泄露密钥"
+        )
         with patch.object(task_packs, "validate_task_pack_v2_semantics", return_value=None):
             cls.invariant_incomplete_payload = _smart_payload(
                 "help me with this", "--invariants", "不能泄露密钥"
@@ -94,6 +97,31 @@ class TaskPackV2SchemaTest(unittest.TestCase):
                     "stage": "review",
                 }
             ],
+        )
+        validate_task_pack_v2(payload)
+
+    def test_public_ready_pack_binds_invariant_capability_to_execution_node(self):
+        payload = _smart_payload(
+            "build a landing page", "--invariants", "不能泄露密钥"
+        )
+        capability = next(
+            item
+            for item in payload["capability_resolution"]["capabilities"]
+            if item.get("source") == "invariant"
+        )
+        node = next(
+            item
+            for item in payload["execution_graph"]["nodes"]
+            if "invariant_capability" in item
+        )
+        self.assertEqual(
+            (node["id"], node["invariant_capability"], node["skill"], node["stage"]),
+            (
+                f"invariant:{capability['capability']}:{capability['skills'][0]}",
+                capability["capability"],
+                capability["skills"][0],
+                capability["stage"],
+            ),
         )
         validate_task_pack_v2(payload)
 
@@ -681,6 +709,83 @@ class TaskPackV2SchemaTest(unittest.TestCase):
         }.items():
             with self.subTest(label=label), self.assertRaises(ValueError):
                 validator(payload)
+
+    def test_semantic_validator_binds_invariant_capabilities_to_exact_nodes(self):
+        validator = task_packs.validate_task_pack_v2_semantics
+
+        def invariant_parts(payload):
+            capability = next(
+                item
+                for item in payload["capability_resolution"]["capabilities"]
+                if item.get("source") == "invariant"
+            )
+            node = next(
+                item
+                for item in payload["execution_graph"]["nodes"]
+                if "invariant_capability" in item
+            )
+            return capability, node
+
+        def remove_expected_record(payload):
+            capability, _ = invariant_parts(payload)
+            capability.pop("source")
+
+        def drift_capability(payload):
+            _, node = invariant_parts(payload)
+            node["invariant_capability"] = "forged_capability"
+
+        def drift_stage(payload):
+            _, node = invariant_parts(payload)
+            node["stage"] = "handoff"
+
+        def drift_identifier(payload):
+            _, node = invariant_parts(payload)
+            original_id = node["id"]
+            node["id"] = f"{original_id}:forged"
+            for edge in payload["execution_graph"]["edges"]:
+                if edge["from"] == original_id:
+                    edge["from"] = node["id"]
+                if edge["to"] == original_id:
+                    edge["to"] = node["id"]
+
+        def duplicate_node(payload):
+            _, node = invariant_parts(payload)
+            duplicate = copy.deepcopy(node)
+            duplicate["id"] = f"{node['id']}:duplicate"
+            payload["execution_graph"]["nodes"].append(duplicate)
+
+        def drift_skill(payload):
+            capability, node = invariant_parts(payload)
+            forged_name = "security-secret-context-redaction-alt"
+            forged_skill = copy.deepcopy(payload["selected_skills"][0])
+            forged_skill["name"] = forged_name
+            payload["selected_skills"].append(forged_skill)
+            capability["skills"] = [forged_name]
+            forged_node = copy.deepcopy(node)
+            forged_node["id"] = f"invariant:{capability['capability']}:{forged_name}"
+            forged_node["skill"] = forged_name
+            payload["execution_graph"]["nodes"].append(forged_node)
+            payload["routing_metrics"]["required_skill_count"] += 1
+            payload["routing_metrics"]["selected_skill_count"] += 1
+
+        mutations = {
+            "missing_expected_record": remove_expected_record,
+            "capability_drift": drift_capability,
+            "stage_drift": drift_stage,
+            "identifier_drift": drift_identifier,
+            "duplicate_extra": duplicate_node,
+            "skill_drift": drift_skill,
+        }
+        for state, baseline in {
+            "ready": self.invariant_ready_payload,
+            "fallback": self.invariant_incomplete_payload,
+        }.items():
+            for label, mutate in mutations.items():
+                with self.subTest(state=state, label=label):
+                    payload = copy.deepcopy(baseline)
+                    mutate(payload)
+                    with self.assertRaises(ValueError):
+                        validator(payload)
 
     def test_semantic_validator_rejects_every_derivable_count_mismatch(self):
         validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)

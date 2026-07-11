@@ -867,6 +867,7 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         capability_resolution.get("capabilities"), "capability_resolution.capabilities"
     )
     capability_keys = []
+    expected_invariant_nodes: list[tuple[str, str, str, str]] = []
     missing_required_count = 0
     for capability in capabilities:
         scenario_id = capability.get("scenario_id")
@@ -887,6 +888,17 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
             _semantic_error("capability status")
         if (status == "covered") != bool(skills):
             _semantic_error("capability coverage")
+        if source == "invariant" and status == "covered":
+            stage = _semantic_text(capability.get("stage"), "invariant capability stage")
+            expected_invariant_nodes.extend(
+                (
+                    f"invariant:{capability_id}:{skill_name}",
+                    capability_id,
+                    skill_name,
+                    stage,
+                )
+                for skill_name in skills
+            )
         if required and status == "missing":
             missing_required_count += 1
         capability_keys.append((scenario_id, capability_id, source))
@@ -920,6 +932,7 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
     node_id_set = set(node_ids)
     required_skill_names: list[str] = []
     standard_node_intents: set[str] = set()
+    actual_invariant_nodes: list[tuple[str, str, str, str]] = []
     selected_intent_id_set = set(selected_intent_ids)
     for node in nodes:
         node_intents = _semantic_text_list(node.get("intent_ids"), "execution node intent ids")
@@ -941,11 +954,18 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         ):
             _semantic_error("execution node references")
         if is_invariant_node:
+            invariant_capability = _semantic_text(
+                node.get("invariant_capability"), "invariant node capability"
+            )
+            node_stage = _semantic_text(node.get("stage"), "invariant node stage")
             if (
                 (not empty_invariant_fallback and set(node_intents) != selected_intent_id_set)
                 or node_scenarios
             ):
                 _semantic_error("invariant node mapping")
+            actual_invariant_nodes.append(
+                (node["id"], invariant_capability, skill_name, node_stage)
+            )
         else:
             if (
                 len(node_intents) != 1
@@ -958,6 +978,11 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
             required_skill_names.append(skill_name)
     if nodes and standard_node_intents != selected_intent_id_set:
         _semantic_error("execution intent coverage")
+    if (
+        len(actual_invariant_nodes) != len(expected_invariant_nodes)
+        or set(actual_invariant_nodes) != set(expected_invariant_nodes)
+    ):
+        _semantic_error("invariant capability node projection")
 
     edges = _semantic_object_list(execution_graph.get("edges"), "execution_graph.edges")
     if len(edges) > 4 * len(nodes) * len(nodes):
