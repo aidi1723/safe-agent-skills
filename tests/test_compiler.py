@@ -39,6 +39,54 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["nodes"], [])
         self.assertEqual(compiled["edges"], [])
 
+    def test_semantically_forged_readiness_evidence_blocks_compilation(self):
+        graph = IntentGraph(
+            (
+                self.intent("i1"),
+                self.intent(
+                    "i2",
+                    depends_on=("i1",),
+                    task_type="open_source_release",
+                    summary="publish update",
+                ),
+            ),
+            (),
+            dependency_relations=(
+                IntentRelation("i1", "i2", "release_gate", True),
+            ),
+            intent_evidence=(
+                IntentEvidence(
+                    "code_review", "action", "positive", "none", "enumeration", (), 2
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "readiness",
+                    "enumeration",
+                    ("release checklist",),
+                    4,
+                ),
+            ),
+        )
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            {
+                "bundles": [
+                    self.bundle("first"),
+                    self.bundle("second"),
+                ]
+            },
+            {"execution-publish-check"},
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+        self.assertEqual(compiled["nodes"], [])
+        self.assertEqual(compiled["edges"], [])
+
     @classmethod
     def setUpClass(cls):
         cls.bundles_index = json.loads(

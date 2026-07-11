@@ -196,7 +196,9 @@ def _validated_evidence(
     if evidence == ():
         return ()
     errors = validate_intent_evidence(
-        evidence, tuple(intent.task_type for intent in intents)
+        evidence,
+        tuple(intent.task_type for intent in intents),
+        tuple(intent.summary for intent in intents),
     )
     if errors:
         return None

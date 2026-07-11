@@ -184,6 +184,7 @@ class IntentGraph:
             validate_intent_evidence(
                 self.intent_evidence,
                 tuple(intent.task_type for intent in self.intents),
+                tuple(intent.summary for intent in self.intents),
             )
         )
 

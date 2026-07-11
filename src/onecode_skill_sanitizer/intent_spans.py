@@ -3,7 +3,11 @@
 from dataclasses import dataclass
 import re
 
-from .intent_evidence import IntentEvidence
+from .intent_evidence import (
+    IntentEvidence,
+    source_supports_release_action,
+    source_supports_release_readiness,
+)
 from .routing_profiles import (
     SCENARIO_PROFILES,
     is_design_governance_composite,
@@ -75,17 +79,6 @@ _EXPLICIT_SEQUENCE_RE = re.compile(
     re.IGNORECASE,
 )
 _PARALLEL_CONTEXT_RE = re.compile(r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE)
-_RELEASE_ACTION_CONTEXT_RE = re.compile(
-    r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?"
-    r"(?:发布|上线|推送)|"
-    r"(?:发布|上线|推送)(?:更新|结果|版本|新版本|软件包|包|项目|网站|应用|代码|变更|到\S+)|"
-    r"推送(?:代码)?(?:到)?\s*github|"
-    r"\b(?:publish|release)\b\s+(?:the\s+|an?\s+)?"
-    r"(?:update|results?|package|version|project|website|app|code|changes?)\b|"
-    r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
-    r"to\s+github)\b",
-    re.IGNORECASE,
-)
 _RELEASE_PRECONDITION_RE = re.compile(
     r"(?:发布|上线|推送)前|推送(?:到)?\s*github\s*前|"
     r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
@@ -97,7 +90,6 @@ _NON_ACTION_RELEASE_TERM_RE = re.compile(
     r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
     re.IGNORECASE,
 )
-_RELEASE_READINESS_SIGNALS = frozenset({"发布清单", "release checklist"})
 _WEBSITE_PUBLISH_PRECONDITION_RE = re.compile(
     r"^\s*before\s+publishing\s+"
     r"(?:(?:the|a|an|our|my|your|their|its)\s+)?"
@@ -467,9 +459,13 @@ def _profile_evidence(
             for combined in signals
             for signal in combined.split(" / ")
         }
-        if normalized_signals & _RELEASE_READINESS_SIGNALS:
+        if source_supports_release_readiness(
+            clause, tuple(normalized_signals)
+        ):
             release_mode = "readiness"
-        elif _has_positive_release_action(clause) or normalized_signals:
+        elif source_supports_release_action(
+            clause, tuple(normalized_signals)
+        ):
             release_mode = "action"
     return IntentEvidence(
         task_type=task_type,
@@ -523,7 +519,7 @@ def _has_positive_release_action(clause: str) -> bool:
             segment
         ):
             continue
-        if _RELEASE_ACTION_CONTEXT_RE.search(segment):
+        if source_supports_release_action(segment):
             return True
     return False
 

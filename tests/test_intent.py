@@ -58,6 +58,165 @@ class IntentTest(unittest.TestCase):
                     graph.validate(),
                 )
 
+    def test_internal_intent_evidence_enforces_release_semantics(self):
+        cases = [
+            (
+                self.intent("i1"),
+                IntentEvidence(
+                    "general", "action", "positive", "action", "single", (), 0
+                ),
+                "non-release intent cannot carry release mode",
+            ),
+            (
+                dataclasses.replace(self.intent("i1"), task_type="code_review"),
+                IntentEvidence(
+                    "code_review",
+                    "action",
+                    "positive",
+                    "readiness",
+                    "single",
+                    ("release checklist",),
+                    2,
+                ),
+                "non-release intent cannot carry release mode",
+            ),
+            (
+                dataclasses.replace(
+                    self.intent("i1"),
+                    task_type="open_source_release",
+                    summary="publish update",
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "none",
+                    "single",
+                    ("publish update",),
+                    4,
+                ),
+                "release intent must declare release mode",
+            ),
+            (
+                dataclasses.replace(
+                    self.intent("i1"),
+                    task_type="open_source_release",
+                    summary="publish update",
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "readiness",
+                    "enumeration",
+                    ("release checklist",),
+                    4,
+                ),
+                "readiness evidence is not supported by source",
+            ),
+            (
+                dataclasses.replace(
+                    self.intent("i1"),
+                    task_type="open_source_release",
+                    summary="prepare a checklist",
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "readiness",
+                    "enumeration",
+                    ("checklist",),
+                    2,
+                ),
+                "readiness evidence is not supported by source",
+            ),
+            (
+                dataclasses.replace(
+                    self.intent("i1"),
+                    task_type="open_source_release",
+                    summary="release checklist",
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "descriptive",
+                    "positive",
+                    "action",
+                    "single",
+                    ("release checklist",),
+                    2,
+                ),
+                "release action evidence requires action context",
+            ),
+            (
+                dataclasses.replace(
+                    self.intent("i1"),
+                    task_type="open_source_release",
+                    summary="unrelated source",
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "action",
+                    "single",
+                    ("publish update",),
+                    4,
+                ),
+                "release action evidence requires action context",
+            ),
+            (
+                dataclasses.replace(
+                    self.intent("i1"),
+                    task_type="open_source_release",
+                    summary="release checklist",
+                ),
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "negative",
+                    "readiness",
+                    "single",
+                    ("release checklist",),
+                    4,
+                ),
+                "readiness evidence requires positive context",
+            ),
+        ]
+
+        for intent, evidence, expected in cases:
+            with self.subTest(expected=expected):
+                graph = IntentGraph((intent,), (), intent_evidence=(evidence,))
+                self.assertTrue(
+                    any(expected in error for error in graph.validate()),
+                    graph.validate(),
+                )
+
+    def test_suppressed_general_evidence_has_canonical_empty_payload(self):
+        generated = decompose_task(
+            "The description mentions code review + executive brief + release checklist"
+        )
+        evidence = generated.intent_evidence[0]
+
+        self.assertEqual(evidence.task_type, "general")
+        self.assertEqual(evidence.context, "descriptive")
+        self.assertEqual(evidence.release_mode, "none")
+        self.assertEqual(evidence.matched_signals, ())
+        self.assertEqual(evidence.matched_score, 0)
+        self.assertEqual(generated.validate(), [])
+
+        malformed = dataclasses.replace(evidence, matched_signals=("code review",))
+        graph = IntentGraph(
+            (self.intent("i1"),), (), intent_evidence=(malformed,)
+        )
+        self.assertTrue(
+            any(
+                "suppressed general evidence must have empty matches" in error
+                for error in graph.validate()
+            ),
+            graph.validate(),
+        )
+
     def test_explicit_sequences_create_dependency_chains(self):
         cases = [
             (
