@@ -70,6 +70,8 @@ from .router_eval_v2 import dataset_identity_v2
 from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_envelope_v2
+from .router_eval_review import load_eval_suite
+from .router_eval_review import load_review_record
 from .router_quality_gate import build_quality_gate
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
@@ -552,10 +554,10 @@ def router_eval_command(args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 2
 
 def router_eval_v2_command(args: argparse.Namespace) -> int:
-    eval_path = resolve_project_asset_path(args.eval)
     registry_dir = resolve_project_asset_path(args.registry)
     bundles_path = resolve_project_asset_path(args.bundles)
     try:
+        _validate_router_eval_v2_inputs(args)
         snapshot = build_verified_registry_snapshot(registry_dir)
         bundles_index = load_bundles_index(bundles_path)
         known_scenarios = {
@@ -563,7 +565,26 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             for bundle in bundles_index.get("bundles", [])
             if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
         }
-        dataset = load_eval_dataset_envelope_v2(eval_path, known_scenarios)
+        suite_path = getattr(args, "suite", None)
+        review_path = getattr(args, "review", None)
+        if suite_path:
+            dataset = load_eval_suite(resolve_project_asset_path(suite_path), known_scenarios)
+            dataset_identity = dataset["identity"]
+            review_identity = (
+                load_review_record(
+                    resolve_project_asset_path(review_path),
+                    dataset["suite_identity"],
+                )
+                if review_path
+                else {}
+            )
+        else:
+            dataset = load_eval_dataset_envelope_v2(
+                resolve_project_asset_path(args.eval),
+                known_scenarios,
+            )
+            dataset_identity = dataset_identity_v2(dataset)
+            review_identity = {}
         cases = dataset["cases"]
         capability_context = _bundle_required_capability_context(bundles_index)
         contract_result = contract_coverage(
@@ -591,8 +612,8 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         result["quality_gate"] = build_quality_gate(
             result["metrics"],
             support_counts={**result["counts"], "case_count": result["case_count"]},
-            dataset_identity=dataset_identity_v2(dataset),
-            review_identity={},
+            dataset_identity=dataset_identity,
+            review_identity=review_identity,
         )
     except (DatasetValidationError, EvaluatorError, ValueError, OSError, SystemExit) as exc:
         print(
@@ -608,6 +629,11 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
     if getattr(args, "require_production_ready", False) and not result["quality_gate"]["production_ready"]:
         return 2
     return 0
+
+
+def _validate_router_eval_v2_inputs(args: argparse.Namespace) -> None:
+    if getattr(args, "review", None) and not getattr(args, "suite", None):
+        raise ValueError("--review is only valid with --suite")
 
 
 CORE_CONTRACT_SCENARIOS = [

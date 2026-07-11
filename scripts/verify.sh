@@ -131,6 +131,8 @@ python3 -m json.tool schemas/contract-v2.schema.json >/dev/null
 python3 -m json.tool schemas/intent-graph.schema.json >/dev/null
 python3 -m json.tool schemas/task-pack-v2.schema.json >/dev/null
 python3 -m json.tool schemas/batch-index.schema.json >/dev/null
+python3 -m json.tool schemas/router-eval-suite.schema.json >/dev/null
+python3 -m json.tool schemas/router-eval-review.schema.json >/dev/null
 python3 -m json.tool catalog/depth-policy.json >/dev/null
 PYTHONPATH=src python3 - <<'PY'
 import json
@@ -145,10 +147,14 @@ contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(e
 intent_graph_schema = json.loads(Path("schemas/intent-graph.schema.json").read_text(encoding="utf-8"))
 manifest_schema = json.loads(Path("schemas/skill-manifest.schema.json").read_text(encoding="utf-8"))
 task_pack_schema = json.loads(Path("schemas/task-pack-v2.schema.json").read_text(encoding="utf-8"))
+router_eval_suite_schema = json.loads(Path("schemas/router-eval-suite.schema.json").read_text(encoding="utf-8"))
+router_eval_review_schema = json.loads(Path("schemas/router-eval-review.schema.json").read_text(encoding="utf-8"))
 Draft202012Validator.check_schema(contract_schema)
 Draft202012Validator.check_schema(intent_graph_schema)
 Draft202012Validator.check_schema(manifest_schema)
 Draft202012Validator.check_schema(task_pack_schema)
+Draft202012Validator.check_schema(router_eval_suite_schema)
+Draft202012Validator.check_schema(router_eval_review_schema)
 strict_type_checker = Draft202012Validator.TYPE_CHECKER.redefine(
     "integer", lambda checker, value: isinstance(value, int) and not isinstance(value, bool)
 )

@@ -256,7 +256,10 @@ def build_parser() -> argparse.ArgumentParser:
     router_eval_parser.set_defaults(func=router_eval_command)
 
     router_eval_v2_parser = subparsers.add_parser("router-eval-v2")
-    router_eval_v2_parser.add_argument("--eval", required=True)
+    router_eval_v2_input = router_eval_v2_parser.add_mutually_exclusive_group(required=True)
+    router_eval_v2_input.add_argument("--eval")
+    router_eval_v2_input.add_argument("--suite")
+    router_eval_v2_parser.add_argument("--review")
     router_eval_v2_parser.add_argument("--registry", default="catalog")
     router_eval_v2_parser.add_argument("--bundles", default="bundles/index.json")
     router_eval_v2_parser.add_argument("--require-production-ready", action="store_true")

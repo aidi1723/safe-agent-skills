@@ -200,6 +200,8 @@ def _validate_case(
     case: object,
     index: int,
     known_scenarios: set[str] | None,
+    *,
+    allowed_categories: set[str] | None = None,
 ) -> dict[str, Any]:
     prefix = f"cases[{index}]"
     if not isinstance(case, dict):
@@ -214,7 +216,8 @@ def _validate_case(
     _require_nonempty_string(case["id"], f"{prefix}.id")
     _require_nonempty_string(case["task"], f"{prefix}.task")
     category = case["category"]
-    if not isinstance(category, str) or category not in CATEGORY_DISTRIBUTION:
+    categories = set(CATEGORY_DISTRIBUTION) if allowed_categories is None else allowed_categories
+    if not isinstance(category, str) or category not in categories:
         raise DatasetValidationError(f"{prefix}.category is invalid")
     _require_string_list(case["expected_intents"], f"{prefix}.expected_intents", nonempty=True)
     if len(set(case["expected_intents"])) != len(case["expected_intents"]):

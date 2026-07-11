@@ -105,6 +105,13 @@ class VerifyScriptTest(unittest.TestCase):
         self.assertIn('Install development checks with: python3 -m pip install -e ".[dev]"', script)
         self.assertIn("exit 2", script)
 
+    def test_verify_script_registers_router_eval_schemas(self):
+        script = Path("scripts/verify.sh").read_text(encoding="utf-8")
+
+        for schema_name in ("router-eval-suite.schema.json", "router-eval-review.schema.json"):
+            self.assertIn(f"python3 -m json.tool schemas/{schema_name}", script)
+            self.assertIn(f'Path("schemas/{schema_name}")', script)
+
     def test_verify_script_exits_two_when_jsonschema_is_missing(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             fake_python = Path(temp_dir) / "python3"
