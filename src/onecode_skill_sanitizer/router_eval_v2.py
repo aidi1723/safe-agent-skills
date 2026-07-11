@@ -90,6 +90,13 @@ EXPECTED_LABELING = {
     "generated_from_router": False,
     "reviewed_at": "2026-07-10",
 }
+LEGACY_ROUTER_EVAL_V2_FIELDS = {
+    "schema_version",
+    "dataset",
+    "split",
+    "case_count",
+    "cases",
+}
 
 
 class DatasetValidationError(ValueError):
@@ -111,6 +118,15 @@ def load_eval_dataset_v2(
         raise DatasetValidationError(f"unable to read evaluation dataset: {exc}") from exc
     except json.JSONDecodeError as exc:
         raise DatasetValidationError(f"invalid evaluation JSON: {exc}") from exc
+    if (
+        isinstance(payload, dict)
+        and payload.get("schema_version") == 2
+        and LEGACY_ROUTER_EVAL_V2_FIELDS.issubset(payload)
+    ):
+        raise DatasetValidationError(
+            "this is a router-eval dataset; use router-eval. "
+            "router-eval-v2 expects the multi-intent gold/suite contract"
+        )
     if not isinstance(payload, dict) or set(payload) != {"labeling", "cases"}:
         raise DatasetValidationError(
             "evaluation dataset must be an object containing only labeling and cases"

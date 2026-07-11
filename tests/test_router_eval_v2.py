@@ -185,6 +185,25 @@ class RouterEvalV2Tests(unittest.TestCase):
             with self.assertRaises(DatasetValidationError):
                 load_eval_dataset_v2(write_payload(temp_dir, payload), bundle_scenario_ids())
 
+    def test_loader_identifies_legacy_router_eval_schema_v2_payload(self):
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
+
+        legacy_payload = {
+            "schema_version": 2,
+            "dataset": "router-quality-v2-baseline",
+            "split": "regression",
+            "case_count": 0,
+            "cases": [],
+            "notes": "optional legacy metadata",
+        }
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with self.assertRaisesRegex(
+                DatasetValidationError,
+                "router-eval dataset.*use router-eval.*multi-intent gold/suite contract",
+            ):
+                load_eval_dataset_v2(write_payload(temp_dir, legacy_payload))
+
     def test_loader_rejects_strict_case_contract_violations(self):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2

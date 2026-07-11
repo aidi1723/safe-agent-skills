@@ -603,8 +603,8 @@ class RouterEvalCliTest(unittest.TestCase):
         self.assertEqual(result["status"], "ok")
         self.assertEqual(result["failed_count"], 0)
 
-    def test_router_eval_v2_regression_envelope_runs_all_cases(self):
-        eval_path = Path("evals/router-quality-v2.json")
+    def test_router_eval_schema_v2_regression_envelope_runs_all_cases(self):
+        eval_path = Path("evals/router-regression-v2.json")
         payload = load_router_eval(eval_path)
 
         self.assertEqual(payload["schema_version"], 2)
@@ -635,6 +635,28 @@ class RouterEvalCliTest(unittest.TestCase):
         self.assertEqual(result["case_count"], 43)
         self.assertEqual(result["passed_count"], 43)
         self.assertEqual(result["failed_count"], 0)
+
+    def test_router_eval_v2_explains_legacy_router_eval_dataset_mismatch(self):
+        eval_out = io.StringIO()
+        with contextlib.redirect_stdout(eval_out):
+            eval_code = main(
+                [
+                    "router-eval-v2",
+                    "--eval",
+                    "evals/router-regression-v2.json",
+                    "--registry",
+                    "catalog",
+                    "--bundles",
+                    "bundles/index.json",
+                ]
+            )
+
+        self.assertEqual(eval_code, 2)
+        result = json.loads(eval_out.getvalue())
+        self.assertEqual(result["status"], "error")
+        self.assertIn("router-eval dataset", result["error"])
+        self.assertIn("use router-eval", result["error"])
+        self.assertIn("multi-intent gold/suite contract", result["error"])
 
     def test_load_router_eval_v2_requires_valid_regression_envelope(self):
         valid_case = {
