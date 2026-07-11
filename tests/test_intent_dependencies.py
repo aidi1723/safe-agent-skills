@@ -218,6 +218,8 @@ class IntentDependenciesTest(unittest.TestCase):
             "Build the website after approval of the PR",
             "Build the website after the PR is approved",
             "构建官网在 PR 审批通过后",
+            "构建官网在PR审批通过后",
+            "构建官网在拉取请求审批通过后",
         ]
 
         for task in cases:

@@ -35,7 +35,7 @@ _ORDERED_AFTER_RE = re.compile(
     re.IGNORECASE,
 )
 _CHINESE_TARGET_FIRST_APPROVAL_RE = re.compile(
-    r"\s*在\s+(?=(?:PR|拉取请求)\s*(?:审批通过|批准|审核通过)后\s*$)",
+    r"\s*在\s*(?=(?:PR|拉取请求)\s*(?:审批通过|批准|审核通过)后\s*$)",
     re.IGNORECASE,
 )
 _PUBLISHING_SITE_TARGET = (

@@ -447,6 +447,8 @@ class CompilerTest(unittest.TestCase):
             ("Build the website after approval of the PR", ("i2",), ("i1",)),
             ("Build the website after the PR is approved", ("i2",), ("i1",)),
             ("构建官网在 PR 审批通过后", ("i2",), ("i1",)),
+            ("构建官网在PR审批通过后", ("i2",), ("i1",)),
+            ("构建官网在拉取请求审批通过后", ("i2",), ("i1",)),
         ]
 
         for task, source_ids, target_ids in cases:
