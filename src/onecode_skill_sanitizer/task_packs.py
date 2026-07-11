@@ -901,6 +901,14 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         _semantic_error("capability resolution status")
 
     execution_graph = _semantic_object(root.get("execution_graph"), "execution_graph")
+    reason_codes = _semantic_text_list(execution_graph.get("reason_codes"), "reason_codes")
+    invariant_only_fallback = (
+        root.get("routing_status") == "incomplete"
+        and execution_graph.get("status") == "blocked"
+        and execution_graph.get("acyclic") is False
+        and reason_codes == ["incomplete_composition"]
+        and not selected_intent_ids
+    )
     nodes = _semantic_object_list(execution_graph.get("nodes"), "execution_graph.nodes")
     maximum_node_count = (len(intent_ids) + 1) * len(allowed_graph_skill_names)
     if len(nodes) > maximum_node_count:
@@ -919,8 +927,12 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
             node.get("scenario_ids"), "execution node scenario ids"
         )
         skill_name = _semantic_text(node.get("skill"), "execution node skill")
+        is_invariant_node = "invariant_capability" in node
+        empty_invariant_fallback = (
+            is_invariant_node and invariant_only_fallback and not node_intents
+        )
         if (
-            not node_intents
+            (not node_intents and not empty_invariant_fallback)
             or len(node_intents) != len(set(node_intents))
             or not set(node_intents) <= selected_intent_id_set
             or len(node_scenarios) != len(set(node_scenarios))
@@ -928,8 +940,11 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
             or skill_name not in allowed_graph_skill_names
         ):
             _semantic_error("execution node references")
-        if "invariant_capability" in node:
-            if set(node_intents) != selected_intent_id_set or node_scenarios:
+        if is_invariant_node:
+            if (
+                (not empty_invariant_fallback and set(node_intents) != selected_intent_id_set)
+                or node_scenarios
+            ):
                 _semantic_error("invariant node mapping")
         else:
             if (
@@ -958,7 +973,6 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
     _require_unique_semantic_keys(edge_keys, "execution edges")
     topology_acyclic = _compiler_graph_is_acyclic(nodes, edges)
 
-    reason_codes = _semantic_text_list(execution_graph.get("reason_codes"), "reason_codes")
     if len(reason_codes) != len(set(reason_codes)):
         _semantic_error("execution graph reason codes")
     graph_status = execution_graph.get("status")

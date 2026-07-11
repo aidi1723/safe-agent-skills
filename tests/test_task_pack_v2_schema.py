@@ -54,6 +54,10 @@ class TaskPackV2SchemaTest(unittest.TestCase):
         cls.compound_payload = _smart_payload(
             "构建官网，同时审计 skill 路由器，验证通过后发布更新"
         )
+        with patch.object(task_packs, "validate_task_pack_v2_semantics", return_value=None):
+            cls.invariant_incomplete_payload = _smart_payload(
+                "help me with this", "--invariants", "不能泄露密钥"
+            )
 
     @classmethod
     def tearDownClass(cls):
@@ -67,6 +71,31 @@ class TaskPackV2SchemaTest(unittest.TestCase):
         for status, payload in self.payloads.items():
             with self.subTest(status=status):
                 validate_task_pack_v2(payload)
+
+    def test_public_vague_incomplete_pack_preserves_invariant_safeguard(self):
+        payload = _smart_payload(
+            "help me with this", "--invariants", "不能泄露密钥"
+        )
+        self.assertEqual(payload["routing_status"], "incomplete")
+        self.assertEqual(
+            [skill["name"] for skill in payload["selected_skills"]],
+            ["security-secret-context-redaction"],
+        )
+        self.assertEqual(
+            payload["execution_graph"]["nodes"],
+            [
+                {
+                    "host_action": False,
+                    "id": "invariant:secret_redaction:security-secret-context-redaction",
+                    "intent_ids": [],
+                    "invariant_capability": "secret_redaction",
+                    "scenario_ids": [],
+                    "skill": "security-secret-context-redaction",
+                    "stage": "review",
+                }
+            ],
+        )
+        validate_task_pack_v2(payload)
 
     def test_every_selected_skill_record_produced_from_the_catalog_validates(self):
         payload = copy.deepcopy(self.payloads["complete"])
@@ -617,6 +646,38 @@ class TaskPackV2SchemaTest(unittest.TestCase):
             "mismatched_mapping": mismatched_mapping,
             "incomplete_true_flag": incomplete_true_flag,
             "blocked_true_flag": blocked_true_flag,
+        }.items():
+            with self.subTest(label=label), self.assertRaises(ValueError):
+                validator(payload)
+
+    def test_semantic_validator_limits_empty_intent_mapping_to_invariant_only_fallback(self):
+        validator = task_packs.validate_task_pack_v2_semantics
+        valid_fallback = copy.deepcopy(self.invariant_incomplete_payload)
+        validator(valid_fallback)
+
+        ready_forgery = copy.deepcopy(self.payloads["complete"])
+        ready_node = ready_forgery["execution_graph"]["nodes"][0]
+        ready_node.update(
+            intent_ids=[], scenario_ids=[], invariant_capability="secret_redaction"
+        )
+
+        normal_node_empty = copy.deepcopy(self.payloads["complete"])
+        normal_node_empty["execution_graph"]["nodes"][0]["intent_ids"] = []
+
+        incomplete_with_standard_mappings = copy.deepcopy(self.payloads["complete"])
+        incomplete_with_standard_mappings["routing_status"] = "incomplete"
+        incomplete_with_standard_mappings["routing_metrics"]["decomposition"][
+            "reason_codes"
+        ] = ["task_scan_limit_exceeded"]
+        invariant_node = incomplete_with_standard_mappings["execution_graph"]["nodes"][0]
+        invariant_node.update(
+            intent_ids=[], scenario_ids=[], invariant_capability="secret_redaction"
+        )
+
+        for label, payload in {
+            "ready_forgery": ready_forgery,
+            "normal_node_empty": normal_node_empty,
+            "incomplete_with_standard_mappings": incomplete_with_standard_mappings,
         }.items():
             with self.subTest(label=label), self.assertRaises(ValueError):
                 validator(payload)
