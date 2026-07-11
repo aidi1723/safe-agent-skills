@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Iterable, Sequence
 
 from .intent import IntentRelation
 from .intent_evidence import IntentEvidence, validate_intent_evidence
-from .routing_profiles import MAX_SCAN_CHARACTERS
+from .intent_source import bound_task_text
 
 if TYPE_CHECKING:
     from .intent import Intent
@@ -46,7 +46,7 @@ _CHINESE_TARGET_FIRST_APPROVAL_RE = re.compile(
 _CHINESE_COMPLETION_RE = re.compile(
     r"(?:完成|验证通过|测试通过|批准|审批通过|审核通过)后(?:再)?"
 )
-_VERIFICATION_GATE_RE = re.compile(
+_LEGACY_VERIFICATION_GATE_RE = re.compile(
     r"\b(?:verif(?:y|ied|ying|ication)|approv(?:ed|al))\b|"
     r"(?:验证通过|测试通过|批准|审批通过|审核通过)",
     re.IGNORECASE,
@@ -93,7 +93,7 @@ def infer_intent_relations(
     intent_evidence: tuple[IntentEvidence, ...] = (),
 ) -> tuple[IntentRelation, ...]:
     """Infer only dependencies stated by explicit ordering or release markers."""
-    current_text = current_text[:MAX_SCAN_CHARACTERS]
+    current_text = bound_task_text(current_text)
     if len(intents) < 2:
         return ()
 
@@ -125,7 +125,9 @@ def infer_intent_relations(
         ordered_intents
     ) == 2:
         source = ordered_intents[1]
-        requires_verification = _requires_verification(source.summary)
+        requires_verification = _gate_requires_verification(
+            structured_evidence, 1, source
+        )
         relations.append(
             IntentRelation(
                 source.id,
@@ -139,10 +141,14 @@ def infer_intent_relations(
     elif _PREFIX_COMPLETION_RE.search(current_text) or _CHINESE_COMPLETION_RE.search(
         current_text
     ):
-        _append_gate_chain(relations, ordered_intents)
+        _append_gate_chain(
+            relations, ordered_intents, structured_evidence
+        )
     elif _INFIX_COMPLETION_RE.search(current_text) and len(ordered_intents) == 2:
         source = ordered_intents[1]
-        requires_verification = _requires_verification(source.summary)
+        requires_verification = _gate_requires_verification(
+            structured_evidence, 1, source
+        )
         relations.append(
             IntentRelation(
                 source.id,
@@ -244,7 +250,7 @@ def infer_unresolved_dependencies(
     current_text: str, intents: Sequence[Intent]
 ) -> tuple[str, ...]:
     """Record an explicit completion reference when no prerequisite intent exists."""
-    current_text = current_text[:MAX_SCAN_CHARACTERS]
+    current_text = bound_task_text(current_text)
     if len(intents) != 1:
         return ()
     match = _UNKNOWN_PREFIX_GATE_RE.search(current_text)
@@ -272,12 +278,16 @@ def _append_source_chain(
 
 
 def _append_gate_chain(
-    relations: list[IntentRelation], intents: Sequence[Intent]
+    relations: list[IntentRelation],
+    intents: Sequence[Intent],
+    evidence: tuple[IntentEvidence, ...],
 ) -> None:
-    for source, target in zip(intents, intents[1:]):
+    for index, (source, target) in enumerate(zip(intents, intents[1:])):
         if target.task_type == "open_source_release":
             continue
-        requires_verification = _requires_verification(source.summary)
+        requires_verification = _gate_requires_verification(
+            evidence, index, source
+        )
         relations.append(
             IntentRelation(
                 source.id,
@@ -290,8 +300,17 @@ def _append_gate_chain(
         )
 
 
-def _requires_verification(text: str) -> bool:
-    return bool(_VERIFICATION_GATE_RE.search(text))
+def _gate_requires_verification(
+    evidence: tuple[IntentEvidence, ...], index: int, intent: Intent
+) -> bool:
+    if evidence:
+        return evidence[index].gate_mode == "verification"
+    return _legacy_requires_verification(intent.summary)
+
+
+def _legacy_requires_verification(text: str) -> bool:
+    """Compatibility fallback used only by empty-evidence manual calls."""
+    return bool(_LEGACY_VERIFICATION_GATE_RE.search(bound_task_text(text)))
 
 
 def _append_semicolon_relations(

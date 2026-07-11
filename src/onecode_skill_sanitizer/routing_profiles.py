@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import re
+
 from collections.abc import Iterable, Iterator
+
+from .intent_source import MAX_TASK_SCAN_CHARS, bound_task_text
 
 
 SCENARIO_PROFILES = [
@@ -631,6 +634,7 @@ NORMALIZATION_ALIASES = [
 ]
 
 def normalize_task_text(task: str) -> str:
+    task = bound_task_text(task)
     text = task.lower().replace("-", " ").replace("_", " ")
     expansions = []
     for source, target in NORMALIZATION_ALIASES:
@@ -695,6 +699,7 @@ STALE_CONTEXT_LABELS = {
 }
 
 def structured_context_label_key(label: str) -> str:
+    label = bound_task_text(label)
     normalized = normalize_task_text(label)
     if normalized in CURRENT_CONTEXT_LABELS:
         return "current"
@@ -705,6 +710,7 @@ def structured_context_label_key(label: str) -> str:
     return ""
 
 def parse_structured_context_text(task: str) -> dict:
+    task = bound_task_text(task)
     fields = {"current": [], "history": [], "stale": []}
     active_key = ""
     saw_label = False
@@ -747,6 +753,7 @@ def empty_current_intent_metadata() -> dict:
     }
 
 def split_current_intent_text(task: str) -> dict:
+    task = bound_task_text(task)
     structured = parse_structured_context_text(task)
     if structured["structured_context_detected"]:
         return {
@@ -813,10 +820,11 @@ PROFILE_SIGNAL_ALIASES = {
     "investment_research_diligence": ("value-investing",),
 }
 
-MAX_SCAN_CHARACTERS = 20_000
+MAX_SCAN_CHARACTERS = MAX_TASK_SCAN_CHARS
 
 
 def is_design_governance_composite(text: str) -> bool:
+    text = bound_task_text(text)
     lowered = text.lower()
     return "design system" in lowered and "component states" in lowered
 
@@ -854,7 +862,7 @@ _PROFILE_SIGNALS_BY_PREFIX = _build_profile_signals_by_prefix()
 
 def iter_profile_signal_matches(text: str) -> Iterator[dict[str, object]]:
     """Return deterministic configured-profile matches with source offsets."""
-    source = text[:MAX_SCAN_CHARACTERS]
+    source = bound_task_text(text)
     for start, source_character in enumerate(source):
         prefix = source_character.lower()
         if len(prefix) != 1:
@@ -891,6 +899,7 @@ def _short_ascii_signal_has_boundaries(
     )
 
 def _signal_score(text: str, signals: Iterable[str]) -> int:
+    text = bound_task_text(text)
     score = 0
     distinctive_score = 0
     for signal in signals:
@@ -906,6 +915,7 @@ def _signal_score(text: str, signals: Iterable[str]) -> int:
 
 
 def _longest_matching_signal(text: str, signals: Iterable[str]) -> int:
+    text = bound_task_text(text)
     return max(
         (
             len(normalized_signal)
@@ -917,6 +927,7 @@ def _longest_matching_signal(text: str, signals: Iterable[str]) -> int:
     )
 
 def signal_matches_text(signal: str, text: str) -> bool:
+    text = bound_task_text(text)
     if not signal:
         return False
     if " " in signal:
@@ -926,6 +937,7 @@ def signal_matches_text(signal: str, text: str) -> bool:
     return signal in text
 
 def build_task_profile(task: str) -> dict:
+    task = bound_task_text(task)
     intent = split_current_intent_text(task)
     full_text = normalize_task_text(task)
     text = intent["current_intent_text"] if intent["current_intent_detected"] else full_text
@@ -1000,6 +1012,7 @@ def build_task_profile(task: str) -> dict:
     }
 
 def build_profile_for_task_type(task: str, task_type: str) -> dict:
+    task = bound_task_text(task)
     profile = build_task_profile(task)
     if profile["task_type"] == task_type:
         return profile

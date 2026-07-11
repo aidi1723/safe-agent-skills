@@ -2,11 +2,13 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 import hashlib
 import json
 import re
 from typing import Any
+
+from .intent_source import bound_task_text
 
 
 EVIDENCE_CONTEXTS = frozenset({"action", "descriptive", "how_to", "ambiguous"})
@@ -15,6 +17,7 @@ RELEASE_MODES = frozenset({"none", "readiness", "action"})
 RELATION_MODES = frozenset(
     {"single", "enumeration", "parallel", "explicit_sequence"}
 )
+GATE_MODES = frozenset({"none", "completion", "verification"})
 MAX_MATCHED_SCORE = 512
 RELEASE_READINESS_SIGNALS = frozenset({"发布清单", "release checklist"})
 RELEASE_ACTION_SIGNALS = frozenset(
@@ -61,14 +64,14 @@ class IntentEvidence:
     matched_signals: tuple[str, ...]
     matched_score: int
     provenance: str = ""
+    gate_mode: str = "none"
 
 
 def bind_intent_evidence(
     evidence: tuple[IntentEvidence, ...], source: str
 ) -> tuple[IntentEvidence, ...]:
     """Bind generated evidence to the exact bounded source and field values."""
-    from dataclasses import replace
-
+    source = bound_task_text(source)
     return tuple(
         replace(item, provenance=_evidence_provenance(item, source))
         for item in evidence
@@ -81,6 +84,8 @@ def validate_intent_evidence(
     evidence_source: str = "",
 ) -> list[str]:
     """Validate internal evidence without accepting lookalike records."""
+    if isinstance(evidence_source, str):
+        evidence_source = bound_task_text(evidence_source)
     if not isinstance(evidence, tuple):
         return ["intent evidence must be a tuple of IntentEvidence records"]
     if not evidence:
@@ -112,6 +117,9 @@ def validate_intent_evidence(
             isinstance(item.relation_mode, str)
             and item.relation_mode in RELATION_MODES
         )
+        gate_mode_valid = (
+            isinstance(item.gate_mode, str) and item.gate_mode in GATE_MODES
+        )
         signals_valid = isinstance(item.matched_signals, tuple) and all(
             isinstance(signal, str) and bool(signal)
             for signal in item.matched_signals
@@ -129,6 +137,8 @@ def validate_intent_evidence(
             errors.append(f"intent evidence {index} has invalid release mode")
         if not relation_mode_valid:
             errors.append(f"intent evidence {index} has invalid relation mode")
+        if not gate_mode_valid:
+            errors.append(f"intent evidence {index} has invalid gate mode")
         if not signals_valid:
             errors.append(f"intent evidence {index} has invalid matched signals")
         if not score_valid:
@@ -140,6 +150,7 @@ def validate_intent_evidence(
                 polarity_valid,
                 release_mode_valid,
                 relation_mode_valid,
+                gate_mode_valid,
                 signals_valid,
                 score_valid,
                 isinstance(item.provenance, str),
@@ -171,6 +182,7 @@ def release_signals(evidence: IntentEvidence) -> tuple[str, ...]:
 def source_supports_release_readiness(
     source: str, matched_signals: tuple[str, ...]
 ) -> bool:
+    source = bound_task_text(source)
     normalized = tuple(signal.casefold() for signal in matched_signals)
     return bool(
         set(normalized) & RELEASE_READINESS_SIGNALS
@@ -185,6 +197,7 @@ def source_supports_release_readiness(
 def source_supports_release_action(
     source: str, matched_signals: tuple[str, ...] = ()
 ) -> bool:
+    source = bound_task_text(source)
     normalized = {signal.casefold() for signal in matched_signals}
     return bool(
         _RELEASE_ACTION_CONTEXT_RE.search(source)
@@ -247,6 +260,7 @@ def _semantic_errors(
 
 
 def _signal_in_source(source: str, signal: str) -> bool:
+    source = bound_task_text(source)
     if signal.isascii():
         return re.search(
             rf"(?<![a-z0-9]){re.escape(signal)}(?![a-z0-9])",
@@ -256,6 +270,7 @@ def _signal_in_source(source: str, signal: str) -> bool:
 
 
 def _evidence_provenance(item: IntentEvidence, source: str) -> str:
+    source = bound_task_text(source)
     payload = {
         "source": source,
         "task_type": item.task_type,
@@ -265,6 +280,7 @@ def _evidence_provenance(item: IntentEvidence, source: str) -> str:
         "relation_mode": item.relation_mode,
         "matched_signals": item.matched_signals,
         "matched_score": item.matched_score,
+        "gate_mode": item.gate_mode,
     }
     encoded = json.dumps(
         payload, ensure_ascii=False, sort_keys=True, separators=(",", ":")

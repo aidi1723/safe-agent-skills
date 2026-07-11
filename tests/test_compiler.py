@@ -17,6 +17,30 @@ COMPOUND_TASK = "构建官网，同时审计 skill 路由器，验证通过后�
 
 
 class CompilerTest(unittest.TestCase):
+    def test_canonical_summary_forgery_blocks_compilation(self):
+        graph = decompose_task(
+            "After completing code review, build a website"
+        )
+        graph = dataclasses.replace(
+            graph,
+            intents=(
+                dataclasses.replace(
+                    graph.intents[0], summary="After verifying code review"
+                ),
+                graph.intents[1],
+            ),
+        )
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            {"bundles": [self.bundle("first"), self.bundle("second")]},
+            {"execution-publish-check"},
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+
     def test_malformed_internal_intent_evidence_blocks_compilation(self):
         valid = IntentEvidence(
             "code_review", "action", "positive", "none", "single", (), 2

@@ -18,8 +18,8 @@ from .intent_spans import (
     relation_mode_for_text,
     split_profile_enumeration,
 )
+from .intent_source import MAX_TASK_SCAN_CHARS, bound_task_text
 from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
-from .routing_profiles import MAX_SCAN_CHARACTERS
 
 
 _LIST_MARKER_RE = re.compile(
@@ -62,6 +62,19 @@ _BEFORE_PUBLISHING_WEBSITE_RE = re.compile(
 _CHINESE_PRECEDES_RE = re.compile(r"\s*先于\s*")
 _RELEASE_BOUNDARY_RE = re.compile(
     r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?(?:发布|上线|推送)"
+)
+_PREFIX_GATE_RE = re.compile(
+    r"^\s*(?:after|once)\b|^\u5f85.+(?:\u5b8c\u6210|\u9a8c\u8bc1\u901a\u8fc7)\u540e|^\u5728.+(?:\u5b8c\u6210|\u9a8c\u8bc1\u901a\u8fc7)\u540e",
+    re.IGNORECASE,
+)
+_INFIX_GATE_RE = re.compile(r"\bafter\b", re.IGNORECASE)
+_CHINESE_GATE_RE = re.compile(
+    r"(?:\u5b8c\u6210|\u9a8c\u8bc1\u901a\u8fc7|\u6d4b\u8bd5\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6279\u901a\u8fc7|\u5ba1\u6838\u901a\u8fc7)\u540e(?:\u518d)?"
+)
+_GATE_VERIFICATION_RE = re.compile(
+    r"\b(?:verif(?:y|ied|ying|ication)|approv(?:ed|al))\b|"
+    r"(?:\u9a8c\u8bc1\u901a\u8fc7|\u6d4b\u8bd5\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6279\u901a\u8fc7|\u5ba1\u6838\u901a\u8fc7)",
+    re.IGNORECASE,
 )
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
@@ -195,7 +208,7 @@ class IntentGraph:
             )
         )
         bounded_evidence_source = (
-            self.evidence_source[:MAX_SCAN_CHARACTERS]
+            bound_task_text(self.evidence_source)
             if isinstance(self.evidence_source, str)
             else self.evidence_source
         )
@@ -211,14 +224,20 @@ class IntentGraph:
             and isinstance(self.evidence_source, str)
             and self.evidence_source
         ):
-            if len(self.evidence_source) > MAX_SCAN_CHARACTERS:
+            if len(self.evidence_source) > MAX_TASK_SCAN_CHARS:
                 errors.append("intent evidence source exceeds scan boundary")
             canonical = _parse_bounded_intent_source(
-                self.evidence_source[:MAX_SCAN_CHARACTERS]
+                bound_task_text(self.evidence_source)
             )
             if self.intent_evidence != canonical.intent_evidence:
                 errors.append(
                     "intent evidence does not match canonical source analysis"
+                )
+            canonical_summaries = canonical.clauses
+            actual_summaries = tuple(intent.summary for intent in self.intents)
+            if actual_summaries != canonical_summaries:
+                errors.append(
+                    "intent summaries do not match canonical source analysis"
                 )
 
         cycle = _find_dependency_cycle(dependencies, intent_ids)
@@ -261,7 +280,7 @@ class _ParsedIntentSource:
 
 
 def normalize_task(task: str) -> NormalizedTask:
-    bounded_task = task[:MAX_SCAN_CHARACTERS]
+    bounded_task = bound_task_text(task)
     context = split_current_intent_text(bounded_task)
     current = (
         context["current_intent_text"]
@@ -278,6 +297,7 @@ def normalize_task(task: str) -> NormalizedTask:
 
 
 def split_task_clauses(task: str) -> list[str]:
+    task = bound_task_text(task)
     normalized = normalize_task(task)
     text = normalized.current.strip()
     if not text:
@@ -362,7 +382,7 @@ def classify_intent(
     index: int,
     evidence: IntentEvidence,
 ) -> Intent:
-    scanned_clause = clause[:MAX_SCAN_CHARACTERS]
+    scanned_clause = bound_task_text(clause)
     if evidence.task_type == "general":
         profile = build_task_profile("")
     else:
@@ -389,7 +409,7 @@ def classify_intent(
 
 def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
     """Build canonical clauses and evidence from an already bounded source."""
-    current = source[:MAX_SCAN_CHARACTERS]
+    current = bound_task_text(source)
     broad_clauses = split_task_clauses(current)
     clauses: list[str] = []
     observed_candidate_count = 0
@@ -456,6 +476,9 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
     clause_evidence = _apply_source_relation_modes(
         current, clauses, clause_evidence
     )
+    clause_evidence = _apply_source_gate_modes(
+        current, clauses, clause_evidence
+    )
     return _ParsedIntentSource(
         clauses=tuple(clauses),
         intent_evidence=bind_intent_evidence(tuple(clause_evidence), current),
@@ -467,9 +490,7 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
 
 
 def _canonical_intent_evidence(source: str) -> tuple[IntentEvidence, ...]:
-    return _parse_bounded_intent_source(
-        source[:MAX_SCAN_CHARACTERS]
-    ).intent_evidence
+    return _parse_bounded_intent_source(bound_task_text(source)).intent_evidence
 
 
 def decompose_task_detailed(task: str) -> TaskDecomposition:
@@ -479,7 +500,7 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
         infer_unresolved_dependencies,
     )
 
-    task_scan_limit_exceeded = len(task) > MAX_SCAN_CHARACTERS
+    task_scan_limit_exceeded = len(task) > MAX_TASK_SCAN_CHARS
     current = normalize_task(task).current
     parsed = _parse_bounded_intent_source(current)
     clauses = parsed.clauses
@@ -567,6 +588,40 @@ def _list_relation_mode(source: str) -> str | None:
     if all(_UNORDERED_LIST_MARKER_RE.match(line) for line in lines):
         return "parallel"
     return None
+
+
+def _apply_source_gate_modes(
+    source: str,
+    clauses: list[str],
+    evidence: list[IntentEvidence],
+) -> list[IntentEvidence]:
+    if not evidence:
+        return evidence
+
+    result = list(evidence)
+    if _CHINESE_TARGET_FIRST_APPROVAL_RE.search(source) or (
+        _INFIX_GATE_RE.search(source) and not _PREFIX_GATE_RE.search(source)
+    ):
+        index = len(result) - 1
+        result[index] = replace(
+            result[index], gate_mode=_gate_mode_for_clause(source)
+        )
+        return result
+    if _PREFIX_GATE_RE.search(source) or _CHINESE_GATE_RE.search(source):
+        for index in range(len(result) - 1):
+            result[index] = replace(
+                result[index],
+                gate_mode=_gate_mode_for_clause(clauses[index]),
+            )
+    return result
+
+
+def _gate_mode_for_clause(clause: str) -> str:
+    return (
+        "verification"
+        if _GATE_VERIFICATION_RE.search(bound_task_text(clause))
+        else "completion"
+    )
 
 
 def decompose_task(task: str) -> IntentGraph:

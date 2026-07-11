@@ -8,7 +8,16 @@ from onecode_skill_sanitizer.intent import (
     decompose_task_detailed,
 )
 from onecode_skill_sanitizer import intent_spans, routing_profiles
-from onecode_skill_sanitizer.intent_spans import ProfileSignalSpan
+from onecode_skill_sanitizer.intent_evidence import (
+    IntentEvidence,
+    bind_intent_evidence,
+    source_supports_release_action,
+)
+from onecode_skill_sanitizer.intent_spans import (
+    ProfileSignalSpan,
+    relation_mode_for_text,
+    split_profile_enumeration,
+)
 
 
 GOOD_CASES = [
@@ -47,6 +56,44 @@ NEGATIVE_CASES = [
 
 
 class IntentSpansTest(unittest.TestCase):
+    def test_direct_text_helpers_share_exact_scan_boundary(self):
+        evidence = IntentEvidence(
+            "general", "action", "positive", "none", "single", (), 0
+        )
+        variants = ((" then", "explicit_sequence"), (" 然后", "explicit_sequence"))
+        release_variants = (" publish update", " 发布更新")
+
+        for suffix, expected_mode in variants:
+            with self.subTest(suffix=suffix):
+                base = "x" * routing_profiles.MAX_SCAN_CHARACTERS
+                outside = base + suffix
+                exact = "x" * (len(base) - len(suffix)) + suffix
+                self.assertEqual(relation_mode_for_text(outside), "single")
+                self.assertEqual(relation_mode_for_text(exact), expected_mode)
+                self.assertEqual(
+                    split_profile_enumeration(outside),
+                    split_profile_enumeration(base),
+                )
+                self.assertEqual(
+                    bind_intent_evidence((evidence,), outside),
+                    bind_intent_evidence((evidence,), base),
+                )
+                self.assertEqual(
+                    routing_profiles.normalize_task_text(outside),
+                    routing_profiles.normalize_task_text(base),
+                )
+                self.assertEqual(
+                    routing_profiles.build_task_profile(outside),
+                    routing_profiles.build_task_profile(base),
+                )
+
+        for suffix in release_variants:
+            with self.subTest(suffix=suffix):
+                base = "x" * routing_profiles.MAX_SCAN_CHARACTERS
+                outside = base + suffix
+                exact = "x" * (len(base) - len(suffix)) + suffix
+                self.assertFalse(source_supports_release_action(outside))
+                self.assertTrue(source_supports_release_action(exact))
     def test_contains_and_mentions_only_suppress_governance_enumerations(self):
         cases = [
             ("Build a website that contains a dashboard", ["website_build"]),

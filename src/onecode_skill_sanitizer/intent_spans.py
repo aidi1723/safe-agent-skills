@@ -8,6 +8,7 @@ from .intent_evidence import (
     source_supports_release_action,
     source_supports_release_readiness,
 )
+from .intent_source import bound_task_text
 from .routing_profiles import (
     SCENARIO_PROFILES,
     is_design_governance_composite,
@@ -104,6 +105,7 @@ def find_profile_signal_spans(
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
 ) -> tuple[tuple[ProfileSignalSpan, ...], int, bool]:
     """Find distinctive, unambiguous spans using bounded deterministic work."""
+    clause = bound_task_text(clause)
     candidates: list[ProfileSignalSpan] = []
     negation_ranges = (
         ((0, len(clause)),)
@@ -184,6 +186,7 @@ def split_profile_enumeration(
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
 ) -> SpanDecomposition:
     """Split a profile-backed enumeration while preserving readable source text."""
+    clause = bound_task_text(clause)
     spans, observed, candidate_limit_exceeded = find_profile_signal_spans(
         clause, candidate_limit
     )
@@ -506,6 +509,7 @@ def _is_governance_enumeration(
 
 
 def relation_mode_for_text(clause: str) -> str:
+    clause = bound_task_text(clause)
     if _EXPLICIT_SEQUENCE_RE.search(clause):
         return "explicit_sequence"
     if _PARALLEL_CONTEXT_RE.search(clause):

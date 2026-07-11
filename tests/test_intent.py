@@ -16,6 +16,7 @@ from onecode_skill_sanitizer.intent_evidence import (
     IntentEvidence,
     bind_intent_evidence,
 )
+from onecode_skill_sanitizer.intent_dependencies import infer_intent_relations
 
 
 class IntentTest(unittest.TestCase):
@@ -231,6 +232,7 @@ class IntentTest(unittest.TestCase):
             "polarity": [None, [], {}],
             "release_mode": [None, [], {}],
             "relation_mode": [None, [], {}],
+            "gate_mode": [None, [], {}],
             "matched_signals": [None, [], (1,), ("ok", None)],
             "matched_score": [True, "2", float("nan"), float("inf"), -1, 513],
         }
@@ -295,6 +297,7 @@ class IntentTest(unittest.TestCase):
             "context": "descriptive",
             "polarity": "negative",
             "relation_mode": "explicit_sequence",
+            "gate_mode": "verification",
             "matched_signals": ("website",),
             "matched_score": original.matched_score + 1,
         }
@@ -341,6 +344,38 @@ class IntentTest(unittest.TestCase):
         )
 
         self.assertTrue(graph.validate())
+
+    def test_canonical_summary_forgery_fails_closed_without_changing_gate(self):
+        source = "After completing code review, build a website"
+        graph = decompose_task(source)
+        forged_intents = (
+            dataclasses.replace(
+                graph.intents[0], summary="After verifying code review"
+            ),
+            graph.intents[1],
+        )
+        forged_graph = dataclasses.replace(graph, intents=forged_intents)
+
+        self.assertTrue(forged_graph.validate())
+        self.assertEqual(
+            infer_intent_relations(
+                source, forged_intents, graph.intent_evidence
+            ),
+            (IntentRelation("i1", "i2", "completion_gate", False),),
+        )
+
+    def test_canonical_evidence_carries_source_gate_semantics(self):
+        completion = decompose_task(
+            "After completing code review, build a website"
+        )
+        verification = decompose_task(
+            "After verifying code review, build a website"
+        )
+
+        self.assertEqual(completion.intent_evidence[0].gate_mode, "completion")
+        self.assertEqual(
+            verification.intent_evidence[0].gate_mode, "verification"
+        )
 
     def test_explicit_sequences_create_dependency_chains(self):
         cases = [
