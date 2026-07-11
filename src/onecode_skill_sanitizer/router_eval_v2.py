@@ -415,10 +415,17 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
         if not isinstance(node, dict) or not isinstance(node.get("id"), str):
             raise EvaluatorError("execution graph node is malformed")
         intent_ids = node.get("intent_ids")
-        if not isinstance(intent_ids, list) or not all(isinstance(item, str) for item in intent_ids):
-            raise EvaluatorError("execution graph node intent_ids must be strings")
+        valid_ids = (
+            isinstance(intent_ids, list)
+            and bool(intent_ids)
+            and all(type(item) is str and bool(item) for item in intent_ids)
+            and len(intent_ids) == len(set(intent_ids))
+            and not (set(intent_ids) - set(type_by_intent))
+        )
+        if not valid_ids:
+            raise EvaluatorError("execution graph node intent_ids are invalid")
         nodes_by_id[node["id"]] = node
-        node_types[node["id"]] = {type_by_intent[item] for item in intent_ids if item in type_by_intent}
+        node_types[node["id"]] = {type_by_intent[item] for item in intent_ids}
     pairs = set()
     for edge in edges:
         if not isinstance(edge, dict):
@@ -431,17 +438,6 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
             raise EvaluatorError("dependency edge endpoints must be nonempty strings")
         if source_id not in nodes_by_id or target_id not in nodes_by_id:
             raise EvaluatorError("dependency edge references an unknown node")
-        for node_id in (source_id, target_id):
-            intent_ids = nodes_by_id[node_id]["intent_ids"]
-            valid_ids = (
-                isinstance(intent_ids, list)
-                and bool(intent_ids)
-                and all(type(item) is str and bool(item) for item in intent_ids)
-                and len(intent_ids) == len(set(intent_ids))
-                and not (set(intent_ids) - set(type_by_intent))
-            )
-            if not valid_ids:
-                raise EvaluatorError("dependency node intent_ids are invalid")
         source_types = node_types[source_id]
         target_types = node_types[target_id]
         pairs.update((source, target) for source in source_types for target in target_types)
@@ -503,6 +499,21 @@ def _dag_assessment(
         return not issues, issues
     if reason_codes:
         issues.append({"id": "unexpected_ready_graph_reason", "reason_codes": reason_codes})
+    if routing_status == "complete" and status == "ready":
+        nodes = graph.get("nodes")
+        if not nodes:
+            issues.append({"id": "empty_ready_graph"})
+        else:
+            source_intent_ids = {intent["id"] for intent in route["intent_graph"]["intents"]}
+            covered_intent_ids = {intent_id for node in nodes for intent_id in node["intent_ids"]}
+            missing_intent_ids = sorted(source_intent_ids - covered_intent_ids)
+            if missing_intent_ids:
+                issues.append(
+                    {
+                        "id": "missing_source_intent_coverage",
+                        "intent_ids": missing_intent_ids,
+                    }
+                )
     if declared_acyclic != topology_acyclic:
         issues.append(
             {

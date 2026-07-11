@@ -683,7 +683,8 @@ class RouterEvalV2Tests(unittest.TestCase):
             with self.subTest(label=label), self.assertRaises(EvaluatorError):
                 evaluate_router_v2([case], route_builder=lambda current: route)
 
-    def test_non_dependency_node_may_have_empty_intent_ids(self):
+    def test_non_dependency_nodes_require_strict_intent_ids(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
@@ -696,8 +697,64 @@ class RouterEvalV2Tests(unittest.TestCase):
             "forbidden_scenarios": [],
             "expected_status": "complete",
         }
-        route = synthetic_route(["alpha"], ["s1"])
-        route["execution_graph"]["nodes"][0]["intent_ids"] = []
+        for label, intent_ids in {
+            "empty": [],
+            "unknown": ["missing"],
+            "duplicate": ["i1", "i1"],
+        }.items():
+            route = synthetic_route(["alpha"], ["s1"])
+            route["execution_graph"]["nodes"][0]["intent_ids"] = intent_ids
+            with self.subTest(label=label), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
+
+    def test_complete_ready_graph_requires_nodes_and_full_source_intent_coverage(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "execution-coverage",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        empty = synthetic_route(["alpha", "beta"], ["s1", "s2"])
+        empty["execution_graph"]["nodes"] = []
+        missing = synthetic_route(["alpha", "beta"], ["s1", "s2"])
+        missing["execution_graph"]["nodes"] = missing["execution_graph"]["nodes"][:1]
+
+        for label, route, expected_issue in (
+            ("empty", empty, "empty_ready_graph"),
+            ("missing", missing, "missing_source_intent_coverage"),
+        ):
+            with self.subTest(label=label):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+                self.assertFalse(report["cases"][0]["dag_valid"])
+                self.assertIn(expected_issue, issue_ids)
+
+    def test_complete_ready_graph_allows_multi_intent_node_mapping(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "multi-intent-node",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        route = synthetic_route(["alpha", "beta"], ["s1", "s2"])
+        route["execution_graph"]["nodes"] = [
+            {
+                **route["execution_graph"]["nodes"][0],
+                "intent_ids": ["i1", "i2"],
+            }
+        ]
 
         report = evaluate_router_v2([case], route_builder=lambda current: route)
 
