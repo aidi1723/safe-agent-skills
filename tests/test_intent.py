@@ -155,6 +155,31 @@ class IntentTest(unittest.TestCase):
                 self.assertNotEqual(intent.task_type, "open_source_release")
                 self.assertNotEqual(intent.required_artifacts, ("release_record",))
 
+    def test_natural_push_phrases_reject_negation_and_preconditions(self):
+        for task in [
+            "不要推送到 GitHub",
+            "推送到 GitHub 前",
+            "do not push changes to GitHub",
+            "before pushing changes to GitHub",
+            "do not push the repository to GitHub",
+            "before pushing the repository to GitHub",
+        ]:
+            with self.subTest(task=task):
+                intent = decompose_task(task).intents[0]
+                self.assertNotEqual(intent.task_type, "open_source_release")
+                self.assertNotEqual(intent.required_artifacts, ("release_record",))
+
+    def test_natural_push_phrases_accept_explicit_actions(self):
+        for task in [
+            "推送到 GitHub",
+            "push changes to GitHub",
+            "push the repository to GitHub",
+        ]:
+            with self.subTest(task=task):
+                intent = decompose_task(task).intents[0]
+                self.assertEqual(intent.task_type, "open_source_release")
+                self.assertEqual(intent.required_artifacts, ("release_record",))
+
     def test_ambiguous_english_and_phrases_remain_single_intents(self):
         for task in [
             "Research and Development roadmap",

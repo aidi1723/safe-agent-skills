@@ -30,7 +30,9 @@ _ENGLISH_RELEASE_ACTION_RE = re.compile(
     re.IGNORECASE,
 )
 _EXPLICIT_PUSH_ACTION_RE = re.compile(
-    r"推送\s*github|\bpush\s+(?:to\s+github|the\s+repository)\b",
+    r"推送(?:到)?\s*github|"
+    r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
+    r"to\s+github)\b",
     re.IGNORECASE,
 )
 _RELEASE_NEGATION_RE = re.compile(
@@ -38,20 +40,22 @@ _RELEASE_NEGATION_RE = re.compile(
     re.IGNORECASE,
 )
 _RELEASE_PRECONDITION_RE = re.compile(
-    r"(?:发布|上线|推送)前|推送\s*github\s*前|"
+    r"(?:发布|上线|推送)前|推送(?:到)?\s*github\s*前|"
     r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)\b",
     re.IGNORECASE,
 )
 _NON_ACTION_RELEASE_TERM_RE = re.compile(
     r"(?:不要|不得|禁止|无需|暂不|先不|别|不)\s*"
-    r"(?:发布|上线|推送)(?:\s*github)?|"
-    r"推送\s*github\s*前|"
+    r"(?:发布|上线|推送)(?:到?\s*github)?|"
+    r"推送(?:到)?\s*github\s*前|"
     r"(?:发布|上线|推送)前|"
     r"\brelease\s+notes\b|\bpublishable\b|"
-    r"\b(?:do\s+not|don't|never)\s+(?:publish|release|push)"
-    r"(?:\s+to\s+github|\s+the\s+repository)?\b|"
-    r"\bbefore\s+(?:publishing|releasing|pushing|publish|release|push)"
-    r"(?:\s+to\s+github|\s+the\s+repository)?\b",
+    r"\b(?:do\s+not|don't|never)\s+(?:publish|release)\b|"
+    r"\b(?:do\s+not|don't|never)\s+push(?:\s+(?:changes\s+to\s+github|"
+    r"the\s+repository(?:\s+to\s+github)?|to\s+github))?\b|"
+    r"\bbefore\s+(?:publishing|releasing|publish|release)\b|"
+    r"\bbefore\s+(?:pushing|push)(?:\s+(?:changes\s+to\s+github|"
+    r"the\s+repository(?:\s+to\s+github)?|to\s+github))?\b",
     re.IGNORECASE,
 )
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
