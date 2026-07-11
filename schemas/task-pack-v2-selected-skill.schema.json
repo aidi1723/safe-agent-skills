@@ -248,7 +248,7 @@
             "approved_hosts": {
               "type": "array",
               "uniqueItems": true,
-              "items": {"type": "string"}
+              "items": {"$ref": "#/$defs/provenance_text"}
             }
           },
           "additionalProperties": false
@@ -260,7 +260,7 @@
             "required_for": {
               "type": "array",
               "uniqueItems": true,
-              "items": {"type": "string"}
+              "items": {"$ref": "#/$defs/provenance_text"}
             }
           },
           "additionalProperties": false

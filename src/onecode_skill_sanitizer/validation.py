@@ -93,6 +93,20 @@ def _is_exact_string_enum(value: object, allowed: set[str]) -> bool:
     return type(value) is str and value in allowed
 
 
+def _is_control_safe_text(value: object) -> bool:
+    return type(value) is str and bool(value) and not any(
+        ord(character) < 32 or ord(character) == 127 for character in value
+    )
+
+
+def _is_unique_control_safe_text_list(value: object) -> bool:
+    return (
+        isinstance(value, list)
+        and all(_is_control_safe_text(item) for item in value)
+        and len(value) == len(set(value))
+    )
+
+
 def text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -205,8 +219,16 @@ def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
         return
     for field in SOURCE_REQUIRED_FIELDS:
         value = source.get(field)
-        if not isinstance(value, str) or not value:
+        if not _is_control_safe_text(value):
             add_issue(issues, "schema-missing-source-field", path, f"source.{field} is required")
+    commit = source.get("commit")
+    if "commit" in source and not _is_control_safe_text(commit):
+        add_issue(
+            issues,
+            "schema-invalid-source-commit",
+            path,
+            "source.commit must be a non-empty control-safe string",
+        )
     source_type = source.get("type")
     if isinstance(source_type, str) and source_type not in SOURCE_TYPE_VALUES:
         add_issue(issues, "schema-invalid-source-type", path, f"source.type {source_type!r} is not supported")
@@ -235,7 +257,7 @@ def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
             return
         for field in SOURCE_IMPORT_CAPTURE_FIELDS:
             value = capture.get(field)
-            if not isinstance(value, str) or not value:
+            if not _is_control_safe_text(value):
                 add_issue(
                     issues,
                     "schema-invalid-source-import-capture",
@@ -305,16 +327,14 @@ def validate_policy(payload: dict, path: Path, issues: list[dict]) -> None:
         if not _is_exact_string_enum(scope, NETWORK_SCOPE_VALUES):
             add_issue(issues, "schema-invalid-policy-network-scope", path, "policy.network.scope is not supported")
         approved_hosts = network.get("approved_hosts")
-        if approved_hosts is not None and (
-            not isinstance(approved_hosts, list) or not all(isinstance(item, str) and item for item in approved_hosts)
-        ):
+        if approved_hosts is not None and not _is_unique_control_safe_text_list(approved_hosts):
             add_issue(issues, "schema-invalid-policy-approved-hosts", path, "policy.network.approved_hosts must be a string array")
     approval = policy.get("approval")
     if not isinstance(approval, dict):
         add_issue(issues, "schema-invalid-policy-approval", path, "policy.approval must be an object")
     else:
         required_for = approval.get("required_for")
-        if not isinstance(required_for, list) or not all(isinstance(item, str) and item for item in required_for):
+        if not _is_unique_control_safe_text_list(required_for):
             add_issue(issues, "schema-invalid-policy-approval-required-for", path, "policy.approval.required_for must be a string array")
 
 

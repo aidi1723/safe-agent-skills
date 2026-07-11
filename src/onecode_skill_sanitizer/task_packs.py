@@ -757,7 +757,323 @@ def build_task_pack_v2(
         "legacy_schema_version": 1,
         "compatibility_loss": to_legacy_v1(payload)["compatibility_loss"],
     }
+    validate_task_pack_v2_semantics(payload)
     return payload
+
+
+def validate_task_pack_v2_semantics(payload: object) -> None:
+    """Validate Task Pack relationships that JSON Schema cannot express."""
+
+    root = _semantic_object(payload, "payload")
+    intent_graph = _semantic_object(root.get("intent_graph"), "intent_graph")
+    intents = _semantic_object_list(intent_graph.get("intents"), "intent_graph.intents")
+    intent_ids = _unique_semantic_values(
+        [_semantic_text(item.get("id"), "intent.id") for item in intents],
+        "intent ids",
+    )
+    if not intent_ids:
+        _semantic_error("intent ids")
+    intent_id_set = set(intent_ids)
+    for intent in intents:
+        dependencies = _semantic_text_list(intent.get("depends_on"), "intent.depends_on")
+        if len(dependencies) != len(set(dependencies)) or not set(dependencies) <= intent_id_set:
+            _semantic_error("intent dependencies")
+
+    candidates = _semantic_object_list(root.get("scenario_candidates"), "scenario_candidates")
+    candidate_keys = []
+    for candidate in candidates:
+        intent_id = _semantic_text(candidate.get("intent_id"), "candidate.intent_id")
+        scenario_id = _semantic_text(candidate.get("scenario_id"), "candidate.scenario_id")
+        if intent_id not in intent_id_set:
+            _semantic_error("candidate intent reference")
+        candidate_keys.append((intent_id, scenario_id))
+    _require_unique_semantic_keys(candidate_keys, "candidate identities")
+
+    selections = _semantic_object_list(root.get("selected_scenarios"), "selected_scenarios")
+    scenario_ids = _unique_semantic_values(
+        [_semantic_text(item.get("scenario_id"), "selection.scenario_id") for item in selections],
+        "selected scenario ids",
+    )
+    scenario_id_set = set(scenario_ids)
+    selected_intent_ids: list[str] = []
+    candidate_key_set = set(candidate_keys)
+    for selection in selections:
+        scenario_id = _semantic_text(selection.get("scenario_id"), "selection.scenario_id")
+        selection_intents = _semantic_text_list(selection.get("intent_ids"), "selection.intent_ids")
+        if (
+            not selection_intents
+            or len(selection_intents) != len(set(selection_intents))
+            or not set(selection_intents) <= intent_id_set
+        ):
+            _semantic_error("selected scenario intent references")
+        if any((intent_id, scenario_id) not in candidate_key_set for intent_id in selection_intents):
+            _semantic_error("selected scenario candidate references")
+        selected_intent_ids.extend(selection_intents)
+    _require_unique_semantic_keys(selected_intent_ids, "selected intent ids")
+
+    uncovered_intents = _semantic_text_list(root.get("uncovered_intents"), "uncovered_intents")
+    if (
+        len(uncovered_intents) != len(set(uncovered_intents))
+        or not set(uncovered_intents) <= intent_id_set
+        or set(selected_intent_ids) & set(uncovered_intents)
+        or set(selected_intent_ids) | set(uncovered_intents) != intent_id_set
+    ):
+        _semantic_error("intent coverage")
+
+    selected_skills = _semantic_object_list(root.get("selected_skills"), "selected_skills")
+    selected_skill_names = _unique_semantic_values(
+        [_semantic_text(item.get("name"), "selected skill name") for item in selected_skills],
+        "selected skill names",
+    )
+    selected_skill_name_set = set(selected_skill_names)
+    routing_metrics = _semantic_object(root.get("routing_metrics"), "routing_metrics")
+    declared_omitted_skills = _semantic_text_list(
+        routing_metrics.get("required_skills_omitted"), "required skills omitted"
+    )
+    if len(declared_omitted_skills) != len(set(declared_omitted_skills)):
+        _semantic_error("required skills omitted")
+    allowed_graph_skill_names = selected_skill_name_set | set(declared_omitted_skills)
+
+    capability_resolution = _semantic_object(
+        root.get("capability_resolution"), "capability_resolution"
+    )
+    capabilities = _semantic_object_list(
+        capability_resolution.get("capabilities"), "capability_resolution.capabilities"
+    )
+    capability_keys = []
+    missing_required_count = 0
+    for capability in capabilities:
+        scenario_id = capability.get("scenario_id")
+        capability_id = capability.get("capability")
+        source = capability.get("source", "scenario")
+        if type(scenario_id) is not str or type(capability_id) is not str or type(source) is not str:
+            _semantic_error("capability identity")
+        if scenario_id and scenario_id not in scenario_id_set:
+            _semantic_error("capability scenario reference")
+        if source == "invariant" and scenario_id:
+            _semantic_error("invariant capability scenario")
+        skills = _semantic_text_list(capability.get("skills"), "capability.skills")
+        if len(skills) != len(set(skills)) or not set(skills) <= selected_skill_name_set:
+            _semantic_error("capability skill references")
+        required = capability.get("required")
+        status = capability.get("status")
+        if type(required) is not bool or status not in {"covered", "missing"}:
+            _semantic_error("capability status")
+        if (status == "covered") != bool(skills):
+            _semantic_error("capability coverage")
+        if required and status == "missing":
+            missing_required_count += 1
+        capability_keys.append((scenario_id, capability_id, source))
+    _require_unique_semantic_keys(capability_keys, "capability identities")
+    _require_semantic_count(
+        capability_resolution.get("missing_required_count"),
+        missing_required_count,
+        "missing required capability count",
+    )
+    expected_capability_status = "complete" if missing_required_count == 0 else "incomplete"
+    if capability_resolution.get("status") != expected_capability_status:
+        _semantic_error("capability resolution status")
+
+    execution_graph = _semantic_object(root.get("execution_graph"), "execution_graph")
+    nodes = _semantic_object_list(execution_graph.get("nodes"), "execution_graph.nodes")
+    node_ids = _unique_semantic_values(
+        [_semantic_text(item.get("id"), "execution node id") for item in nodes],
+        "execution node ids",
+    )
+    node_id_set = set(node_ids)
+    required_skill_names: list[str] = []
+    for node in nodes:
+        node_intents = _semantic_text_list(node.get("intent_ids"), "execution node intent ids")
+        node_scenarios = _semantic_text_list(
+            node.get("scenario_ids"), "execution node scenario ids"
+        )
+        skill_name = _semantic_text(node.get("skill"), "execution node skill")
+        if (
+            len(node_intents) != len(set(node_intents))
+            or not set(node_intents) <= intent_id_set
+            or len(node_scenarios) != len(set(node_scenarios))
+            or not set(node_scenarios) <= scenario_id_set
+            or skill_name not in allowed_graph_skill_names
+        ):
+            _semantic_error("execution node references")
+        if skill_name not in required_skill_names:
+            required_skill_names.append(skill_name)
+
+    edges = _semantic_object_list(execution_graph.get("edges"), "execution_graph.edges")
+    edge_keys = []
+    for edge in edges:
+        source = _semantic_text(edge.get("from"), "execution edge source")
+        target = _semantic_text(edge.get("to"), "execution edge target")
+        edge_type = _semantic_text(edge.get("type"), "execution edge type")
+        if source not in node_id_set or target not in node_id_set:
+            _semantic_error("execution edge endpoint")
+        edge_keys.append((source, target, edge_type))
+    _require_unique_semantic_keys(edge_keys, "execution edges")
+
+    reason_codes = _semantic_text_list(execution_graph.get("reason_codes"), "reason_codes")
+    if len(reason_codes) != len(set(reason_codes)):
+        _semantic_error("execution graph reason codes")
+    graph_status = execution_graph.get("status")
+    acyclic = execution_graph.get("acyclic")
+    if type(acyclic) is not bool or graph_status not in {"ready", "blocked"}:
+        _semantic_error("execution graph status")
+    expected_graph_status = "ready" if acyclic and not reason_codes else "blocked"
+    if graph_status != expected_graph_status or (graph_status == "blocked" and not reason_codes):
+        _semantic_error("execution graph coherence")
+
+    _require_semantic_count(routing_metrics.get("intent_count"), len(intents), "intent count")
+    _require_semantic_count(routing_metrics.get("candidate_count"), len(candidates), "candidate count")
+    _require_semantic_count(
+        routing_metrics.get("selected_scenario_count"), len(selections), "selected scenario count"
+    )
+    _require_semantic_count(
+        routing_metrics.get("required_skill_count"), len(required_skill_names), "required skill count"
+    )
+    _require_semantic_count(
+        routing_metrics.get("selected_skill_count"), len(selected_skills), "selected skill count"
+    )
+    _require_semantic_count(
+        routing_metrics.get("optional_skills_selected"), 0, "optional skills selected"
+    )
+    optional_skill_limit = routing_metrics.get("optional_skill_limit")
+    if type(optional_skill_limit) is not int or optional_skill_limit < 0:
+        _semantic_error("optional skill limit")
+    expected_omitted = [name for name in required_skill_names if name not in selected_skill_name_set]
+    if declared_omitted_skills != expected_omitted:
+        _semantic_error("required skills omitted")
+    expected_selected = [name for name in required_skill_names if name not in set(expected_omitted)]
+    if selected_skill_names != expected_selected:
+        _semantic_error("selected skill order")
+
+    decomposition = _semantic_object(routing_metrics.get("decomposition"), "decomposition")
+    _require_semantic_count(
+        decomposition.get("emitted_intent_count"), len(intents), "emitted intent count"
+    )
+    observed_candidates = decomposition.get("observed_candidate_count")
+    # Signal scans have no corresponding candidate-record array in the pack.
+    if type(observed_candidates) is not int or not 0 <= observed_candidates <= 129:
+        _semantic_error("observed candidate count")
+    decomposition_reasons = _semantic_text_list(
+        decomposition.get("reason_codes"), "decomposition reason codes"
+    )
+    if len(decomposition_reasons) != len(set(decomposition_reasons)):
+        _semantic_error("decomposition reason codes")
+    for flag, reason in (
+        ("candidate_signal_limit_exceeded", "candidate_signal_limit_exceeded"),
+        ("intent_limit_exceeded", "intent_limit_exceeded"),
+    ):
+        flag_value = decomposition.get(flag)
+        if type(flag_value) is not bool or flag_value != (reason in decomposition_reasons):
+            _semantic_error("decomposition status")
+
+    registry_verification = _semantic_object(
+        root.get("registry_verification"), "registry_verification"
+    )
+    issues = _semantic_object_list(registry_verification.get("issues"), "registry issues")
+    issue_keys = []
+    unknown_provenance_count = 0
+    tampered_count = 0
+    for issue in issues:
+        issue_id = _semantic_text(issue.get("id"), "registry issue id")
+        skill = _semantic_text(issue.get("skill"), "registry issue skill")
+        path = _semantic_text(issue.get("path"), "registry issue path")
+        issue_keys.append((issue_id, skill, path))
+        if issue_id == "unknown-provenance":
+            unknown_provenance_count += 1
+        else:
+            tampered_count += 1
+    _require_unique_semantic_keys(issue_keys, "registry issues")
+    # Registry totals have no corresponding Skill-record array in the pack.
+    skill_count = _semantic_nonnegative_int(registry_verification.get("skill_count"), "skill count")
+    trusted_count = _semantic_nonnegative_int(
+        registry_verification.get("trusted_count"), "trusted count"
+    )
+    if trusted_count > skill_count:
+        _semantic_error("trusted count")
+    if tampered_count > skill_count or unknown_provenance_count > skill_count:
+        _semantic_error("registry issue counts")
+    _require_semantic_count(
+        registry_verification.get("tampered_count"), tampered_count, "tampered count"
+    )
+    _require_semantic_count(
+        registry_verification.get("unknown_provenance_count"),
+        unknown_provenance_count,
+        "unknown provenance count",
+    )
+    expected_registry_status = "failed" if issues else "ok"
+    if registry_verification.get("status") != expected_registry_status:
+        _semantic_error("registry status")
+
+    compatibility = _semantic_object(root.get("compatibility"), "compatibility")
+    if compatibility.get("legacy_schema_version") != 1:
+        _semantic_error("compatibility schema version")
+    compatibility_loss = _semantic_object(
+        compatibility.get("compatibility_loss"), "compatibility loss"
+    )
+    expected_compatibility_loss = to_legacy_v1(root).get("compatibility_loss")
+    if compatibility_loss != expected_compatibility_loss:
+        _semantic_error("compatibility loss")
+
+    composition_status = "complete" if not uncovered_intents else "incomplete"
+    decomposition_status = "incomplete" if decomposition_reasons else "complete"
+    expected_routing_status = _routing_status(
+        composition_status,
+        capability_resolution,
+        execution_graph,
+        decomposition_status,
+    )
+    if root.get("routing_status") != expected_routing_status:
+        _semantic_error("routing status")
+
+
+def _semantic_error(field: str) -> None:
+    raise ValueError(f"task pack v2 semantic validation failed: {field}")
+
+
+def _semantic_object(value: object, field: str) -> dict:
+    if type(value) is not dict:
+        _semantic_error(field)
+    return value
+
+
+def _semantic_object_list(value: object, field: str) -> list[dict]:
+    if type(value) is not list or any(type(item) is not dict for item in value):
+        _semantic_error(field)
+    return value
+
+
+def _semantic_text(value: object, field: str) -> str:
+    if type(value) is not str or not value:
+        _semantic_error(field)
+    return value
+
+
+def _semantic_text_list(value: object, field: str) -> list[str]:
+    if type(value) is not list or any(type(item) is not str or not item for item in value):
+        _semantic_error(field)
+    return value
+
+
+def _semantic_nonnegative_int(value: object, field: str) -> int:
+    if type(value) is not int or value < 0:
+        _semantic_error(field)
+    return value
+
+
+def _require_semantic_count(value: object, expected: int, field: str) -> None:
+    if _semantic_nonnegative_int(value, field) != expected:
+        _semantic_error(field)
+
+
+def _unique_semantic_values(values: list[str], field: str) -> list[str]:
+    _require_unique_semantic_keys(values, field)
+    return values
+
+
+def _require_unique_semantic_keys(values: list, field: str) -> None:
+    if len(values) != len(set(values)):
+        _semantic_error(field)
+
 
 def _build_v2_capability_resolution(
     bundles_index: dict,

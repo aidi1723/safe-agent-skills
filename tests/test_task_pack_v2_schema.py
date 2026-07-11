@@ -5,14 +5,17 @@ import json
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 from jsonschema import ValidationError
 from jsonschema import validators
 from jsonschema import Draft202012Validator
 
 from onecode_skill_sanitizer.cli import main
+from onecode_skill_sanitizer import task_packs
 from onecode_skill_sanitizer.task_packs import load_trusted_skill_pack_items
 from onecode_skill_sanitizer.validation import validate_contract
+from onecode_skill_sanitizer.validation import validate_policy
 from onecode_skill_sanitizer.validation import validate_source
 
 from tests.registry_cli_helpers import validate_task_pack_v2
@@ -317,6 +320,306 @@ class TaskPackV2SchemaTest(unittest.TestCase):
                 payload["selected_skills"][0]["source"] = invalid_source
                 with self.assertRaises(ValidationError):
                     validate_task_pack_v2(payload)
+
+    def test_policy_string_items_match_runtime_for_empty_and_control_values(self):
+        cases = [
+            ("example.test", True),
+            ("publication", True),
+            ("", False),
+            ("\n", False),
+            ("\t", False),
+            ("\x00", False),
+            ("example\n.test", False),
+            (True, False),
+            (7, False),
+            (None, False),
+        ]
+        for field in ("approved_hosts", "required_for"):
+            for value, expected in cases:
+                with self.subTest(field=field, value=value):
+                    payload = copy.deepcopy(self.payloads["complete"])
+                    policy = payload["selected_skills"][0]["policy"]
+                    if field == "approved_hosts":
+                        policy["network"][field] = [value]
+                    else:
+                        policy["approval"][field] = [value]
+                    try:
+                        validate_task_pack_v2(payload)
+                    except ValidationError:
+                        schema_valid = False
+                    else:
+                        schema_valid = True
+                    issues = []
+                    validate_policy({"policy": policy}, Path("skill.json"), issues)
+                    self.assertEqual(schema_valid, expected)
+                    self.assertEqual(not issues, expected)
+
+    def test_provenance_strings_match_runtime_for_control_characters(self):
+        base_source = copy.deepcopy(self.payloads["complete"]["selected_skills"][0]["source"])
+        corruptions = ["", "\n", "\t", "\x00", "value\nwith-control", True, 7, None]
+        fields = [
+            "path",
+            "url",
+            "author",
+            "license",
+            "reference",
+            "collected_by",
+            "captured_at",
+            "commit",
+        ]
+        for field in fields:
+            for value in corruptions:
+                with self.subTest(field=field, value=value):
+                    source = copy.deepcopy(base_source)
+                    source[field] = value
+                    payload = copy.deepcopy(self.payloads["complete"])
+                    payload["selected_skills"][0]["source"] = source
+                    try:
+                        validate_task_pack_v2(payload)
+                    except ValidationError:
+                        schema_valid = False
+                    else:
+                        schema_valid = True
+                    issues = []
+                    validate_source({"source": source}, Path("skill.json"), issues)
+                    self.assertFalse(schema_valid)
+                    self.assertTrue(issues)
+
+    def test_source_import_capture_strings_match_runtime_for_control_characters(self):
+        source = copy.deepcopy(self.payloads["complete"]["selected_skills"][0]["source"])
+        source.update(
+            type="archive",
+            usage="source_import",
+            capture={
+                "upstream_url": "https://example.test/archive.tar.gz",
+                "upstream_ref_type": "release",
+                "upstream_ref": "v1.0.0",
+                "captured_at": "2026-07-12T00:00:00Z",
+                "license_snapshot": "Apache-2.0",
+                "upstream_sha256": "a" * 64,
+                "content_path": "skills/example",
+                "capture_method": "archive_download",
+            },
+        )
+        for field in source["capture"]:
+            if field == "upstream_sha256":
+                invalid_values = ["", "a" * 63, f"{'a' * 64}\n", f"{'a' * 32}\x00{'a' * 32}"]
+            elif field == "upstream_ref_type":
+                invalid_values = ["", "release\n", "release\t", "release\x00"]
+            else:
+                invalid_values = ["", "\n", "\t", "\x00", "value\nwith-control"]
+            for value in invalid_values:
+                with self.subTest(field=field, value=value):
+                    invalid_source = copy.deepcopy(source)
+                    invalid_source["capture"][field] = value
+                    payload = copy.deepcopy(self.payloads["complete"])
+                    payload["selected_skills"][0]["source"] = invalid_source
+                    try:
+                        validate_task_pack_v2(payload)
+                    except ValidationError:
+                        schema_valid = False
+                    else:
+                        schema_valid = True
+                    issues = []
+                    validate_source({"source": invalid_source}, Path("skill.json"), issues)
+                    self.assertFalse(schema_valid)
+                    self.assertTrue(issues)
+
+    def test_semantic_validator_rejects_identity_and_reference_corruption(self):
+        validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
+        self.assertIsNotNone(validator)
+        mutations = {
+            "duplicate_skill_name": lambda p: p["selected_skills"].append(
+                {**copy.deepcopy(p["selected_skills"][0]), "match_score": 1}
+            ),
+            "duplicate_candidate_identity": lambda p: p["scenario_candidates"].append(
+                {**copy.deepcopy(p["scenario_candidates"][0]), "score": 0.5}
+            ),
+            "duplicate_intent_id": lambda p: p["intent_graph"]["intents"].append(
+                {**copy.deepcopy(p["intent_graph"]["intents"][0]), "summary": "duplicate"}
+            ),
+            "duplicate_scenario_id": lambda p: p["selected_scenarios"].append(
+                {**copy.deepcopy(p["selected_scenarios"][0]), "score": 0.5}
+            ),
+            "duplicate_node_id": lambda p: p["execution_graph"]["nodes"].append(
+                {**copy.deepcopy(p["execution_graph"]["nodes"][0]), "stage": "review"}
+            ),
+            "duplicate_edge": lambda p: p["execution_graph"]["edges"].append(
+                copy.deepcopy(p["execution_graph"]["edges"][0])
+            ),
+            "dangling_edge": lambda p: p["execution_graph"]["edges"].append(
+                {
+                    "from": "missing:node",
+                    "to": p["execution_graph"]["nodes"][0]["id"],
+                    "type": "scenario_order",
+                }
+            ),
+            "unknown_candidate_intent": lambda p: p["scenario_candidates"][0].update(
+                intent_id="i99"
+            ),
+            "unknown_selected_intent": lambda p: p["selected_scenarios"][0].update(
+                intent_ids=["i99"]
+            ),
+            "unknown_uncovered_intent": lambda p: p.update(uncovered_intents=["i99"]),
+            "unknown_node_intent": lambda p: p["execution_graph"]["nodes"][0].update(
+                intent_ids=["i99"]
+            ),
+            "unknown_node_scenario": lambda p: p["execution_graph"]["nodes"][0].update(
+                scenario_ids=["unknown-scenario"]
+            ),
+            "unknown_node_skill": lambda p: p["execution_graph"]["nodes"][0].update(
+                skill="unknown-skill"
+            ),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label):
+                payload = copy.deepcopy(self.payloads["complete"])
+                mutate(payload)
+                with self.assertRaises(ValueError):
+                    validator(payload)
+
+    def test_semantic_validator_rejects_every_derivable_count_mismatch(self):
+        validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
+        self.assertIsNotNone(validator)
+        paths = [
+            ("routing_metrics.intent_count", ("routing_metrics", "intent_count")),
+            ("routing_metrics.candidate_count", ("routing_metrics", "candidate_count")),
+            (
+                "routing_metrics.selected_scenario_count",
+                ("routing_metrics", "selected_scenario_count"),
+            ),
+            (
+                "routing_metrics.required_skill_count",
+                ("routing_metrics", "required_skill_count"),
+            ),
+            (
+                "routing_metrics.selected_skill_count",
+                ("routing_metrics", "selected_skill_count"),
+            ),
+            (
+                "routing_metrics.optional_skills_selected",
+                ("routing_metrics", "optional_skills_selected"),
+            ),
+            (
+                "capability_resolution.missing_required_count",
+                ("capability_resolution", "missing_required_count"),
+            ),
+            (
+                "decomposition.emitted_intent_count",
+                ("routing_metrics", "decomposition", "emitted_intent_count"),
+            ),
+            (
+                "registry_verification.tampered_count",
+                ("registry_verification", "tampered_count"),
+            ),
+            (
+                "registry_verification.unknown_provenance_count",
+                ("registry_verification", "unknown_provenance_count"),
+            ),
+            (
+                "compatibility.cross_scenario_edges_dropped",
+                ("compatibility", "compatibility_loss", "cross_scenario_edges_dropped"),
+            ),
+        ]
+        for label, path in paths:
+            for delta in (-1, 1):
+                with self.subTest(label=label, delta=delta):
+                    payload = copy.deepcopy(self.payloads["complete"])
+                    owner = payload
+                    for component in path[:-1]:
+                        owner = owner[component]
+                    owner[path[-1]] = owner[path[-1]] + delta
+                    with self.assertRaises(ValueError):
+                        validator(payload)
+
+    def test_semantic_validator_rejects_derived_lists_and_status_mismatches(self):
+        validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
+        self.assertIsNotNone(validator)
+        mutations = {
+            "required_skills_omitted": lambda p: p["routing_metrics"].update(
+                required_skills_omitted=[p["selected_skills"][0]["name"]]
+            ),
+            "compatibility_multi_intent": lambda p: p["compatibility"][
+                "compatibility_loss"
+            ].update(multi_intent_dropped=True),
+            "compatibility_scenarios": lambda p: p["compatibility"][
+                "compatibility_loss"
+            ].update(scenarios_dropped=[p["selected_scenarios"][0]["scenario_id"]]),
+            "capability_status": lambda p: p["capability_resolution"].update(
+                status="incomplete"
+            ),
+            "registry_status": lambda p: p["registry_verification"].update(status="failed"),
+            "registry_trusted_above_total": lambda p: p["registry_verification"].update(
+                trusted_count=p["registry_verification"]["skill_count"] + 1
+            ),
+            "routing_status": lambda p: p.update(routing_status="incomplete"),
+            "decomposition_flag": lambda p: p["routing_metrics"]["decomposition"].update(
+                intent_limit_exceeded=True
+            ),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label):
+                payload = copy.deepcopy(self.payloads["complete"])
+                mutate(payload)
+                with self.assertRaises(ValueError):
+                    validator(payload)
+
+    def test_semantic_validator_is_total_for_arbitrary_json_like_input(self):
+        validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
+        self.assertIsNotNone(validator)
+        malformed = [None, [], "payload", 7, True, {}, {"routing_metrics": []}]
+        for payload in malformed:
+            with self.subTest(payload=payload), self.assertRaises(ValueError):
+                validator(payload)
+
+    def test_semantic_validator_fails_closed_for_malformed_nested_types(self):
+        validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
+        self.assertIsNotNone(validator)
+        mutations = {
+            "intents": lambda p: p["intent_graph"].update(intents="intents"),
+            "dependencies": lambda p: p["intent_graph"]["intents"][0].update(depends_on={}),
+            "candidates": lambda p: p.update(scenario_candidates={}),
+            "selections": lambda p: p.update(selected_scenarios=None),
+            "uncovered": lambda p: p.update(uncovered_intents={}),
+            "skills": lambda p: p.update(selected_skills=[True]),
+            "capabilities": lambda p: p["capability_resolution"].update(capabilities={}),
+            "nodes": lambda p: p["execution_graph"].update(nodes="nodes"),
+            "edges": lambda p: p["execution_graph"].update(edges=[True]),
+            "reason_codes": lambda p: p["execution_graph"].update(reason_codes={}),
+            "metrics": lambda p: p.update(routing_metrics=[]),
+            "optional_limit": lambda p: p["routing_metrics"].update(optional_skill_limit=True),
+            "decomposition": lambda p: p["routing_metrics"].update(decomposition=[]),
+            "observed_count": lambda p: p["routing_metrics"]["decomposition"].update(
+                observed_candidate_count=True
+            ),
+            "registry_issues": lambda p: p["registry_verification"].update(issues=[True]),
+            "registry_skill_count": lambda p: p["registry_verification"].update(skill_count=True),
+            "compatibility": lambda p: p.update(compatibility=[]),
+            "compatibility_loss": lambda p: p["compatibility"].update(compatibility_loss=[]),
+        }
+        for label, mutate in mutations.items():
+            with self.subTest(label=label):
+                payload = copy.deepcopy(self.payloads["complete"])
+                mutate(payload)
+                with self.assertRaises(ValueError):
+                    validator(payload)
+
+    def test_public_cli_bounds_semantic_validation_failure(self):
+        out = io.StringIO()
+        with patch.object(
+            task_packs,
+            "validate_task_pack_v2_semantics",
+            side_effect=ValueError("sensitive semantic detail"),
+            create=True,
+        ):
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    ["smart", "build a landing page", "--schema-version", "2", "--format", "json"]
+                )
+        result = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(result["error"]["code"], "invalid_input")
+        self.assertNotIn("sensitive semantic detail", json.dumps(result))
 
     def test_cross_field_state_contradictions_are_rejected(self):
         complete_mutations = {
