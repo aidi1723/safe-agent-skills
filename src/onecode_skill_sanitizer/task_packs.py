@@ -29,6 +29,7 @@ from .router import build_task_profile, capability_skill_names, parse_invariant_
 from .router import pipeline_stage_for_skill
 from .router import route_mesh_task, route_scenario_task
 from .taxonomy import classify_skill
+from .validation import validate_contract
 
 
 def skill_matches_task(entry: dict, task_taxonomy: dict, task_text: str) -> int:
@@ -895,17 +896,25 @@ def _v2_skill_stage(skill: dict) -> str:
     if "contract" not in skill:
         return pipeline_stage_for_skill(skill.get("name", ""))
     contract = skill["contract"]
-    if isinstance(contract, dict) and "schema_version" not in contract:
-        return pipeline_stage_for_skill(skill.get("name", ""))
     skill_name = skill.get("name", "")
-    if not usable_contract(contract, skill_name=skill_name):
+    issues: list[dict] = []
+    validate_contract(
+        {"name": skill_name, "contract": contract},
+        Path("skill.json"),
+        issues,
+    )
+    if issues or not isinstance(contract, dict):
+        raise ValueError(f"invalid Contract v2 or legacy contract: {skill_name}")
+    if contract.get("schema_version") == 2 and not usable_contract(
+        contract, skill_name=skill_name
+    ):
         raise ValueError(f"invalid Contract v2 for trusted skill: {skill_name}")
-    stage_hint = contract["stage_hint"]
+    stage_hint = contract.get("stage_hint")
     if stage_hint == "execution":
         return "production"
     if stage_hint in PIPELINE_STAGE_ORDER:
         return stage_hint
-    raise ValueError(f"invalid Contract v2 stage for trusted skill: {skill_name}")
+    raise ValueError(f"invalid Contract v2 or legacy contract stage: {skill_name}")
 
 def _v2_skill_host_action(skill: dict) -> bool:
     contract = skill.get("contract")

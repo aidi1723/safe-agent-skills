@@ -60,6 +60,62 @@ class TaskPackV2CliTest(unittest.TestCase):
                         }
                     )
 
+    def test_v2_real_unversioned_contract_stages_are_authoritative(self):
+        expected_stages = {
+            "content-claims-compliance-filter": "review",
+            "content-marketing-pricing-strategy-review": "review",
+            "design-design-md-system-contract": "planning",
+            "execution-claude-skills-productivity-review": "review",
+        }
+        for name, expected_stage in expected_stages.items():
+            entry = next(
+                item
+                for item in json.loads(
+                    Path("catalog/index.json").read_text(encoding="utf-8")
+                )["skills"]
+                if item["name"] == name
+            )
+            manifest = json.loads(
+                (Path("catalog") / entry["registry_path"] / "skill.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertNotIn("schema_version", manifest["contract"])
+            self.assertEqual(
+                _v2_skill_stage(
+                    {"name": name, "contract": manifest["contract"]}
+                ),
+                expected_stage,
+            )
+
+        cases = [
+            (
+                "create DESIGN.md as the design system source of truth",
+                "design-design-md-system-contract",
+                "planning",
+            ),
+            (
+                "review the remaining claude-skills backlog",
+                "execution-claude-skills-productivity-review",
+                "review",
+            ),
+        ]
+        for task, skill_name, expected_stage in cases:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        ["smart", task, "--schema-version", "2", "--format", "json"]
+                    )
+                payload = json.loads(out.getvalue())
+                node = next(
+                    node
+                    for node in payload["execution_graph"]["nodes"]
+                    if node["skill"] == skill_name
+                )
+                self.assertEqual(exit_code, 0)
+                self.assertEqual(node["stage"], expected_stage)
+
     def test_v2_hash_consistent_malformed_manifest_contract_returns_bounded_error(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -142,6 +198,18 @@ class TaskPackV2CliTest(unittest.TestCase):
                 "stage_hint": "unknown-stage",
             }
             write_manifest(malformed_manifest)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+            malformed_legacy = dict(manifest)
+            malformed_legacy["contract"] = {
+                key: value
+                for key, value in valid_contract.items()
+                if key not in {"schema_version", "stage_hint"}
+            }
+            write_manifest(malformed_legacy)
             exit_code, payload = route()
             self.assertEqual(exit_code, 2)
             self.assertEqual(payload["status"], "error")
