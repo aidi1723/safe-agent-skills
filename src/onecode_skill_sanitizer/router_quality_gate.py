@@ -135,10 +135,12 @@ def _flat_identity(identity: object, *, allow_empty: bool) -> dict[str, object] 
         if type(value) is str:
             if not value or value != value.strip():
                 return None
+        elif type(value) is int:
+            pass
         elif type(value) is float:
             if not math.isfinite(value):
                 return None
-        elif type(value) not in {int, bool} and value is not None:
+        else:
             return None
         normalized[key] = value
     return dict(sorted(normalized.items()))

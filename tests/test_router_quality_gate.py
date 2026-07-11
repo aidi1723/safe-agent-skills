@@ -185,12 +185,45 @@ class RouterQualityGateTests(unittest.TestCase):
         self.assertFalse(report["production_ready"])
         self.assertIn("independent_label_review", report["missing_gates"])
 
-        invalid_identities = [None, [], {"nested": {}}, {"blank": " "}, {1: "bad"}]
+        invalid_identities = [
+            None,
+            [],
+            {"nested": {}},
+            {"nested": []},
+            {"blank": " "},
+            {"null": None},
+            {"boolean": True},
+            {"nan": math.nan},
+            {"infinity": math.inf},
+            {1: "bad"},
+        ]
         for identity in invalid_identities:
             with self.subTest(identity=identity):
                 report = self.build(dataset_identity=identity)
                 self.assertIn("dataset_identity", report["missing_gates"])
                 self.assertEqual(report["dataset_identity"], {})
+
+    def test_all_null_and_partial_null_identities_never_count_as_evidence(self):
+        for field, identity, missing_gate in (
+            ("dataset_identity", {"dataset": None}, "dataset_identity"),
+            (
+                "dataset_identity",
+                {"dataset": "gold", "reviewed_at": None},
+                "dataset_identity",
+            ),
+            ("review_identity", {"review_id": None}, "independent_label_review"),
+            (
+                "review_identity",
+                {"review_id": "r1", "reviewed_at": None},
+                "independent_label_review",
+            ),
+        ):
+            with self.subTest(field=field, identity=identity):
+                kwargs = {field: identity}
+                report = self.build(**kwargs)
+                self.assertFalse(report["production_ready"])
+                self.assertIn(missing_gate, report["missing_gates"])
+                self.assertEqual(report[field], {})
 
     def test_output_identities_are_copies_and_gate_lists_are_sorted(self):
         dataset = {"dataset": "gold", "case_count": 100}
