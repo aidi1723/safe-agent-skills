@@ -134,6 +134,29 @@ class IntentGraph:
         return errors
 
 
+@dataclass(frozen=True)
+class DecompositionDiagnostics:
+    mode: str
+    observed_candidate_count: int
+    emitted_intent_count: int
+    candidate_signal_limit_exceeded: bool
+    intent_limit_exceeded: bool
+    reason_codes: tuple[str, ...]
+
+    @property
+    def status(self) -> str:
+        return "incomplete" if self.reason_codes else "complete"
+
+    def to_json(self) -> dict[str, Any]:
+        return _json_compatible(asdict(self))
+
+
+@dataclass(frozen=True)
+class TaskDecomposition:
+    intent_graph: IntentGraph
+    diagnostics: DecompositionDiagnostics
+
+
 def normalize_task(task: str) -> NormalizedTask:
     context = split_current_intent_text(task)
     current = context["current_intent_text"] if context["current_intent_detected"] else task.strip()
@@ -208,9 +231,10 @@ def classify_intent(clause: str, index: int) -> Intent:
     )
 
 
-def decompose_task(task: str) -> IntentGraph:
+def decompose_task_detailed(task: str) -> TaskDecomposition:
+    clauses = split_task_clauses(task)
     intents: list[Intent] = []
-    for index, clause in enumerate(split_task_clauses(task), start=1):
+    for index, clause in enumerate(clauses, start=1):
         intent = classify_intent(clause, index)
         if intent.task_type == "open_source_release" and intents:
             intent = Intent(
@@ -224,7 +248,20 @@ def decompose_task(task: str) -> IntentGraph:
                 confidence=intent.confidence,
             )
         intents.append(intent)
-    return IntentGraph(intents=tuple(intents), unresolved_dependencies=())
+    intent_graph = IntentGraph(intents=tuple(intents), unresolved_dependencies=())
+    diagnostics = DecompositionDiagnostics(
+        mode="strong_clauses" if len(clauses) > 1 else "single_clause",
+        observed_candidate_count=0,
+        emitted_intent_count=len(intents),
+        candidate_signal_limit_exceeded=False,
+        intent_limit_exceeded=False,
+        reason_codes=(),
+    )
+    return TaskDecomposition(intent_graph=intent_graph, diagnostics=diagnostics)
+
+
+def decompose_task(task: str) -> IntentGraph:
+    return decompose_task_detailed(task).intent_graph
 
 
 def _deterministic_confidence(matched_signal_score: int, task_type: str) -> float:

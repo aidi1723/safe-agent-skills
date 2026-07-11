@@ -6,6 +6,7 @@ import unittest
 from onecode_skill_sanitizer.intent import (
     Intent,
     IntentGraph,
+    TaskDecomposition,
     decompose_task,
     normalize_task,
     split_task_clauses,
@@ -13,6 +14,12 @@ from onecode_skill_sanitizer.intent import (
 
 
 class IntentTest(unittest.TestCase):
+    def test_decompose_task_remains_graph_only_compatibility_wrapper(self):
+        graph = decompose_task("审计 skill router")
+
+        self.assertIsInstance(graph, IntentGraph)
+        self.assertNotIsInstance(graph, TaskDecomposition)
+
     def test_normalize_task_preserves_structured_context(self):
         normalized = normalize_task(
             "历史：之前在写官网\n当前任务：审计 skill 路由器\n过期上下文：发布旧版本"
