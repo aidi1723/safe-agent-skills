@@ -395,6 +395,23 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertAlmostEqual(report["metrics"]["task_type_macro_f1"], 2 / 3)
         self.assertEqual(report["metrics"]["multi_intent_exact_match"], 2 / 3)
         self.assertEqual(report["counts"]["task_type_label_count"], 2)
+        self.assertEqual(
+            report["counts"]["task_type_by_label"],
+            [
+                {
+                    "task_type": "a",
+                    "true_positive": 1,
+                    "false_positive": 0,
+                    "false_negative": 1,
+                },
+                {
+                    "task_type": "b",
+                    "true_positive": 1,
+                    "false_positive": 1,
+                    "false_negative": 0,
+                },
+            ],
+        )
 
     def test_required_capability_recall_counts_only_covered_expected_capabilities(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
@@ -1764,6 +1781,37 @@ class RouterEvalV2Tests(unittest.TestCase):
                 "high_confidence_error_rate",
                 "core_bundle_contract_coverage",
             },
+        )
+        task_type_support = report["counts"]["task_type_by_label"]
+        self.assertEqual(
+            [item["task_type"] for item in task_type_support],
+            sorted(item["task_type"] for item in task_type_support),
+        )
+        for item in task_type_support:
+            for field in ("true_positive", "false_positive", "false_negative"):
+                self.assertIs(type(item[field]), int)
+                self.assertGreaterEqual(item[field], 0)
+        per_label = []
+        for item in task_type_support:
+            true_positive = item["true_positive"]
+            precision_denominator = true_positive + item["false_positive"]
+            recall_denominator = true_positive + item["false_negative"]
+            precision = true_positive / precision_denominator if precision_denominator else 0.0
+            recall = true_positive / recall_denominator if recall_denominator else 0.0
+            f1 = 0.0 if precision + recall == 0 else 2 * precision * recall / (precision + recall)
+            per_label.append((precision, recall, f1))
+        self.assertTrue(per_label)
+        self.assertAlmostEqual(
+            report["metrics"]["task_type_macro_precision"],
+            sum(item[0] for item in per_label) / len(per_label),
+        )
+        self.assertAlmostEqual(
+            report["metrics"]["task_type_macro_recall"],
+            sum(item[1] for item in per_label) / len(per_label),
+        )
+        self.assertAlmostEqual(
+            report["metrics"]["task_type_macro_f1"],
+            sum(item[2] for item in per_label) / len(per_label),
         )
 
     def test_bundle_capability_context_is_deterministic_and_required_only(self):

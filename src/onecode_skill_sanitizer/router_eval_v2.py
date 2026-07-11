@@ -370,6 +370,13 @@ def evaluate_router_v2(
             "high_confidence_error_cases": high_confidence_error_cases,
             "high_confidence_cases": high_confidence_cases,
             "task_type_label_count": len(task_type_metrics["per_label"]),
+            "task_type_by_label": [
+                {
+                    "task_type": task_type,
+                    **task_type_metrics["per_label"][task_type]["counts"],
+                }
+                for task_type in sorted(task_type_metrics["per_label"])
+            ],
             "core_bundle_contract_covered": core_contract_covered,
             "core_bundle_contract_total": core_contract_total,
             "dag_valid_cases": dag_valid,
