@@ -804,7 +804,18 @@ PROFILE_SIGNAL_ALIASES = {
     ),
 }
 
+_RELEASE_READINESS_REQUEST_RE = re.compile(
+    r"^\s*(?:(?:一份\s*)?发布清单(?:草案)?|"
+    r"(?:draft\s+)?release\s+checklist(?:\s+draft)?)\s*$",
+    re.IGNORECASE,
+)
+
 MAX_SCAN_CHARACTERS = 20_000
+
+
+def is_release_readiness_request(text: str) -> bool:
+    """Recognize bounded readiness aliases without treating generic lists as release."""
+    return _RELEASE_READINESS_REQUEST_RE.fullmatch(text) is not None
 
 
 def is_design_governance_composite(text: str) -> bool:

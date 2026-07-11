@@ -335,6 +335,79 @@ class TaskPackV2CliTest(unittest.TestCase):
         self.assertEqual(payload["execution_graph"]["status"], "ready")
         self.assertTrue(payload["execution_graph"]["acyclic"])
 
+    def test_smart_schema_v2_fails_closed_for_non_action_plus_enumerations(self):
+        cases = [
+            "The description mentions code review + executive brief + release checklist",
+            "术语：代码审查 + 老板简报 + 发布清单",
+            "code review + 1 + release checklist",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(
+                        main(["smart", task, "--schema-version", "2", "--format", "json"]),
+                        0,
+                    )
+                payload = json.loads(out.getvalue())
+                self.assertEqual(
+                    [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+                    ["general"],
+                )
+                self.assertEqual(payload["routing_status"], "incomplete")
+                self.assertEqual(payload["selected_scenarios"], [])
+                self.assertEqual(payload["uncovered_intents"], ["i1"])
+
+    def test_smart_schema_v2_suppresses_descriptive_github_push_contexts(self):
+        cases = [
+            "Research how to push to GitHub + code review",
+            "Write a guide about push changes to GitHub + code review",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(
+                        main(["smart", task, "--schema-version", "2", "--format", "json"]),
+                        0,
+                    )
+                payload = json.loads(out.getvalue())
+                scenario_ids = {
+                    scenario["scenario_id"] for scenario in payload["selected_scenarios"]
+                }
+                self.assertEqual(
+                    [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+                    ["general"],
+                )
+                self.assertNotIn("open-source-release", scenario_ids)
+                self.assertEqual(payload["selected_scenarios"], [])
+                self.assertEqual(payload["routing_status"], "incomplete")
+
+    def test_smart_schema_v2_routes_single_release_readiness_request(self):
+        for task in ["发布清单", "release checklist"]:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(
+                        main(["smart", task, "--schema-version", "2", "--format", "json"]),
+                        0,
+                    )
+                payload = json.loads(out.getvalue())
+                self.assertEqual(
+                    [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+                    ["open_source_release"],
+                )
+                self.assertEqual(
+                    [
+                        scenario["scenario_id"]
+                        for scenario in payload["selected_scenarios"]
+                    ],
+                    ["open-source-release"],
+                )
+                self.assertEqual(payload["routing_status"], "complete")
+
     def test_smart_schema_v2_marks_contract_approval_nodes_as_host_actions(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):

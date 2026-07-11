@@ -59,16 +59,34 @@ class IntentTest(unittest.TestCase):
 
     def test_plain_plus_readiness_enumerations_do_not_create_release_gates(self):
         cases = [
-            "代码审查 + 老板简报 + 发布清单",
-            "code review ＋ management brief ＋ release checklist",
+            (
+                "代码审查 + 老板简报 + 发布清单",
+                ["code_review", "data_analysis", "open_source_release"],
+            ),
+            (
+                "code review ＋ management brief ＋ release checklist",
+                ["code_review", "data_analysis", "open_source_release"],
+            ),
+            (
+                "代码审查 + 一份发布清单",
+                ["code_review", "open_source_release"],
+            ),
+            (
+                "代码审查 + 发布清单草案",
+                ["code_review", "open_source_release"],
+            ),
+            (
+                "code review + draft release checklist",
+                ["code_review", "open_source_release"],
+            ),
         ]
 
-        for task in cases:
+        for task, expected_task_types in cases:
             with self.subTest(task=task):
                 graph = decompose_task(task)
                 self.assertEqual(
                     [intent.task_type for intent in graph.intents],
-                    ["code_review", "data_analysis", "open_source_release"],
+                    expected_task_types,
                 )
                 self.assertTrue(all(not intent.depends_on for intent in graph.intents))
                 self.assertEqual(graph.dependency_relations, ())
@@ -109,6 +127,20 @@ class IntentTest(unittest.TestCase):
         self.assertIn(
             IntentRelation("i1", "i2", "explicit_sequence", False),
             graph.dependency_relations,
+        )
+
+    def test_then_marker_in_plus_enumeration_creates_complete_source_chain(self):
+        graph = decompose_task(
+            "代码审查 + 然后老板简报 + 发布清单"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["code_review", "data_analysis", "open_source_release"],
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in graph.intents],
+            [(), ("i1",), ("i1", "i2")],
         )
 
     def test_decompose_task_remains_graph_only_compatibility_wrapper(self):

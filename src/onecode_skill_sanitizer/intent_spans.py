@@ -29,6 +29,7 @@ class SpanDecomposition:
     observed_candidate_count: int
     candidate_signal_limit_exceeded: bool
     intent_limit_exceeded: bool
+    classification_suppressed: bool = False
 
 
 _PROFILE_ORDER = {
@@ -53,6 +54,13 @@ _DESCRIPTIVE_LIST_PREFIX_RE = re.compile(
     r"^\s*(?:(?:artifacts?|objects?|terms?|file\s+lists?|supported\s+files?|"
     r"file\s+types?|files?)|(?:产物|对象|术语|文件列表|支持的文件|"
     r"支持文件|文件类型|文件))\s*[:：]",
+    re.IGNORECASE,
+)
+_DESCRIPTIVE_RELEASE_ACTION_RE = re.compile(
+    r"(?:\bresearch\s+how\s+to\b|\bwrite\s+(?:a\s+)?guide\s+(?:about|to)\b|"
+    r"\bhow[-\s]+to\s+guide\b|\bguide\s+(?:about|to)\b)"
+    r"[\s\S]{0,80}\b(?:push|publish|release)\b|"
+    r"(?:研究|指南|教程)[\s\S]{0,80}(?:推送|发布|上线)",
     re.IGNORECASE,
 )
 
@@ -136,6 +144,9 @@ def split_profile_enumeration(
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
 ) -> SpanDecomposition:
     """Split a profile-backed enumeration while preserving readable source text."""
+    if _classification_should_be_suppressed(clause):
+        return SpanDecomposition((clause,), 0, False, False, True)
+
     spans, observed, candidate_limit_exceeded = find_profile_signal_spans(
         clause, candidate_limit
     )
@@ -148,6 +159,12 @@ def split_profile_enumeration(
                 span.task_type == "website_build"
                 and span.signal == "design system"
             )
+        )
+    if _PLUS_CONNECTOR_RE.search(clause) and not _plus_segments_have_profile_evidence(
+        clause, spans
+    ):
+        return SpanDecomposition(
+            (clause,), observed, candidate_limit_exceeded, False, True
         )
     if len({span.task_type for span in spans}) < 2:
         positive_prefix = _positive_prefix_before_coordinated_negation(clause)
@@ -187,7 +204,9 @@ def split_profile_enumeration(
         and not _range_is_negated(piece_start, piece_end, negation_ranges)
         for piece_index, (piece_start, piece_end, text) in enumerate(pieces)
     ):
-        return SpanDecomposition((clause,), observed, candidate_limit_exceeded, False)
+        return SpanDecomposition(
+            (clause,), observed, candidate_limit_exceeded, False, True
+        )
 
     for piece_index, (piece_start, piece_end, _) in enumerate(pieces):
         if piece_assignments[piece_index] or _range_is_negated(
@@ -254,6 +273,33 @@ def split_profile_enumeration(
         observed_candidate_count=observed,
         candidate_signal_limit_exceeded=candidate_limit_exceeded,
         intent_limit_exceeded=intent_limit,
+    )
+
+
+def _classification_should_be_suppressed(clause: str) -> bool:
+    return bool(
+        _DESCRIPTIVE_ENUMERATION_RE.search(clause)
+        or _DESCRIPTIVE_LIST_PREFIX_RE.search(clause)
+        or _DESCRIPTIVE_RELEASE_ACTION_RE.search(clause)
+    )
+
+
+def _plus_segments_have_profile_evidence(
+    clause: str, spans: tuple[ProfileSignalSpan, ...]
+) -> bool:
+    start = 0
+    pieces: list[tuple[int, int]] = []
+    for connector in _PLUS_CONNECTOR_RE.finditer(clause):
+        pieces.append((start, connector.start()))
+        start = connector.end()
+    pieces.append((start, len(clause)))
+    return all(
+        not clause[piece_start:piece_end].strip()
+        or any(
+            span.start < piece_end and span.end > piece_start
+            for span in spans
+        )
+        for piece_start, piece_end in pieces
     )
 
 

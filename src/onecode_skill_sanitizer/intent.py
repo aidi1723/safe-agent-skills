@@ -341,17 +341,20 @@ def _split_list_items(text: str) -> list[str]:
     return items
 
 
-def classify_intent(clause: str, index: int) -> Intent:
+def classify_intent(clause: str, index: int, force_general: bool = False) -> Intent:
     scanned_clause = clause[:MAX_SCAN_CHARACTERS]
     website_publish_precondition = bool(
         _WEBSITE_PUBLISH_PRECONDITION_RE.search(scanned_clause)
     )
-    release_action = _is_release_action(scanned_clause)
-    routing_clause = (
-        scanned_clause
-        if release_action
-        else _routing_clause_without_non_action_release_terms(scanned_clause)
-    )
+    release_action = False if force_general else _is_release_action(scanned_clause)
+    if force_general:
+        routing_clause = ""
+    elif release_action:
+        routing_clause = scanned_clause
+    else:
+        routing_clause = _routing_clause_without_non_action_release_terms(
+            scanned_clause
+        )
     profile = build_task_profile(routing_clause)
     if is_design_governance_composite(routing_clause):
         profile = build_profile_for_task_type(
@@ -395,6 +398,7 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
     candidate_signal_limit_exceeded = False
     intent_limit_exceeded = False
     used_profile_spans = False
+    suppressed_clause_indexes: set[int] = set()
     for clause_index, broad_clause in enumerate(broad_clauses):
         if candidate_signal_limit_exceeded:
             decomposition = SpanDecomposition(
@@ -422,7 +426,12 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
         if len(decomposition.clauses) > remaining:
             intent_limit_exceeded = True
         if remaining > 0:
-            clauses.extend(decomposition.clauses[:remaining])
+            emitted = decomposition.clauses[:remaining]
+            if decomposition.classification_suppressed:
+                suppressed_clause_indexes.update(
+                    range(len(clauses), len(clauses) + len(emitted))
+                )
+            clauses.extend(emitted)
         if (
             len(clauses) >= MAX_EMITTED_INTENTS
             and clause_index < len(broad_clauses) - 1
@@ -432,7 +441,11 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
 
     intents: list[Intent] = []
     for index, clause in enumerate(clauses, start=1):
-        intents.append(classify_intent(clause, index))
+        intents.append(
+            classify_intent(
+                clause, index, force_general=index - 1 in suppressed_clause_indexes
+            )
+        )
     relations = infer_intent_relations(current, intents)
     final_intents = apply_intent_relations(intents, relations)
     intent_graph = IntentGraph(
@@ -447,6 +460,8 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
         reason_codes.append("candidate_signal_limit_exceeded")
     if intent_limit_exceeded:
         reason_codes.append("intent_limit_exceeded")
+    if suppressed_clause_indexes:
+        reason_codes.append("ambiguous_profile_enumeration")
     diagnostics = DecompositionDiagnostics(
         mode=(
             "profile_spans"

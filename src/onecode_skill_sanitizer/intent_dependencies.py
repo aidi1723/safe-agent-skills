@@ -7,6 +7,7 @@ import re
 from typing import TYPE_CHECKING, Iterable, Sequence
 
 from .intent import IntentRelation
+from .routing_profiles import is_release_readiness_request
 
 if TYPE_CHECKING:
     from .intent import Intent
@@ -54,9 +55,6 @@ _UNKNOWN_PREFIX_GATE_RE = re.compile(
     re.IGNORECASE,
 )
 _PLUS_ENUMERATION_RE = re.compile(r"\+|＋")
-_RELEASE_READINESS_ALIAS_RE = re.compile(
-    r"^\s*(?:release\s+checklist|发布清单)\s*$", re.IGNORECASE
-)
 _CHINESE_SEQUENCE_RE = re.compile(r"然后|先[\s\S]*(?:再|后)")
 
 
@@ -140,6 +138,8 @@ def infer_intent_relations(
         _append_source_chain(relations, ordered_intents, "first_then")
     elif _BEFORE_RE.search(current_text) or _CHINESE_PRECEDES_RE.search(current_text):
         _append_source_chain(relations, ordered_intents, "before")
+    elif _CHINESE_SEQUENCE_RE.search(current_text):
+        _append_source_chain(relations, ordered_intents, "explicit_sequence")
     elif _ORDER_LEAD_IN_RE.search(current_text):
         _append_source_chain(relations, ordered_intents, "explicit_sequence")
     elif ";" in current_text or "；" in current_text:
@@ -163,7 +163,7 @@ def _is_plain_release_readiness_enumeration(
 ) -> bool:
     if not (
         _PLUS_ENUMERATION_RE.search(current_text)
-        and _RELEASE_READINESS_ALIAS_RE.fullmatch(target.summary)
+        and is_release_readiness_request(target.summary)
     ):
         return False
     return not any(
