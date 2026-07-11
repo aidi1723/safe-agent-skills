@@ -7,7 +7,7 @@
   "required": ["schema_version", "suite_id", "labeling", "case_count", "shards"],
   "properties": {
     "schema_version": {"const": 1},
-    "suite_id": {"type": "string", "minLength": 1, "pattern": "^\\S(?:.*\\S)?$"},
+    "suite_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
     "labeling": {
       "type": "object",
       "additionalProperties": false,

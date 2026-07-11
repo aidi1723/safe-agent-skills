@@ -567,7 +567,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         }
         suite_path = getattr(args, "suite", None)
         review_path = getattr(args, "review", None)
-        if suite_path:
+        if suite_path is not None:
             dataset = load_eval_suite(resolve_project_asset_path(suite_path), known_scenarios)
             dataset_identity = dataset["identity"]
             review_identity = (
@@ -575,7 +575,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
                     resolve_project_asset_path(review_path),
                     dataset["suite_identity"],
                 )
-                if review_path
+                if review_path is not None
                 else {}
             )
         else:
@@ -632,7 +632,13 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
 
 
 def _validate_router_eval_v2_inputs(args: argparse.Namespace) -> None:
-    if getattr(args, "review", None) and not getattr(args, "suite", None):
+    suite_path = getattr(args, "suite", None)
+    review_path = getattr(args, "review", None)
+    if suite_path is not None and (not suite_path or suite_path != suite_path.strip()):
+        raise ValueError("--suite must be a nonblank path without surrounding whitespace")
+    if review_path is not None and (not review_path or review_path != review_path.strip()):
+        raise ValueError("--review must be a nonblank path without surrounding whitespace")
+    if review_path is not None and suite_path is None:
         raise ValueError("--review is only valid with --suite")
 
 

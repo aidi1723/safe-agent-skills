@@ -58,6 +58,10 @@ def _exact_nonblank(value: object) -> bool:
     return type(value) is str and bool(value) and value == value.strip()
 
 
+def _exact_identifier(value: object) -> bool:
+    return type(value) is str and bool(value) and not any(character.isspace() for character in value)
+
+
 def _positive_int(value: object) -> bool:
     return type(value) is int and value > 0
 
@@ -104,7 +108,7 @@ def _validate_index(payload: object) -> dict[str, Any]:
         raise DatasetValidationError("suite index has missing or unknown fields")
     if payload["schema_version"] != 1:
         raise DatasetValidationError("suite index schema_version must be 1")
-    if not _exact_nonblank(payload["suite_id"]):
+    if not _exact_identifier(payload["suite_id"]):
         raise DatasetValidationError("suite_id must be an exact nonempty string")
     if payload["labeling"] != EXPECTED_LABELING:
         raise DatasetValidationError("suite labeling metadata is invalid")
@@ -154,6 +158,8 @@ def _load_suite(index_path: Path, known_scenarios: set[str] | None) -> dict[str,
             )
             for offset, item in enumerate(payload["cases"])
         ]
+        if any(not _exact_identifier(item["id"]) for item in validated):
+            raise DatasetValidationError(f"shards[{shard_index}] case ids must be exact identifiers")
         if len(validated) != descriptor["case_count"]:
             raise DatasetValidationError(f"shards[{shard_index}] case count mismatch")
         cases.extend(validated)
@@ -231,13 +237,13 @@ def _validate_suite_identity(identity: object) -> dict[str, Any]:
         raise DatasetValidationError("suite identity has missing or unknown fields")
     case_ids = identity["case_ids"]
     if (
-        not _exact_nonblank(identity["suite_id"])
+        not _exact_identifier(identity["suite_id"])
         or type(identity["suite_sha256"]) is not str
         or _SHA256_PATTERN.fullmatch(identity["suite_sha256"]) is None
         or not _positive_int(identity["case_count"])
         or type(case_ids) is not list
         or len(case_ids) != identity["case_count"]
-        or not all(_exact_nonblank(case_id) for case_id in case_ids)
+        or not all(_exact_identifier(case_id) for case_id in case_ids)
         or len(case_ids) != len(set(case_ids))
     ):
         raise DatasetValidationError("suite identity is invalid")
@@ -254,7 +260,7 @@ def load_review_record(review_path: Path, suite_identity: object) -> dict[str, o
     if payload["schema_version"] != 1:
         raise DatasetValidationError("review schema_version must be 1")
     exact_strings = ("suite_id", "rule_author_id", "reviewer_id")
-    if any(not _exact_nonblank(payload[field]) for field in exact_strings):
+    if any(not _exact_identifier(payload[field]) for field in exact_strings):
         raise DatasetValidationError("review identifiers must be exact nonempty strings")
     if (
         payload["suite_id"] != suite_identity.get("suite_id")
@@ -280,7 +286,7 @@ def load_review_record(review_path: Path, suite_identity: object) -> dict[str, o
     if (
         type(expected_ids) is not list
         or type(reviewed_ids) is not list
-        or not all(_exact_nonblank(item) for item in reviewed_ids)
+        or not all(_exact_identifier(item) for item in reviewed_ids)
     ):
         raise DatasetValidationError("reviewed_case_ids are invalid")
     if len(reviewed_ids) != len(set(reviewed_ids)):
@@ -294,7 +300,11 @@ def load_review_record(review_path: Path, suite_identity: object) -> dict[str, o
     for index, exception in enumerate(exceptions):
         if type(exception) is not dict or set(exception) != _EXCEPTION_FIELDS:
             raise DatasetValidationError(f"exceptions[{index}] is invalid")
-        if exception["case_id"] not in set(expected_ids) or not _exact_nonblank(exception["reason"]):
+        if (
+            not _exact_identifier(exception["case_id"])
+            or exception["case_id"] not in set(expected_ids)
+            or not _exact_nonblank(exception["reason"])
+        ):
             raise DatasetValidationError(f"exceptions[{index}] is invalid")
         if exception["case_id"] in exception_ids:
             raise DatasetValidationError("exceptions must not repeat case IDs")

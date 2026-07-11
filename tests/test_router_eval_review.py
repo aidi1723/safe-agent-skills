@@ -182,6 +182,30 @@ class RouterEvalSuiteTests(unittest.TestCase):
             with self.assertRaises(DatasetValidationError):
                 self.load(fixture.index_path)
 
+    def test_suite_case_ids_reject_edge_and_control_whitespace(self):
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        for invalid_id in (" leading", "trailing ", "line\nbreak", "tab\tinside"):
+            with self.subTest(case_id=invalid_id), tempfile.TemporaryDirectory() as tmp:
+                fixture = SuiteFixture(Path(tmp), [case(invalid_id)])
+                with self.assertRaises(DatasetValidationError):
+                    self.load(fixture.index_path)
+
+    def test_suite_identifier_runtime_matches_strict_schema(self):
+        from jsonschema import Draft202012Validator
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        schema = json.loads(Path("schemas/router-eval-suite.schema.json").read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema)
+        for invalid_id in ("suite\nname", "suite\tname", "suite\n"):
+            with self.subTest(suite_id=invalid_id), tempfile.TemporaryDirectory() as tmp:
+                fixture = SuiteFixture(Path(tmp))
+                fixture.index_payload["suite_id"] = invalid_id
+                fixture.write_index()
+                self.assertTrue(list(validator.iter_errors(fixture.index_payload)))
+                with self.assertRaises(DatasetValidationError):
+                    self.load(fixture.index_path)
+
     def test_declared_order_and_canonical_identity_bind_index_and_shards(self):
         from onecode_skill_sanitizer.router_eval_review import canonical_suite_sha256
 
@@ -351,6 +375,33 @@ class RouterEvalReviewTests(unittest.TestCase):
             payload["unknown"] = True
             self.assertTrue(list(Draft202012Validator(schema).iter_errors(payload)))
 
+    def test_review_identifier_runtime_matches_strict_schema(self):
+        from jsonschema import Draft202012Validator
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        schema = json.loads(Path("schemas/router-eval-review.schema.json").read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema)
+        mutations = (
+            lambda payload: payload.update(rule_author_id="author\nname"),
+            lambda payload: payload.update(reviewer_id="reviewer\tname"),
+            lambda payload: payload.update(reviewed_case_ids=["normal-001\nextra"]),
+            lambda payload: payload.update(reviewed_case_ids=["normal-001\n"]),
+            lambda payload: payload.update(
+                exceptions=[{"case_id": "normal-001\tother", "reason": "Noted"}]
+            ),
+        )
+        for mutate in mutations:
+            with self.subTest(mutation=mutate), tempfile.TemporaryDirectory() as tmp:
+                fixture = SuiteFixture(Path(tmp))
+                identity = RouterEvalSuiteTests().load(fixture.index_path)["suite_identity"]
+                payload = fixture.review_payload(identity)
+                mutate(payload)
+                self.assertTrue(list(validator.iter_errors(payload)))
+                path = fixture.root / "review.json"
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                with self.assertRaises(DatasetValidationError):
+                    self.load_review(path, identity)
+
 
 class RouterEvalV2ArgumentTests(unittest.TestCase):
     def parse(self, *arguments: str):
@@ -375,6 +426,33 @@ class RouterEvalV2ArgumentTests(unittest.TestCase):
         parsed = self.parse("--suite", "index.json", "--review", "review.json")
         _validate_router_eval_v2_inputs(parsed)
         self.assertEqual(parsed.review, "review.json")
+
+    def test_blank_or_padded_suite_and_review_paths_fail_as_structured_json(self):
+        root = Path(__file__).resolve().parents[1]
+        invalid_commands = (
+            ("--suite", ""),
+            ("--suite", "   "),
+            ("--suite", " index.json "),
+            ("--suite", "missing.json", "--review", ""),
+            ("--suite", "missing.json", "--review", "  "),
+            ("--suite", "missing.json", "--review", " review.json "),
+            ("--eval", "evals/multi-intent-gold.json", "--review", "review.json"),
+            ("--eval", "evals/multi-intent-gold.json", "--review", ""),
+        )
+        for arguments in invalid_commands:
+            with self.subTest(arguments=arguments):
+                completed = subprocess.run(
+                    [sys.executable, "-m", "onecode_skill_sanitizer", "router-eval-v2", *arguments],
+                    cwd=root,
+                    env={**os.environ, "PYTHONPATH": str(root / "src")},
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+                self.assertEqual(completed.returncode, 2)
+                self.assertNotIn("Traceback", completed.stderr)
+                report = json.loads(completed.stdout)
+                self.assertEqual(report["status"], "error")
 
     def test_suite_without_review_evaluates_but_strict_mode_returns_two(self):
         root = Path(__file__).resolve().parents[1]
