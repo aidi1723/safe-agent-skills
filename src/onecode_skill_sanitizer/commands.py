@@ -72,6 +72,7 @@ from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_envelope_v2
 from .router_eval_review import load_eval_suite
 from .router_eval_review import load_review_record
+from .router_eval_review import load_router_source_identity
 from .router_quality_gate import build_quality_gate
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
@@ -570,14 +571,16 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         if suite_path is not None:
             dataset = load_eval_suite(resolve_project_asset_path(suite_path), known_scenarios)
             dataset_identity = dataset["identity"]
-            review_identity = (
-                load_review_record(
+            if review_path is not None:
+                source_identity = load_router_source_identity(registry_dir)
+                review_identity = load_review_record(
                     resolve_project_asset_path(review_path),
                     dataset["suite_identity"],
+                    source_identity,
                 )
-                if review_path is not None
-                else {}
-            )
+            else:
+                source_identity = None
+                review_identity = {}
         else:
             dataset = load_eval_dataset_envelope_v2(
                 resolve_project_asset_path(args.eval),
@@ -585,6 +588,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             )
             dataset_identity = dataset_identity_v2(dataset)
             review_identity = {}
+            source_identity = None
         cases = dataset["cases"]
         capability_context = _bundle_required_capability_context(bundles_index)
         contract_result = contract_coverage(
@@ -614,6 +618,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             support_counts={**result["counts"], "case_count": result["case_count"]},
             dataset_identity=dataset_identity,
             review_identity=review_identity,
+            source_identity=source_identity,
         )
     except (DatasetValidationError, EvaluatorError, ValueError, OSError, SystemExit) as exc:
         print(

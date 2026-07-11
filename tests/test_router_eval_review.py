@@ -6,6 +6,7 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 
 LABELING = {
@@ -100,6 +101,7 @@ class RouterEvalSuiteTests(unittest.TestCase):
         mutations = (
             lambda fixture: fixture.index_payload.update(extra=True),
             lambda fixture: fixture.index_payload.update(schema_version=2),
+            lambda fixture: fixture.index_payload.update(schema_version=True),
             lambda fixture: fixture.index_payload["shards"][0].update(extra=True),
             lambda fixture: fixture.index_payload["shards"][0].update(case_count=True),
         )
@@ -119,6 +121,57 @@ class RouterEvalSuiteTests(unittest.TestCase):
             fixture.write_index()
             with self.assertRaises(DatasetValidationError):
                 self.load(fixture.index_path)
+
+    def test_strict_parser_rejects_duplicate_keys_and_nonstandard_constants(self):
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture = SuiteFixture(Path(tmp))
+            raw_index = json.dumps(fixture.index_payload).replace(
+                '"schema_version": 1',
+                '"schema_version": 1, "schema_version": 2',
+                1,
+            )
+            fixture.index_path.write_text(raw_index, encoding="utf-8")
+            with self.assertRaisesRegex(DatasetValidationError, "duplicate"):
+                self.load(fixture.index_path)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture = SuiteFixture(Path(tmp))
+            raw_shard = json.dumps(fixture.shard_payload).replace(
+                '"id": "normal-001"',
+                '"id": "normal-001", "id": "conflicting-id"',
+                1,
+            )
+            fixture.shard_path.write_text(raw_shard, encoding="utf-8")
+            with self.assertRaisesRegex(DatasetValidationError, "duplicate"):
+                self.load(fixture.index_path)
+
+        for constant in ("NaN", "Infinity", "-Infinity"):
+            with self.subTest(constant=constant), tempfile.TemporaryDirectory() as tmp:
+                fixture = SuiteFixture(Path(tmp))
+                raw_index = json.dumps(fixture.index_payload).replace(
+                    '"case_count": 1',
+                    f'"case_count": {constant}',
+                    1,
+                )
+                fixture.index_path.write_text(raw_index, encoding="utf-8")
+                with self.assertRaises(DatasetValidationError):
+                    self.load(fixture.index_path)
+
+    def test_deep_json_is_normalized_to_dataset_validation_error(self):
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        invalid_documents = (
+            "[" * 10_000 + "0" + "]" * 10_000,
+            '{"schema_version":' + "1" * 10_000 + "}",
+        )
+        for document in invalid_documents:
+            with self.subTest(prefix=document[:20]), tempfile.TemporaryDirectory() as tmp:
+                path = Path(tmp) / "index.json"
+                path.write_text(document, encoding="utf-8")
+                with self.assertRaises(DatasetValidationError):
+                    self.load(path)
 
     def test_shard_paths_must_be_safe_known_relative_files(self):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
@@ -226,6 +279,7 @@ class RouterEvalSuiteTests(unittest.TestCase):
 
         schema = json.loads(Path("schemas/router-eval-suite.schema.json").read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
+        self.assertEqual(schema["properties"]["schema_version"]["type"], "integer")
         with tempfile.TemporaryDirectory() as tmp:
             fixture = SuiteFixture(Path(tmp))
             Draft202012Validator(schema).validate(fixture.index_payload)
@@ -275,6 +329,69 @@ class RouterEvalReviewTests(unittest.TestCase):
             with self.assertRaises(DatasetValidationError):
                 self.load_review(path, identity)
 
+            payload = fixture.review_payload(identity)
+            payload["schema_version"] = True
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            with self.assertRaises(DatasetValidationError):
+                self.load_review(path, identity)
+
+    def test_review_parser_rejects_conflicting_and_nested_duplicate_keys_and_constants(self):
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        replacements = (
+            ('"decision": "accepted"', '"decision": "accepted", "decision": "rejected"'),
+            (
+                '"case_id": "normal-001"',
+                '"case_id": "normal-001", "case_id": "conflicting-id"',
+            ),
+        )
+        for original, replacement in replacements:
+            with self.subTest(replacement=replacement), tempfile.TemporaryDirectory() as tmp:
+                fixture = SuiteFixture(Path(tmp))
+                identity = RouterEvalSuiteTests().load(fixture.index_path)["suite_identity"]
+                payload = fixture.review_payload(identity)
+                payload["exceptions"] = [{"case_id": "normal-001", "reason": "Noted"}]
+                raw = json.dumps(payload).replace(original, replacement, 1)
+                path = fixture.root / "review.json"
+                path.write_text(raw, encoding="utf-8")
+                with self.assertRaisesRegex(DatasetValidationError, "duplicate"):
+                    self.load_review(path, identity)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture = SuiteFixture(Path(tmp))
+            identity = RouterEvalSuiteTests().load(fixture.index_path)["suite_identity"]
+            raw = json.dumps(fixture.review_payload(identity)).replace(
+                '"schema_version": 1',
+                '"schema_version": NaN',
+                1,
+            )
+            path = fixture.root / "review.json"
+            path.write_text(raw, encoding="utf-8")
+            with self.assertRaises(DatasetValidationError):
+                self.load_review(path, identity)
+
+    def test_exception_reason_schema_and_runtime_reject_control_whitespace(self):
+        from jsonschema import Draft202012Validator
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        schema = json.loads(Path("schemas/router-eval-review.schema.json").read_text(encoding="utf-8"))
+        validator = Draft202012Validator(schema)
+        for reason in ("Noted\tinside", "Noted\ninside", "Noted\n"):
+            with self.subTest(reason=reason), tempfile.TemporaryDirectory() as tmp:
+                fixture = SuiteFixture(Path(tmp))
+                identity = RouterEvalSuiteTests().load(fixture.index_path)["suite_identity"]
+                payload = fixture.review_payload(identity)
+                payload["exceptions"] = [{"case_id": "normal-001", "reason": reason}]
+                self.assertTrue(list(validator.iter_errors(payload)))
+                path = fixture.root / "review.json"
+                path.write_text(json.dumps(payload), encoding="utf-8")
+                with self.assertRaises(DatasetValidationError):
+                    self.load_review(path, identity)
+
+        valid = [{"case_id": "normal-001", "reason": "Accepted wording caveat"}]
+        payload["exceptions"] = valid
+        validator.validate(payload)
+
     def test_malformed_suite_identity_is_rejected_with_contract_error(self):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
 
@@ -316,6 +433,27 @@ class RouterEvalReviewTests(unittest.TestCase):
                 path.write_text(json.dumps(payload), encoding="utf-8")
                 with self.assertRaises(DatasetValidationError):
                     self.load_review(path, identity)
+
+    def test_review_loader_cross_checks_trusted_source_identity_when_provided(self):
+        from onecode_skill_sanitizer.router_eval_review import load_review_record
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        with tempfile.TemporaryDirectory() as tmp:
+            fixture = SuiteFixture(Path(tmp))
+            identity = RouterEvalSuiteTests().load(fixture.index_path)["suite_identity"]
+            payload = fixture.review_payload(identity)
+            path = fixture.root / "review.json"
+            path.write_text(json.dumps(payload), encoding="utf-8")
+            source = {"reviewed_commit": "c" * 40, "rule_author_id": "routing-author"}
+
+            load_review_record(path, identity, source)
+            for mismatch in (
+                {**source, "reviewed_commit": "d" * 40},
+                {**source, "rule_author_id": "different-author"},
+                None,
+            ):
+                with self.subTest(source=mismatch), self.assertRaises(DatasetValidationError):
+                    load_review_record(path, identity, mismatch)
 
     def test_reviewed_case_ids_require_exact_full_unique_coverage(self):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
@@ -367,6 +505,7 @@ class RouterEvalReviewTests(unittest.TestCase):
 
         schema = json.loads(Path("schemas/router-eval-review.schema.json").read_text(encoding="utf-8"))
         Draft202012Validator.check_schema(schema)
+        self.assertEqual(schema["properties"]["schema_version"]["type"], "integer")
         with tempfile.TemporaryDirectory() as tmp:
             fixture = SuiteFixture(Path(tmp))
             identity = RouterEvalSuiteTests().load(fixture.index_path)["suite_identity"]
@@ -453,6 +592,137 @@ class RouterEvalV2ArgumentTests(unittest.TestCase):
                 self.assertNotIn("Traceback", completed.stderr)
                 report = json.loads(completed.stdout)
                 self.assertEqual(report["status"], "error")
+
+    def test_deep_suite_json_returns_structured_error_without_traceback(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as tmp:
+            suite_path = Path(tmp) / "index.json"
+            suite_path.write_text("[" * 10_000 + "0" + "]" * 10_000, encoding="utf-8")
+            completed = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "onecode_skill_sanitizer",
+                    "router-eval-v2",
+                    "--suite",
+                    str(suite_path),
+                ],
+                cwd=root,
+                env={**os.environ, "PYTHONPATH": str(root / "src")},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+        self.assertEqual(completed.returncode, 2)
+        self.assertNotIn("Traceback", completed.stderr)
+        self.assertEqual(json.loads(completed.stdout)["status"], "error")
+
+
+class RouterSourceIdentityTests(unittest.TestCase):
+    def git(self, repository: Path, *arguments: str, env: dict[str, str] | None = None):
+        return subprocess.run(
+            ["git", "-C", str(repository), *arguments],
+            env=env,
+            capture_output=True,
+            text=True,
+            check=True,
+        )
+
+    def repository(self, root: Path) -> tuple[str, str]:
+        self.git(root, "init", "--quiet")
+        self.git(root, "config", "user.name", "Routing Author")
+        self.git(root, "config", "user.email", "routing-author@example.com")
+        tracked = root / "router.py"
+        tracked.write_text("ROUTER = 1\n", encoding="utf-8")
+        self.git(root, "add", "router.py")
+        self.git(root, "commit", "--quiet", "-m", "router source")
+        commit = self.git(root, "rev-parse", "HEAD").stdout.strip()
+        return commit, "routing-author@example.com"
+
+    def test_source_identity_uses_current_commit_author_and_ignores_untracked_files(self):
+        from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            commit, author = self.repository(root)
+            (root / "uv.lock").write_text("untracked\n", encoding="utf-8")
+
+            identity = load_router_source_identity(root)
+
+        self.assertEqual(identity, {"reviewed_commit": commit, "rule_author_id": author})
+
+    def test_source_identity_rejects_dirty_tracked_worktree_and_missing_git(self):
+        from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            self.repository(root)
+            (root / "router.py").write_text("ROUTER = 2\n", encoding="utf-8")
+            with self.assertRaises(DatasetValidationError):
+                load_router_source_identity(root)
+
+        with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"PATH": tmp}):
+            with self.assertRaises(DatasetValidationError):
+                load_router_source_identity(Path(tmp))
+
+    def test_source_identity_normalizes_timeout_command_error_invalid_head_and_empty_author(self):
+        from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        failures = (
+            subprocess.TimeoutExpired(["git"], 5),
+            subprocess.CalledProcessError(1, ["git"], stderr="failed"),
+        )
+        for failure in failures:
+            with self.subTest(failure=failure), mock.patch(
+                "onecode_skill_sanitizer.router_eval_review.subprocess.run",
+                side_effect=failure,
+            ):
+                with self.assertRaises(DatasetValidationError):
+                    load_router_source_identity(Path("repo"))
+
+        invalid_sequences = (
+            [
+                subprocess.CompletedProcess(["git"], 0, stdout="not-a-commit\n", stderr=""),
+            ],
+            [
+                subprocess.CompletedProcess(["git"], 0, stdout="c" * 40 + "\n", stderr=""),
+                subprocess.CompletedProcess(["git"], 0, stdout="", stderr=""),
+                subprocess.CompletedProcess(["git"], 0, stdout="\n", stderr=""),
+            ],
+        )
+        for sequence in invalid_sequences:
+            with self.subTest(sequence=sequence), mock.patch(
+                "onecode_skill_sanitizer.router_eval_review.subprocess.run",
+                side_effect=sequence,
+            ) as run:
+                with self.assertRaises(DatasetValidationError):
+                    load_router_source_identity(Path("repo"))
+                if run.call_args:
+                    self.assertIsInstance(run.call_args.args[0], list)
+                    self.assertIs(run.call_args.kwargs["shell"], False)
+
+    def test_source_identity_rejects_head_or_tracked_state_changes_during_validation(self):
+        from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        stable_commit = "c" * 40
+        sequences = (
+            [stable_commit + "\n", "", "author@example.com\n", "d" * 40 + "\n", ""],
+            [stable_commit + "\n", "", "author@example.com\n", stable_commit + "\n", " M router.py\n"],
+        )
+        for outputs in sequences:
+            completed = [
+                subprocess.CompletedProcess(["git"], 0, stdout=output, stderr="")
+                for output in outputs
+            ]
+            with self.subTest(outputs=outputs), mock.patch(
+                "onecode_skill_sanitizer.router_eval_review.subprocess.run",
+                side_effect=completed,
+            ):
+                with self.assertRaises(DatasetValidationError):
+                    load_router_source_identity(Path("repo"))
 
     def test_suite_without_review_evaluates_but_strict_mode_returns_two(self):
         root = Path(__file__).resolve().parents[1]

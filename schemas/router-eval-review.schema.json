@@ -10,7 +10,7 @@
     "decision", "independence_attestation", "reviewed_case_ids", "exceptions"
   ],
   "properties": {
-    "schema_version": {"const": 1},
+    "schema_version": {"type": "integer", "const": 1},
     "suite_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
     "suite_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "reviewed_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
@@ -38,7 +38,11 @@
         "required": ["case_id", "reason"],
         "properties": {
           "case_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
-          "reason": {"type": "string", "minLength": 1, "pattern": "^\\S(?:.*\\S)?$"}
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!.*[^\\S ])\\S(?:.*\\S)?$"
+          }
         }
       }
     }

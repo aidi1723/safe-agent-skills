@@ -63,6 +63,7 @@ _REVIEW_IDENTITY_FIELDS = {
     "suite_id",
     "suite_sha256",
 }
+_SOURCE_IDENTITY_FIELDS = {"reviewed_commit", "rule_author_id"}
 _SHA256_PATTERN = re.compile(r"sha256:[0-9a-f]{64}\Z")
 _COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}\Z")
 _UTC_TIMESTAMP_PATTERN = re.compile(
@@ -76,6 +77,7 @@ def build_quality_gate(
     dataset_identity: object,
     review_identity: object,
     support_counts: dict[str, Any] | None = None,
+    source_identity: object = None,
 ) -> dict[str, object]:
     """Build an auditable production decision without trusting empty evidence."""
 
@@ -123,7 +125,12 @@ def build_quality_gate(
         missing_gates.add("dataset_identity")
         valid_dataset_identity = {}
     valid_review_identity = _review_identity(review_identity)
-    if not _review_matches_dataset(valid_review_identity, valid_dataset_identity):
+    valid_source_identity = _source_identity(source_identity)
+    if not _review_matches_dataset_and_source(
+        valid_review_identity,
+        valid_dataset_identity,
+        valid_source_identity,
+    ):
         missing_gates.add("independent_label_review")
         valid_review_identity = None
 
@@ -136,6 +143,7 @@ def build_quality_gate(
         "missing_gates": missing,
         "dataset_identity": valid_dataset_identity,
         "review_identity": valid_review_identity,
+        "source_identity": valid_source_identity,
         "support_evidence": support_evidence,
     }
 
@@ -171,7 +179,7 @@ def _dataset_identity(identity: object) -> dict[str, object] | None:
     suite_id = identity["suite_id"]
     suite_sha256 = identity["suite_sha256"]
     legacy_identity = suite_id is None and suite_sha256 is None
-    suite_identity = _exact_nonblank(suite_id) and _matches(suite_sha256, _SHA256_PATTERN)
+    suite_identity = _exact_identifier(suite_id) and _matches(suite_sha256, _SHA256_PATTERN)
     if not legacy_identity and not suite_identity:
         return None
     return {field: identity[field] for field in sorted(_DATASET_IDENTITY_FIELDS)}
@@ -181,7 +189,7 @@ def _review_identity(identity: object) -> dict[str, object] | None:
     if type(identity) is not dict or set(identity) != _REVIEW_IDENTITY_FIELDS:
         return None
     for field in ("suite_id", "rule_author_id", "reviewer_id"):
-        if not _exact_nonblank(identity[field]):
+        if not _exact_identifier(identity[field]):
             return None
     if identity["reviewer_id"] == identity["rule_author_id"]:
         return None
@@ -204,9 +212,20 @@ def _review_identity(identity: object) -> dict[str, object] | None:
     return {field: identity[field] for field in sorted(_REVIEW_IDENTITY_FIELDS)}
 
 
-def _review_matches_dataset(
+def _source_identity(identity: object) -> dict[str, object] | None:
+    if type(identity) is not dict or set(identity) != _SOURCE_IDENTITY_FIELDS:
+        return None
+    if not _matches(identity["reviewed_commit"], _COMMIT_PATTERN):
+        return None
+    if identity["reviewed_commit"] == "0" * 40 or not _exact_identifier(identity["rule_author_id"]):
+        return None
+    return {field: identity[field] for field in sorted(_SOURCE_IDENTITY_FIELDS)}
+
+
+def _review_matches_dataset_and_source(
     review_identity: dict[str, object] | None,
     dataset_identity: dict[str, object],
+    source_identity: dict[str, object] | None,
 ) -> bool:
     return (
         review_identity is not None
@@ -214,11 +233,18 @@ def _review_matches_dataset(
         and review_identity["suite_id"] == dataset_identity["suite_id"]
         and review_identity["suite_sha256"] == dataset_identity["suite_sha256"]
         and review_identity["reviewed_case_count"] == dataset_identity["case_count"]
+        and source_identity is not None
+        and review_identity["reviewed_commit"] == source_identity["reviewed_commit"]
+        and review_identity["rule_author_id"] == source_identity["rule_author_id"]
     )
 
 
 def _exact_nonblank(value: object) -> bool:
     return type(value) is str and bool(value) and value == value.strip()
+
+
+def _exact_identifier(value: object) -> bool:
+    return type(value) is str and bool(value) and not any(character.isspace() for character in value)
 
 
 def _matches(value: object, pattern: re.Pattern[str]) -> bool:

@@ -47,6 +47,13 @@ def valid_review_identity():
     }
 
 
+def valid_source_identity():
+    return {
+        "reviewed_commit": "c" * 40,
+        "rule_author_id": "routing-author",
+    }
+
+
 def passing_metrics():
     return {
         name: threshold if direction == "minimum" else 0.0
@@ -77,6 +84,7 @@ class RouterQualityGateTests(unittest.TestCase):
         support_counts=None,
         dataset_identity=_DEFAULT,
         review_identity=_DEFAULT,
+        source_identity=_DEFAULT,
     ):
         from onecode_skill_sanitizer.router_quality_gate import build_quality_gate
 
@@ -89,6 +97,9 @@ class RouterQualityGateTests(unittest.TestCase):
             review_identity=valid_review_identity()
             if review_identity is _DEFAULT
             else review_identity,
+            source_identity=valid_source_identity()
+            if source_identity is _DEFAULT
+            else source_identity,
         )
 
     def test_exact_boundaries_pass_without_rounding(self):
@@ -193,7 +204,10 @@ class RouterQualityGateTests(unittest.TestCase):
         )
 
         self.assertFalse(report["production_ready"])
-        self.assertEqual(report["missing_gates"], sorted(PRODUCTION_THRESHOLDS))
+        self.assertEqual(
+            report["missing_gates"],
+            sorted({*PRODUCTION_THRESHOLDS, "independent_label_review"}),
+        )
 
     def test_malformed_support_values_are_bounded_strict_json(self):
         for value in (object(), math.nan, math.inf, {}, []):
@@ -343,6 +357,36 @@ class RouterQualityGateTests(unittest.TestCase):
         self.assertTrue(report["production_ready"])
         self.assertEqual(list(report["review_identity"]), sorted(valid_review_identity()))
         self.assertEqual(report["review_identity"]["reviewer_id"], "independent-reviewer")
+
+    def test_review_identity_requires_independently_validated_source_binding(self):
+        invalid_sources = (
+            None,
+            {},
+            {"reviewed_commit": "0" * 40, "rule_author_id": "routing-author"},
+            {"reviewed_commit": "d" * 40, "rule_author_id": "routing-author"},
+            {"reviewed_commit": "c" * 40, "rule_author_id": "different-author"},
+            {"reviewed_commit": "c" * 40, "rule_author_id": "routing\tauthor"},
+            {**valid_source_identity(), "unknown": True},
+        )
+        for source in invalid_sources:
+            with self.subTest(source=source):
+                report = self.build(source_identity=source)
+                self.assertFalse(report["production_ready"])
+                self.assertIn("independent_label_review", report["missing_gates"])
+                self.assertIsNone(report["review_identity"])
+
+        report = self.build(source_identity=valid_source_identity())
+        self.assertTrue(report["production_ready"])
+        self.assertEqual(report["source_identity"], valid_source_identity())
+
+        whitespace_author = {"reviewed_commit": "c" * 40, "rule_author_id": "routing\tauthor"}
+        report = self.build(
+            review_identity={**valid_review_identity(), "rule_author_id": "routing\tauthor"},
+            source_identity=whitespace_author,
+        )
+        self.assertFalse(report["production_ready"])
+        self.assertIsNone(report["review_identity"])
+        self.assertIsNone(report["source_identity"])
 
     def test_all_null_and_partial_null_identities_never_count_as_evidence(self):
         for field, identity, missing_gate in (

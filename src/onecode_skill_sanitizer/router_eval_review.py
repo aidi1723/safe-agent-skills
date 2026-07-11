@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import json
 import re
+import subprocess
 from collections import Counter
 from contextlib import ExitStack
 from datetime import datetime
@@ -41,9 +42,12 @@ _REVIEW_FIELDS = {
 }
 _EXCEPTION_FIELDS = {"case_id", "reason"}
 _SUITE_IDENTITY_FIELDS = {"suite_id", "suite_sha256", "case_count", "case_ids"}
+_SOURCE_IDENTITY_FIELDS = {"reviewed_commit", "rule_author_id"}
 _SHA256_PATTERN = re.compile(r"sha256:[0-9a-f]{64}\Z")
 _COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}\Z")
 _UTC_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z\Z")
+_MISSING_SOURCE_IDENTITY = object()
+_GIT_TIMEOUT_SECONDS = 5
 
 
 def _canonical_bytes(payload: object) -> bytes:
@@ -55,7 +59,12 @@ def _digest(payload: object) -> str:
 
 
 def _exact_nonblank(value: object) -> bool:
-    return type(value) is str and bool(value) and value == value.strip()
+    return (
+        type(value) is str
+        and bool(value)
+        and value == value.strip()
+        and all(not character.isspace() or character == " " for character in value)
+    )
 
 
 def _exact_identifier(value: object) -> bool:
@@ -94,19 +103,40 @@ def _read_regular_relative(root: Path, relative: PurePosixPath, label: str) -> b
     return bytes(content)
 
 
-def _read_json_path(path: Path, label: str) -> object:
+def _strict_json_loads(raw: bytes, label: str) -> object:
+    def reject_duplicate_keys(pairs: list[tuple[str, object]]) -> dict[str, object]:
+        result: dict[str, object] = {}
+        for key, value in pairs:
+            if key in result:
+                raise DatasetValidationError(f"duplicate object key in {label}: {key}")
+            result[key] = value
+        return result
+
+    def reject_constant(value: str) -> None:
+        raise DatasetValidationError(f"nonstandard JSON constant in {label}: {value}")
+
     try:
-        relative = PurePosixPath(path.name)
-        raw = _read_regular_relative(path.parent, relative, label)
-        return json.loads(raw.decode("utf-8"))
-    except (UnicodeDecodeError, json.JSONDecodeError) as exc:
+        return json.loads(
+            raw.decode("utf-8"),
+            object_pairs_hook=reject_duplicate_keys,
+            parse_constant=reject_constant,
+        )
+    except DatasetValidationError:
+        raise
+    except (UnicodeDecodeError, ValueError, RecursionError) as exc:
         raise DatasetValidationError(f"invalid {label} JSON: {exc}") from exc
+
+
+def _read_json_path(path: Path, label: str) -> object:
+    relative = PurePosixPath(path.name)
+    raw = _read_regular_relative(path.parent, relative, label)
+    return _strict_json_loads(raw, label)
 
 
 def _validate_index(payload: object) -> dict[str, Any]:
     if type(payload) is not dict or set(payload) != _INDEX_FIELDS:
         raise DatasetValidationError("suite index has missing or unknown fields")
-    if payload["schema_version"] != 1:
+    if type(payload["schema_version"]) is not int or payload["schema_version"] != 1:
         raise DatasetValidationError("suite index schema_version must be 1")
     if not _exact_identifier(payload["suite_id"]):
         raise DatasetValidationError("suite_id must be an exact nonempty string")
@@ -140,10 +170,7 @@ def _load_suite(index_path: Path, known_scenarios: set[str] | None) -> dict[str,
     canonical_shards = []
     for shard_index, descriptor in enumerate(index["shards"]):
         raw = _read_regular_relative(index_path.parent, descriptor["_relative"], "suite shard")
-        try:
-            payload = json.loads(raw.decode("utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError) as exc:
-            raise DatasetValidationError(f"invalid suite shard JSON: {exc}") from exc
+        payload = _strict_json_loads(raw, f"suite shard {descriptor['path']}")
         if type(payload) is not dict or set(payload) != {"cases"} or type(payload["cases"]) is not list:
             raise DatasetValidationError(f"shards[{shard_index}] must contain only a cases list")
         actual_hash = _digest(payload)
@@ -250,14 +277,68 @@ def _validate_suite_identity(identity: object) -> dict[str, Any]:
     return identity
 
 
-def load_review_record(review_path: Path, suite_identity: object) -> dict[str, object]:
+def _validate_source_identity(identity: object) -> dict[str, str]:
+    if type(identity) is not dict or set(identity) != _SOURCE_IDENTITY_FIELDS:
+        raise DatasetValidationError("router source identity has missing or unknown fields")
+    if (
+        type(identity["reviewed_commit"]) is not str
+        or _COMMIT_PATTERN.fullmatch(identity["reviewed_commit"]) is None
+        or identity["reviewed_commit"] == "0" * 40
+        or not _exact_identifier(identity["rule_author_id"])
+    ):
+        raise DatasetValidationError("router source identity is invalid")
+    return dict(identity)
+
+
+def _run_git(repository: Path, *arguments: str) -> str:
+    command = ["git", "-C", str(repository), *arguments]
+    try:
+        completed = subprocess.run(
+            command,
+            shell=False,
+            capture_output=True,
+            text=True,
+            check=True,
+            timeout=_GIT_TIMEOUT_SECONDS,
+        )
+    except (FileNotFoundError, OSError, subprocess.SubprocessError, UnicodeError) as exc:
+        raise DatasetValidationError(f"unable to validate router source identity: {exc}") from exc
+    return completed.stdout
+
+
+def load_router_source_identity(repository: Path) -> dict[str, str]:
+    """Bind review evidence to a clean tracked Git HEAD and its author email."""
+
+    commit = _run_git(repository, "rev-parse", "--verify", "HEAD^{commit}").strip()
+    if _COMMIT_PATTERN.fullmatch(commit) is None or commit == "0" * 40:
+        raise DatasetValidationError("router source HEAD is invalid")
+    tracked_status = _run_git(repository, "status", "--porcelain=v1", "--untracked-files=no")
+    if tracked_status:
+        raise DatasetValidationError("router source has tracked worktree changes")
+    author_id = _run_git(repository, "show", "-s", "--format=%ae", commit).strip()
+    if not _exact_identifier(author_id):
+        raise DatasetValidationError("router source commit author is invalid")
+    finished_commit = _run_git(repository, "rev-parse", "--verify", "HEAD^{commit}").strip()
+    finished_status = _run_git(repository, "status", "--porcelain=v1", "--untracked-files=no")
+    if finished_commit != commit or finished_status:
+        raise DatasetValidationError("router source changed during identity validation")
+    return _validate_source_identity(
+        {"reviewed_commit": commit, "rule_author_id": author_id}
+    )
+
+
+def load_review_record(
+    review_path: Path,
+    suite_identity: object,
+    expected_source_identity: object = _MISSING_SOURCE_IDENTITY,
+) -> dict[str, object]:
     """Authenticate accepted independent review evidence for one exact suite."""
 
     suite_identity = _validate_suite_identity(suite_identity)
     payload = _read_json_path(review_path, "review record")
     if type(payload) is not dict or set(payload) != _REVIEW_FIELDS:
         raise DatasetValidationError("review record has missing or unknown fields")
-    if payload["schema_version"] != 1:
+    if type(payload["schema_version"]) is not int or payload["schema_version"] != 1:
         raise DatasetValidationError("review schema_version must be 1")
     exact_strings = ("suite_id", "rule_author_id", "reviewer_id")
     if any(not _exact_identifier(payload[field]) for field in exact_strings):
@@ -273,6 +354,13 @@ def load_review_record(review_path: Path, suite_identity: object) -> dict[str, o
         raise DatasetValidationError("reviewed_commit must be a lowercase 40-character commit")
     if payload["reviewer_id"] == payload["rule_author_id"]:
         raise DatasetValidationError("reviewer must be independent from the rule author")
+    if expected_source_identity is not _MISSING_SOURCE_IDENTITY:
+        source_identity = _validate_source_identity(expected_source_identity)
+        if (
+            payload["reviewed_commit"] != source_identity["reviewed_commit"]
+            or payload["rule_author_id"] != source_identity["rule_author_id"]
+        ):
+            raise DatasetValidationError("review does not authenticate the evaluated router source")
     if payload["reviewer_role"] != "independent_dataset_review":
         raise DatasetValidationError("reviewer_role is invalid")
     if not _valid_utc_timestamp(payload["reviewed_at"]):
