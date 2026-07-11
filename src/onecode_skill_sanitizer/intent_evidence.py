@@ -8,7 +8,11 @@ import json
 import re
 from typing import Any
 
-from .intent_source import bound_task_text, parse_approval_release
+from .intent_source import (
+    bound_task_text,
+    parse_approval_release,
+    source_contains_release_action,
+)
 
 
 EVIDENCE_CONTEXTS = frozenset({"action", "descriptive", "how_to", "ambiguous"})
@@ -38,20 +42,6 @@ RELEASE_ACTION_SIGNALS = frozenset(
         "publish update",
     }
 )
-_RELEASE_ACTION_CONTEXT_RE = re.compile(
-    r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?"
-    r"(?:发布|上线|推送)|"
-    r"(?:发布|上线|推送)(?:更新|结果|版本|新版本|软件包|包|项目|网站|应用|代码|变更|到\S+)|"
-    r"推送(?:代码)?(?:到)?\s*github|"
-    r"\b(?:publish|release)\b\s+(?:the\s+|an?\s+)?"
-    r"(?:(?:verified|approved)\s+)?"
-    r"(?:update|results?|package|version|project|website|app|code|changes?)\b|"
-    r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
-    r"to\s+github)\b|\bopen[-\s]+source\s+release\b|^\s*release\s*$",
-    re.IGNORECASE,
-)
-
-
 @dataclass(frozen=True)
 class IntentEvidence:
     """Profile and relation evidence aligned by index with an internal intent."""
@@ -211,7 +201,7 @@ def source_supports_release_action(
         return True
     normalized = {signal.casefold() for signal in matched_signals}
     return bool(
-        _RELEASE_ACTION_CONTEXT_RE.search(source)
+        source_contains_release_action(source)
         or any(
             signal in RELEASE_ACTION_SIGNALS
             and _signal_in_source(source, signal)

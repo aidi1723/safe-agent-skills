@@ -13,7 +13,10 @@ from onecode_skill_sanitizer.intent_dependencies import (
     apply_intent_relations,
     infer_intent_relations,
 )
-from onecode_skill_sanitizer.intent_source import parse_approval_release
+from onecode_skill_sanitizer.intent_source import (
+    is_release_action_text,
+    parse_approval_release,
+)
 
 
 class IntentDependenciesTest(unittest.TestCase):
@@ -48,6 +51,11 @@ class IntentDependenciesTest(unittest.TestCase):
             "After the PR is approved, release now",
             "After PR approval, publish",
             "After PR approval, push",
+            "After PR approval, publish the update",
+            "After PR approval, publish results",
+            "After PR approval, push the repository",
+            "After PR approval, release approved package",
+            "After PR approval, publish release notes",
         )
 
         for task in tasks:
@@ -71,6 +79,23 @@ class IntentDependenciesTest(unittest.TestCase):
                 self.assertEqual(graph.intent_evidence[1].release_mode, "action")
                 self.assertEqual(graph.validate(), [])
 
+    def test_approval_targets_share_central_release_action_taxonomy(self):
+        targets = (
+            "publish the update",
+            "publish results",
+            "push the repository",
+            "release approved package",
+            "publish release notes",
+        )
+
+        for target in targets:
+            with self.subTest(target=target):
+                self.assertTrue(is_release_action_text(target, allow_bare=True))
+                self.assertEqual(
+                    parse_approval_release(f"After PR approval, {target}"),
+                    ("After PR approval", target),
+                )
+
     def test_negated_approval_does_not_create_release_action(self):
         task = "If PR is not approved, do not release"
         graph = decompose_task(task)
@@ -80,6 +105,9 @@ class IntentDependenciesTest(unittest.TestCase):
             parse_approval_release(
                 "After PR approval, publish and analyze a spreadsheet"
             )
+        )
+        self.assertIsNone(
+            parse_approval_release("Before PR approval, publish update")
         )
         self.assertNotIn(
             "open_source_release", [item.task_type for item in graph.intents]

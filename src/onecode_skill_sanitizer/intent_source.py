@@ -1,20 +1,35 @@
-"""Shared hard boundary for every intent text parsing entry point."""
+"""Shared hard boundary and source predicates for intent parsing."""
 
 import re
 
 
 MAX_TASK_SCAN_CHARS = 20_000
 
+_RELEASE_ACTION_PHRASE = (
+    r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?"
+    r"(?:发布|上线|推送)|"
+    r"(?:发布|上线|推送)(?:更新|结果|版本|新版本|软件包|包|项目|网站|应用|代码|变更|到\S+)|"
+    r"推送(?:代码)?(?:到)?\s*github|"
+    r"\b(?:publish|release)\b\s+(?:the\s+|an?\s+)?"
+    r"(?:(?:verified|approved)\s+)?"
+    r"(?:update|results?|package|version|project|website|app|code|changes?|release\s+notes)\b|"
+    r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
+    r"to\s+github)\b|\bopen[-\s]+source\s+release\b"
+)
+_RELEASE_ACTION_RE = re.compile(_RELEASE_ACTION_PHRASE, re.IGNORECASE)
+_BARE_RELEASE_ACTION_RE = re.compile(
+    r"(?:publish|release|push)(?:\s+now)?|"
+    r"(?:发布|上线|推送)(?:现在|立即)?",
+    re.IGNORECASE,
+)
 _APPROVAL_RELEASE_RE = re.compile(
     r"^\s*(?:"
-    r"(?:\u5728\s*)?(?P<cn_source>(?:PR|\u62c9\u53d6\u8bf7\u6c42)\s*"
-    r"(?:\u5ba1\u6279\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6838\u901a\u8fc7)\u540e)\s*[,\uff0c]?\s*"
-    r"(?P<cn_target>(?:\u53d1\u5e03|\u4e0a\u7ebf|\u63a8\u9001)"
-    r"(?:\u66f4\u65b0|\u7248\u672c|\u8f6f\u4ef6\u5305|\u5305|\u4ee3\u7801|\u53d8\u66f4|\u9879\u76ee|\u73b0\u5728|\u7acb\u5373)?)|"
+    r"(?:在\s*)?(?P<cn_source>(?:PR|拉取请求)\s*"
+    r"(?:审批通过|批准|审核通过)后)\s*[,，]?\s*"
+    r"(?P<cn_target>.+?)|"
     r"(?P<en_source>after\s+(?:(?:the\s+)?(?:pr|pull\s+request)\s+"
-    r"is\s+approved|(?:pr|pull\s+request)\s+approval))\s*[,\uff0c]?\s*"
-    r"(?P<en_target>(?:publish|release|push)"
-    r"(?:\s+(?:now|update|(?:the\s+)?package|changes?|code|repository))?)"
+    r"is\s+approved|(?:pr|pull\s+request)\s+approval))\s*[,，]?\s*"
+    r"(?P<en_target>.+?)"
     r")\s*$",
     re.IGNORECASE,
 )
@@ -25,12 +40,27 @@ def bound_task_text(text: str) -> str:
     return text[:MAX_TASK_SCAN_CHARS]
 
 
+def is_release_action_text(text: str, *, allow_bare: bool = False) -> bool:
+    """Validate a complete release action using the central action taxonomy."""
+    text = bound_task_text(text).strip()
+    return bool(
+        _RELEASE_ACTION_RE.fullmatch(text)
+        or (allow_bare and _BARE_RELEASE_ACTION_RE.fullmatch(text))
+    )
+
+
+def source_contains_release_action(text: str) -> bool:
+    """Find a release action inside a bounded task source."""
+    return _RELEASE_ACTION_RE.search(bound_task_text(text)) is not None
+
+
 def parse_approval_release(text: str) -> tuple[str, str] | None:
-    """Return canonical approval source and release target for a whole task."""
+    """Return canonical approval source and validated release target."""
     match = _APPROVAL_RELEASE_RE.fullmatch(bound_task_text(text))
     if not match:
         return None
-    return (
+    result = (
         match.group("cn_source") or match.group("en_source"),
         match.group("cn_target") or match.group("en_target"),
     )
+    return result if is_release_action_text(result[1], allow_bare=True) else None
