@@ -635,7 +635,10 @@ class RouterSourceIdentityTests(unittest.TestCase):
         tracked = root / "src/onecode_skill_sanitizer/router.py"
         tracked.parent.mkdir(parents=True)
         tracked.write_text("ROUTER = 1\n", encoding="utf-8")
-        self.git(root, "add", "src/onecode_skill_sanitizer/router.py")
+        catalog_marker = root / "catalog/.keep"
+        catalog_marker.parent.mkdir()
+        catalog_marker.write_text("catalog\n", encoding="utf-8")
+        self.git(root, "add", "src/onecode_skill_sanitizer/router.py", "catalog/.keep")
         self.git(root, "commit", "--quiet", "-m", "router source")
         commit = self.git(root, "rev-parse", "HEAD").stdout.strip()
         return commit, "routing-author@example.com"
@@ -659,8 +662,26 @@ class RouterSourceIdentityTests(unittest.TestCase):
             self.commit_file(root, "docs/review-notes.md", "reviewed\n", "review notes")
 
             identity = load_router_source_identity(root, commit)
+            nested_identity = load_router_source_identity(root / "catalog", commit)
 
         self.assertEqual(identity, {"reviewed_commit": commit, "rule_author_id": author})
+        self.assertEqual(nested_identity, identity)
+
+    def test_catalog_candidate_uses_top_anchored_protected_paths(self):
+        from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            reviewed_commit, _ = self.repository(root)
+            self.commit_file(
+                root,
+                "src/onecode_skill_sanitizer/router.py",
+                "ROUTER = 2\n",
+                "protected source change",
+            )
+            with self.assertRaises(DatasetValidationError):
+                load_router_source_identity(root / "catalog", reviewed_commit)
 
     def test_source_identity_rejects_dirty_tracked_worktree_and_missing_git(self):
         from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
@@ -676,6 +697,34 @@ class RouterSourceIdentityTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp, mock.patch.dict(os.environ, {"PATH": tmp}):
             with self.assertRaises(DatasetValidationError):
                 load_router_source_identity(Path(tmp), "c" * 40)
+
+        with tempfile.TemporaryDirectory() as tmp:
+            with self.assertRaises(DatasetValidationError):
+                load_router_source_identity(Path(tmp), "c" * 40)
+
+    def test_source_identity_rejects_invalid_or_outside_repository_root_response(self):
+        from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        with tempfile.TemporaryDirectory() as tmp, tempfile.TemporaryDirectory() as outside:
+            candidate = Path(tmp)
+            responses = ("relative-root\n", str(Path(outside).resolve()) + "\n")
+            for response in responses:
+                with self.subTest(response=response), mock.patch(
+                    "onecode_skill_sanitizer.router_eval_review.subprocess.run",
+                    return_value=subprocess.CompletedProcess(
+                        ["git"],
+                        0,
+                        stdout=response,
+                        stderr="",
+                    ),
+                ) as run:
+                    with self.assertRaises(DatasetValidationError):
+                        load_router_source_identity(candidate, "c" * 40)
+                    self.assertEqual(
+                        run.call_args_list[0].args[0][-2:],
+                        ["rev-parse", "--show-toplevel"],
+                    )
 
     def test_source_identity_normalizes_timeout_command_error_invalid_head_and_empty_author(self):
         from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
@@ -757,21 +806,38 @@ class RouterSourceIdentityTests(unittest.TestCase):
 
         stable_commit = "c" * 40
         sequences = (
-            [stable_commit + "\n", "", stable_commit + "\n", "", "", "author@example.com\n", stable_commit + "\n", "", "", "d" * 40 + "\n", ""],
-            [stable_commit + "\n", "", stable_commit + "\n", "", "", "author@example.com\n", stable_commit + "\n", "", "", stable_commit + "\n", " M router.py\n"],
+            [
+                stable_commit + "\n", "", stable_commit + "\n", "", "",
+                "author@example.com\n", stable_commit + "\n", "", "",
+                "d" * 40 + "\n", "",
+            ],
+            [
+                stable_commit + "\n", "", stable_commit + "\n", "", "",
+                "author@example.com\n", stable_commit + "\n", "", "",
+                stable_commit + "\n", " M router.py\n",
+            ],
         )
         for outputs in sequences:
-            completed = [
-                subprocess.CompletedProcess(["git"], 0, stdout=output, stderr="")
-                for output in outputs
-            ]
-            with self.subTest(outputs=outputs), mock.patch(
-                "onecode_skill_sanitizer.router_eval_review.subprocess.run",
-                side_effect=completed,
-            ) as run:
-                with self.assertRaises(DatasetValidationError):
-                    load_router_source_identity(Path("repo"), stable_commit)
-                self.assertEqual(run.call_count, 11)
+            with self.subTest(outputs=outputs), tempfile.TemporaryDirectory() as tmp:
+                repository = Path(tmp).resolve()
+                completed = [
+                    subprocess.CompletedProcess(["git"], 0, stdout=output, stderr="")
+                    for output in [str(repository) + "\n", *outputs]
+                ]
+                with mock.patch(
+                    "onecode_skill_sanitizer.router_eval_review.subprocess.run",
+                    side_effect=completed,
+                ) as run:
+                    with self.assertRaises(DatasetValidationError):
+                        load_router_source_identity(repository, stable_commit)
+                    self.assertEqual(run.call_count, 12)
+                    self.assertEqual(
+                        run.call_args_list[0].args[0][-2:],
+                        ["rev-parse", "--show-toplevel"],
+                    )
+                    self.assertTrue(
+                        all(call.args[0][2] == str(repository) for call in run.call_args_list[1:])
+                    )
 
     def test_single_parse_evidence_loader_binds_review_to_ancestor_author(self):
         from onecode_skill_sanitizer.router_eval_review import load_review_evidence

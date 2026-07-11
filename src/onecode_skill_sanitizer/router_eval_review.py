@@ -58,6 +58,7 @@ PROTECTED_ROUTER_PATHS = (
     "pyproject.toml",
     "scripts",
 )
+_PROTECTED_ROUTER_PATHSPECS = tuple(f":(top){path}" for path in PROTECTED_ROUTER_PATHS)
 
 
 def _canonical_bytes(payload: object) -> bytes:
@@ -316,6 +317,26 @@ def _run_git(repository: Path, *arguments: str) -> str:
     return completed.stdout
 
 
+def _resolve_repository_root(candidate: Path) -> Path:
+    output = _run_git(candidate, "rev-parse", "--show-toplevel")
+    value = output.removesuffix("\n")
+    if not value or "\n" in value or "\r" in value:
+        raise DatasetValidationError("Git repository top-level is invalid")
+    root = Path(value)
+    try:
+        resolved_root = root.resolve(strict=True)
+        resolved_candidate = candidate.resolve(strict=True)
+    except OSError as exc:
+        raise DatasetValidationError(f"Git repository top-level is invalid: {exc}") from exc
+    if not root.is_absolute() or not resolved_root.is_dir() or root != resolved_root:
+        raise DatasetValidationError("Git repository top-level must be an exact absolute directory")
+    try:
+        resolved_candidate.relative_to(resolved_root)
+    except ValueError as exc:
+        raise DatasetValidationError("Git repository candidate is outside its reported top-level") from exc
+    return resolved_root
+
+
 def _git_head(repository: Path) -> str:
     head = _run_git(repository, "rev-parse", "--verify", "HEAD^{commit}").strip()
     if _COMMIT_PATTERN.fullmatch(head) is None or head == "0" * 40:
@@ -340,7 +361,7 @@ def _validate_reviewed_tree(repository: Path, reviewed_commit: str, head: str) -
         reviewed_commit,
         head,
         "--",
-        *PROTECTED_ROUTER_PATHS,
+        *_PROTECTED_ROUTER_PATHSPECS,
     )
     if protected_changes:
         raise DatasetValidationError("protected router source changed after review")
@@ -355,17 +376,23 @@ def load_router_source_identity(repository: Path, reviewed_commit: str) -> dict[
         or reviewed_commit == "0" * 40
     ):
         raise DatasetValidationError("reviewed router source commit is invalid")
-    head = _git_head(repository)
-    tracked_status = _run_git(repository, "status", "--porcelain=v1", "--untracked-files=no")
+    repository_root = _resolve_repository_root(repository)
+    head = _git_head(repository_root)
+    tracked_status = _run_git(repository_root, "status", "--porcelain=v1", "--untracked-files=no")
     if tracked_status:
         raise DatasetValidationError("router source has tracked worktree changes")
-    _validate_reviewed_tree(repository, reviewed_commit, head)
-    author_id = _run_git(repository, "show", "-s", "--format=%ae", reviewed_commit).strip()
+    _validate_reviewed_tree(repository_root, reviewed_commit, head)
+    author_id = _run_git(repository_root, "show", "-s", "--format=%ae", reviewed_commit).strip()
     if not _exact_identifier(author_id):
         raise DatasetValidationError("router source commit author is invalid")
-    _validate_reviewed_tree(repository, reviewed_commit, head)
-    finished_commit = _git_head(repository)
-    finished_status = _run_git(repository, "status", "--porcelain=v1", "--untracked-files=no")
+    _validate_reviewed_tree(repository_root, reviewed_commit, head)
+    finished_commit = _git_head(repository_root)
+    finished_status = _run_git(
+        repository_root,
+        "status",
+        "--porcelain=v1",
+        "--untracked-files=no",
+    )
     if finished_commit != head or finished_status:
         raise DatasetValidationError("router source changed during identity validation")
     return _validate_source_identity(
