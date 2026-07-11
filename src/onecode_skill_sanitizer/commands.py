@@ -71,8 +71,7 @@ from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_envelope_v2
 from .router_eval_review import load_eval_suite
-from .router_eval_review import load_review_record
-from .router_eval_review import load_router_source_identity
+from .router_eval_review import load_review_evidence
 from .router_quality_gate import build_quality_gate
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
@@ -572,12 +571,13 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             dataset = load_eval_suite(resolve_project_asset_path(suite_path), known_scenarios)
             dataset_identity = dataset["identity"]
             if review_path is not None:
-                source_identity = load_router_source_identity(registry_dir)
-                review_identity = load_review_record(
+                review_evidence = load_review_evidence(
                     resolve_project_asset_path(review_path),
                     dataset["suite_identity"],
-                    source_identity,
+                    registry_dir,
                 )
+                review_identity = review_evidence["review_identity"]
+                source_identity = review_evidence["source_identity"]
             else:
                 source_identity = None
                 review_identity = {}

@@ -48,6 +48,16 @@ _COMMIT_PATTERN = re.compile(r"[0-9a-f]{40}\Z")
 _UTC_PATTERN = re.compile(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,6})?Z\Z")
 _MISSING_SOURCE_IDENTITY = object()
 _GIT_TIMEOUT_SECONDS = 5
+# Review evidence and ordinary docs are intentionally outside this protected routing surface.
+PROTECTED_ROUTER_PATHS = (
+    "src/onecode_skill_sanitizer",
+    "bundles",
+    "catalog",
+    "schemas",
+    "evals/router-production",
+    "pyproject.toml",
+    "scripts",
+)
 
 
 def _canonical_bytes(payload: object) -> bytes:
@@ -306,24 +316,60 @@ def _run_git(repository: Path, *arguments: str) -> str:
     return completed.stdout
 
 
-def load_router_source_identity(repository: Path) -> dict[str, str]:
-    """Bind review evidence to a clean tracked Git HEAD and its author email."""
-
-    commit = _run_git(repository, "rev-parse", "--verify", "HEAD^{commit}").strip()
-    if _COMMIT_PATTERN.fullmatch(commit) is None or commit == "0" * 40:
+def _git_head(repository: Path) -> str:
+    head = _run_git(repository, "rev-parse", "--verify", "HEAD^{commit}").strip()
+    if _COMMIT_PATTERN.fullmatch(head) is None or head == "0" * 40:
         raise DatasetValidationError("router source HEAD is invalid")
+    return head
+
+
+def _validate_reviewed_tree(repository: Path, reviewed_commit: str, head: str) -> None:
+    resolved = _run_git(
+        repository,
+        "rev-parse",
+        "--verify",
+        f"{reviewed_commit}^{{commit}}",
+    ).strip()
+    if resolved != reviewed_commit:
+        raise DatasetValidationError("reviewed router source commit is invalid")
+    _run_git(repository, "merge-base", "--is-ancestor", reviewed_commit, head)
+    protected_changes = _run_git(
+        repository,
+        "diff",
+        "--name-only",
+        reviewed_commit,
+        head,
+        "--",
+        *PROTECTED_ROUTER_PATHS,
+    )
+    if protected_changes:
+        raise DatasetValidationError("protected router source changed after review")
+
+
+def load_router_source_identity(repository: Path, reviewed_commit: str) -> dict[str, str]:
+    """Validate a reviewed ancestor against the protected router source surface."""
+
+    if (
+        type(reviewed_commit) is not str
+        or _COMMIT_PATTERN.fullmatch(reviewed_commit) is None
+        or reviewed_commit == "0" * 40
+    ):
+        raise DatasetValidationError("reviewed router source commit is invalid")
+    head = _git_head(repository)
     tracked_status = _run_git(repository, "status", "--porcelain=v1", "--untracked-files=no")
     if tracked_status:
         raise DatasetValidationError("router source has tracked worktree changes")
-    author_id = _run_git(repository, "show", "-s", "--format=%ae", commit).strip()
+    _validate_reviewed_tree(repository, reviewed_commit, head)
+    author_id = _run_git(repository, "show", "-s", "--format=%ae", reviewed_commit).strip()
     if not _exact_identifier(author_id):
         raise DatasetValidationError("router source commit author is invalid")
-    finished_commit = _run_git(repository, "rev-parse", "--verify", "HEAD^{commit}").strip()
+    _validate_reviewed_tree(repository, reviewed_commit, head)
+    finished_commit = _git_head(repository)
     finished_status = _run_git(repository, "status", "--porcelain=v1", "--untracked-files=no")
-    if finished_commit != commit or finished_status:
+    if finished_commit != head or finished_status:
         raise DatasetValidationError("router source changed during identity validation")
     return _validate_source_identity(
-        {"reviewed_commit": commit, "rule_author_id": author_id}
+        {"reviewed_commit": reviewed_commit, "rule_author_id": author_id}
     )
 
 
@@ -409,4 +455,24 @@ def load_review_record(
         "independence_attestation": payload["independence_attestation"],
         "reviewed_case_count": len(reviewed_ids),
         "exceptions_count": len(exceptions),
+    }
+
+
+def load_review_evidence(
+    review_path: Path,
+    suite_identity: object,
+    source_repository: Path,
+) -> dict[str, dict[str, object]]:
+    """Load a review once and bind it to its protected ancestor source tree."""
+
+    review_identity = load_review_record(review_path, suite_identity)
+    source_identity = load_router_source_identity(
+        source_repository,
+        str(review_identity["reviewed_commit"]),
+    )
+    if review_identity["rule_author_id"] != source_identity["rule_author_id"]:
+        raise DatasetValidationError("review rule author does not match the reviewed commit author")
+    return {
+        "review_identity": review_identity,
+        "source_identity": source_identity,
     }
