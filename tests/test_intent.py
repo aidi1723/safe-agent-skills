@@ -14,6 +14,48 @@ from onecode_skill_sanitizer.intent import (
 
 
 class IntentTest(unittest.TestCase):
+    def test_explicit_sequences_create_dependency_chains(self):
+        cases = [
+            (
+                "first analyze the spreadsheet, then write the SEO article",
+                [(), ("i1",)],
+            ),
+            (
+                "先做短视频脚本，再接入 agentic media workflow",
+                [(), ("i1",)],
+            ),
+            (
+                "Review the PR; build the website; prepare an open-source release",
+                [(), ("i1",), ("i1", "i2")],
+            ),
+            (
+                "Govern the role library before planning the multi-agent workflow",
+                [(), ("i1",)],
+            ),
+        ]
+
+        for task, expected_dependencies in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents],
+                    expected_dependencies,
+                )
+
+    def test_parallel_and_plain_enumerations_do_not_create_dependencies(self):
+        cases = [
+            "In parallel: review code, analyze the spreadsheet, and draft an SEO article",
+            "同时做 UI 设计、代码审查和表格分析",
+            "review code, analyze the spreadsheet, and draft an SEO article",
+            "做 UI 设计、代码审查和表格分析",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertTrue(graph.intents)
+                self.assertTrue(all(not intent.depends_on for intent in graph.intents))
+
     def test_decompose_task_remains_graph_only_compatibility_wrapper(self):
         graph = decompose_task("审计 skill router")
 

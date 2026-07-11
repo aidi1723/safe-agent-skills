@@ -6,6 +6,11 @@ from dataclasses import asdict, dataclass
 import re
 from typing import Any
 
+from .intent_dependencies import (
+    apply_intent_relations,
+    infer_intent_relations,
+    infer_unresolved_dependencies,
+)
 from .intent_spans import (
     MAX_CANDIDATE_SIGNALS,
     MAX_EMITTED_INTENTS,
@@ -20,6 +25,10 @@ _LIST_MARKER_RE = re.compile(
     r"^\s*(?:\d+[.)、]|[-*+]\s*\[[ xX]\]|[-*+])\s+(.+?)\s*$"
 )
 _CLAUSE_SEPARATOR_RE = re.compile(r"\s*(?:[；;]|，?同时|，?以及|\bthen\b)\s*", re.IGNORECASE)
+_ORDERED_BEFORE_RE = re.compile(
+    r"\s+\bbefore\b\s+(?!(?:publishing|releasing|pushing|publish|release|push)\b)",
+    re.IGNORECASE,
+)
 _RELEASE_BOUNDARY_RE = re.compile(
     r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?(?:发布|上线|推送)"
 )
@@ -207,6 +216,14 @@ def split_task_clauses(task: str) -> list[str]:
         candidate = candidate.strip(" \t\n,，。")
         if not candidate:
             continue
+        ordered_parts = [
+            part.strip(" \t\n,，。")
+            for part in _ORDERED_BEFORE_RE.split(candidate)
+            if part.strip(" \t\n,，。")
+        ]
+        if len(ordered_parts) > 1:
+            clauses.extend(ordered_parts)
+            continue
         release_match = _RELEASE_BOUNDARY_RE.search(candidate)
         if release_match and release_match.start() > 0:
             clauses.extend([candidate[: release_match.start()], candidate[release_match.start() :]])
@@ -309,20 +326,13 @@ def decompose_task_detailed(task: str) -> TaskDecomposition:
 
     intents: list[Intent] = []
     for index, clause in enumerate(clauses, start=1):
-        intent = classify_intent(clause, index)
-        if intent.task_type == "open_source_release" and intents:
-            intent = Intent(
-                id=intent.id,
-                summary=intent.summary,
-                task_type=intent.task_type,
-                required_artifacts=intent.required_artifacts,
-                risk_flags=intent.risk_flags,
-                depends_on=tuple(previous.id for previous in intents),
-                source=intent.source,
-                confidence=intent.confidence,
-            )
-        intents.append(intent)
-    intent_graph = IntentGraph(intents=tuple(intents), unresolved_dependencies=())
+        intents.append(classify_intent(clause, index))
+    relations = infer_intent_relations(current, intents)
+    final_intents = apply_intent_relations(intents, relations)
+    intent_graph = IntentGraph(
+        intents=final_intents,
+        unresolved_dependencies=infer_unresolved_dependencies(current, final_intents),
+    )
     reason_codes: list[str] = []
     if task_scan_limit_exceeded:
         reason_codes.append("task_scan_limit_exceeded")
