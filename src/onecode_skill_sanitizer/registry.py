@@ -28,10 +28,10 @@ class VerifiedRegistrySkill:
     skill_text: str
 
     def entry(self) -> dict:
-        return json.loads(self.entry_json)
+        return _load_snapshot_object(self.entry_json, "entry")
 
     def manifest(self) -> dict:
-        return json.loads(self.manifest_json)
+        return _load_snapshot_object(self.manifest_json, "manifest")
 
 
 @dataclass(frozen=True)
@@ -41,10 +41,10 @@ class VerifiedRegistrySnapshot:
     verification_json: str
 
     def index(self) -> dict:
-        return json.loads(self.index_json)
+        return _load_snapshot_object(self.index_json, "index")
 
     def verification(self) -> dict:
-        return json.loads(self.verification_json)
+        return _load_snapshot_object(self.verification_json, "verification")
 
     def trusted_skill_names(self) -> frozenset[str]:
         return frozenset(
@@ -52,6 +52,13 @@ class VerifiedRegistrySnapshot:
             for skill in self.skills
             if skill.entry().get("status") == "trusted"
         )
+
+
+def _load_snapshot_object(serialized: str, label: str) -> dict:
+    payload = json.loads(serialized)
+    if type(payload) is not dict:
+        raise ValueError(f"registry snapshot {label} is malformed")
+    return payload
 
 
 def utc_now() -> str:
@@ -164,7 +171,9 @@ def build_verified_registry_snapshot(registry_dir: Path) -> VerifiedRegistrySnap
         if root_fd is None:
             raise ValueError("registry snapshot root is missing")
         index = json.loads(safe_fs.read_file_at(root_fd, ("index.json",)).decode("utf-8"))
-        if not isinstance(index, dict) or not isinstance(index.get("skills"), list):
+        if type(index) is not dict:
+            raise ValueError("registry snapshot index is malformed")
+        if not isinstance(index.get("skills"), list):
             raise ValueError("registry snapshot index is malformed")
         entries = index["skills"]
         if any(type(entry) is not dict for entry in entries):
@@ -211,12 +220,12 @@ def build_verified_registry_snapshot(registry_dir: Path) -> VerifiedRegistrySnap
                     manifest = json.loads(
                         safe_fs.read_file_at(skill_fd, ("skill.json",)).decode("utf-8")
                     )
+                    if type(manifest) is not dict:
+                        raise ValueError("registry snapshot manifest is malformed")
                     skill_text = safe_fs.read_file_at(skill_fd, ("SKILL.md",)).decode("utf-8")
                     expected_auxiliary = manifest.get("hashes", {}).get("auxiliary_sha256")
                     if auxiliary_content_sha256_from_fd(skill_fd) != expected_auxiliary:
                         raise ValueError("registry snapshot auxiliary content hash mismatch")
-            if not isinstance(manifest, dict):
-                raise ValueError("registry snapshot manifest is malformed")
             manifest_issues: list[dict] = []
             validate_manifest_schema(manifest, manifest_path, manifest_issues)
             if manifest_issues:
