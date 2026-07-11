@@ -419,6 +419,77 @@ git add src/onecode_skill_sanitizer/intent_dependencies.py \
 git commit -m "feat: infer explicit multi-intent dependencies"
 ```
 
+## Task 3A: Isolate Verification From Local Workspaces
+
+**Files:**
+
+- Modify: `.gitignore`
+- Modify: `scripts/verify.sh`
+- Modify: `tests/test_verify_script.py`
+
+- [ ] Add failing tests proving private-path and placeholder scans inspect only
+  Git-tracked files when `rg` is present or absent. Local `.venv/`, `venv/`,
+  `.worktrees/`, caches, and unrelated untracked files must not affect release
+  verification.
+- [ ] Add `.venv/` and `venv/` to `.gitignore` while retaining the existing
+  `.worktrees/` rule.
+- [ ] Replace the recursive `rg`/`grep` fallback with one tracked-file search
+  contract, using `git grep` or `git ls-files -z` plus a bounded grep fallback.
+  Preserve the existing optional exclude-path behavior and match/no-match exit
+  semantics.
+- [ ] Run `tests.test_verify_script`, a sandbox fixture containing private paths
+  under untracked `.venv` and `.worktrees`, and full `scripts/verify.sh`.
+- [ ] Commit: `fix: isolate verification from local workspaces`.
+
+## Task 3B: Disambiguate Router Evaluation Artifacts
+
+**Files:**
+
+- Rename: `evals/router-quality-v2.json` to
+  `evals/router-regression-v2.json`
+- Modify: `src/onecode_skill_sanitizer/router_eval_v2.py`
+- Modify: `tests/test_router_eval_cli.py`
+- Modify: `tests/test_router_eval_v2.py`
+- Modify: `docs/router-development.md`
+
+- [ ] Add a failing CLI test showing the legacy `router-eval` Schema v2 payload
+  produces an actionable `router-eval-v2` error instead of the generic
+  `{labeling, cases}` failure.
+- [ ] Rename the regression artifact and update active tests/current guidance;
+  do not rewrite dated historical plans that record the old milestone path.
+- [ ] Detect the `schema_version/dataset/split/case_count/cases` signature in
+  `load_eval_dataset_v2()` and report that the file belongs to `router-eval`,
+  while `router-eval-v2` expects the multi-intent gold/suite contract.
+- [ ] Verify both commands with their intended files and run the focused Router
+  Eval suites.
+- [ ] Commit: `fix: disambiguate router evaluation datasets`.
+
+## Task 3C: Cover The Real Chinese Review Brief Release Request
+
+**Files:**
+
+- Modify: `src/onecode_skill_sanitizer/intent_spans.py`
+- Modify: `src/onecode_skill_sanitizer/routing_profiles.py`
+- Modify: `tests/test_intent_spans.py`
+- Modify: `tests/test_task_pack_v2_cli.py`
+- Modify: `evals/multi-intent-gold.json`
+
+- [ ] Add a failing real-task regression for
+  `代码审查 + 老板简报 + 发布清单`. It must select, in order,
+  `code_review`, `data_analysis`, and `open_source_release`, with scenarios
+  `code-review-hardening`, `data-analysis-report`, and `open-source-release`;
+  it must never select `website-build-launch`.
+- [ ] Treat `+` and full-width `＋` as enumeration connectors only when distinct
+  profile evidence survives. Add `老板简报`, `管理层简报`, `executive brief`, and
+  `management brief` as bounded aliases for the existing `data_analysis`
+  report scenario, and `发布清单`/`release checklist` as bounded aliases for
+  the existing release-readiness scenario. Do not add a new task type, bundle,
+  or Skill.
+- [ ] Add negative controls for descriptive mentions and arithmetic plus signs,
+  plus Chinese spacing/full-width variants.
+- [ ] Run span, task-pack, composer, compatibility, and Router Eval tests.
+- [ ] Commit: `fix: route Chinese review brief release tasks`.
+
 ## Task 4: Wire Diagnostics Into Default Schema v2
 
 **Files:**
