@@ -3,20 +3,13 @@
 from __future__ import annotations
 
 import dataclasses
-from dataclasses import dataclass
 import re
 from typing import TYPE_CHECKING, Iterable, Sequence
 
+from .intent import IntentRelation
+
 if TYPE_CHECKING:
     from .intent import Intent
-
-
-@dataclass(frozen=True)
-class IntentRelation:
-    source_id: str
-    target_id: str
-    reason: str
-    requires_verification: bool = False
 
 
 _PARALLEL_RE = re.compile(r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE)
@@ -41,10 +34,12 @@ _INFIX_COMPLETION_RE = re.compile(
     r"\bafter\s+(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b",
     re.IGNORECASE,
 )
-_CHINESE_COMPLETION_RE = re.compile(r"(?:完成|验证通过|测试通过)后(?:再)?")
+_CHINESE_COMPLETION_RE = re.compile(
+    r"(?:完成|验证通过|测试通过|批准|审批通过|审核通过)后(?:再)?"
+)
 _VERIFICATION_GATE_RE = re.compile(
-    r"(?:\b(?:after|once)\b[\s\S]*\bverif(?:y|ied|ying|ication)\b)|"
-    r"(?:验证通过|测试通过)",
+    r"\b(?:verif(?:y|ied|ying|ication)|approv(?:ed|al))\b|"
+    r"(?:验证通过|测试通过|批准|审批通过|审核通过)",
     re.IGNORECASE,
 )
 _UNKNOWN_PREFIX_GATE_RE = re.compile(
@@ -92,8 +87,6 @@ def infer_intent_relations(
     relations: list[IntentRelation] = []
     parallel_start = _parallel_start_index(current_text, intents)
     ordered_intents = intents[:parallel_start]
-    verification_gate = bool(_VERIFICATION_GATE_RE.search(current_text))
-    gate_reason = "verification_gate" if verification_gate else "completion_gate"
 
     if _PREFIX_BEFORE_RE.search(current_text) and len(ordered_intents) == 2:
         relations.append(
@@ -102,19 +95,18 @@ def infer_intent_relations(
     elif _PREFIX_COMPLETION_RE.search(current_text) or _CHINESE_COMPLETION_RE.search(
         current_text
     ):
-        _append_source_chain(
-            relations,
-            ordered_intents,
-            gate_reason,
-            requires_verification=verification_gate,
-        )
+        _append_gate_chain(relations, ordered_intents)
     elif _INFIX_COMPLETION_RE.search(current_text) and len(ordered_intents) == 2:
+        source = ordered_intents[1]
+        requires_verification = _requires_verification(source.summary)
         relations.append(
             IntentRelation(
-                ordered_intents[1].id,
+                source.id,
                 ordered_intents[0].id,
-                gate_reason,
-                verification_gate,
+                "verification_gate"
+                if requires_verification
+                else "completion_gate",
+                requires_verification,
             )
         )
     elif _FIRST_THEN_RE.search(current_text):
@@ -192,6 +184,29 @@ def _append_source_chain(
                     source.id, target.id, reason, requires_verification
                 )
             )
+
+
+def _append_gate_chain(
+    relations: list[IntentRelation], intents: Sequence[Intent]
+) -> None:
+    for source, target in zip(intents, intents[1:]):
+        if target.task_type == "open_source_release":
+            continue
+        requires_verification = _requires_verification(source.summary)
+        relations.append(
+            IntentRelation(
+                source.id,
+                target.id,
+                "verification_gate"
+                if requires_verification
+                else "completion_gate",
+                requires_verification,
+            )
+        )
+
+
+def _requires_verification(text: str) -> bool:
+    return bool(_VERIFICATION_GATE_RE.search(text))
 
 
 def _append_semicolon_relations(

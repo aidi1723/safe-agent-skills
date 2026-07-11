@@ -6,12 +6,6 @@ from dataclasses import asdict, dataclass
 import re
 from typing import Any
 
-from .intent_dependencies import (
-    IntentRelation,
-    apply_intent_relations,
-    infer_intent_relations,
-    infer_unresolved_dependencies,
-)
 from .intent_spans import (
     MAX_CANDIDATE_SIGNALS,
     MAX_EMITTED_INTENTS,
@@ -37,10 +31,18 @@ _ORDERED_AFTER_RE = re.compile(
     r"\s+\bafter\b\s+(?=(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b)",
     re.IGNORECASE,
 )
+_PUBLISHING_SITE_TARGET = (
+    r"publishing\s+"
+    r"(?:(?:the|a|an|our|my|your|their|its)\s+)?"
+    r"(?:(?:official|product|company)\s+)?(?:website|site)"
+)
 _BEFORE_PUBLISHING_WEBSITE_RE = re.compile(
     r"^(?P<source>.+?)\s+\bbefore\b\s+"
-    r"(?P<target>publishing\s+(?:the\s+)?website)\s*$",
+    rf"(?P<target>{_PUBLISHING_SITE_TARGET})\s*$",
     re.IGNORECASE,
+)
+_WEBSITE_PUBLISH_PRECONDITION_RE = re.compile(
+    rf"^before\s+{_PUBLISHING_SITE_TARGET}\s*$", re.IGNORECASE
 )
 _CHINESE_PRECEDES_RE = re.compile(r"\s*先于\s*")
 _RELEASE_BOUNDARY_RE = re.compile(
@@ -88,6 +90,14 @@ _RELEASE_POLARITY_BOUNDARY_RE = re.compile(
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _CHINESE_CODE_REVIEW_ACTION_RE = re.compile(r"审查代码")
 _INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
+_INTENT_RELATION_REASONS = {
+    "before",
+    "completion_gate",
+    "first_then",
+    "release_gate",
+    "semicolon_sequence",
+    "verification_gate",
+}
 
 
 @dataclass(frozen=True)
@@ -118,6 +128,14 @@ class Intent:
 
 
 @dataclass(frozen=True)
+class IntentRelation:
+    source_id: str
+    target_id: str
+    reason: str
+    requires_verification: bool = False
+
+
+@dataclass(frozen=True)
 class IntentGraph:
     intents: tuple[Intent, ...]
     unresolved_dependencies: tuple[str, ...]
@@ -134,7 +152,13 @@ class IntentGraph:
     def validate(self) -> list[str]:
         errors: list[str] = []
         if not self.intents:
-            return ["intent graph is empty"]
+            errors.append("intent graph is empty")
+            errors.extend(
+                _validate_dependency_relations(
+                    self.dependency_relations, {}, set()
+                )
+            )
+            return errors
 
         duplicate_ids = _duplicate_intent_ids(self.intents)
         if duplicate_ids:
@@ -180,6 +204,12 @@ class IntentGraph:
 
         if not _contains_only_nonempty_strings(self.unresolved_dependencies):
             errors.append("unresolved_dependencies must contain nonempty strings")
+
+        errors.extend(
+            _validate_dependency_relations(
+                self.dependency_relations, dependencies, intent_ids
+            )
+        )
 
         cycle = _find_dependency_cycle(dependencies, intent_ids)
         if cycle:
@@ -296,6 +326,9 @@ def _split_list_items(text: str) -> list[str]:
 
 def classify_intent(clause: str, index: int) -> Intent:
     scanned_clause = clause[:MAX_SCAN_CHARACTERS]
+    website_publish_precondition = bool(
+        _WEBSITE_PUBLISH_PRECONDITION_RE.search(scanned_clause)
+    )
     release_action = _is_release_action(scanned_clause)
     routing_clause = (
         scanned_clause
@@ -307,6 +340,8 @@ def classify_intent(clause: str, index: int) -> Intent:
         profile = build_profile_for_task_type(
             routing_clause, "design_md_system_governance"
         )
+    elif website_publish_precondition:
+        profile = build_profile_for_task_type(routing_clause, "website_build")
     elif _CHINESE_CODE_REVIEW_ACTION_RE.search(routing_clause):
         profile = build_profile_for_task_type(routing_clause, "code_review")
     task_type = profile["task_type"]
@@ -329,6 +364,12 @@ def classify_intent(clause: str, index: int) -> Intent:
 
 
 def decompose_task_detailed(task: str) -> TaskDecomposition:
+    from .intent_dependencies import (
+        apply_intent_relations,
+        infer_intent_relations,
+        infer_unresolved_dependencies,
+    )
+
     current = normalize_task(task).current
     task_scan_limit_exceeded = len(current) > MAX_SCAN_CHARACTERS
     broad_clauses = split_task_clauses(current[:MAX_SCAN_CHARACTERS])
@@ -462,6 +503,103 @@ def _contains_only_nonempty_strings(values: Any) -> bool:
     return isinstance(values, (tuple, list)) and all(
         isinstance(value, str) and bool(value) for value in values
     )
+
+
+def _validate_dependency_relations(
+    relations: Any,
+    dependencies: dict[str, tuple[str, ...]],
+    intent_ids: set[str],
+) -> list[str]:
+    if not isinstance(relations, tuple):
+        return ["dependency_relations must be a tuple of IntentRelation records"]
+
+    errors: list[str] = []
+    seen_pairs: set[tuple[str, str]] = set()
+    represented_pairs: set[tuple[str, str]] = set()
+    for relation in relations:
+        if type(relation) is not IntentRelation:
+            errors.append("dependency relation must be an IntentRelation")
+            continue
+
+        source_valid = bool(
+            isinstance(relation.source_id, str)
+            and _INTENT_ID_RE.fullmatch(relation.source_id)
+        )
+        target_valid = bool(
+            isinstance(relation.target_id, str)
+            and _INTENT_ID_RE.fullmatch(relation.target_id)
+        )
+        if not source_valid:
+            errors.append(
+                f"dependency relation has invalid source id: {relation.source_id}"
+            )
+        elif relation.source_id not in intent_ids:
+            errors.append(
+                f"dependency relation has unknown source id: {relation.source_id}"
+            )
+        if not target_valid:
+            errors.append(
+                f"dependency relation has invalid target id: {relation.target_id}"
+            )
+        elif relation.target_id not in intent_ids:
+            errors.append(
+                f"dependency relation has unknown target id: {relation.target_id}"
+            )
+        if source_valid and target_valid and relation.source_id == relation.target_id:
+            errors.append(
+                f"dependency relation cannot be self-referential: {relation.source_id}"
+            )
+        if (
+            not isinstance(relation.reason, str)
+            or relation.reason not in _INTENT_RELATION_REASONS
+        ):
+            errors.append(
+                f"dependency relation has unsupported reason: {relation.reason}"
+            )
+        if type(relation.requires_verification) is not bool:
+            errors.append("dependency relation requires_verification must be bool")
+
+        pair = (
+            (relation.source_id, relation.target_id)
+            if isinstance(relation.source_id, str)
+            and isinstance(relation.target_id, str)
+            else None
+        )
+        if pair is not None:
+            if pair in seen_pairs:
+                errors.append(
+                    "duplicate dependency relation metadata: "
+                    f"{relation.source_id} -> {relation.target_id}"
+                )
+            seen_pairs.add(pair)
+        if (
+            source_valid
+            and target_valid
+            and relation.source_id in intent_ids
+            and relation.target_id in intent_ids
+        ):
+            if relation.source_id not in dependencies.get(relation.target_id, ()):
+                errors.append(
+                    f"dependency relation {relation.source_id} -> "
+                    f"{relation.target_id} is not represented by depends_on"
+                )
+            else:
+                if pair is not None:
+                    represented_pairs.add(pair)
+
+    if relations:
+        dependency_pairs = {
+            (dependency_id, target_id)
+            for target_id, dependency_ids in dependencies.items()
+            for dependency_id in dependency_ids
+            if isinstance(dependency_id, str)
+        }
+        for source_id, target_id in sorted(dependency_pairs - represented_pairs):
+            errors.append(
+                f"dependency relation metadata missing for edge: "
+                f"{source_id} -> {target_id}"
+            )
+    return errors
 
 
 def _find_dependency_cycle(

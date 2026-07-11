@@ -6,6 +6,7 @@ import unittest
 from onecode_skill_sanitizer.intent import (
     Intent,
     IntentGraph,
+    IntentRelation,
     TaskDecomposition,
     decompose_task,
     normalize_task,
@@ -283,6 +284,111 @@ class IntentTest(unittest.TestCase):
         )
 
         self.assertEqual(graph.validate(), ["intent i1 depends on unknown intent i9"])
+
+    def test_validate_rejects_malformed_dependency_relation_collections(self):
+        valid_relation = IntentRelation("i1", "i2", "before", False)
+        for relations in [None, "bad", [valid_relation]]:
+            with self.subTest(relations=relations):
+                graph = IntentGraph(
+                    intents=(self.intent("i1"), self.intent("i2", ("i1",))),
+                    unresolved_dependencies=(),
+                    dependency_relations=relations,
+                )
+
+                self.assertIn(
+                    "dependency_relations must be a tuple of IntentRelation records",
+                    graph.validate(),
+                )
+
+    def test_validate_rejects_malformed_dependency_relation_records(self):
+        cases = [
+            ((object(),), "dependency relation must be an IntentRelation"),
+            (
+                (IntentRelation([], "i2", "before", False),),
+                "dependency relation has invalid source id: []",
+            ),
+            (
+                (IntentRelation("bad", "i2", "before", False),),
+                "dependency relation has invalid source id: bad",
+            ),
+            (
+                (IntentRelation("i9", "i2", "before", False),),
+                "dependency relation has unknown source id: i9",
+            ),
+            (
+                (IntentRelation("i1", "i9", "before", False),),
+                "dependency relation has unknown target id: i9",
+            ),
+            (
+                (IntentRelation("i1", "i1", "before", False),),
+                "dependency relation cannot be self-referential: i1",
+            ),
+            (
+                (IntentRelation("i2", "i1", "before", False),),
+                "dependency relation i2 -> i1 is not represented by depends_on",
+            ),
+            (
+                (IntentRelation("i1", "i2", "unsupported", False),),
+                "dependency relation has unsupported reason: unsupported",
+            ),
+            (
+                (IntentRelation("i1", "i2", [], False),),
+                "dependency relation has unsupported reason: []",
+            ),
+            (
+                (IntentRelation("i1", "i2", "before", 1),),
+                "dependency relation requires_verification must be bool",
+            ),
+        ]
+
+        for relations, expected in cases:
+            with self.subTest(expected=expected):
+                graph = IntentGraph(
+                    intents=(self.intent("i1"), self.intent("i2", ("i1",))),
+                    unresolved_dependencies=(),
+                    dependency_relations=relations,
+                )
+                self.assertIn(expected, graph.validate())
+
+    def test_validate_rejects_duplicate_and_conflicting_relation_metadata(self):
+        for relations in [
+            (
+                IntentRelation("i1", "i2", "before", False),
+                IntentRelation("i1", "i2", "before", False),
+            ),
+            (
+                IntentRelation("i1", "i2", "before", False),
+                IntentRelation("i1", "i2", "verification_gate", True),
+            ),
+        ]:
+            with self.subTest(relations=relations):
+                graph = IntentGraph(
+                    intents=(self.intent("i1"), self.intent("i2", ("i1",))),
+                    unresolved_dependencies=(),
+                    dependency_relations=relations,
+                )
+                self.assertIn(
+                    "duplicate dependency relation metadata: i1 -> i2",
+                    graph.validate(),
+                )
+
+    def test_validate_requires_complete_metadata_when_any_record_is_present(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent("i2", ("i1",)),
+                self.intent("i3", ("i2",)),
+            ),
+            unresolved_dependencies=(),
+            dependency_relations=(
+                IntentRelation("i1", "i2", "before", False),
+            ),
+        )
+
+        self.assertIn(
+            "dependency relation metadata missing for edge: i2 -> i3",
+            graph.validate(),
+        )
 
     def test_validate_rejects_duplicate_ids_before_dependency_analysis(self):
         graph = IntentGraph(

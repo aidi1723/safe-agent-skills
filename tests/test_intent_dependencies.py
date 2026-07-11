@@ -230,19 +230,59 @@ class IntentDependenciesTest(unittest.TestCase):
                     graph.dependency_relations[0].requires_verification
                 )
 
-    def test_before_publishing_website_is_ordering_not_release(self):
-        graph = decompose_task("Review the PR before publishing the website")
+    def test_approval_gates_require_verification(self):
+        cases = [
+            "After the PR is approved, build the website",
+            "PR 审批通过后，构建官网",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents], [(), ("i1",)]
+                )
+                self.assertTrue(
+                    graph.dependency_relations[0].requires_verification
+                )
+
+    def test_later_parallel_verification_does_not_contaminate_completion_relation(self):
+        graph = decompose_task(
+            "After completing the PR review, build the website; "
+            "in parallel, verify the spreadsheet"
+        )
 
         self.assertEqual(
             [intent.task_type for intent in graph.intents],
-            ["code_review", "website_build"],
+            ["code_review", "website_build", "data_analysis"],
         )
         self.assertEqual(
-            [intent.depends_on for intent in graph.intents], [(), ("i1",)]
+            [intent.depends_on for intent in graph.intents], [(), ("i1",), ()]
         )
-        self.assertTrue(
-            all(intent.task_type != "open_source_release" for intent in graph.intents)
-        )
+        self.assertFalse(graph.dependency_relations[0].requires_verification)
+
+    def test_before_publishing_website_is_ordering_not_release(self):
+        for task in [
+            "Review the PR before publishing the website",
+            "Review the PR before publishing our website",
+            "Review the PR before publishing a website",
+            "Review the PR before publishing the site",
+        ]:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["code_review", "website_build"],
+                )
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents], [(), ("i1",)]
+                )
+                self.assertTrue(
+                    all(
+                        intent.task_type != "open_source_release"
+                        for intent in graph.intents
+                    )
+                )
 
     def test_first_then_release_preserves_the_preceding_action(self):
         cases = [

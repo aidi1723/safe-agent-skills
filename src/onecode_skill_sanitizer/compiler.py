@@ -8,7 +8,7 @@ from typing import Any
 
 from .candidates import referenced_skill_names, validate_bundles_index
 from .composer import ScenarioComposition
-from .intent import IntentGraph
+from .intent import IntentGraph, IntentRelation
 from .router import pipeline_stage_for_skill
 from .routing_profiles import SCENARIO_PROFILES
 
@@ -173,16 +173,16 @@ def _relation_verification_requirements(
     intent_graph: IntentGraph,
 ) -> dict[tuple[str, str], bool]:
     requirements: dict[tuple[str, str], bool] = {}
-    for relation in getattr(intent_graph, "dependency_relations", ()):
-        source_id = getattr(relation, "source_id", None)
-        target_id = getattr(relation, "target_id", None)
-        requires_verification = getattr(relation, "requires_verification", None)
-        if (
-            isinstance(source_id, str)
-            and isinstance(target_id, str)
-            and isinstance(requires_verification, bool)
-        ):
-            requirements[(source_id, target_id)] = requires_verification
+    relations = getattr(intent_graph, "dependency_relations", ())
+    if not isinstance(relations, tuple):
+        return requirements
+    for relation in relations:
+        if type(relation) is not IntentRelation:
+            continue
+        pair = (relation.source_id, relation.target_id)
+        if pair in requirements:
+            return {}
+        requirements[pair] = relation.requires_verification
     return requirements
 
 

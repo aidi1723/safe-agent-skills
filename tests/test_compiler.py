@@ -347,7 +347,7 @@ class CompilerTest(unittest.TestCase):
             ),
             unresolved_dependencies=(),
             dependency_relations=(
-                IntentRelation("i1", "i2", "forged", False),
+                IntentRelation("i1", "i2", "release_gate", False),
             ),
         )
         bundles = {
@@ -407,6 +407,8 @@ class CompilerTest(unittest.TestCase):
         for task in [
             "Once the PR is verified, build the website",
             "PR 验证通过后，构建官网",
+            "After the PR is approved, build the website",
+            "PR 审批通过后，构建官网",
         ]:
             with self.subTest(task=task):
                 graph = decompose_task(task)
@@ -578,6 +580,36 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
         self.assertEqual(compiled["nodes"], [])
         self.assertEqual(compiled["edges"], [])
+
+    def test_malformed_dependency_relation_metadata_is_blocked_without_raising(self):
+        base_relation = IntentRelation("i1", "i2", "before", False)
+        for relations in [None, "bad", [base_relation], (object(),)]:
+            with self.subTest(relations=relations):
+                graph = IntentGraph(
+                    intents=(
+                        self.intent("i1"),
+                        self.intent("i2", depends_on=("i1",)),
+                    ),
+                    unresolved_dependencies=(),
+                    dependency_relations=relations,
+                )
+
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(("i1",), ("i2",)),
+                    {
+                        "bundles": [
+                            self.bundle("first", ["skill-a"]),
+                            self.bundle("second", ["execution-publish-check"]),
+                        ]
+                    },
+                    {"skill-a", "execution-publish-check"},
+                )
+
+                self.assertEqual(compiled["status"], "blocked")
+                self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+                self.assertEqual(compiled["nodes"], [])
+                self.assertEqual(compiled["edges"], [])
 
     def test_malformed_validate_return_fails_closed(self):
         graph = IntentGraph((self.intent("i1"),), ())
