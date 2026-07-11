@@ -15,9 +15,10 @@ from .routing_profiles import SCENARIO_PROFILES
 
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _KNOWN_TASK_TYPES = frozenset(profile["task_type"] for profile in SCENARIO_PROFILES)
-_EXPLICIT_VERIFICATION_GATE_RE = re.compile(
-    r"\b(?:after\s+verif(?:ication|ying)|once\s+verified)\b|"
-    r"(?:验证通过|测试通过)后",
+_EXPLICIT_VERIFICATION_OR_COMPLETION_GATE_RE = re.compile(
+    r"^\s*(?:after|once)\b.*\b"
+    r"(?:verif(?:ied|ication|ying)|complet(?:e|ed|ion|ing)|approved)\b|"
+    r"(?:验证通过|测试通过|完成|批准|审批通过|审核通过)后",
     re.IGNORECASE,
 )
 
@@ -122,7 +123,9 @@ def compile_execution_graph(
         dependencies = intents[intent_id].depends_on
         for dependency_id in sorted(set(dependencies), key=_intent_sort_key):
             anchors = verification_anchors[dependency_id]
-            if not anchors and _requires_verified_dependency(intents[intent_id]):
+            if not anchors and _requires_verified_dependency(
+                intents[dependency_id], intents[intent_id]
+            ):
                 _add_reason(reason_codes, "missing_intent_verification")
                 continue
             if anchors:
@@ -157,11 +160,20 @@ def compile_execution_graph(
     return _result(acyclic, nodes, edges, reason_codes, details)
 
 
-def _requires_verified_dependency(intent: Any) -> bool:
+def _requires_verified_dependency(source_intent: Any, target_intent: Any) -> bool:
     return (
-        intent.task_type not in _KNOWN_TASK_TYPES
-        or intent.task_type == "open_source_release"
-        or bool(_EXPLICIT_VERIFICATION_GATE_RE.search(intent.summary))
+        target_intent.task_type not in _KNOWN_TASK_TYPES
+        or target_intent.task_type == "open_source_release"
+        or bool(
+            _EXPLICIT_VERIFICATION_OR_COMPLETION_GATE_RE.search(
+                source_intent.summary
+            )
+        )
+        or bool(
+            _EXPLICIT_VERIFICATION_OR_COMPLETION_GATE_RE.search(
+                target_intent.summary
+            )
+        )
     )
 
 

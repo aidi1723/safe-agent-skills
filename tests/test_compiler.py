@@ -365,6 +365,41 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["status"], "blocked")
         self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
 
+    def test_source_side_verification_gate_without_anchor_is_blocked(self):
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+
+        for task in [
+            "Once the PR is verified, build the website",
+            "PR 验证通过后，构建官网",
+        ]:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["code_review", "website_build"],
+                )
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents],
+                    [(), ("i1",)],
+                )
+
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(("i1",), ("i2",)),
+                    bundles,
+                    {"skill-a", "execution-publish-check"},
+                )
+
+                self.assertEqual(compiled["status"], "blocked")
+                self.assertEqual(
+                    compiled["reason_codes"], ["missing_intent_verification"]
+                )
+
     def test_verification_followed_by_review_adds_evidence_and_completion_edges(self):
         graph = IntentGraph(
             intents=(
