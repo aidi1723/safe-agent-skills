@@ -24,11 +24,19 @@ from .routing_profiles import MAX_SCAN_CHARACTERS, is_design_governance_composit
 _LIST_MARKER_RE = re.compile(
     r"^\s*(?:\d+[.)、]|[-*+]\s*\[[ xX]\]|[-*+])\s+(.+?)\s*$"
 )
-_CLAUSE_SEPARATOR_RE = re.compile(r"\s*(?:[；;]|，?同时|，?以及|\bthen\b)\s*", re.IGNORECASE)
+_CLAUSE_SEPARATOR_RE = re.compile(
+    r"\s*(?:[；;]|，?同时|，?以及|，\s*再|\bthen\b)\s*",
+    re.IGNORECASE,
+)
 _ORDERED_BEFORE_RE = re.compile(
     r"\s+\bbefore\b\s+(?!(?:publishing|releasing|pushing|publish|release|push)\b)",
     re.IGNORECASE,
 )
+_ORDERED_AFTER_RE = re.compile(
+    r"\s+\bafter\b\s+(?=(?:complet(?:e|ing)|verif(?:y|ying|ication)|review(?:ing)?)\b)",
+    re.IGNORECASE,
+)
+_CHINESE_PRECEDES_RE = re.compile(r"\s*先于\s*")
 _RELEASE_BOUNDARY_RE = re.compile(
     r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?(?:发布|上线|推送)"
 )
@@ -72,6 +80,7 @@ _RELEASE_POLARITY_BOUNDARY_RE = re.compile(
     r"\bbut\b|但是|但要", re.IGNORECASE
 )
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
+_CHINESE_CODE_REVIEW_ACTION_RE = re.compile(r"审查代码")
 _INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
 
 
@@ -224,6 +233,22 @@ def split_task_clauses(task: str) -> list[str]:
         if len(ordered_parts) > 1:
             clauses.extend(ordered_parts)
             continue
+        completion_parts = [
+            part.strip(" \t\n,，。")
+            for part in _ORDERED_AFTER_RE.split(candidate)
+            if part.strip(" \t\n,，。")
+        ]
+        if len(completion_parts) > 1:
+            clauses.extend(completion_parts)
+            continue
+        preceding_parts = [
+            part.strip(" \t\n,，。")
+            for part in _CHINESE_PRECEDES_RE.split(candidate)
+            if part.strip(" \t\n,，。")
+        ]
+        if len(preceding_parts) > 1:
+            clauses.extend(preceding_parts)
+            continue
         release_match = _RELEASE_BOUNDARY_RE.search(candidate)
         if release_match and release_match.start() > 0:
             clauses.extend([candidate[: release_match.start()], candidate[release_match.start() :]])
@@ -261,6 +286,8 @@ def classify_intent(clause: str, index: int) -> Intent:
         profile = build_profile_for_task_type(
             routing_clause, "design_md_system_governance"
         )
+    elif _CHINESE_CODE_REVIEW_ACTION_RE.search(routing_clause):
+        profile = build_profile_for_task_type(routing_clause, "code_review")
     task_type = profile["task_type"]
     required_artifacts = tuple(profile["artifact_types"])
     risk_flags = tuple(profile["risk_flags"])

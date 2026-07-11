@@ -36,8 +36,8 @@ class IntentDependenciesTest(unittest.TestCase):
 
     def test_semicolon_steps_chain_in_source_order(self):
         intents = (
-            self.intent("i1", "Review the PR"),
-            self.intent("i2", "build the website"),
+            self.intent("i1", "Review the PR", "code_review"),
+            self.intent("i2", "build the website", "website_build"),
             self.intent("i3", "prepare an open-source release", "open_source_release"),
         )
 
@@ -52,6 +52,18 @@ class IntentDependenciesTest(unittest.TestCase):
                 IntentRelation("i2", "i3", "release_gate"),
             ),
         )
+
+    def test_unrelated_semicolon_compound_remains_parallel(self):
+        graph = decompose_task(
+            "Prepare a value-investing memo with a bear case; "
+            "govern the expert agent role library"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["investment_research_diligence", "agent_role_library_governance"],
+        )
+        self.assertEqual([intent.depends_on for intent in graph.intents], [(), ()])
 
     def test_parallel_marker_suppresses_ordered_nonrelease_relations(self):
         intents = (
@@ -113,15 +125,92 @@ class IntentDependenciesTest(unittest.TestCase):
             with self.subTest(text=text):
                 self.assertEqual(infer_intent_relations(text, intents), (expected,))
 
+    def test_before_orientation_through_decomposition(self):
+        cases = [
+            (
+                "Before building the website, review the PR",
+                ["website_build", "code_review"],
+                [("i2",), ()],
+            ),
+            (
+                "Review the PR before building the website",
+                ["code_review", "website_build"],
+                [(), ("i1",)],
+            ),
+            (
+                "构建官网前，先做代码审查",
+                ["website_build", "code_review"],
+                [("i2",), ()],
+            ),
+            (
+                "做代码审查先于构建官网",
+                ["code_review", "website_build"],
+                [(), ("i1",)],
+            ),
+        ]
+
+        for text, task_types, dependencies in cases:
+            with self.subTest(text=text):
+                graph = decompose_task(text)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents], task_types
+                )
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents], dependencies
+                )
+
+    def test_after_completion_splits_and_reverses_dependency(self):
+        graph = decompose_task("Build the website after completing the PR review")
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["website_build", "code_review"],
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in graph.intents], [("i2",), ()]
+        )
+
+    def test_first_then_release_preserves_the_preceding_action(self):
+        cases = [
+            "先审查代码，再发布更新",
+            "first review the PR, then publish the update",
+        ]
+
+        for text in cases:
+            with self.subTest(text=text):
+                graph = decompose_task(text)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["code_review", "open_source_release"],
+                )
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents], [(), ("i1",)]
+                )
+
+    def test_repeated_then_chains_nonrelease_steps_before_release(self):
+        graph = decompose_task(
+            "Review the pull request and regression tests, then map the code "
+            "lifecycle change, then release the verified package"
+        )
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents],
+            ["code_review", "codebase_change_lifecycle", "open_source_release"],
+        )
+        self.assertEqual(
+            [intent.depends_on for intent in graph.intents],
+            [(), ("i1",), ("i1", "i2")],
+        )
+
     def test_release_depends_on_every_explicitly_preceding_path(self):
         intents = (
-            self.intent("i1", "review code"),
-            self.intent("i2", "verify website"),
+            self.intent("i1", "analyze data", "data_analysis"),
+            self.intent("i2", "write article", "content_seo"),
             self.intent("i3", "publish update", "open_source_release"),
         )
 
         self.assertEqual(
-            infer_intent_relations("review code; verify website; publish update", intents),
+            infer_intent_relations("analyze data; write article; publish update", intents),
             (
                 IntentRelation("i1", "i2", "semicolon_sequence"),
                 IntentRelation("i1", "i3", "release_gate"),

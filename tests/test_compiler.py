@@ -278,7 +278,7 @@ class CompilerTest(unittest.TestCase):
                 self.assertEqual(compiled["status"], "blocked")
                 self.assertIn(reason_code, compiled["reason_codes"])
 
-    def test_dependency_without_verification_anchor_is_blocked(self):
+    def test_ordinary_dependency_without_verification_uses_completion_anchor(self):
         graph = IntentGraph(
             intents=(
                 self.intent("i1"),
@@ -296,6 +296,70 @@ class CompilerTest(unittest.TestCase):
 
         compiled = compile_execution_graph(
             graph, composition, bundles, {"skill-a", "execution-publish-check"}
+        )
+
+        self.assertEqual(compiled["status"], "ready")
+        self.assertEqual(compiled["reason_codes"], [])
+        self.assertIn(
+            {
+                "from": "skill:i1:skill-a",
+                "to": "skill:i2:execution-publish-check",
+                "type": "intent_completion_dependency",
+            },
+            compiled["edges"],
+        )
+
+    def test_release_dependency_without_verification_anchor_is_blocked(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent(
+                    "i2", depends_on=("i1",), task_type="open_source_release"
+                ),
+            ),
+            unresolved_dependencies=(),
+        )
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            bundles,
+            {"skill-a", "execution-publish-check"},
+        )
+
+        self.assertEqual(compiled["status"], "blocked")
+        self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
+
+    def test_explicit_verification_gate_without_anchor_is_blocked(self):
+        graph = IntentGraph(
+            intents=(
+                self.intent("i1"),
+                self.intent(
+                    "i2",
+                    depends_on=("i1",),
+                    summary="After verification is complete, review the result",
+                ),
+            ),
+            unresolved_dependencies=(),
+        )
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            bundles,
+            {"skill-a", "execution-publish-check"},
         )
 
         self.assertEqual(compiled["status"], "blocked")
@@ -492,11 +556,11 @@ class CompilerTest(unittest.TestCase):
         self.assertNotIn("details", first)
 
     @staticmethod
-    def intent(intent_id, depends_on=()):
+    def intent(intent_id, depends_on=(), task_type="code_review", summary="test intent"):
         return Intent(
             id=intent_id,
-            summary="test intent",
-            task_type="code_review",
+            summary=summary,
+            task_type=task_type,
             required_artifacts=(),
             risk_flags=(),
             depends_on=depends_on,

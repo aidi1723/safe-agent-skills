@@ -10,9 +10,16 @@ from .candidates import referenced_skill_names, validate_bundles_index
 from .composer import ScenarioComposition
 from .intent import IntentGraph
 from .router import pipeline_stage_for_skill
+from .routing_profiles import SCENARIO_PROFILES
 
 
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
+_KNOWN_TASK_TYPES = frozenset(profile["task_type"] for profile in SCENARIO_PROFILES)
+_EXPLICIT_VERIFICATION_GATE_RE = re.compile(
+    r"\b(?:after\s+verif(?:ication|ying)|once\s+verified)\b|"
+    r"(?:验证通过|测试通过)后",
+    re.IGNORECASE,
+)
 
 
 def compile_execution_graph(
@@ -115,17 +122,18 @@ def compile_execution_graph(
         dependencies = intents[intent_id].depends_on
         for dependency_id in sorted(set(dependencies), key=_intent_sort_key):
             anchors = verification_anchors[dependency_id]
-            if not anchors:
+            if not anchors and _requires_verified_dependency(intents[intent_id]):
                 _add_reason(reason_codes, "missing_intent_verification")
                 continue
-            edges.extend(
-                {
-                    "from": anchor_id,
-                    "to": roots[intent_id],
-                    "type": "intent_verification_dependency",
-                }
-                for anchor_id in anchors
-            )
+            if anchors:
+                edges.extend(
+                    {
+                        "from": anchor_id,
+                        "to": roots[intent_id],
+                        "type": "intent_verification_dependency",
+                    }
+                    for anchor_id in anchors
+                )
             edges.extend(
                 {
                     "from": anchor_id,
@@ -147,6 +155,14 @@ def compile_execution_graph(
     if not acyclic:
         _add_reason(reason_codes, "dependency_cycle")
     return _result(acyclic, nodes, edges, reason_codes, details)
+
+
+def _requires_verified_dependency(intent: Any) -> bool:
+    return (
+        intent.task_type not in _KNOWN_TASK_TYPES
+        or intent.task_type == "open_source_release"
+        or bool(_EXPLICIT_VERIFICATION_GATE_RE.search(intent.summary))
+    )
 
 
 def _validate_intent_graph_boundary(
