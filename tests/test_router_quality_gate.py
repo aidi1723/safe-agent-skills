@@ -26,6 +26,8 @@ def valid_dataset_identity():
         "labeling_reviewer_role": "independent_dataset_review",
         "labeling_generated_from_router": False,
         "labeling_reviewed_at": "2026-07-10",
+        "suite_id": "router-production-v1",
+        "suite_sha256": f"sha256:{'b' * 64}",
     }
 
 
@@ -281,6 +283,56 @@ class RouterQualityGateTests(unittest.TestCase):
         self.assertFalse(report["production_ready"])
         self.assertIn("dataset_identity", report["missing_gates"])
         self.assertEqual(report["dataset_identity"], {})
+
+    def test_dataset_suite_identity_requires_exact_null_or_bound_pair(self):
+        invalid_pairs = [
+            (None, f"sha256:{'b' * 64}"),
+            ("router-production-v1", None),
+            ("", f"sha256:{'b' * 64}"),
+            ("router-production-v1", f"sha256:{'B' * 64}"),
+        ]
+
+        for suite_id, suite_sha256 in invalid_pairs:
+            with self.subTest(suite_id=suite_id, suite_sha256=suite_sha256):
+                dataset = {
+                    **valid_dataset_identity(),
+                    "suite_id": suite_id,
+                    "suite_sha256": suite_sha256,
+                }
+                report = self.build(dataset_identity=dataset)
+                self.assertFalse(report["production_ready"])
+                self.assertIn("dataset_identity", report["missing_gates"])
+                self.assertEqual(report["dataset_identity"], {})
+
+    def test_review_identity_must_bind_to_suite_and_full_dataset_case_count(self):
+        legacy_dataset = {
+            **valid_dataset_identity(),
+            "suite_id": None,
+            "suite_sha256": None,
+        }
+        mismatches = {
+            "different suite id": (
+                valid_dataset_identity(),
+                {**valid_review_identity(), "suite_id": "other-suite"},
+            ),
+            "different suite hash": (
+                valid_dataset_identity(),
+                {**valid_review_identity(), "suite_sha256": f"sha256:{'d' * 64}"},
+            ),
+            "partial reviewed count": (
+                valid_dataset_identity(),
+                {**valid_review_identity(), "reviewed_case_count": 99},
+            ),
+            "legacy single file": (legacy_dataset, valid_review_identity()),
+        }
+
+        for label, (dataset, review) in mismatches.items():
+            with self.subTest(label=label):
+                report = self.build(dataset_identity=dataset, review_identity=review)
+                self.assertFalse(report["production_ready"])
+                self.assertNotIn("dataset_identity", report["missing_gates"])
+                self.assertIn("independent_label_review", report["missing_gates"])
+                self.assertIsNone(report["review_identity"])
 
     def test_review_identity_output_is_normalized_copy_of_validated_projection(self):
         review = dict(reversed(list(valid_review_identity().items())))

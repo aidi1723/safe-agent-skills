@@ -123,6 +123,15 @@ def _is_legacy_router_eval_v2(payload: object) -> bool:
 def load_eval_dataset_v2(
     path: Path,
     known_scenarios: set[str] | None = None,
+) -> list[dict[str, Any]]:
+    """Load and validate the legacy single-file dataset cases."""
+
+    return load_eval_dataset_envelope_v2(path, known_scenarios)["cases"]
+
+
+def load_eval_dataset_envelope_v2(
+    path: Path,
+    known_scenarios: set[str] | None = None,
 ) -> dict[str, Any]:
     allowed_scenarios = TRUSTED_SCENARIO_IDS if known_scenarios is None else known_scenarios
     try:
@@ -182,6 +191,8 @@ def dataset_identity_v2(dataset: dict[str, Any]) -> dict[str, object]:
         "labeling_method": EXPECTED_LABELING["method"],
         "labeling_reviewed_at": EXPECTED_LABELING["reviewed_at"],
         "labeling_reviewer_role": EXPECTED_LABELING["reviewer_role"],
+        "suite_id": None,
+        "suite_sha256": None,
     }
 
 

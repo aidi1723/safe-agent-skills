@@ -69,7 +69,7 @@ from .router_eval_v2 import DatasetValidationError
 from .router_eval_v2 import dataset_identity_v2
 from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
-from .router_eval_v2 import load_eval_dataset_v2
+from .router_eval_v2 import load_eval_dataset_envelope_v2
 from .router_quality_gate import build_quality_gate
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
@@ -563,7 +563,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             for bundle in bundles_index.get("bundles", [])
             if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
         }
-        dataset = load_eval_dataset_v2(eval_path, known_scenarios)
+        dataset = load_eval_dataset_envelope_v2(eval_path, known_scenarios)
         cases = dataset["cases"]
         capability_context = _bundle_required_capability_context(bundles_index)
         contract_result = contract_coverage(

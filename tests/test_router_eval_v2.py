@@ -129,10 +129,8 @@ class RouterEvalV2Tests(unittest.TestCase):
     def test_gold_dataset_has_exact_count_distribution_and_contract(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
-        dataset = load_eval_dataset_v2(EVAL_PATH)
-        cases = dataset["cases"]
+        cases = load_eval_dataset_v2(EVAL_PATH)
 
-        self.assertEqual(dataset["labeling"], EXPECTED_LABELING)
         self.assertEqual(len(cases), 100)
         self.assertEqual(Counter(case["category"] for case in cases), EXPECTED_CATEGORIES)
         self.assertEqual(len({case["id"] for case in cases}), 100)
@@ -156,7 +154,7 @@ class RouterEvalV2Tests(unittest.TestCase):
     def test_gold_dataset_covers_all_bundle_scenarios(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
-        cases = load_eval_dataset_v2(EVAL_PATH)["cases"]
+        cases = load_eval_dataset_v2(EVAL_PATH)
         scenario_counts = Counter(scenario for case in cases for scenario in case["expected_scenarios"])
 
         self.assertEqual(set(scenario_counts), bundle_scenario_ids())
@@ -164,9 +162,9 @@ class RouterEvalV2Tests(unittest.TestCase):
 
     def test_dataset_identity_is_bound_to_canonical_validated_payload(self):
         from onecode_skill_sanitizer.router_eval_v2 import dataset_identity_v2
-        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_envelope_v2
 
-        dataset = load_eval_dataset_v2(EVAL_PATH)
+        dataset = load_eval_dataset_envelope_v2(EVAL_PATH)
         canonical = json.dumps(
             dataset,
             sort_keys=True,
@@ -185,14 +183,25 @@ class RouterEvalV2Tests(unittest.TestCase):
                 "labeling_method": "manual_review",
                 "labeling_reviewed_at": "2026-07-10",
                 "labeling_reviewer_role": "independent_dataset_review",
+                "suite_id": None,
+                "suite_sha256": None,
             },
         )
 
-    def test_dataset_identity_ignores_object_key_order_but_preserves_content_and_list_order(self):
-        from onecode_skill_sanitizer.router_eval_v2 import dataset_identity_v2
+    def test_envelope_loader_returns_labeling_and_same_validated_cases(self):
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_envelope_v2
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
-        dataset = load_eval_dataset_v2(EVAL_PATH)
+        envelope = load_eval_dataset_envelope_v2(EVAL_PATH)
+
+        self.assertEqual(envelope["labeling"], EXPECTED_LABELING)
+        self.assertEqual(envelope["cases"], load_eval_dataset_v2(EVAL_PATH))
+
+    def test_dataset_identity_ignores_object_key_order_but_preserves_content_and_list_order(self):
+        from onecode_skill_sanitizer.router_eval_v2 import dataset_identity_v2
+        from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_envelope_v2
+
+        dataset = load_eval_dataset_envelope_v2(EVAL_PATH)
         reordered = {
             "cases": [dict(reversed(list(case.items()))) for case in dataset["cases"]],
             "labeling": dict(reversed(list(dataset["labeling"].items()))),
@@ -1891,6 +1900,8 @@ class RouterEvalV2Tests(unittest.TestCase):
                 "labeling_method": "manual_review",
                 "labeling_reviewed_at": "2026-07-10",
                 "labeling_reviewer_role": "independent_dataset_review",
+                "suite_id": None,
+                "suite_sha256": None,
             },
         )
         self.assertRegex(

@@ -47,6 +47,8 @@ _DATASET_IDENTITY_FIELDS = {
     "labeling_method",
     "labeling_reviewed_at",
     "labeling_reviewer_role",
+    "suite_id",
+    "suite_sha256",
 }
 _REVIEW_IDENTITY_FIELDS = {
     "decision",
@@ -121,8 +123,9 @@ def build_quality_gate(
         missing_gates.add("dataset_identity")
         valid_dataset_identity = {}
     valid_review_identity = _review_identity(review_identity)
-    if valid_review_identity is None:
+    if not _review_matches_dataset(valid_review_identity, valid_dataset_identity):
         missing_gates.add("independent_label_review")
+        valid_review_identity = None
 
     failed = sorted(failed_gates)
     missing = sorted(missing_gates)
@@ -165,6 +168,12 @@ def _dataset_identity(identity: object) -> dict[str, object] | None:
     for field in ("labeling_method", "labeling_reviewed_at", "labeling_reviewer_role"):
         if not _exact_nonblank(identity[field]):
             return None
+    suite_id = identity["suite_id"]
+    suite_sha256 = identity["suite_sha256"]
+    legacy_identity = suite_id is None and suite_sha256 is None
+    suite_identity = _exact_nonblank(suite_id) and _matches(suite_sha256, _SHA256_PATTERN)
+    if not legacy_identity and not suite_identity:
+        return None
     return {field: identity[field] for field in sorted(_DATASET_IDENTITY_FIELDS)}
 
 
@@ -193,6 +202,19 @@ def _review_identity(identity: object) -> dict[str, object] | None:
     if type(identity["exceptions_count"]) is not int or identity["exceptions_count"] < 0:
         return None
     return {field: identity[field] for field in sorted(_REVIEW_IDENTITY_FIELDS)}
+
+
+def _review_matches_dataset(
+    review_identity: dict[str, object] | None,
+    dataset_identity: dict[str, object],
+) -> bool:
+    return (
+        review_identity is not None
+        and type(dataset_identity.get("suite_id")) is str
+        and review_identity["suite_id"] == dataset_identity["suite_id"]
+        and review_identity["suite_sha256"] == dataset_identity["suite_sha256"]
+        and review_identity["reviewed_case_count"] == dataset_identity["case_count"]
+    )
 
 
 def _exact_nonblank(value: object) -> bool:
