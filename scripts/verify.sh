@@ -13,10 +13,23 @@ search_repo() {
   local pattern="$1"
   local exclude_path="${2:-}"
   if [[ -n "$exclude_path" ]]; then
-    git grep -n -E -- "$pattern" -- . ":(exclude)$exclude_path"
+    git grep -n -E -- "$pattern" -- . ":(exclude,literal)$exclude_path"
   else
     git grep -n -E -- "$pattern" -- .
   fi
+}
+
+assert_repo_has_no_matches() {
+  local status
+  if search_repo "$@"; then
+    return 1
+  else
+    status=$?
+  fi
+  if [[ "$status" -eq 1 ]]; then
+    return 0
+  fi
+  return "$status"
 }
 
 PYTHONPATH=src python3 -m compileall src tests
@@ -36,9 +49,7 @@ private_path_patterns=(
   '/one[ ]code/'
 )
 for private_path_pattern in "${private_path_patterns[@]}"; do
-  if search_repo "$private_path_pattern"; then
-    exit 1
-  fi
+  assert_repo_has_no_matches "$private_path_pattern"
 done
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
   --eval evals/router-quality.json \
@@ -183,6 +194,4 @@ PY
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null
-if search_repo "TODO|FIXME|PLACEHOLDER|TBD|待定" "scripts/verify.sh"; then
-  exit 1
-fi
+assert_repo_has_no_matches "TODO|FIXME|PLACEHOLDER|TBD|待定" "scripts/verify.sh"
