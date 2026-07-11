@@ -33,6 +33,15 @@ _APPROVAL_RELEASE_RE = re.compile(
     r")\s*$",
     re.IGNORECASE,
 )
+_RELEASE_PRECONDITION_RE = re.compile(
+    r"^\s*(?:"
+    r"before\s+(?:the\s+)?(?P<en_source>(?:pr|pull\s+request)\s+approval)"
+    r"\s*[,\uff0c]?\s*(?P<en_target>.+?)|"
+    r"(?:在\s*)?(?P<cn_source>(?:PR|拉取请求)\s*"
+    r"(?:审批|批准|审核)前)\s*[,\uff0c]?\s*(?P<cn_target>.+?)"
+    r")\s*$",
+    re.IGNORECASE,
+)
 
 
 def bound_task_text(text: str) -> str:
@@ -64,3 +73,23 @@ def parse_approval_release(text: str) -> tuple[str, str] | None:
         match.group("cn_target") or match.group("en_target"),
     )
     return result if is_release_action_text(result[1], allow_bare=True) else None
+
+
+def parse_release_precondition(text: str) -> tuple[str, str] | None:
+    """Return approval prerequisite and validated release target."""
+    match = _RELEASE_PRECONDITION_RE.fullmatch(bound_task_text(text))
+    if not match:
+        return None
+    result = (
+        match.group("cn_source") or match.group("en_source"),
+        match.group("cn_target") or match.group("en_target"),
+    )
+    return result if is_release_action_text(result[1], allow_bare=True) else None
+
+
+def find_release_precondition(text: str) -> tuple[str, str] | None:
+    """Find one strict precondition clause without consuming sibling clauses."""
+    for segment in re.split(r"[;；]", bound_task_text(text)):
+        if result := parse_release_precondition(segment):
+            return result
+    return None

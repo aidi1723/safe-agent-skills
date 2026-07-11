@@ -20,6 +20,53 @@ from onecode_skill_sanitizer.intent_source import (
 
 
 class IntentDependenciesTest(unittest.TestCase):
+    def test_release_preconditions_keep_explicit_reverse_edge_without_cycle(self):
+        tasks = (
+            "Before PR approval, publish update",
+            "在 PR 审批前发布更新",
+            "在PR审批前 发布更新",
+        )
+
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [item.task_type for item in graph.intents],
+                    ["code_review", "open_source_release"],
+                )
+                self.assertEqual(
+                    graph.dependency_relations,
+                    (IntentRelation("i2", "i1", "before", False),),
+                )
+                self.assertEqual(
+                    [item.depends_on for item in graph.intents],
+                    [("i2",), ()],
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_reverse_precondition_only_suppresses_conflicting_prior_gate(self):
+        graph = decompose_task(
+            "analyze a spreadsheet; Before PR approval, publish update"
+        )
+
+        self.assertEqual(
+            [item.task_type for item in graph.intents],
+            ["data_analysis", "code_review", "open_source_release"],
+        )
+        self.assertIn(
+            IntentRelation("i3", "i2", "before", False),
+            graph.dependency_relations,
+        )
+        self.assertIn(
+            IntentRelation("i1", "i3", "release_gate", True),
+            graph.dependency_relations,
+        )
+        self.assertNotIn(
+            IntentRelation("i2", "i3", "release_gate", True),
+            graph.dependency_relations,
+        )
+        self.assertEqual(graph.validate(), [])
+
     def test_nonempty_evidence_inference_parses_canonical_source_once(self):
         source = "code review then build a website"
         graph = decompose_task(source)

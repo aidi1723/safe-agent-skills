@@ -21,7 +21,9 @@ from .intent_spans import (
 from .intent_source import (
     MAX_TASK_SCAN_CHARS,
     bound_task_text,
+    find_release_precondition,
     parse_approval_release,
+    parse_release_precondition,
 )
 from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
 
@@ -395,6 +397,10 @@ def split_task_clauses(task: str) -> list[str]:
         candidate = candidate.strip(" \t\n,，。")
         if not candidate:
             continue
+        release_precondition = parse_release_precondition(candidate)
+        if release_precondition:
+            clauses.extend(release_precondition)
+            continue
         before_publishing = _BEFORE_PUBLISHING_WEBSITE_RE.match(candidate)
         if before_publishing:
             clauses.extend(
@@ -556,28 +562,31 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
             intent_limit_exceeded = True
             break
 
-    approval_release = parse_approval_release(current)
-    if approval_release is not None and len(clause_evidence) == 2:
-        clause_evidence = [
-            IntentEvidence(
+    release_context = parse_approval_release(
+        current
+    ) or find_release_precondition(current)
+    if release_context is not None:
+        source_clause, target_clause = release_context
+        source_index = clauses.index(source_clause)
+        target_index = clauses.index(target_clause)
+        clause_evidence[source_index] = IntentEvidence(
                 task_type="code_review",
                 context="action",
                 polarity="positive",
                 release_mode="none",
-                relation_mode=clause_evidence[0].relation_mode,
+                relation_mode=clause_evidence[source_index].relation_mode,
                 matched_signals=("pr",),
                 matched_score=4,
-            ),
-            IntentEvidence(
+            )
+        clause_evidence[target_index] = IntentEvidence(
                 task_type="open_source_release",
                 context="action",
                 polarity="positive",
                 release_mode="action",
-                relation_mode=clause_evidence[1].relation_mode,
+                relation_mode=clause_evidence[target_index].relation_mode,
                 matched_signals=("approval release action",),
                 matched_score=4,
-            ),
-        ]
+            )
 
     clause_evidence = _apply_source_relation_modes(
         current, clauses, clause_evidence
@@ -586,7 +595,9 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
         current, clauses, clause_evidence
     )
     bound_evidence = bind_intent_evidence(tuple(clause_evidence), current)
-    dependency_relations = _canonical_relations(current, bound_evidence)
+    dependency_relations = _canonical_relations(
+        current, tuple(clauses), bound_evidence
+    )
     intent_dependencies = _canonical_dependencies(
         len(bound_evidence), dependency_relations
     )
@@ -739,7 +750,9 @@ def _gate_mode_for_clause(clause: str) -> str:
 
 
 def _canonical_relations(
-    source: str, evidence: tuple[IntentEvidence, ...]
+    source: str,
+    clauses: tuple[str, ...],
+    evidence: tuple[IntentEvidence, ...],
 ) -> tuple[IntentRelation, ...]:
     source = bound_task_text(source)
     if len(evidence) < 2:
@@ -758,6 +771,17 @@ def _canonical_relations(
     gate_indexes = [
         index for index, item in enumerate(ordered) if item.gate_mode != "none"
     ]
+    release_precondition = find_release_precondition(source)
+    if release_precondition is not None:
+        prerequisite_index = clauses.index(release_precondition[0])
+        release_index = clauses.index(release_precondition[1])
+        relations.append(
+            IntentRelation(
+                f"i{release_index + 1}",
+                f"i{prerequisite_index + 1}",
+                "before",
+            )
+        )
 
     if gate_indexes:
         if (
@@ -775,6 +799,8 @@ def _canonical_relations(
                     _append_canonical_gate(
                         relations, index, index + 1, ordered[index]
                     )
+    elif release_precondition is not None:
+        pass
     elif _CANONICAL_PREFIX_BEFORE_RE.search(source) and len(ordered) == 2:
         relations.append(IntentRelation("i2", "i1", "before"))
     elif _CANONICAL_FIRST_THEN_RE.search(source):
@@ -810,10 +836,18 @@ def _canonical_relations(
         }:
             continue
         for source_index in range(target_index):
+            source_id = f"i{source_index + 1}"
+            target_id = f"i{target_index + 1}"
+            if any(
+                relation.source_id == target_id
+                and relation.target_id == source_id
+                for relation in relations
+            ):
+                continue
             relations.append(
                 IntentRelation(
-                    f"i{source_index + 1}",
-                    f"i{target_index + 1}",
+                    source_id,
+                    target_id,
                     "release_gate",
                     True,
                 )
