@@ -82,6 +82,10 @@ DISALLOWED_TOOL_VALUES = {
 }
 
 
+def _is_exact_string_enum(value: object, allowed: set[str]) -> bool:
+    return type(value) is str and value in allowed
+
+
 def text_sha256(text: str) -> str:
     return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
@@ -136,6 +140,9 @@ def add_issue(issues: list[dict], issue_id: str, path: Path | str, summary: str,
 
 
 def validate_hashes(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-hash-owner", path, "hash owner must be an object")
+        return
     hashes = payload.get("hashes")
     if not isinstance(hashes, dict):
         add_issue(issues, "schema-invalid-hashes", path, "hashes must be an object")
@@ -152,6 +159,9 @@ def validate_hashes(payload: dict, path: Path, issues: list[dict]) -> None:
 
 
 def validate_manifest_integrity(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-manifest", path, "manifest must be an object")
+        return
     hashes = payload.get("hashes")
     if not isinstance(hashes, dict):
         return
@@ -164,6 +174,9 @@ def validate_manifest_integrity(payload: dict, path: Path, issues: list[dict]) -
 
 
 def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-source-owner", path, "source owner must be an object")
+        return
     source = payload.get("source")
     if not isinstance(source, dict):
         add_issue(issues, "schema-invalid-source", path, "source must be an object")
@@ -235,6 +248,9 @@ def validate_source(payload: dict, path: Path, issues: list[dict]) -> None:
 
 
 def validate_taxonomy(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-taxonomy-owner", path, "taxonomy owner must be an object")
+        return
     taxonomy = payload.get("taxonomy")
     if not isinstance(taxonomy, dict):
         add_issue(issues, "schema-invalid-taxonomy", path, "taxonomy must be an object")
@@ -245,6 +261,9 @@ def validate_taxonomy(payload: dict, path: Path, issues: list[dict]) -> None:
 
 
 def validate_policy(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-policy-owner", path, "policy owner must be an object")
+        return
     policy = payload.get("policy")
     if not isinstance(policy, dict):
         add_issue(issues, "schema-invalid-policy", path, "policy must be an object")
@@ -254,14 +273,14 @@ def validate_policy(payload: dict, path: Path, issues: list[dict]) -> None:
         add_issue(issues, "schema-invalid-policy-filesystem", path, "policy.filesystem must be an object")
     else:
         scope = filesystem.get("scope")
-        if scope not in FILESYSTEM_SCOPE_VALUES:
+        if not _is_exact_string_enum(scope, FILESYSTEM_SCOPE_VALUES):
             add_issue(issues, "schema-invalid-policy-filesystem-scope", path, "policy.filesystem.scope is not supported")
     network = policy.get("network")
     if not isinstance(network, dict):
         add_issue(issues, "schema-invalid-policy-network", path, "policy.network must be an object")
     else:
         scope = network.get("scope")
-        if scope not in NETWORK_SCOPE_VALUES:
+        if not _is_exact_string_enum(scope, NETWORK_SCOPE_VALUES):
             add_issue(issues, "schema-invalid-policy-network-scope", path, "policy.network.scope is not supported")
         approved_hosts = network.get("approved_hosts")
         if approved_hosts is not None and (
@@ -278,6 +297,9 @@ def validate_policy(payload: dict, path: Path, issues: list[dict]) -> None:
 
 
 def validate_allowed_tools(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-tools-owner", path, "allowed_tools owner must be an object")
+        return
     allowed_tools = payload.get("allowed_tools")
     if not isinstance(allowed_tools, list):
         add_issue(issues, "schema-invalid-allowed-tools", path, "allowed_tools must be an array")
@@ -324,6 +346,9 @@ def validate_string_list(
 
 
 def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-contract-owner", path, "contract owner must be an object")
+        return
     contract = payload.get("contract")
     if contract is None:
         return
@@ -442,6 +467,9 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
 
 
 def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-manifest", path, "manifest must be an object")
+        return
     required = [
         "schema_version",
         "name",
@@ -458,11 +486,11 @@ def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> N
     for field in required:
         if field not in payload:
             add_issue(issues, "schema-missing-manifest-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
+    if type(payload.get("schema_version")) is not int or payload.get("schema_version") != 1:
         add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
-    if payload.get("status") not in STATUS_VALUES:
+    if not _is_exact_string_enum(payload.get("status"), STATUS_VALUES):
         add_issue(issues, "schema-invalid-status", path, "status is not a supported registry state")
-    if payload.get("risk_level") not in RISK_LEVEL_VALUES:
+    if not _is_exact_string_enum(payload.get("risk_level"), RISK_LEVEL_VALUES):
         add_issue(issues, "schema-invalid-risk-level", path, "risk_level is not supported")
     if not isinstance(payload.get("required_verifiers"), list):
         add_issue(issues, "schema-invalid-required-verifiers", path, "required_verifiers must be an array")
@@ -476,25 +504,31 @@ def validate_manifest_schema(payload: dict, path: Path, issues: list[dict]) -> N
 
 
 def validate_registry_index_schema(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-index", path, "registry index must be an object")
+        return
     for field in ["schema_version", "generated_at", "skill_count", "skills"]:
         if field not in payload:
             add_issue(issues, "schema-missing-index-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
+    if type(payload.get("schema_version")) is not int or payload.get("schema_version") != 1:
         add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
     skills = payload.get("skills")
     if not isinstance(skills, list):
         add_issue(issues, "schema-invalid-index-skills", path, "skills must be an array")
         return
-    if payload.get("skill_count") != len(skills):
+    if type(payload.get("skill_count")) is not int or payload.get("skill_count") != len(skills):
         add_issue(issues, "schema-index-count-mismatch", path, "skill_count must match skills length")
     for index, entry in enumerate(skills):
         entry_path = f"{path.as_posix()}#/skills/{index}"
+        if not isinstance(entry, dict):
+            add_issue(issues, "schema-invalid-index-entry", entry_path, "index entry must be an object")
+            continue
         for field in ["name", "status", "risk_level", "taxonomy", "source", "hashes", "registry_path"]:
             if field not in entry:
                 add_issue(issues, "schema-missing-index-entry-field", entry_path, f"{field} is required")
-        if entry.get("status") not in STATUS_VALUES:
+        if not _is_exact_string_enum(entry.get("status"), STATUS_VALUES):
             add_issue(issues, "schema-invalid-status", entry_path, "status is not a supported registry state")
-        if entry.get("risk_level") not in RISK_LEVEL_VALUES:
+        if not _is_exact_string_enum(entry.get("risk_level"), RISK_LEVEL_VALUES):
             add_issue(issues, "schema-invalid-risk-level", entry_path, "risk_level is not supported")
         validate_taxonomy(entry, Path(entry_path), issues)
         validate_source(entry, Path(entry_path), issues)
@@ -502,22 +536,28 @@ def validate_registry_index_schema(payload: dict, path: Path, issues: list[dict]
 
 
 def validate_verify_report_schema(payload: dict, path: Path, issues: list[dict]) -> None:
+    if not isinstance(payload, dict):
+        add_issue(issues, "schema-invalid-verify-report", path, "verify report must be an object")
+        return
     for field in ["schema_version", "generated_at", "status", "skill_count", "trusted_count", "tampered_count", "unknown_provenance_count", "issues"]:
         if field not in payload:
             add_issue(issues, "schema-missing-verify-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
+    if type(payload.get("schema_version")) is not int or payload.get("schema_version") != 1:
         add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
-    if payload.get("status") not in {"ok", "failed"}:
+    if not _is_exact_string_enum(payload.get("status"), {"ok", "failed"}):
         add_issue(issues, "schema-invalid-verify-status", path, "status must be ok or failed")
     for field in ["skill_count", "trusted_count", "tampered_count", "unknown_provenance_count"]:
         value = payload.get(field)
-        if not isinstance(value, int) or value < 0:
+        if type(value) is not int or value < 0:
             add_issue(issues, "schema-invalid-verify-count", path, f"{field} must be a non-negative integer")
     if not isinstance(payload.get("issues"), list):
         add_issue(issues, "schema-invalid-verify-issues", path, "issues must be an array")
 
 
 def validate_sanitization_report_schema(payload: dict, path: Path, manifest: dict, issues: list[dict]) -> None:
+    if not isinstance(payload, dict) or not isinstance(manifest, dict):
+        add_issue(issues, "schema-invalid-report", path, "report and manifest must be objects")
+        return
     for field in [
         "schema_version",
         "skill_name",
@@ -532,7 +572,7 @@ def validate_sanitization_report_schema(payload: dict, path: Path, manifest: dic
     ]:
         if field not in payload:
             add_issue(issues, "schema-missing-report-field", path, f"{field} is required")
-    if payload.get("schema_version") != 1:
+    if type(payload.get("schema_version")) is not int or payload.get("schema_version") != 1:
         add_issue(issues, "schema-invalid-version", path, "schema_version must be 1")
     if payload.get("skill_name") != manifest.get("name"):
         add_issue(issues, "schema-report-name-mismatch", path, "report skill_name must match manifest name")

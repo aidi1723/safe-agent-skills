@@ -174,6 +174,8 @@ class TaskPackV2CliTest(unittest.TestCase):
                 entry["hashes"]["manifest_sha256"] = updated["hashes"][
                     "manifest_sha256"
                 ]
+                entry["status"] = updated["status"]
+                entry["risk_level"] = updated["risk_level"]
                 if isinstance(updated.get("contract"), dict):
                     entry["contract"] = updated["contract"]
                 else:
@@ -240,6 +242,22 @@ class TaskPackV2CliTest(unittest.TestCase):
             serialized_error = json.dumps(payload)
             self.assertNotIn("Traceback", serialized_error)
             self.assertNotIn(str(root), serialized_error)
+
+            malformed_policy = copy.deepcopy(manifest)
+            malformed_policy["policy"]["filesystem"]["scope"] = []
+            write_manifest(malformed_policy)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+            malformed_status = copy.deepcopy(manifest)
+            malformed_status["status"] = []
+            write_manifest(malformed_status)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
 
             malformed_legacy = dict(manifest)
             malformed_legacy["contract"] = {

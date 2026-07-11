@@ -1,7 +1,16 @@
+import copy
+import json
 import unittest
 from pathlib import Path
 
-from onecode_skill_sanitizer.validation import validate_contract, validate_sanitization_report_schema, validate_source
+from onecode_skill_sanitizer.validation import (
+    validate_contract,
+    validate_manifest_schema,
+    validate_registry_index_schema,
+    validate_sanitization_report_schema,
+    validate_source,
+    validate_verify_report_schema,
+)
 
 
 class ValidationTest(unittest.TestCase):
@@ -108,6 +117,102 @@ class ValidationTest(unittest.TestCase):
                 )
                 self.assertTrue(first)
                 self.assertEqual(first, second)
+
+    def test_manifest_validation_is_total_for_json_field_mutations(self):
+        base = json.loads(
+            Path("catalog/research/research-source-check/skill.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        mutations = [
+            (("status",), []),
+            (("status",), {}),
+            (("status",), None),
+            (("status",), True),
+            (("risk_level",), []),
+            (("risk_level",), {}),
+            (("risk_level",), None),
+            (("risk_level",), False),
+            (("policy", "filesystem", "scope"), []),
+            (("policy", "filesystem", "scope"), {}),
+            (("policy", "filesystem", "scope"), None),
+            (("policy", "filesystem", "scope"), True),
+            (("policy", "network", "scope"), []),
+            (("policy", "network", "scope"), {}),
+            (("policy", "network", "scope"), None),
+            (("policy", "network", "scope"), False),
+            (("source",), []),
+            (("source", "type"), []),
+            (("source", "usage"), {}),
+            (("taxonomy",), False),
+            (("taxonomy", "category"), []),
+            (("allowed_tools",), {}),
+            (("required_verifiers",), True),
+            (("hashes",), []),
+            (("contract", "schema_version"), []),
+            (("contract", "stage_hint"), {}),
+            (("contract", "retry_policy"), []),
+            (("contract", "cost_weight"), {}),
+            (("contract", "estimated_cost"), []),
+            (("contract", "approval_classes"), {}),
+        ]
+
+        for keys, value in mutations:
+            with self.subTest(keys=keys, value=value):
+                payload = copy.deepcopy(base)
+                target = payload
+                for key in keys[:-1]:
+                    target = target[key]
+                target[keys[-1]] = value
+                first: list[dict] = []
+                second: list[dict] = []
+                validate_manifest_schema(payload, Path("skill.json"), first)
+                validate_manifest_schema(payload, Path("skill.json"), second)
+                self.assertTrue(first)
+                self.assertEqual(first, second)
+
+    def test_index_and_verify_report_validation_are_total_for_json_values(self):
+        index_cases = [
+            {
+                "schema_version": 1,
+                "generated_at": "now",
+                "skill_count": 1,
+                "skills": [[]],
+            },
+            {
+                "schema_version": 1,
+                "generated_at": "now",
+                "skill_count": 1,
+                "skills": [{"status": [], "risk_level": {}}],
+            },
+        ]
+        for payload in index_cases:
+            with self.subTest(payload=payload):
+                first: list[dict] = []
+                second: list[dict] = []
+                validate_registry_index_schema(payload, Path("index.json"), first)
+                validate_registry_index_schema(payload, Path("index.json"), second)
+                self.assertTrue(first)
+                self.assertEqual(first, second)
+
+        for status in ([], {}, None, True):
+            with self.subTest(status=status):
+                issues: list[dict] = []
+                validate_verify_report_schema(
+                    {
+                        "schema_version": 1,
+                        "generated_at": "now",
+                        "status": status,
+                        "skill_count": 0,
+                        "trusted_count": 0,
+                        "tampered_count": 0,
+                        "unknown_provenance_count": 0,
+                        "issues": [],
+                    },
+                    Path("verify.json"),
+                    issues,
+                )
+                self.assertTrue(issues)
 
     def test_sanitization_report_allows_metadata_only_manifest_reseal(self):
         issues: list[dict] = []
