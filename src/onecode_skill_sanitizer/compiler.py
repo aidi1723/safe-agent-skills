@@ -185,6 +185,8 @@ def _validated_stage_map(
         return {}
     if type(stage_by_skill) not in {dict, MappingProxyType}:
         return None
+    if not stage_by_skill:
+        return None
     if set(stage_by_skill) != trusted_skill_names:
         return None
     stages = set(PIPELINE_STAGE_ORDER)

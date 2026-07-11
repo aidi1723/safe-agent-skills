@@ -2,6 +2,7 @@ import copy
 import dataclasses
 import json
 from pathlib import Path
+from types import MappingProxyType
 import unittest
 from unittest.mock import patch
 
@@ -564,6 +565,33 @@ class CompilerTest(unittest.TestCase):
                 self.assertEqual(compiled["reason_codes"], ["invalid_stage_map"])
                 self.assertEqual(compiled["nodes"], [])
                 self.assertEqual(compiled["edges"], [])
+
+    def test_explicit_empty_stage_map_is_invalid_even_without_trusted_skills(self):
+        graph = IntentGraph((self.intent("i1"),), ())
+        composition = self.composition(("i1",))
+
+        for stage_by_skill in ({}, MappingProxyType({})):
+            with self.subTest(stage_by_skill=stage_by_skill):
+                compiled = compile_execution_graph(
+                    graph,
+                    composition,
+                    {"bundles": []},
+                    set(),
+                    stage_by_skill=stage_by_skill,
+                )
+                self.assertEqual(compiled["reason_codes"], ["invalid_stage_map"])
+                self.assertEqual(compiled["nodes"], [])
+                self.assertEqual(compiled["edges"], [])
+
+        legacy = compile_execution_graph(
+            graph,
+            composition,
+            {"bundles": []},
+            set(),
+            stage_by_skill=None,
+        )
+        self.assertEqual(legacy["reason_codes"], ["missing_scenario_bundle"])
+        self.assertNotIn("invalid_stage_map", legacy["reason_codes"])
 
     def test_release_target_rejects_false_internal_verification_metadata(self):
         graph = IntentGraph(

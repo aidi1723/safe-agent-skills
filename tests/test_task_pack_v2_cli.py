@@ -2,6 +2,7 @@ import contextlib
 import copy
 import io
 import json
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -13,11 +14,139 @@ from jsonschema import Draft202012Validator
 from onecode_skill_sanitizer.cli import _routing_status
 from onecode_skill_sanitizer.cli import main
 from onecode_skill_sanitizer.cli import render_task_pack_v2_markdown
+from onecode_skill_sanitizer.registry import seal_manifest, verify_registry
+from onecode_skill_sanitizer.task_packs import _v2_skill_stage
 
 from tests.registry_cli_helpers import validate_task_pack_v2
 
 
 class TaskPackV2CliTest(unittest.TestCase):
+    def test_v2_contract_stage_is_authoritative_and_malformed_contracts_fail_closed(self):
+        manifest = json.loads(
+            Path("catalog/research/research-source-check/skill.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        valid = manifest["contract"]
+        self.assertEqual(
+            _v2_skill_stage(
+                {
+                    "name": "research-source-check",
+                    "contract": valid,
+                }
+            ),
+            "verification",
+        )
+        self.assertEqual(
+            _v2_skill_stage({"name": "research-source-check"}),
+            "source",
+        )
+
+        malformed = [
+            True,
+            [],
+            {**valid, "schema_version": True},
+            {**valid, "stage_hint": "unknown-stage"},
+            {key: value for key, value in valid.items() if key != "stage_hint"},
+            {"schema_version": 2, "stage_hint": "verification"},
+        ]
+        for contract in malformed:
+            with self.subTest(contract=contract):
+                with self.assertRaisesRegex(ValueError, "invalid Contract v2"):
+                    _v2_skill_stage(
+                        {
+                            "name": "research-source-check",
+                            "contract": contract,
+                        }
+                    )
+
+    def test_v2_hash_consistent_malformed_manifest_contract_returns_bounded_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "catalog"
+            bundles = root / "bundles.json"
+            shutil.copytree("catalog", registry)
+            shutil.copyfile("bundles/index.json", bundles)
+
+            manifest_path = (
+                registry / "research" / "research-source-check" / "skill.json"
+            )
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            valid_contract = manifest["contract"]
+            index_path = registry / "index.json"
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            entry = next(
+                item
+                for item in index["skills"]
+                if item["name"] == "research-source-check"
+            )
+
+            def route() -> tuple[int, dict]:
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--bundles",
+                            str(bundles),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+                return exit_code, json.loads(out.getvalue())
+
+            def write_manifest(updated: dict) -> None:
+                seal_manifest(updated)
+                manifest_path.write_text(
+                    json.dumps(updated, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                entry["hashes"]["manifest_sha256"] = updated["hashes"][
+                    "manifest_sha256"
+                ]
+                index_path.write_text(
+                    json.dumps(index, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                self.assertEqual(verify_registry(registry)["status"], "ok")
+
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 0)
+            source_node = next(
+                node
+                for node in payload["execution_graph"]["nodes"]
+                if node["skill"] == "research-source-check"
+            )
+            self.assertEqual(source_node["stage"], "verification")
+
+            legacy_manifest = dict(manifest)
+            legacy_manifest.pop("contract")
+            write_manifest(legacy_manifest)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 0)
+            source_node = next(
+                node
+                for node in payload["execution_graph"]["nodes"]
+                if node["skill"] == "research-source-check"
+            )
+            self.assertEqual(source_node["stage"], "source")
+
+            malformed_manifest = dict(manifest)
+            malformed_manifest["contract"] = {
+                **valid_contract,
+                "stage_hint": "unknown-stage",
+            }
+            write_manifest(malformed_manifest)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
     def test_v2_routing_status_precedence_is_blocked_then_incomplete_then_complete(self):
         complete_capabilities = {"status": "complete", "missing_required_count": 0}
         incomplete_capabilities = {"status": "incomplete", "missing_required_count": 1}

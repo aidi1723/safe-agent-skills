@@ -13,6 +13,7 @@ from .compatibility import build_route_identity_payload
 from .compatibility import to_legacy_v1
 from .compiler import compile_execution_graph
 from .composer import compose_scenarios
+from .contracts import usable_contract
 from .intent import DecompositionDiagnostics
 from .intent import IntentGraph
 from .intent import TaskDecomposition
@@ -145,7 +146,7 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
         "failure_handling": sections.get("Failure Handling", ""),
         "policy": manifest.get("policy", {}),
     }
-    if isinstance(manifest.get("contract"), dict):
+    if "contract" in manifest:
         item["contract"] = manifest["contract"]
     return item
 
@@ -891,14 +892,20 @@ def _extend_v2_graph_with_invariants(
     return graph
 
 def _v2_skill_stage(skill: dict) -> str:
-    contract = skill.get("contract")
-    if isinstance(contract, dict):
-        stage_hint = contract.get("stage_hint")
-        if stage_hint == "execution":
-            return "production"
-        if stage_hint in PIPELINE_STAGE_ORDER:
-            return stage_hint
-    return pipeline_stage_for_skill(skill.get("name", ""))
+    if "contract" not in skill:
+        return pipeline_stage_for_skill(skill.get("name", ""))
+    contract = skill["contract"]
+    if isinstance(contract, dict) and "schema_version" not in contract:
+        return pipeline_stage_for_skill(skill.get("name", ""))
+    skill_name = skill.get("name", "")
+    if not usable_contract(contract, skill_name=skill_name):
+        raise ValueError(f"invalid Contract v2 for trusted skill: {skill_name}")
+    stage_hint = contract["stage_hint"]
+    if stage_hint == "execution":
+        return "production"
+    if stage_hint in PIPELINE_STAGE_ORDER:
+        return stage_hint
+    raise ValueError(f"invalid Contract v2 stage for trusted skill: {skill_name}")
 
 def _v2_skill_host_action(skill: dict) -> bool:
     contract = skill.get("contract")
