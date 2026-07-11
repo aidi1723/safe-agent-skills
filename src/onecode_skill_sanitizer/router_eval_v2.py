@@ -87,6 +87,10 @@ class EvaluatorError(RuntimeError):
     pass
 
 
+def _is_exact_nonblank_string(value: object) -> bool:
+    return type(value) is str and bool(value) and value == value.strip()
+
+
 def _is_legacy_router_eval_v2(payload: object) -> bool:
     if not isinstance(payload, dict):
         return False
@@ -393,9 +397,9 @@ def _route_intents(route: dict[str, Any]) -> list[dict[str, Any]]:
     for intent in intents:
         if not isinstance(intent, dict):
             raise EvaluatorError("intent must be an object")
-        if not isinstance(intent.get("id"), str) or not intent["id"]:
+        if not _is_exact_nonblank_string(intent.get("id")):
             raise EvaluatorError("intent id must be nonempty")
-        if not isinstance(intent.get("task_type"), str) or not intent["task_type"]:
+        if not _is_exact_nonblank_string(intent.get("task_type")):
             raise EvaluatorError("intent task_type must be nonempty")
     return intents
 
@@ -412,13 +416,13 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
     nodes_by_id: dict[str, dict[str, Any]] = {}
     node_types: dict[str, set[str]] = {}
     for node in nodes:
-        if not isinstance(node, dict) or type(node.get("id")) is not str or not node["id"].strip():
+        if not isinstance(node, dict) or not _is_exact_nonblank_string(node.get("id")):
             raise EvaluatorError("execution graph node is malformed")
         intent_ids = node.get("intent_ids")
         valid_ids = (
             isinstance(intent_ids, list)
             and bool(intent_ids)
-            and all(type(item) is str and bool(item) for item in intent_ids)
+            and all(_is_exact_nonblank_string(item) for item in intent_ids)
             and len(intent_ids) == len(set(intent_ids))
             and not (set(intent_ids) - set(type_by_intent))
         )
@@ -434,7 +438,7 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
             continue
         source_id = edge.get("from")
         target_id = edge.get("to")
-        if type(source_id) is not str or not source_id.strip() or type(target_id) is not str or not target_id.strip():
+        if not _is_exact_nonblank_string(source_id) or not _is_exact_nonblank_string(target_id):
             raise EvaluatorError("dependency edge endpoints must be nonempty strings")
         if source_id not in nodes_by_id or target_id not in nodes_by_id:
             raise EvaluatorError("dependency edge references an unknown node")
@@ -542,10 +546,10 @@ def _source_intent_graph_issues(route: dict[str, Any]) -> list[dict[str, Any]]:
             raise EvaluatorError("intent must be an object")
         intent_id = intent.get("id")
         depends_on = intent.get("depends_on")
-        if not isinstance(intent_id, str) or not intent_id:
+        if not _is_exact_nonblank_string(intent_id):
             raise EvaluatorError("intent id must be nonempty")
         if not isinstance(depends_on, list) or not all(
-            type(dependency_id) is str and dependency_id for dependency_id in depends_on
+            _is_exact_nonblank_string(dependency_id) for dependency_id in depends_on
         ):
             return [
                 {

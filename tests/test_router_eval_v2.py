@@ -593,6 +593,76 @@ class RouterEvalV2Tests(unittest.TestCase):
                 self.assertFalse(report["cases"][0]["dag_valid"])
                 self.assertIn("source_intent_graph_invalid", issue_ids)
 
+    def test_source_intent_and_matching_node_identities_reject_blank_or_padded_values(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "source-identity",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        for intent_id in (" ", " i1 "):
+            route = synthetic_route(["alpha"], ["s1"])
+            route["intent_graph"]["intents"][0]["id"] = intent_id
+            route["execution_graph"]["nodes"][0]["intent_ids"] = [intent_id]
+            with self.subTest(intent_id=intent_id), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
+
+        for task_type in (" ", " code_review "):
+            route = synthetic_route(["alpha"], ["s1"])
+            route["intent_graph"]["intents"][0]["task_type"] = task_type
+            with self.subTest(task_type=task_type), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
+
+    def test_source_depends_on_rejects_blank_or_padded_values_as_malformed(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "dependency-identity",
+            "category": "sequential",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        for dependency_id in (" ", " i1 "):
+            route = synthetic_route(["alpha"], ["s1"], intent_dependencies=[[dependency_id]])
+            with self.subTest(dependency_id=dependency_id):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                source_issue = next(
+                    issue for issue in report["cases"][0]["issues"] if issue["id"] == "source_intent_graph_invalid"
+                )
+                self.assertFalse(report["cases"][0]["dag_valid"])
+                self.assertEqual(source_issue["reason"], "malformed_dependencies")
+
+    def test_source_identity_accepts_canonical_intent_id_and_task_type(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "canonical-identity",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["code_review"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        route = synthetic_route(["code_review"], ["s1"])
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertEqual(route["intent_graph"]["intents"][0]["id"], "i1")
+        self.assertTrue(report["cases"][0]["dag_valid"])
+
     def test_complete_ready_graph_requires_exactly_empty_reason_codes(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
