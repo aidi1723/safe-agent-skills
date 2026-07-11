@@ -14,8 +14,15 @@ from jsonschema import Draft202012Validator
 from onecode_skill_sanitizer.cli import _routing_status
 from onecode_skill_sanitizer.cli import main
 from onecode_skill_sanitizer.cli import render_task_pack_v2_markdown
-from onecode_skill_sanitizer.registry import seal_manifest, verify_registry
-from onecode_skill_sanitizer.task_packs import _v2_skill_stage
+from onecode_skill_sanitizer.registry import (
+    build_verified_registry_snapshot,
+    seal_manifest,
+    verify_registry,
+)
+from onecode_skill_sanitizer.task_packs import (
+    _v2_skill_stage,
+    load_trusted_skill_pack_items,
+)
 
 from tests.registry_cli_helpers import validate_task_pack_v2
 
@@ -47,6 +54,8 @@ class TaskPackV2CliTest(unittest.TestCase):
             [],
             {**valid, "schema_version": True},
             {**valid, "stage_hint": "unknown-stage"},
+            {**valid, "stage_hint": []},
+            {**valid, "retry_policy": {}},
             {key: value for key, value in valid.items() if key != "stage_hint"},
             {"schema_version": 2, "stage_hint": "verification"},
         ]
@@ -165,6 +174,10 @@ class TaskPackV2CliTest(unittest.TestCase):
                 entry["hashes"]["manifest_sha256"] = updated["hashes"][
                     "manifest_sha256"
                 ]
+                if isinstance(updated.get("contract"), dict):
+                    entry["contract"] = updated["contract"]
+                else:
+                    entry.pop("contract", None)
                 index_path.write_text(
                     json.dumps(index, ensure_ascii=False, indent=2) + "\n",
                     encoding="utf-8",
@@ -203,6 +216,31 @@ class TaskPackV2CliTest(unittest.TestCase):
             self.assertEqual(payload["status"], "error")
             self.assertEqual(payload["error"]["code"], "invalid_input")
 
+            malformed_stage_type = dict(manifest)
+            malformed_stage_type["contract"] = {
+                **valid_contract,
+                "stage_hint": [],
+            }
+            write_manifest(malformed_stage_type)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+            malformed_retry_type = dict(manifest)
+            malformed_retry_type["contract"] = {
+                **valid_contract,
+                "retry_policy": {},
+            }
+            write_manifest(malformed_retry_type)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+            serialized_error = json.dumps(payload)
+            self.assertNotIn("Traceback", serialized_error)
+            self.assertNotIn(str(root), serialized_error)
+
             malformed_legacy = dict(manifest)
             malformed_legacy["contract"] = {
                 key: value
@@ -214,6 +252,105 @@ class TaskPackV2CliTest(unittest.TestCase):
             self.assertEqual(exit_code, 2)
             self.assertEqual(payload["status"], "error")
             self.assertEqual(payload["error"]["code"], "invalid_input")
+
+    def test_v2_registry_snapshot_rejects_stale_or_unbound_index_state(self):
+        mutations = [
+            "path_points_to_other_manifest",
+            "name_mismatch",
+            "status_mismatch",
+            "hash_mismatch",
+            "missing_entry",
+            "extra_entry",
+            "missing_index",
+            "extra_manifest",
+        ]
+        for mutation in mutations:
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                registry = root / "catalog"
+                bundles = root / "bundles.json"
+                shutil.copytree("catalog", registry)
+                shutil.copyfile("bundles/index.json", bundles)
+                index_path = registry / "index.json"
+                index = json.loads(index_path.read_text(encoding="utf-8"))
+                entry = next(
+                    item
+                    for item in index["skills"]
+                    if item["name"] == "research-source-check"
+                )
+                other = next(
+                    item
+                    for item in index["skills"]
+                    if item["name"] == "code-review-risk"
+                )
+                if mutation == "path_points_to_other_manifest":
+                    entry["registry_path"] = other["registry_path"]
+                elif mutation == "name_mismatch":
+                    entry["name"] = "research-source-check-renamed"
+                elif mutation == "status_mismatch":
+                    entry["status"] = "disabled"
+                elif mutation == "hash_mismatch":
+                    entry["hashes"]["manifest_sha256"] = "0" * 64
+                elif mutation == "missing_entry":
+                    index["skills"].remove(entry)
+                    index["skill_count"] -= 1
+                elif mutation == "extra_entry":
+                    index["skills"].append({**entry, "name": "extra-index-skill"})
+                    index["skill_count"] += 1
+                elif mutation == "missing_index":
+                    index_path.unlink()
+                elif mutation == "extra_manifest":
+                    extra = registry / "extra" / "research-source-check-copy"
+                    shutil.copytree(
+                        registry / entry["registry_path"],
+                        extra,
+                    )
+                if mutation not in {"missing_index", "extra_manifest"}:
+                    index_path.write_text(
+                        json.dumps(index, ensure_ascii=False, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
+
+                self.assertEqual(verify_registry(registry)["status"], "ok")
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--bundles",
+                            str(bundles),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+                payload = json.loads(out.getvalue())
+                self.assertEqual(exit_code, 2)
+                self.assertEqual(payload["status"], "error")
+                self.assertEqual(payload["error"]["code"], "invalid_input")
+
+    def test_v2_stage_builder_uses_only_bound_registry_snapshot_data(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp) / "catalog"
+            shutil.copytree("catalog", registry)
+            snapshot = build_verified_registry_snapshot(registry)
+            index_path = registry / "index.json"
+            index_path.write_text("{}", encoding="utf-8")
+
+            with patch.object(Path, "read_text", side_effect=AssertionError("unexpected reread")):
+                items = load_trusted_skill_pack_items(
+                    registry,
+                    snapshot=snapshot,
+                )
+
+            source_check = next(
+                item for item in items if item["name"] == "research-source-check"
+            )
+            self.assertEqual(_v2_skill_stage(source_check), "verification")
 
     def test_v2_routing_status_precedence_is_blocked_then_incomplete_then_complete(self):
         complete_capabilities = {"status": "complete", "missing_required_count": 0}
@@ -1299,7 +1436,10 @@ class TaskPackV2CliTest(unittest.TestCase):
             "security-llm-guard-io-scanning",
         }
         out = io.StringIO()
-        with patch("onecode_skill_sanitizer.task_packs.trusted_skill_names", return_value=trusted):
+        with patch(
+            "onecode_skill_sanitizer.registry.VerifiedRegistrySnapshot.trusted_skill_names",
+            return_value=frozenset(trusted),
+        ):
             with contextlib.redirect_stdout(out):
                 self.assertEqual(
                     main(

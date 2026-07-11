@@ -82,6 +82,33 @@ class ValidationTest(unittest.TestCase):
                 validate_contract({"name": "example-skill", "contract": contract}, Path("skill.json"), issues)
                 self.assertTrue(issues)
 
+    def test_validate_contract_is_total_for_unhashable_enum_values(self):
+        cases = [
+            {"schema_version": []},
+            {"schema_version": {}},
+            {"stage_hint": []},
+            {"stage_hint": {}},
+            {"retry_policy": []},
+            {"retry_policy": {}},
+        ]
+
+        for contract in cases:
+            with self.subTest(contract=contract):
+                first: list[dict] = []
+                second: list[dict] = []
+                validate_contract(
+                    {"name": "example-skill", "contract": contract},
+                    Path("skill.json"),
+                    first,
+                )
+                validate_contract(
+                    {"name": "example-skill", "contract": contract},
+                    Path("skill.json"),
+                    second,
+                )
+                self.assertTrue(first)
+                self.assertEqual(first, second)
+
     def test_sanitization_report_allows_metadata_only_manifest_reseal(self):
         issues: list[dict] = []
         shared = {

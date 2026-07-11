@@ -372,7 +372,9 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
     if contract_version == 2 and contract.get("capability_vector") is None:
         add_issue(issues, "schema-invalid-contract-capability", path, "contract.capability_vector is required for version 2")
     stage_hint = contract.get("stage_hint")
-    if stage_hint is not None and stage_hint not in CONTRACT_STAGE_VALUES:
+    if stage_hint is not None and (
+        type(stage_hint) is not str or stage_hint not in CONTRACT_STAGE_VALUES
+    ):
         add_issue(issues, "schema-invalid-contract-stage", path, "contract.stage_hint is not supported")
     if contract_version == 2 and stage_hint is None:
         add_issue(issues, "schema-invalid-contract-stage", path, "contract.stage_hint is required for version 2")
@@ -427,7 +429,10 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
     if idempotent is not None and not isinstance(idempotent, bool):
         add_issue(issues, "schema-invalid-contract-idempotent", path, "contract.idempotent must be a boolean")
     retry_policy = contract.get("retry_policy")
-    if retry_policy is not None and retry_policy not in CONTRACT_RETRY_POLICY_VALUES:
+    if retry_policy is not None and (
+        type(retry_policy) is not str
+        or retry_policy not in CONTRACT_RETRY_POLICY_VALUES
+    ):
         add_issue(
             issues,
             "schema-invalid-contract-retry-policy",

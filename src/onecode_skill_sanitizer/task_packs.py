@@ -22,6 +22,8 @@ from .registry import load_registry_index
 from .registry import manifest_index_entry
 from .registry import utc_now
 from .registry import verify_registry
+from .registry import VerifiedRegistrySnapshot
+from .registry import build_verified_registry_snapshot
 from .rendering import project_legacy_contracts
 from .router import CAPABILITY_SKILL_PREFERENCES
 from .router import PIPELINE_STAGE_ORDER
@@ -124,8 +126,12 @@ def extract_markdown_sections(text: str) -> dict[str, str]:
 def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
     skill_dir = registry_dir / entry["registry_path"]
     skill_text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    sections = extract_markdown_sections(skill_text)
     manifest = json.loads((skill_dir / "skill.json").read_text(encoding="utf-8"))
+    return _build_skill_pack_item(entry, manifest, skill_text)
+
+
+def _build_skill_pack_item(entry: dict, manifest: dict, skill_text: str) -> dict:
+    sections = extract_markdown_sections(skill_text)
     item = {
         "name": entry["name"],
         "status": entry["status"],
@@ -151,7 +157,26 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
         item["contract"] = manifest["contract"]
     return item
 
-def load_trusted_skill_pack_items(registry_dir: Path) -> list[dict]:
+def load_trusted_skill_pack_items(
+    registry_dir: Path,
+    *,
+    snapshot: VerifiedRegistrySnapshot | None = None,
+) -> list[dict]:
+    if snapshot is not None:
+        skills = []
+        for bound_skill in snapshot.skills:
+            entry = bound_skill.entry()
+            if entry.get("status") != "trusted":
+                continue
+            item = _build_skill_pack_item(
+                entry,
+                bound_skill.manifest(),
+                bound_skill.skill_text,
+            )
+            item["match_score"] = item.get("match_score", 0)
+            skills.append(item)
+        return skills
+
     index = load_registry_index(registry_dir)
     skills = []
     for entry in index["skills"]:
@@ -559,9 +584,8 @@ def build_task_pack_v2(
 ) -> dict:
     if not task.strip():
         raise ValueError("task must not be empty")
-    verification = verify_registry(registry_dir)
-    if verification["status"] != "ok":
-        raise SystemExit("registry verification failed; refusing to build task pack")
+    snapshot = build_verified_registry_snapshot(registry_dir)
+    verification = snapshot.verification()
 
     bundles_index = load_bundles_index(bundles_path)
     overlap_groups = None
@@ -576,7 +600,7 @@ def build_task_pack_v2(
         if overlap_validation["issues"]:
             raise ValueError("overlap groups validation failed")
         overlap_policy = "validated_not_applied"
-    trusted_names = trusted_skill_names(registry_dir)
+    trusted_names = set(snapshot.trusted_skill_names())
     normalized_task = normalize_task(task)
     decomposition = decompose_task_detailed(task)
     intent_graph, decomposition_diagnostics = _validated_decomposition(decomposition)
@@ -584,7 +608,7 @@ def build_task_pack_v2(
     composition = compose_scenarios(intent_graph, candidates, bundles_index, trusted_names)
     trusted_items = {
         item["name"]: item
-        for item in load_trusted_skill_pack_items(registry_dir)
+        for item in load_trusted_skill_pack_items(registry_dir, snapshot=snapshot)
         if item["name"] in trusted_names
     }
     stage_by_skill = MappingProxyType(
@@ -688,7 +712,7 @@ def build_task_pack_v2(
         ),
         strategy=strategy,
         provider_identifier=provider["used"],
-        catalog_content_hash=_json_asset_content_hash(registry_dir / "index.json"),
+        catalog_content_hash=build_canonical_content_hash(snapshot.index()),
         bundle_content_hash=_json_asset_content_hash(bundles_path),
         overlap_content_hash=(
             build_canonical_content_hash(overlap_groups) if overlap_groups is not None else "none"
