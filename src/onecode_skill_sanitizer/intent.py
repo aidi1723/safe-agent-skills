@@ -18,7 +18,11 @@ from .intent_spans import (
     relation_mode_for_text,
     split_profile_enumeration,
 )
-from .intent_source import MAX_TASK_SCAN_CHARS, bound_task_text
+from .intent_source import (
+    MAX_TASK_SCAN_CHARS,
+    bound_task_text,
+    parse_approval_release,
+)
 from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
 
 
@@ -80,17 +84,6 @@ _CHINESE_GATE_RE = re.compile(
 _GATE_VERIFICATION_RE = re.compile(
     r"\b(?:verif(?:y|ied|ying|ication)|approv(?:ed|al))\b|"
     r"(?:\u9a8c\u8bc1\u901a\u8fc7|\u6d4b\u8bd5\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6279\u901a\u8fc7|\u5ba1\u6838\u901a\u8fc7)",
-    re.IGNORECASE,
-)
-_APPROVAL_RELEASE_RE = re.compile(
-    r"^\s*(?:"
-    r"(?:\u5728\s*)?(?P<cn_source>(?:PR|\u62c9\u53d6\u8bf7\u6c42)\s*"
-    r"(?:\u5ba1\u6279\u901a\u8fc7|\u6279\u51c6|\u5ba1\u6838\u901a\u8fc7)\u540e)\s*[,\uff0c]?\s*"
-    r"(?P<cn_target>(?:\u53d1\u5e03|\u4e0a\u7ebf|\u63a8\u9001).+)|"
-    r"(?P<en_source>after\s+(?:(?:the\s+)?(?:pr|pull\s+request)\s+"
-    r"is\s+approved|(?:pr|pull\s+request)\s+approval))\s*[,\uff0c]?\s*"
-    r"(?P<en_target>(?:publish|release|push)\b.+)"
-    r")\s*$",
     re.IGNORECASE,
 )
 _CANONICAL_PREFIX_BEFORE_RE = re.compile(
@@ -389,14 +382,9 @@ def split_task_clauses(task: str) -> list[str]:
     if not text:
         return []
 
-    approval_release = _APPROVAL_RELEASE_RE.fullmatch(text)
+    approval_release = parse_approval_release(text)
     if approval_release:
-        return [
-            approval_release.group("cn_source")
-            or approval_release.group("en_source"),
-            approval_release.group("cn_target")
-            or approval_release.group("en_target"),
-        ]
+        return list(approval_release)
 
     list_items = _split_list_items(text)
     if len(list_items) > 1:
@@ -568,6 +556,29 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
             intent_limit_exceeded = True
             break
 
+    approval_release = parse_approval_release(current)
+    if approval_release is not None and len(clause_evidence) == 2:
+        clause_evidence = [
+            IntentEvidence(
+                task_type="code_review",
+                context="action",
+                polarity="positive",
+                release_mode="none",
+                relation_mode=clause_evidence[0].relation_mode,
+                matched_signals=("pr",),
+                matched_score=4,
+            ),
+            IntentEvidence(
+                task_type="open_source_release",
+                context="action",
+                polarity="positive",
+                release_mode="action",
+                relation_mode=clause_evidence[1].relation_mode,
+                matched_signals=("approval release action",),
+                matched_score=4,
+            ),
+        ]
+
     clause_evidence = _apply_source_relation_modes(
         current, clauses, clause_evidence
     )
@@ -699,6 +710,9 @@ def _apply_source_gate_modes(
         return evidence
 
     result = list(evidence)
+    if parse_approval_release(source) is not None and len(result) == 2:
+        result[0] = replace(result[0], gate_mode="verification")
+        return result
     if _CHINESE_TARGET_FIRST_APPROVAL_RE.search(source) or (
         _INFIX_GATE_RE.search(source) and not _PREFIX_GATE_RE.search(source)
     ):

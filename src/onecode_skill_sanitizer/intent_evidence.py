@@ -8,7 +8,7 @@ import json
 import re
 from typing import Any
 
-from .intent_source import bound_task_text
+from .intent_source import bound_task_text, parse_approval_release
 
 
 EVIDENCE_CONTEXTS = frozenset({"action", "descriptive", "how_to", "ambiguous"})
@@ -207,6 +207,8 @@ def source_supports_release_action(
     source: str, matched_signals: tuple[str, ...] = ()
 ) -> bool:
     source = bound_task_text(source)
+    if parse_approval_release(source) is not None:
+        return True
     normalized = {signal.casefold() for signal in matched_signals}
     return bool(
         _RELEASE_ACTION_CONTEXT_RE.search(source)

@@ -13,6 +13,7 @@ from onecode_skill_sanitizer.intent_dependencies import (
     apply_intent_relations,
     infer_intent_relations,
 )
+from onecode_skill_sanitizer.intent_source import parse_approval_release
 
 
 class IntentDependenciesTest(unittest.TestCase):
@@ -37,9 +38,16 @@ class IntentDependenciesTest(unittest.TestCase):
             "在 PR 审批通过后发布更新",
             "在PR审批通过后发布更新",
             "在 PR 审批通过后，发布更新",
+            "在 PR 审批通过后发布",
+            "在PR审批通过后 上线",
+            "在 PR 审批通过后，推送",
             "After the PR is approved, publish update",
             "After the PR is approved，publish update",
             "After PR approval, publish update",
+            "After the PR is approved, release",
+            "After the PR is approved, release now",
+            "After PR approval, publish",
+            "After PR approval, push",
         )
 
         for task in tasks:
@@ -62,6 +70,26 @@ class IntentDependenciesTest(unittest.TestCase):
                 )
                 self.assertEqual(graph.intent_evidence[1].release_mode, "action")
                 self.assertEqual(graph.validate(), [])
+
+    def test_negated_approval_does_not_create_release_action(self):
+        task = "If PR is not approved, do not release"
+        graph = decompose_task(task)
+
+        self.assertIsNone(parse_approval_release(task))
+        self.assertIsNone(
+            parse_approval_release(
+                "After PR approval, publish and analyze a spreadsheet"
+            )
+        )
+        self.assertNotIn(
+            "open_source_release", [item.task_type for item in graph.intents]
+        )
+        self.assertFalse(
+            any(
+                item.release_mode == "action"
+                for item in graph.intent_evidence
+            )
+        )
     def test_direct_relation_inference_ignores_markers_after_scan_boundary(self):
         intents = (
             self.intent("i1", "review code"),
