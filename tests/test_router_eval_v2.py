@@ -538,6 +538,171 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(report["counts"]["dependency_hits"], 1)
         self.assertEqual(report["counts"]["dependency_total"], 1)
 
+    def test_complete_ready_route_rejects_source_intent_cycle_despite_status_mismatch(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "source-cycle",
+            "category": "sequential",
+            "task": "task",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        route = synthetic_route(
+            ["alpha", "beta"],
+            ["s1", "s2"],
+            routing_status="complete",
+            graph_status="ready",
+            intent_dependencies=[["i2"], ["i1"]],
+        )
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        self.assertIn("source_intent_graph_cycle", issue_ids)
+        self.assertIn("status_mismatch", issue_ids)
+
+    def test_complete_ready_route_rejects_unknown_and_malformed_source_dependencies(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "source-dependencies",
+            "category": "sequential",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        routes = {
+            "unknown": synthetic_route(["alpha"], ["s1"], intent_dependencies=[["missing"]]),
+            "not-list": synthetic_route(["alpha"], ["s1"]),
+            "empty": synthetic_route(["alpha"], ["s1"], intent_dependencies=[[""]]),
+        }
+        routes["not-list"]["intent_graph"]["intents"][0]["depends_on"] = "i1"
+
+        for label, route in routes.items():
+            with self.subTest(label=label):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+                self.assertFalse(report["cases"][0]["dag_valid"])
+                self.assertIn("source_intent_graph_invalid", issue_ids)
+
+    def test_complete_ready_graph_requires_exactly_empty_reason_codes(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "complete-reasons",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        invalid_reason_codes = (
+            ["incomplete_composition"],
+            ["dependency_cycle"],
+            ["invented_reason"],
+            ["incomplete_composition", "dependency_cycle"],
+            ["invented_reason", "invented_reason"],
+        )
+
+        for reason_codes in invalid_reason_codes:
+            route = synthetic_route(["alpha"], ["s1"], reason_codes=reason_codes)
+            with self.subTest(reason_codes=reason_codes):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+                self.assertFalse(report["cases"][0]["dag_valid"])
+                self.assertIn("unexpected_ready_graph_reason", issue_ids)
+
+    def test_reason_codes_malformed_types_fail_closed(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "malformed-reasons",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        for reason_codes in ("incomplete_composition", [""], [1], [True]):
+            route = synthetic_route(["alpha"], ["s1"])
+            route["execution_graph"]["reason_codes"] = reason_codes
+            with self.subTest(reason_codes=reason_codes), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
+
+    def test_dependency_edge_endpoint_nodes_require_strict_intent_ids(self):
+        from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "dependency-node",
+            "category": "sequential",
+            "task": "task",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [["alpha", "beta"]],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        mutations = {
+            "empty intent ids": [],
+            "unknown intent id": ["missing"],
+            "duplicate intent id": ["i1", "i1"],
+            "empty intent id": [""],
+            "malformed intent ids": ("i1",),
+        }
+        for label, intent_ids in mutations.items():
+            route = synthetic_route(
+                ["alpha", "beta"],
+                ["s1", "s2"],
+                dependency_pairs=[("alpha", "beta")],
+            )
+            route["execution_graph"]["nodes"][0]["intent_ids"] = intent_ids
+            with self.subTest(label=label), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
+
+        for label, endpoint in (("empty endpoint", ""), ("unknown endpoint", "missing"), ("malformed endpoint", 1)):
+            route = synthetic_route(
+                ["alpha", "beta"],
+                ["s1", "s2"],
+                dependency_pairs=[("alpha", "beta")],
+            )
+            route["execution_graph"]["edges"][0]["from"] = endpoint
+            with self.subTest(label=label), self.assertRaises(EvaluatorError):
+                evaluate_router_v2([case], route_builder=lambda current: route)
+
+    def test_non_dependency_node_may_have_empty_intent_ids(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "ordinary-node",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        route = synthetic_route(["alpha"], ["s1"])
+        route["execution_graph"]["nodes"][0]["intent_ids"] = []
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertTrue(report["cases"][0]["dag_valid"])
+
     def test_expected_blocked_case_accepts_allowed_empty_graph_and_scores_ready_as_mismatch(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
