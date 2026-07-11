@@ -1195,6 +1195,7 @@ class TaskPackV2CliTest(unittest.TestCase):
                 0,
             )
         payload = json.loads(out.getvalue())
+        validate_task_pack_v2(payload)
         selected = {skill["name"]: skill for skill in payload["selected_skills"]}
 
         self.assertEqual(selected["engineering-build-release"]["contract"]["stage_hint"], "execution")

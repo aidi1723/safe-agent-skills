@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from jsonschema import Draft202012Validator
+from jsonschema import validators
 from referencing import Registry
 from referencing import Resource
 
@@ -41,6 +42,21 @@ def payload_shape_sha256(payload):
 def validate_task_pack_v2(payload):
     schema = json.loads(Path("schemas/task-pack-v2.schema.json").read_text(encoding="utf-8"))
     intent_schema = json.loads(Path("schemas/intent-graph.schema.json").read_text(encoding="utf-8"))
-    registry = Registry().with_resource(intent_schema["$id"], Resource.from_contents(intent_schema))
+    selected_skill_schema = json.loads(
+        Path("schemas/task-pack-v2-selected-skill.schema.json").read_text(encoding="utf-8")
+    )
+    contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
+    registry = Registry().with_resources(
+        [
+            (intent_schema["$id"], Resource.from_contents(intent_schema)),
+            (selected_skill_schema["$id"], Resource.from_contents(selected_skill_schema)),
+            (contract_schema["$id"], Resource.from_contents(contract_schema)),
+        ]
+    )
     Draft202012Validator.check_schema(schema)
-    Draft202012Validator(schema, registry=registry).validate(payload)
+    Draft202012Validator.check_schema(selected_skill_schema)
+    strict_type_checker = Draft202012Validator.TYPE_CHECKER.redefine(
+        "integer", lambda checker, value: isinstance(value, int) and not isinstance(value, bool)
+    )
+    strict_validator = validators.extend(Draft202012Validator, type_checker=strict_type_checker)
+    strict_validator(schema, registry=registry).validate(payload)

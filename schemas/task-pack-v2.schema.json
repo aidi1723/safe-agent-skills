@@ -24,11 +24,57 @@
     "compatibility"
   ],
   "properties": {
-    "schema_version": {"const": 2},
+    "schema_version": {"type": "integer", "const": 2},
     "generated_at": {"type": "string", "minLength": 1},
     "route_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
     "routing_mode": {"const": "hybrid"},
     "routing_status": {"enum": ["blocked", "incomplete", "complete"]},
+    "provider": {"$ref": "#/$defs/provider"},
+    "normalized_task": {"$ref": "#/$defs/normalized_task"},
+    "intent_graph": {"$ref": "intent-graph.schema.json"},
+    "scenario_candidates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/scenario_candidate"}
+    },
+    "selected_scenarios": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/selected_scenario"}
+    },
+    "uncovered_intents": {"$ref": "#/$defs/intent_ids"},
+    "selected_skills": {
+      "type": "array",
+      "items": {"$ref": "task-pack-v2-selected-skill.schema.json"}
+    },
+    "capability_resolution": {"$ref": "#/$defs/capability_resolution"},
+    "execution_graph": {"$ref": "#/$defs/execution_graph"},
+    "host_execution_protocol": {"$ref": "#/$defs/host_execution_protocol"},
+    "routing_metrics": {"$ref": "#/$defs/routing_metrics"},
+    "registry_verification": {"$ref": "#/$defs/registry_verification"},
+    "compatibility": {"$ref": "#/$defs/compatibility"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "intent_id": {"type": "string", "pattern": "^i[1-9][0-9]*$"},
+    "intent_ids": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {"$ref": "#/$defs/intent_id"}
+    },
+    "scenario_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]*$"
+    },
+    "skill_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{1,80}$"
+    },
+    "node_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9:_-]*$"
+    },
+    "stage": {
+      "enum": ["preflight", "source", "planning", "production", "review", "execution", "verification", "handoff"]
+    },
     "provider": {
       "type": "object",
       "required": ["requested", "used", "fallback_reason"],
@@ -51,41 +97,168 @@
       },
       "additionalProperties": false
     },
-    "intent_graph": {"$ref": "intent-graph.schema.json"},
-    "scenario_candidates": {
-      "type": "array",
-      "items": {"type": "object", "additionalProperties": true}
+    "scenario_candidate": {
+      "type": "object",
+      "required": ["intent_id", "scenario_id", "score", "deterministic_score"],
+      "properties": {
+        "intent_id": {"$ref": "#/$defs/intent_id"},
+        "scenario_id": {"$ref": "#/$defs/scenario_id"},
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "deterministic_score": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
     },
-    "selected_scenarios": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["scenario_id", "intent_ids", "score", "score_breakdown"],
-        "properties": {
-          "scenario_id": {"type": "string", "minLength": 1},
-          "intent_ids": {"type": "array", "items": {"type": "string"}},
-          "score": {"type": "number", "minimum": 0, "maximum": 1},
-          "score_breakdown": {"type": "object", "additionalProperties": true}
+    "selected_scenario": {
+      "type": "object",
+      "required": ["scenario_id", "intent_ids", "score", "score_breakdown"],
+      "properties": {
+        "scenario_id": {"$ref": "#/$defs/scenario_id"},
+        "intent_ids": {
+          "allOf": [{"$ref": "#/$defs/intent_ids"}, {"minItems": 1}]
         },
-        "additionalProperties": false
-      }
+        "score": {"type": "number", "minimum": 0, "maximum": 1},
+        "score_breakdown": {"$ref": "#/$defs/score_breakdown"}
+      },
+      "additionalProperties": false
     },
-    "uncovered_intents": {"type": "array", "items": {"type": "string"}},
-    "selected_skills": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "required": ["name", "status", "registry_path"],
-        "properties": {
-          "name": {"type": "string", "minLength": 1},
-          "status": {"const": "trusted"},
-          "registry_path": {"type": "string", "minLength": 1}
+    "score_breakdown": {
+      "type": "object",
+      "required": ["deterministic_signal", "deterministic_score"],
+      "properties": {
+        "deterministic_signal": {"type": "number", "minimum": 0, "maximum": 1},
+        "deterministic_score": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "capability_resolution": {
+      "type": "object",
+      "required": ["status", "capabilities", "missing_required_count"],
+      "properties": {
+        "status": {"enum": ["complete", "incomplete"]},
+        "capabilities": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/capability"}
         },
-        "additionalProperties": true
-      }
+        "missing_required_count": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
     },
-    "capability_resolution": {"type": "object", "additionalProperties": true},
-    "execution_graph": {"type": "object", "additionalProperties": true},
+    "capability": {
+      "type": "object",
+      "required": ["scenario_id", "capability", "required", "status", "skills"],
+      "properties": {
+        "scenario_id": {
+          "type": "string",
+          "pattern": "^(?:[a-z0-9][a-z0-9-]*)?$"
+        },
+        "capability": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        },
+        "required": {"type": "boolean"},
+        "status": {"enum": ["covered", "missing"]},
+        "skills": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/skill_name"}
+        },
+        "source": {"const": "invariant"},
+        "stage": {
+          "anyOf": [{"$ref": "#/$defs/stage"}, {"const": ""}]
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution_graph": {
+      "type": "object",
+      "required": ["schema_version", "status", "acyclic", "nodes", "edges", "reason_codes"],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 2},
+        "status": {"enum": ["ready", "blocked"]},
+        "acyclic": {"type": "boolean"},
+        "nodes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/execution_node"}
+        },
+        "edges": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/execution_edge"}
+        },
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/execution_reason_code"}
+        },
+        "details": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution_node": {
+      "type": "object",
+      "required": ["id", "intent_ids", "scenario_ids", "skill", "stage", "host_action"],
+      "properties": {
+        "id": {"$ref": "#/$defs/node_id"},
+        "intent_ids": {"$ref": "#/$defs/intent_ids"},
+        "scenario_ids": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/scenario_id"}
+        },
+        "skill": {"$ref": "#/$defs/skill_name"},
+        "stage": {"$ref": "#/$defs/stage"},
+        "host_action": {"type": "boolean"},
+        "invariant_capability": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_]*$"
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution_edge": {
+      "type": "object",
+      "required": ["from", "to", "type"],
+      "properties": {
+        "from": {"$ref": "#/$defs/node_id"},
+        "to": {"$ref": "#/$defs/node_id"},
+        "type": {
+          "enum": [
+            "scenario_order",
+            "intent_verification_dependency",
+            "intent_completion_dependency",
+            "invariant_safeguard"
+          ]
+        }
+      },
+      "additionalProperties": false
+    },
+    "execution_reason_code": {
+      "enum": [
+        "dependency_cycle",
+        "invalid_stage_map",
+        "missing_scenario_bundle",
+        "malformed_execution_order",
+        "empty_execution_order",
+        "duplicate_skill_name",
+        "untrusted_scenario",
+        "duplicate_intent_selection",
+        "incomplete_composition",
+        "missing_intent_verification",
+        "invalid_intent_graph",
+        "malformed_intent_graph",
+        "duplicate_intent_id",
+        "malformed_intent_dependency",
+        "unknown_intent_dependency",
+        "malformed_composition",
+        "malformed_scenario_id",
+        "malformed_selection_intents",
+        "unknown_intent_id",
+        "malformed_bundles_index",
+        "missing_trusted_skill_pack_item"
+      ]
+    },
     "host_execution_protocol": {
       "type": "object",
       "required": ["mode", "runtime_boundary", "node_statuses"],
@@ -94,14 +267,137 @@
         "runtime_boundary": {"const": "The host runtime controls permissions and execution."},
         "node_statuses": {
           "type": "array",
-          "items": {"enum": ["pending", "ready", "running", "waiting_approval", "completed", "failed", "blocked", "skipped"]}
+          "uniqueItems": true,
+          "items": {
+            "enum": ["pending", "ready", "running", "waiting_approval", "completed", "failed", "blocked", "skipped"]
+          }
         }
       },
       "additionalProperties": false
     },
-    "routing_metrics": {"type": "object", "additionalProperties": true},
-    "registry_verification": {"type": "object", "additionalProperties": true},
-    "compatibility": {"type": "object", "additionalProperties": true}
-  },
-  "additionalProperties": false
+    "routing_metrics": {
+      "type": "object",
+      "required": [
+        "intent_count",
+        "candidate_count",
+        "selected_scenario_count",
+        "required_skill_count",
+        "selected_skill_count",
+        "optional_skill_limit",
+        "optional_skills_selected",
+        "required_skills_omitted",
+        "overlap_policy",
+        "decomposition"
+      ],
+      "properties": {
+        "intent_count": {"type": "integer", "minimum": 0},
+        "candidate_count": {"type": "integer", "minimum": 0},
+        "selected_scenario_count": {"type": "integer", "minimum": 0},
+        "required_skill_count": {"type": "integer", "minimum": 0},
+        "selected_skill_count": {"type": "integer", "minimum": 0},
+        "optional_skill_limit": {"type": "integer", "minimum": 0},
+        "optional_skills_selected": {"type": "integer", "minimum": 0},
+        "required_skills_omitted": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/skill_name"}
+        },
+        "overlap_policy": {"enum": ["not_configured", "validated_not_applied"]},
+        "decomposition": {"$ref": "#/$defs/decomposition_diagnostics"}
+      },
+      "additionalProperties": false
+    },
+    "decomposition_diagnostics": {
+      "type": "object",
+      "required": [
+        "mode",
+        "observed_candidate_count",
+        "emitted_intent_count",
+        "candidate_signal_limit_exceeded",
+        "intent_limit_exceeded",
+        "reason_codes"
+      ],
+      "properties": {
+        "mode": {"enum": ["single_clause", "strong_clauses", "profile_spans"]},
+        "observed_candidate_count": {"type": "integer", "minimum": 0},
+        "emitted_intent_count": {"type": "integer", "minimum": 0},
+        "candidate_signal_limit_exceeded": {"type": "boolean"},
+        "intent_limit_exceeded": {"type": "boolean"},
+        "reason_codes": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "enum": [
+              "task_scan_limit_exceeded",
+              "candidate_signal_limit_exceeded",
+              "intent_limit_exceeded",
+              "ambiguous_profile_enumeration"
+            ]
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "registry_verification": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "generated_at",
+        "status",
+        "skill_count",
+        "trusted_count",
+        "tampered_count",
+        "unknown_provenance_count",
+        "issues"
+      ],
+      "properties": {
+        "schema_version": {"type": "integer", "const": 1},
+        "generated_at": {"type": "string", "minLength": 1},
+        "status": {"enum": ["ok", "failed"]},
+        "skill_count": {"type": "integer", "minimum": 0},
+        "trusted_count": {"type": "integer", "minimum": 0},
+        "tampered_count": {"type": "integer", "minimum": 0},
+        "unknown_provenance_count": {"type": "integer", "minimum": 0},
+        "issues": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/registry_issue"}
+        }
+      },
+      "additionalProperties": false
+    },
+    "registry_issue": {
+      "type": "object",
+      "required": ["id", "severity", "skill", "path"],
+      "properties": {
+        "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "severity": {"enum": ["low", "medium", "high", "critical"]},
+        "skill": {"$ref": "#/$defs/skill_name"},
+        "path": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "compatibility": {
+      "type": "object",
+      "required": ["legacy_schema_version", "compatibility_loss"],
+      "properties": {
+        "legacy_schema_version": {"type": "integer", "const": 1},
+        "compatibility_loss": {"$ref": "#/$defs/compatibility_loss"}
+      },
+      "additionalProperties": false
+    },
+    "compatibility_loss": {
+      "type": "object",
+      "required": ["multi_intent_dropped", "scenarios_dropped", "cross_scenario_edges_dropped"],
+      "properties": {
+        "multi_intent_dropped": {"type": "boolean"},
+        "scenarios_dropped": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {"$ref": "#/$defs/scenario_id"}
+        },
+        "cross_scenario_edges_dropped": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    }
+  }
 }
