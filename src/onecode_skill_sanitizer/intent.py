@@ -97,13 +97,15 @@ _RELEASE_POLARITY_BOUNDARY_RE = re.compile(
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _CHINESE_CODE_REVIEW_ACTION_RE = re.compile(r"审查代码")
 _INTENT_SOURCES = {"deterministic", "semantic", "hybrid"}
-_INTENT_RELATION_REASONS = {
-    "before",
-    "completion_gate",
-    "first_then",
-    "release_gate",
-    "semicolon_sequence",
-    "verification_gate",
+_INTENT_RELATION_REASON_REQUIREMENTS = {
+    "before": False,
+    "completion_gate": False,
+    "explicit_sequence": False,
+    "first_then": False,
+    "release_gate": True,
+    "semicolon_sequence": False,
+    "semicolon_workflow": False,
+    "verification_gate": True,
 }
 
 
@@ -566,13 +568,23 @@ def _validate_dependency_relations(
             )
         if (
             not isinstance(relation.reason, str)
-            or relation.reason not in _INTENT_RELATION_REASONS
+            or relation.reason not in _INTENT_RELATION_REASON_REQUIREMENTS
         ):
             errors.append(
                 f"dependency relation has unsupported reason: {relation.reason}"
             )
         if type(relation.requires_verification) is not bool:
             errors.append("dependency relation requires_verification must be bool")
+        elif (
+            isinstance(relation.reason, str)
+            and relation.reason in _INTENT_RELATION_REASON_REQUIREMENTS
+            and relation.requires_verification
+            is not _INTENT_RELATION_REASON_REQUIREMENTS[relation.reason]
+        ):
+            errors.append(
+                "dependency relation verification requirement mismatches "
+                f"reason: {relation.reason}"
+            )
 
         pair = (
             (relation.source_id, relation.target_id)

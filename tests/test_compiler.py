@@ -337,7 +337,7 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["status"], "blocked")
         self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
 
-    def test_release_target_ignores_false_internal_verification_metadata(self):
+    def test_release_target_rejects_false_internal_verification_metadata(self):
         graph = IntentGraph(
             intents=(
                 self.intent("i1"),
@@ -365,7 +365,48 @@ class CompilerTest(unittest.TestCase):
         )
 
         self.assertEqual(compiled["status"], "blocked")
-        self.assertEqual(compiled["reason_codes"], ["missing_intent_verification"])
+        self.assertEqual(compiled["reason_codes"], ["invalid_intent_graph"])
+        self.assertEqual(compiled["nodes"], [])
+        self.assertEqual(compiled["edges"], [])
+
+    def test_semantically_inconsistent_relation_metadata_is_invalid(self):
+        cases = [
+            IntentRelation("i1", "i2", "verification_gate", False),
+            IntentRelation("i1", "i2", "completion_gate", True),
+            IntentRelation("i1", "i2", "explicit_sequence", True),
+            IntentRelation("i1", "i2", "semicolon_workflow", True),
+        ]
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+
+        for relation in cases:
+            with self.subTest(relation=relation):
+                graph = IntentGraph(
+                    intents=(
+                        self.intent("i1"),
+                        self.intent("i2", depends_on=("i1",)),
+                    ),
+                    unresolved_dependencies=(),
+                    dependency_relations=(relation,),
+                )
+
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(("i1",), ("i2",)),
+                    bundles,
+                    {"skill-a", "execution-publish-check"},
+                )
+
+                self.assertEqual(compiled["status"], "blocked")
+                self.assertEqual(
+                    compiled["reason_codes"], ["invalid_intent_graph"]
+                )
+                self.assertEqual(compiled["nodes"], [])
+                self.assertEqual(compiled["edges"], [])
 
     def test_manual_graph_without_metadata_does_not_reparse_gate_summary(self):
         graph = IntentGraph(

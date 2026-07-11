@@ -372,6 +372,48 @@ class IntentTest(unittest.TestCase):
                     graph.validate(),
                 )
 
+    def test_validate_rejects_reason_verification_semantic_mismatches(self):
+        cases = [
+            ("verification_gate", False),
+            ("release_gate", False),
+            ("completion_gate", True),
+            ("explicit_sequence", True),
+            ("semicolon_workflow", True),
+            ("before", True),
+            ("first_then", True),
+            ("semicolon_sequence", True),
+        ]
+
+        for reason, requires_verification in cases:
+            with self.subTest(
+                reason=reason, requires_verification=requires_verification
+            ):
+                graph = IntentGraph(
+                    intents=(self.intent("i1"), self.intent("i2", ("i1",))),
+                    unresolved_dependencies=(),
+                    dependency_relations=(
+                        IntentRelation(
+                            "i1", "i2", reason, requires_verification
+                        ),
+                    ),
+                )
+
+                self.assertIn(
+                    "dependency relation verification requirement mismatches "
+                    f"reason: {reason}",
+                    graph.validate(),
+                )
+
+    def test_decomposed_relation_reason_semantics_validate(self):
+        for task in [
+            "After verifying the PR, build the website",
+            "After completing the PR review, build the website",
+            "Review the PR before building the website",
+            "Review the PR; build the website; prepare an open-source release",
+        ]:
+            with self.subTest(task=task):
+                self.assertEqual(decompose_task(task).validate(), [])
+
     def test_validate_requires_complete_metadata_when_any_record_is_present(self):
         graph = IntentGraph(
             intents=(
