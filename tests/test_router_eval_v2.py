@@ -25,12 +25,15 @@ EXPECTED_LABELING = {
     "generated_from_router": False,
     "reviewed_at": "2026-07-10",
 }
+VALID_STATUS_GRAPH_PAIRS = [
+    ("complete", "ready", True),
+    ("incomplete", "blocked", True),
+    ("blocked", "blocked", True),
+]
 
 
 def bundle_scenario_ids() -> set[str]:
-    bundles = json.loads(
-        (ROOT / "bundles" / "index.json").read_text(encoding="utf-8")
-    )["bundles"]
+    bundles = json.loads((ROOT / "bundles" / "index.json").read_text(encoding="utf-8"))["bundles"]
     return {bundle["id"] for bundle in bundles}
 
 
@@ -71,10 +74,7 @@ def synthetic_route(
         }
         for index, intent in enumerate(intents, start=1)
     ]
-    node_by_type = {
-        intent["task_type"]: nodes[index]
-        for index, intent in enumerate(intents)
-    }
+    node_by_type = {intent["task_type"]: nodes[index] for index, intent in enumerate(intents)}
     edges = []
     for source_type, target_type in dependency_pairs or []:
         edges.append(
@@ -87,10 +87,7 @@ def synthetic_route(
     return {
         "routing_status": routing_status,
         "intent_graph": {"intents": intents},
-        "selected_scenarios": [
-            {"scenario_id": scenario_id, "intent_ids": []}
-            for scenario_id in scenarios
-        ],
+        "selected_scenarios": [{"scenario_id": scenario_id, "intent_ids": []} for scenario_id in scenarios],
         "execution_graph": {
             "status": graph_status,
             "acyclic": acyclic,
@@ -115,12 +112,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         payload = gold_payload()
 
         self.assertEqual(payload["labeling"], EXPECTED_LABELING)
-        actual_fields = {
-            key
-            for case in payload["cases"]
-            for key in case
-            if key.startswith("actual_")
-        }
+        actual_fields = {key for case in payload["cases"] for key in case if key.startswith("actual_")}
         self.assertEqual(actual_fields, set())
         for case in payload["cases"]:
             for expected_field in (
@@ -128,18 +120,14 @@ class RouterEvalV2Tests(unittest.TestCase):
                 "expected_scenarios",
                 "required_dependency_edges",
             ):
-                copied_field = expected_field.replace("expected_", "actual_").replace(
-                    "required_", "actual_"
-                )
+                copied_field = expected_field.replace("expected_", "actual_").replace("required_", "actual_")
                 self.assertNotIn(copied_field, case)
 
     def test_gold_dataset_covers_all_bundle_scenarios(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
         cases = load_eval_dataset_v2(EVAL_PATH)
-        scenario_counts = Counter(
-            scenario for case in cases for scenario in case["expected_scenarios"]
-        )
+        scenario_counts = Counter(scenario for case in cases for scenario in case["expected_scenarios"])
 
         self.assertEqual(set(scenario_counts), bundle_scenario_ids())
         self.assertGreaterEqual(min(scenario_counts.values()), 5)
@@ -244,20 +232,14 @@ class RouterEvalV2Tests(unittest.TestCase):
             "duplicate intents": lambda case: case.update(expected_intents=["x", "x"]),
             "empty scenario": lambda case: case.update(expected_scenarios=[""]),
             "unknown scenario": lambda case: case.update(expected_scenarios=["not-known"]),
-            "unknown forbidden scenario": lambda case: case.update(
-                forbidden_scenarios=["website-build-launc"]
-            ),
+            "unknown forbidden scenario": lambda case: case.update(forbidden_scenarios=["website-build-launc"]),
             "duplicate forbidden": lambda case: case.update(forbidden_scenarios=["x", "x"]),
-            "overlap": lambda case: case.update(
-                forbidden_scenarios=[case["expected_scenarios"][0]]
-            ),
+            "overlap": lambda case: case.update(forbidden_scenarios=[case["expected_scenarios"][0]]),
             "duplicate edge": lambda case: case.update(
                 expected_intents=["a", "b"],
                 required_dependency_edges=[["a", "b"], ["a", "b"]],
             ),
-            "self edge": lambda case: case.update(
-                expected_intents=["a"], required_dependency_edges=[["a", "a"]]
-            ),
+            "self edge": lambda case: case.update(expected_intents=["a"], required_dependency_edges=[["a", "a"]]),
             "unknown edge endpoint": lambda case: case.update(
                 expected_intents=["a"], required_dependency_edges=[["a", "b"]]
             ),
@@ -366,9 +348,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(report["metrics"]["scenario_recall"], 1.0)
         self.assertEqual(report["metrics"]["scenario_f1"], 1.0)
         self.assertEqual(report["metrics"]["dependency_edge_recall"], 1.0)
-        self.assertEqual(
-            report["metrics"]["forbidden_scenario_false_positive_rate"], 0.0
-        )
+        self.assertEqual(report["metrics"]["forbidden_scenario_false_positive_rate"], 0.0)
         json.dumps(report, allow_nan=False)
 
     def test_unexpected_cycle_is_an_evaluator_error(self):
@@ -386,9 +366,7 @@ class RouterEvalV2Tests(unittest.TestCase):
             "expected_status": "complete",
         }
         route = synthetic_route(["alpha"], ["s1"], graph_status="blocked", acyclic=False)
-        route["execution_graph"]["edges"] = [
-            {"from": "node-1", "to": "node-1", "type": "skill_order"}
-        ]
+        route["execution_graph"]["edges"] = [{"from": "node-1", "to": "node-1", "type": "skill_order"}]
 
         with self.assertRaises(EvaluatorError):
             evaluate_router_v2([case], route_builder=lambda item: route)
@@ -419,7 +397,148 @@ class RouterEvalV2Tests(unittest.TestCase):
                     ),
                 )
 
-    def test_expected_blocked_case_accepts_blocked_graph_and_scores_ready_as_mismatch(self):
+    def test_coherent_status_graph_pairs_are_valid(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        for routing_status, graph_status, expected_valid in VALID_STATUS_GRAPH_PAIRS:
+            case = {
+                "id": routing_status,
+                "category": "compound",
+                "task": "task",
+                "expected_intents": ["alpha"],
+                "expected_scenarios": ["s1"],
+                "required_dependency_edges": [],
+                "forbidden_scenarios": [],
+                "expected_status": routing_status,
+            }
+            route = synthetic_route(
+                ["alpha"],
+                ["s1"],
+                graph_status=graph_status,
+                acyclic=graph_status == "ready",
+                routing_status=routing_status,
+                reason_codes=[] if graph_status == "ready" else ["incomplete_composition"],
+            )
+            if graph_status == "blocked":
+                route["execution_graph"]["nodes"] = []
+                route["execution_graph"]["edges"] = []
+
+            with self.subTest(routing_status=routing_status, graph_status=graph_status):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                self.assertEqual(report["cases"][0]["dag_valid"], expected_valid)
+
+    def test_fail_closed_empty_graph_accepts_only_incomplete_reasons(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "fail-closed",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        for reason in ("incomplete_composition", "missing_required_capability"):
+            route = synthetic_route(
+                ["alpha"],
+                ["s1"],
+                graph_status="blocked",
+                acyclic=False,
+                routing_status="blocked",
+                reason_codes=[reason],
+            )
+            route["execution_graph"]["nodes"] = []
+            route["execution_graph"]["edges"] = []
+            with self.subTest(reason=reason):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                self.assertTrue(report["cases"][0]["dag_valid"])
+
+        for reason in ("dependency_cycle", "missing_scenario_bundle", "invented_reason"):
+            route = synthetic_route(
+                ["alpha"],
+                ["s1"],
+                graph_status="blocked",
+                acyclic=False,
+                routing_status="blocked",
+                reason_codes=[reason],
+            )
+            route["execution_graph"]["nodes"] = []
+            route["execution_graph"]["edges"] = []
+            with self.subTest(reason=reason):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                self.assertFalse(report["cases"][0]["dag_valid"])
+
+    def test_fail_closed_incomplete_graph_rejects_nodes_edges_and_acyclic_flag(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "incomplete",
+            "category": "compound",
+            "task": "task",
+            "expected_intents": ["alpha"],
+            "expected_scenarios": ["s1"],
+            "required_dependency_edges": [],
+            "forbidden_scenarios": [],
+            "expected_status": "blocked",
+        }
+        nonempty = synthetic_route(
+            ["alpha"],
+            ["s1"],
+            graph_status="blocked",
+            acyclic=False,
+            routing_status="incomplete",
+            reason_codes=["incomplete_composition"],
+        )
+        wrong_flag = synthetic_route(
+            ["alpha"],
+            ["s1"],
+            graph_status="blocked",
+            acyclic=True,
+            routing_status="incomplete",
+            reason_codes=["incomplete_composition"],
+        )
+        wrong_flag["execution_graph"]["nodes"] = []
+        wrong_flag["execution_graph"]["edges"] = []
+
+        for route in (nonempty, wrong_flag):
+            with self.subTest(route=route):
+                report = evaluate_router_v2([case], route_builder=lambda current: route)
+                self.assertFalse(report["cases"][0]["dag_valid"])
+
+    def test_dependency_edge_types_collapse_to_one_logical_intent_pair(self):
+        from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
+
+        case = {
+            "id": "logical-edge",
+            "category": "sequential",
+            "task": "task",
+            "expected_intents": ["alpha", "beta"],
+            "expected_scenarios": ["s1", "s2"],
+            "required_dependency_edges": [["alpha", "beta"]],
+            "forbidden_scenarios": [],
+            "expected_status": "complete",
+        }
+        route = synthetic_route(
+            ["alpha", "beta"],
+            ["s1", "s2"],
+            dependency_pairs=[("alpha", "beta")],
+        )
+        route["execution_graph"]["edges"].append(
+            {
+                **route["execution_graph"]["edges"][0],
+                "type": "intent_verification_dependency",
+            }
+        )
+
+        report = evaluate_router_v2([case], route_builder=lambda current: route)
+
+        self.assertEqual(report["cases"][0]["actual_dependency_edges"], [["alpha", "beta"]])
+        self.assertEqual(report["counts"]["dependency_hits"], 1)
+        self.assertEqual(report["counts"]["dependency_total"], 1)
+
+    def test_expected_blocked_case_accepts_allowed_empty_graph_and_scores_ready_as_mismatch(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
@@ -441,14 +560,14 @@ class RouterEvalV2Tests(unittest.TestCase):
                     graph_status="blocked",
                     acyclic=False,
                     routing_status="blocked",
-                    reason_codes=["missing_intent_verification"],
+                    reason_codes=["incomplete_composition"],
                 ),
                 "execution_graph": {
                     "status": "blocked",
                     "acyclic": False,
                     "nodes": [],
                     "edges": [],
-                    "reason_codes": ["missing_intent_verification"],
+                    "reason_codes": ["incomplete_composition"],
                 },
             },
         )
@@ -463,12 +582,10 @@ class RouterEvalV2Tests(unittest.TestCase):
         )
 
         self.assertTrue(blocked["cases"][0]["dag_valid"])
-        self.assertFalse(ready["cases"][0]["dag_valid"])
-        self.assertIn(
-            "status_mismatch", {issue["id"] for issue in ready["cases"][0]["issues"]}
-        )
+        self.assertTrue(ready["cases"][0]["dag_valid"])
+        self.assertIn("status_mismatch", {issue["id"] for issue in ready["cases"][0]["issues"]})
 
-    def test_coherent_blocked_self_cycle_is_valid_and_records_cyclic_topology(self):
+    def test_blocked_source_cycle_is_invalid_even_with_empty_execution_graph(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
@@ -495,9 +612,11 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         report = evaluate_router_v2([case], route_builder=lambda current: route)
 
-        self.assertTrue(report["cases"][0]["dag_valid"])
+        self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertTrue(report["cases"][0]["topology_acyclic"])
-        self.assertEqual(report["cases"][0]["issues"], [])
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+        self.assertIn("source_intent_graph_cycle", issue_ids)
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
     def test_incoherent_blocked_self_cycle_is_invalid_with_flag_issue(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
@@ -559,7 +678,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
-        self.assertIn("dependency_cycle_source_mismatch", issue_ids)
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
     def test_cyclic_source_with_noncycle_blocking_reason_is_invalid(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
@@ -590,9 +709,10 @@ class RouterEvalV2Tests(unittest.TestCase):
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
-        self.assertIn("missing_dependency_cycle_reason", issue_ids)
+        self.assertIn("source_intent_graph_cycle", issue_ids)
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
-    def test_real_compiler_cyclic_intent_graph_is_valid_blocked(self):
+    def test_real_compiler_cyclic_intent_graph_is_invalid_blocked(self):
         from onecode_skill_sanitizer.compiler import compile_execution_graph
         from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
         from onecode_skill_sanitizer.intent import Intent, IntentGraph
@@ -655,9 +775,12 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertIn("dependency_cycle", compiled["reason_codes"])
         self.assertEqual(compiled["nodes"], [])
         self.assertEqual(compiled["edges"], [])
-        self.assertTrue(report["cases"][0]["dag_valid"])
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+        self.assertIn("source_intent_graph_cycle", issue_ids)
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
-    def test_noncycle_blocked_boundary_allows_empty_acyclic_topology(self):
+    def test_noncycle_blocked_boundary_rejects_disallowed_reason(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
 
         case = {
@@ -683,9 +806,10 @@ class RouterEvalV2Tests(unittest.TestCase):
 
         report = evaluate_router_v2([case], route_builder=lambda current: route)
 
-        self.assertTrue(report["cases"][0]["dag_valid"])
+        self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertTrue(report["cases"][0]["topology_acyclic"])
-        self.assertEqual(report["cases"][0]["issues"], [])
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
     def test_noncycle_blocked_payload_with_emitted_graph_is_invalid(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
@@ -744,7 +868,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertFalse(report["cases"][0]["dag_valid"])
         self.assertIn("blocked_graph_not_empty", issue_ids)
 
-    def test_real_compiler_missing_scenario_payload_is_valid_blocked_boundary(self):
+    def test_real_compiler_missing_scenario_payload_is_invalid_blocked_boundary(self):
         from onecode_skill_sanitizer.compiler import compile_execution_graph
         from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
         from onecode_skill_sanitizer.intent import Intent, IntentGraph
@@ -797,9 +921,11 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(compiled["reason_codes"], ["missing_scenario_bundle"])
         self.assertEqual(compiled["nodes"], [])
         self.assertEqual(compiled["edges"], [])
-        self.assertTrue(report["cases"][0]["dag_valid"])
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
 
-    def test_real_compiler_missing_verification_diagnostic_graph_is_valid_blocked(self):
+    def test_real_compiler_missing_verification_diagnostic_graph_is_invalid_blocked(self):
         from onecode_skill_sanitizer.compiler import compile_execution_graph
         from onecode_skill_sanitizer.composer import ScenarioComposition, ScenarioSelection
         from onecode_skill_sanitizer.intent import Intent, IntentGraph
@@ -894,7 +1020,10 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertTrue(compiled["nodes"])
         self.assertTrue(compiled["edges"])
         self.assertEqual({edge["type"] for edge in compiled["edges"]}, {"scenario_order"})
-        self.assertTrue(report["cases"][0]["dag_valid"])
+        self.assertFalse(report["cases"][0]["dag_valid"])
+        issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
+        self.assertIn("blocked_graph_not_empty", issue_ids)
 
     def test_missing_verification_rejects_dependent_intent_edges(self):
         from onecode_skill_sanitizer.router_eval_v2 import evaluate_router_v2
@@ -924,7 +1053,8 @@ class RouterEvalV2Tests(unittest.TestCase):
         issue_ids = {issue["id"] for issue in report["cases"][0]["issues"]}
 
         self.assertFalse(report["cases"][0]["dag_valid"])
-        self.assertIn("blocked_dependent_intent_edges", issue_ids)
+        self.assertIn("invalid_incomplete_graph_reason", issue_ids)
+        self.assertIn("blocked_graph_not_empty", issue_ids)
 
     def test_ready_graph_requires_true_flag_and_acyclic_topology(self):
         from onecode_skill_sanitizer.router_eval_v2 import EvaluatorError
@@ -963,15 +1093,24 @@ class RouterEvalV2Tests(unittest.TestCase):
         }
         routes = [
             synthetic_route(
-                ["alpha"], ["s1"], graph_status="blocked", routing_status="complete",
+                ["alpha"],
+                ["s1"],
+                graph_status="blocked",
+                routing_status="complete",
                 reason_codes=["missing_intent_verification"],
             ),
             synthetic_route(
-                ["alpha"], ["s1"], graph_status="blocked", routing_status="blocked",
+                ["alpha"],
+                ["s1"],
+                graph_status="blocked",
+                routing_status="blocked",
                 reason_codes=[],
             ),
             synthetic_route(
-                ["alpha"], ["s1"], graph_status="blocked", routing_status="blocked",
+                ["alpha"],
+                ["s1"],
+                graph_status="blocked",
+                routing_status="blocked",
                 reason_codes=["invented_reason"],
             ),
         ]
@@ -1005,15 +1144,20 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
         report = json.loads(completed.stdout)
         self.assertEqual(report["case_count"], 100)
-        self.assertEqual(set(report["metrics"]), {
-            "multi_intent_exact_match",
-            "scenario_precision",
-            "scenario_recall",
-            "scenario_f1",
-            "forbidden_scenario_false_positive_rate",
-            "dependency_edge_recall",
-            "dag_validity",
-        })
+        self.assertEqual(report["metrics"]["dag_validity"], 1.0)
+        self.assertGreaterEqual(report["metrics"]["dependency_edge_recall"], 0.90)
+        self.assertEqual(
+            set(report["metrics"]),
+            {
+                "multi_intent_exact_match",
+                "scenario_precision",
+                "scenario_recall",
+                "scenario_f1",
+                "forbidden_scenario_false_positive_rate",
+                "dependency_edge_recall",
+                "dag_validity",
+            },
+        )
 
     def test_command_returns_two_for_schema_errors(self):
         with tempfile.TemporaryDirectory() as temp_dir:

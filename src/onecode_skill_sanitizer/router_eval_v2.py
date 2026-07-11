@@ -24,29 +24,9 @@ DEPENDENCY_EDGE_TYPES = {
     "intent_verification_dependency",
     "intent_completion_dependency",
 }
-COMPILER_BLOCKING_REASONS = {
-    "dependency_cycle",
-    "duplicate_intent_id",
-    "duplicate_intent_selection",
-    "duplicate_skill_name",
-    "empty_execution_order",
+INCOMPLETE_GRAPH_REASONS = {
     "incomplete_composition",
-    "invalid_intent_graph",
-    "malformed_bundles_index",
-    "malformed_composition",
-    "malformed_execution_order",
-    "malformed_intent_dependency",
-    "malformed_intent_graph",
-    "malformed_scenario_id",
-    "malformed_selection_intents",
-    "missing_intent_verification",
-    "missing_scenario_bundle",
-    "unknown_intent_dependency",
-    "unknown_intent_id",
-    "untrusted_scenario",
-}
-FAIL_CLOSED_EMPTY_GRAPH_REASONS = COMPILER_BLOCKING_REASONS - {
-    "missing_intent_verification",
+    "missing_required_capability",
 }
 EXPECTED_STATUSES = {"complete", "incomplete", "blocked"}
 TRUSTED_SCENARIO_IDS = {
@@ -127,9 +107,7 @@ def _is_legacy_router_eval_v2(payload: object) -> bool:
     if not valid_envelope:
         return False
     case_ids = [case.get("id") if isinstance(case, dict) else None for case in cases]
-    invalid_case_id = any(
-        not isinstance(case_id, str) or not case_id for case_id in case_ids
-    )
+    invalid_case_id = any(not isinstance(case_id, str) or not case_id for case_id in case_ids)
     return not invalid_case_id and len(case_ids) == len(set(case_ids))
 
 
@@ -150,22 +128,15 @@ def load_eval_dataset_v2(
             "router-eval-v2 expects the multi-intent gold/suite contract"
         )
     if not isinstance(payload, dict) or set(payload) != {"labeling", "cases"}:
-        raise DatasetValidationError(
-            "evaluation dataset must be an object containing only labeling and cases"
-        )
+        raise DatasetValidationError("evaluation dataset must be an object containing only labeling and cases")
     if payload["labeling"] != EXPECTED_LABELING:
         raise DatasetValidationError("evaluation dataset labeling metadata is invalid")
     cases = payload["cases"]
     if not isinstance(cases, list):
         raise DatasetValidationError("cases must be a list")
-    validated = [
-        _validate_case(case, index, allowed_scenarios)
-        for index, case in enumerate(cases)
-    ]
+    validated = [_validate_case(case, index, allowed_scenarios) for index, case in enumerate(cases)]
     if len(validated) != EXPECTED_CASE_COUNT:
-        raise DatasetValidationError(
-            f"expected exactly {EXPECTED_CASE_COUNT} cases, found {len(validated)}"
-        )
+        raise DatasetValidationError(f"expected exactly {EXPECTED_CASE_COUNT} cases, found {len(validated)}")
     ids = [case["id"] for case in validated]
     duplicates = sorted(case_id for case_id, count in Counter(ids).items() if count > 1)
     if duplicates:
@@ -210,14 +181,11 @@ def _validate_case(
     if known_scenarios is not None:
         unknown = sorted(set(case["expected_scenarios"]) - known_scenarios)
         if unknown:
-            raise DatasetValidationError(
-                f"{prefix}.expected_scenarios contains unknown ids: {', '.join(unknown)}"
-            )
+            raise DatasetValidationError(f"{prefix}.expected_scenarios contains unknown ids: {', '.join(unknown)}")
         unknown_forbidden = sorted(set(case["forbidden_scenarios"]) - known_scenarios)
         if unknown_forbidden:
             raise DatasetValidationError(
-                f"{prefix}.forbidden_scenarios contains unknown ids: "
-                f"{', '.join(unknown_forbidden)}"
+                f"{prefix}.forbidden_scenarios contains unknown ids: {', '.join(unknown_forbidden)}"
             )
     overlap = set(case["expected_scenarios"]) & set(case["forbidden_scenarios"])
     if overlap:
@@ -235,9 +203,7 @@ def _validate_case(
         if edge[0] == edge[1]:
             raise DatasetValidationError(f"{edge_prefix} must not be a self edge")
         if edge[0] not in case["expected_intents"] or edge[1] not in case["expected_intents"]:
-            raise DatasetValidationError(
-                f"{edge_prefix} endpoints must exist in expected_intents"
-            )
+            raise DatasetValidationError(f"{edge_prefix} endpoints must exist in expected_intents")
         normalized_edges.append([edge[0], edge[1]])
     if len({tuple(edge) for edge in normalized_edges}) != len(normalized_edges):
         raise DatasetValidationError(f"{prefix}.required_dependency_edges has duplicates")
@@ -255,9 +221,7 @@ def _require_nonempty_string(value: object, field: str) -> None:
 
 
 def _require_string_list(value: object, field: str, *, nonempty: bool = False) -> None:
-    if not isinstance(value, list) or not all(
-        isinstance(item, str) and bool(item.strip()) for item in value
-    ):
+    if not isinstance(value, list) or not all(isinstance(item, str) and bool(item.strip()) for item in value):
         raise DatasetValidationError(f"{field} must be a list of nonempty strings")
     if nonempty and not value:
         raise DatasetValidationError(f"{field} must not be empty")
@@ -309,17 +273,13 @@ def evaluate_router_v2(
         "scenario_precision": precision,
         "scenario_recall": recall,
         "scenario_f1": f1,
-        "forbidden_scenario_false_positive_rate": _ratio(
-            forbidden_hits, forbidden_total, empty=0.0
-        ),
+        "forbidden_scenario_false_positive_rate": _ratio(forbidden_hits, forbidden_total, empty=0.0),
         "dependency_edge_recall": _ratio(dependency_hits, dependency_total, empty=1.0),
         "dag_validity": _ratio(dag_valid, case_count, empty=1.0),
     }
     if not all(math.isfinite(value) for value in metrics.values()):
         raise EvaluatorError("metrics must be finite")
-    expected_scenario_coverage = sorted(
-        {scenario for case in cases for scenario in case["expected_scenarios"]}
-    )
+    expected_scenario_coverage = sorted({scenario for case in cases for scenario in case["expected_scenarios"]})
     return {
         "schema_version": 1,
         "case_count": case_count,
@@ -338,15 +298,12 @@ def evaluate_router_v2(
         },
         "scenario_coverage": {
             "expected_scenarios": expected_scenario_coverage,
-            "uncovered_scenarios": sorted(
-                (known_scenarios or set()) - set(expected_scenario_coverage)
-            ),
+            "uncovered_scenarios": sorted((known_scenarios or set()) - set(expected_scenario_coverage)),
         },
         "dag_definition": (
-            "Valid means graph.acyclic matches topology computed from nodes and edges. "
-            "Complete or incomplete cases require an acyclic ready graph. Blocked cases "
-            "require blocked routing and execution statuses plus a recognized compiler "
-            "reason; a coherent dependency cycle is valid with topology_acyclic false."
+            "Valid means complete routes have an acyclic ready graph, while incomplete "
+            "or blocked routes have an empty, topologically acyclic blocked graph with "
+            "an incomplete_composition or missing_required_capability compiler reason."
         ),
         "cases": results,
     }
@@ -377,20 +334,14 @@ def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
     topology_acyclic = _graph_topology_is_acyclic(route)
     dag_is_valid, dag_issues = _dag_assessment(
         route,
-        case.get("expected_status"),
         topology_acyclic,
     )
-    graph_status = route["execution_graph"].get("status")
-    if case.get("expected_status") != "blocked" and (
-        not dag_is_valid or not topology_acyclic or graph_status == "blocked"
-    ):
+    if case.get("expected_status") != "blocked" and not dag_is_valid:
         raise EvaluatorError(f"unexpected invalid DAG for case {case['id']}")
 
     issues = list(dag_issues)
     if actual_intents != expected_intents:
-        issues.append(
-            {"id": "intent_order_mismatch", "expected": expected_intents, "actual": actual_intents}
-        )
+        issues.append({"id": "intent_order_mismatch", "expected": expected_intents, "actual": actual_intents})
     missing_scenarios = sorted(expected_scenario_set - actual_scenario_set)
     unexpected_scenarios = sorted(actual_scenario_set - expected_scenario_set)
     if missing_scenarios:
@@ -406,9 +357,7 @@ def _evaluate_case(case: dict[str, Any], route: object) -> dict[str, Any]:
     expected_status = case.get("expected_status")
     actual_status = route.get("routing_status")
     if expected_status is not None and actual_status != expected_status:
-        issues.append(
-            {"id": "status_mismatch", "expected": expected_status, "actual": actual_status}
-        )
+        issues.append({"id": "status_mismatch", "expected": expected_status, "actual": actual_status})
     if not dag_is_valid:
         issues.append({"id": "expected_blocked_dag"})
 
@@ -482,7 +431,6 @@ def _dependency_pairs(route: dict[str, Any], intents: list[dict[str, Any]]) -> s
 
 def _dag_assessment(
     route: dict[str, Any],
-    expected_status: str | None,
     topology_acyclic: bool,
 ) -> tuple[bool, list[dict[str, Any]]]:
     graph = route.get("execution_graph")
@@ -494,13 +442,11 @@ def _dag_assessment(
     reason_codes = graph.get("reason_codes")
     if not isinstance(declared_acyclic, bool) or not isinstance(status, str):
         raise EvaluatorError("execution graph status and acyclic fields are malformed")
-    if not isinstance(reason_codes, list) or not all(
-        isinstance(reason, str) and reason for reason in reason_codes
-    ):
+    if not isinstance(reason_codes, list) or not all(isinstance(reason, str) and reason for reason in reason_codes):
         raise EvaluatorError("execution graph reason_codes must be nonempty strings")
     issues: list[dict[str, Any]] = []
-    if expected_status == "blocked":
-        if status != "blocked" or routing_status != "blocked":
+    if routing_status in {"incomplete", "blocked"}:
+        if status != "blocked":
             issues.append(
                 {
                     "id": "blocked_status_incoherent",
@@ -508,54 +454,36 @@ def _dag_assessment(
                     "routing_status": routing_status,
                 }
             )
-        recognized_reasons = sorted(set(reason_codes) & COMPILER_BLOCKING_REASONS)
-        if not recognized_reasons:
-            issues.append(
-                {"id": "missing_recognized_blocking_reason", "reason_codes": reason_codes}
-            )
-        has_cycle_reason = "dependency_cycle" in recognized_reasons
-        source_intent_acyclic = _source_intent_graph_is_acyclic(route)
-        if declared_acyclic:
+        invalid_reasons = sorted(set(reason_codes) - INCOMPLETE_GRAPH_REASONS)
+        if not reason_codes or invalid_reasons:
             issues.append(
                 {
-                    "id": "acyclic_flag_mismatch",
-                    "declared": declared_acyclic,
-                    "expected": False,
+                    "id": "invalid_incomplete_graph_reason",
+                    "reason_codes": reason_codes,
+                    "allowed_reasons": sorted(INCOMPLETE_GRAPH_REASONS),
                 }
             )
-        if has_cycle_reason and source_intent_acyclic:
+        if not topology_acyclic:
             issues.append(
-                {"id": "dependency_cycle_source_mismatch", "computed": True}
+                {
+                    "id": "blocked_graph_cycle",
+                    "computed": topology_acyclic,
+                }
             )
-        if not has_cycle_reason and not source_intent_acyclic:
-            issues.append({"id": "missing_dependency_cycle_reason"})
+        if declared_acyclic:
+            issues.append({"id": "acyclic_flag_mismatch", "declared": True, "expected": False})
+        if not _source_intent_graph_is_acyclic(route):
+            issues.append({"id": "source_intent_graph_cycle"})
         nodes = graph.get("nodes")
         edges = graph.get("edges")
-        fail_closed_reasons = sorted(
-            set(recognized_reasons) & FAIL_CLOSED_EMPTY_GRAPH_REASONS
-        )
-        if fail_closed_reasons and (nodes or edges):
+        if nodes or edges:
             issues.append(
                 {
                     "id": "blocked_graph_not_empty",
-                    "fail_closed_reasons": fail_closed_reasons,
                     "node_count": len(nodes) if isinstance(nodes, list) else None,
                     "edge_count": len(edges) if isinstance(edges, list) else None,
                 }
             )
-        if "missing_intent_verification" in recognized_reasons and isinstance(edges, list):
-            dependent_edges = [
-                edge
-                for edge in edges
-                if isinstance(edge, dict) and edge.get("type") in DEPENDENCY_EDGE_TYPES
-            ]
-            if dependent_edges:
-                issues.append(
-                    {
-                        "id": "blocked_dependent_intent_edges",
-                        "edge_count": len(dependent_edges),
-                    }
-                )
         return not issues, issues
     if declared_acyclic != topology_acyclic:
         issues.append(
@@ -565,12 +493,7 @@ def _dag_assessment(
                 "computed": topology_acyclic,
             }
         )
-    valid = (
-        not issues
-        and topology_acyclic
-        and status == "ready"
-        and routing_status in {"complete", "incomplete"}
-    )
+    valid = not issues and topology_acyclic and status == "ready" and routing_status == "complete"
     return valid, issues
 
 
@@ -591,8 +514,7 @@ def _source_intent_graph_is_acyclic(route: dict[str, Any]) -> bool:
         if not isinstance(intent_id, str) or not intent_id:
             raise EvaluatorError("intent id must be nonempty")
         if not isinstance(depends_on, list) or not all(
-            isinstance(dependency_id, str) and dependency_id
-            for dependency_id in depends_on
+            isinstance(dependency_id, str) and dependency_id for dependency_id in depends_on
         ):
             raise EvaluatorError("intent depends_on must be a list of nonempty strings")
         intent_ids.append(intent_id)
