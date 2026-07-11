@@ -7,6 +7,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from onecode_skill_sanitizer import validation as validation_module
 from onecode_skill_sanitizer.validation import (
     UnsafeAuxiliaryContentError,
     auxiliary_content_sha256,
@@ -20,6 +21,12 @@ from onecode_skill_sanitizer.validation import (
 
 
 class ValidationTest(unittest.TestCase):
+    def test_auxiliary_components_reject_ambiguous_or_non_text_names(self):
+        for name in ("", ".", "..", "nested/file", "nul\0name", b"bytes"):
+            with self.subTest(name=name):
+                with self.assertRaises(UnsafeAuxiliaryContentError):
+                    validation_module._safe_component(name)
+
     def test_auxiliary_hash_preserves_regular_file_contract(self):
         with tempfile.TemporaryDirectory() as temp_dir:
             skill_dir = Path(temp_dir) / "skill"
@@ -86,6 +93,135 @@ class ValidationTest(unittest.TestCase):
 
             with self.assertRaises(UnsafeAuxiliaryContentError):
                 auxiliary_content_sha256(skill_dir)
+
+    def test_auxiliary_hash_rejects_file_replacement_races_without_outside_read(self):
+        for replacement_timing in ("before_open", "after_open"):
+            with self.subTest(timing=replacement_timing), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                skill_dir = root / "skill"
+                target = skill_dir / "references/guide.md"
+                target.parent.mkdir(parents=True)
+                target.write_text("inside\n", encoding="utf-8")
+                outside = root / "outside.txt"
+                outside.write_text("outside\n", encoding="utf-8")
+                outside_identity = (outside.stat().st_dev, outside.stat().st_ino)
+                original_open = os.open
+                original_read = os.read
+                replaced = False
+                outside_read = False
+
+                def replace_target() -> None:
+                    nonlocal replaced
+                    parked = target.with_suffix(".parked")
+                    target.rename(parked)
+                    target.symlink_to(outside)
+                    replaced = True
+
+                def racing_open(path, flags, mode=0o777, *, dir_fd=None):
+                    if path != "guide.md" or dir_fd is None or replaced:
+                        return original_open(path, flags, mode, dir_fd=dir_fd)
+                    if replacement_timing == "before_open":
+                        replace_target()
+                        return original_open(path, flags, mode, dir_fd=dir_fd)
+                    fd = original_open(path, flags, mode, dir_fd=dir_fd)
+                    replace_target()
+                    return fd
+
+                def guarded_read(fd: int, length: int) -> bytes:
+                    nonlocal outside_read
+                    opened = os.fstat(fd)
+                    if (opened.st_dev, opened.st_ino) == outside_identity:
+                        outside_read = True
+                    return original_read(fd, length)
+
+                with patch.object(validation_module.os, "open", racing_open):
+                    with patch.object(validation_module.os, "read", guarded_read):
+                        with self.assertRaises(UnsafeAuxiliaryContentError):
+                            auxiliary_content_sha256(skill_dir)
+
+                self.assertTrue(replaced)
+                self.assertFalse(outside_read)
+
+    def test_auxiliary_hash_rejects_directory_replacement_races_without_outside_read(self):
+        for replacement_timing in ("before_open", "after_open"):
+            with self.subTest(timing=replacement_timing), tempfile.TemporaryDirectory() as temp_dir:
+                root = Path(temp_dir)
+                skill_dir = root / "skill"
+                target = skill_dir / "references/nested"
+                target.mkdir(parents=True)
+                (target / "inside.txt").write_text("inside\n", encoding="utf-8")
+                outside = root / "outside"
+                outside.mkdir()
+                outside_file = outside / "secret.txt"
+                outside_file.write_text("outside\n", encoding="utf-8")
+                outside_identity = (outside_file.stat().st_dev, outside_file.stat().st_ino)
+                original_open = os.open
+                original_read = os.read
+                replaced = False
+                outside_read = False
+
+                def replace_target() -> None:
+                    nonlocal replaced
+                    target.rename(target.with_name("nested-parked"))
+                    target.symlink_to(outside, target_is_directory=True)
+                    replaced = True
+
+                def racing_open(path, flags, mode=0o777, *, dir_fd=None):
+                    if path != "nested" or dir_fd is None or replaced:
+                        return original_open(path, flags, mode, dir_fd=dir_fd)
+                    if replacement_timing == "before_open":
+                        replace_target()
+                        return original_open(path, flags, mode, dir_fd=dir_fd)
+                    fd = original_open(path, flags, mode, dir_fd=dir_fd)
+                    replace_target()
+                    return fd
+
+                def guarded_read(fd: int, length: int) -> bytes:
+                    nonlocal outside_read
+                    opened = os.fstat(fd)
+                    if (opened.st_dev, opened.st_ino) == outside_identity:
+                        outside_read = True
+                    return original_read(fd, length)
+
+                with patch.object(validation_module.os, "open", racing_open):
+                    with patch.object(validation_module.os, "read", guarded_read):
+                        with self.assertRaises(UnsafeAuxiliaryContentError):
+                            auxiliary_content_sha256(skill_dir)
+
+                self.assertTrue(replaced)
+                self.assertFalse(outside_read)
+
+    def test_auxiliary_hash_closes_descriptors_when_opened_directory_disappears(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            skill_dir = Path(temp_dir) / "skill"
+            target = skill_dir / "references/nested"
+            target.mkdir(parents=True)
+            (target / "inside.txt").write_text("inside\n", encoding="utf-8")
+            original_open = os.open
+            original_close = os.close
+            opened_fds = set()
+            replaced = False
+
+            def tracking_open(path, flags, mode=0o777, *, dir_fd=None):
+                nonlocal replaced
+                fd = original_open(path, flags, mode, dir_fd=dir_fd)
+                opened_fds.add(fd)
+                if path == "nested" and dir_fd is not None and not replaced:
+                    target.rename(target.with_name("nested-parked"))
+                    replaced = True
+                return fd
+
+            def tracking_close(fd: int) -> None:
+                opened_fds.discard(fd)
+                original_close(fd)
+
+            with patch.object(validation_module.os, "open", tracking_open):
+                with patch.object(validation_module.os, "close", tracking_close):
+                    with self.assertRaises(UnsafeAuxiliaryContentError):
+                        auxiliary_content_sha256(skill_dir)
+
+            self.assertTrue(replaced)
+            self.assertEqual(opened_fds, set())
 
     def test_validate_contract_accepts_complete_v2_contract(self):
         issues: list[dict] = []
