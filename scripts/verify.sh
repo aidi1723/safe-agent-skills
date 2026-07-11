@@ -169,6 +169,7 @@ schema_registry = Registry().with_resources(
         (intent_graph_schema["$id"], Resource.from_contents(intent_graph_schema)),
         (selected_skill_schema["$id"], Resource.from_contents(selected_skill_schema)),
         (contract_schema["$id"], Resource.from_contents(contract_schema)),
+        (manifest_schema["$id"], Resource.from_contents(manifest_schema)),
     ]
 )
 task_pack_validator = strict_validator(task_pack_schema, registry=schema_registry)

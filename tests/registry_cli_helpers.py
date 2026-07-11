@@ -46,11 +46,15 @@ def validate_task_pack_v2(payload):
         Path("schemas/task-pack-v2-selected-skill.schema.json").read_text(encoding="utf-8")
     )
     contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(encoding="utf-8"))
+    manifest_schema = json.loads(
+        Path("schemas/skill-manifest.schema.json").read_text(encoding="utf-8")
+    )
     registry = Registry().with_resources(
         [
             (intent_schema["$id"], Resource.from_contents(intent_schema)),
             (selected_skill_schema["$id"], Resource.from_contents(selected_skill_schema)),
             (contract_schema["$id"], Resource.from_contents(contract_schema)),
+            (manifest_schema["$id"], Resource.from_contents(manifest_schema)),
         ]
     )
     Draft202012Validator.check_schema(schema)

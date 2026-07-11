@@ -26,23 +26,37 @@
   "properties": {
     "schema_version": {"type": "integer", "const": 2},
     "generated_at": {"type": "string", "minLength": 1},
-    "route_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "route_id": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}(?![\\s\\S])"
+    },
     "routing_mode": {"const": "hybrid"},
     "routing_status": {"enum": ["blocked", "incomplete", "complete"]},
     "provider": {"$ref": "#/$defs/provider"},
     "normalized_task": {"$ref": "#/$defs/normalized_task"},
-    "intent_graph": {"$ref": "intent-graph.schema.json"},
+    "intent_graph": {
+      "allOf": [
+        {"$ref": "intent-graph.schema.json"},
+        {"$ref": "#/$defs/intent_graph_id_safety"}
+      ]
+    },
     "scenario_candidates": {
       "type": "array",
+      "maxItems": 36,
+      "uniqueItems": true,
       "items": {"$ref": "#/$defs/scenario_candidate"}
     },
     "selected_scenarios": {
       "type": "array",
+      "maxItems": 12,
+      "uniqueItems": true,
       "items": {"$ref": "#/$defs/selected_scenario"}
     },
     "uncovered_intents": {"$ref": "#/$defs/intent_ids"},
     "selected_skills": {
+      "$comment": "uniqueItems rejects identical records; JSON Schema cannot enforce uniqueness by Skill name.",
       "type": "array",
+      "uniqueItems": true,
       "items": {"$ref": "task-pack-v2-selected-skill.schema.json"}
     },
     "capability_resolution": {"$ref": "#/$defs/capability_resolution"},
@@ -52,25 +66,96 @@
     "registry_verification": {"$ref": "#/$defs/registry_verification"},
     "compatibility": {"$ref": "#/$defs/compatibility"}
   },
+  "allOf": [
+    {
+      "if": {"properties": {"routing_status": {"const": "complete"}}},
+      "then": {
+        "properties": {
+          "uncovered_intents": {"maxItems": 0},
+          "selected_scenarios": {"minItems": 1},
+          "selected_skills": {"minItems": 1},
+          "capability_resolution": {
+            "properties": {
+              "status": {"const": "complete"},
+              "missing_required_count": {"const": 0}
+            }
+          },
+          "execution_graph": {"properties": {"status": {"const": "ready"}}},
+          "routing_metrics": {
+            "properties": {
+              "decomposition": {
+                "properties": {
+                  "candidate_signal_limit_exceeded": {"const": false},
+                  "intent_limit_exceeded": {"const": false},
+                  "reason_codes": {"maxItems": 0}
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {"properties": {"routing_status": {"const": "incomplete"}}},
+      "then": {
+        "anyOf": [
+          {"properties": {"uncovered_intents": {"minItems": 1}}},
+          {
+            "properties": {
+              "capability_resolution": {
+                "properties": {"status": {"const": "incomplete"}}
+              }
+            }
+          },
+          {
+            "properties": {
+              "routing_metrics": {
+                "properties": {
+                  "decomposition": {"properties": {"reason_codes": {"minItems": 1}}}
+                }
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "if": {"properties": {"routing_status": {"const": "blocked"}}},
+      "then": {
+        "properties": {
+          "execution_graph": {
+            "properties": {
+              "status": {"const": "blocked"},
+              "reason_codes": {"contains": {"$ref": "#/$defs/fatal_execution_reason_code"}}
+            }
+          }
+        }
+      }
+    }
+  ],
   "additionalProperties": false,
   "$defs": {
-    "intent_id": {"type": "string", "pattern": "^i[1-9][0-9]*$"},
+    "intent_id": {
+      "type": "string",
+      "pattern": "^i[1-9][0-9]*(?![\\s\\S])"
+    },
     "intent_ids": {
       "type": "array",
+      "maxItems": 12,
       "uniqueItems": true,
       "items": {"$ref": "#/$defs/intent_id"}
     },
     "scenario_id": {
       "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9-]*$"
+      "pattern": "^[a-z0-9][a-z0-9-]*(?![\\s\\S])"
     },
     "skill_name": {
       "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9_-]{1,80}$"
+      "pattern": "^[a-z0-9][a-z0-9_-]{1,80}(?![\\s\\S])"
     },
     "node_id": {
       "type": "string",
-      "pattern": "^[a-z0-9][a-z0-9:_-]*$"
+      "pattern": "^[a-z0-9][a-z0-9:_-]*(?![\\s\\S])"
     },
     "stage": {
       "enum": ["preflight", "source", "planning", "production", "review", "execution", "verification", "handoff"]
@@ -96,6 +181,23 @@
         "stale_policy": {"type": "string"}
       },
       "additionalProperties": false
+    },
+    "intent_graph_id_safety": {
+      "type": "object",
+      "properties": {
+        "intents": {
+          "type": "array",
+          "maxItems": 12,
+          "uniqueItems": true,
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": {"$ref": "#/$defs/intent_id"},
+              "depends_on": {"$ref": "#/$defs/intent_ids"}
+            }
+          }
+        }
+      }
     },
     "scenario_candidate": {
       "type": "object",
@@ -131,16 +233,58 @@
       "additionalProperties": false
     },
     "capability_resolution": {
+      "$comment": "missing_required_count is unbounded because caller-supplied bundles can declare arbitrary capabilities; JSON Schema cannot equate it to matching array entries.",
       "type": "object",
       "required": ["status", "capabilities", "missing_required_count"],
       "properties": {
         "status": {"enum": ["complete", "incomplete"]},
         "capabilities": {
           "type": "array",
+          "uniqueItems": true,
           "items": {"$ref": "#/$defs/capability"}
         },
         "missing_required_count": {"type": "integer", "minimum": 0}
       },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "complete"}}},
+          "then": {
+            "properties": {
+              "missing_required_count": {"const": 0},
+              "capabilities": {
+                "not": {
+                  "contains": {
+                    "type": "object",
+                    "properties": {
+                      "required": {"const": true},
+                      "status": {"const": "missing"}
+                    },
+                    "required": ["required", "status"]
+                  }
+                }
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"status": {"const": "incomplete"}}},
+          "then": {
+            "properties": {
+              "missing_required_count": {"minimum": 1},
+              "capabilities": {
+                "contains": {
+                  "type": "object",
+                  "properties": {
+                    "required": {"const": true},
+                    "status": {"const": "missing"}
+                  },
+                  "required": ["required", "status"]
+                }
+              }
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "capability": {
@@ -149,11 +293,11 @@
       "properties": {
         "scenario_id": {
           "type": "string",
-          "pattern": "^(?:[a-z0-9][a-z0-9-]*)?$"
+          "pattern": "^(?:[a-z0-9][a-z0-9-]*)?(?![\\s\\S])"
         },
         "capability": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_]*$"
+          "pattern": "^[a-z][a-z0-9_]*(?![\\s\\S])"
         },
         "required": {"type": "boolean"},
         "status": {"enum": ["covered", "missing"]},
@@ -167,6 +311,16 @@
           "anyOf": [{"$ref": "#/$defs/stage"}, {"const": ""}]
         }
       },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "covered"}}},
+          "then": {"properties": {"skills": {"minItems": 1}}}
+        },
+        {
+          "if": {"properties": {"status": {"const": "missing"}}},
+          "then": {"properties": {"skills": {"maxItems": 0}}}
+        }
+      ],
       "additionalProperties": false
     },
     "execution_graph": {
@@ -178,10 +332,12 @@
         "acyclic": {"type": "boolean"},
         "nodes": {
           "type": "array",
+          "uniqueItems": true,
           "items": {"$ref": "#/$defs/execution_node"}
         },
         "edges": {
           "type": "array",
+          "uniqueItems": true,
           "items": {"$ref": "#/$defs/execution_edge"}
         },
         "reason_codes": {
@@ -191,9 +347,31 @@
         },
         "details": {
           "type": "array",
+          "uniqueItems": true,
           "items": {"type": "string", "minLength": 1}
         }
       },
+      "allOf": [
+        {
+          "if": {"properties": {"status": {"const": "ready"}}},
+          "then": {
+            "properties": {
+              "acyclic": {"const": true},
+              "nodes": {"minItems": 1},
+              "reason_codes": {"maxItems": 0}
+            }
+          }
+        },
+        {
+          "if": {"properties": {"status": {"const": "blocked"}}},
+          "then": {
+            "properties": {
+              "acyclic": {"const": false},
+              "reason_codes": {"minItems": 1}
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "execution_node": {
@@ -212,7 +390,7 @@
         "host_action": {"type": "boolean"},
         "invariant_capability": {
           "type": "string",
-          "pattern": "^[a-z][a-z0-9_]*$"
+          "pattern": "^[a-z][a-z0-9_]*(?![\\s\\S])"
         }
       },
       "additionalProperties": false
@@ -259,6 +437,30 @@
         "missing_trusted_skill_pack_item"
       ]
     },
+    "fatal_execution_reason_code": {
+      "enum": [
+        "dependency_cycle",
+        "invalid_stage_map",
+        "missing_scenario_bundle",
+        "malformed_execution_order",
+        "empty_execution_order",
+        "duplicate_skill_name",
+        "untrusted_scenario",
+        "duplicate_intent_selection",
+        "missing_intent_verification",
+        "invalid_intent_graph",
+        "malformed_intent_graph",
+        "duplicate_intent_id",
+        "malformed_intent_dependency",
+        "unknown_intent_dependency",
+        "malformed_composition",
+        "malformed_scenario_id",
+        "malformed_selection_intents",
+        "unknown_intent_id",
+        "malformed_bundles_index",
+        "missing_trusted_skill_pack_item"
+      ]
+    },
     "host_execution_protocol": {
       "type": "object",
       "required": ["mode", "runtime_boundary", "node_statuses"],
@@ -276,6 +478,7 @@
       "additionalProperties": false
     },
     "routing_metrics": {
+      "$comment": "Hard producer limits are bounded below. Skill counts remain unbounded because registries and bundle execution orders are caller supplied; JSON Schema cannot equate counts to array lengths.",
       "type": "object",
       "required": [
         "intent_count",
@@ -290,13 +493,17 @@
         "decomposition"
       ],
       "properties": {
-        "intent_count": {"type": "integer", "minimum": 0},
-        "candidate_count": {"type": "integer", "minimum": 0},
-        "selected_scenario_count": {"type": "integer", "minimum": 0},
+        "intent_count": {"type": "integer", "minimum": 1, "maximum": 12},
+        "candidate_count": {"type": "integer", "minimum": 0, "maximum": 36},
+        "selected_scenario_count": {"type": "integer", "minimum": 0, "maximum": 12},
         "required_skill_count": {"type": "integer", "minimum": 0},
         "selected_skill_count": {"type": "integer", "minimum": 0},
-        "optional_skill_limit": {"type": "integer", "minimum": 0},
-        "optional_skills_selected": {"type": "integer", "minimum": 0},
+        "optional_skill_limit": {
+          "$comment": "User-controlled and intentionally unbounded; JSON Schema cannot tie it to array lengths.",
+          "type": "integer",
+          "minimum": 0
+        },
+        "optional_skills_selected": {"type": "integer", "const": 0},
         "required_skills_omitted": {
           "type": "array",
           "uniqueItems": true,
@@ -319,8 +526,8 @@
       ],
       "properties": {
         "mode": {"enum": ["single_clause", "strong_clauses", "profile_spans"]},
-        "observed_candidate_count": {"type": "integer", "minimum": 0},
-        "emitted_intent_count": {"type": "integer", "minimum": 0},
+        "observed_candidate_count": {"type": "integer", "minimum": 0, "maximum": 129},
+        "emitted_intent_count": {"type": "integer", "minimum": 1, "maximum": 12},
         "candidate_signal_limit_exceeded": {"type": "boolean"},
         "intent_limit_exceeded": {"type": "boolean"},
         "reason_codes": {
@@ -336,9 +543,42 @@
           }
         }
       },
+      "allOf": [
+        {
+          "if": {
+            "properties": {"candidate_signal_limit_exceeded": {"const": true}}
+          },
+          "then": {
+            "properties": {
+              "reason_codes": {"contains": {"const": "candidate_signal_limit_exceeded"}}
+            }
+          },
+          "else": {
+            "properties": {
+              "reason_codes": {
+                "not": {"contains": {"const": "candidate_signal_limit_exceeded"}}
+              }
+            }
+          }
+        },
+        {
+          "if": {"properties": {"intent_limit_exceeded": {"const": true}}},
+          "then": {
+            "properties": {
+              "reason_codes": {"contains": {"const": "intent_limit_exceeded"}}
+            }
+          },
+          "else": {
+            "properties": {
+              "reason_codes": {"not": {"contains": {"const": "intent_limit_exceeded"}}}
+            }
+          }
+        }
+      ],
       "additionalProperties": false
     },
     "registry_verification": {
+      "$comment": "Registry counts are unbounded because caller-supplied registries have no schema-level size limit.",
       "type": "object",
       "required": [
         "schema_version",
@@ -369,7 +609,10 @@
       "type": "object",
       "required": ["id", "severity", "skill", "path"],
       "properties": {
-        "id": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "id": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9-]*(?![\\s\\S])"
+        },
         "severity": {"enum": ["low", "medium", "high", "critical"]},
         "skill": {"$ref": "#/$defs/skill_name"},
         "path": {"type": "string", "minLength": 1}
@@ -386,6 +629,7 @@
       "additionalProperties": false
     },
     "compatibility_loss": {
+      "$comment": "Dropped edge counts are unbounded because caller-supplied execution orders have no schema-level size limit.",
       "type": "object",
       "required": ["multi_intent_dropped", "scenarios_dropped", "cross_scenario_edges_dropped"],
       "properties": {
