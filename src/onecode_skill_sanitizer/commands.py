@@ -71,7 +71,9 @@ from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_envelope_v2
 from .router_eval_review import load_eval_suite
+from .router_eval_review import load_authoritative_project_root
 from .router_eval_review import load_review_evidence
+from .router_eval_review import validate_review_asset_paths
 from .router_quality_gate import build_quality_gate
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
@@ -558,6 +560,15 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
     bundles_path = resolve_project_asset_path(args.bundles)
     try:
         _validate_router_eval_v2_inputs(args)
+        review_path = getattr(args, "review", None)
+        authoritative_root = None
+        if review_path is not None:
+            authoritative_root = load_authoritative_project_root()
+            validate_review_asset_paths(
+                authoritative_root,
+                registry_dir,
+                bundles_path,
+            )
         snapshot = build_verified_registry_snapshot(registry_dir)
         bundles_index = load_bundles_index(bundles_path)
         known_scenarios = {
@@ -566,7 +577,6 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
             if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
         }
         suite_path = getattr(args, "suite", None)
-        review_path = getattr(args, "review", None)
         if suite_path is not None:
             dataset = load_eval_suite(resolve_project_asset_path(suite_path), known_scenarios)
             dataset_identity = dataset["identity"]
@@ -574,7 +584,7 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
                 review_evidence = load_review_evidence(
                     resolve_project_asset_path(review_path),
                     dataset["suite_identity"],
-                    registry_dir,
+                    authoritative_root,
                 )
                 review_identity = review_evidence["review_identity"]
                 source_identity = review_evidence["source_identity"]

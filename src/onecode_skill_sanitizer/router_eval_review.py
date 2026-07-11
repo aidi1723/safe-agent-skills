@@ -337,6 +337,48 @@ def _resolve_repository_root(candidate: Path) -> Path:
     return resolved_root
 
 
+def load_authoritative_project_root() -> Path:
+    """Resolve the runtime project root from this module, never from user assets."""
+
+    try:
+        module_path = Path(__file__).resolve(strict=True)
+    except OSError as exc:
+        raise DatasetValidationError(f"authoritative runtime module path is invalid: {exc}") from exc
+    project_root = module_path.parent.parent.parent
+    expected_module = project_root / "src/onecode_skill_sanitizer/router_eval_review.py"
+    if module_path != expected_module or not project_root.is_absolute():
+        raise DatasetValidationError("authoritative runtime module is outside the expected source checkout")
+    git_root = _resolve_repository_root(module_path.parent)
+    if git_root != project_root:
+        raise DatasetValidationError("authoritative runtime project root does not match its Git top-level")
+    return project_root
+
+
+def _exact_resolved_asset(path: Path, expected: Path, label: str) -> None:
+    try:
+        absolute = path.absolute()
+        resolved = path.resolve(strict=True)
+    except OSError as exc:
+        raise DatasetValidationError(f"authoritative {label} is invalid: {exc}") from exc
+    if absolute != resolved or resolved != expected:
+        raise DatasetValidationError(f"{label} must be the authoritative project asset")
+
+
+def validate_review_asset_paths(
+    authoritative_root: Path,
+    registry_path: Path,
+    bundles_path: Path,
+) -> None:
+    """Require canonical built-in routing assets whenever review evidence is attached."""
+
+    _exact_resolved_asset(registry_path, authoritative_root / "catalog", "registry")
+    _exact_resolved_asset(
+        bundles_path,
+        authoritative_root / "bundles/index.json",
+        "bundles index",
+    )
+
+
 def _git_head(repository: Path) -> str:
     head = _run_git(repository, "rev-parse", "--verify", "HEAD^{commit}").strip()
     if _COMMIT_PATTERN.fullmatch(head) is None or head == "0" * 40:

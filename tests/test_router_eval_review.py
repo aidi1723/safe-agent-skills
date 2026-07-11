@@ -1,6 +1,7 @@
 import hashlib
 import json
 import os
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -617,6 +618,73 @@ class RouterEvalV2ArgumentTests(unittest.TestCase):
         self.assertNotIn("Traceback", completed.stderr)
         self.assertEqual(json.loads(completed.stdout)["status"], "error")
 
+    def test_review_cli_rejects_custom_and_symlinked_registry_or_bundles(self):
+        root = Path(__file__).resolve().parents[1]
+        with tempfile.TemporaryDirectory() as tmp:
+            external = Path(tmp)
+            custom_catalog = external / "catalog"
+            custom_catalog.mkdir()
+            custom_bundles = external / "index.json"
+            custom_bundles.write_text("{}", encoding="utf-8")
+            catalog_alias = external / "catalog-alias"
+            bundles_alias = external / "bundles-alias.json"
+            catalog_alias.symlink_to(root / "catalog", target_is_directory=True)
+            bundles_alias.symlink_to(root / "bundles/index.json")
+            invalid_assets = (
+                ("--registry", str(custom_catalog)),
+                ("--bundles", str(custom_bundles)),
+                ("--registry", str(catalog_alias)),
+                ("--bundles", str(bundles_alias)),
+            )
+            for option, value in invalid_assets:
+                with self.subTest(option=option, value=value):
+                    completed = subprocess.run(
+                        [
+                            sys.executable,
+                            "-m",
+                            "onecode_skill_sanitizer",
+                            "router-eval-v2",
+                            "--suite",
+                            "missing-suite.json",
+                            "--review",
+                            "missing-review.json",
+                            option,
+                            value,
+                        ],
+                        cwd=root,
+                        env={**os.environ, "PYTHONPATH": str(root / "src")},
+                        capture_output=True,
+                        text=True,
+                        check=False,
+                    )
+                    self.assertEqual(completed.returncode, 2)
+                    self.assertNotIn("Traceback", completed.stderr)
+                    self.assertIn("authoritative", json.loads(completed.stdout)["error"])
+
+            standard = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "onecode_skill_sanitizer",
+                    "router-eval-v2",
+                    "--suite",
+                    "missing-suite.json",
+                    "--review",
+                    "missing-review.json",
+                    "--registry",
+                    str(root / "catalog"),
+                    "--bundles",
+                    str(root / "bundles/index.json"),
+                ],
+                cwd=root,
+                env={**os.environ, "PYTHONPATH": str(root / "src")},
+                capture_output=True,
+                text=True,
+                check=False,
+            )
+            self.assertEqual(standard.returncode, 2)
+            self.assertNotIn("authoritative", json.loads(standard.stdout)["error"])
+
 
 class RouterSourceIdentityTests(unittest.TestCase):
     def git(self, repository: Path, *arguments: str, env: dict[str, str] | None = None):
@@ -682,6 +750,52 @@ class RouterSourceIdentityTests(unittest.TestCase):
             )
             with self.assertRaises(DatasetValidationError):
                 load_router_source_identity(root / "catalog", reviewed_commit)
+
+    def test_authoritative_root_and_review_asset_paths_are_not_user_selected(self):
+        from onecode_skill_sanitizer.router_eval_review import load_authoritative_project_root
+        from onecode_skill_sanitizer.router_eval_review import validate_review_asset_paths
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        actual_root = Path(__file__).resolve().parents[1]
+        authoritative_root = load_authoritative_project_root()
+        self.assertEqual(authoritative_root, actual_root)
+        validate_review_asset_paths(
+            authoritative_root,
+            actual_root / "catalog",
+            actual_root / "bundles/index.json",
+        )
+
+        with tempfile.TemporaryDirectory() as tmp:
+            external = Path(tmp)
+            external_catalog = external / "catalog"
+            external_catalog.mkdir()
+            external_bundles = external / "index.json"
+            external_bundles.write_text("{}", encoding="utf-8")
+            invalid_pairs = (
+                (external_catalog, actual_root / "bundles/index.json"),
+                (actual_root / "catalog", external_bundles),
+            )
+            for registry, bundles in invalid_pairs:
+                with self.subTest(registry=registry, bundles=bundles):
+                    with self.assertRaises(DatasetValidationError):
+                        validate_review_asset_paths(authoritative_root, registry, bundles)
+
+    def test_nested_catalog_git_cannot_hide_outer_protected_changes(self):
+        from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
+        from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
+
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            reviewed_commit, _ = self.repository(root)
+            self.git(root / "catalog", "init", "--quiet")
+            self.commit_file(
+                root,
+                "src/onecode_skill_sanitizer/router.py",
+                "ROUTER = 3\n",
+                "outer protected change",
+            )
+            with self.assertRaises(DatasetValidationError):
+                load_router_source_identity(root, reviewed_commit)
 
     def test_source_identity_rejects_dirty_tracked_worktree_and_missing_git(self):
         from onecode_skill_sanitizer.router_eval_review import load_router_source_identity
@@ -883,7 +997,13 @@ class RouterSourceIdentityTests(unittest.TestCase):
         }
         cases = [{**item, "category": category_map[item["category"]]} for item in payload["cases"]]
         with tempfile.TemporaryDirectory() as tmp:
-            fixture = SuiteFixture(Path(tmp), cases)
+            custom_root = Path(tmp)
+            fixture = SuiteFixture(custom_root, cases)
+            custom_catalog = custom_root / "custom-catalog"
+            custom_bundles = custom_root / "custom-bundles"
+            shutil.copytree(root / "catalog", custom_catalog)
+            custom_bundles.mkdir()
+            shutil.copy2(root / "bundles/index.json", custom_bundles / "index.json")
             base = [
                 sys.executable,
                 "-m",
@@ -892,9 +1012,9 @@ class RouterSourceIdentityTests(unittest.TestCase):
                 "--suite",
                 str(fixture.index_path),
                 "--registry",
-                str(root / "catalog"),
+                str(custom_catalog),
                 "--bundles",
-                str(root / "bundles/index.json"),
+                str(custom_bundles / "index.json"),
             ]
             normal = subprocess.run(
                 base,
