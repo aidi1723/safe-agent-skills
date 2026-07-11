@@ -30,6 +30,70 @@ from tests.registry_cli_helpers import validate_task_pack_v2
 
 
 class TaskPackV2CliTest(unittest.TestCase):
+    def test_v2_snapshot_schema_guards_nested_manifest_objects_before_access(self):
+        mutations = [
+            ("hashes", []),
+            ("hashes", None),
+            ("hashes", "hashes"),
+            ("hashes", True),
+            ("source", []),
+            ("policy", "policy"),
+            ("taxonomy", None),
+        ]
+        for field, value in mutations:
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as tmp:
+                registry = Path(tmp) / "catalog"
+                shutil.copytree("catalog", registry)
+                manifest_path = registry / "research/research-source-check/skill.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                manifest[field] = value
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+                with self.assertRaises(ValueError):
+                    build_verified_registry_snapshot(registry)
+
+    def test_v2_smart_bounds_nested_manifest_schema_errors(self):
+        mutations = [
+            ("hashes", []),
+            ("hashes", None),
+            ("hashes", "hashes"),
+            ("hashes", True),
+            ("source", []),
+            ("policy", "policy"),
+            ("taxonomy", None),
+        ]
+        for field, value in mutations:
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                registry = root / "catalog"
+                shutil.copytree("catalog", registry)
+                manifest_path = registry / "research/research-source-check/skill.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                manifest[field] = value
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                out = io.StringIO()
+
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+                result = json.loads(out.getvalue())
+                self.assertEqual(exit_code, 2)
+                self.assertEqual(result["error"]["code"], "invalid_input")
+                serialized = json.dumps(result)
+                self.assertNotIn("Traceback", serialized)
+                self.assertNotIn(str(root), serialized)
+
     def test_v2_snapshot_rejects_nonobject_manifests_with_typed_error(self):
         for payload in ([], None, "manifest", 7, True):
             with self.subTest(payload=payload), tempfile.TemporaryDirectory() as tmp:

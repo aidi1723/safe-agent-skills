@@ -222,14 +222,14 @@ def build_verified_registry_snapshot(registry_dir: Path) -> VerifiedRegistrySnap
                     )
                     if type(manifest) is not dict:
                         raise ValueError("registry snapshot manifest is malformed")
+                    manifest_issues: list[dict] = []
+                    validate_manifest_schema(manifest, manifest_path, manifest_issues)
+                    if manifest_issues:
+                        raise ValueError("registry snapshot manifest validation failed")
                     skill_text = safe_fs.read_file_at(skill_fd, ("SKILL.md",)).decode("utf-8")
                     expected_auxiliary = manifest.get("hashes", {}).get("auxiliary_sha256")
                     if auxiliary_content_sha256_from_fd(skill_fd) != expected_auxiliary:
                         raise ValueError("registry snapshot auxiliary content hash mismatch")
-            manifest_issues: list[dict] = []
-            validate_manifest_schema(manifest, manifest_path, manifest_issues)
-            if manifest_issues:
-                raise ValueError("registry snapshot manifest validation failed")
             expected_entry = manifest_index_entry(manifest, Path(entry["registry_path"]))
             if entry != expected_entry:
                 raise ValueError("registry snapshot entry does not match manifest")
