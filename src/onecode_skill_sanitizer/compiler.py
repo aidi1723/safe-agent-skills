@@ -15,10 +15,10 @@ from .routing_profiles import SCENARIO_PROFILES
 
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
 _KNOWN_TASK_TYPES = frozenset(profile["task_type"] for profile in SCENARIO_PROFILES)
-_EXPLICIT_VERIFICATION_OR_COMPLETION_GATE_RE = re.compile(
+_EXPLICIT_VERIFICATION_GATE_RE = re.compile(
     r"^\s*(?:after|once)\b.*\b"
-    r"(?:verif(?:ied|ication|ying)|complet(?:e|ed|ion|ing)|approved)\b|"
-    r"(?:验证通过|测试通过|完成|批准|审批通过|审核通过)后",
+    r"(?:verif(?:ied|ication|ying)|approved)\b|"
+    r"(?:验证通过|测试通过|批准|审批通过|审核通过)后",
     re.IGNORECASE,
 )
 
@@ -165,14 +165,10 @@ def _requires_verified_dependency(source_intent: Any, target_intent: Any) -> boo
         target_intent.task_type not in _KNOWN_TASK_TYPES
         or target_intent.task_type == "open_source_release"
         or bool(
-            _EXPLICIT_VERIFICATION_OR_COMPLETION_GATE_RE.search(
-                source_intent.summary
-            )
+            _EXPLICIT_VERIFICATION_GATE_RE.search(source_intent.summary)
         )
         or bool(
-            _EXPLICIT_VERIFICATION_OR_COMPLETION_GATE_RE.search(
-                target_intent.summary
-            )
+            _EXPLICIT_VERIFICATION_GATE_RE.search(target_intent.summary)
         )
     )
 

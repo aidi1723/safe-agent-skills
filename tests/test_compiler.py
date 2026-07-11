@@ -400,6 +400,51 @@ class CompilerTest(unittest.TestCase):
                     compiled["reason_codes"], ["missing_intent_verification"]
                 )
 
+    def test_source_side_completion_gate_without_anchor_uses_completion_edge(self):
+        bundles = {
+            "bundles": [
+                self.bundle("first", ["skill-a"]),
+                self.bundle("second", ["execution-publish-check"]),
+            ]
+        }
+
+        for task in [
+            "After completing the PR review, build the website",
+            "PR 审查完成后，构建官网",
+        ]:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    ["code_review", "website_build"],
+                )
+                self.assertEqual(
+                    [intent.depends_on for intent in graph.intents],
+                    [(), ("i1",)],
+                )
+
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(("i1",), ("i2",)),
+                    bundles,
+                    {"skill-a", "execution-publish-check"},
+                )
+
+                self.assertEqual(compiled["status"], "ready")
+                self.assertEqual(compiled["reason_codes"], [])
+                self.assertIn(
+                    {
+                        "from": "skill:i1:skill-a",
+                        "to": "skill:i2:execution-publish-check",
+                        "type": "intent_completion_dependency",
+                    },
+                    compiled["edges"],
+                )
+                self.assertNotIn(
+                    "intent_verification_dependency",
+                    {edge["type"] for edge in compiled["edges"]},
+                )
+
     def test_verification_followed_by_review_adds_evidence_and_completion_edges(self):
         graph = IntentGraph(
             intents=(
