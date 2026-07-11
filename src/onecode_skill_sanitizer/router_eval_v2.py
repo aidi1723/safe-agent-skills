@@ -107,6 +107,32 @@ class EvaluatorError(RuntimeError):
     pass
 
 
+def _is_legacy_router_eval_v2(payload: object) -> bool:
+    if not isinstance(payload, dict):
+        return False
+    cases = payload.get("cases")
+    case_count = payload.get("case_count")
+    valid_envelope = (
+        LEGACY_ROUTER_EVAL_V2_FIELDS.issubset(payload)
+        and "labeling" not in payload
+        and payload.get("schema_version") == 2
+        and isinstance(payload.get("dataset"), str)
+        and bool(payload["dataset"])
+        and payload.get("split") == "regression"
+        and isinstance(cases, list)
+        and isinstance(case_count, int)
+        and not isinstance(case_count, bool)
+        and case_count == len(cases)
+    )
+    if not valid_envelope:
+        return False
+    case_ids = [case.get("id") if isinstance(case, dict) else None for case in cases]
+    invalid_case_id = any(
+        not isinstance(case_id, str) or not case_id for case_id in case_ids
+    )
+    return not invalid_case_id and len(case_ids) == len(set(case_ids))
+
+
 def load_eval_dataset_v2(
     path: Path,
     known_scenarios: set[str] | None = None,
@@ -118,11 +144,7 @@ def load_eval_dataset_v2(
         raise DatasetValidationError(f"unable to read evaluation dataset: {exc}") from exc
     except json.JSONDecodeError as exc:
         raise DatasetValidationError(f"invalid evaluation JSON: {exc}") from exc
-    if (
-        isinstance(payload, dict)
-        and payload.get("schema_version") == 2
-        and LEGACY_ROUTER_EVAL_V2_FIELDS.issubset(payload)
-    ):
+    if _is_legacy_router_eval_v2(payload):
         raise DatasetValidationError(
             "this is a router-eval dataset; use router-eval. "
             "router-eval-v2 expects the multi-intent gold/suite contract"

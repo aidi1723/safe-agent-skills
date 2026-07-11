@@ -189,7 +189,7 @@ class RouterEvalV2Tests(unittest.TestCase):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 
-        legacy_payload = {
+        valid_legacy_payload = {
             "schema_version": 2,
             "dataset": "router-quality-v2-baseline",
             "split": "regression",
@@ -202,7 +202,39 @@ class RouterEvalV2Tests(unittest.TestCase):
                 DatasetValidationError,
                 "router-eval dataset.*use router-eval.*multi-intent gold/suite contract",
             ):
-                load_eval_dataset_v2(write_payload(temp_dir, legacy_payload))
+                load_eval_dataset_v2(write_payload(temp_dir, valid_legacy_payload))
+
+        malformed_payloads = {
+            "null dataset": {**valid_legacy_payload, "dataset": None},
+            "empty dataset": {**valid_legacy_payload, "dataset": ""},
+            "wrong split": {**valid_legacy_payload, "split": "training"},
+            "boolean case count": {**valid_legacy_payload, "case_count": True},
+            "string case count": {**valid_legacy_payload, "case_count": "0"},
+            "mismatched case count": {**valid_legacy_payload, "case_count": 1},
+            "non-list cases": {**valid_legacy_payload, "cases": {}},
+            "invalid case id": {
+                **valid_legacy_payload,
+                "case_count": 1,
+                "cases": [{}],
+            },
+            "duplicate case ids": {
+                **valid_legacy_payload,
+                "case_count": 2,
+                "cases": [{"id": "same"}, {"id": "same"}],
+            },
+            "hybrid labeling": {
+                **valid_legacy_payload,
+                "labeling": EXPECTED_LABELING,
+            },
+        }
+        for label, payload in malformed_payloads.items():
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temp_dir:
+                with self.assertRaises(DatasetValidationError) as captured:
+                    load_eval_dataset_v2(write_payload(temp_dir, payload))
+                self.assertEqual(
+                    str(captured.exception),
+                    "evaluation dataset must be an object containing only labeling and cases",
+                )
 
     def test_loader_rejects_strict_case_contract_violations(self):
         from onecode_skill_sanitizer.router_eval_v2 import DatasetValidationError
