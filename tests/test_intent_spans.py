@@ -237,6 +237,27 @@ class IntentSpansTest(unittest.TestCase):
                 self.assertEqual(readiness[0].polarity, "positive")
                 self.assertEqual(graph.validate(), [])
 
+    def test_positive_release_obligations_remain_readiness_requests(self):
+        tasks = (
+            "Do not forget to prepare a repository release packet.",
+            "Do not fail to prepare a repository release checklist.",
+            "Do not neglect to prepare a repository release packet.",
+            "Please do not hesitate to prepare a repository release checklist.",
+            "Not only prepare a repository release packet, but also document it.",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                readiness = [
+                    item
+                    for item in graph.intent_evidence
+                    if item.task_type == "open_source_release"
+                    and item.release_mode == "readiness"
+                ]
+                self.assertEqual(len(readiness), 1)
+                self.assertEqual(readiness[0].polarity, "positive")
+                self.assertEqual(graph.validate(), [])
+
     def test_direct_text_helpers_share_exact_scan_boundary(self):
         evidence = IntentEvidence(
             "general", "action", "positive", "none", "single", (), 0

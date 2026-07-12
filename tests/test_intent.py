@@ -255,6 +255,39 @@ class IntentTest(unittest.TestCase):
                     ["negative", "positive"],
                 )
 
+    def test_release_negation_attachment_exempts_positive_obligations(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        positive_cases = (
+            "Do not forget to prepare a repository release packet.",
+            "Don't forget to prepare a repository release packet.",
+            "Do not fail to prepare a repository release checklist.",
+            "Do not neglect to prepare a repository release packet.",
+            "Please do not hesitate to prepare a repository release checklist.",
+            "Not only prepare a repository release packet, but also document it.",
+        )
+        for source in positive_cases:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].polarity, "positive")
+                self.assertEqual(propositions[0].discourse_role, "request")
+
+        negative_cases = (
+            "Do not plan to prepare a repository release packet.",
+            "Don't intend to prepare a repository release checklist.",
+            "Will not currently plan to prepare a repository release packet.",
+            "Asked you not to immediately prepare a repository release packet.",
+            "Do not automatically prepare a repository release checklist.",
+        )
+        for source in negative_cases:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].polarity, "negative")
+
     def test_release_sentence_discourse_role_covers_coordinated_propositions(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"

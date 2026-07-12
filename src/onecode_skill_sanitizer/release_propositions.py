@@ -45,15 +45,36 @@ _COORDINATOR_RE = re.compile(
     r"[;；\n。]|\s*[+＋]\s*",
     re.IGNORECASE,
 )
+_ACTION_MODIFIER = (
+    r"(?:immediately|directly|automatically|publicly|yet|currently|"
+    r"carefully|quietly|explicitly|manually|now|temporarily|"
+    r"deliberately|intentionally|properly|securely|ever)"
+)
 _ENGLISH_ACTION_NEGATION_RE = re.compile(
     r"(?:\basked\s+(?:you|us|me|them)\s+not\s+to|"
     r"\b(?:do|will|can|must|should)\s+not|"
     r"\b(?:do|ca|wo|must|should)n['’]t|"
     r"\bcannot|\bnever|\bno\s+need\s+to|"
     r"\bnot\s+authorized\s+to|\bnot)"
-    r"(?:\s+[\w-]+){0,3}\s*$",
+    rf"(?:\s+{_ACTION_MODIFIER}){{0,3}}\s*$",
     re.IGNORECASE,
 )
+_NEGATIVE_INTENT_RE = re.compile(
+    r"(?:\b(?:do|will|can)\s+not|"
+    r"\b(?:do|ca|wo)n['’]t|\bcannot)"
+    rf"(?:\s+{_ACTION_MODIFIER}){{0,2}}\s+"
+    r"(?:plan|intend)\s+to"
+    rf"(?:\s+{_ACTION_MODIFIER}){{0,2}}\s*$",
+    re.IGNORECASE,
+)
+_POSITIVE_OBLIGATION_RE = re.compile(
+    r"(?:\bdo\s+not|\bdon['’]t)"
+    rf"(?:\s+{_ACTION_MODIFIER}){{0,2}}\s+"
+    r"(?:forget|fail|neglect|hesitate)\s+to"
+    rf"(?:\s+{_ACTION_MODIFIER}){{0,2}}\s*$",
+    re.IGNORECASE,
+)
+_NOT_ONLY_RE = re.compile(r"\bnot\s+only\s*$", re.IGNORECASE)
 _CHINESE_ACTION_NEGATION_RE = re.compile(
     r"(?:不能|不会|不可|不需要|无需|不得|不要|暂不|先不|别|未授权)"
     r"(?:立即|马上|暂时|仔细|认真|谨慎|再|先)?\s*$"
@@ -347,8 +368,11 @@ def _dot_is_internal(source: str, index: int) -> bool:
 
 
 def _action_is_negated(prefix: str, between_action_and_object: str) -> bool:
+    if _POSITIVE_OBLIGATION_RE.search(prefix) or _NOT_ONLY_RE.search(prefix):
+        return False
     return bool(
-        _ENGLISH_ACTION_NEGATION_RE.search(prefix)
+        _NEGATIVE_INTENT_RE.search(prefix)
+        or _ENGLISH_ACTION_NEGATION_RE.search(prefix)
         or _CHINESE_ACTION_NEGATION_RE.search(prefix)
         or _OBJECT_EXCLUSION_RE.search(between_action_and_object)
     )

@@ -115,6 +115,11 @@ def find_profile_signal_spans(
         and _POSITIVE_AFTER_NEGATION_RE.search(clause) is None
         else _coordinated_negation_ranges(clause)
     )
+    positive_readiness_ranges = tuple(
+        (item.start, item.end)
+        for item in parse_release_readiness_propositions(clause)
+        if item.polarity == "positive" and item.discourse_role == "request"
+    )
     non_action_release_ranges = tuple(
         (match.start(), match.end())
         for match in _NON_ACTION_RELEASE_TERM_RE.finditer(clause)
@@ -133,7 +138,13 @@ def find_profile_signal_spans(
             signal=str(item["signal"]),
             score=int(item["score"]),
         )
-        if not _offset_is_negated(span.start, negation_ranges) and not (
+        negated = _offset_is_negated(span.start, negation_ranges) and not (
+            span.task_type == "open_source_release"
+            and _range_overlaps(
+                span.start, span.end, positive_readiness_ranges
+            )
+        )
+        if not negated and not (
             span.task_type in {"website_build", "open_source_release"}
             and _range_overlaps(span.start, span.end, non_action_release_ranges)
         ):
