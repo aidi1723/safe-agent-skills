@@ -508,6 +508,14 @@ class IntentSpansTest(unittest.TestCase):
             "despite repository code review.",
             "Prepare a content-management release packet for Following repository "
             "code review.",
+            "Prepare a content-management release packet for Python package "
+            "campaign.",
+            "Prepare a content-management release packet for the Python package "
+            "campaign.",
+            "Prepare a content-management release packet for GitLab package "
+            "promotion.",
+            "Prepare a content-management release packet for GitHub package "
+            "photography campaign.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",

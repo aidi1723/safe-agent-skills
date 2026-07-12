@@ -83,10 +83,15 @@ _PACKAGE_ANCHOR_PATTERN = r"packages?"
 _ECOSYSTEM_PACKAGE_ANCHOR_PATTERN = (
     rf"(?:github|gitlab|python)\s+{_PACKAGE_ANCHOR_PATTERN}"
 )
+_QUALIFIED_REPOSITORY_ANCHOR_PATTERN = (
+    rf"(?:software|open[ -]source)\s+"
+    rf"(?:{_REPOSITORY_ANCHOR_PATTERN}|{_REPO_ANCHOR_PATTERN})"
+)
 _DOCKER_ANCHOR_PATTERN = r"docker(?:\s+images?)?"
 _CLI_ANCHOR_PATTERN = r"clis?"
 _VERSION_ANCHOR_PATTERN = r"versions?"
 _DIRECT_SOFTWARE_ANCHOR_PATTERN = (
+    rf"{_QUALIFIED_REPOSITORY_ANCHOR_PATTERN}|"
     rf"{_REPOSITORY_ANCHOR_PATTERN}|{_REPO_ANCHOR_PATTERN}|software|"
     rf"{_ECOSYSTEM_PACKAGE_ANCHOR_PATTERN}|{_CODEBASE_ANCHOR_PATTERN}|"
     rf"{_CODE_ARTIFACT_ANCHOR_PATTERN}|code|"
@@ -122,11 +127,23 @@ _RELEASE_OBJECT_MODIFIER = (
     rf"{_RELEASE_OBJECT_PROPER_POSSESSIVE}|"
     rf"{_RELEASE_OBJECT_PACKAGE_MODIFIER})"
 )
+_RELEASE_OBJECT_HEAD_COORDINATOR = (
+    rf"(?:\s+(?i:and)\s+|\s*&\s*|"
+    rf"{_DASH_CHARACTER}(?i:and){_DASH_CHARACTER})"
+)
+_RELEASE_OBJECT_COMPLEMENT_END = (
+    r"(?=\s*(?:$|[,;:.!?()\[\]{}，。！？；：]))"
+)
 _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
     rf"^\s*(?i:for|of)\s+"
     rf"(?:(?:{_RELEASE_OBJECT_MODIFIER})\s+)"
     rf"{{0,{MAX_RELEASE_OBJECT_MODIFIER_TOKENS}}}"
     rf"(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})"
+    rf"(?:\s+(?i:{_MAINTAINER_ANCHOR_PATTERN}))?"
+    rf"(?:{_RELEASE_OBJECT_HEAD_COORDINATOR}"
+    rf"(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})"
+    rf"(?:\s+(?i:{_MAINTAINER_ANCHOR_PATTERN}))?)?"
+    rf"{_RELEASE_OBJECT_COMPLEMENT_END}"
 )
 _ACTION_RE = re.compile(
     r"(?<!\w)(?:prepare|review|check|verify|audit|assess|assemble|"
