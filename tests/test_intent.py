@@ -288,6 +288,62 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(len(propositions), 1)
                 self.assertEqual(propositions[0].polarity, "negative")
 
+    def test_release_negation_accepts_grammatical_adverb_tokens_only(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        unseen_adverbs = (
+            "quickly",
+            "accidentally",
+            "inadvertently",
+            "unexpectedly",
+            "swiftly",
+            "surprisingly",
+        )
+        templates = (
+            "Do not {adverb} prepare a repository release packet.",
+            "Won't {adverb} review the release checklist for v1.0.",
+        )
+        for adverb in unseen_adverbs:
+            for template in templates:
+                source = template.format(adverb=adverb)
+                with self.subTest(source=source):
+                    propositions = parse(source)
+                    self.assertEqual(len(propositions), 1)
+                    self.assertEqual(propositions[0].polarity, "negative")
+
+            positive = (
+                f"{adverb.title()} prepare a repository release packet."
+            )
+            with self.subTest(source=positive):
+                propositions = parse(positive)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].polarity, "positive")
+
+        controls = (
+            ("Do not want to prepare a repository release packet.", "negative"),
+            ("Do not plan to prepare a repository release packet.", "negative"),
+            ("Don't intend to review the release checklist for v1.0.", "negative"),
+            (
+                "Do not quickly forget to prepare a repository release packet.",
+                "positive",
+            ),
+            (
+                "Do not accidentally fail to prepare a repository release checklist.",
+                "positive",
+            ),
+            (
+                "Do not inadvertently neglect to prepare a repository release packet.",
+                "positive",
+            ),
+        )
+        for source, expected in controls:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].polarity, expected)
+
     def test_release_sentence_discourse_role_covers_coordinated_propositions(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"

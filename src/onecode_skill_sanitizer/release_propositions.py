@@ -46,9 +46,7 @@ _COORDINATOR_RE = re.compile(
     re.IGNORECASE,
 )
 _ACTION_MODIFIER = (
-    r"(?:immediately|directly|automatically|publicly|yet|currently|"
-    r"carefully|quietly|explicitly|manually|now|temporarily|"
-    r"deliberately|intentionally|properly|securely|ever)"
+    r"(?:[^\W\d_]+ly|never|ever|yet|now|soon|still|just|already)"
 )
 _ENGLISH_ACTION_NEGATION_RE = re.compile(
     r"(?:\basked\s+(?:you|us|me|them)\s+not\s+to|"
@@ -63,7 +61,7 @@ _NEGATIVE_INTENT_RE = re.compile(
     r"(?:\b(?:do|will|can)\s+not|"
     r"\b(?:do|ca|wo)n['’]t|\bcannot)"
     rf"(?:\s+{_ACTION_MODIFIER}){{0,2}}\s+"
-    r"(?:plan|intend)\s+to"
+    r"(?:want|plan|intend)\s+to"
     rf"(?:\s+{_ACTION_MODIFIER}){{0,2}}\s*$",
     re.IGNORECASE,
 )
