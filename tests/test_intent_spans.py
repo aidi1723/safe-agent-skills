@@ -377,6 +377,42 @@ class IntentSpansTest(unittest.TestCase):
         )
         self.assertEqual(graph.validate(), [])
 
+    def test_independent_report_facts_do_not_suppress_release_readiness(self):
+        tasks = (
+            "The report says tests passed; prepare a repository release checklist.",
+            "Prepare a repository release checklist; the report says tests passed.",
+            "The report says tests passed, but prepare a repository release "
+            "checklist.",
+            "Prepare a repository release checklist, and the report says tests "
+            "passed.",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    sum(
+                        item.task_type == "open_source_release"
+                        and item.release_mode == "readiness"
+                        for item in graph.intent_evidence
+                    ),
+                    1,
+                )
+                self.assertEqual(graph.validate(), [])
+
+        for task in (
+            "The report says to prepare a repository release checklist.",
+            'The report says "Prepare a repository release checklist."',
+        ):
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
     def test_detailed_decomposition_parses_release_propositions_once(self):
         task = (
             "Example: prepare a repository release packet; review the release "

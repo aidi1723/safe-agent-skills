@@ -82,6 +82,8 @@ class CompilerTest(unittest.TestCase):
             "~~~text\nPrepare a repository release checklist",
             "The documentation says to prepare a repository release packet and "
             "review the release checklist for v1.0.",
+            "The report says to prepare a repository release checklist.",
+            'The report says "Prepare a repository release checklist."',
             "仓库发布清单准备完成。",
             "准备工作涉及仓库发布清单。",
             "审查仓库未发布清单。",

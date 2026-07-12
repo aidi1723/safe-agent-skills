@@ -555,10 +555,6 @@ class IntentTest(unittest.TestCase):
             "checklist for v1.0.",
             "I.e., prepare a repository release packet and review the release "
             "checklist for v1.0.",
-            "The report says \"Prepare a repository release packet\" and review "
-            "the release checklist for v1.0.",
-            "The quoted instruction says to prepare a repository release packet "
-            "and review the release checklist for v1.0.",
         )
         for source in references:
             with self.subTest(source=source):
@@ -579,6 +575,48 @@ class IntentTest(unittest.TestCase):
         self.assertEqual(
             tuple(item.discourse_role for item in parse(ordinary_docs_request)),
             ("request",),
+        )
+
+    def test_reported_speech_reference_is_proposition_local(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        references = (
+            "The report says to prepare a repository release checklist.",
+            "Instruction says prepare a repository release checklist.",
+            "The report tells us to review the release checklist for v1.0.",
+            'The report says "Prepare a repository release checklist."',
+            '"Prepare a repository release checklist," the report says.',
+        )
+        for source in references:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].discourse_role, "reference")
+
+        independent = (
+            "The report says tests passed; prepare a repository release checklist.",
+            "Prepare a repository release checklist; the report says tests passed.",
+            "The report says tests passed, but prepare a repository release "
+            "checklist.",
+            "Prepare a repository release checklist, and the report says tests "
+            "passed.",
+        )
+        for source in independent:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].polarity, "positive")
+                self.assertEqual(propositions[0].discourse_role, "request")
+
+        quoted_then_request = (
+            'The report says "Prepare a repository release packet"; review the '
+            "release checklist for v1.0."
+        )
+        self.assertEqual(
+            tuple(item.discourse_role for item in parse(quoted_then_request)),
+            ("reference", "request"),
         )
 
     def test_release_sentence_discourse_role_covers_coordinated_propositions(self):

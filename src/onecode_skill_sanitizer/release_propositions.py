@@ -104,6 +104,14 @@ _REFERENCE_CLAUSE_RE = re.compile(
     r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
 )
+_REPORTED_SPEECH_REFERENCE_RE = re.compile(
+    r"^\s*(?:(?:the|an?)\s+)?(?:(?:quoted\s+)?instruction|report)\s+"
+    r"(?:says?|tells?|asks?)(?:\s+\w+)?\s+(?:to\s+)?"
+    r"(?:[^\W\d_]+ly\s+){0,2}"
+    r"(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
+    r"draft|produce|document|approve)\b",
+    re.IGNORECASE,
+)
 _SENTENCE_REFERENCE_RE = re.compile(
     r"^\s*(?:#{1,6}\s+|>\s+|"
     r"(?:example|for\s+example|reference|quoted|hypothetical(?:ly)?|"
@@ -112,7 +120,6 @@ _SENTENCE_REFERENCE_RE = re.compile(
     r"(?:[-*+]\s+)?\[[ xX]\]\s+|(?:e\.g\.|i\.e\.)\s*[,，:]?)|"
     r"^\s*(?:the\s+)?(?:example|documentation|docs|guide)\s+"
     r"(?:says?|tells?|asks?)(?:\s+\w+)?\s+to\b|"
-    r"\b(?:(?:quoted\s+)?instruction|report)\s+says\b|"
     r"\bdiscussed\s+whether\b|"
     r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
@@ -221,6 +228,7 @@ def parse_release_readiness_propositions(
             sentence_is_reference
             or _STRUCTURAL_PREFIX_RE.search(proposition)
             or _REFERENCE_CLAUSE_RE.search(proposition)
+            or _REPORTED_SPEECH_REFERENCE_RE.search(proposition)
         ):
             propositions.append(
                 ReleaseReadinessProposition(
