@@ -75,6 +75,17 @@ class CompilerTest(unittest.TestCase):
 
     def test_release_readiness_controls_never_compile_as_invalid_intent_graph(self):
         tasks = (
+            "I refuse to prepare a repository release packet.",
+            "You are not permitted to review the release checklist for v1.0.",
+            "There is no requirement to prepare a repository release checklist.",
+            "Review the repository instead of the release checklist for v1.0.",
+            "~~~text\nPrepare a repository release checklist",
+            "The documentation says to prepare a repository release packet and "
+            "review the release checklist for v1.0.",
+            "仓库发布清单准备完成。",
+            "准备工作涉及仓库发布清单。",
+            "审查仓库未发布清单。",
+            "审查仓库发布清单字段。",
             "前置说明。Example: prepare a repository release packet; review the "
             "release checklist for v1.0。",
             "前置说明。。Example: prepare a repository release packet; review the "

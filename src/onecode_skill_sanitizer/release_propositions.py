@@ -51,6 +51,9 @@ _ACTION_MODIFIER = (
 )
 _ENGLISH_ACTION_NEGATION_RE = re.compile(
     r"(?:\basked\s+(?:you|us|me|them)\s+not\s+to|"
+    r"\b(?:refuse|refused|decline|declined)\s+to|"
+    r"\bnot\s+(?:permitted|allowed)\s+to|"
+    r"\bno\s+(?:requirement|need|plan)\s+to|"
     r"\b(?:am|is|are)\s+not\s+going\s+to|"
     r"\b(?:have|has)\s+no\s+plans?\s+to|"
     r"\b(?:am|is|are)\s+not\s+to|"
@@ -83,7 +86,9 @@ _CHINESE_ACTION_NEGATION_RE = re.compile(
     r"(?:立即|马上|暂时|仔细|认真|谨慎|再|先)?\s*$"
 )
 _OBJECT_EXCLUSION_RE = re.compile(
-    r"[\s,，]*(?:not\s+(?:(?:the|an?)\s+)?|而不是(?:这个|该)?)$",
+    r"(?:\b(?:rather\s+than|instead\s+of|excluding|except)\s+"
+    r"(?:(?:the|an?)\s+)?|"
+    r"[\s,，]*(?:not\s+(?:(?:the|an?)\s+)?|而不是(?:这个|该)?))$",
     re.IGNORECASE,
 )
 _STRUCTURAL_PREFIX_RE = re.compile(
@@ -104,7 +109,10 @@ _SENTENCE_REFERENCE_RE = re.compile(
     r"(?:example|for\s+example|reference|quoted|hypothetical(?:ly)?|"
     r"suppose|if\b|label|terms?|navigation|headings?|menu|title|readme|"
     r"description)\s*[:：,，]?|"
-    r"(?:[-*+]\s+)?\[[ xX]\]\s+)|"
+    r"(?:[-*+]\s+)?\[[ xX]\]\s+|(?:e\.g\.|i\.e\.)\s*[,，:]?)|"
+    r"^\s*(?:the\s+)?(?:example|documentation|docs|guide)\s+"
+    r"(?:says?|tells?|asks?)(?:\s+\w+)?\s+to\b|"
+    r"\b(?:(?:quoted\s+)?instruction|report)\s+says\b|"
     r"\bdiscussed\s+whether\b|"
     r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
@@ -156,8 +164,14 @@ def parse_release_readiness_propositions(
             break
         object_start, object_end = match.span()
         object_text = match.group()
-        if object_text == "发布清单" and source[object_end : object_end + 1] == "化":
-            continue
+        chinese_object = object_text == "发布清单"
+        if chinese_object:
+            object_prefix = source[max(0, object_start - 1) : object_start]
+            object_suffix = source[object_end:]
+            if object_prefix in {"未", "不"} or object_suffix.startswith(
+                ("项", "条目", "字段", "记录", "化")
+            ):
+                continue
         line_start, line_end = _line_bounds(source, object_start, object_end)
         line = source[line_start:line_end]
         local_end = object_end - line_start
@@ -235,11 +249,15 @@ def parse_release_readiness_propositions(
         invalid_actions = tuple(
             item
             for item in raw_actions
-            if _is_chinese_action(item.group())
-            and proposition[item.end() : item.end() + 1] == "度"
+            if _chinese_action_is_nominalized(item, proposition)
         )
-        actions = tuple(item for item in raw_actions if item not in invalid_actions)
-        if invalid_actions and not actions:
+        actions = tuple(
+            item
+            for item in raw_actions
+            if item not in invalid_actions
+            and (not chinese_object or item.end() <= local_object_start)
+        )
+        if raw_actions and not actions and chinese_object:
             continue
         action = min(
             actions,
@@ -396,6 +414,7 @@ def _structural_reference_spans(
     spans: list[tuple[int, int]] = []
     scanned_spans = (
         *_delimited_spans(source, "```", "```"),
+        *_delimited_spans(source, "~~~", "~~~"),
         *_inline_code_spans(source),
         *_quote_spans(source, '"', '"'),
         *_quote_spans(source, "“", "”"),
@@ -517,6 +536,16 @@ def _is_escaped(source: str, index: int) -> bool:
 
 def _is_chinese_action(action: str) -> bool:
     return any("\u4e00" <= character <= "\u9fff" for character in action)
+
+
+def _chinese_action_is_nominalized(match: re.Match[str], source: str) -> bool:
+    action = match.group()
+    if not _is_chinese_action(action):
+        return False
+    suffix = source[match.end() :]
+    return suffix.startswith("度") or (
+        action == "准备" and suffix.startswith(("工作", "阶段", "性", "项"))
+    )
 
 
 def _range_is_contained(

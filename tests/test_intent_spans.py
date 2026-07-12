@@ -339,6 +339,44 @@ class IntentSpansTest(unittest.TestCase):
         self.assertEqual(readiness[0].polarity, "positive")
         self.assertEqual(graph.validate(), [])
 
+    def test_release_common_form_controls_keep_graphs_safe(self):
+        controls = (
+            "I refuse to prepare a repository release packet.",
+            "You are not permitted to review the release checklist for v1.0.",
+            "There is no requirement to prepare a repository release checklist.",
+            "Review the repository instead of the release checklist for v1.0.",
+            "~~~text\nPrepare a repository release checklist",
+            "The documentation says to prepare a repository release packet and "
+            "review the release checklist for v1.0.",
+            "仓库发布清单准备完成。",
+            "准备工作涉及仓库发布清单。",
+            "审查仓库未发布清单。",
+            "审查仓库发布清单字段。",
+        )
+        for task in controls:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+        graph = decompose_task_detailed(
+            controls[5] + " Prepare a repository release checklist."
+        ).intent_graph
+        self.assertEqual(
+            sum(
+                item.task_type == "open_source_release"
+                and item.release_mode == "readiness"
+                for item in graph.intent_evidence
+            ),
+            1,
+        )
+        self.assertEqual(graph.validate(), [])
+
     def test_detailed_decomposition_parses_release_propositions_once(self):
         task = (
             "Example: prepare a repository release packet; review the release "
