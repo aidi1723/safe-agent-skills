@@ -172,6 +172,7 @@ _ACTION_RE = re.compile(
     r"(?:准备|审查|检查|验证|审计|评估|组装|生成|创建|起草|记录|批准)",
     re.IGNORECASE,
 )
+_OBJECT_ACTION_NOMINAL_PREFIX_RE = re.compile(r"^\s+for\s+$", re.IGNORECASE)
 _SOFTWARE_ANCHOR_RE = re.compile(
     rf"(?<!\w)(?:{_DIRECT_SOFTWARE_ANCHOR_PATTERN}|"
     rf"{_PACKAGE_ANCHOR_PATTERN}|"
@@ -457,17 +458,13 @@ def parse_release_readiness_propositions(
         proposition = source[
             candidate.proposition_start : candidate.proposition_end
         ]
-        request_actions = tuple(
-            action
-            for action in candidate.actions
-            if _action_has_request_prefix(
-                action.match,
-                proposition,
-                candidates,
-                candidate.proposition_start,
-            )
+        action = (candidate.actions or (None,))[0]
+        action_is_request = action is not None and _action_has_request_prefix(
+            action.match,
+            proposition,
+            candidates,
+            candidate.proposition_start,
         )
-        action = (request_actions or candidate.actions or (None,))[0]
         if action is None and candidate.evidence_statement_request:
             propositions.append(
                 ReleaseReadinessProposition(
@@ -503,7 +500,7 @@ def parse_release_readiness_propositions(
                 action.text,
                 candidate.object_text,
                 action.polarity,
-                "request" if action in request_actions else "reference",
+                "request" if action_is_request else "reference",
             )
         )
     return tuple(propositions)
@@ -663,6 +660,16 @@ def _nearest_readiness_actions(
         len(facts.actions), insertion + MAX_BOUND_ACTION_CANDIDATES
     )
     local_actions = facts.actions[window_start:window_end]
+    local_actions = tuple(
+        action
+        for action in local_actions
+        if not (
+            action.start() >= object_end
+            and _OBJECT_ACTION_NOMINAL_PREFIX_RE.fullmatch(
+                proposition[object_end : action.start()]
+            )
+        )
+    )
     if chinese_object:
         local_actions = tuple(
             action
@@ -822,7 +829,12 @@ def _action_has_request_prefix(
         return True
     if _NARRATIVE_REFERENCE_PREFIX_RE.fullmatch(prefix):
         return False
-    return _ENGLISH_REQUEST_PREFIX_RE.fullmatch(prefix) is not None
+    if _ENGLISH_REQUEST_PREFIX_RE.fullmatch(prefix) is not None:
+        return True
+    comma = max(prefix.rfind(","), prefix.rfind("，"))
+    return comma >= 0 and (
+        _ENGLISH_REQUEST_PREFIX_RE.fullmatch(prefix[comma + 1 :]) is not None
+    )
 
 
 def _without_structural_reference_spans(source: str) -> str:

@@ -339,6 +339,48 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(readiness[0].polarity, "positive")
                 self.assertEqual(readiness[0].discourse_role, "request")
 
+    def test_release_readiness_parser_prefers_nearest_bound_action(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        cases = (
+            (
+                "Review repository code, prepare a repository release checklist.",
+                "prepare",
+            ),
+            (
+                "Audit repository code, draft a repository release packet.",
+                "draft",
+            ),
+            (
+                "Prepare documentation, review the release checklist for v1.0.",
+                "review",
+            ),
+        )
+
+        for source, expected_action in cases:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                readiness = propositions[0]
+                self.assertEqual(readiness.action, expected_action)
+                self.assertEqual(
+                    readiness.start,
+                    source.casefold().index(expected_action),
+                )
+                self.assertEqual(readiness.discourse_role, "request")
+
+                graph = decompose_task(source)
+                evidence = tuple(
+                    item
+                    for item in graph.intent_evidence
+                    if item.task_type == "open_source_release"
+                    and item.release_mode == "readiness"
+                )
+                self.assertEqual(len(evidence), 1)
+                self.assertEqual(graph.validate(), [])
+
     def test_release_readiness_propositions_do_not_cross_sentence_boundaries(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"
