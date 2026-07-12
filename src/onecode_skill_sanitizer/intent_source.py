@@ -29,6 +29,8 @@ _RELEASE_ACTION_CLAUSE_BOUNDARY_RE = re.compile(
     re.IGNORECASE,
 )
 _RELEASE_ACTION_DOT_ABBREVIATIONS = ("e.g.", "i.e.")
+_RELEASE_ACTION_CLOSING_QUOTES = frozenset({'"', "'", "”", "’"})
+_RELEASE_ACTION_QUOTE_TERMINATORS = frozenset(".!?。！？;；")
 _RELEASE_ACTION_TITLE_ABBREVIATIONS = frozenset(
     {
         "capt",
@@ -169,10 +171,11 @@ def _is_release_action_reference_source(text: str) -> bool:
 
 def _release_action_clause_boundary_ends(text: str) -> tuple[int, ...]:
     hard_boundaries = tuple(
-        match.end() for match in _RELEASE_ACTION_CLAUSE_BOUNDARY_RE.finditer(text)
+        _advance_release_boundary_closing_quotes(text, match.end())
+        for match in _RELEASE_ACTION_CLAUSE_BOUNDARY_RE.finditer(text)
     )
     dot_boundaries = tuple(
-        index + 1
+        _advance_release_boundary_closing_quotes(text, index + 1)
         for index, character in enumerate(text)
         if character == "." and _is_release_sentence_dot(text, index)
     )
@@ -192,6 +195,17 @@ def _release_action_clause_boundary_ends(text: str) -> tuple[int, ...]:
         if not merged or merged[-1] != boundary:
             merged.append(boundary)
     return tuple(merged)
+
+
+def _advance_release_boundary_closing_quotes(text: str, boundary: int) -> int:
+    if boundary == 0 or text[boundary - 1] not in _RELEASE_ACTION_QUOTE_TERMINATORS:
+        return boundary
+    while (
+        boundary < len(text)
+        and text[boundary] in _RELEASE_ACTION_CLOSING_QUOTES
+    ):
+        boundary += 1
+    return boundary
 
 
 def _is_release_sentence_dot(text: str, index: int) -> bool:

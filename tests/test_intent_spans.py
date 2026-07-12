@@ -1525,6 +1525,9 @@ class IntentSpansTest(unittest.TestCase):
             "README:\nPublish update.",
             '"Review code. Publish update."',
             "“Review code. Publish update.”",
+            "'Review code. Publish update.'",
+            "‘Review code. Publish update.’",
+            'Review code\n"Publish update."',
         )
 
         for source in cases:
@@ -1553,6 +1556,29 @@ class IntentSpansTest(unittest.TestCase):
             )
         )
         self.assertEqual(graph.validate(), [])
+
+    def test_closing_quote_boundary_starts_host_release_action(self):
+        cases = (
+            '"Review code." Publish update.',
+            "“Review code.” Publish update.",
+            '"Review code." Then publish update.',
+            "“Review code!” Publish update.",
+            "'Review code.' Publish update.",
+            "‘Review code.’ Publish update.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertTrue(source_supports_release_action(source))
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertTrue(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
 
     def test_unbounded_negation_rejects_forged_release_evidence(self):
         source = (
