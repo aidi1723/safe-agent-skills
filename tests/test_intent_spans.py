@@ -131,6 +131,14 @@ class IntentSpansTest(unittest.TestCase):
                 "Prepare a model-serving release packet for 代码库.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a repository-and-CLI content-management release packet.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a repository－and－CLI content-management release packet.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
@@ -360,6 +368,22 @@ class IntentSpansTest(unittest.TestCase):
             "while reviewing repository code.",
             "Prepare a model-serving release packet for a photography package "
             "while auditing software code.",
+            "Prepare a content-management release packet for a campaign package "
+            "after reviewing repository code.",
+            "Prepare a content-management release packet for a campaign package "
+            "before reviewing repository code.",
+            "Prepare a content-management release packet for a campaign package "
+            "during repository code review.",
+            "Prepare a content-management release packet for a campaign package "
+            "when reviewing repository code.",
+            "Prepare a content-management release packet for a campaign package "
+            "as repository code is reviewed.",
+            "Prepare a content-management release packet for a campaign package "
+            "with repository code under review.",
+            "Prepare a content-management release packet for a campaign package "
+            "alongside repository code review.",
+            "Prepare a content-management release packet for a campaign package "
+            "because repository code passed review.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",

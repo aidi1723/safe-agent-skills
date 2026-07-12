@@ -53,6 +53,8 @@ class IntentTest(unittest.TestCase):
             "Prepare a model−serving release packet for the software repository.",
             "Prepare a content-management release packet for 仓库.",
             "Prepare a model-serving release packet for 代码库.",
+            "Prepare a repository-and-CLI content-management release packet.",
+            "Prepare a repository－and－CLI content-management release packet.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
@@ -124,6 +126,22 @@ class IntentTest(unittest.TestCase):
             "while reviewing repository code.",
             "Prepare a model-serving release packet for a photography package "
             "while auditing software code.",
+            "Prepare a content-management release packet for a campaign package "
+            "after reviewing repository code.",
+            "Prepare a content-management release packet for a campaign package "
+            "before reviewing repository code.",
+            "Prepare a content-management release packet for a campaign package "
+            "during repository code review.",
+            "Prepare a content-management release packet for a campaign package "
+            "when reviewing repository code.",
+            "Prepare a content-management release packet for a campaign package "
+            "as repository code is reviewed.",
+            "Prepare a content-management release packet for a campaign package "
+            "with repository code under review.",
+            "Prepare a content-management release packet for a campaign package "
+            "alongside repository code review.",
+            "Prepare a content-management release packet for a campaign package "
+            "because repository code passed review.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
@@ -808,6 +826,9 @@ class IntentTest(unittest.TestCase):
             "repository release checklist.",
             "The report says to review a model-serving release packet for a "
             "photography package while auditing software code, so prepare a "
+            "repository release checklist.",
+            "The report says to review a content-management release packet for a "
+            "campaign package after reviewing repository code, so prepare a "
             "repository release checklist.",
         )
         for source in invalid_governed_candidates:

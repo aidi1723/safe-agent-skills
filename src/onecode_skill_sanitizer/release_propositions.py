@@ -73,11 +73,19 @@ _SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     rf"model{_COMPOUND_SEPARATOR}serving)(?!\w)",
     re.IGNORECASE,
 )
-_STRONG_SOFTWARE_RELEASE_OBJECT_RE = re.compile(
+_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN = (
     r"(?<!\w)(?:repository|repo|software|code(?:base)?|"
     r"open[ -]source|maintainers?|npm|docker(?:\s+image)?|cli|version|"
     r"v?\d+\.\d+(?:\.\d+)?)(?!\w)|"
-    r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)",
+    r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)"
+)
+_STRONG_SOFTWARE_RELEASE_OBJECT_RE = re.compile(
+    _STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN,
+    re.IGNORECASE,
+)
+_STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
+    rf"^\s*(?:for|of)\s+(?:(?:the|an?|this|that)\s+)?"
+    rf"(?:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})",
     re.IGNORECASE,
 )
 _ACTION_RE = re.compile(
@@ -97,11 +105,6 @@ _COORDINATOR_RE = re.compile(
     rf"\s*(?:,\s*)?(?:(?<!{_DASH_CHARACTER})\b(?:and|but|then)\b"
     rf"(?!{_DASH_CHARACTER})|然后|但是|但要|不过|同时|再)\s*|"
     r"[;；\n。]|\s*[+＋]\s*",
-    re.IGNORECASE,
-)
-_LOCAL_OBJECT_COMPLEMENT_BOUNDARY_RE = re.compile(
-    rf"(?:{_COORDINATOR_RE.pattern})|[,;:.!?()[\]{{}}，。！？；：]|"
-    r"(?<!\w)(?:while|whereas)(?!\w)",
     re.IGNORECASE,
 )
 _ACTION_MODIFIER = (
@@ -566,17 +569,13 @@ def _release_object_is_software(
     if non_software:
         return False
     if _SOFTWARE_RELEASE_DOMAIN_RE.search(noun_phrase):
+        if _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(noun_phrase):
+            return True
         complement = proposition[
             object_end : object_end + MAX_RELEASE_OBJECT_COMPLEMENT_CHARS
         ]
-        complement_boundary = _LOCAL_OBJECT_COMPLEMENT_BOUNDARY_RE.search(
-            complement
-        )
-        if complement_boundary:
-            complement = complement[: complement_boundary.start()]
-        local_object_context = noun_phrase + complement
         return (
-            _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(local_object_context)
+            _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(complement)
             is not None
         )
     return True
