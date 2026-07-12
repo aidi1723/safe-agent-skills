@@ -63,6 +63,12 @@ _OBJECT_RE = re.compile(
 _NON_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     r"(?<!\w)(?:talent|model|content)(?!\w)", re.IGNORECASE
 )
+_STRONG_SOFTWARE_RELEASE_OBJECT_RE = re.compile(
+    r"(?<!\w)(?:repository|repo|software|code(?:base)?|"
+    r"open[ -]source|maintainers?|npm|docker(?:\s+image)?|cli|version|"
+    r"v?\d+\.\d+(?:\.\d+)?)(?!\w)",
+    re.IGNORECASE,
+)
 _ACTION_RE = re.compile(
     r"(?<!\w)(?:prepare|review|check|verify|audit|assess|assemble|"
     r"create|build|draft|produce|document|approve)(?!\w)|"
@@ -534,10 +540,7 @@ def _release_object_is_software(source: str, object_start: int) -> bool:
     non_software = tuple(_NON_SOFTWARE_RELEASE_DOMAIN_RE.finditer(noun_phrase))
     if not non_software:
         return True
-    software = tuple(_SOFTWARE_ANCHOR_RE.finditer(noun_phrase))
-    if not software:
-        return False
-    return software[-1].end() > non_software[-1].end()
+    return _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(noun_phrase) is not None
 
 
 def _line_bounds(source: str, start: int, end: int) -> tuple[int, int]:

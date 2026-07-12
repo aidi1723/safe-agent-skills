@@ -83,6 +83,18 @@ class IntentSpansTest(unittest.TestCase):
                 "Prepare a repository release packet for talent-platform maintainers.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a repository content-management release packet.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a software model-serving release packet.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare an npm content-management release packet.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
@@ -295,6 +307,8 @@ class IntentSpansTest(unittest.TestCase):
             "Prepare a model photography release packet for a software repository.",
             "Prepare a content licensing release packet for a software repository.",
             "Prepare a model's release packet for a software repository.",
+            "Prepare a content package release packet for a campaign.",
+            "Prepare a talent package release packet for repository maintainers.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",
@@ -618,6 +632,11 @@ class IntentSpansTest(unittest.TestCase):
             "software repository, so prepare a repository release checklist.",
             "The report says to review a model's release packet for a software "
             "repository, therefore prepare a repository release checklist.",
+            "The report says to review a content package release packet for a "
+            "campaign, so prepare a repository release checklist.",
+            "The report says to review a talent package release packet for "
+            "repository maintainers, therefore prepare a repository release "
+            "checklist.",
         )
         for task in requests:
             with self.subTest(task=task):
