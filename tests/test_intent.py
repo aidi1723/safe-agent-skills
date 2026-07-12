@@ -563,6 +563,38 @@ class IntentTest(unittest.TestCase):
             ("negative", "positive"),
         )
 
+    def test_chinese_full_stops_are_hard_release_sentence_boundaries(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        references = (
+            "前置说明。Example: prepare a repository release packet; review "
+            "the release checklist for v1.0。",
+            "前置说明。。Example: prepare a repository release packet; review "
+            "the release checklist for v1.0。。",
+            "前置说明。Example: 准备仓库发布清单; review the repository release "
+            "checklist for v1.0。",
+        )
+        for source in references:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 2)
+                self.assertTrue(
+                    all(item.discourse_role == "reference" for item in propositions)
+                )
+
+        true_requests = (
+            references[0] + " Prepare a repository release checklist.",
+            references[0] + "准备仓库发布清单。",
+        )
+        for source in true_requests:
+            with self.subTest(source=source):
+                self.assertEqual(
+                    tuple(item.discourse_role for item in parse(source)),
+                    ("reference", "reference", "request"),
+                )
+
     def test_release_readiness_proposition_parser_is_bounded_and_total(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"

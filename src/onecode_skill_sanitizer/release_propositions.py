@@ -10,6 +10,7 @@ from .intent_source import bound_task_text
 
 MAX_READINESS_OCCURRENCES = 128
 MAX_STRUCTURAL_REFERENCE_SPANS = 256
+_HARD_SENTENCE_PUNCTUATION = ".!?！？。"
 
 
 @dataclass(frozen=True)
@@ -349,14 +350,17 @@ def _sentence_boundaries(source: str) -> tuple[tuple[int, int], ...]:
             boundaries.append((index, index + 1))
             index += 1
             continue
-        if character not in ".!?！？":
+        if character not in _HARD_SENTENCE_PUNCTUATION:
             index += 1
             continue
         if character == "." and _dot_is_internal(source, index):
             index += 1
             continue
         boundary_start = index
-        while index < len(source) and source[index] in ".!?！？":
+        while (
+            index < len(source)
+            and source[index] in _HARD_SENTENCE_PUNCTUATION
+        ):
             index += 1
         while index < len(source) and source[index].isspace():
             index += 1

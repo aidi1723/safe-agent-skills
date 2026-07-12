@@ -306,6 +306,39 @@ class IntentSpansTest(unittest.TestCase):
                 self.assertEqual(readiness[0].polarity, "positive")
                 self.assertEqual(graph.validate(), [])
 
+    def test_chinese_full_stop_keeps_reference_release_clauses_non_actionable(self):
+        controls = (
+            "前置说明。Example: prepare a repository release packet; review the "
+            "release checklist for v1.0。",
+            "前置说明。。Example: prepare a repository release packet; review the "
+            "release checklist for v1.0。。",
+            "前置说明。Example: 准备仓库发布清单; review the repository release "
+            "checklist for v1.0。",
+        )
+        for task in controls:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+        graph = decompose_task_detailed(
+            controls[0] + "准备仓库发布清单。"
+        ).intent_graph
+        readiness = [
+            item
+            for item in graph.intent_evidence
+            if item.task_type == "open_source_release"
+            and item.release_mode == "readiness"
+        ]
+        self.assertEqual(len(readiness), 1)
+        self.assertEqual(readiness[0].polarity, "positive")
+        self.assertEqual(graph.validate(), [])
+
     def test_detailed_decomposition_parses_release_propositions_once(self):
         task = (
             "Example: prepare a repository release packet; review the release "
