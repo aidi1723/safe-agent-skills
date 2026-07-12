@@ -11,7 +11,7 @@ from onecode_skill_sanitizer.intent import (
 from onecode_skill_sanitizer.release_propositions import (
     parse_release_readiness_propositions,
 )
-from onecode_skill_sanitizer import intent_spans, routing_profiles
+from onecode_skill_sanitizer import intent_source, intent_spans, routing_profiles
 from onecode_skill_sanitizer.intent_evidence import (
     IntentEvidence,
     bind_intent_evidence,
@@ -1029,7 +1029,7 @@ class IntentSpansTest(unittest.TestCase):
             with self.subTest(suffix=suffix):
                 base = "x" * routing_profiles.MAX_SCAN_CHARACTERS
                 outside = base + suffix
-                exact = "x" * (len(base) - len(suffix)) + suffix
+                exact = "x" * (len(base) - len(suffix) - 1) + "." + suffix
                 self.assertFalse(source_supports_release_action(outside))
                 self.assertTrue(source_supports_release_action(exact))
     def test_contains_and_mentions_only_suppress_governance_enumerations(self):
@@ -1389,6 +1389,122 @@ class IntentSpansTest(unittest.TestCase):
                     )
                 )
                 self.assertEqual(graph.validate(), [])
+
+    def test_non_host_release_constructions_are_not_supported(self):
+        cases = (
+            "According to the guide, open source the project.",
+            "A request to open source the project was logged.",
+            '"Open source the project."',
+            "Example: Open source the project.",
+            "Label: Open source the project.",
+            "Do not under any circumstances whatsoever even consider to open "
+            "source the project.",
+            "The guide says " + "very " * 33 + "open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_action(source, ("open source",))
+                )
+
+    def test_non_host_release_constructions_do_not_promote_action_evidence(self):
+        cases = (
+            "According to the guide, open source the project.",
+            "A request to open source the project was logged.",
+            '"Open source the project."',
+            "Example: Open source the project.",
+            "Label: Open source the project.",
+            "Do not under any circumstances whatsoever even consider to open "
+            "source the project.",
+            "The guide says " + "very " * 33 + "open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_explicit_host_release_constructions_remain_supported(self):
+        cases = (
+            "Please open source the project.",
+            "Kindly publish update.",
+            "We need to publish the update.",
+            "The team wants to open source the project.",
+            "Maintainers plan to push changes to GitHub.",
+            "We intend to publish update.",
+            "The team should release the package.",
+            "Maintainers must publish update.",
+            "We would like to open source the project.",
+            "Can you publish update?",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertTrue(source_supports_release_action(source))
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertTrue(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_unbounded_negation_rejects_forged_release_evidence(self):
+        source = (
+            "Do not under any circumstances whatsoever even consider to open "
+            "source the project."
+        )
+        evidence = bind_intent_evidence(
+            (
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "action",
+                    "single",
+                    ("open source",),
+                    4,
+                ),
+            ),
+            source,
+        )
+
+        self.assertIn(
+            "intent evidence 1 release action evidence requires action context",
+            validate_intent_evidence(
+                evidence, ("open_source_release",), source
+            ),
+        )
+
+    def test_rejected_clause_prefix_is_evaluated_once(self):
+        source = "The guide says " + "open source the project and " * 128
+        pattern = intent_source._RELEASE_ACTION_HOST_PREFIX_RE
+
+        class CountingPattern:
+            def __init__(self):
+                self.calls = 0
+
+            def fullmatch(self, text):
+                self.calls += 1
+                return pattern.fullmatch(text)
+
+        counter = CountingPattern()
+        with patch.object(
+            intent_source, "_RELEASE_ACTION_HOST_PREFIX_RE", counter
+        ):
+            self.assertFalse(source_supports_release_action(source))
+
+        self.assertEqual(counter.calls, 1)
 
     def test_independent_sentence_release_actions_remain_supported(self):
         cases = (

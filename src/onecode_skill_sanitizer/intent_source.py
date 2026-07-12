@@ -22,7 +22,10 @@ _RELEASE_ACTION_PHRASE = (
 )
 _RELEASE_ACTION_RE = re.compile(_RELEASE_ACTION_PHRASE, re.IGNORECASE)
 _RELEASE_ACTION_CLAUSE_BOUNDARY_RE = re.compile(
-    r"[;；\n。！？!?]|(?<=[,.，])\s*(?:and\s+)?(?:then|but|so|therefore)\b",
+    r"[;；\n。！？!?]|(?<=[,.，])\s*(?:and\s+)?(?:then|but|so|therefore)\b|"
+    r"(?:但是|但要|不过)|"
+    r"[,，]\s*(?:同时\s*)?"
+    r"(?=(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后)",
     re.IGNORECASE,
 )
 _RELEASE_ACTION_DOT_ABBREVIATIONS = ("e.g.", "i.e.")
@@ -45,18 +48,19 @@ _RELEASE_ACTION_TITLE_ABBREVIATIONS = frozenset(
         "sr",
     }
 )
-_RELEASE_ACTION_NEGATED_PREFIX_RE = re.compile(
-    r"(?:\b(?:do|must|should|will|can)\s+not|"
-    r"\b(?:do|ca|wo|must|should)n['’]t|\bnever|"
-    r"\bno\s+need\s+to|\bnot\s+authorized\s+to)\b"
-    r"(?:(?:\s*,\s*|\s+)[^\s,;.!?。！？；，]+){0,4}"
-    r"\s*,?\s*$",
-    re.IGNORECASE,
-)
-_RELEASE_ACTION_REPORTED_PREFIX_RE = re.compile(
-    r"\b(?:says?|said|asks?|asked|tells?|told|claims?|claimed|"
-    r"reports?|reported|recommends?|recommended|instructs?|instructed|"
-    r"requires?|required)\b[\s\S]{0,128}$",
+_RELEASE_ACTION_HOST_PREFIX_RE = re.compile(
+    r"\s*(?:"
+    r"(?:please|kindly)\s+|"
+    r"(?:can|could|would)\s+you(?:\s+(?:please|kindly))?\s+|"
+    r"let(?:['’]s|\s+us)\s+|"
+    r"prepare\s+(?:an?\s+)?|"
+    r"before\s+(?:the\s+)?(?:pr|pull\s+request)\s+approval\s*[,，]\s*|"
+    r"(?:在\s*)?(?:PR|拉取请求)\s*(?:审批|批准|审核)前\s*|"
+    r"(?:(?:the\s+)?(?:team|maintainers?)|we|i|you)\s+"
+    r"(?:(?:needs?|wants?|plans?|intends?)\s+to|should|must|"
+    r"would\s+like\s+to)\s+|"
+    r"(?:(?:and\s+)?(?:then|next)|first|now|finally)(?:\s*,)?\s+"
+    r")?",
     re.IGNORECASE,
 )
 _BARE_RELEASE_ACTION_RE = re.compile(
@@ -101,7 +105,7 @@ def bound_task_text(text: str) -> str:
 
 def is_release_action_text(text: str, *, allow_bare: bool = False) -> bool:
     """Validate a complete release action using the central action taxonomy."""
-    text = bound_task_text(text).strip()
+    text = bound_task_text(text).strip().rstrip(".!?。！？").rstrip()
     return bool(
         _RELEASE_ACTION_RE.fullmatch(text)
         or (allow_bare and _BARE_RELEASE_ACTION_RE.fullmatch(text))
@@ -114,29 +118,45 @@ def source_contains_release_action(text: str) -> bool:
     boundaries = iter(_release_action_clause_boundary_ends(text))
     boundary = next(boundaries, None)
     clause_start = 0
+    evaluated_clause_start: int | None = None
     for action in _RELEASE_ACTION_RE.finditer(text):
         while boundary is not None and boundary <= action.start():
             clause_start = boundary
             boundary = next(boundaries, None)
+        if clause_start == evaluated_clause_start:
+            continue
+        evaluated_clause_start = clause_start
         prefix = text[clause_start : action.start()]
-        if (
-            _RELEASE_ACTION_NEGATED_PREFIX_RE.search(prefix) is None
-            and _RELEASE_ACTION_REPORTED_PREFIX_RE.search(prefix) is None
-        ):
+        if _RELEASE_ACTION_HOST_PREFIX_RE.fullmatch(prefix) is not None:
             return True
     return False
 
 
 def _release_action_clause_boundary_ends(text: str) -> tuple[int, ...]:
-    boundaries = [
+    hard_boundaries = tuple(
         match.end() for match in _RELEASE_ACTION_CLAUSE_BOUNDARY_RE.finditer(text)
-    ]
-    boundaries.extend(
+    )
+    dot_boundaries = tuple(
         index + 1
         for index, character in enumerate(text)
         if character == "." and _is_release_sentence_dot(text, index)
     )
-    return tuple(sorted(boundaries))
+    merged: list[int] = []
+    hard_index = 0
+    dot_index = 0
+    while hard_index < len(hard_boundaries) or dot_index < len(dot_boundaries):
+        if dot_index >= len(dot_boundaries) or (
+            hard_index < len(hard_boundaries)
+            and hard_boundaries[hard_index] <= dot_boundaries[dot_index]
+        ):
+            boundary = hard_boundaries[hard_index]
+            hard_index += 1
+        else:
+            boundary = dot_boundaries[dot_index]
+            dot_index += 1
+        if not merged or merged[-1] != boundary:
+            merged.append(boundary)
+    return tuple(merged)
 
 
 def _is_release_sentence_dot(text: str, index: int) -> bool:
