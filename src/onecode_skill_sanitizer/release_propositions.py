@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from bisect import bisect_left
 from dataclasses import dataclass
 import re
 
@@ -15,6 +16,7 @@ MAX_NARRATIVE_TRANSITIONS = 128
 MAX_RELEASE_OBJECT_PREFIX_CHARS = 96
 MAX_RELEASE_OBJECT_COMPLEMENT_CHARS = 96
 MAX_RELEASE_OBJECT_MODIFIER_TOKENS = 3
+MAX_BOUND_ACTION_CANDIDATES = 8
 _HARD_SENTENCE_PUNCTUATION = ".!?！？。"
 _DASH_CHARACTER = r"[-\u2010-\u2015\u2212\uff0d]"
 _COMPOUND_SEPARATOR = rf"(?:\s+|{_DASH_CHARACTER})"
@@ -57,6 +59,16 @@ class _ReadinessCandidate:
     legacy_proposition_request: bool
     evidence_statement_request: bool
     skip: bool
+
+
+@dataclass(frozen=True)
+class _PropositionFacts:
+    raw_actions: tuple[re.Match[str], ...]
+    actions: tuple[re.Match[str], ...]
+    action_starts: tuple[int, ...]
+    software_anchor_spans: tuple[tuple[int, int], ...]
+    proposition_reference: bool
+    legacy_request: bool
 
 
 _OBJECT_RE = re.compile(
@@ -504,6 +516,11 @@ def _collect_readiness_candidates(
     structural_spans: tuple[tuple[int, int], ...],
 ) -> tuple[_ReadinessCandidate, ...]:
     candidates: list[_ReadinessCandidate] = []
+    proposition_facts_by_bounds: dict[
+        tuple[int, int], _PropositionFacts
+    ] = {}
+    sentence_reference_by_bounds: dict[tuple[int, int], bool] = {}
+    line_facts_by_bounds: dict[tuple[int, int], tuple[bool, bool]] = {}
     for occurrence_index, match in enumerate(_OBJECT_RE.finditer(source)):
         if occurrence_index >= MAX_READINESS_OCCURRENCES:
             break
@@ -525,36 +542,39 @@ def _collect_readiness_candidates(
         proposition = source[proposition_start:proposition_end]
         local_object_start = object_start - proposition_start
         local_object_end = object_end - proposition_start
-        raw_actions = tuple(_ACTION_RE.finditer(proposition))
-        invalid_actions = tuple(
-            item
-            for item in raw_actions
-            if _chinese_action_is_nominalized(item, proposition)
-        )
-        actions = tuple(
-            item
-            for item in raw_actions
-            if item not in invalid_actions
-            and (
-                not chinese_object
-                or _chinese_action_governs_object(
-                    item, proposition, local_object_start
-                )
+        proposition_bounds = (proposition_start, proposition_end)
+        facts = proposition_facts_by_bounds.get(proposition_bounds)
+        if facts is None:
+            raw_actions = tuple(_ACTION_RE.finditer(proposition))
+            actions = tuple(
+                item
+                for item in raw_actions
+                if not _chinese_action_is_nominalized(item, proposition)
             )
-        )
-        ranked_actions = tuple(
-            sorted(
+            facts = _PropositionFacts(
+                raw_actions,
                 actions,
-                key=lambda item: (
-                    max(
-                        local_object_start - item.end(),
-                        item.start() - local_object_end,
-                        0,
-                    ),
-                    0 if item.end() <= local_object_start else 1,
-                    item.start(),
+                tuple(item.start() for item in actions),
+                tuple(
+                    (
+                        proposition_start + anchor.start(),
+                        proposition_start + anchor.end(),
+                    )
+                    for anchor in _SOFTWARE_ANCHOR_RE.finditer(proposition)
                 ),
+                bool(
+                    _STRUCTURAL_PREFIX_RE.search(proposition)
+                    or _REFERENCE_CLAUSE_RE.search(proposition)
+                ),
+                _LEGACY_CHECKLIST_RE.fullmatch(proposition) is not None,
             )
+            proposition_facts_by_bounds[proposition_bounds] = facts
+        ranked_actions = _nearest_readiness_actions(
+            facts,
+            proposition,
+            local_object_start,
+            local_object_end,
+            chinese_object,
         )
         bound_actions: list[_BoundReadinessAction] = []
         for action in ranked_actions:
@@ -578,7 +598,29 @@ def _collect_readiness_candidates(
         sentence_start, sentence_end = _bounds_from_boundaries(
             source, object_start, object_end, sentence_boundaries
         )
-        sentence = source[sentence_start:sentence_end]
+        sentence_bounds = (sentence_start, sentence_end)
+        sentence_reference = sentence_reference_by_bounds.get(sentence_bounds)
+        if sentence_reference is None:
+            sentence_reference = bool(
+                _SENTENCE_REFERENCE_RE.search(source[sentence_start:sentence_end])
+            )
+            sentence_reference_by_bounds[sentence_bounds] = sentence_reference
+        line_bounds = (line_start, line_end)
+        line_facts = line_facts_by_bounds.get(line_bounds)
+        if line_facts is None:
+            line_facts = (
+                _LEGACY_CHECKLIST_RE.fullmatch(line) is not None,
+                bool(
+                    _EVIDENCE_STATEMENT_RE.search(line)
+                    and _SOFTWARE_ANCHOR_RE.search(line)
+                ),
+            )
+            line_facts_by_bounds[line_bounds] = line_facts
+        legacy_line_request, evidence_statement_request = line_facts
+        filename_reference = (
+            _FILENAME_SUFFIX_RE.match(line[object_end - line_start :])
+            is not None
+        )
         candidates.append(
             _ReadinessCandidate(
                 object_start,
@@ -590,31 +632,55 @@ def _collect_readiness_candidates(
                 _release_object_is_software(
                     proposition, local_object_start, local_object_end
                 ),
-                tuple(
-                    (
-                        proposition_start + anchor.start(),
-                        proposition_start + anchor.end(),
-                    )
-                    for anchor in _SOFTWARE_ANCHOR_RE.finditer(proposition)
-                ),
+                facts.software_anchor_spans,
                 _range_is_contained(object_start, object_end, structural_spans),
-                bool(_SENTENCE_REFERENCE_RE.search(sentence)),
+                sentence_reference,
+                facts.proposition_reference,
+                filename_reference,
+                legacy_line_request,
+                facts.legacy_request,
+                evidence_statement_request,
                 bool(
-                    _STRUCTURAL_PREFIX_RE.search(proposition)
-                    or _REFERENCE_CLAUSE_RE.search(proposition)
+                    facts.raw_actions
+                    and not ranked_actions
+                    and chinese_object
                 ),
-                _FILENAME_SUFFIX_RE.match(line[object_end - line_start :])
-                is not None,
-                _LEGACY_CHECKLIST_RE.fullmatch(line) is not None,
-                _LEGACY_CHECKLIST_RE.fullmatch(proposition) is not None,
-                bool(
-                    _EVIDENCE_STATEMENT_RE.search(line)
-                    and _SOFTWARE_ANCHOR_RE.search(line)
-                ),
-                bool(raw_actions and not actions and chinese_object),
             )
         )
     return tuple(candidates)
+
+
+def _nearest_readiness_actions(
+    facts: _PropositionFacts,
+    proposition: str,
+    object_start: int,
+    object_end: int,
+    chinese_object: bool,
+) -> tuple[re.Match[str], ...]:
+    insertion = bisect_left(facts.action_starts, object_start)
+    window_start = max(0, insertion - MAX_BOUND_ACTION_CANDIDATES)
+    window_end = min(
+        len(facts.actions), insertion + MAX_BOUND_ACTION_CANDIDATES
+    )
+    local_actions = facts.actions[window_start:window_end]
+    if chinese_object:
+        local_actions = tuple(
+            action
+            for action in local_actions
+            if _chinese_action_governs_object(
+                action, proposition, object_start
+            )
+        )
+    return tuple(
+        sorted(
+            local_actions,
+            key=lambda item: (
+                max(object_start - item.end(), item.start() - object_end, 0),
+                0 if item.end() <= object_start else 1,
+                item.start(),
+            ),
+        )[:MAX_BOUND_ACTION_CANDIDATES]
+    )
 
 
 def _release_object_is_software(

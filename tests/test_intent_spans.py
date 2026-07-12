@@ -1,5 +1,6 @@
 import unittest
 from itertools import islice
+from time import perf_counter
 from unittest.mock import patch
 
 from onecode_skill_sanitizer.intent import (
@@ -953,6 +954,44 @@ class IntentSpansTest(unittest.TestCase):
             release_propositions.parse_release_readiness_propositions(task)
 
         self.assertEqual(collect.call_count, 1)
+
+    def test_release_parser_bounds_repeated_object_action_work(self):
+        from onecode_skill_sanitizer import release_propositions
+
+        task = "prepare repository release checklist, " * 160
+        started = perf_counter()
+        with patch.object(
+            release_propositions,
+            "_ACTION_RE",
+            wraps=release_propositions._ACTION_RE,
+        ) as action_pattern:
+            candidates = release_propositions._collect_readiness_candidates(
+                task,
+                release_propositions._sentence_boundaries(task),
+                tuple(
+                    sorted(
+                        set(
+                            match.span()
+                            for match in release_propositions._COORDINATOR_RE.finditer(
+                                task
+                            )
+                        )
+                    )
+                ),
+                (),
+            )
+        elapsed = perf_counter() - started
+
+        self.assertEqual(action_pattern.finditer.call_count, 1)
+        self.assertEqual(
+            len(candidates), release_propositions.MAX_READINESS_OCCURRENCES
+        )
+        self.assertTrue(candidates)
+        self.assertLessEqual(
+            max(len(candidate.actions) for candidate in candidates),
+            release_propositions.MAX_BOUND_ACTION_CANDIDATES,
+        )
+        self.assertLess(elapsed, 2.0)
 
     def test_direct_text_helpers_share_exact_scan_boundary(self):
         evidence = IntentEvidence(
