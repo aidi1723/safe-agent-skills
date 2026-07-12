@@ -49,6 +49,10 @@ class IntentTest(unittest.TestCase):
             "Prepare a content management release packet for the repository.",
             "Prepare a model serving release packet for the software repository.",
             "Prepare a content–management release packet for the repository.",
+            "Prepare a content－management release packet for the repository.",
+            "Prepare a model−serving release packet for the software repository.",
+            "Prepare a content-management release packet for 仓库.",
+            "Prepare a model-serving release packet for 代码库.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
@@ -116,6 +120,10 @@ class IntentTest(unittest.TestCase):
             "Prepare a talent research-and-review release packet for v1.0.",
             "Prepare a content drafting-and-review release packet for a software "
             "repository.",
+            "Prepare a content-management release packet for a campaign package "
+            "while reviewing repository code.",
+            "Prepare a model-serving release packet for a photography package "
+            "while auditing software code.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
@@ -795,6 +803,12 @@ class IntentTest(unittest.TestCase):
             "checklist.",
             "The report says to review repository code and review a talent release "
             "packet for v1.0, so prepare a repository release checklist.",
+            "The report says to review a content-management release packet for a "
+            "campaign package while reviewing repository code, so prepare a "
+            "repository release checklist.",
+            "The report says to review a model-serving release packet for a "
+            "photography package while auditing software code, so prepare a "
+            "repository release checklist.",
         )
         for source in invalid_governed_candidates:
             with self.subTest(source=source):

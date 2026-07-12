@@ -13,8 +13,10 @@ MAX_STRUCTURAL_REFERENCE_SPANS = 256
 MAX_NARRATIVE_GOVERNOR_GAP = 256
 MAX_NARRATIVE_TRANSITIONS = 128
 MAX_RELEASE_OBJECT_PREFIX_CHARS = 96
+MAX_RELEASE_OBJECT_COMPLEMENT_CHARS = 96
 _HARD_SENTENCE_PUNCTUATION = ".!?！？。"
-_COMPOUND_SEPARATOR = r"(?:\s+|[-\u2010-\u2015])"
+_DASH_CHARACTER = r"[-\u2010-\u2015\u2212\uff0d]"
+_COMPOUND_SEPARATOR = rf"(?:\s+|{_DASH_CHARACTER})"
 
 
 @dataclass(frozen=True)
@@ -74,7 +76,8 @@ _SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
 _STRONG_SOFTWARE_RELEASE_OBJECT_RE = re.compile(
     r"(?<!\w)(?:repository|repo|software|code(?:base)?|"
     r"open[ -]source|maintainers?|npm|docker(?:\s+image)?|cli|version|"
-    r"v?\d+\.\d+(?:\.\d+)?)(?!\w)",
+    r"v?\d+\.\d+(?:\.\d+)?)(?!\w)|"
+    r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)",
     re.IGNORECASE,
 )
 _ACTION_RE = re.compile(
@@ -91,9 +94,14 @@ _SOFTWARE_ANCHOR_RE = re.compile(
     re.IGNORECASE,
 )
 _COORDINATOR_RE = re.compile(
-    r"\s*(?:,\s*)?(?:(?<![-\u2010-\u2015])\b(?:and|but|then)\b"
-    r"(?![-\u2010-\u2015])|然后|但是|但要|不过|同时|再)\s*|"
+    rf"\s*(?:,\s*)?(?:(?<!{_DASH_CHARACTER})\b(?:and|but|then)\b"
+    rf"(?!{_DASH_CHARACTER})|然后|但是|但要|不过|同时|再)\s*|"
     r"[;；\n。]|\s*[+＋]\s*",
+    re.IGNORECASE,
+)
+_LOCAL_OBJECT_COMPLEMENT_BOUNDARY_RE = re.compile(
+    rf"(?:{_COORDINATOR_RE.pattern})|[,;:.!?()[\]{{}}，。！？；：]|"
+    r"(?<!\w)(?:while|whereas)(?!\w)",
     re.IGNORECASE,
 )
 _ACTION_MODIFIER = (
@@ -510,7 +518,9 @@ def _collect_readiness_candidates(
                 proposition_start,
                 proposition_end,
                 tuple(bound_actions),
-                _release_object_is_software(proposition, local_object_start),
+                _release_object_is_software(
+                    proposition, local_object_start, local_object_end
+                ),
                 tuple(
                     (
                         proposition_start + anchor.start(),
@@ -538,7 +548,9 @@ def _collect_readiness_candidates(
     return tuple(candidates)
 
 
-def _release_object_is_software(proposition: str, object_start: int) -> bool:
+def _release_object_is_software(
+    proposition: str, object_start: int, object_end: int
+) -> bool:
     prefix_start = max(0, object_start - MAX_RELEASE_OBJECT_PREFIX_CHARS)
     prefix = proposition[prefix_start:object_start]
     boundary = max(
@@ -554,7 +566,19 @@ def _release_object_is_software(proposition: str, object_start: int) -> bool:
     if non_software:
         return False
     if _SOFTWARE_RELEASE_DOMAIN_RE.search(noun_phrase):
-        return _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(proposition) is not None
+        complement = proposition[
+            object_end : object_end + MAX_RELEASE_OBJECT_COMPLEMENT_CHARS
+        ]
+        complement_boundary = _LOCAL_OBJECT_COMPLEMENT_BOUNDARY_RE.search(
+            complement
+        )
+        if complement_boundary:
+            complement = complement[: complement_boundary.start()]
+        local_object_context = noun_phrase + complement
+        return (
+            _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(local_object_context)
+            is not None
+        )
     return True
 
 
