@@ -103,6 +103,18 @@ class IntentSpansTest(unittest.TestCase):
                 "Prepare a model-serving release packet for the software repository.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a content management release packet for the repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a model serving release packet for the software repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content–management release packet for the repository.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
@@ -323,6 +335,11 @@ class IntentSpansTest(unittest.TestCase):
             "review a model release packet for v1.0.",
             "Review repo code and prepare a content licensing release packet for "
             "v1.0.",
+            "Prepare a content-management release packet for a campaign package.",
+            "Prepare a model-serving release packet for a photography package.",
+            "Prepare a talent research-and-review release packet for v1.0.",
+            "Prepare a content drafting-and-review release packet for a software "
+            "repository.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",

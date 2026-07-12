@@ -14,6 +14,7 @@ MAX_NARRATIVE_GOVERNOR_GAP = 256
 MAX_NARRATIVE_TRANSITIONS = 128
 MAX_RELEASE_OBJECT_PREFIX_CHARS = 96
 _HARD_SENTENCE_PUNCTUATION = ".!?！？。"
+_COMPOUND_SEPARATOR = r"(?:\s+|[-\u2010-\u2015])"
 
 
 @dataclass(frozen=True)
@@ -61,7 +62,13 @@ _OBJECT_RE = re.compile(
     re.IGNORECASE,
 )
 _NON_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
-    r"(?<!\w)(?:talent|model(?!-serving\b)|content(?!-management\b))(?!\w)",
+    rf"(?<!\w)(?:talent|model(?!{_COMPOUND_SEPARATOR}serving\b)|"
+    rf"content(?!{_COMPOUND_SEPARATOR}management\b))(?!\w)",
+    re.IGNORECASE,
+)
+_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
+    rf"(?<!\w)(?:content{_COMPOUND_SEPARATOR}management|"
+    rf"model{_COMPOUND_SEPARATOR}serving)(?!\w)",
     re.IGNORECASE,
 )
 _STRONG_SOFTWARE_RELEASE_OBJECT_RE = re.compile(
@@ -84,7 +91,8 @@ _SOFTWARE_ANCHOR_RE = re.compile(
     re.IGNORECASE,
 )
 _COORDINATOR_RE = re.compile(
-    r"\s*(?:,\s*)?(?:\b(?:and|but|then)\b|然后|但是|但要|不过|同时|再)\s*|"
+    r"\s*(?:,\s*)?(?:(?<![-\u2010-\u2015])\b(?:and|but|then)\b"
+    r"(?![-\u2010-\u2015])|然后|但是|但要|不过|同时|再)\s*|"
     r"[;；\n。]|\s*[+＋]\s*",
     re.IGNORECASE,
 )
@@ -502,7 +510,7 @@ def _collect_readiness_candidates(
                 proposition_start,
                 proposition_end,
                 tuple(bound_actions),
-                _release_object_is_software(source, object_start),
+                _release_object_is_software(proposition, local_object_start),
                 tuple(
                     (
                         proposition_start + anchor.start(),
@@ -530,9 +538,9 @@ def _collect_readiness_candidates(
     return tuple(candidates)
 
 
-def _release_object_is_software(source: str, object_start: int) -> bool:
+def _release_object_is_software(proposition: str, object_start: int) -> bool:
     prefix_start = max(0, object_start - MAX_RELEASE_OBJECT_PREFIX_CHARS)
-    prefix = source[prefix_start:object_start]
+    prefix = proposition[prefix_start:object_start]
     boundary = max(
         (prefix.rfind(character) for character in ",;:.!?()[]{}。！？；\n"),
         default=-1,
@@ -543,9 +551,11 @@ def _release_object_is_software(source: str, object_start: int) -> bool:
     )
     noun_phrase = prefix[max(boundary + 1, coordinator_end) :]
     non_software = tuple(_NON_SOFTWARE_RELEASE_DOMAIN_RE.finditer(noun_phrase))
-    if not non_software:
-        return True
-    return _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(noun_phrase) is not None
+    if non_software:
+        return False
+    if _SOFTWARE_RELEASE_DOMAIN_RE.search(noun_phrase):
+        return _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(proposition) is not None
+    return True
 
 
 def _line_bounds(source: str, start: int, end: int) -> tuple[int, int]:

@@ -46,6 +46,9 @@ class IntentTest(unittest.TestCase):
             "Prepare an npm content-management release packet.",
             "Prepare a content-management release packet for the repository.",
             "Prepare a model-serving release packet for the software repository.",
+            "Prepare a content management release packet for the repository.",
+            "Prepare a model serving release packet for the software repository.",
+            "Prepare a content–management release packet for the repository.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
@@ -108,6 +111,11 @@ class IntentTest(unittest.TestCase):
             "review a model release packet for v1.0.",
             "Review repo code and prepare a content licensing release packet for "
             "v1.0.",
+            "Prepare a content-management release packet for a campaign package.",
+            "Prepare a model-serving release packet for a photography package.",
+            "Prepare a talent research-and-review release packet for v1.0.",
+            "Prepare a content drafting-and-review release packet for a software "
+            "repository.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
