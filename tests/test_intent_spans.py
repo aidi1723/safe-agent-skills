@@ -95,6 +95,14 @@ class IntentSpansTest(unittest.TestCase):
                 "Prepare an npm content-management release packet.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a content-management release packet for the repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a model-serving release packet for the software repository.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
@@ -309,6 +317,12 @@ class IntentSpansTest(unittest.TestCase):
             "Prepare a model's release packet for a software repository.",
             "Prepare a content package release packet for a campaign.",
             "Prepare a talent package release packet for repository maintainers.",
+            "Review repository code and prepare a talent release packet for a v1.0 "
+            "campaign.",
+            "Prepare a talent authorization document for repository maintainers and "
+            "review a model release packet for v1.0.",
+            "Review repo code and prepare a content licensing release packet for "
+            "v1.0.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",
@@ -637,6 +651,8 @@ class IntentSpansTest(unittest.TestCase):
             "The report says to review a talent package release packet for "
             "repository maintainers, therefore prepare a repository release "
             "checklist.",
+            "The report says to review repository code and review a talent release "
+            "packet for v1.0, so prepare a repository release checklist.",
         )
         for task in requests:
             with self.subTest(task=task):

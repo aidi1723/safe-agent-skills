@@ -44,6 +44,8 @@ class IntentTest(unittest.TestCase):
             "Prepare a repository content-management release packet.",
             "Prepare a software model-serving release packet.",
             "Prepare an npm content-management release packet.",
+            "Prepare a content-management release packet for the repository.",
+            "Prepare a model-serving release packet for the software repository.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
@@ -100,6 +102,12 @@ class IntentTest(unittest.TestCase):
             "Prepare a model's release packet for a software repository.",
             "Prepare a content package release packet for a campaign.",
             "Prepare a talent package release packet for repository maintainers.",
+            "Review repository code and prepare a talent release packet for a v1.0 "
+            "campaign.",
+            "Prepare a talent authorization document for repository maintainers and "
+            "review a model release packet for v1.0.",
+            "Review repo code and prepare a content licensing release packet for "
+            "v1.0.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
@@ -777,6 +785,8 @@ class IntentTest(unittest.TestCase):
             "The report says to review a talent package release packet for "
             "repository maintainers, therefore prepare a repository release "
             "checklist.",
+            "The report says to review repository code and review a talent release "
+            "packet for v1.0, so prepare a repository release checklist.",
         )
         for source in invalid_governed_candidates:
             with self.subTest(source=source):

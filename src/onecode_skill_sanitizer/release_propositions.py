@@ -61,7 +61,8 @@ _OBJECT_RE = re.compile(
     re.IGNORECASE,
 )
 _NON_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
-    r"(?<!\w)(?:talent|model|content)(?!\w)", re.IGNORECASE
+    r"(?<!\w)(?:talent|model(?!-serving\b)|content(?!-management\b))(?!\w)",
+    re.IGNORECASE,
 )
 _STRONG_SOFTWARE_RELEASE_OBJECT_RE = re.compile(
     r"(?<!\w)(?:repository|repo|software|code(?:base)?|"
@@ -536,7 +537,11 @@ def _release_object_is_software(source: str, object_start: int) -> bool:
         (prefix.rfind(character) for character in ",;:.!?()[]{}。！？；\n"),
         default=-1,
     )
-    noun_phrase = prefix[boundary + 1 :]
+    coordinator_end = max(
+        (match.end() for match in _COORDINATOR_RE.finditer(prefix)),
+        default=0,
+    )
+    noun_phrase = prefix[max(boundary + 1, coordinator_end) :]
     non_software = tuple(_NON_SOFTWARE_RELEASE_DOMAIN_RE.finditer(noun_phrase))
     if not non_software:
         return True
