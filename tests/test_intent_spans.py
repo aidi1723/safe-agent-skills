@@ -1395,6 +1395,10 @@ class IntentSpansTest(unittest.TestCase):
             "The guide says tests passed. Open source the project.",
             "An old email said open source the project. Publish update.",
             "The guide mentions Dr. Smith. Open source the project.",
+            "The guide says deployment is limited to the U.S. Open source the "
+            "project.",
+            "The guide says deployment is limited to the U.K. Publish update.",
+            "The guide says contact A. Open source the project.",
         )
 
         for source in cases:
@@ -1408,6 +1412,10 @@ class IntentSpansTest(unittest.TestCase):
             "The guide says tests passed. Open source the project.",
             "An old email said open source the project. Publish update.",
             "The guide mentions Dr. Smith. Open source the project.",
+            "The guide says deployment is limited to the U.S. Open source the "
+            "project.",
+            "The guide says deployment is limited to the U.K. Publish update.",
+            "The guide says contact A. Open source the project.",
         )
 
         for source in cases:

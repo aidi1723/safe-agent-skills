@@ -147,6 +147,26 @@ def _is_release_sentence_dot(text: str, index: int) -> bool:
         and text[index + 1].isdigit()
     ):
         return False
+    for abbreviation in _RELEASE_ACTION_DOT_ABBREVIATIONS:
+        first_start = max(0, index - len(abbreviation) + 1)
+        last_start = min(index, len(text) - len(abbreviation))
+        if any(
+            text[start : start + len(abbreviation)].casefold() == abbreviation
+            for start in range(first_start, last_start + 1)
+        ):
+            return False
+    action_start = index + 1
+    while (
+        action_start < len(text)
+        and action_start <= index + 4
+        and text[action_start].isspace()
+    ):
+        action_start += 1
+    if (
+        action_start > index + 1
+        and _RELEASE_ACTION_RE.match(text, action_start) is not None
+    ):
+        return True
     if (
         index > 0
         and text[index - 1].isalpha()
@@ -187,14 +207,6 @@ def _is_release_sentence_dot(text: str, index: int) -> bool:
         token_start -= 1
     if text[token_start:index].casefold() in _RELEASE_ACTION_TITLE_ABBREVIATIONS:
         return False
-    for abbreviation in _RELEASE_ACTION_DOT_ABBREVIATIONS:
-        first_start = max(0, index - len(abbreviation) + 1)
-        last_start = min(index, len(text) - len(abbreviation))
-        if any(
-            text[start : start + len(abbreviation)].casefold() == abbreviation
-            for start in range(first_start, last_start + 1)
-        ):
-            return False
     return True
 
 
