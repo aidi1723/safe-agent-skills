@@ -139,6 +139,25 @@ class IntentSpansTest(unittest.TestCase):
                 "Prepare a repository－and－CLI content-management release packet.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a content-management release packet for our repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for an internal "
+                "repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for GitHub repository "
+                "maintainers.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for the package "
+                "maintainers.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:

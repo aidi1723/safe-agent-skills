@@ -55,6 +55,11 @@ class IntentTest(unittest.TestCase):
             "Prepare a model-serving release packet for 代码库.",
             "Prepare a repository-and-CLI content-management release packet.",
             "Prepare a repository－and－CLI content-management release packet.",
+            "Prepare a content-management release packet for our repository.",
+            "Prepare a content-management release packet for an internal repository.",
+            "Prepare a content-management release packet for GitHub repository "
+            "maintainers.",
+            "Prepare a content-management release packet for the package maintainers.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
