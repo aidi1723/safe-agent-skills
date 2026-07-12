@@ -78,17 +78,21 @@ _REPOSITORY_ANCHOR_PATTERN = r"repositor(?:y|ies)"
 _REPO_ANCHOR_PATTERN = r"repos?"
 _CODEBASE_ANCHOR_PATTERN = r"codebases?"
 _MAINTAINER_ANCHOR_PATTERN = r"maintainers?"
-_CODE_ARTIFACT_ANCHOR_PATTERN = r"code[ -]artifacts?"
+_OPEN_SOURCE_ANCHOR_PATTERN = rf"open{_COMPOUND_SEPARATOR}source"
+_CODE_ARTIFACT_ANCHOR_PATTERN = (
+    rf"code{_COMPOUND_SEPARATOR}artifacts?"
+)
 _PACKAGE_ANCHOR_PATTERN = r"packages?"
 _ECOSYSTEM_PACKAGE_ANCHOR_PATTERN = (
     rf"(?:github|gitlab|python)\s+{_PACKAGE_ANCHOR_PATTERN}"
 )
 _QUALIFIED_REPOSITORY_ANCHOR_PATTERN = (
-    rf"(?:software|open[ -]source)\s+"
+    rf"(?:software|{_OPEN_SOURCE_ANCHOR_PATTERN})\s+"
     rf"(?:{_REPOSITORY_ANCHOR_PATTERN}|{_REPO_ANCHOR_PATTERN})"
 )
 _QUALIFIED_PACKAGE_ANCHOR_PATTERN = (
-    rf"(?:npm|software|open[ -]source)\s+{_PACKAGE_ANCHOR_PATTERN}"
+    rf"(?:npm|software|{_OPEN_SOURCE_ANCHOR_PATTERN})\s+"
+    rf"{_PACKAGE_ANCHOR_PATTERN}"
 )
 _DOCKER_ANCHOR_PATTERN = r"docker(?:\s+images?)?"
 _CLI_ANCHOR_PATTERN = r"clis?"
@@ -99,7 +103,7 @@ _DIRECT_SOFTWARE_ANCHOR_PATTERN = (
     rf"{_REPOSITORY_ANCHOR_PATTERN}|{_REPO_ANCHOR_PATTERN}|software|"
     rf"{_ECOSYSTEM_PACKAGE_ANCHOR_PATTERN}|{_CODEBASE_ANCHOR_PATTERN}|"
     rf"{_CODE_ARTIFACT_ANCHOR_PATTERN}|code|"
-    rf"open[ -]source|{_MAINTAINER_ANCHOR_PATTERN}|npm|"
+    rf"{_OPEN_SOURCE_ANCHOR_PATTERN}|{_MAINTAINER_ANCHOR_PATTERN}|npm|"
     rf"{_DOCKER_ANCHOR_PATTERN}|{_CLI_ANCHOR_PATTERN}|"
     rf"{_VERSION_ANCHOR_PATTERN}"
 )
@@ -136,7 +140,8 @@ _RELEASE_OBJECT_HEAD_COORDINATOR = (
     rf"{_DASH_CHARACTER}(?i:and){_DASH_CHARACTER})"
 )
 _RELEASE_OBJECT_COMPLEMENT_END = (
-    r"(?=\s*(?:$|[,;:.!?()\[\]{}，。！？；：]))"
+    r"(?=\s*(?:(?P<object_complement_punctuation>"
+    r"[,;:.!?()\[\]{}，。！？；：])|$))"
 )
 _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
     rf"^\s*(?i:for|of)\s+"
@@ -632,12 +637,16 @@ def _release_object_is_software(
     if _SOFTWARE_RELEASE_DOMAIN_RE.search(noun_phrase):
         if _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(noun_phrase):
             return True
-        complement = proposition[
-            object_end : object_end + MAX_RELEASE_OBJECT_COMPLEMENT_CHARS
-        ]
-        return (
-            _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(complement)
-            is not None
+        full_complement = proposition[object_end:]
+        complement = full_complement[:MAX_RELEASE_OBJECT_COMPLEMENT_CHARS]
+        complement_match = _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(
+            complement
+        )
+        if complement_match is None:
+            return False
+        complement_was_truncated = len(full_complement) > len(complement)
+        return not complement_was_truncated or (
+            complement_match.group("object_complement_punctuation") is not None
         )
     return True
 

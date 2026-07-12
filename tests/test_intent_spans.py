@@ -275,6 +275,26 @@ class IntentSpansTest(unittest.TestCase):
                 "packages.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a content-management release packet for "
+                + ("A" * 74)
+                + "'s Python package",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for open–source "
+                "packages.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for open－source "
+                "repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for code–artifacts.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
@@ -542,6 +562,9 @@ class IntentSpansTest(unittest.TestCase):
             "promotion.",
             "Prepare a content-management release packet for GitHub package "
             "photography campaign.",
+            "Prepare a content-management release packet for "
+            + ("A" * 74)
+            + "'s Python package campaign.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",

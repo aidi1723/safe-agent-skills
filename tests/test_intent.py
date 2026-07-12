@@ -90,6 +90,12 @@ class IntentTest(unittest.TestCase):
             "Prepare a content-management release packet for software packages.",
             "Prepare a content-management release packet for open-source package.",
             "Prepare a content-management release packet for open-source packages.",
+            "Prepare a content-management release packet for "
+            + ("A" * 74)
+            + "'s Python package",
+            "Prepare a content-management release packet for open–source packages.",
+            "Prepare a content-management release packet for open－source repository.",
+            "Prepare a content-management release packet for code–artifacts.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
@@ -199,6 +205,9 @@ class IntentTest(unittest.TestCase):
             "promotion.",
             "Prepare a content-management release packet for GitHub package "
             "photography campaign.",
+            "Prepare a content-management release packet for "
+            + ("A" * 74)
+            + "'s Python package campaign.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
