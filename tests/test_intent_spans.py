@@ -1394,6 +1394,7 @@ class IntentSpansTest(unittest.TestCase):
         cases = (
             "The guide says tests passed. Open source the project.",
             "An old email said open source the project. Publish update.",
+            "The guide mentions Dr. Smith. Open source the project.",
         )
 
         for source in cases:
@@ -1406,6 +1407,7 @@ class IntentSpansTest(unittest.TestCase):
         cases = (
             "The guide says tests passed. Open source the project.",
             "An old email said open source the project. Publish update.",
+            "The guide mentions Dr. Smith. Open source the project.",
         )
 
         for source in cases:
@@ -1438,6 +1440,38 @@ class IntentSpansTest(unittest.TestCase):
             "The guide says v1.2 should open source the project.",
             "The guide says e.g. open source the project.",
             "An old email said release v1.2 and open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_initial_and_title_dots_do_not_end_reported_actions(self):
+        cases = (
+            "The guide says the U.S. team should open source the project.",
+            "The guide says Dr. Smith should open source the project.",
+            "The guide says A. Smith should open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_action(source, ("open source",))
+                )
+
+    def test_initial_and_title_dots_do_not_promote_release_evidence(self):
+        cases = (
+            "The guide says the U.S. team should open source the project.",
+            "The guide says Dr. Smith should open source the project.",
+            "The guide says A. Smith should open source the project.",
         )
 
         for source in cases:

@@ -26,6 +26,25 @@ _RELEASE_ACTION_CLAUSE_BOUNDARY_RE = re.compile(
     re.IGNORECASE,
 )
 _RELEASE_ACTION_DOT_ABBREVIATIONS = ("e.g.", "i.e.")
+_RELEASE_ACTION_TITLE_ABBREVIATIONS = frozenset(
+    {
+        "capt",
+        "cmdr",
+        "col",
+        "dr",
+        "gen",
+        "hon",
+        "jr",
+        "lt",
+        "mr",
+        "mrs",
+        "ms",
+        "prof",
+        "rev",
+        "sgt",
+        "sr",
+    }
+)
 _RELEASE_ACTION_NEGATED_PREFIX_RE = re.compile(
     r"(?:\b(?:do|must|should|will|can)\s+not|"
     r"\b(?:do|ca|wo|must|should)n['’]t|\bnever|"
@@ -127,6 +146,46 @@ def _is_release_sentence_dot(text: str, index: int) -> bool:
         and text[index - 1].isdigit()
         and text[index + 1].isdigit()
     ):
+        return False
+    if (
+        index > 0
+        and text[index - 1].isalpha()
+        and (
+            (
+                index >= 3
+                and text[index - 2] == "."
+                and text[index - 3].isalpha()
+            )
+            or (
+                index + 2 < len(text)
+                and text[index + 1].isalpha()
+                and text[index + 2] == "."
+            )
+        )
+    ):
+        return False
+    if (
+        index > 0
+        and text[index - 1].isalpha()
+        and (index < 2 or not text[index - 2].isalpha())
+    ):
+        name_start = index + 1
+        while (
+            name_start < len(text)
+            and name_start <= index + 4
+            and text[name_start] in " \t"
+        ):
+            name_start += 1
+        if (
+            name_start > index + 1
+            and name_start < len(text)
+            and text[name_start].isupper()
+        ):
+            return False
+    token_start = index
+    while token_start > 0 and text[token_start - 1].isalpha():
+        token_start -= 1
+    if text[token_start:index].casefold() in _RELEASE_ACTION_TITLE_ABBREVIATIONS:
         return False
     for abbreviation in _RELEASE_ACTION_DOT_ABBREVIATIONS:
         first_start = max(0, index - len(abbreviation) + 1)
