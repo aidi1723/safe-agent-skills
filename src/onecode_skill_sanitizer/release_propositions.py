@@ -174,6 +174,17 @@ _NARRATIVE_INSTRUCTION_START_RE = re.compile(
     r"draft|produce|document|approve)\b)",
     re.IGNORECASE,
 )
+_NARRATIVE_GOVERNOR_START_RE = re.compile(
+    r"^\s*(?:"
+    r"(?:(?:the|an?)\s+)?(?:report|example|documentation|docs|guide|"
+    r"(?:quoted\s+)?instruction)\s+(?:says?|tells?|asks?)\b|"
+    r"(?:(?:the|an?)\s+)?report\s+(?:states?|recommends?)\s+that\b|"
+    r"according\s+to\s+(?:the\s+)?(?:report|documentation|docs|guide)\s*,|"
+    r"(?:(?:the|an?)\s+)?(?:documentation|docs|guide)\s+"
+    r"(?:instructs?|requires?)\b"
+    r")",
+    re.IGNORECASE,
+)
 _NARRATIVE_INSTRUCTION_STOP_RE = re.compile(
     r"\s*(?:,\s*)?(?:\bbut\b|\bhowever\b|但是|但)",
     re.IGNORECASE,
@@ -603,7 +614,9 @@ def _narrative_instruction_reference_spans(
     for candidate_start in sorted(candidate_starts):
         match = _NARRATIVE_INSTRUCTION_START_RE.match(source[candidate_start:])
         if match is None:
-            continue
+            match = _NARRATIVE_GOVERNOR_START_RE.match(source[candidate_start:])
+            if match is None:
+                continue
         span_start = candidate_start + match.start()
         instruction_start = candidate_start + match.end()
         stops = [len(source)]

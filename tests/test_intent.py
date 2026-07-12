@@ -824,6 +824,24 @@ class IntentTest(unittest.TestCase):
                 "packet; prepare a maintainer release checklist.",
                 ("reference", "request"),
             ),
+            (
+                "The report states that the senior release engineering team should "
+                "prepare a repository release packet; prepare a maintainer release "
+                "checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "The guide instructs the senior release engineering team to prepare "
+                "a repository release packet, but review the actual maintainer "
+                "release checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "The report states that the senior release engineering team should "
+                "prepare a repository release packet. Prepare a maintainer release "
+                "checklist.",
+                ("reference", "request"),
+            ),
         )
         for source, expected in boundaries:
             with self.subTest(source=source):
@@ -834,14 +852,23 @@ class IntentTest(unittest.TestCase):
 
         overlong = (
             "The report states that the senior release engineering team should "
-            "prepare a repository release packet and review the release checklist."
+            "prepare a repository release packet and review the release checklist "
+            "for v1.0.",
+            "The guide instructs the senior release engineering team to prepare a "
+            "repository release packet and review the release checklist for v1.0.",
         )
-        self.assertEqual(
-            module._narrative_instruction_reference_spans(
-                overlong, module._sentence_boundaries(overlong)
-            ),
-            (),
-        )
+        for source in overlong:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 2)
+                self.assertTrue(
+                    all(item.discourse_role == "reference" for item in propositions)
+                )
+                spans = module._narrative_instruction_reference_spans(
+                    source, module._sentence_boundaries(source)
+                )
+                self.assertEqual(len(spans), 1)
+                self.assertLessEqual(spans[0][1], len(source))
 
     def test_release_sentence_discourse_role_covers_coordinated_propositions(self):
         module = importlib.import_module(

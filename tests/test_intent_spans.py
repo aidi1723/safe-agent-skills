@@ -521,6 +521,11 @@ class IntentSpansTest(unittest.TestCase):
             "release packet and review the release checklist for v1.0.",
             "The docs ask the maintainers to prepare a repository release packet and "
             "review the release checklist for v1.0.",
+            "The report states that the senior release engineering team should "
+            "prepare a repository release packet and review the release checklist "
+            "for v1.0.",
+            "The guide instructs the senior release engineering team to prepare a "
+            "repository release packet and review the release checklist for v1.0.",
         )
         for task in references:
             with self.subTest(task=task):
