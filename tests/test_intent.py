@@ -432,6 +432,11 @@ class IntentTest(unittest.TestCase):
             "Prepare a release packet for campaign content-management repository.",
             "Prepare a release packet for internal model-serving package.",
             "Prepare a release packet for repository.",
+            "Prepare a release packet intended for an internal repository.",
+            "Prepare a release packet intended for our repository.",
+            "Prepare a release packet intended for the project repository.",
+            "Prepare a release packet intended for Acme's repository.",
+            "Prepare a release packet intended for GitHub repository maintainers.",
         ):
             with self.subTest(source=source):
                 propositions = parse(source)

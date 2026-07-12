@@ -81,8 +81,10 @@ _NON_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     rf"content(?!{_COMPOUND_SEPARATOR}management\b))(?!\w)",
     re.IGNORECASE,
 )
+_RELEASE_OBJECT_COMPLEMENT_INTRODUCER = r"(?:for|of|intended\s+for)"
 _RELEASE_OBJECT_COMPLEMENT_PREFIX_RE = re.compile(
-    r"^\s*(?:for|of|intended\s+for)\s+(?:(?:a|an|the)\s+)?",
+    rf"^\s*(?i:{_RELEASE_OBJECT_COMPLEMENT_INTRODUCER})\s+"
+    r"(?:(?:a|an|the)\s+)?",
     re.IGNORECASE,
 )
 _RELEASE_OBJECT_COMPLEMENT_MODIFIER_RE = re.compile(
@@ -156,7 +158,8 @@ _RELEASE_OBJECT_MODIFIER = (
     rf"(?:{_RELEASE_OBJECT_DETERMINER}|{_RELEASE_OBJECT_ADJECTIVE}|"
     rf"{_RELEASE_OBJECT_VENDOR}|{_RELEASE_OBJECT_PROJECT_POSSESSIVE}|"
     rf"{_RELEASE_OBJECT_PROPER_POSSESSIVE}|"
-    rf"{_RELEASE_OBJECT_PACKAGE_MODIFIER})"
+    rf"{_RELEASE_OBJECT_PACKAGE_MODIFIER}|"
+    rf"(?i:{_DIRECT_SOFTWARE_ANCHOR_PATTERN}))"
 )
 _RELEASE_OBJECT_HEAD_COORDINATOR = (
     rf"(?:\s+(?i:and)\s+|\s*&\s*|"
@@ -167,7 +170,7 @@ _RELEASE_OBJECT_COMPLEMENT_END = (
     r"[,;:.!?()\[\]{}，。！？；：])|$))"
 )
 _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
-    rf"^\s*(?i:for|of)\s+"
+    rf"^\s*(?i:{_RELEASE_OBJECT_COMPLEMENT_INTRODUCER})\s+"
     rf"(?:(?:{_RELEASE_OBJECT_MODIFIER})\s+)"
     rf"{{0,{MAX_RELEASE_OBJECT_MODIFIER_TOKENS}}}"
     rf"(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})"
@@ -177,15 +180,8 @@ _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
     rf"(?:\s+(?i:{_MAINTAINER_ANCHOR_PATTERN}))?)?"
     rf"{_RELEASE_OBJECT_COMPLEMENT_END}"
 )
-_QUALIFIED_LOCAL_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
-    rf"^\s*(?i:for|of|intended\s+for)\s+"
-    rf"(?:(?i:a|an|the)\s+)?"
-    rf"(?:(?i:{_DIRECT_SOFTWARE_ANCHOR_PATTERN})\s+)?"
-    rf"(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})"
-    rf"{_RELEASE_OBJECT_COMPLEMENT_END}"
-)
 _SOFTWARE_DOMAIN_RELEASE_COMPLEMENT_RE = re.compile(
-    rf"^\s*(?i:for|of|intended\s+for)\s+"
+    rf"^\s*(?i:{_RELEASE_OBJECT_COMPLEMENT_INTRODUCER})\s+"
     rf"(?:(?i:a|an|the)\s+)?"
     rf"(?:[^\W\d_]+(?:{_DASH_CHARACTER}[^\W\d_]+)*\s+)"
     rf"{{0,{MAX_RELEASE_OBJECT_MODIFIER_TOKENS}}}"
@@ -761,7 +757,6 @@ def _classify_release_object_complement(complement: str) -> bool | None:
         return None
     if (
         _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(complement)
-        or _QUALIFIED_LOCAL_SOFTWARE_RELEASE_COMPLEMENT_RE.match(complement)
         or _SOFTWARE_DOMAIN_RELEASE_COMPLEMENT_RE.match(complement)
     ):
         return True
