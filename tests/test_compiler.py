@@ -52,6 +52,27 @@ class CompilerTest(unittest.TestCase):
                 self.assertEqual(compiled["status"], "ready")
                 self.assertEqual(compiled["reason_codes"], [])
 
+    def test_release_readiness_compiler_accepts_unrelated_denied_clause(self):
+        task = (
+            "Review code for unauthorized access; "
+            "prepare a repository release checklist."
+        )
+        graph = decompose_task(task)
+        bundles = {
+            "bundles": [self.bundle("first"), self.bundle("second")]
+        }
+
+        compiled = compile_execution_graph(
+            graph,
+            self.composition(("i1",), ("i2",)),
+            bundles,
+            {"execution-publish-check"},
+        )
+
+        self.assertEqual(graph.validate(), [])
+        self.assertEqual(compiled["status"], "ready")
+        self.assertEqual(compiled["reason_codes"], [])
+
     def test_release_precondition_compiles_without_cycle(self):
         graph = decompose_task("Before PR approval, publish update")
         composition = ScenarioComposition(

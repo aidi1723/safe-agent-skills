@@ -24,14 +24,23 @@ RELATION_MODES = frozenset(
 )
 GATE_MODES = frozenset({"none", "completion", "verification"})
 MAX_MATCHED_SCORE = 512
-LEGACY_RELEASE_READINESS_SIGNALS = frozenset(
-    {"发布清单", "release checklist"}
+RELEASE_READINESS_PATTERNS = (
+    ("发布清单", re.compile(r"发布清单")),
+    (
+        "release checklist",
+        re.compile(r"(?<![a-z0-9])release[\s-]+checklist(?![a-z0-9])", re.I),
+    ),
+    (
+        "release packet",
+        re.compile(r"(?<![a-z0-9])release[\s-]+packet(?![a-z0-9])", re.I),
+    ),
+    (
+        "release readiness",
+        re.compile(r"(?<![a-z0-9])release[\s-]+readiness(?![a-z0-9])", re.I),
+    ),
 )
-EXPLICIT_RELEASE_READINESS_SIGNALS = frozenset(
-    {"release packet", "release readiness"}
-)
-RELEASE_READINESS_SIGNALS = (
-    LEGACY_RELEASE_READINESS_SIGNALS | EXPLICIT_RELEASE_READINESS_SIGNALS
+RELEASE_READINESS_SIGNALS = frozenset(
+    signal for signal, _ in RELEASE_READINESS_PATTERNS
 )
 RELEASE_READINESS_EVIDENCE_SIGNALS = RELEASE_READINESS_SIGNALS | {"release"}
 RELEASE_ACTION_SIGNALS = frozenset(
@@ -52,12 +61,52 @@ RELEASE_ACTION_SIGNALS = frozenset(
         "publish update",
     }
 )
+_READINESS_SEGMENT_BOUNDARY_RE = re.compile(
+    r"[;；\n。]|(?<=[.!?])\s+|"
+    r",\s*(?:then|but)\s+|，\s*(?:然后|再|但(?:是|要)?|不过)\s*",
+    re.IGNORECASE,
+)
 _NON_REQUEST_RELEASE_READINESS_RE = re.compile(
-    r"\b(?:example|hypothetical(?:ly)?|quoted?|quotation|mentions?|stale|unauthorized)\b|"
+    r"\b(?:hypothetical(?:ly)?|mentions?|stale|unauthorized)\b|"
     r"\bnot\s+(?:authorized|a\s+work\s+order)\b|"
-    r"\b(?:must|do)\s+not\s+publish\b|\bdon't\s+publish\b|"
     r"\bwithout\s+(?:publishing|releasing)\b|"
-    r"\b(?:navigation|headings?)\s*(?::|label)",
+    r"(?:过期|未授权|未经授权|不是(?:工作|任务)指令)",
+    re.IGNORECASE,
+)
+_NEGATED_RELEASE_READINESS_RE = re.compile(
+    r"\b(?:must\s+not|do\s+not|don't|never)\b[\s\S]{0,80}"
+    r"\b(?:prepare|release|claim|publish|create|assemble|draft|produce)\b|"
+    r"\brelease[\s-]+(?:readiness|checklist|packet)\b[\s\S]{0,40}"
+    r"\b(?:is\s+not|isn't|was\s+not|wasn't)\s+"
+    r"(?:approved|authorized|ready|valid)\b|"
+    r"(?:不要|不得|禁止|不可|无需)[\s\S]{0,80}(?:准备|发布|声称|生成|创建)",
+    re.IGNORECASE,
+)
+_READINESS_LABEL_RE = re.compile(
+    r"^\s*(?:(?:example|label|terms?|navigation|headings?|menu)\s*[:：]|"
+    r"(?:[-*+]|\d+[.)、])\s+)",
+    re.IGNORECASE,
+)
+_MARKUP_HEADING_RE = re.compile(
+    r"^\s*(?:#{1,6}\s+|<h[1-6]\b[^>]*>)", re.IGNORECASE
+)
+_READINESS_FILENAME_SUFFIX_RE = re.compile(
+    r"\.(?:md|markdown|json|ya?ml|toml|txt|html?|xml|csv)\b", re.IGNORECASE
+)
+_QUOTED_TEXT_PATTERNS = (
+    re.compile(r'"[^"\n]*"'),
+    re.compile(r"“[^”\n]*”"),
+    re.compile(r"‘[^’\n]*’"),
+    re.compile(r"`[^`\n]*`"),
+)
+_NON_SOFTWARE_RELEASE_RE = re.compile(
+    r"\b(?:talent|model|content)\s+release[\s-]+packet\b|"
+    r"\b(?:photo(?:graphy)?|photo\s+shoot|photographer|campaign|performer|actor)\b",
+    re.IGNORECASE,
+)
+_SOFTWARE_RELEASE_ANCHOR_RE = re.compile(
+    r"\b(?:repository|repo|package|cli|codebase|software|project|maintainer)\b|"
+    r"(?:代码库|仓库|软件包|维护者|项目)",
     re.IGNORECASE,
 )
 _RELEASE_PACKET_REQUEST_RE = re.compile(
@@ -211,22 +260,63 @@ def source_supports_release_readiness(
 ) -> bool:
     source = bound_task_text(source)
     normalized = {signal.casefold() for signal in matched_signals}
-    if any(
-        signal in LEGACY_RELEASE_READINESS_SIGNALS
-        and signal in normalized
-        and _signal_in_source(source, signal)
-        for signal in LEGACY_RELEASE_READINESS_SIGNALS
-    ):
-        return True
     if not normalized & RELEASE_READINESS_EVIDENCE_SIGNALS:
         return False
-    if _NON_REQUEST_RELEASE_READINESS_RE.search(source):
+    return any(
+        _readiness_occurrence_is_request(source, signal, match.start(), match.end())
+        for signal, pattern in RELEASE_READINESS_PATTERNS
+        for match in pattern.finditer(source)
+    )
+
+
+def _readiness_occurrence_is_request(
+    source: str, signal: str, start: int, end: int
+) -> bool:
+    segment, local_start, local_end = _local_readiness_segment(
+        source, start, end
+    )
+    if (
+        _occurrence_is_quoted(segment, local_start, local_end)
+        or _MARKUP_HEADING_RE.search(segment)
+        or _READINESS_LABEL_RE.search(segment)
+        or _READINESS_FILENAME_SUFFIX_RE.match(segment[local_end:])
+        or _NON_REQUEST_RELEASE_READINESS_RE.search(segment)
+        or _NEGATED_RELEASE_READINESS_RE.search(segment)
+    ):
         return False
-    if _signal_in_source(source, "release readiness"):
-        return True
-    return bool(
-        _signal_in_source(source, "release packet")
-        and _RELEASE_PACKET_REQUEST_RE.search(source)
+    if (
+        _NON_SOFTWARE_RELEASE_RE.search(segment)
+        and not _SOFTWARE_RELEASE_ANCHOR_RE.search(segment)
+    ):
+        return False
+    if signal == "release packet":
+        return _RELEASE_PACKET_REQUEST_RE.search(segment) is not None
+    return True
+
+
+def _local_readiness_segment(
+    source: str, start: int, end: int
+) -> tuple[str, int, int]:
+    segment_start = 0
+    segment_end = len(source)
+    for boundary in _READINESS_SEGMENT_BOUNDARY_RE.finditer(source):
+        if boundary.end() <= start:
+            segment_start = boundary.end()
+        elif boundary.start() >= end:
+            segment_end = boundary.start()
+            break
+    return (
+        source[segment_start:segment_end],
+        start - segment_start,
+        end - segment_start,
+    )
+
+
+def _occurrence_is_quoted(segment: str, start: int, end: int) -> bool:
+    return any(
+        match.start() <= start and end <= match.end()
+        for pattern in _QUOTED_TEXT_PATTERNS
+        for match in pattern.finditer(segment)
     )
 
 

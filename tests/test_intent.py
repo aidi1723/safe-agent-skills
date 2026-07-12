@@ -75,6 +75,72 @@ class IntentTest(unittest.TestCase):
                     source_supports_release_readiness(source, matched_signals)
                 )
 
+    def test_release_readiness_context_is_scoped_to_its_local_segment(self):
+        cases = (
+            "Audit unauthorized access; prepare a repository release packet.",
+            "Prepare a repository release packet; audit unauthorized access.",
+            "Remove stale cache, then prepare a maintainer-ready release packet.",
+            "Prepare package release readiness checks, then remove stale cache.",
+            "Must not delete old artifacts; prepare a repository release checklist.",
+            "清理过期缓存；然后 prepare a repository release packet.",
+            "Prepare a repository release packet。然后清理过期缓存。",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    source_supports_release_readiness(source, ("release",))
+                )
+
+    def test_release_readiness_rejects_locally_negated_actions(self):
+        cases = (
+            "Must not prepare a repository release packet.",
+            "Do not release the repository release readiness packet.",
+            "Don't prepare a release checklist.",
+            "Never prepare a maintainer-ready release packet.",
+            "Do not claim release readiness.",
+            "Release readiness is not approved.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_readiness(source, ("release",))
+                )
+
+    def test_release_readiness_uses_syntax_and_software_context_controls(self):
+        negative_cases = (
+            '"Prepare a repository release packet"',
+            "“Prepare a repository release checklist”",
+            "# Release readiness",
+            "<h2>Release checklist</h2>",
+            "Navigation: Release readiness",
+            "Release readiness.md",
+            "release-checklist.json",
+            "Example: prepare a repository release checklist",
+            "- Release checklist",
+            "Prepare a talent release packet for a photo shoot",
+            "Prepare a model release packet for the photographer",
+            "Prepare a content release packet for the campaign",
+        )
+        positive_cases = (
+            "Prepare a repository release checklist.",
+            "Prepare package release readiness checks.",
+            "Prepare a maintainer-ready release packet.",
+            "Prepare a release packet for the CLI repository.",
+        )
+
+        for source in negative_cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_readiness(source, ("release",))
+                )
+        for source in positive_cases:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    source_supports_release_readiness(source, ("release",))
+                )
+
     def test_standalone_bare_release_actions_are_canonical(self):
         for task in ("release", "publish", "push", "发布", "上线", "推送"):
             with self.subTest(task=task):
