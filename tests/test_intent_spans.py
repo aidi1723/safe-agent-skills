@@ -1469,7 +1469,11 @@ class IntentSpansTest(unittest.TestCase):
     def test_bounded_host_sequences_and_chinese_polite_requests_are_supported(self):
         cases = (
             "Review code and then publish update.",
+            "Please review code then publish update.",
+            "After code review, publish update.",
+            "Once tests pass, push changes to GitHub.",
             "先审查代码，再发布更新",
+            "请先审查代码，然后发布更新。",
             "请发布更新。",
             "请推送到 GitHub。",
         )
