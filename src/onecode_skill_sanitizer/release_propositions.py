@@ -42,6 +42,7 @@ class _ReadinessCandidate:
     proposition_start: int
     proposition_end: int
     actions: tuple[_BoundReadinessAction, ...]
+    software_object: bool
     software_anchor_spans: tuple[tuple[int, int], ...]
     structurally_contained: bool
     sentence_reference: bool
@@ -57,6 +58,9 @@ _OBJECT_RE = re.compile(
     r"(?<!\w)release[\s-]+(?:checklist|packet|readiness)(?!\w)|"
     r"发布清单",
     re.IGNORECASE,
+)
+_NON_SOFTWARE_RELEASE_OBJECT_PREFIX_RE = re.compile(
+    r"\b(?:talent|model|content)[\s-]+$", re.IGNORECASE
 )
 _ACTION_RE = re.compile(
     r"(?<!\w)(?:prepare|review|check|verify|audit|assess|assemble|"
@@ -371,7 +375,11 @@ def parse_release_readiness_propositions(
                 )
             )
             continue
-        if action is None or not candidate.software_anchor_spans:
+        if (
+            action is None
+            or not candidate.software_object
+            or not candidate.software_anchor_spans
+        ):
             propositions.append(
                 ReleaseReadinessProposition(
                     candidate.object_start,
@@ -486,6 +494,10 @@ def _collect_readiness_candidates(
                 proposition_start,
                 proposition_end,
                 tuple(bound_actions),
+                _NON_SOFTWARE_RELEASE_OBJECT_PREFIX_RE.search(
+                    source[max(0, object_start - 32) : object_start]
+                )
+                is None,
                 tuple(
                     (
                         proposition_start + anchor.start(),
@@ -799,6 +811,7 @@ def _governed_readiness_chain_started(
             or candidate.proposition_reference
             or candidate.filename_reference
             or candidate.skip
+            or not candidate.software_object
             or not any(
                 segment_start <= anchor_start
                 and anchor_end <= transition_start

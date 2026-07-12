@@ -276,6 +276,8 @@ class IntentSpansTest(unittest.TestCase):
             "Prepare a talent release packet for a photo shoot",
             "Prepare a model release packet for the photographer",
             "Prepare a content release packet for the campaign",
+            "Prepare a talent release packet for repository maintainers.",
+            "Prepare a model release packet for a software repository.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",
@@ -587,6 +589,10 @@ class IntentSpansTest(unittest.TestCase):
             "and now prepare a repository release checklist.",
             "The report says to prepare a repository release packet, so inspect "
             "assets, and now prepare a repository release checklist.",
+            "The report says to review a talent release packet for repository "
+            "maintainers, so prepare a repository release checklist.",
+            "The report says to review a content release packet for a software "
+            "repository, therefore prepare a repository release checklist.",
         )
         for task in requests:
             with self.subTest(task=task):

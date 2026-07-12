@@ -84,6 +84,8 @@ class IntentTest(unittest.TestCase):
             "Prepare a talent release packet for a photo shoot",
             "Prepare a model release packet for the photographer",
             "Prepare a content release packet for the campaign",
+            "Prepare a talent release packet for repository maintainers.",
+            "Prepare a model release packet for a software repository.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
@@ -744,6 +746,10 @@ class IntentTest(unittest.TestCase):
             "and now prepare a repository release checklist.",
             "The report says to prepare a repository release packet, so inspect "
             "assets, and now prepare a repository release checklist.",
+            "The report says to review a talent release packet for repository "
+            "maintainers, so prepare a repository release checklist.",
+            "The report says to review a content release packet for a software "
+            "repository, therefore prepare a repository release checklist.",
         )
         for source in invalid_governed_candidates:
             with self.subTest(source=source):
