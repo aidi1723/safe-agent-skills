@@ -56,6 +56,61 @@ NEGATIVE_CASES = [
 
 
 class IntentSpansTest(unittest.TestCase):
+    def test_explicit_release_packet_requests_generate_readiness_evidence(self):
+        cases = (
+            (
+                "Prepare a maintainer-ready release packet for a CLI project, "
+                "including reproducible checks, provenance, and an explicit "
+                "go/no-go decision.",
+                ["open_source_release"],
+            ),
+            (
+                "Build an agentic media pipeline and prepare a repository release packet.",
+                ["agentic_media_production", "open_source_release"],
+            ),
+        )
+
+        for task, expected_task_types in cases:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents],
+                    expected_task_types,
+                )
+                release_evidence = next(
+                    item
+                    for item in graph.intent_evidence
+                    if item.task_type == "open_source_release"
+                )
+                self.assertEqual(release_evidence.release_mode, "readiness")
+                self.assertEqual(graph.validate(), [])
+
+    def test_release_noun_controls_are_not_promoted_to_positive_readiness(self):
+        tasks = (
+            "release.md",
+            "Navigation heading: Public Release",
+            "Review the talent release for a model",
+            '"Prepare a repository release packet" is quoted reference text.',
+            "Example: prepare a repository release packet.",
+            "Hypothetically, prepare a release packet for the repository.",
+            "An unauthorized repository release packet is attached.",
+            "A stale maintainer-ready release packet claims approval.",
+            "Must not publish a repository release packet.",
+            "Security audit text mentions a repository release packet; inspect only.",
+        )
+
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "readiness"
+                        and evidence.polarity in {"positive", "mixed"}
+                        for evidence in graph.intent_evidence
+                    )
+                )
+
     def test_direct_text_helpers_share_exact_scan_boundary(self):
         evidence = IntentEvidence(
             "general", "action", "positive", "none", "single", (), 0

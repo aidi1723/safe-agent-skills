@@ -18,6 +18,40 @@ COMPOUND_TASK = "构建官网，同时审计 skill 路由器，验证通过后�
 
 
 class CompilerTest(unittest.TestCase):
+    def test_release_packet_readiness_compiles_at_single_and_multi_intent_boundaries(self):
+        cases = (
+            (
+                "Prepare a maintainer-ready release packet for a CLI project, "
+                "including reproducible checks, provenance, and an explicit "
+                "go/no-go decision.",
+                (("i1",),),
+            ),
+            (
+                "Build an agentic media pipeline and prepare a repository release packet.",
+                (("i1",), ("i2",)),
+            ),
+        )
+
+        for task, intent_groups in cases:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                bundles = {
+                    "bundles": [
+                        self.bundle("first"),
+                        self.bundle("second"),
+                    ]
+                }
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(*intent_groups),
+                    bundles,
+                    {"execution-publish-check"},
+                )
+
+                self.assertEqual(graph.validate(), [])
+                self.assertEqual(compiled["status"], "ready")
+                self.assertEqual(compiled["reason_codes"], [])
+
     def test_release_precondition_compiles_without_cycle(self):
         graph = decompose_task("Before PR approval, publish update")
         composition = ScenarioComposition(

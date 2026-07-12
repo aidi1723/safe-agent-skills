@@ -24,7 +24,16 @@ RELATION_MODES = frozenset(
 )
 GATE_MODES = frozenset({"none", "completion", "verification"})
 MAX_MATCHED_SCORE = 512
-RELEASE_READINESS_SIGNALS = frozenset({"发布清单", "release checklist"})
+LEGACY_RELEASE_READINESS_SIGNALS = frozenset(
+    {"发布清单", "release checklist"}
+)
+EXPLICIT_RELEASE_READINESS_SIGNALS = frozenset(
+    {"release packet", "release readiness"}
+)
+RELEASE_READINESS_SIGNALS = (
+    LEGACY_RELEASE_READINESS_SIGNALS | EXPLICIT_RELEASE_READINESS_SIGNALS
+)
+RELEASE_READINESS_EVIDENCE_SIGNALS = RELEASE_READINESS_SIGNALS | {"release"}
 RELEASE_ACTION_SIGNALS = frozenset(
     {
         "open source",
@@ -43,6 +52,24 @@ RELEASE_ACTION_SIGNALS = frozenset(
         "publish update",
     }
 )
+_NON_REQUEST_RELEASE_READINESS_RE = re.compile(
+    r"\b(?:example|hypothetical(?:ly)?|quoted?|quotation|mentions?|stale|unauthorized)\b|"
+    r"\bnot\s+(?:authorized|a\s+work\s+order)\b|"
+    r"\b(?:must|do)\s+not\s+publish\b|\bdon't\s+publish\b|"
+    r"\bwithout\s+(?:publishing|releasing)\b|"
+    r"\b(?:navigation|headings?)\s*(?::|label)",
+    re.IGNORECASE,
+)
+_RELEASE_PACKET_REQUEST_RE = re.compile(
+    r"\b(?:prepare|assemble|create|build|draft|produce)\b[\s\S]{0,120}"
+    r"\brelease\s+packet\b|"
+    r"\b(?:maintainer[- ]ready|repository|repo)\s+release\s+packet\b|"
+    r"\brelease\s+packet\b[\s\S]{0,60}"
+    r"\b(?:preparation|readiness|go/no-go)\b",
+    re.IGNORECASE,
+)
+
+
 @dataclass(frozen=True)
 class IntentEvidence:
     """Profile and relation evidence aligned by index with an internal intent."""
@@ -183,14 +210,23 @@ def source_supports_release_readiness(
     source: str, matched_signals: tuple[str, ...]
 ) -> bool:
     source = bound_task_text(source)
-    normalized = tuple(signal.casefold() for signal in matched_signals)
+    normalized = {signal.casefold() for signal in matched_signals}
+    if any(
+        signal in LEGACY_RELEASE_READINESS_SIGNALS
+        and signal in normalized
+        and _signal_in_source(source, signal)
+        for signal in LEGACY_RELEASE_READINESS_SIGNALS
+    ):
+        return True
+    if not normalized & RELEASE_READINESS_EVIDENCE_SIGNALS:
+        return False
+    if _NON_REQUEST_RELEASE_READINESS_RE.search(source):
+        return False
+    if _signal_in_source(source, "release readiness"):
+        return True
     return bool(
-        set(normalized) & RELEASE_READINESS_SIGNALS
-        and any(
-            signal in RELEASE_READINESS_SIGNALS
-            and _signal_in_source(source, signal)
-            for signal in normalized
-        )
+        _signal_in_source(source, "release packet")
+        and _RELEASE_PACKET_REQUEST_RE.search(source)
     )
 
 

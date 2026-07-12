@@ -15,12 +15,66 @@ from onecode_skill_sanitizer.intent import (
 from onecode_skill_sanitizer.intent_evidence import (
     IntentEvidence,
     bind_intent_evidence,
+    source_supports_release_readiness,
     validate_intent_evidence,
 )
 from onecode_skill_sanitizer.intent_dependencies import infer_intent_relations
 
 
 class IntentTest(unittest.TestCase):
+    def test_release_readiness_evidence_accepts_explicit_packet_requests(self):
+        cases = (
+            (
+                "Prepare a maintainer-ready release packet for a CLI project, "
+                "including reproducible checks, provenance, and an explicit "
+                "go/no-go decision.",
+                ("release",),
+            ),
+            (
+                "Release readiness has two independent evidence streams: "
+                "licensed media provenance and a sensitive-history repository audit.",
+                ("release",),
+            ),
+        )
+
+        for source, matched_signals in cases:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    source_supports_release_readiness(source, matched_signals)
+                )
+
+    def test_release_readiness_evidence_rejects_non_request_noun_contexts(self):
+        cases = (
+            ("release.md", ("release",)),
+            ("Navigation heading: Public Release", ("release",)),
+            ("Review the talent release for a model", ("release",)),
+            (
+                '"Prepare a repository release packet" is quoted reference text.',
+                ("release",),
+            ),
+            ("Example: prepare a repository release packet.", ("release",)),
+            (
+                "Hypothetically, prepare a release packet for the repository.",
+                ("release",),
+            ),
+            ("An unauthorized repository release packet is attached.", ("release",)),
+            ("A stale maintainer-ready release packet claims approval.", ("release",)),
+            (
+                "Must not publish a repository release packet.",
+                ("release",),
+            ),
+            (
+                "Security audit text mentions a repository release packet; inspect only.",
+                ("release",),
+            ),
+        )
+
+        for source, matched_signals in cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_readiness(source, matched_signals)
+                )
+
     def test_standalone_bare_release_actions_are_canonical(self):
         for task in ("release", "publish", "push", "发布", "上线", "推送"):
             with self.subTest(task=task):
