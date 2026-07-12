@@ -5,6 +5,7 @@ import re
 
 
 MAX_TASK_SCAN_CHARS = 20_000
+MAX_RELEASE_ACTION_QUOTE_SPANS = 256
 
 _RELEASE_ACTION_PHRASE = (
     r"(?:验证(?:通过)?|测试通过|完成|批准|审批通过|审核通过)后(?:再)?"
@@ -140,11 +141,25 @@ def source_contains_release_action(text: str) -> bool:
     text = bound_task_text(text)
     if _is_release_action_reference_source(text):
         return False
+    quote_spans = _release_action_paired_quote_spans(text)
+    quote_index = 0
     boundaries = iter(_release_action_clause_boundary_ends(text))
     boundary = next(boundaries, None)
     clause_start = 0
     evaluated_clause_start: int | None = None
     for action in _RELEASE_ACTION_RE.finditer(text):
+        while (
+            quote_index < len(quote_spans)
+            and quote_spans[quote_index][1] <= action.start()
+        ):
+            quote_index += 1
+        if (
+            quote_index < len(quote_spans)
+            and quote_spans[quote_index][0]
+            <= action.start()
+            < quote_spans[quote_index][1]
+        ):
+            continue
         while boundary is not None and boundary <= action.start():
             clause_start = boundary
             boundary = next(boundaries, None)
@@ -167,6 +182,66 @@ def _is_release_action_reference_source(text: str) -> bool:
         and stripped.endswith(closing)
         for opening, closing in _RELEASE_ACTION_QUOTE_PAIRS
     )
+
+
+def _release_action_paired_quote_spans(
+    text: str,
+) -> tuple[tuple[int, int], ...]:
+    spans: list[tuple[int, int]] = []
+    for opening, closing in _RELEASE_ACTION_QUOTE_PAIRS:
+        cursor = 0
+        while cursor < len(text):
+            start = _find_release_action_quote(text, opening, cursor, True)
+            if start < 0:
+                break
+            close_start = _find_release_action_quote(
+                text, closing, start + len(opening), False
+            )
+            if close_start < 0:
+                break
+            end = close_start + len(closing)
+            spans.append((start, end))
+            if len(spans) >= MAX_RELEASE_ACTION_QUOTE_SPANS:
+                return ((0, len(text)),)
+            cursor = end
+    return tuple(sorted(spans))
+
+
+def _find_release_action_quote(
+    text: str, quote: str, cursor: int, opening: bool
+) -> int:
+    index = text.find(quote, cursor)
+    while index >= 0:
+        if not _is_release_action_quote_escaped(text, index) and (
+            quote != "'"
+            or (
+                opening
+                and (index == 0 or not _is_release_action_word(text[index - 1]))
+            )
+            or (
+                not opening
+                and (
+                    index + 1 == len(text)
+                    or not _is_release_action_word(text[index + 1])
+                )
+            )
+        ):
+            return index
+        index = text.find(quote, index + len(quote))
+    return -1
+
+
+def _is_release_action_word(character: str) -> bool:
+    return character.isalnum() or character == "_"
+
+
+def _is_release_action_quote_escaped(text: str, index: int) -> bool:
+    backslashes = 0
+    index -= 1
+    while index >= 0 and text[index] == "\\":
+        backslashes += 1
+        index -= 1
+    return backslashes % 2 == 1
 
 
 def _release_action_clause_boundary_ends(text: str) -> tuple[int, ...]:

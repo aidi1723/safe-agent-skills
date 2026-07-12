@@ -1580,6 +1580,43 @@ class IntentSpansTest(unittest.TestCase):
                 )
                 self.assertEqual(graph.validate(), [])
 
+    def test_paired_quote_release_actions_remain_non_actionable(self):
+        cases = (
+            '"Review code. Publish update".',
+            '"Review code. Publish update." is quoted reference text.',
+            "“Review code. Publish update”外。",
+            "“Review code. Publish update.”是引用文本。",
+            "'Review code. Publish update.' is quoted reference text.",
+            "‘Review code. Publish update.’ is quoted reference text.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(source_supports_release_action(source))
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_paired_quote_span_limit_fails_closed(self):
+        source = '"reference" ' * 257 + ". Publish update."
+
+        self.assertFalse(source_supports_release_action(source))
+        graph = decompose_task_detailed(source).intent_graph
+        self.assertFalse(
+            any(
+                evidence.task_type == "open_source_release"
+                and evidence.release_mode == "action"
+                for evidence in graph.intent_evidence
+            )
+        )
+        self.assertEqual(graph.validate(), [])
+
     def test_unbounded_negation_rejects_forged_release_evidence(self):
         source = (
             "Do not under any circumstances whatsoever even consider to open "
