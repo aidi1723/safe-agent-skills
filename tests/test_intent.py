@@ -147,6 +147,18 @@ class IntentTest(unittest.TestCase):
             "alongside repository code review.",
             "Prepare a content-management release packet for a campaign package "
             "because repository code passed review.",
+            "Prepare a content-management release packet for campaign material "
+            "following repository code review.",
+            "Prepare a content-management release packet for campaign material "
+            "once repository code review passes.",
+            "Prepare a content-management release packet for campaign material "
+            "since repository code passed review.",
+            "Prepare a content-management release packet for campaign material "
+            "upon repository code review.",
+            "Prepare a content-management release packet for campaign material "
+            "if repository code passes review.",
+            "Prepare a content-management release packet for campaign material "
+            "despite repository code review.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
@@ -834,6 +846,9 @@ class IntentTest(unittest.TestCase):
             "repository release checklist.",
             "The report says to review a content-management release packet for a "
             "campaign package after reviewing repository code, so prepare a "
+            "repository release checklist.",
+            "The report says to review a content-management release packet for "
+            "campaign material following repository code review, so prepare a "
             "repository release checklist.",
         )
         for source in invalid_governed_candidates:

@@ -84,19 +84,25 @@ _STRONG_SOFTWARE_RELEASE_OBJECT_RE = re.compile(
     _STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN,
     re.IGNORECASE,
 )
-_RELEASE_OBJECT_CLAUSE_BOUNDARY_TOKEN = (
-    r"(?:while|whereas|after|before|during|when|as|with|alongside|because)"
+_RELEASE_OBJECT_DETERMINER = (
+    r"(?i:the|a|an|this|that|these|those|our|your|their|its|my)"
 )
-_RELEASE_OBJECT_MODIFIER_TOKEN = (
-    rf"(?!{_RELEASE_OBJECT_CLAUSE_BOUNDARY_TOKEN}(?!\w))"
-    r"[^\W\d_][\w'’-]*"
+_RELEASE_OBJECT_ADJECTIVE = (
+    r"(?i:internal|public|private|local|official|core|primary|shared|hosted)"
+)
+_RELEASE_OBJECT_VENDOR = r"GitHub"
+_RELEASE_OBJECT_PACKAGE_MODIFIER = (
+    r"(?i:package)(?=\s+(?i:maintainers?)(?!\w))"
+)
+_RELEASE_OBJECT_MODIFIER = (
+    rf"(?:{_RELEASE_OBJECT_DETERMINER}|{_RELEASE_OBJECT_ADJECTIVE}|"
+    rf"{_RELEASE_OBJECT_VENDOR}|{_RELEASE_OBJECT_PACKAGE_MODIFIER})"
 )
 _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
-    rf"^\s*(?:for|of)\s+"
-    rf"(?:(?:{_RELEASE_OBJECT_MODIFIER_TOKEN})\s+)"
+    rf"^\s*(?i:for|of)\s+"
+    rf"(?:(?:{_RELEASE_OBJECT_MODIFIER})\s+)"
     rf"{{0,{MAX_RELEASE_OBJECT_MODIFIER_TOKENS}}}"
-    rf"(?:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})",
-    re.IGNORECASE,
+    rf"(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})"
 )
 _ACTION_RE = re.compile(
     r"(?<!\w)(?:prepare|review|check|verify|audit|assess|assemble|"

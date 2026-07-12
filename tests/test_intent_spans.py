@@ -403,6 +403,18 @@ class IntentSpansTest(unittest.TestCase):
             "alongside repository code review.",
             "Prepare a content-management release packet for a campaign package "
             "because repository code passed review.",
+            "Prepare a content-management release packet for campaign material "
+            "following repository code review.",
+            "Prepare a content-management release packet for campaign material "
+            "once repository code review passes.",
+            "Prepare a content-management release packet for campaign material "
+            "since repository code passed review.",
+            "Prepare a content-management release packet for campaign material "
+            "upon repository code review.",
+            "Prepare a content-management release packet for campaign material "
+            "if repository code passes review.",
+            "Prepare a content-management release packet for campaign material "
+            "despite repository code review.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",
