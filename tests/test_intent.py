@@ -403,6 +403,12 @@ class IntentTest(unittest.TestCase):
             "repository code.",
             "Prepare a release packet for seasonal campaign editorial content "
             "while reviewing repository code.",
+            "Prepare a release packet for global seasonal campaign editorial "
+            "content while reviewing repository code.",
+            "Prepare a release packet for package while reviewing repository code.",
+            "Prepare a release packet for campaign package while reviewing "
+            "repository code.",
+            "Prepare a release packet for package during reviewing repository.",
             "Review repository code, prepare a release packet for content.",
         )
 
@@ -425,6 +431,7 @@ class IntentTest(unittest.TestCase):
         for source in (
             "Prepare a release packet for campaign content-management repository.",
             "Prepare a release packet for internal model-serving package.",
+            "Prepare a release packet for repository.",
         ):
             with self.subTest(source=source):
                 propositions = parse(source)
@@ -441,8 +448,9 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(graph.validate(), [])
 
         governed = (
-            "Prepare a release packet of content while reviewing repository "
-            "code, so prepare a repository release checklist."
+            "Prepare a release packet for global seasonal campaign editorial "
+            "content while reviewing repository code, so prepare a repository "
+            "release checklist."
         )
         propositions = parse(governed)
         self.assertEqual(

@@ -89,9 +89,12 @@ _RELEASE_OBJECT_COMPLEMENT_MODIFIER_RE = re.compile(
     rf"[^\W\d_]+(?:{_DASH_CHARACTER}[^\W\d_]+)*\s+",
     re.IGNORECASE,
 )
+_SOFTWARE_RELEASE_DOMAIN_PATTERN = (
+    rf"(?:content{_COMPOUND_SEPARATOR}management|"
+    rf"model{_COMPOUND_SEPARATOR}serving)"
+)
 _SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
-    rf"(?<!\w)(?:content{_COMPOUND_SEPARATOR}management|"
-    rf"model{_COMPOUND_SEPARATOR}serving)(?!\w)",
+    rf"(?<!\w){_SOFTWARE_RELEASE_DOMAIN_PATTERN}(?!\w)",
     re.IGNORECASE,
 )
 _REPOSITORY_ANCHOR_PATTERN = r"repositor(?:y|ies)"
@@ -172,6 +175,23 @@ _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
     rf"(?:{_RELEASE_OBJECT_HEAD_COORDINATOR}"
     rf"(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})"
     rf"(?:\s+(?i:{_MAINTAINER_ANCHOR_PATTERN}))?)?"
+    rf"{_RELEASE_OBJECT_COMPLEMENT_END}"
+)
+_QUALIFIED_LOCAL_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
+    rf"^\s*(?i:for|of|intended\s+for)\s+"
+    rf"(?:(?i:a|an|the)\s+)?"
+    rf"(?:(?i:{_DIRECT_SOFTWARE_ANCHOR_PATTERN})\s+)?"
+    rf"(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN})"
+    rf"{_RELEASE_OBJECT_COMPLEMENT_END}"
+)
+_SOFTWARE_DOMAIN_RELEASE_COMPLEMENT_RE = re.compile(
+    rf"^\s*(?i:for|of|intended\s+for)\s+"
+    rf"(?:(?i:a|an|the)\s+)?"
+    rf"(?:[^\W\d_]+(?:{_DASH_CHARACTER}[^\W\d_]+)*\s+)"
+    rf"{{0,{MAX_RELEASE_OBJECT_MODIFIER_TOKENS}}}"
+    rf"(?i:{_SOFTWARE_RELEASE_DOMAIN_PATTERN})"
+    rf"(?:\s+(?i:{_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN}|"
+    rf"{_PACKAGE_ANCHOR_PATTERN}))?"
     rf"{_RELEASE_OBJECT_COMPLEMENT_END}"
 )
 _ACTION_RE = re.compile(
@@ -719,8 +739,6 @@ def _release_object_is_software(
         return True
     full_complement = proposition[object_end:]
     complement = full_complement[:MAX_RELEASE_OBJECT_COMPLEMENT_CHARS]
-    if _complement_has_nonsoftware_head(complement):
-        return False
     if _SOFTWARE_RELEASE_DOMAIN_RE.search(noun_phrase):
         complement_match = _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(
             complement
@@ -731,19 +749,26 @@ def _release_object_is_software(
         return not complement_was_truncated or (
             complement_match.group("object_complement_punctuation") is not None
         )
+    complement_classification = _classify_release_object_complement(complement)
+    if complement_classification is not None:
+        return complement_classification
     return True
 
 
-def _complement_has_nonsoftware_head(complement: str) -> bool:
+def _classify_release_object_complement(complement: str) -> bool | None:
     prefix = _RELEASE_OBJECT_COMPLEMENT_PREFIX_RE.match(complement)
     if prefix is None:
-        return False
+        return None
+    if (
+        _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(complement)
+        or _QUALIFIED_LOCAL_SOFTWARE_RELEASE_COMPLEMENT_RE.match(complement)
+        or _SOFTWARE_DOMAIN_RELEASE_COMPLEMENT_RE.match(complement)
+    ):
+        return True
     cursor = prefix.end()
     for modifier_count in range(MAX_RELEASE_OBJECT_MODIFIER_TOKENS + 1):
-        if _SOFTWARE_RELEASE_DOMAIN_RE.match(complement, cursor):
-            return False
         if _NON_SOFTWARE_RELEASE_DOMAIN_RE.match(complement, cursor):
-            return True
+            return False
         if modifier_count >= MAX_RELEASE_OBJECT_MODIFIER_TOKENS:
             break
         modifier = _RELEASE_OBJECT_COMPLEMENT_MODIFIER_RE.match(
