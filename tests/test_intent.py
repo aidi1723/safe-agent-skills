@@ -547,7 +547,7 @@ class IntentTest(unittest.TestCase):
             "the release checklist for v1.0.",
             "The documentation tells us to prepare a repository release packet, "
             "then review the release checklist for v1.0.",
-            "The docs ask us to prepare a repository release packet but review "
+            "The docs ask us to prepare a repository release packet and review "
             "the release checklist for v1.0.",
             "The guide asks you to prepare a repository release packet and review "
             "the release checklist for v1.0.",
@@ -618,6 +618,59 @@ class IntentTest(unittest.TestCase):
             tuple(item.discourse_role for item in parse(quoted_then_request)),
             ("reference", "request"),
         )
+
+    def test_reported_instruction_spans_cover_only_governed_coordinates(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        governed = (
+            "The report says to prepare a repository release packet and review "
+            "the release checklist for v1.0.",
+            "The report says to prepare a repository release packet, then review "
+            "the release checklist for v1.0.",
+            "The documentation tells maintainers to prepare a repository release "
+            "packet, then review the release checklist and audit repository "
+            "release readiness.",
+            "The report says that maintainers should prepare a repository release "
+            "packet and review the release checklist for v1.0.",
+        )
+        for source in governed:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertIn(len(propositions), (2, 3))
+                self.assertTrue(
+                    all(item.discourse_role == "reference" for item in propositions)
+                )
+
+        boundaries = (
+            (
+                "The report says to prepare a repository release packet; "
+                "independently prepare a repository release checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "The report says to prepare a repository release packet, but "
+                "prepare an actual maintainer release checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "The report says to prepare a repository release packet; however, "
+                "prepare a maintainer release checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "The report says to prepare a repository release packet，但是准备"
+                "仓库发布清单。",
+                ("reference", "request"),
+            ),
+        )
+        for source, expected in boundaries:
+            with self.subTest(source=source):
+                self.assertEqual(
+                    tuple(item.discourse_role for item in parse(source)),
+                    expected,
+                )
 
     def test_release_sentence_discourse_role_covers_coordinated_propositions(self):
         module = importlib.import_module(

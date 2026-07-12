@@ -112,14 +112,28 @@ _REPORTED_SPEECH_REFERENCE_RE = re.compile(
     r"draft|produce|document|approve)\b",
     re.IGNORECASE,
 )
+_REPORTED_INSTRUCTION_START_RE = re.compile(
+    r"^\s*(?:(?:the|an?)\s+)?(?:report|example|documentation|docs|guide|"
+    r"(?:quoted\s+)?instruction)\s+(?:says?|tells?|asks?)"
+    r"(?:"
+    r"(?:\s+\w+)?\s+to\s+|"
+    r"\s+that\s+(?:\w+\s+)?(?:should|must|needs?\s+to|is\s+to|are\s+to)\s+"
+    r")"
+    r"(?:[^\W\d_]+ly\s+){0,2}"
+    r"(?=(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
+    r"draft|produce|document|approve)\b)",
+    re.IGNORECASE,
+)
+_REPORTED_INSTRUCTION_STOP_RE = re.compile(
+    r"\s*(?:,\s*)?(?:\bbut\b|\bhowever\b|但是|但)",
+    re.IGNORECASE,
+)
 _SENTENCE_REFERENCE_RE = re.compile(
     r"^\s*(?:#{1,6}\s+|>\s+|"
     r"(?:example|for\s+example|reference|quoted|hypothetical(?:ly)?|"
     r"suppose|if\b|label|terms?|navigation|headings?|menu|title|readme|"
     r"description)\s*[:：,，]?|"
     r"(?:[-*+]\s+)?\[[ xX]\]\s+|(?:e\.g\.|i\.e\.)\s*[,，:]?)|"
-    r"^\s*(?:the\s+)?(?:example|documentation|docs|guide)\s+"
-    r"(?:says?|tells?|asks?)(?:\s+\w+)?\s+to\b|"
     r"\bdiscussed\s+whether\b|"
     r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
@@ -156,6 +170,9 @@ def parse_release_readiness_propositions(
     """Extract bounded action-object readiness propositions without raising."""
     source = bound_task_text(source)
     sentence_boundaries = _sentence_boundaries(source)
+    reported_reference_spans = _reported_instruction_reference_spans(
+        source, sentence_boundaries
+    )
     proposition_boundaries = tuple(
         sorted(
             set(
@@ -191,8 +208,15 @@ def parse_release_readiness_propositions(
         structurally_contained = _range_is_contained(
             object_start, object_end, structural_spans
         )
+        reported_instruction = _range_is_contained(
+            object_start, object_end, reported_reference_spans
+        )
 
-        if structurally_contained or _FILENAME_SUFFIX_RE.match(line[local_end:]):
+        if (
+            structurally_contained
+            or reported_instruction
+            or _FILENAME_SUFFIX_RE.match(line[local_end:])
+        ):
             propositions.append(
                 ReleaseReadinessProposition(
                     object_start,
@@ -439,6 +463,42 @@ def _structural_reference_spans(
             if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
                 return ((0, len(source)),)
     return tuple(sorted(spans))
+
+
+def _reported_instruction_reference_spans(
+    source: str,
+    sentence_boundaries: tuple[tuple[int, int], ...],
+) -> tuple[tuple[int, int], ...]:
+    candidate_starts = {0}
+    candidate_starts.update(
+        match.end() for match in re.finditer(r"[;；\n]", source)
+    )
+    candidate_starts.update(end for _, end in sentence_boundaries)
+    spans: list[tuple[int, int]] = []
+    for candidate_start in sorted(candidate_starts):
+        match = _REPORTED_INSTRUCTION_START_RE.match(source[candidate_start:])
+        if match is None:
+            continue
+        span_start = candidate_start + match.start()
+        instruction_start = candidate_start + match.end()
+        stops = [len(source)]
+        semicolon = re.search(r"[;；]", source[instruction_start:])
+        if semicolon is not None:
+            stops.append(instruction_start + semicolon.start())
+        adversative = _REPORTED_INSTRUCTION_STOP_RE.search(
+            source, instruction_start
+        )
+        if adversative is not None:
+            stops.append(adversative.start())
+        stops.extend(
+            boundary_start
+            for boundary_start, _ in sentence_boundaries
+            if boundary_start >= instruction_start
+        )
+        spans.append((span_start, min(stops)))
+        if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
+            return ((0, len(source)),)
+    return tuple(spans)
 
 
 def _delimited_spans(

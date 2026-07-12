@@ -399,6 +399,48 @@ class IntentSpansTest(unittest.TestCase):
                 )
                 self.assertEqual(graph.validate(), [])
 
+    def test_reported_instruction_spans_stop_before_independent_requests(self):
+        references = (
+            "The report says to prepare a repository release packet and review "
+            "the release checklist for v1.0.",
+            "The report says to prepare a repository release packet, then review "
+            "the release checklist for v1.0.",
+            "The documentation tells maintainers to prepare a repository release "
+            "packet, then review the release checklist and audit repository "
+            "release readiness.",
+        )
+        for task in references:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+        requests = (
+            "The report says to prepare a repository release packet; independently "
+            "prepare a repository release checklist.",
+            "The report says to prepare a repository release packet, but prepare "
+            "an actual maintainer release checklist.",
+            "The report says to prepare a repository release packet; however, "
+            "prepare a maintainer release checklist.",
+        )
+        for task in requests:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    sum(
+                        item.task_type == "open_source_release"
+                        and item.release_mode == "readiness"
+                        for item in graph.intent_evidence
+                    ),
+                    1,
+                )
+                self.assertEqual(graph.validate(), [])
+
         for task in (
             "The report says to prepare a repository release checklist.",
             'The report says "Prepare a repository release checklist."',
