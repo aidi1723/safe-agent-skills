@@ -72,6 +72,14 @@ class IntentTest(unittest.TestCase):
             "Prepare a content-management release packet for Python package "
             "maintainers.",
             "Prepare a content-management release packet for project maintainers.",
+            "Prepare a content-management release packet for repositories.",
+            "Prepare a content-management release packet for repos.",
+            "Prepare a content-management release packet for codebases.",
+            "Prepare a content-management release packet for this project's "
+            "repository.",
+            "Prepare a content-management release packet for the project's repository.",
+            "Prepare a content-management release packet for github repository.",
+            "Prepare a content-management release packet for external repository.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",

@@ -74,12 +74,24 @@ _SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     rf"model{_COMPOUND_SEPARATOR}serving)(?!\w)",
     re.IGNORECASE,
 )
+_REPOSITORY_ANCHOR_PATTERN = r"repositor(?:y|ies)"
+_REPO_ANCHOR_PATTERN = r"repos?"
+_CODEBASE_ANCHOR_PATTERN = r"codebases?"
 _MAINTAINER_ANCHOR_PATTERN = r"maintainers?"
 _CODE_ARTIFACT_ANCHOR_PATTERN = r"code[ -]artifacts?"
-_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN = (
-    r"(?<!\w)(?:repository|repo|software|code(?:base)?|"
+_PACKAGE_ANCHOR_PATTERN = r"packages?"
+_DOCKER_ANCHOR_PATTERN = r"docker(?:\s+images?)?"
+_CLI_ANCHOR_PATTERN = r"clis?"
+_VERSION_ANCHOR_PATTERN = r"versions?"
+_DIRECT_SOFTWARE_ANCHOR_PATTERN = (
+    rf"{_REPOSITORY_ANCHOR_PATTERN}|{_REPO_ANCHOR_PATTERN}|software|"
+    rf"{_CODEBASE_ANCHOR_PATTERN}|{_CODE_ARTIFACT_ANCHOR_PATTERN}|code|"
     rf"open[ -]source|{_MAINTAINER_ANCHOR_PATTERN}|npm|"
-    r"docker(?:\s+image)?|cli|version|"
+    rf"{_DOCKER_ANCHOR_PATTERN}|{_CLI_ANCHOR_PATTERN}|"
+    rf"{_VERSION_ANCHOR_PATTERN}"
+)
+_STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN = (
+    rf"(?<!\w)(?:{_DIRECT_SOFTWARE_ANCHOR_PATTERN}|"
     r"v?\d+\.\d+(?:\.\d+)?)(?!\w)|"
     r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)"
 )
@@ -92,16 +104,18 @@ _RELEASE_OBJECT_DETERMINER = (
 )
 _RELEASE_OBJECT_ADJECTIVE = (
     r"(?i:internal|public|private|local|official|core|primary|shared|hosted|"
-    r"main|upstream|project)"
+    r"main|upstream|project|external)"
 )
-_RELEASE_OBJECT_VENDOR = r"(?:GitHub|GitLab|Python)"
+_RELEASE_OBJECT_VENDOR = r"(?i:github|gitlab|python)"
+_RELEASE_OBJECT_PROJECT_POSSESSIVE = r"(?i:project['’]s)"
 _RELEASE_OBJECT_PROPER_POSSESSIVE = r"[A-Z][A-Za-z0-9]*['’]s"
 _RELEASE_OBJECT_PACKAGE_MODIFIER = (
     r"(?i:package)(?=\s+(?i:maintainers?)(?!\w))"
 )
 _RELEASE_OBJECT_MODIFIER = (
     rf"(?:{_RELEASE_OBJECT_DETERMINER}|{_RELEASE_OBJECT_ADJECTIVE}|"
-    rf"{_RELEASE_OBJECT_VENDOR}|{_RELEASE_OBJECT_PROPER_POSSESSIVE}|"
+    rf"{_RELEASE_OBJECT_VENDOR}|{_RELEASE_OBJECT_PROJECT_POSSESSIVE}|"
+    rf"{_RELEASE_OBJECT_PROPER_POSSESSIVE}|"
     rf"{_RELEASE_OBJECT_PACKAGE_MODIFIER})"
 )
 _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
@@ -117,9 +131,8 @@ _ACTION_RE = re.compile(
     re.IGNORECASE,
 )
 _SOFTWARE_ANCHOR_RE = re.compile(
-    r"(?<!\w)(?:repository|repo|package|cli|codebase|software|"
-    rf"open[ -]source|{_CODE_ARTIFACT_ANCHOR_PATTERN}|"
-    rf"{_MAINTAINER_ANCHOR_PATTERN}|npm|docker(?:\s+image)?|"
+    rf"(?<!\w)(?:{_DIRECT_SOFTWARE_ANCHOR_PATTERN}|"
+    rf"{_PACKAGE_ANCHOR_PATTERN}|"
     r"v?\d+\.\d+(?:\.\d+)?)(?!\w)|"
     r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)",
     re.IGNORECASE,
