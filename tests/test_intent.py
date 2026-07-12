@@ -394,6 +394,15 @@ class IntentTest(unittest.TestCase):
             "repository code.",
             "Prepare a release packet for content-licensing while reviewing "
             "repository code.",
+            "Prepare a release packet of content while reviewing repository code.",
+            "Prepare a release packet of a model while reviewing repository code.",
+            "Prepare a release packet of talent while reviewing repository code.",
+            "Prepare a release packet intended for content while reviewing "
+            "repository code.",
+            "Prepare a release packet for campaign content while reviewing "
+            "repository code.",
+            "Prepare a release packet for seasonal campaign editorial content "
+            "while reviewing repository code.",
             "Review repository code, prepare a release packet for content.",
         )
 
@@ -413,8 +422,26 @@ class IntentTest(unittest.TestCase):
                 )
                 self.assertEqual(graph.validate(), [])
 
+        for source in (
+            "Prepare a release packet for campaign content-management repository.",
+            "Prepare a release packet for internal model-serving package.",
+        ):
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].discourse_role, "request")
+                graph = decompose_task(source)
+                self.assertTrue(
+                    any(
+                        item.task_type == "open_source_release"
+                        and item.release_mode == "readiness"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
         governed = (
-            "Prepare a release packet for content while reviewing repository "
+            "Prepare a release packet of content while reviewing repository "
             "code, so prepare a repository release checklist."
         )
         propositions = parse(governed)

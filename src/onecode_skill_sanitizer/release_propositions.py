@@ -82,7 +82,11 @@ _NON_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     re.IGNORECASE,
 )
 _RELEASE_OBJECT_COMPLEMENT_PREFIX_RE = re.compile(
-    r"^\s*for\s+(?:(?:a|an|the)\s+)?",
+    r"^\s*(?:for|of|intended\s+for)\s+(?:(?:a|an|the)\s+)?",
+    re.IGNORECASE,
+)
+_RELEASE_OBJECT_COMPLEMENT_MODIFIER_RE = re.compile(
+    rf"[^\W\d_]+(?:{_DASH_CHARACTER}[^\W\d_]+)*\s+",
     re.IGNORECASE,
 )
 _SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
@@ -715,13 +719,8 @@ def _release_object_is_software(
         return True
     full_complement = proposition[object_end:]
     complement = full_complement[:MAX_RELEASE_OBJECT_COMPLEMENT_CHARS]
-    complement_prefix = _RELEASE_OBJECT_COMPLEMENT_PREFIX_RE.match(complement)
-    if complement_prefix is not None:
-        complement_head = _NON_SOFTWARE_RELEASE_DOMAIN_RE.match(
-            complement, complement_prefix.end()
-        )
-        if complement_head is not None:
-            return False
+    if _complement_has_nonsoftware_head(complement):
+        return False
     if _SOFTWARE_RELEASE_DOMAIN_RE.search(noun_phrase):
         complement_match = _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(
             complement
@@ -733,6 +732,27 @@ def _release_object_is_software(
             complement_match.group("object_complement_punctuation") is not None
         )
     return True
+
+
+def _complement_has_nonsoftware_head(complement: str) -> bool:
+    prefix = _RELEASE_OBJECT_COMPLEMENT_PREFIX_RE.match(complement)
+    if prefix is None:
+        return False
+    cursor = prefix.end()
+    for modifier_count in range(MAX_RELEASE_OBJECT_MODIFIER_TOKENS + 1):
+        if _SOFTWARE_RELEASE_DOMAIN_RE.match(complement, cursor):
+            return False
+        if _NON_SOFTWARE_RELEASE_DOMAIN_RE.match(complement, cursor):
+            return True
+        if modifier_count >= MAX_RELEASE_OBJECT_MODIFIER_TOKENS:
+            break
+        modifier = _RELEASE_OBJECT_COMPLEMENT_MODIFIER_RE.match(
+            complement, cursor
+        )
+        if modifier is None:
+            break
+        cursor = modifier.end()
+    return False
 
 
 def _line_bounds(source: str, start: int, end: int) -> tuple[int, int]:
