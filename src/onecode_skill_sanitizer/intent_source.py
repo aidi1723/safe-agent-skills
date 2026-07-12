@@ -164,6 +164,8 @@ def _is_release_sentence_dot(text: str, index: int) -> bool:
         action_start += 1
     if (
         action_start > index + 1
+        and action_start < len(text)
+        and text[action_start].isupper()
         and _RELEASE_ACTION_RE.match(text, action_start) is not None
     ):
         return True

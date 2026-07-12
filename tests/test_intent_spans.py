@@ -1467,6 +1467,8 @@ class IntentSpansTest(unittest.TestCase):
             "The guide says the U.S. team should open source the project.",
             "The guide says Dr. Smith should open source the project.",
             "The guide says A. Smith should open source the project.",
+            "The guide says the U.S. release project should remain private.",
+            "The guide says the U.K. release project was archived.",
         )
 
         for source in cases:
@@ -1480,6 +1482,8 @@ class IntentSpansTest(unittest.TestCase):
             "The guide says the U.S. team should open source the project.",
             "The guide says Dr. Smith should open source the project.",
             "The guide says A. Smith should open source the project.",
+            "The guide says the U.S. release project should remain private.",
+            "The guide says the U.K. release project was archived.",
         )
 
         for source in cases:
