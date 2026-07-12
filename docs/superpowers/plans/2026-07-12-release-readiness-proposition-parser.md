@@ -173,6 +173,6 @@ Run specification review, then code-quality/adversarial review. Rework the same 
 ## Plan Self-Review
 
 - Spec coverage: positive requests, structural references, local polarity, clause order, safe downgrade, generation/validation parity, provenance, legacy compatibility, and held-out verification are all assigned to explicit tasks.
-- Placeholder scan: no TODO/TBD or unspecified implementation step remains.
+- Completeness scan: every implementation step is explicit and assigned.
 - Type consistency: the parser returns immutable `ReleaseReadinessProposition` records; generation and validation share the same tuple API.
 - Scope: no schema, evaluator, catalog, bundle, or gold change is authorized.

@@ -119,6 +119,94 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(readiness[0].polarity, "positive")
                 self.assertEqual(readiness[0].discourse_role, "request")
 
+    def test_release_readiness_propositions_do_not_cross_sentence_boundaries(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        negative = "Cannot prepare a repository release packet"
+        positive = "Prepare a repository release checklist"
+        matrices = (
+            (f"{negative}. {positive}.", ("negative", "positive")),
+            (f"{positive}. {negative}.", ("positive", "negative")),
+            (f"{negative}? {positive}!", ("negative", "positive")),
+            (f"{positive}!! {negative}??", ("positive", "negative")),
+        )
+
+        for source, expected_polarities in matrices:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(
+                    tuple(item.polarity for item in propositions),
+                    expected_polarities,
+                )
+                self.assertTrue(
+                    all(item.discourse_role == "request" for item in propositions)
+                )
+                for item in propositions:
+                    span = source[item.start : item.end]
+                    self.assertEqual(item.action, "prepare")
+                    self.assertTrue(span.casefold().startswith("prepare"))
+                    self.assertIn(item.object_text, span)
+
+    def test_release_readiness_structural_roles_are_proposition_local(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        reference = "Example: prepare a repository release packet"
+        request = "Prepare a repository release checklist"
+        matrices = (
+            (f"{reference}. {request}.", ("reference", "request")),
+            (f"{request}. {reference}.", ("request", "reference")),
+            (f"{reference}! {request}?", ("reference", "request")),
+        )
+
+        for source, expected_roles in matrices:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(
+                    tuple(item.discourse_role for item in propositions),
+                    expected_roles,
+                )
+                self.assertEqual(
+                    sum(
+                        item.polarity == "positive"
+                        and item.discourse_role == "request"
+                        for item in propositions
+                    ),
+                    1,
+                )
+
+    def test_release_sentence_boundaries_preserve_versions_files_and_abbreviations(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        cases = (
+            "Review the release checklist for v1.0.",
+            "Use e.g. repository metadata to prepare a repository release checklist.",
+        )
+        for source in cases:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].discourse_role, "request")
+                self.assertEqual(propositions[0].polarity, "positive")
+
+        controls = (
+            "README.md describes a release checklist.",
+            "The v1.0.release-checklist.json filename is documented.",
+        )
+        for source in controls:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    any(
+                        item.discourse_role == "request"
+                        for item in parse(source)
+                    )
+                )
+
     def test_release_readiness_proposition_parser_is_bounded_and_total(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"

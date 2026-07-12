@@ -98,7 +98,6 @@ def parse_release_readiness_propositions(
 
         if (
             _is_quoted(line, local_start, local_end)
-            or _STRUCTURAL_PREFIX_RE.search(line)
             or _FILENAME_SUFFIX_RE.match(line[local_end:])
         ):
             propositions.append(
@@ -132,7 +131,9 @@ def parse_release_readiness_propositions(
         proposition = source[proposition_start:proposition_end]
         local_object_start = object_start - proposition_start
         local_object_end = object_end - proposition_start
-        if _REFERENCE_CLAUSE_RE.search(proposition):
+        if _STRUCTURAL_PREFIX_RE.search(
+            proposition
+        ) or _REFERENCE_CLAUSE_RE.search(proposition):
             propositions.append(
                 ReleaseReadinessProposition(
                     object_start,
@@ -233,13 +234,47 @@ def _line_bounds(source: str, start: int, end: int) -> tuple[int, int]:
 def _proposition_bounds(source: str, start: int, end: int) -> tuple[int, int]:
     proposition_start = 0
     proposition_end = len(source)
-    for boundary in _COORDINATOR_RE.finditer(source):
-        if boundary.end() <= start:
-            proposition_start = boundary.end()
-        elif boundary.start() >= end:
-            proposition_end = boundary.start()
+    boundaries = [
+        match.span() for match in _COORDINATOR_RE.finditer(source)
+    ] + list(_sentence_boundaries(source))
+    for boundary_start, boundary_end in sorted(set(boundaries)):
+        if boundary_end <= start:
+            proposition_start = boundary_end
+        elif boundary_start >= end:
+            proposition_end = boundary_start
             break
     return proposition_start, proposition_end
+
+
+def _sentence_boundaries(source: str) -> tuple[tuple[int, int], ...]:
+    boundaries: list[tuple[int, int]] = []
+    index = 0
+    while index < len(source):
+        character = source[index]
+        if character not in ".!?":
+            index += 1
+            continue
+        if character == "." and _dot_is_internal(source, index):
+            index += 1
+            continue
+        boundary_start = index
+        while index < len(source) and source[index] in ".!?":
+            index += 1
+        while index < len(source) and source[index].isspace():
+            index += 1
+        boundaries.append((boundary_start, index))
+    return tuple(boundaries)
+
+
+def _dot_is_internal(source: str, index: int) -> bool:
+    previous = source[index - 1] if index else ""
+    following = source[index + 1] if index + 1 < len(source) else ""
+    if previous.isalnum() and following.isalnum():
+        return True
+    return source[max(0, index - 3) : index + 1].casefold() in {
+        "e.g.",
+        "i.e.",
+    }
 
 
 def _is_quoted(line: str, start: int, end: int) -> bool:
