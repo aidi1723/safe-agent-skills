@@ -74,9 +74,12 @@ _SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     rf"model{_COMPOUND_SEPARATOR}serving)(?!\w)",
     re.IGNORECASE,
 )
+_MAINTAINER_ANCHOR_PATTERN = r"maintainers?"
+_CODE_ARTIFACT_ANCHOR_PATTERN = r"code[ -]artifacts?"
 _STRONG_SOFTWARE_RELEASE_OBJECT_PATTERN = (
     r"(?<!\w)(?:repository|repo|software|code(?:base)?|"
-    r"open[ -]source|maintainers?|npm|docker(?:\s+image)?|cli|version|"
+    rf"open[ -]source|{_MAINTAINER_ANCHOR_PATTERN}|npm|"
+    r"docker(?:\s+image)?|cli|version|"
     r"v?\d+\.\d+(?:\.\d+)?)(?!\w)|"
     r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)"
 )
@@ -88,15 +91,18 @@ _RELEASE_OBJECT_DETERMINER = (
     r"(?i:the|a|an|this|that|these|those|our|your|their|its|my)"
 )
 _RELEASE_OBJECT_ADJECTIVE = (
-    r"(?i:internal|public|private|local|official|core|primary|shared|hosted)"
+    r"(?i:internal|public|private|local|official|core|primary|shared|hosted|"
+    r"main|upstream|project)"
 )
-_RELEASE_OBJECT_VENDOR = r"GitHub"
+_RELEASE_OBJECT_VENDOR = r"(?:GitHub|GitLab|Python)"
+_RELEASE_OBJECT_PROPER_POSSESSIVE = r"[A-Z][A-Za-z0-9]*['’]s"
 _RELEASE_OBJECT_PACKAGE_MODIFIER = (
     r"(?i:package)(?=\s+(?i:maintainers?)(?!\w))"
 )
 _RELEASE_OBJECT_MODIFIER = (
     rf"(?:{_RELEASE_OBJECT_DETERMINER}|{_RELEASE_OBJECT_ADJECTIVE}|"
-    rf"{_RELEASE_OBJECT_VENDOR}|{_RELEASE_OBJECT_PACKAGE_MODIFIER})"
+    rf"{_RELEASE_OBJECT_VENDOR}|{_RELEASE_OBJECT_PROPER_POSSESSIVE}|"
+    rf"{_RELEASE_OBJECT_PACKAGE_MODIFIER})"
 )
 _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE = re.compile(
     rf"^\s*(?i:for|of)\s+"
@@ -112,7 +118,8 @@ _ACTION_RE = re.compile(
 )
 _SOFTWARE_ANCHOR_RE = re.compile(
     r"(?<!\w)(?:repository|repo|package|cli|codebase|software|"
-    r"open[ -]source|code[ -]artifact|maintainer|npm|docker(?:\s+image)?|"
+    rf"open[ -]source|{_CODE_ARTIFACT_ANCHOR_PATTERN}|"
+    rf"{_MAINTAINER_ANCHOR_PATTERN}|npm|docker(?:\s+image)?|"
     r"v?\d+\.\d+(?:\.\d+)?)(?!\w)|"
     r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)",
     re.IGNORECASE,

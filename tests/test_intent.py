@@ -60,6 +60,18 @@ class IntentTest(unittest.TestCase):
             "Prepare a content-management release packet for GitHub repository "
             "maintainers.",
             "Prepare a content-management release packet for the package maintainers.",
+            "Prepare a content-management release packet for maintainers.",
+            "Prepare a content-management release packet for the maintainers.",
+            "Prepare a content-management release packet for code artifacts.",
+            "Prepare a content-management release packet for the code artifacts.",
+            "Prepare a content-management release packet for main repository.",
+            "Prepare a content-management release packet for upstream repository.",
+            "Prepare a content-management release packet for project repository.",
+            "Prepare a content-management release packet for Acme's repository.",
+            "Prepare a content-management release packet for GitLab repository.",
+            "Prepare a content-management release packet for Python package "
+            "maintainers.",
+            "Prepare a content-management release packet for project maintainers.",
             "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
@@ -159,6 +171,8 @@ class IntentTest(unittest.TestCase):
             "if repository code passes review.",
             "Prepare a content-management release packet for campaign material "
             "despite repository code review.",
+            "Prepare a content-management release packet for Following repository "
+            "code review.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):

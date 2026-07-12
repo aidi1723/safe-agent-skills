@@ -158,6 +158,51 @@ class IntentSpansTest(unittest.TestCase):
                 "maintainers.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a content-management release packet for maintainers.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for the maintainers.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for code artifacts.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for the code artifacts.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for main repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for upstream repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for project repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for Acme's repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for GitLab repository.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for Python package "
+                "maintainers.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for project maintainers.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
@@ -415,6 +460,8 @@ class IntentSpansTest(unittest.TestCase):
             "if repository code passes review.",
             "Prepare a content-management release packet for campaign material "
             "despite repository code review.",
+            "Prepare a content-management release packet for Following repository "
+            "code review.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",
