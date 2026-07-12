@@ -118,6 +118,18 @@ class IntentTest(unittest.TestCase):
             "After reviewing the report, prepare a repository release checklist.",
             "Before updating the documentation, prepare a repository release checklist.",
             "Use the guide to review the repository release checklist.",
+            "First, prepare a repository release checklist.",
+            "Next, review the release checklist for v1.0.",
+            "Now prepare a repository release checklist.",
+            "Let’s prepare a repository release checklist.",
+            "I would like to prepare a repository release checklist.",
+            "We plan to prepare a repository release checklist.",
+            "Make sure to prepare a repository release checklist.",
+            "Please help prepare a repository release checklist.",
+            "麻烦准备一个仓库发布清单。",
+            "请帮忙准备详细的仓库发布清单。",
+            "我们计划准备仓库发布清单。",
+            "接下来准备仓库发布清单。",
             "请准备仓库发布清单。",
             "请你审查仓库发布清单。",
             "我们需要准备仓库发布清单。",
@@ -147,6 +159,8 @@ class IntentTest(unittest.TestCase):
             "According to the report, prepare a repository release checklist.",
             "The guide instructs maintainers to prepare a repository release checklist.",
             "Documentation requires us to prepare a repository release checklist.",
+            "We do not plan to prepare a repository release checklist.",
+            "The report plans to prepare a repository release checklist.",
         )
         for source in controls:
             with self.subTest(source=source):
@@ -733,6 +747,14 @@ class IntentTest(unittest.TestCase):
             "packet, then review the release checklist for v1.0.",
             "The docs ask prepare a repository release packet and audit repository "
             "release readiness.",
+            "The report states that maintainers should prepare a repository release "
+            "packet and review the release checklist for v1.0.",
+            "The report recommends that maintainers prepare a repository release "
+            "packet and review the release checklist for v1.0.",
+            "According to the report, prepare a repository release packet and review "
+            "the release checklist for v1.0.",
+            "The guide instructs maintainers to prepare a repository release packet "
+            "and review the release checklist for v1.0.",
         )
         for source in governed:
             with self.subTest(source=source):
@@ -770,6 +792,16 @@ class IntentTest(unittest.TestCase):
             ),
             (
                 "The instruction tells maintainers prepare a repository release "
+                "packet, but review the actual maintainer release checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "The report states that maintainers should prepare a repository "
+                "release packet; prepare a maintainer release checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "The guide instructs maintainers to prepare a repository release "
                 "packet, but review the actual maintainer release checklist.",
                 ("reference", "request"),
             ),

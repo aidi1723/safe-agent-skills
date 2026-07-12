@@ -84,10 +84,15 @@ _ENGLISH_REQUEST_PREFIX_RE = re.compile(
     r"^\s*[.,;:!?\"'”’\)\]}-]*\s*(?:"
     r"(?:[^\W\d_]+ly\s+){0,2}|"
     r"(?:please|kindly)(?:\s+[^\W\d_]+ly){0,2}\s+|"
+    r"please\s+help(?:\s+to)?\s+|"
     r"however\s*,\s*|"
+    r"(?:first|next|now)(?:\s*,)?\s+|"
+    r"let(?:['’]s|\s+us)\s+|"
+    r"make\s+sure\s+to\s+|"
     r"(?:could|would|can)\s+you(?:\s+(?:please|kindly))?\s+|"
     r"(?:(?:the\s+)?(?:team|maintainers?)|we|i|you)\s+"
-    r"(?:(?:needs?|wants?)\s+to|should|must)\s+|"
+    r"(?:(?:needs?|wants?|plans?|intends?)\s+to|"
+    r"would\s+like\s+to|should|must)\s+|"
     r"use\b[^,;!?\n]{0,80}\bto\s+|"
     r"(?:for|before|after|once|when|while|during|at|in|as\s+part\s+of)\b"
     r"[^,;!?\n]{0,80},\s*(?:(?:please|kindly)\s+)?"
@@ -105,11 +110,12 @@ _NARRATIVE_REFERENCE_PREFIX_RE = re.compile(
     re.IGNORECASE,
 )
 _CHINESE_REQUEST_PREFIX_RE = re.compile(
-    r"^\s*[，。！？；：”’）】]*\s*(?:(?:请(?:你)?|我们需要|维护者应|团队要)"
+    r"^\s*[，。！？；：”’）】]*\s*(?:(?:请(?:你)?|请帮忙|麻烦|我们需要|"
+    r"我们计划|维护者应|团队要|接下来[，,]?)"
     r"(?:立即|马上|仔细|认真|谨慎|再|先)?\s*)?$"
 )
 _CHINESE_ACTION_OBJECT_GAP_RE = re.compile(
-    r"^(?:\s|该|本|这个|一份|完整|好|一下|仓库|代码库|软件包|"
+    r"^(?:\s|该|本|这个|一个|一份|完整|详细的|好|一下|仓库|代码库|软件包|"
     r"维护者|开源|软件|版本|许可证|供应链|的|、|与|和|及|以及)*$"
 )
 _CHINESE_ACTION_NEGATION_RE = re.compile(
@@ -137,16 +143,9 @@ _REFERENCE_CLAUSE_RE = re.compile(
     r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
 )
-_REPORTED_SPEECH_REFERENCE_RE = re.compile(
-    r"^\s*(?:(?:the|an?)\s+)?(?:(?:quoted\s+)?instruction|report)\s+"
-    r"(?:says?|tells?|asks?)(?:\s+\w+)?\s+(?:to\s+)?"
-    r"(?:[^\W\d_]+ly\s+){0,2}"
-    r"(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
-    r"draft|produce|document|approve)\b",
-    re.IGNORECASE,
-)
-_REPORTED_INSTRUCTION_START_RE = re.compile(
-    r"^\s*(?:(?:the|an?)\s+)?(?:report|example|documentation|docs|guide|"
+_NARRATIVE_INSTRUCTION_START_RE = re.compile(
+    r"^\s*(?:"
+    r"(?:(?:the|an?)\s+)?(?:report|example|documentation|docs|guide|"
     r"(?:quoted\s+)?instruction)\s+"
     r"(?:"
     r"(?:says?|tells?|asks?)(?:"
@@ -155,13 +154,21 @@ _REPORTED_INSTRUCTION_START_RE = re.compile(
     r")|"
     r"says?\s+|"
     r"(?:tells?|asks?)(?:\s+\w+)?\s+"
+    r")|"
+    r"(?:(?:the|an?)\s+)?report\s+(?:states?|recommends?)\s+that\s+"
+    r"(?:\w+\s+)?(?:(?:should|must)\s+)?|"
+    r"according\s+to\s+(?:the\s+)?(?:report|documentation|docs|guide)"
+    r"\s*,\s*(?:\w+\s+)?"
+    r"(?:(?:should|must|needs?\s+to)\s+)?|"
+    r"(?:(?:the|an?)\s+)?(?:documentation|docs|guide)\s+"
+    r"(?:instructs?|requires?)(?:\s+\w+)?\s+(?:to\s+)?"
     r")"
     r"(?:[^\W\d_]+ly\s+){0,2}"
     r"(?=(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
     r"draft|produce|document|approve)\b)",
     re.IGNORECASE,
 )
-_REPORTED_INSTRUCTION_STOP_RE = re.compile(
+_NARRATIVE_INSTRUCTION_STOP_RE = re.compile(
     r"\s*(?:,\s*)?(?:\bbut\b|\bhowever\b|但是|但)",
     re.IGNORECASE,
 )
@@ -207,7 +214,7 @@ def parse_release_readiness_propositions(
     """Extract bounded action-object readiness propositions without raising."""
     source = bound_task_text(source)
     sentence_boundaries = _sentence_boundaries(source)
-    reported_reference_spans = _reported_instruction_reference_spans(
+    reported_reference_spans = _narrative_instruction_reference_spans(
         source, sentence_boundaries
     )
     proposition_boundaries = tuple(
@@ -289,7 +296,6 @@ def parse_release_readiness_propositions(
             sentence_is_reference
             or _STRUCTURAL_PREFIX_RE.search(proposition)
             or _REFERENCE_CLAUSE_RE.search(proposition)
-            or _REPORTED_SPEECH_REFERENCE_RE.search(proposition)
         ):
             propositions.append(
                 ReleaseReadinessProposition(
@@ -575,7 +581,7 @@ def _html_pre_spans(source: str) -> tuple[tuple[int, int], ...]:
     return tuple(spans)
 
 
-def _reported_instruction_reference_spans(
+def _narrative_instruction_reference_spans(
     source: str,
     sentence_boundaries: tuple[tuple[int, int], ...],
 ) -> tuple[tuple[int, int], ...]:
@@ -583,10 +589,13 @@ def _reported_instruction_reference_spans(
     candidate_starts.update(
         match.end() for match in re.finditer(r"[;；\n]", source)
     )
+    candidate_starts.update(
+        match.end() for match in _COORDINATOR_RE.finditer(source)
+    )
     candidate_starts.update(end for _, end in sentence_boundaries)
     spans: list[tuple[int, int]] = []
     for candidate_start in sorted(candidate_starts):
-        match = _REPORTED_INSTRUCTION_START_RE.match(source[candidate_start:])
+        match = _NARRATIVE_INSTRUCTION_START_RE.match(source[candidate_start:])
         if match is None:
             continue
         span_start = candidate_start + match.start()
@@ -595,7 +604,7 @@ def _reported_instruction_reference_spans(
         semicolon = re.search(r"[;；]", source[instruction_start:])
         if semicolon is not None:
             stops.append(instruction_start + semicolon.start())
-        adversative = _REPORTED_INSTRUCTION_STOP_RE.search(
+        adversative = _NARRATIVE_INSTRUCTION_STOP_RE.search(
             source, instruction_start
         )
         if adversative is not None:
