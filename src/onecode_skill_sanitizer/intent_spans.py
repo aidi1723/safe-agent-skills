@@ -220,6 +220,11 @@ def split_profile_enumeration(
     )
     spans = merge_same_profile_spans(spans)
     descriptive_release_ranges = _descriptive_release_ranges(clause)
+    positive_readiness_ranges = tuple(
+        (item.start - source_offset, item.end - source_offset)
+        for item in release_propositions
+        if item.polarity == "positive" and item.discourse_role == "request"
+    )
     if descriptive_release_ranges:
         spans = tuple(
             span
@@ -228,6 +233,9 @@ def split_profile_enumeration(
                 span.task_type == "open_source_release"
                 and _range_overlaps(
                     span.start, span.end, descriptive_release_ranges
+                )
+                and not _range_overlaps(
+                    span.start, span.end, positive_readiness_ranges
                 )
             )
         )

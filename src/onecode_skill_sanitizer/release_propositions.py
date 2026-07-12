@@ -94,9 +94,14 @@ _ENGLISH_REQUEST_PREFIX_RE = re.compile(
     r")$",
     re.IGNORECASE,
 )
-_NARRATIVE_CONTEXT_RE = re.compile(
-    r"\b(?:according\s+to|report|recommendation|instruction|"
-    r"documentation|guide)\b",
+_NARRATIVE_REFERENCE_PREFIX_RE = re.compile(
+    r"^\s*(?:"
+    r"according\s+to\s+(?:the\s+)?"
+    r"(?:report|documentation|docs|guide|instruction)\b[^,;!?\n]{0,48},\s*|"
+    r"(?:(?:the|an?)\s+)?"
+    r"(?:report|documentation|docs|guide|instruction)\s+"
+    r"(?:states?|recommends?|says?|instructs?|requires?)\b[^,;!?\n]{0,96}"
+    r")$",
     re.IGNORECASE,
 )
 _CHINESE_REQUEST_PREFIX_RE = re.compile(
@@ -496,7 +501,7 @@ def _action_has_request_prefix(
         return _CHINESE_REQUEST_PREFIX_RE.fullmatch(prefix) is not None
     if _POSITIVE_OBLIGATION_RE.search(prefix) or _NOT_ONLY_RE.search(prefix):
         return True
-    if _NARRATIVE_CONTEXT_RE.search(prefix):
+    if _NARRATIVE_REFERENCE_PREFIX_RE.fullmatch(prefix):
         return False
     return _ENGLISH_REQUEST_PREFIX_RE.fullmatch(prefix) is not None
 

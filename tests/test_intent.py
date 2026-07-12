@@ -114,6 +114,10 @@ class IntentTest(unittest.TestCase):
             "Can you please prepare a repository release checklist?",
             "For v1.0, prepare a repository release checklist.",
             "Before publishing, review the repository release checklist.",
+            "Use the audit report to prepare a repository release checklist.",
+            "After reviewing the report, prepare a repository release checklist.",
+            "Before updating the documentation, prepare a repository release checklist.",
+            "Use the guide to review the repository release checklist.",
             "请准备仓库发布清单。",
             "请你审查仓库发布清单。",
             "我们需要准备仓库发布清单。",
@@ -152,6 +156,25 @@ class IntentTest(unittest.TestCase):
                         and item.discourse_role == "request"
                         for item in parse(source)
                     )
+                )
+
+        boundaries = (
+            (
+                "According to the report, prepare a repository release packet; "
+                "prepare a repository release checklist.",
+                ("reference", "request"),
+            ),
+            (
+                "Use the audit report to prepare a repository release packet; "
+                "according to the guide, review the release checklist for v1.0.",
+                ("request", "reference"),
+            ),
+        )
+        for source, expected in boundaries:
+            with self.subTest(source=source):
+                self.assertEqual(
+                    tuple(item.discourse_role for item in parse(source)),
+                    expected,
                 )
 
     def test_release_readiness_proposition_parser_binds_local_action_and_object(self):
