@@ -408,6 +408,14 @@ class IntentSpansTest(unittest.TestCase):
             "The documentation tells maintainers to prepare a repository release "
             "packet, then review the release checklist and audit repository "
             "release readiness.",
+            "The report says prepare a repository release packet and review the "
+            "release checklist for v1.0.",
+            "Instruction says prepare a repository release packet, then review "
+            "the release checklist for v1.0.",
+            "The instruction tells maintainers prepare a repository release "
+            "packet, then review the release checklist for v1.0.",
+            "The docs ask prepare a repository release packet and audit repository "
+            "release readiness.",
         )
         for task in references:
             with self.subTest(task=task):
@@ -427,6 +435,10 @@ class IntentSpansTest(unittest.TestCase):
             "an actual maintainer release checklist.",
             "The report says to prepare a repository release packet; however, "
             "prepare a maintainer release checklist.",
+            "The report says prepare a repository release packet; prepare a "
+            "maintainer release checklist.",
+            "The instruction tells maintainers prepare a repository release "
+            "packet, but review the actual maintainer release checklist.",
         )
         for task in requests:
             with self.subTest(task=task):

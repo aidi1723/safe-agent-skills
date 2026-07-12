@@ -114,10 +114,14 @@ _REPORTED_SPEECH_REFERENCE_RE = re.compile(
 )
 _REPORTED_INSTRUCTION_START_RE = re.compile(
     r"^\s*(?:(?:the|an?)\s+)?(?:report|example|documentation|docs|guide|"
-    r"(?:quoted\s+)?instruction)\s+(?:says?|tells?|asks?)"
+    r"(?:quoted\s+)?instruction)\s+"
     r"(?:"
+    r"(?:says?|tells?|asks?)(?:"
     r"(?:\s+\w+)?\s+to\s+|"
     r"\s+that\s+(?:\w+\s+)?(?:should|must|needs?\s+to|is\s+to|are\s+to)\s+"
+    r")|"
+    r"says?\s+|"
+    r"(?:tells?|asks?)(?:\s+\w+)?\s+"
     r")"
     r"(?:[^\W\d_]+ly\s+){0,2}"
     r"(?=(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
