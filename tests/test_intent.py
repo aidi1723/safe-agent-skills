@@ -381,6 +381,58 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(len(evidence), 1)
                 self.assertEqual(graph.validate(), [])
 
+    def test_release_readiness_rejects_nonsoftware_post_object_heads(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        controls = (
+            "Prepare a release packet for content while reviewing repository code.",
+            "Prepare a release packet for a model while reviewing repository code.",
+            "Prepare a release packet for talent after reviewing repository code.",
+            "Prepare a release packet for talent-authorization while reviewing "
+            "repository code.",
+            "Prepare a release packet for content-licensing while reviewing "
+            "repository code.",
+            "Review repository code, prepare a release packet for content.",
+        )
+
+        for source in controls:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].discourse_role, "reference")
+
+                graph = decompose_task(source)
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        and item.release_mode == "readiness"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+        governed = (
+            "Prepare a release packet for content while reviewing repository "
+            "code, so prepare a repository release checklist."
+        )
+        propositions = parse(governed)
+        self.assertEqual(
+            tuple(item.discourse_role for item in propositions),
+            ("reference", "request"),
+        )
+        graph = decompose_task(governed)
+        self.assertEqual(
+            sum(
+                item.task_type == "open_source_release"
+                and item.release_mode == "readiness"
+                for item in graph.intent_evidence
+            ),
+            1,
+        )
+        self.assertEqual(graph.validate(), [])
+
     def test_release_readiness_propositions_do_not_cross_sentence_boundaries(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"

@@ -81,6 +81,10 @@ _NON_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     rf"content(?!{_COMPOUND_SEPARATOR}management\b))(?!\w)",
     re.IGNORECASE,
 )
+_RELEASE_OBJECT_COMPLEMENT_PREFIX_RE = re.compile(
+    r"^\s*for\s+(?:(?:a|an|the)\s+)?",
+    re.IGNORECASE,
+)
 _SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
     rf"(?<!\w)(?:content{_COMPOUND_SEPARATOR}management|"
     rf"model{_COMPOUND_SEPARATOR}serving)(?!\w)",
@@ -707,11 +711,18 @@ def _release_object_is_software(
     non_software = tuple(_NON_SOFTWARE_RELEASE_DOMAIN_RE.finditer(noun_phrase))
     if non_software:
         return False
+    if _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(noun_phrase):
+        return True
+    full_complement = proposition[object_end:]
+    complement = full_complement[:MAX_RELEASE_OBJECT_COMPLEMENT_CHARS]
+    complement_prefix = _RELEASE_OBJECT_COMPLEMENT_PREFIX_RE.match(complement)
+    if complement_prefix is not None:
+        complement_head = _NON_SOFTWARE_RELEASE_DOMAIN_RE.match(
+            complement, complement_prefix.end()
+        )
+        if complement_head is not None:
+            return False
     if _SOFTWARE_RELEASE_DOMAIN_RE.search(noun_phrase):
-        if _STRONG_SOFTWARE_RELEASE_OBJECT_RE.search(noun_phrase):
-            return True
-        full_complement = proposition[object_end:]
-        complement = full_complement[:MAX_RELEASE_OBJECT_COMPLEMENT_CHARS]
         complement_match = _STRONG_SOFTWARE_RELEASE_COMPLEMENT_RE.match(
             complement
         )
