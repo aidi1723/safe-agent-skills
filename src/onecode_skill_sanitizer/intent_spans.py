@@ -47,7 +47,8 @@ _CONNECTOR_RE = re.compile(
 )
 _PLUS_CONNECTOR_RE = re.compile(r"\+|＋")
 _NEGATION_MARKER_RE = re.compile(
-    r"\b(?:do\s+not|don't|never)\b|(?:不需要|不要|不得|禁止|无需|暂不|先不|不做|别)",
+    r"\b(?:(?:do|must|should)\s+not|(?:do|must|should)n['’]t|never)\b|"
+    r"(?:不需要|不要|不得|禁止|无需|暂不|先不|不做|别)",
     re.IGNORECASE,
 )
 _PUNCTUATION_BOUNDARY_RE = re.compile(r"[,，;；]")
@@ -432,10 +433,21 @@ def _single_clause_evidence(
             matched_signals=("publishing site",),
             matched_score=2,
         )
+    release_spans = [
+        span for span in spans if span.task_type == "open_source_release"
+    ]
+    release_signals = tuple(span.signal.casefold() for span in release_spans)
+    if release_spans and source_supports_release_readiness(
+        clause, release_signals, polarity=polarity
+    ):
+        return _profile_evidence(
+            "open_source_release",
+            release_spans,
+            clause,
+            polarity,
+            relation_mode,
+        )
     if _has_positive_release_action(clause):
-        release_spans = [
-            span for span in spans if span.task_type == "open_source_release"
-        ]
         return _profile_evidence(
             "open_source_release",
             release_spans,
@@ -476,13 +488,23 @@ def _profile_evidence(
             for signal in combined.split(" / ")
         }
         if source_supports_release_readiness(
-            clause, tuple(normalized_signals)
+            clause, tuple(normalized_signals), polarity=polarity
         ):
             release_mode = "readiness"
         elif source_supports_release_action(
             clause, tuple(normalized_signals)
         ):
             release_mode = "action"
+        if release_mode == "none":
+            return IntentEvidence(
+                task_type="general",
+                context="action",
+                polarity=polarity,
+                release_mode="none",
+                relation_mode=relation_mode,
+                matched_signals=(),
+                matched_score=0,
+            )
     return IntentEvidence(
         task_type=task_type,
         context="action",
@@ -526,6 +548,11 @@ def _clause_polarity(
     if not negation_ranges:
         return "positive"
     if spans and _ADVERSATIVE_BOUNDARY_RE.search(clause):
+        if all(
+            span.start >= max(range_end for _, range_end in negation_ranges)
+            for span in spans
+        ):
+            return "positive"
         return "mixed"
     return "negative"
 

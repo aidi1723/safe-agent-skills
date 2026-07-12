@@ -110,14 +110,27 @@ class IntentSpansTest(unittest.TestCase):
                         for evidence in graph.intent_evidence
                     )
                 )
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "none"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
 
     def test_release_readiness_decomposition_scopes_context_per_segment(self):
         tasks = (
             "Review code for unauthorized access; prepare a repository release packet.",
             "Prepare a repository release packet; review code for unauthorized access.",
+            "Review code for unauthorized access and prepare a repository release packet.",
+            "Prepare a repository release packet and review code for unauthorized access.",
             "Remove stale cache, then prepare a maintainer-ready release packet.",
+            "Remove stale cache, and then prepare a maintainer-ready release packet.",
             "Must not delete old artifacts; prepare a repository release checklist.",
             "清理过期缓存；然后 prepare a repository release packet.",
+            "Prepare a repository release packet documenting stale artifacts.",
+            "Prepare a repository release packet without publishing it.",
         )
 
         for task in tasks:
@@ -137,15 +150,23 @@ class IntentSpansTest(unittest.TestCase):
     def test_release_readiness_decomposition_rejects_negated_and_syntax_controls(self):
         tasks = (
             "Must not prepare a repository release packet.",
+            "Mustn't approve a repository release packet.",
+            "Should not prepare a repository release checklist.",
+            "Shouldn't approve package release readiness.",
             "Do not claim release readiness.",
             "Don't prepare a release checklist.",
             "Never prepare a maintainer-ready release packet.",
             '"Prepare a repository release packet"',
+            "'Prepare a repository release packet'",
             "“Prepare a repository release checklist”",
             "# Release readiness",
+            "> Release readiness",
+            "- [ ] Prepare a repository release checklist",
             "<h2>Release checklist</h2>",
             "Navigation: Release readiness",
+            "Title: Release readiness",
             "Release readiness.md",
+            "release_packet.yaml",
             "release-checklist.json",
             "Example: prepare a repository release checklist",
             "- Release checklist",
@@ -164,6 +185,14 @@ class IntentSpansTest(unittest.TestCase):
                         for item in graph.intent_evidence
                     )
                 )
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        and item.release_mode == "none"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
 
     def test_direct_text_helpers_share_exact_scan_boundary(self):
         evidence = IntentEvidence(

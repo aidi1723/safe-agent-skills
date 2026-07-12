@@ -73,6 +73,36 @@ class CompilerTest(unittest.TestCase):
         self.assertEqual(compiled["status"], "ready")
         self.assertEqual(compiled["reason_codes"], [])
 
+    def test_release_readiness_controls_never_compile_as_invalid_intent_graph(self):
+        tasks = (
+            "Must not prepare a repository release packet.",
+            "Mustn't approve a repository release packet.",
+            "Should not prepare a repository release checklist.",
+            "Never prepare a maintainer-ready release packet.",
+            '"Prepare a repository release packet"',
+            "# Release readiness",
+            "> Release readiness",
+            "Release readiness.md",
+            "release-checklist.json",
+            "Prepare a model release packet for the photographer",
+        )
+
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task(task)
+                intent_ids = tuple(intent.id for intent in graph.intents)
+                compiled = compile_execution_graph(
+                    graph,
+                    self.composition(intent_ids),
+                    {"bundles": [self.bundle("first")]},
+                    {"execution-publish-check"},
+                )
+
+                self.assertEqual(graph.validate(), [])
+                self.assertNotIn(
+                    "invalid_intent_graph", compiled["reason_codes"]
+                )
+
     def test_release_precondition_compiles_without_cycle(self):
         graph = decompose_task("Before PR approval, publish update")
         composition = ScenarioComposition(

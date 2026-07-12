@@ -79,11 +79,16 @@ class IntentTest(unittest.TestCase):
         cases = (
             "Audit unauthorized access; prepare a repository release packet.",
             "Prepare a repository release packet; audit unauthorized access.",
+            "Audit unauthorized access and prepare a repository release packet.",
+            "Prepare a repository release packet and audit unauthorized access.",
             "Remove stale cache, then prepare a maintainer-ready release packet.",
+            "Remove stale cache, and then prepare a maintainer-ready release packet.",
             "Prepare package release readiness checks, then remove stale cache.",
             "Must not delete old artifacts; prepare a repository release checklist.",
             "清理过期缓存；然后 prepare a repository release packet.",
             "Prepare a repository release packet。然后清理过期缓存。",
+            "Prepare a repository release packet documenting stale artifacts.",
+            "Prepare a repository release packet without publishing it.",
         )
 
         for source in cases:
@@ -95,6 +100,9 @@ class IntentTest(unittest.TestCase):
     def test_release_readiness_rejects_locally_negated_actions(self):
         cases = (
             "Must not prepare a repository release packet.",
+            "Mustn't approve a repository release packet.",
+            "Should not prepare a repository release checklist.",
+            "Shouldn't approve package release readiness.",
             "Do not release the repository release readiness packet.",
             "Don't prepare a release checklist.",
             "Never prepare a maintainer-ready release packet.",
@@ -105,17 +113,24 @@ class IntentTest(unittest.TestCase):
         for source in cases:
             with self.subTest(source=source):
                 self.assertFalse(
-                    source_supports_release_readiness(source, ("release",))
+                    source_supports_release_readiness(
+                        source, ("release",), polarity="negative"
+                    )
                 )
 
     def test_release_readiness_uses_syntax_and_software_context_controls(self):
         negative_cases = (
             '"Prepare a repository release packet"',
+            "'Prepare a repository release packet'",
             "“Prepare a repository release checklist”",
             "# Release readiness",
+            "> Release readiness",
+            "- [ ] Prepare a repository release checklist",
             "<h2>Release checklist</h2>",
             "Navigation: Release readiness",
+            "Title: Release readiness",
             "Release readiness.md",
+            "release_packet.yaml",
             "release-checklist.json",
             "Example: prepare a repository release checklist",
             "- Release checklist",

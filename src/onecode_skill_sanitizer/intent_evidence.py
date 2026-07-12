@@ -62,59 +62,50 @@ RELEASE_ACTION_SIGNALS = frozenset(
     }
 )
 _READINESS_SEGMENT_BOUNDARY_RE = re.compile(
-    r"[;；\n。]|(?<=[.!?])\s+|"
-    r",\s*(?:then|but)\s+|，\s*(?:然后|再|但(?:是|要)?|不过)\s*",
+    r"[;；\n。]|\s*[+＋]\s*|(?<=[.!?])\s+|"
+    r",\s*(?:(?:and\s+)?then|but)\s+|"
+    r"，\s*(?:然后|再|但(?:是|要)?|不过)\s*",
     re.IGNORECASE,
 )
-_NON_REQUEST_RELEASE_READINESS_RE = re.compile(
-    r"\b(?:hypothetical(?:ly)?|mentions?|stale|unauthorized)\b|"
-    r"\bnot\s+(?:authorized|a\s+work\s+order)\b|"
-    r"\bwithout\s+(?:publishing|releasing)\b|"
-    r"(?:过期|未授权|未经授权|不是(?:工作|任务)指令)",
+_NON_ACTION_MODALITY_RE = re.compile(
+    r"^\s*(?:hypothetical(?:ly)?|suppose\b|if\b)", re.IGNORECASE
+)
+_DESCRIPTIVE_REFERENCE_RE = re.compile(
+    r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
 )
-_NEGATED_RELEASE_READINESS_RE = re.compile(
-    r"\b(?:must\s+not|do\s+not|don't|never)\b[\s\S]{0,80}"
-    r"\b(?:prepare|release|claim|publish|create|assemble|draft|produce)\b|"
-    r"\brelease[\s-]+(?:readiness|checklist|packet)\b[\s\S]{0,40}"
-    r"\b(?:is\s+not|isn't|was\s+not|wasn't)\s+"
-    r"(?:approved|authorized|ready|valid)\b|"
-    r"(?:不要|不得|禁止|不可|无需)[\s\S]{0,80}(?:准备|发布|声称|生成|创建)",
+_READINESS_ACTION_RE = re.compile(
+    r"\b(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
+    r"draft|produce|document)\b|(?:准备|审查|检查|验证|审计|评估|生成|创建)",
     re.IGNORECASE,
 )
 _READINESS_LABEL_RE = re.compile(
-    r"^\s*(?:(?:example|label|terms?|navigation|headings?|menu)\s*[:：]|"
-    r"(?:[-*+]|\d+[.)、])\s+)",
+    r"^\s*(?:(?:example|label|terms?|navigation|headings?|menu|title)\s*[:：]|"
+    r"(?:[-*+]|\d+[.)、])\s+(?:\[[ xX]\]\s*)?)",
     re.IGNORECASE,
 )
 _MARKUP_HEADING_RE = re.compile(
-    r"^\s*(?:#{1,6}\s+|<h[1-6]\b[^>]*>)", re.IGNORECASE
+    r"^\s*(?:#{1,6}\s+|>\s+|<h[1-6]\b[^>]*>)", re.IGNORECASE
 )
 _READINESS_FILENAME_SUFFIX_RE = re.compile(
     r"\.(?:md|markdown|json|ya?ml|toml|txt|html?|xml|csv)\b", re.IGNORECASE
 )
 _QUOTED_TEXT_PATTERNS = (
     re.compile(r'"[^"\n]*"'),
+    re.compile(r"(?<![a-z0-9])'[^'\n]+'(?![a-z0-9])", re.I),
     re.compile(r"“[^”\n]*”"),
     re.compile(r"‘[^’\n]*’"),
     re.compile(r"`[^`\n]*`"),
 )
-_NON_SOFTWARE_RELEASE_RE = re.compile(
-    r"\b(?:talent|model|content)\s+release[\s-]+packet\b|"
-    r"\b(?:photo(?:graphy)?|photo\s+shoot|photographer|campaign|performer|actor)\b",
-    re.IGNORECASE,
-)
 _SOFTWARE_RELEASE_ANCHOR_RE = re.compile(
-    r"\b(?:repository|repo|package|cli|codebase|software|project|maintainer)\b|"
-    r"(?:代码库|仓库|软件包|维护者|项目)",
+    r"\b(?:repository|repo|package|cli(?:\s+project)?|codebase|software|"
+    r"open[ -]source|code\s+artifact|maintainer)\b|"
+    r"(?:代码库|仓库|软件包|维护者|开源|软件)",
     re.IGNORECASE,
 )
-_RELEASE_PACKET_REQUEST_RE = re.compile(
-    r"\b(?:prepare|assemble|create|build|draft|produce)\b[\s\S]{0,120}"
-    r"\brelease\s+packet\b|"
-    r"\b(?:maintainer[- ]ready|repository|repo)\s+release\s+packet\b|"
-    r"\brelease\s+packet\b[\s\S]{0,60}"
-    r"\b(?:preparation|readiness|go/no-go)\b",
+_LEGACY_CHECKLIST_COMMAND_RE = re.compile(
+    r"^\s*(?:(?:a|the)\s+)?(?:draft\s+)?release\s+checklist"
+    r"(?:\s+draft)?[.!]?\s*$|^\s*(?:一份)?发布清单(?:\s*草案)?[。！]?$",
     re.IGNORECASE,
 )
 
@@ -256,14 +247,21 @@ def release_signals(evidence: IntentEvidence) -> tuple[str, ...]:
 
 
 def source_supports_release_readiness(
-    source: str, matched_signals: tuple[str, ...]
+    source: str,
+    matched_signals: tuple[str, ...],
+    polarity: str = "positive",
 ) -> bool:
     source = bound_task_text(source)
     normalized = {signal.casefold() for signal in matched_signals}
-    if not normalized & RELEASE_READINESS_EVIDENCE_SIGNALS:
+    if (
+        polarity != "positive"
+        or not normalized & RELEASE_READINESS_EVIDENCE_SIGNALS
+    ):
         return False
     return any(
-        _readiness_occurrence_is_request(source, signal, match.start(), match.end())
+        _readiness_occurrence_is_request(
+            source, signal, match.start(), match.end()
+        )
         for signal, pattern in RELEASE_READINESS_PATTERNS
         for match in pattern.finditer(source)
     )
@@ -280,18 +278,25 @@ def _readiness_occurrence_is_request(
         or _MARKUP_HEADING_RE.search(segment)
         or _READINESS_LABEL_RE.search(segment)
         or _READINESS_FILENAME_SUFFIX_RE.match(segment[local_end:])
-        or _NON_REQUEST_RELEASE_READINESS_RE.search(segment)
-        or _NEGATED_RELEASE_READINESS_RE.search(segment)
+        or _NON_ACTION_MODALITY_RE.search(segment)
+        or _DESCRIPTIVE_REFERENCE_RE.search(segment)
     ):
         return False
-    if (
-        _NON_SOFTWARE_RELEASE_RE.search(segment)
-        and not _SOFTWARE_RELEASE_ANCHOR_RE.search(segment)
+    if signal in {"release checklist", "发布清单"} and (
+        _LEGACY_CHECKLIST_COMMAND_RE.fullmatch(segment)
     ):
-        return False
-    if signal == "release packet":
-        return _RELEASE_PACKET_REQUEST_RE.search(segment) is not None
-    return True
+        return True
+    return bool(
+        _pattern_matches_near(
+            _READINESS_ACTION_RE, segment, local_start, local_end
+        )
+        and _pattern_matches_near(
+            _SOFTWARE_RELEASE_ANCHOR_RE,
+            segment,
+            local_start,
+            local_end,
+        )
+    )
 
 
 def _local_readiness_segment(
@@ -316,6 +321,15 @@ def _occurrence_is_quoted(segment: str, start: int, end: int) -> bool:
     return any(
         match.start() <= start and end <= match.end()
         for pattern in _QUOTED_TEXT_PATTERNS
+        for match in pattern.finditer(segment)
+    )
+
+
+def _pattern_matches_near(
+    pattern: re.Pattern[str], segment: str, start: int, end: int
+) -> bool:
+    return any(
+        max(start - match.end(), match.start() - end, 0) <= 192
         for match in pattern.finditer(segment)
     )
 
@@ -366,15 +380,12 @@ def _semantic_errors(
 
     signals = release_signals(item)
     if item.release_mode == "readiness" and not source_supports_release_readiness(
-        source, signals
+        source, signals, polarity=item.polarity
     ):
         errors.append(
             f"intent evidence {index} readiness evidence is not supported by source"
         )
-    if item.release_mode == "readiness" and item.polarity not in {
-        "positive",
-        "mixed",
-    }:
+    if item.release_mode == "readiness" and item.polarity != "positive":
         errors.append(
             f"intent evidence {index} readiness evidence requires positive context"
         )
