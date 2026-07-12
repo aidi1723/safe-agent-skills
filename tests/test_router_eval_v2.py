@@ -385,6 +385,23 @@ class RouterEvalV2Tests(unittest.TestCase):
             self.assertIn("open_source_release", case["expected_intents"], case["id"])
             self.assertIn("open-source-release", case["expected_scenarios"], case["id"])
 
+    def test_independent_multi_intent_tasks_do_not_state_cross_track_dependencies(self):
+        cases = [
+            case
+            for case in production_cases()
+            if case["category"] == "multi_intent"
+            and not case["required_dependency_edges"]
+        ]
+        dependency_cues = re.compile(
+            r"\u5fc5须等待.*(?:\u624d\u80fd|\u65b9\u53ef)|\u5f85(?:\u524d\u9879|\u4e0a\u8ff0|\u7b2c\s*\d+\s*\u9879).*\u540e|"
+            r"only after|once (?:the )?(?:first|previous).*then|"
+            r"must wait (?:for|until)",
+            re.I,
+        )
+        misstated = [case["id"] for case in cases if dependency_cues.search(case["task"])]
+
+        self.assertEqual(misstated, [])
+
     def test_forbidden_labels_are_trusted_supported_and_semantically_tempting(self):
         self.maxDiff = None
         catalog = json.loads((ROOT / "catalog" / "index.json").read_text(encoding="utf-8"))

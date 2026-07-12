@@ -1361,7 +1361,7 @@
     {
       "id": "multi-intent-069",
       "category": "multi_intent",
-      "task": "金额计算修复和仓库上线门禁评估可同时进行，但发布负责人必须等待修复证据才能放行。",
+      "task": "并行准备两份互不作为前置的证据包：代码维护组诊断并收敛重复金额计算，开源治理组独立盘点许可证、供应链和敏感历史的准备度。",
       "expected_intents": [
         "codebase_change_lifecycle",
         "open_source_release"
