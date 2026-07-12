@@ -75,6 +75,12 @@ class CompilerTest(unittest.TestCase):
 
     def test_release_readiness_controls_never_compile_as_invalid_intent_graph(self):
         tasks = (
+            "They asked you not to prepare a repository release packet.",
+            "Won't prepare a repository release packet.",
+            "Won’t prepare a repository release packet.",
+            "Will not immediately prepare a repository release packet.",
+            "Review the repository, not the release checklist for v1.0.",
+            "不要立即准备仓库发布清单。",
             "Can't prepare a repository release packet.",
             "Cannot prepare a repository release packet.",
             "No need to prepare a repository release packet.",
@@ -97,6 +103,10 @@ class CompilerTest(unittest.TestCase):
             "Prepare a talent release packet for a photo shoot",
             "Prepare a model release packet for the photographer",
             "Prepare a content release packet for the campaign",
+            "Example: prepare a repository release packet and review the "
+            "release checklist for v1.0.",
+            "```text\nPrepare a repository release checklist\n```",
+            "[Prepare a repository release packet](docs/release.md)",
         )
 
         for task in tasks:

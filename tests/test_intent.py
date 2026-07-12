@@ -207,6 +207,170 @@ class IntentTest(unittest.TestCase):
                     )
                 )
 
+    def test_release_action_polarity_is_token_aware_and_local(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        negative_cases = (
+            "They asked you not to prepare a repository release packet.",
+            "Not prepare a repository release packet.",
+            "Won't prepare a repository release packet.",
+            "Won’t prepare a repository release packet.",
+            "Will not prepare a repository release packet.",
+            "Cannot prepare a repository release packet.",
+            "Can't prepare a repository release packet.",
+            "No need to immediately prepare a repository release packet.",
+            "Not authorized to carefully prepare a repository release packet.",
+            "Do not immediately prepare a repository release packet.",
+            "Review the repository, not the release checklist for v1.0.",
+            "不要立即准备仓库发布清单。",
+            "不会准备仓库发布清单。",
+            "不可准备仓库发布清单。",
+            "无需立即准备仓库发布清单。",
+        )
+        for source in negative_cases:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertFalse(
+                    any(
+                        item.polarity == "positive"
+                        and item.discourse_role == "request"
+                        for item in propositions
+                    )
+                )
+
+        coordinated = (
+            "Do not review the repository release packet, but prepare a "
+            "repository release checklist.",
+            "Prepare a repository release checklist, but do not review the "
+            "repository release packet.",
+        )
+        for source in coordinated:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(
+                    sorted(item.polarity for item in propositions),
+                    ["negative", "positive"],
+                )
+
+    def test_release_sentence_discourse_role_covers_coordinated_propositions(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        references = (
+            "Example: prepare a repository release packet and review the "
+            "release checklist for v1.0.",
+            "For example, prepare a repository release packet, then review "
+            "the release checklist for v1.0.",
+            "Reference: prepare a repository release packet but review the "
+            "release checklist for v1.0.",
+            "We discussed whether to prepare a repository release packet and "
+            "review the release checklist for v1.0.",
+            "Hypothetically, prepare a repository release packet and review "
+            "the release checklist for v1.0.",
+            "If authorized, prepare a repository release packet and review "
+            "the release checklist for v1.0.",
+            "# Prepare a repository release packet and review the release "
+            "checklist for v1.0.",
+            "> Prepare a repository release packet and review the release "
+            "checklist for v1.0.",
+        )
+        for source in references:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 2)
+                self.assertTrue(
+                    all(item.discourse_role == "reference" for item in propositions)
+                )
+
+        request = (
+            "Prepare a repository release packet and review the release "
+            "checklist for v1.0."
+        )
+        self.assertTrue(
+            all(item.discourse_role == "request" for item in parse(request))
+        )
+
+    def test_release_structural_reference_spans_are_global_and_bounded(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        references = (
+            '"Prepare a repository\nrelease packet"',
+            "“Prepare a repository\nrelease checklist”",
+            "'Prepare a repository\nrelease packet'",
+            "`Prepare a repository release packet`",
+            "```text\nPrepare a repository release checklist\n```",
+            "[Prepare a repository release packet](docs/release.md)",
+            "<h2>Prepare a repository release checklist</h2>",
+            "<code>Prepare a repository release packet</code>",
+        )
+        for source in references:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].discourse_role, "reference")
+
+        mixed = (
+            '"Prepare a repository release packet." Prepare a repository '
+            "release checklist."
+        )
+        self.assertEqual(
+            tuple(item.discourse_role for item in parse(mixed)),
+            ("reference", "request"),
+        )
+        link_target = (
+            "[instructions](prepare-a-repository-release-packet) and prepare "
+            "a repository release checklist."
+        )
+        self.assertEqual(
+            sum(item.discourse_role == "request" for item in parse(link_target)),
+            1,
+        )
+        saturated = (
+            ("`x` " * 256)
+            + "Prepare a repository release checklist."
+        )
+        self.assertFalse(
+            any(item.discourse_role == "request" for item in parse(saturated))
+        )
+
+    def test_release_tokens_are_unicode_exact_and_fullwidth_boundaries_are_hard(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        controls = (
+            "Prepare a repository xrelease checklist.",
+            "Prepare a repository release checklist_legacy.",
+            "Prepare a repository αrelease checklist.",
+            "Prepare a repository release checklist界.",
+        )
+        for source in controls:
+            with self.subTest(source=source):
+                self.assertEqual(parse(source), ())
+
+        source = (
+            "Cannot prepare a repository release packet！"
+            "Prepare a repository release checklist？"
+        )
+        self.assertEqual(
+            tuple(item.polarity for item in parse(source)),
+            ("negative", "positive"),
+        )
+        no_space = (
+            "Cannot prepare a repository release packet."
+            "Prepare a repository release checklist."
+        )
+        self.assertEqual(
+            tuple(item.polarity for item in parse(no_space)),
+            ("negative", "positive"),
+        )
+
     def test_release_readiness_proposition_parser_is_bounded_and_total(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"

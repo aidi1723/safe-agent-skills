@@ -154,6 +154,12 @@ class IntentSpansTest(unittest.TestCase):
 
     def test_release_readiness_decomposition_rejects_negated_and_syntax_controls(self):
         tasks = (
+            "They asked you not to prepare a repository release packet.",
+            "Won't prepare a repository release packet.",
+            "Won’t prepare a repository release packet.",
+            "Will not immediately prepare a repository release packet.",
+            "Review the repository, not the release checklist for v1.0.",
+            "不要立即准备仓库发布清单。",
             "Can't prepare a repository release packet.",
             "Cannot prepare a repository release packet.",
             "No need to prepare a repository release packet.",
@@ -184,6 +190,10 @@ class IntentSpansTest(unittest.TestCase):
             "Prepare a talent release packet for a photo shoot",
             "Prepare a model release packet for the photographer",
             "Prepare a content release packet for the campaign",
+            "Example: prepare a repository release packet and review the "
+            "release checklist for v1.0.",
+            "```text\nPrepare a repository release checklist\n```",
+            "[Prepare a repository release packet](docs/release.md)",
         )
 
         for task in tasks:
@@ -203,6 +213,28 @@ class IntentSpansTest(unittest.TestCase):
                         for item in graph.intent_evidence
                     )
                 )
+                self.assertEqual(graph.validate(), [])
+
+    def test_positive_release_request_survives_prior_negative_sentence(self):
+        tasks = (
+            "Cannot prepare a repository release packet. "
+            "Prepare a repository release checklist.",
+            "Example: prepare a repository release packet. "
+            "Prepare a repository release checklist.",
+            "Cannot prepare a repository release packet！"
+            "Prepare a repository release checklist？",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                readiness = [
+                    item
+                    for item in graph.intent_evidence
+                    if item.task_type == "open_source_release"
+                    and item.release_mode == "readiness"
+                ]
+                self.assertEqual(len(readiness), 1)
+                self.assertEqual(readiness[0].polarity, "positive")
                 self.assertEqual(graph.validate(), [])
 
     def test_direct_text_helpers_share_exact_scan_boundary(self):

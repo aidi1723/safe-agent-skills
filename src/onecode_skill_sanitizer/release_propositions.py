@@ -9,6 +9,7 @@ from .intent_source import bound_task_text
 
 
 MAX_READINESS_OCCURRENCES = 128
+MAX_STRUCTURAL_REFERENCE_SPANS = 256
 
 
 @dataclass(frozen=True)
@@ -22,20 +23,20 @@ class ReleaseReadinessProposition:
 
 
 _OBJECT_RE = re.compile(
-    r"(?<![a-z0-9])release[\s-]+(?:checklist|packet|readiness)(?![a-z0-9])|"
+    r"(?<!\w)release[\s-]+(?:checklist|packet|readiness)(?!\w)|"
     r"发布清单",
     re.IGNORECASE,
 )
 _ACTION_RE = re.compile(
-    r"(?<![a-z0-9])(?:prepare|review|check|verify|audit|assess|assemble|"
-    r"create|build|draft|produce|document|approve)(?![a-z0-9])|"
+    r"(?<!\w)(?:prepare|review|check|verify|audit|assess|assemble|"
+    r"create|build|draft|produce|document|approve)(?!\w)|"
     r"(?:准备|审查|检查|验证|审计|评估|组装|生成|创建|起草|记录|批准)",
     re.IGNORECASE,
 )
 _SOFTWARE_ANCHOR_RE = re.compile(
-    r"(?<![a-z0-9])(?:repository|repo|package|cli|codebase|software|"
+    r"(?<!\w)(?:repository|repo|package|cli|codebase|software|"
     r"open[ -]source|code[ -]artifact|maintainer|npm|docker(?:\s+image)?|"
-    r"v?\d+\.\d+(?:\.\d+)?)(?![a-z0-9])|"
+    r"v?\d+\.\d+(?:\.\d+)?)(?!\w)|"
     r"(?:代码库|仓库|软件包|维护者|开源|软件|版本)",
     re.IGNORECASE,
 )
@@ -44,13 +45,23 @@ _COORDINATOR_RE = re.compile(
     r"[;；\n。]|\s*[+＋]\s*",
     re.IGNORECASE,
 )
-_NEGATED_ACTION_PREFIX_RE = re.compile(
-    r"(?:\b(?:can(?:not|'t)|do\s+not|don't|must\s+not|mustn't|"
-    r"should\s+not|shouldn't|never|no\s+need\s+to|not\s+authorized\s+to)\s*$)|"
-    r"(?:不能|不可|不需要|无需|不得|不要|暂不|先不|别|未授权)\s*$",
+_ENGLISH_ACTION_NEGATION_RE = re.compile(
+    r"(?:\basked\s+(?:you|us|me|them)\s+not\s+to|"
+    r"\b(?:do|will|can|must|should)\s+not|"
+    r"\b(?:do|ca|wo|must|should)n['’]t|"
+    r"\bcannot|\bnever|\bno\s+need\s+to|"
+    r"\bnot\s+authorized\s+to|\bnot)"
+    r"(?:\s+[\w-]+){0,3}\s*$",
     re.IGNORECASE,
 )
-_NEGATED_ACTION_SUFFIX_RE = re.compile(r"^\s*(?:not|不|未)", re.IGNORECASE)
+_CHINESE_ACTION_NEGATION_RE = re.compile(
+    r"(?:不能|不会|不可|不需要|无需|不得|不要|暂不|先不|别|未授权)"
+    r"(?:立即|马上|暂时|仔细|认真|谨慎|再|先)?\s*$"
+)
+_OBJECT_EXCLUSION_RE = re.compile(
+    r"[\s,，]*(?:not\s+(?:(?:the|an?)\s+)?|而不是(?:这个|该)?)$",
+    re.IGNORECASE,
+)
 _STRUCTURAL_PREFIX_RE = re.compile(
     r"^\s*(?:#{1,6}\s+|>\s+|<h[1-6]\b[^>]*>|"
     r"(?:[-*+]\s+)?\[[ xX]\]\s+|"
@@ -61,6 +72,16 @@ _STRUCTURAL_PREFIX_RE = re.compile(
 )
 _REFERENCE_CLAUSE_RE = re.compile(
     r"^\s*(?:hypothetical(?:ly)?|suppose\b|if\b)|"
+    r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
+    re.IGNORECASE,
+)
+_SENTENCE_REFERENCE_RE = re.compile(
+    r"^\s*(?:#{1,6}\s+|>\s+|"
+    r"(?:example|for\s+example|reference|quoted|hypothetical(?:ly)?|"
+    r"suppose|if\b|label|terms?|navigation|headings?|menu|title|readme|"
+    r"description)\s*[:：,，]?|"
+    r"(?:[-*+]\s+)?\[[ xX]\]\s+)|"
+    r"\bdiscussed\s+whether\b|"
     r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
 )
@@ -77,7 +98,22 @@ _EVIDENCE_STATEMENT_RE = re.compile(
     r"^\s*release\s+readiness\s+has\b[\s\S]*\bevidence\b",
     re.IGNORECASE,
 )
-_QUOTES = (('"', '"'), ("'", "'"), ("“", "”"), ("‘", "’"), ("\u0060", "\u0060"))
+_FILENAME_EXTENSION_RE = re.compile(
+    r"\.(?:md|markdown|json|ya?ml|toml|txt|html?|xml|csv|py|js|ts|"
+    r"tsx|jsx|css|scss|rs|go|java)(?!\w)",
+    re.IGNORECASE,
+)
+_STRUCTURAL_REFERENCE_PATTERNS = (
+    re.compile(r"```[\s\S]*?```"),
+    re.compile(r"`(?!`)[^\u0060]*?`"),
+    re.compile(r'"[\s\S]*?"'),
+    re.compile(r"“[\s\S]*?”"),
+    re.compile(r"‘[\s\S]*?’"),
+    re.compile(r"(?<!\w)'[\s\S]*?'(?!\w)"),
+    re.compile(r"\[[^\]\n]*\]\([^\)\n]*\)"),
+    re.compile(r"<h[1-6]\b[^>]*>[\s\S]*?</h[1-6]\s*>", re.IGNORECASE),
+    re.compile(r"<code\b[^>]*>[\s\S]*?</code\s*>", re.IGNORECASE),
+)
 
 
 def parse_release_readiness_propositions(
@@ -85,6 +121,16 @@ def parse_release_readiness_propositions(
 ) -> tuple[ReleaseReadinessProposition, ...]:
     """Extract bounded action-object readiness propositions without raising."""
     source = bound_task_text(source)
+    sentence_boundaries = _sentence_boundaries(source)
+    proposition_boundaries = tuple(
+        sorted(
+            set(
+                [match.span() for match in _COORDINATOR_RE.finditer(source)]
+                + list(sentence_boundaries)
+            )
+        )
+    )
+    structural_spans = _structural_reference_spans(source)
     propositions: list[ReleaseReadinessProposition] = []
     for occurrence_index, match in enumerate(_OBJECT_RE.finditer(source)):
         if occurrence_index >= MAX_READINESS_OCCURRENCES:
@@ -93,13 +139,18 @@ def parse_release_readiness_propositions(
         object_text = match.group()
         line_start, line_end = _line_bounds(source, object_start, object_end)
         line = source[line_start:line_end]
-        local_start = object_start - line_start
         local_end = object_end - line_start
 
-        if (
-            _is_quoted(line, local_start, local_end)
-            or _FILENAME_SUFFIX_RE.match(line[local_end:])
-        ):
+        sentence_start, sentence_end = _bounds_from_boundaries(
+            source, object_start, object_end, sentence_boundaries
+        )
+        sentence = source[sentence_start:sentence_end]
+        sentence_is_reference = bool(_SENTENCE_REFERENCE_RE.search(sentence))
+        structurally_contained = _range_is_contained(
+            object_start, object_end, structural_spans
+        )
+
+        if structurally_contained or _FILENAME_SUFFIX_RE.match(line[local_end:]):
             propositions.append(
                 ReleaseReadinessProposition(
                     object_start,
@@ -126,14 +177,16 @@ def parse_release_readiness_propositions(
             continue
 
         proposition_start, proposition_end = _proposition_bounds(
-            source, object_start, object_end
+            source, object_start, object_end, proposition_boundaries
         )
         proposition = source[proposition_start:proposition_end]
         local_object_start = object_start - proposition_start
         local_object_end = object_end - proposition_start
-        if _STRUCTURAL_PREFIX_RE.search(
-            proposition
-        ) or _REFERENCE_CLAUSE_RE.search(proposition):
+        if (
+            sentence_is_reference
+            or _STRUCTURAL_PREFIX_RE.search(proposition)
+            or _REFERENCE_CLAUSE_RE.search(proposition)
+        ):
             propositions.append(
                 ReleaseReadinessProposition(
                     object_start,
@@ -203,11 +256,12 @@ def parse_release_readiness_propositions(
             continue
 
         prefix = proposition[: action.start()]
-        suffix = proposition[action.end() : local_object_start]
+        between_action_and_object = proposition[
+            action.end() : local_object_start
+        ]
         polarity = (
             "negative"
-            if _NEGATED_ACTION_PREFIX_RE.search(prefix)
-            or _NEGATED_ACTION_SUFFIX_RE.search(suffix)
+            if _action_is_negated(prefix, between_action_and_object)
             else "positive"
         )
         action_start = proposition_start + action.start()
@@ -231,19 +285,30 @@ def _line_bounds(source: str, start: int, end: int) -> tuple[int, int]:
     return line_start, len(source) if next_line < 0 else next_line
 
 
-def _proposition_bounds(source: str, start: int, end: int) -> tuple[int, int]:
-    proposition_start = 0
-    proposition_end = len(source)
-    boundaries = [
-        match.span() for match in _COORDINATOR_RE.finditer(source)
-    ] + list(_sentence_boundaries(source))
-    for boundary_start, boundary_end in sorted(set(boundaries)):
+def _proposition_bounds(
+    source: str,
+    start: int,
+    end: int,
+    boundaries: tuple[tuple[int, int], ...],
+) -> tuple[int, int]:
+    return _bounds_from_boundaries(source, start, end, boundaries)
+
+
+def _bounds_from_boundaries(
+    source: str,
+    start: int,
+    end: int,
+    boundaries: tuple[tuple[int, int], ...],
+) -> tuple[int, int]:
+    region_start = 0
+    region_end = len(source)
+    for boundary_start, boundary_end in boundaries:
         if boundary_end <= start:
-            proposition_start = boundary_end
+            region_start = boundary_end
         elif boundary_start >= end:
-            proposition_end = boundary_start
+            region_end = boundary_start
             break
-    return proposition_start, proposition_end
+    return region_start, region_end
 
 
 def _sentence_boundaries(source: str) -> tuple[tuple[int, int], ...]:
@@ -251,14 +316,18 @@ def _sentence_boundaries(source: str) -> tuple[tuple[int, int], ...]:
     index = 0
     while index < len(source):
         character = source[index]
-        if character not in ".!?":
+        if character == "\n":
+            boundaries.append((index, index + 1))
+            index += 1
+            continue
+        if character not in ".!?！？":
             index += 1
             continue
         if character == "." and _dot_is_internal(source, index):
             index += 1
             continue
         boundary_start = index
-        while index < len(source) and source[index] in ".!?":
+        while index < len(source) and source[index] in ".!?！？":
             index += 1
         while index < len(source) and source[index].isspace():
             index += 1
@@ -269,25 +338,38 @@ def _sentence_boundaries(source: str) -> tuple[tuple[int, int], ...]:
 def _dot_is_internal(source: str, index: int) -> bool:
     previous = source[index - 1] if index else ""
     following = source[index + 1] if index + 1 < len(source) else ""
-    if previous.isalnum() and following.isalnum():
+    if previous.isdigit() and following.isdigit():
         return True
-    return source[max(0, index - 3) : index + 1].casefold() in {
-        "e.g.",
-        "i.e.",
-    }
+    around = source[max(0, index - 3) : index + 3].casefold()
+    if "e.g." in around or "i.e." in around:
+        return True
+    return _FILENAME_EXTENSION_RE.match(source, index) is not None
 
 
-def _is_quoted(line: str, start: int, end: int) -> bool:
-    for opener, closer in _QUOTES:
-        search_start = 0
-        while True:
-            quote_start = line.find(opener, search_start)
-            if quote_start < 0:
-                break
-            quote_end = line.find(closer, quote_start + len(opener))
-            if quote_end < 0:
-                break
-            if quote_start <= start and end <= quote_end + len(closer):
-                return True
-            search_start = quote_end + len(closer)
-    return False
+def _action_is_negated(prefix: str, between_action_and_object: str) -> bool:
+    return bool(
+        _ENGLISH_ACTION_NEGATION_RE.search(prefix)
+        or _CHINESE_ACTION_NEGATION_RE.search(prefix)
+        or _OBJECT_EXCLUSION_RE.search(between_action_and_object)
+    )
+
+
+def _structural_reference_spans(
+    source: str,
+) -> tuple[tuple[int, int], ...]:
+    spans: list[tuple[int, int]] = []
+    for pattern in _STRUCTURAL_REFERENCE_PATTERNS:
+        for match in pattern.finditer(source):
+            spans.append(match.span())
+            if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
+                return ((0, len(source)),)
+    return tuple(sorted(spans))
+
+
+def _range_is_contained(
+    start: int, end: int, spans: tuple[tuple[int, int], ...]
+) -> bool:
+    return any(
+        span_start <= start and end <= span_end
+        for span_start, span_end in spans
+    )
