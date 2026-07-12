@@ -71,6 +71,18 @@ class IntentSpansTest(unittest.TestCase):
                 "Build an agentic media pipeline and prepare a repository release packet.",
                 ["agentic_media_production", "open_source_release"],
             ),
+            (
+                "Prepare a content-management repository release packet.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a model-serving repository release packet.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a repository release packet for talent-platform maintainers.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
@@ -278,6 +290,11 @@ class IntentSpansTest(unittest.TestCase):
             "Prepare a content release packet for the campaign",
             "Prepare a talent release packet for repository maintainers.",
             "Prepare a model release packet for a software repository.",
+            "Prepare a talent authorization release packet for repository "
+            "maintainers.",
+            "Prepare a model photography release packet for a software repository.",
+            "Prepare a content licensing release packet for a software repository.",
+            "Prepare a model's release packet for a software repository.",
             "Example: prepare a repository release packet and review the "
             "release checklist for v1.0.",
             "```text\nPrepare a repository release checklist\n```",
@@ -592,6 +609,14 @@ class IntentSpansTest(unittest.TestCase):
             "The report says to review a talent release packet for repository "
             "maintainers, so prepare a repository release checklist.",
             "The report says to review a content release packet for a software "
+            "repository, therefore prepare a repository release checklist.",
+            "The report says to review a talent authorization release packet for "
+            "repository maintainers, so prepare a repository release checklist.",
+            "The report says to review a model photography release packet for a "
+            "software repository, therefore prepare a repository release checklist.",
+            "The report says to review a content licensing release packet for a "
+            "software repository, so prepare a repository release checklist.",
+            "The report says to review a model's release packet for a software "
             "repository, therefore prepare a repository release checklist.",
         )
         for task in requests:

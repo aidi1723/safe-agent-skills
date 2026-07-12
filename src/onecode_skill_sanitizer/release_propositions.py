@@ -12,6 +12,7 @@ MAX_READINESS_OCCURRENCES = 128
 MAX_STRUCTURAL_REFERENCE_SPANS = 256
 MAX_NARRATIVE_GOVERNOR_GAP = 256
 MAX_NARRATIVE_TRANSITIONS = 128
+MAX_RELEASE_OBJECT_PREFIX_CHARS = 96
 _HARD_SENTENCE_PUNCTUATION = ".!?！？。"
 
 
@@ -59,8 +60,8 @@ _OBJECT_RE = re.compile(
     r"发布清单",
     re.IGNORECASE,
 )
-_NON_SOFTWARE_RELEASE_OBJECT_PREFIX_RE = re.compile(
-    r"\b(?:talent|model|content)[\s-]+$", re.IGNORECASE
+_NON_SOFTWARE_RELEASE_DOMAIN_RE = re.compile(
+    r"(?<!\w)(?:talent|model|content)(?!\w)", re.IGNORECASE
 )
 _ACTION_RE = re.compile(
     r"(?<!\w)(?:prepare|review|check|verify|audit|assess|assemble|"
@@ -494,10 +495,7 @@ def _collect_readiness_candidates(
                 proposition_start,
                 proposition_end,
                 tuple(bound_actions),
-                _NON_SOFTWARE_RELEASE_OBJECT_PREFIX_RE.search(
-                    source[max(0, object_start - 32) : object_start]
-                )
-                is None,
+                _release_object_is_software(source, object_start),
                 tuple(
                     (
                         proposition_start + anchor.start(),
@@ -523,6 +521,23 @@ def _collect_readiness_candidates(
             )
         )
     return tuple(candidates)
+
+
+def _release_object_is_software(source: str, object_start: int) -> bool:
+    prefix_start = max(0, object_start - MAX_RELEASE_OBJECT_PREFIX_CHARS)
+    prefix = source[prefix_start:object_start]
+    boundary = max(
+        (prefix.rfind(character) for character in ",;:.!?()[]{}。！？；\n"),
+        default=-1,
+    )
+    noun_phrase = prefix[boundary + 1 :]
+    non_software = tuple(_NON_SOFTWARE_RELEASE_DOMAIN_RE.finditer(noun_phrase))
+    if not non_software:
+        return True
+    software = tuple(_SOFTWARE_ANCHOR_RE.finditer(noun_phrase))
+    if not software:
+        return False
+    return software[-1].end() > non_software[-1].end()
 
 
 def _line_bounds(source: str, start: int, end: int) -> tuple[int, int]:

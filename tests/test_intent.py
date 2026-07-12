@@ -38,6 +38,10 @@ class IntentTest(unittest.TestCase):
             "Review the release checklist for v1.0.",
             "Prepare a maintainer-ready release packet for a CLI project.",
             "Prepare package release readiness checks.",
+            "Prepare a content-management repository release packet.",
+            "Prepare a model-serving repository release packet.",
+            "Prepare a repository release packet for talent-platform maintainers.",
+            "Review content notes. Prepare a release checklist for v1.0.",
             "release checklist",
             "发布清单",
         )
@@ -86,6 +90,11 @@ class IntentTest(unittest.TestCase):
             "Prepare a content release packet for the campaign",
             "Prepare a talent release packet for repository maintainers.",
             "Prepare a model release packet for a software repository.",
+            "Prepare a talent authorization release packet for repository "
+            "maintainers.",
+            "Prepare a model photography release packet for a software repository.",
+            "Prepare a content licensing release packet for a software repository.",
+            "Prepare a model's release packet for a software repository.",
         )
         for source in rejected_cases:
             with self.subTest(source=source):
@@ -749,6 +758,14 @@ class IntentTest(unittest.TestCase):
             "The report says to review a talent release packet for repository "
             "maintainers, so prepare a repository release checklist.",
             "The report says to review a content release packet for a software "
+            "repository, therefore prepare a repository release checklist.",
+            "The report says to review a talent authorization release packet for "
+            "repository maintainers, so prepare a repository release checklist.",
+            "The report says to review a model photography release packet for a "
+            "software repository, therefore prepare a repository release checklist.",
+            "The report says to review a content licensing release packet for a "
+            "software repository, so prepare a repository release checklist.",
+            "The report says to review a model's release packet for a software "
             "repository, therefore prepare a repository release checklist.",
         )
         for source in invalid_governed_candidates:
