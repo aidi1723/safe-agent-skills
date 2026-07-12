@@ -249,6 +249,32 @@ class IntentSpansTest(unittest.TestCase):
                 "Prepare a content-management release packet for GitLab package.",
                 ["open_source_release"],
             ),
+            (
+                "Prepare a content-management release packet for npm package.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for npm packages.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for software package.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for software packages.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for open-source "
+                "package.",
+                ["open_source_release"],
+            ),
+            (
+                "Prepare a content-management release packet for open-source "
+                "packages.",
+                ["open_source_release"],
+            ),
         )
 
         for task, expected_task_types in cases:
