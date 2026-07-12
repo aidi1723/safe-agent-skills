@@ -9,6 +9,7 @@ from typing import Any
 from .intent_evidence import (
     IntentEvidence,
     bind_intent_evidence,
+    source_supports_release_action,
     validate_intent_evidence,
 )
 from .intent_spans import (
@@ -612,6 +613,25 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
                 matched_signals=("approval release action",),
                 matched_score=4,
             )
+
+    if not source_supports_release_action(current):
+        clause_evidence = [
+            (
+                IntentEvidence(
+                    task_type="general",
+                    context="action",
+                    polarity=evidence.polarity,
+                    release_mode="none",
+                    relation_mode=evidence.relation_mode,
+                    matched_signals=(),
+                    matched_score=0,
+                )
+                if evidence.task_type == "open_source_release"
+                and evidence.release_mode == "action"
+                else evidence
+            )
+            for evidence in clause_evidence
+        ]
 
     clause_evidence = _apply_source_relation_modes(
         current, clauses, clause_evidence

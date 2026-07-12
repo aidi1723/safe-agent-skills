@@ -421,7 +421,7 @@ def split_profile_enumeration(
         _profile_evidence(
             task_type,
             evidence_spans[task_type],
-            clauses[index],
+            clause if task_type == "open_source_release" else clauses[index],
             polarity,
             relation_mode,
             release_propositions,

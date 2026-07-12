@@ -1109,7 +1109,14 @@ class IntentSpansTest(unittest.TestCase):
         suffix = " then publish update"
         exact = (
             "code review"
-            + "x" * (routing_profiles.MAX_SCAN_CHARACTERS - len("code review") - len(suffix))
+            + "x"
+            * (
+                routing_profiles.MAX_SCAN_CHARACTERS
+                - len("code review")
+                - len(suffix)
+                - 1
+            )
+            + "."
             + suffix
         )
         exact_result = decompose_task_detailed(exact)
@@ -1451,6 +1458,46 @@ class IntentSpansTest(unittest.TestCase):
                 self.assertTrue(source_supports_release_action(source))
                 graph = decompose_task_detailed(source).intent_graph
                 self.assertTrue(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_bounded_host_sequences_and_chinese_polite_requests_are_supported(self):
+        cases = (
+            "Review code and then publish update.",
+            "先审查代码，再发布更新",
+            "请发布更新。",
+            "请推送到 GitHub。",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertTrue(source_supports_release_action(source))
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertTrue(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_reported_sequences_do_not_become_host_release_actions(self):
+        cases = (
+            "The guide says review code and then publish update.",
+            "指南说先审查代码，再发布更新",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(source_supports_release_action(source))
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
                     any(
                         evidence.task_type == "open_source_release"
                         and evidence.release_mode == "action"
