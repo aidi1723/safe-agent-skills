@@ -16,10 +16,28 @@ _RELEASE_ACTION_PHRASE = (
     r"(?:update|results?|package|version|project|website|app|code|changes?|release\s+notes)\b|"
     r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
     r"to\s+github)\b|\bopen[-\s]+source\s+release\b"
-    r"|\bopen[-\s]+source\s+(?:the\s+|an?\s+)?"
+    r"|\bopen[-\s]+source\s+"
+    r"(?:the|this|that|our|your|their|a|an)\s+"
     r"(?:project|repository|repo|package|codebase|software|code)\b"
 )
 _RELEASE_ACTION_RE = re.compile(_RELEASE_ACTION_PHRASE, re.IGNORECASE)
+_RELEASE_ACTION_CLAUSE_BOUNDARY_RE = re.compile(
+    r"[;；\n。！？!?]|(?<=[,.，])\s*(?:and\s+)?(?:then|but|so|therefore)\b",
+    re.IGNORECASE,
+)
+_RELEASE_ACTION_NEGATED_PREFIX_RE = re.compile(
+    r"(?:\b(?:do|must|should|will|can)\s+not|"
+    r"\b(?:do|ca|wo|must|should)n['’]t|\bnever|"
+    r"\bno\s+need\s+to|\bnot\s+authorized\s+to)"
+    r"(?:\s+[^\s,;.!?。！？；，]+){0,4}\s*$",
+    re.IGNORECASE,
+)
+_RELEASE_ACTION_REPORTED_PREFIX_RE = re.compile(
+    r"\b(?:says?|said|asks?|asked|tells?|told|claims?|claimed|"
+    r"reports?|reported|recommends?|recommended|instructs?|instructed|"
+    r"requires?|required)\b[\s\S]{0,128}$",
+    re.IGNORECASE,
+)
 _BARE_RELEASE_ACTION_RE = re.compile(
     r"(?:publish|release|push)(?:\s+now)?|"
     r"(?:发布|上线|推送)(?:现在|立即)?",
@@ -70,8 +88,22 @@ def is_release_action_text(text: str, *, allow_bare: bool = False) -> bool:
 
 
 def source_contains_release_action(text: str) -> bool:
-    """Find a release action inside a bounded task source."""
-    return _RELEASE_ACTION_RE.search(bound_task_text(text)) is not None
+    """Find a positive host release action inside a bounded task source."""
+    text = bound_task_text(text)
+    boundaries = iter(_RELEASE_ACTION_CLAUSE_BOUNDARY_RE.finditer(text))
+    boundary = next(boundaries, None)
+    clause_start = 0
+    for action in _RELEASE_ACTION_RE.finditer(text):
+        while boundary is not None and boundary.end() <= action.start():
+            clause_start = boundary.end()
+            boundary = next(boundaries, None)
+        prefix = text[clause_start : action.start()]
+        if (
+            _RELEASE_ACTION_NEGATED_PREFIX_RE.search(prefix) is None
+            and _RELEASE_ACTION_REPORTED_PREFIX_RE.search(prefix) is None
+        ):
+            return True
+    return False
 
 
 def parse_approval_release(text: str) -> tuple[str, str] | None:

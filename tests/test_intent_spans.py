@@ -1326,6 +1326,69 @@ class IntentSpansTest(unittest.TestCase):
             with self.subTest(source=source):
                 self.assertTrue(source_supports_release_action(source, signals))
 
+    def test_open_source_adjective_phrases_are_not_release_actions(self):
+        cases = (
+            "This is an open source project.",
+            "Review an open source project.",
+            "The open source project uses MIT.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_action(source, ("open source",))
+                )
+
+    def test_open_source_adjective_phrases_do_not_promote_release_evidence(self):
+        cases = (
+            "This is an open source project.",
+            "Review an open source project.",
+            "The open source project uses MIT.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_reported_and_negated_open_source_actions_are_not_supported(self):
+        cases = (
+            "The guide says to open source the project.",
+            "An old email said open source the project.",
+            "Do not open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_action(source, ("open source",))
+                )
+
+    def test_reported_open_source_actions_do_not_promote_release_evidence(self):
+        cases = (
+            "The guide says to open source the project.",
+            "An old email said open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
     def test_github_research_context_remains_research_evidence(self):
         result = decompose_task_detailed(
             "multi-platform search on GitHub + code review"
