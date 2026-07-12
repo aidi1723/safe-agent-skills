@@ -755,6 +755,20 @@ class IntentTest(unittest.TestCase):
             "the release checklist for v1.0.",
             "The guide instructs maintainers to prepare a repository release packet "
             "and review the release checklist for v1.0.",
+            "According to the report, the team should prepare a repository release "
+            "packet and review the release checklist for v1.0.",
+            "The report states that the team should prepare a repository release "
+            "packet and review the release checklist for v1.0.",
+            "The report recommends that the maintainers prepare a repository release "
+            "packet and review the release checklist for v1.0.",
+            "The guide instructs the team to prepare a repository release packet and "
+            "review the release checklist for v1.0.",
+            "Documentation requires the maintainers to prepare a repository release "
+            "packet and review the release checklist for v1.0.",
+            "The report says that the release team should prepare a repository "
+            "release packet and review the release checklist for v1.0.",
+            "The docs ask the maintainers to prepare a repository release packet and "
+            "review the release checklist for v1.0.",
         )
         for source in governed:
             with self.subTest(source=source):
@@ -805,6 +819,11 @@ class IntentTest(unittest.TestCase):
                 "packet, but review the actual maintainer release checklist.",
                 ("reference", "request"),
             ),
+            (
+                "The report states that the team should prepare a repository release "
+                "packet; prepare a maintainer release checklist.",
+                ("reference", "request"),
+            ),
         )
         for source, expected in boundaries:
             with self.subTest(source=source):
@@ -812,6 +831,17 @@ class IntentTest(unittest.TestCase):
                     tuple(item.discourse_role for item in parse(source)),
                     expected,
                 )
+
+        overlong = (
+            "The report states that the senior release engineering team should "
+            "prepare a repository release packet and review the release checklist."
+        )
+        self.assertEqual(
+            module._narrative_instruction_reference_spans(
+                overlong, module._sentence_boundaries(overlong)
+            ),
+            (),
+        )
 
     def test_release_sentence_discourse_role_covers_coordinated_propositions(self):
         module = importlib.import_module(

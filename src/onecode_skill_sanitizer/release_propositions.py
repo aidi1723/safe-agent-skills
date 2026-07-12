@@ -143,25 +143,31 @@ _REFERENCE_CLAUSE_RE = re.compile(
     r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
     re.IGNORECASE,
 )
+_NARRATIVE_WORD_TOKEN = r"(?!(?:and|but|then)\b)[^\W\d_]+"
+_NARRATIVE_NOUN_PHRASE = (
+    rf"{_NARRATIVE_WORD_TOKEN}(?:\s+{_NARRATIVE_WORD_TOKEN}){{0,3}}"
+)
 _NARRATIVE_INSTRUCTION_START_RE = re.compile(
     r"^\s*(?:"
     r"(?:(?:the|an?)\s+)?(?:report|example|documentation|docs|guide|"
     r"(?:quoted\s+)?instruction)\s+"
     r"(?:"
     r"(?:says?|tells?|asks?)(?:"
-    r"(?:\s+\w+)?\s+to\s+|"
-    r"\s+that\s+(?:\w+\s+)?(?:should|must|needs?\s+to|is\s+to|are\s+to)\s+"
+    rf"(?:\s+{_NARRATIVE_NOUN_PHRASE})?\s+to\s+|"
+    rf"\s+that\s+(?:{_NARRATIVE_NOUN_PHRASE}\s+)?"
+    r"(?:should|must|needs?\s+to|is\s+to|are\s+to)\s+"
     r")|"
     r"says?\s+|"
-    r"(?:tells?|asks?)(?:\s+\w+)?\s+"
+    rf"(?:tells?|asks?)(?:\s+{_NARRATIVE_NOUN_PHRASE})?\s+"
     r")|"
     r"(?:(?:the|an?)\s+)?report\s+(?:states?|recommends?)\s+that\s+"
-    r"(?:\w+\s+)?(?:(?:should|must)\s+)?|"
+    rf"(?:{_NARRATIVE_NOUN_PHRASE}\s+)?(?:(?:should|must)\s+)?|"
     r"according\s+to\s+(?:the\s+)?(?:report|documentation|docs|guide)"
-    r"\s*,\s*(?:\w+\s+)?"
+    rf"\s*,\s*(?:{_NARRATIVE_NOUN_PHRASE}\s+)?"
     r"(?:(?:should|must|needs?\s+to)\s+)?|"
     r"(?:(?:the|an?)\s+)?(?:documentation|docs|guide)\s+"
-    r"(?:instructs?|requires?)(?:\s+\w+)?\s+(?:to\s+)?"
+    rf"(?:instructs?|requires?)(?:\s+{_NARRATIVE_NOUN_PHRASE})?"
+    r"\s+(?:to\s+)?"
     r")"
     r"(?:[^\W\d_]+ly\s+){0,2}"
     r"(?=(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
