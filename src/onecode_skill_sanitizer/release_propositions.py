@@ -10,6 +10,7 @@ from .intent_source import bound_task_text
 
 MAX_READINESS_OCCURRENCES = 128
 MAX_STRUCTURAL_REFERENCE_SPANS = 256
+MAX_NARRATIVE_GOVERNOR_GAP = 256
 _HARD_SENTENCE_PUNCTUATION = ".!?！？。"
 
 
@@ -86,6 +87,7 @@ _ENGLISH_REQUEST_PREFIX_RE = re.compile(
     r"(?:please|kindly)(?:\s+[^\W\d_]+ly){0,2}\s+|"
     r"please\s+help(?:\s+to)?\s+|"
     r"however\s*,\s*|"
+    r"(?:so|therefore)(?:\s*,)?\s+|"
     r"(?:first|next|now)(?:\s*,)?\s+|"
     r"let(?:['’]s|\s+us)\s+|"
     r"make\s+sure\s+to\s+|"
@@ -99,7 +101,6 @@ _ENGLISH_REQUEST_PREFIX_RE = re.compile(
     r")$",
     re.IGNORECASE,
 )
-_CAUSAL_REQUEST_TRANSITION_RE = re.compile(r",\s*so\s*$", re.IGNORECASE)
 _NARRATIVE_REFERENCE_PREFIX_RE = re.compile(
     r"^\s*(?:"
     r"according\s+to\s+(?:the\s+)?"
@@ -187,7 +188,11 @@ _NARRATIVE_GOVERNOR_START_RE = re.compile(
     re.IGNORECASE,
 )
 _NARRATIVE_INSTRUCTION_STOP_RE = re.compile(
-    r"\s*(?:,\s*)?(?:\bbut\b|\bhowever\b|\bso\b|\band\s+now\b|但是|但)",
+    r"\s*(?:,\s*)?(?:\bbut\b|\bhowever\b|但是|但)",
+    re.IGNORECASE,
+)
+_NARRATIVE_REQUEST_TRANSITION_RE = re.compile(
+    r"\s*(?:,\s*)?(?:\bso\b|\btherefore\b|\band\s+now\b)",
     re.IGNORECASE,
 )
 _SENTENCE_REFERENCE_RE = re.compile(
@@ -525,7 +530,10 @@ def _action_has_request_prefix(
         return _CHINESE_REQUEST_PREFIX_RE.fullmatch(prefix) is not None
     if _POSITIVE_OBLIGATION_RE.search(prefix) or _NOT_ONLY_RE.search(prefix):
         return True
-    if _CAUSAL_REQUEST_TRANSITION_RE.search(prefix):
+    governor = _NARRATIVE_GOVERNOR_START_RE.match(prefix)
+    if governor is not None and _independent_narrative_request_transition(
+        prefix, governor.end(), len(prefix)
+    ) is not None:
         return True
     if _NARRATIVE_REFERENCE_PREFIX_RE.fullmatch(prefix):
         return False
@@ -615,11 +623,13 @@ def _narrative_instruction_reference_spans(
     candidate_starts.update(end for _, end in sentence_boundaries)
     spans: list[tuple[int, int]] = []
     for candidate_start in sorted(candidate_starts):
-        match = _NARRATIVE_INSTRUCTION_START_RE.match(source[candidate_start:])
+        candidate = source[candidate_start:]
+        governor = _NARRATIVE_GOVERNOR_START_RE.match(candidate)
+        match = _NARRATIVE_INSTRUCTION_START_RE.match(candidate)
         if match is None:
-            match = _NARRATIVE_GOVERNOR_START_RE.match(source[candidate_start:])
-            if match is None:
+            if governor is None:
                 continue
+            match = governor
         span_start = candidate_start + match.start()
         instruction_start = candidate_start + match.end()
         stops = [len(source)]
@@ -636,10 +646,50 @@ def _narrative_instruction_reference_spans(
             for boundary_start, _ in sentence_boundaries
             if boundary_start >= instruction_start
         )
+        if governor is not None:
+            transition = _independent_narrative_request_transition(
+                source,
+                candidate_start + governor.end(),
+                min(stops),
+            )
+            if transition is not None:
+                stops.append(transition)
         spans.append((span_start, min(stops)))
         if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
             return ((0, len(source)),)
     return tuple(spans)
+
+
+def _independent_narrative_request_transition(
+    source: str, governor_end: int, search_end: int
+) -> int | None:
+    bounded_end = min(search_end, governor_end + MAX_NARRATIVE_GOVERNOR_GAP)
+    transition = _NARRATIVE_REQUEST_TRANSITION_RE.search(
+        source, governor_end, bounded_end
+    )
+    if transition is None:
+        return None
+    if _governed_readiness_chain_started(
+        source, governor_end, transition.start()
+    ):
+        return None
+    return transition.start()
+
+
+def _governed_readiness_chain_started(
+    source: str, governor_end: int, transition_start: int
+) -> bool:
+    actions = tuple(_ACTION_RE.finditer(source, governor_end, transition_start))
+    for object_match in _OBJECT_RE.finditer(
+        source, governor_end, transition_start
+    ):
+        for action in reversed(actions):
+            if action.end() > object_match.start():
+                continue
+            gap = source[action.end() : object_match.start()]
+            if len(gap) <= 96 and not re.search(r"[,;.!?；。！？]", gap):
+                return True
+    return False
 
 
 def _delimited_spans(

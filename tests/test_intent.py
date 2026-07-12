@@ -702,6 +702,12 @@ class IntentTest(unittest.TestCase):
 
         independent = (
             "The report says tests passed; prepare a repository release checklist.",
+            "The report says tests passed; so prepare a repository release "
+            "checklist.",
+            "The report says tests passed. So prepare a repository release "
+            "checklist.",
+            "The report says tests passed; therefore prepare a repository release "
+            "checklist.",
             "Prepare a repository release checklist; the report says tests passed.",
             "The report says tests passed, but prepare a repository release "
             "checklist.",
@@ -713,6 +719,10 @@ class IntentTest(unittest.TestCase):
             "checklist.",
             "According to the report, tests passed, so prepare a repository release "
             "checklist.",
+            "The report says code review passed, so prepare a repository release "
+            "checklist.",
+            "The report says to prepare a migration plan, so prepare a repository "
+            "release checklist.",
         )
         for source in independent:
             with self.subTest(source=source):
@@ -737,6 +747,10 @@ class IntentTest(unittest.TestCase):
         parse = module.parse_release_readiness_propositions
         governed = (
             "The report says to prepare a repository release packet and review "
+            "the release checklist for v1.0.",
+            "The report says to prepare a repository release packet and now review "
+            "the release checklist for v1.0.",
+            "The report says to prepare a repository release packet, and now review "
             "the release checklist for v1.0.",
             "The report says to prepare a repository release packet, then review "
             "the release checklist for v1.0.",

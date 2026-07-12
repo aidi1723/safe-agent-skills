@@ -486,6 +486,10 @@ class IntentSpansTest(unittest.TestCase):
         references = (
             "The report says to prepare a repository release packet and review "
             "the release checklist for v1.0.",
+            "The report says to prepare a repository release packet and now review "
+            "the release checklist for v1.0.",
+            "The report says to prepare a repository release packet, and now review "
+            "the release checklist for v1.0.",
             "The report says to prepare a repository release packet, then review "
             "the release checklist for v1.0.",
             "The documentation tells maintainers to prepare a repository release "
@@ -541,6 +545,12 @@ class IntentSpansTest(unittest.TestCase):
         requests = (
             "The report says to prepare a repository release packet; independently "
             "prepare a repository release checklist.",
+            "The report says tests passed; so prepare a repository release "
+            "checklist.",
+            "The report says tests passed. So prepare a repository release "
+            "checklist.",
+            "The report says tests passed; therefore prepare a repository release "
+            "checklist.",
             "The report says to prepare a repository release packet, but prepare "
             "an actual maintainer release checklist.",
             "The report says to prepare a repository release packet; however, "
@@ -561,6 +571,10 @@ class IntentSpansTest(unittest.TestCase):
             "checklist.",
             "According to the report, tests passed, so prepare a repository release "
             "checklist.",
+            "The report says code review passed, so prepare a repository release "
+            "checklist.",
+            "The report says to prepare a migration plan, so prepare a repository "
+            "release checklist.",
         )
         for task in requests:
             with self.subTest(task=task):
