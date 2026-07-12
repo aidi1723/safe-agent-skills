@@ -11,6 +11,7 @@ from .intent_source import bound_task_text
 MAX_READINESS_OCCURRENCES = 128
 MAX_STRUCTURAL_REFERENCE_SPANS = 256
 MAX_NARRATIVE_GOVERNOR_GAP = 256
+MAX_NARRATIVE_TRANSITIONS = 128
 _HARD_SENTENCE_PUNCTUATION = ".!?！？。"
 
 
@@ -22,6 +23,34 @@ class ReleaseReadinessProposition:
     object_text: str
     polarity: str
     discourse_role: str
+
+
+@dataclass(frozen=True)
+class _BoundReadinessAction:
+    match: re.Match[str]
+    start: int
+    end: int
+    text: str
+    polarity: str
+
+
+@dataclass(frozen=True)
+class _ReadinessCandidate:
+    object_start: int
+    object_end: int
+    object_text: str
+    proposition_start: int
+    proposition_end: int
+    actions: tuple[_BoundReadinessAction, ...]
+    software_anchor_spans: tuple[tuple[int, int], ...]
+    structurally_contained: bool
+    sentence_reference: bool
+    proposition_reference: bool
+    filename_reference: bool
+    legacy_line_request: bool
+    legacy_proposition_request: bool
+    evidence_statement_request: bool
+    skip: bool
 
 
 _OBJECT_RE = re.compile(
@@ -237,9 +266,6 @@ def parse_release_readiness_propositions(
     """Extract bounded action-object readiness propositions without raising."""
     source = bound_task_text(source)
     sentence_boundaries = _sentence_boundaries(source)
-    reported_reference_spans = _narrative_instruction_reference_spans(
-        source, sentence_boundaries
-    )
     proposition_boundaries = tuple(
         sorted(
             set(
@@ -249,7 +275,134 @@ def parse_release_readiness_propositions(
         )
     )
     structural_spans = _structural_reference_spans(source)
+    candidates = _collect_readiness_candidates(
+        source,
+        sentence_boundaries,
+        proposition_boundaries,
+        structural_spans,
+    )
+    reported_reference_spans = _narrative_instruction_reference_spans(
+        source, sentence_boundaries, candidates
+    )
     propositions: list[ReleaseReadinessProposition] = []
+    for candidate in candidates:
+        reported_instruction = _range_is_contained(
+            candidate.object_start,
+            candidate.object_end,
+            reported_reference_spans,
+        )
+        if (
+            candidate.structurally_contained
+            or reported_instruction
+            or candidate.filename_reference
+        ):
+            propositions.append(
+                ReleaseReadinessProposition(
+                    candidate.object_start,
+                    candidate.object_end,
+                    "reference",
+                    candidate.object_text,
+                    "positive",
+                    "reference",
+                )
+            )
+            continue
+        if candidate.legacy_line_request:
+            propositions.append(
+                ReleaseReadinessProposition(
+                    candidate.object_start,
+                    candidate.object_end,
+                    "prepare",
+                    candidate.object_text,
+                    "positive",
+                    "request",
+                )
+            )
+            continue
+        if candidate.sentence_reference or candidate.proposition_reference:
+            propositions.append(
+                ReleaseReadinessProposition(
+                    candidate.object_start,
+                    candidate.object_end,
+                    "reference",
+                    candidate.object_text,
+                    "positive",
+                    "reference",
+                )
+            )
+            continue
+        if candidate.legacy_proposition_request:
+            propositions.append(
+                ReleaseReadinessProposition(
+                    candidate.object_start,
+                    candidate.object_end,
+                    "prepare",
+                    candidate.object_text,
+                    "positive",
+                    "request",
+                )
+            )
+            continue
+        if candidate.skip:
+            continue
+        proposition = source[
+            candidate.proposition_start : candidate.proposition_end
+        ]
+        request_actions = tuple(
+            action
+            for action in candidate.actions
+            if _action_has_request_prefix(
+                action.match,
+                proposition,
+                candidates,
+                candidate.proposition_start,
+            )
+        )
+        action = (request_actions or candidate.actions or (None,))[0]
+        if action is None and candidate.evidence_statement_request:
+            propositions.append(
+                ReleaseReadinessProposition(
+                    candidate.object_start,
+                    candidate.object_end,
+                    "document",
+                    candidate.object_text,
+                    "positive",
+                    "request",
+                )
+            )
+            continue
+        if action is None or not candidate.software_anchor_spans:
+            propositions.append(
+                ReleaseReadinessProposition(
+                    candidate.object_start,
+                    candidate.object_end,
+                    action.text if action else "reference",
+                    candidate.object_text,
+                    "positive",
+                    "reference",
+                )
+            )
+            continue
+        propositions.append(
+            ReleaseReadinessProposition(
+                min(action.start, candidate.object_start),
+                max(action.end, candidate.object_end),
+                action.text,
+                candidate.object_text,
+                action.polarity,
+                "request" if action in request_actions else "reference",
+            )
+        )
+    return tuple(propositions)
+
+
+def _collect_readiness_candidates(
+    source: str,
+    sentence_boundaries: tuple[tuple[int, int], ...],
+    proposition_boundaries: tuple[tuple[int, int], ...],
+    structural_spans: tuple[tuple[int, int], ...],
+) -> tuple[_ReadinessCandidate, ...]:
+    candidates: list[_ReadinessCandidate] = []
     for occurrence_index, match in enumerate(_OBJECT_RE.finditer(source)):
         if occurrence_index >= MAX_READINESS_OCCURRENCES:
             break
@@ -265,84 +418,12 @@ def parse_release_readiness_propositions(
                 continue
         line_start, line_end = _line_bounds(source, object_start, object_end)
         line = source[line_start:line_end]
-        local_end = object_end - line_start
-
-        sentence_start, sentence_end = _bounds_from_boundaries(
-            source, object_start, object_end, sentence_boundaries
-        )
-        sentence = source[sentence_start:sentence_end]
-        sentence_is_reference = bool(_SENTENCE_REFERENCE_RE.search(sentence))
-        structurally_contained = _range_is_contained(
-            object_start, object_end, structural_spans
-        )
-        reported_instruction = _range_is_contained(
-            object_start, object_end, reported_reference_spans
-        )
-
-        if (
-            structurally_contained
-            or reported_instruction
-            or _FILENAME_SUFFIX_RE.match(line[local_end:])
-        ):
-            propositions.append(
-                ReleaseReadinessProposition(
-                    object_start,
-                    object_end,
-                    "reference",
-                    object_text,
-                    "positive",
-                    "reference",
-                )
-            )
-            continue
-
-        if _LEGACY_CHECKLIST_RE.fullmatch(line):
-            propositions.append(
-                ReleaseReadinessProposition(
-                    object_start,
-                    object_end,
-                    "prepare",
-                    object_text,
-                    "positive",
-                    "request",
-                )
-            )
-            continue
-
         proposition_start, proposition_end = _proposition_bounds(
             source, object_start, object_end, proposition_boundaries
         )
         proposition = source[proposition_start:proposition_end]
         local_object_start = object_start - proposition_start
         local_object_end = object_end - proposition_start
-        if (
-            sentence_is_reference
-            or _STRUCTURAL_PREFIX_RE.search(proposition)
-            or _REFERENCE_CLAUSE_RE.search(proposition)
-        ):
-            propositions.append(
-                ReleaseReadinessProposition(
-                    object_start,
-                    object_end,
-                    "reference",
-                    object_text,
-                    "positive",
-                    "reference",
-                )
-            )
-            continue
-        if _LEGACY_CHECKLIST_RE.fullmatch(proposition):
-            propositions.append(
-                ReleaseReadinessProposition(
-                    object_start,
-                    object_end,
-                    "prepare",
-                    object_text,
-                    "positive",
-                    "request",
-                )
-            )
-            continue
         raw_actions = tuple(_ACTION_RE.finditer(proposition))
         invalid_actions = tuple(
             item
@@ -360,83 +441,76 @@ def parse_release_readiness_propositions(
                 )
             )
         )
-        if raw_actions and not actions and chinese_object:
-            continue
-        request_actions = tuple(
-            item
-            for item in actions
-            if _action_has_request_prefix(item, proposition)
-        )
-        action = min(
-            request_actions or actions,
-            key=lambda item: (
-                max(
-                    local_object_start - item.end(),
-                    item.start() - local_object_end,
-                    0,
+        ranked_actions = tuple(
+            sorted(
+                actions,
+                key=lambda item: (
+                    max(
+                        local_object_start - item.end(),
+                        item.start() - local_object_end,
+                        0,
+                    ),
+                    0 if item.end() <= local_object_start else 1,
+                    item.start(),
                 ),
-                0 if item.end() <= local_object_start else 1,
-                item.start(),
-            ),
-            default=None,
+            )
         )
-        has_anchor = bool(_SOFTWARE_ANCHOR_RE.search(proposition))
-
-        if (
-            action is None
-            and _EVIDENCE_STATEMENT_RE.search(line)
-            and _SOFTWARE_ANCHOR_RE.search(line)
-        ):
-            propositions.append(
-                ReleaseReadinessProposition(
-                    object_start,
-                    object_end,
-                    "document",
-                    object_text,
-                    "positive",
-                    "request",
+        bound_actions: list[_BoundReadinessAction] = []
+        for action in ranked_actions:
+            prefix = proposition[: action.start()]
+            between_action_and_object = proposition[
+                action.end() : local_object_start
+            ]
+            bound_actions.append(
+                _BoundReadinessAction(
+                    action,
+                    proposition_start + action.start(),
+                    proposition_start + action.end(),
+                    action.group().casefold(),
+                    (
+                        "negative"
+                        if _action_is_negated(prefix, between_action_and_object)
+                        else "positive"
+                    ),
                 )
             )
-            continue
-        if action is None or not has_anchor:
-            propositions.append(
-                ReleaseReadinessProposition(
-                    object_start,
-                    object_end,
-                    action.group().casefold() if action else "reference",
-                    object_text,
-                    "positive",
-                    "reference",
-                )
-            )
-            continue
-
-        prefix = proposition[: action.start()]
-        between_action_and_object = proposition[
-            action.end() : local_object_start
-        ]
-        polarity = (
-            "negative"
-            if _action_is_negated(prefix, between_action_and_object)
-            else "positive"
+        sentence_start, sentence_end = _bounds_from_boundaries(
+            source, object_start, object_end, sentence_boundaries
         )
-        action_start = proposition_start + action.start()
-        action_end = proposition_start + action.end()
-        propositions.append(
-            ReleaseReadinessProposition(
-                min(action_start, object_start),
-                max(action_end, object_end),
-                action.group().casefold(),
+        sentence = source[sentence_start:sentence_end]
+        candidates.append(
+            _ReadinessCandidate(
+                object_start,
+                object_end,
                 object_text,
-                polarity,
-                (
-                    "request"
-                    if action in request_actions
-                    else "reference"
+                proposition_start,
+                proposition_end,
+                tuple(bound_actions),
+                tuple(
+                    (
+                        proposition_start + anchor.start(),
+                        proposition_start + anchor.end(),
+                    )
+                    for anchor in _SOFTWARE_ANCHOR_RE.finditer(proposition)
                 ),
+                _range_is_contained(object_start, object_end, structural_spans),
+                bool(_SENTENCE_REFERENCE_RE.search(sentence)),
+                bool(
+                    _STRUCTURAL_PREFIX_RE.search(proposition)
+                    or _REFERENCE_CLAUSE_RE.search(proposition)
+                ),
+                _FILENAME_SUFFIX_RE.match(line[object_end - line_start :])
+                is not None,
+                _LEGACY_CHECKLIST_RE.fullmatch(line) is not None,
+                _LEGACY_CHECKLIST_RE.fullmatch(proposition) is not None,
+                bool(
+                    _EVIDENCE_STATEMENT_RE.search(line)
+                    and _SOFTWARE_ANCHOR_RE.search(line)
+                ),
+                bool(raw_actions and not actions and chinese_object),
             )
         )
-    return tuple(propositions)
+    return tuple(candidates)
 
 
 def _line_bounds(source: str, start: int, end: int) -> tuple[int, int]:
@@ -521,7 +595,10 @@ def _action_is_negated(prefix: str, between_action_and_object: str) -> bool:
 
 
 def _action_has_request_prefix(
-    action: re.Match[str], proposition: str
+    action: re.Match[str],
+    proposition: str,
+    readiness_candidates: tuple[_ReadinessCandidate, ...] = (),
+    proposition_start: int = 0,
 ) -> bool:
     prefix = _without_structural_reference_spans(
         proposition[: action.start()]
@@ -532,7 +609,11 @@ def _action_has_request_prefix(
         return True
     governor = _NARRATIVE_GOVERNOR_START_RE.match(prefix)
     if governor is not None and _independent_narrative_request_transition(
-        prefix, governor.end(), len(prefix)
+        prefix,
+        governor.end(),
+        len(prefix),
+        readiness_candidates,
+        proposition_start,
     ) is not None:
         return True
     if _NARRATIVE_REFERENCE_PREFIX_RE.fullmatch(prefix):
@@ -612,7 +693,23 @@ def _html_pre_spans(source: str) -> tuple[tuple[int, int], ...]:
 def _narrative_instruction_reference_spans(
     source: str,
     sentence_boundaries: tuple[tuple[int, int], ...],
+    readiness_candidates: tuple[_ReadinessCandidate, ...] | None = None,
 ) -> tuple[tuple[int, int], ...]:
+    if readiness_candidates is None:
+        proposition_boundaries = tuple(
+            sorted(
+                set(
+                    [match.span() for match in _COORDINATOR_RE.finditer(source)]
+                    + list(sentence_boundaries)
+                )
+            )
+        )
+        readiness_candidates = _collect_readiness_candidates(
+            source,
+            sentence_boundaries,
+            proposition_boundaries,
+            _structural_reference_spans(source),
+        )
     candidate_starts = {0}
     candidate_starts.update(
         match.end() for match in re.finditer(r"[;；\n]", source)
@@ -651,6 +748,7 @@ def _narrative_instruction_reference_spans(
                 source,
                 candidate_start + governor.end(),
                 min(stops),
+                readiness_candidates,
             )
             if transition is not None:
                 stops.append(transition)
@@ -661,33 +759,60 @@ def _narrative_instruction_reference_spans(
 
 
 def _independent_narrative_request_transition(
-    source: str, governor_end: int, search_end: int
+    source: str,
+    governor_end: int,
+    search_end: int,
+    readiness_candidates: tuple[_ReadinessCandidate, ...] = (),
+    source_offset: int = 0,
 ) -> int | None:
     bounded_end = min(search_end, governor_end + MAX_NARRATIVE_GOVERNOR_GAP)
-    transition = _NARRATIVE_REQUEST_TRANSITION_RE.search(
-        source, governor_end, bounded_end
-    )
-    if transition is None:
-        return None
-    if _governed_readiness_chain_started(
-        source, governor_end, transition.start()
+    segment_start = governor_end
+    for transition_index, transition in enumerate(
+        _NARRATIVE_REQUEST_TRANSITION_RE.finditer(
+            source, governor_end, bounded_end
+        )
     ):
-        return None
-    return transition.start()
+        if transition_index >= MAX_NARRATIVE_TRANSITIONS:
+            return None
+        if _governed_readiness_chain_started(
+            readiness_candidates,
+            source_offset + segment_start,
+            source_offset + transition.start(),
+        ):
+            segment_start = transition.end()
+            continue
+        return transition.start()
+    return None
 
 
 def _governed_readiness_chain_started(
-    source: str, governor_end: int, transition_start: int
+    readiness_candidates: tuple[_ReadinessCandidate, ...],
+    segment_start: int,
+    transition_start: int,
 ) -> bool:
-    actions = tuple(_ACTION_RE.finditer(source, governor_end, transition_start))
-    for object_match in _OBJECT_RE.finditer(
-        source, governor_end, transition_start
-    ):
-        for action in reversed(actions):
-            if action.end() > object_match.start():
-                continue
-            gap = source[action.end() : object_match.start()]
-            if len(gap) <= 96 and not re.search(r"[,;.!?；。！？]", gap):
+    for candidate in readiness_candidates:
+        if (
+            candidate.object_start < segment_start
+            or candidate.object_end > transition_start
+            or candidate.structurally_contained
+            or candidate.sentence_reference
+            or candidate.proposition_reference
+            or candidate.filename_reference
+            or candidate.skip
+            or not any(
+                segment_start <= anchor_start
+                and anchor_end <= transition_start
+                for anchor_start, anchor_end in candidate.software_anchor_spans
+            )
+        ):
+            continue
+        if candidate.actions:
+            action = candidate.actions[0]
+            if (
+                action.polarity == "positive"
+                and segment_start <= action.start
+                and action.end <= candidate.object_start
+            ):
                 return True
     return False
 

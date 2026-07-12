@@ -731,6 +731,29 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(propositions[0].polarity, "positive")
                 self.assertEqual(propositions[0].discourse_role, "request")
 
+        invalid_governed_candidates = (
+            "The report says to review a talent release packet, so prepare a "
+            "repository release checklist.",
+            "The report says not to prepare a repository release packet, so prepare "
+            "a repository release checklist.",
+            "The report says `prepare a repository release packet`, so prepare a "
+            "repository release checklist.",
+            "The report says to review a model release packet, therefore review the "
+            "release checklist for v1.0.",
+            "The report says to review a talent release packet, so inspect assets, "
+            "and now prepare a repository release checklist.",
+            "The report says to prepare a repository release packet, so inspect "
+            "assets, and now prepare a repository release checklist.",
+        )
+        for source in invalid_governed_candidates:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 2)
+                self.assertEqual(
+                    tuple(item.discourse_role for item in propositions),
+                    ("reference", "request"),
+                )
+
         quoted_then_request = (
             'The report says "Prepare a repository release packet"; review the '
             "release checklist for v1.0."

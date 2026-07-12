@@ -575,6 +575,18 @@ class IntentSpansTest(unittest.TestCase):
             "checklist.",
             "The report says to prepare a migration plan, so prepare a repository "
             "release checklist.",
+            "The report says to review a talent release packet, so prepare a "
+            "repository release checklist.",
+            "The report says not to prepare a repository release packet, so prepare "
+            "a repository release checklist.",
+            "The report says `prepare a repository release packet`, so prepare a "
+            "repository release checklist.",
+            "The report says to review a model release packet, therefore review the "
+            "release checklist for v1.0.",
+            "The report says to review a talent release packet, so inspect assets, "
+            "and now prepare a repository release checklist.",
+            "The report says to prepare a repository release packet, so inspect "
+            "assets, and now prepare a repository release checklist.",
         )
         for task in requests:
             with self.subTest(task=task):
@@ -616,6 +628,23 @@ class IntentSpansTest(unittest.TestCase):
 
         self.assertEqual(parse.call_count, 1)
         self.assertEqual(decomposition.intent_graph.validate(), [])
+
+    def test_release_parser_collects_candidate_facts_once(self):
+        from onecode_skill_sanitizer import release_propositions
+
+        task = (
+            "The report says to prepare a repository release packet, so inspect "
+            "assets, and now prepare a repository release checklist."
+        )
+        collector = release_propositions._collect_readiness_candidates
+        with patch.object(
+            release_propositions,
+            "_collect_readiness_candidates",
+            wraps=collector,
+        ) as collect:
+            release_propositions.parse_release_readiness_propositions(task)
+
+        self.assertEqual(collect.call_count, 1)
 
     def test_direct_text_helpers_share_exact_scan_boundary(self):
         evidence = IntentEvidence(
