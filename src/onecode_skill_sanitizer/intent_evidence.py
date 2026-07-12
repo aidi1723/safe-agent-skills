@@ -5,7 +5,6 @@ from __future__ import annotations
 from dataclasses import dataclass, replace
 import hashlib
 import json
-import re
 from typing import Any
 
 from .intent_source import (
@@ -29,24 +28,6 @@ RELEASE_READINESS_SIGNALS = frozenset(
     {"发布清单", "release checklist", "release packet", "release readiness"}
 )
 RELEASE_READINESS_EVIDENCE_SIGNALS = RELEASE_READINESS_SIGNALS | {"release"}
-RELEASE_ACTION_SIGNALS = frozenset(
-    {
-        "open source",
-        "publish repo",
-        "public repository",
-        "开源",
-        "发布仓库",
-        "公开仓库",
-        "推送 github",
-        "推送到 github",
-        "推送代码到 github",
-        "push to github",
-        "push changes to github",
-        "push the repository to github",
-        "发布更新",
-        "publish update",
-    }
-)
 @dataclass(frozen=True)
 class IntentEvidence:
     """Profile and relation evidence aligned by index with an internal intent."""
@@ -206,19 +187,12 @@ def source_supports_release_action(
     source: str, matched_signals: tuple[str, ...] = ()
 ) -> bool:
     source = bound_task_text(source)
+    del matched_signals
     if parse_approval_release(source) is not None or is_release_action_text(
         source, allow_bare=True
     ):
         return True
-    normalized = {signal.casefold() for signal in matched_signals}
-    return bool(
-        source_contains_release_action(source)
-        or any(
-            signal in RELEASE_ACTION_SIGNALS
-            and _signal_in_source(source, signal)
-            for signal in normalized
-        )
-    )
+    return source_contains_release_action(source)
 
 
 def _semantic_errors(
@@ -266,16 +240,6 @@ def _semantic_errors(
             f"intent evidence {index} release action evidence requires action context"
         )
     return errors
-
-
-def _signal_in_source(source: str, signal: str) -> bool:
-    source = bound_task_text(source)
-    if signal.isascii():
-        return re.search(
-            rf"(?<![a-z0-9]){re.escape(signal)}(?![a-z0-9])",
-            source.casefold(),
-        ) is not None
-    return signal in source.casefold()
 
 
 def _evidence_provenance(item: IntentEvidence, source: str) -> str:

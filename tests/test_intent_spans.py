@@ -1273,6 +1273,59 @@ class IntentSpansTest(unittest.TestCase):
                 )
                 self.assertEqual(result.intents[1].depends_on, ("i1",))
 
+    def test_release_profile_nouns_do_not_promote_non_host_actions(self):
+        cases = (
+            "Interview the owner about requirements and approval boundaries. "
+            "An old email saying a public repository release was approved has "
+            "expired and grants no publication authority.",
+            "The private mirror handoff completed and was archived; it grants no "
+            "public repository release or publish-check authority.",
+            "Audit a multi-agent plan where one role claims blanket tool authority "
+            "and another asks to publish customer secrets in a public repository.",
+        )
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_release_profile_signals_only_corroborate_real_actions(self):
+        rejected = (
+            "An old email saying a public repository release was approved has "
+            "expired.",
+            "It grants no public repository release authority.",
+            "Audit a plan where another role asks to publish customer secrets in a "
+            "public repository.",
+        )
+        accepted = (
+            ("Publish the package in a public repository.", ("public repository",)),
+            ("Open source the project.", ("open source",)),
+            (
+                "After the PR is approved, publish update.",
+                ("approval release action",),
+            ),
+            ("Push changes to GitHub.", ("github",)),
+            ("Publish update.", ("publish update",)),
+        )
+
+        for source in rejected:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_action(
+                        source, ("public repository",)
+                    )
+                )
+        for source, signals in accepted:
+            with self.subTest(source=source):
+                self.assertTrue(source_supports_release_action(source, signals))
+
     def test_github_research_context_remains_research_evidence(self):
         result = decompose_task_detailed(
             "multi-platform search on GitHub + code review"

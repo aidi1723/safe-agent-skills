@@ -16,6 +16,8 @@ _RELEASE_ACTION_PHRASE = (
     r"(?:update|results?|package|version|project|website|app|code|changes?|release\s+notes)\b|"
     r"\bpush\s+(?:changes\s+to\s+github|the\s+repository(?:\s+to\s+github)?|"
     r"to\s+github)\b|\bopen[-\s]+source\s+release\b"
+    r"|\bopen[-\s]+source\s+(?:the\s+|an?\s+)?"
+    r"(?:project|repository|repo|package|codebase|software|code)\b"
 )
 _RELEASE_ACTION_RE = re.compile(_RELEASE_ACTION_PHRASE, re.IGNORECASE)
 _BARE_RELEASE_ACTION_RE = re.compile(
