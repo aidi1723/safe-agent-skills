@@ -10,6 +10,18 @@ from pathlib import Path
 from unittest import mock
 
 
+ROOT = Path(__file__).resolve().parents[1]
+PRODUCTION_SUITE = ROOT / "evals" / "router-production" / "index.json"
+EXPECTED_PRODUCTION_SHARDS = (
+    ("normal.json", "normal", "normal", 200),
+    ("multi-intent.json", "multi_intent", "multi-intent", 80),
+    ("ambiguous.json", "ambiguous", "ambiguous", 50),
+    ("negative.json", "negative", "negative", 50),
+    ("perturbations.json", "multilingual_typo_paraphrase", "perturbation", 40),
+    ("safety.json", "safety_sensitive", "safety", 30),
+)
+
+
 LABELING = {
     "method": "manual_review",
     "reviewer_role": "independent_dataset_review",
@@ -287,6 +299,46 @@ class RouterEvalSuiteTests(unittest.TestCase):
             invalid = json.loads(json.dumps(fixture.index_payload))
             invalid["shards"][0]["extra"] = True
             self.assertTrue(list(Draft202012Validator(schema).iter_errors(invalid)))
+
+    def test_production_suite_has_exact_order_counts_ids_and_authenticated_shards(self):
+        from onecode_skill_sanitizer.router_eval_review import canonical_suite_sha256, load_eval_suite
+
+        bundle_ids = {
+            bundle["id"]
+            for bundle in json.loads((ROOT / "bundles" / "index.json").read_text(encoding="utf-8"))["bundles"]
+        }
+        index = json.loads(PRODUCTION_SUITE.read_text(encoding="utf-8"))
+        self.assertEqual(index["case_count"], 450)
+        self.assertEqual(
+            [(item["path"], item["case_count"]) for item in index["shards"]],
+            [(path, count) for path, _category, _prefix, count in EXPECTED_PRODUCTION_SHARDS],
+        )
+
+        all_ids = []
+        for descriptor, (path, category, prefix, count) in zip(
+            index["shards"], EXPECTED_PRODUCTION_SHARDS, strict=True
+        ):
+            payload = json.loads((PRODUCTION_SUITE.parent / path).read_text(encoding="utf-8"))
+            self.assertEqual(descriptor["sha256"], canonical_sha256(payload))
+            self.assertEqual(len(payload["cases"]), count)
+            self.assertEqual({item["category"] for item in payload["cases"]}, {category})
+            expected_ids = [f"{prefix}-{number:03d}" for number in range(1, count + 1)]
+            actual_ids = [item["id"] for item in payload["cases"]]
+            self.assertEqual(actual_ids, expected_ids)
+            all_ids.extend(actual_ids)
+
+        self.assertEqual(len(all_ids), len(set(all_ids)))
+        loaded = load_eval_suite(PRODUCTION_SUITE, bundle_ids)
+        self.assertEqual(len(loaded["cases"]), 450)
+        self.assertEqual(loaded["identity"]["suite_sha256"], canonical_suite_sha256(PRODUCTION_SUITE))
+        self.assertEqual(
+            {
+                scenario
+                for item in loaded["cases"]
+                for scenario in item["expected_scenarios"]
+            },
+            bundle_ids,
+        )
 
 
 class RouterEvalReviewTests(unittest.TestCase):

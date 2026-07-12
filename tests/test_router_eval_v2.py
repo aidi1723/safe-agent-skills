@@ -27,6 +27,26 @@ EXPECTED_LABELING = {
     "generated_from_router": False,
     "reviewed_at": "2026-07-10",
 }
+PRODUCTION_SUITE = ROOT / "evals" / "router-production" / "index.json"
+EXPECTED_PRODUCTION_COUNTS = {
+    "normal": 200,
+    "multi_intent": 80,
+    "ambiguous": 50,
+    "negative": 50,
+    "multilingual_typo_paraphrase": 40,
+    "safety_sensitive": 30,
+}
+STRICT_PRODUCTION_CASE_FIELDS = {
+    "id",
+    "category",
+    "task",
+    "expected_intents",
+    "expected_scenarios",
+    "required_dependency_edges",
+    "forbidden_scenarios",
+    "forbidden_skills",
+    "expected_status",
+}
 VALID_STATUS_GRAPH_PAIRS = [
     ("complete", "ready", True),
     ("incomplete", "blocked", True),
@@ -37,6 +57,12 @@ VALID_STATUS_GRAPH_PAIRS = [
 def bundle_scenario_ids() -> set[str]:
     bundles = json.loads((ROOT / "bundles" / "index.json").read_text(encoding="utf-8"))["bundles"]
     return {bundle["id"] for bundle in bundles}
+
+
+def production_cases() -> list[dict]:
+    from onecode_skill_sanitizer.router_eval_review import load_eval_suite
+
+    return load_eval_suite(PRODUCTION_SUITE, bundle_scenario_ids())["cases"]
 
 
 def gold_payload() -> dict:
@@ -126,6 +152,36 @@ def evaluate_fixture(cases: list[dict], *, route_builder, **kwargs) -> dict:
 
 
 class RouterEvalV2Tests(unittest.TestCase):
+    def test_production_suite_has_exact_distribution_and_full_strict_case_fields(self):
+        cases = production_cases()
+
+        self.assertEqual(len(cases), 450)
+        self.assertEqual(Counter(case["category"] for case in cases), EXPECTED_PRODUCTION_COUNTS)
+        self.assertEqual(len({case["id"] for case in cases}), 450)
+        self.assertEqual(len({case["task"] for case in cases}), 450)
+        self.assertTrue(all(set(case) == STRICT_PRODUCTION_CASE_FIELDS for case in cases))
+
+    def test_production_suite_covers_every_trusted_scenario_at_least_five_times(self):
+        scenario_counts = Counter(
+            scenario
+            for case in production_cases()
+            for scenario in case["expected_scenarios"]
+        )
+
+        self.assertEqual(set(scenario_counts), bundle_scenario_ids())
+        self.assertTrue(all(count >= 5 for count in scenario_counts.values()), scenario_counts)
+
+    def test_production_suite_has_real_forbidden_skill_label_support(self):
+        cases = production_cases()
+        supported = [case for case in cases if case["forbidden_skills"]]
+
+        self.assertGreater(sum(len(case["forbidden_skills"]) for case in cases), 0)
+        self.assertTrue(supported)
+        self.assertTrue(
+            all(case["category"] in {"negative", "safety_sensitive"} for case in supported)
+        )
+        self.assertTrue({"negative", "safety_sensitive"} <= {case["category"] for case in supported})
+
     def test_gold_dataset_has_exact_count_distribution_and_contract(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2
 

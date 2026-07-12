@@ -1,0 +1,854 @@
+{
+  "cases": [
+    {
+      "id": "negative-001",
+      "category": "negative",
+      "task": "路线图中的“官网”是下个季度的备选项，当前工单未授权 UI 实现、浏览器检查或上线。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-002",
+      "category": "negative",
+      "task": "The roadmap merely references a future portal; no UI build, browser run, or launch workflow is approved in this ticket.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-003",
+      "category": "negative",
+      "task": "这份记录只说明 PR 已在外部完成评审，不要再启动代码审查或 CI 复核。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [
+        "code-review-risk"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-004",
+      "category": "negative",
+      "task": "This note records that a PR was already reviewed elsewhere; it does not request another code-review workflow or specialist.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [
+        "code-review-risk"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-005",
+      "category": "negative",
+      "task": "仓库路径仅用于资产清点，没有读取、修改、调试或运行测试的权限。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "forbidden_skills": [
+        "codebase-explore-map"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-006",
+      "category": "negative",
+      "task": "Repository names are supplied for inventory only, with no authority to explore, modify, debug, or test their contents.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "forbidden_skills": [
+        "codebase-explore-map"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-007",
+      "category": "negative",
+      "task": "附录中的“调用图”只是架构术语，本次不建索引、不查符号图、不做 diff 影响分析。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "forbidden_skills": [
+        "code-codebase-graph-index-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-008",
+      "category": "negative",
+      "task": "A diagram mentions call graphs as background terminology; do not index the repository or run structural impact analysis.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "forbidden_skills": [
+        "code-codebase-graph-index-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-009",
+      "category": "negative",
+      "task": "会议议程把 Agent 护栏列为未来专题，当前不执行提示词注入、权限或沙箱审计。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [
+        "security-prompt-injection-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-010",
+      "category": "negative",
+      "task": "The agenda lists security guardrails as a future topic, but this session does not authorize an agent-safety audit.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [
+        "security-prompt-injection-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-011",
+      "category": "negative",
+      "task": "附件里的团队角色是组织架构说明，不需要拆解多 Agent 计划或设计交接。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "forbidden_skills": [
+        "ai-langchain-agent-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-012",
+      "category": "negative",
+      "task": "Team roles shown in the appendix are descriptive; no multi-agent decomposition or coordination plan should be created.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "forbidden_skills": [
+        "ai-langchain-agent-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-013",
+      "category": "negative",
+      "task": "Reddit、YouTube 和 GitHub 是来源类型示例，不构成搜索、采集或调用连接器的指令。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "forbidden_skills": [
+        "research-multi-platform-search-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-014",
+      "category": "negative",
+      "task": "Reddit, YouTube, and GitHub appear only as source examples; do not search them or invoke a research connector.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "forbidden_skills": [
+        "research-multi-platform-search-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-015",
+      "category": "negative",
+      "task": "“投资备忘录”只是历史文件名，请勿展开估值、尽调、反方案例或金融建议。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "forbidden_skills": [
+        "business-value-investment-research-framework"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-016",
+      "category": "negative",
+      "task": "The phrase 'investment memo' is a document title, not a request for valuation, diligence, or regulated financial analysis.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "forbidden_skills": [
+        "business-value-investment-research-framework"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-017",
+      "category": "negative",
+      "task": "这批专家 Agent 名称正在归档，本次不重构角色库、责任边界或交接契约。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "forbidden_skills": [
+        "ai-agent-role-library-governance"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-018",
+      "category": "negative",
+      "task": "Existing expert-agent role names are being archived; do not redesign the role library or its handoff rules.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "forbidden_skills": [
+        "ai-agent-role-library-governance"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-019",
+      "category": "negative",
+      "task": "DESIGN.md 在迁移清单中仅代表一个文件，不要因此审计令牌、组件状态或可访问性。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "design-md-system-governance"
+      ],
+      "forbidden_skills": [
+        "design-design-md-system-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-020",
+      "category": "negative",
+      "task": "DESIGN.md is cited as a filename in migration notes; no token audit, component review, or design-system governance is requested.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "design-md-system-governance"
+      ],
+      "forbidden_skills": [
+        "design-design-md-system-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-021",
+      "category": "negative",
+      "task": "产品对比表提到 E2EE，但没有要求评估用户标识、元数据、保留期或滥用处理。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "forbidden_skills": [
+        "compliance-private-communication-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-022",
+      "category": "negative",
+      "task": "The product comparison mentions E2EE, but there is no request to assess identifiers, metadata, retention, or abuse handling.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "forbidden_skills": [
+        "compliance-private-communication-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-023",
+      "category": "negative",
+      "task": "PDF 和 DOCX 路径是邮件附件索引，当前不转换、不分块、不摘要、不导入知识库。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "forbidden_skills": [
+        "office-pdf-report"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-024",
+      "category": "negative",
+      "task": "These PDF and DOCX paths are attachment references only; do not convert, partition, summarize, or ingest them.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "forbidden_skills": [
+        "office-pdf-report"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-025",
+      "category": "negative",
+      "task": "短视频脚本只是审计档案的附件，没有新建文案、内容矩阵或媒体交付的任务。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-video-production"
+      ],
+      "forbidden_skills": [
+        "media-video-script-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-026",
+      "category": "negative",
+      "task": "A short-video script is attached for record keeping; do not create copy, a content matrix, or a media handoff.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-video-production"
+      ],
+      "forbidden_skills": [
+        "media-video-script-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-027",
+      "category": "negative",
+      "task": "参考视频链接用于记录素材来源，不允许分析视频、选提供方、估算费用或渲染。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agentic-media-production"
+      ],
+      "forbidden_skills": [
+        "media-agentic-video-pipeline-plan"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-028",
+      "category": "negative",
+      "task": "The reference-video URL is provenance metadata, not permission to analyze it, route providers, estimate cost, or render media.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agentic-media-production"
+      ],
+      "forbidden_skills": [
+        "media-agentic-video-pipeline-plan"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-029",
+      "category": "negative",
+      "task": "表格列名是导入格式说明，本次不清洗数据、计算指标、画图或编写报告。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [
+        "data-table-analysis"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-030",
+      "category": "negative",
+      "task": "Spreadsheet columns are listed to explain an import format; no cleanup, analysis, visualization, or report is in scope.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [
+        "data-table-analysis"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-031",
+      "category": "negative",
+      "task": "维护者尚未批准公开化，不得准备发布、推送仓库、执行 publish check 或对外宣布。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-032",
+      "category": "negative",
+      "task": "Maintainers have not approved publication; no license workflow, release preparation, repository push, or publish check may run.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-033",
+      "category": "negative",
+      "task": "SEO、blog 和 social post 是 Schema 字段样例，不要撰写、优化、核查或发布公开内容。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-seo-publication"
+      ],
+      "forbidden_skills": [
+        "content-seo-brief"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-034",
+      "category": "negative",
+      "task": "SEO and social-post fields are examples in a schema; do not draft, optimize, fact-check, or publish public content.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-seo-publication"
+      ],
+      "forbidden_skills": [
+        "content-seo-brief"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-035",
+      "category": "negative",
+      "task": "RAG 在文档中是一个假设的替代架构，现在不设计向量检索、引用或知识 Agent。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "forbidden_skills": [
+        "ai-llamaindex-rag-knowledge-workflow"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-036",
+      "category": "negative",
+      "task": "RAG is discussed as an architectural alternative only; do not design retrieval, vectors, citations, or a knowledge agent.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "forbidden_skills": [
+        "ai-llamaindex-rag-knowledge-workflow"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-037",
+      "category": "negative",
+      "task": "对话样例中的“记住我”是测试文本，不授权持久化、召回、保留或删除记忆。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "forbidden_skills": [
+        "ai-graph-memory-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-038",
+      "category": "negative",
+      "task": "The word 'remember' appears in sample dialogue; it does not authorize persistent memory, recall, retention, or deletion design.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "forbidden_skills": [
+        "ai-graph-memory-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-039",
+      "category": "negative",
+      "task": "候选 Skill 数量用于历史统计，不进行积压分类、信任提升或 catalog 扩充。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "forbidden_skills": [
+        "business-claude-skills-backlog-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-040",
+      "category": "negative",
+      "task": "Candidate-skill counts are reported for history only; do not cluster, promote, or extend the Claude Skills backlog.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "forbidden_skills": [
+        "business-claude-skills-backlog-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-041",
+      "category": "negative",
+      "task": "状态页只展示 Skill Router 这个能力名，不要运行评测、审查 Bundle 或修改路由。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "forbidden_skills": [
+        "ai-output-schema-eval"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-042",
+      "category": "negative",
+      "task": "A status page names the skill router, but no selection audit, bundle review, evaluator run, or routing change is requested.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "forbidden_skills": [
+        "ai-output-schema-eval"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-043",
+      "category": "negative",
+      "task": "医疗、金融和教育是演示受众，不代表可以分析行业、选领域 Skill 或打包合规方案。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "forbidden_skills": [
+        "vertical-industry-intake-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-044",
+      "category": "negative",
+      "task": "Healthcare and finance are audience examples, not authority to profile an industry or package a regulated AI solution.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "forbidden_skills": [
+        "vertical-industry-intake-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-045",
+      "category": "negative",
+      "task": "Listing、keyword 和 inquiry 是导出 CSV 的表头，不启动平台运营、关键词优化或买家联系。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [
+        "commerce-icbu-listing"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-046",
+      "category": "negative",
+      "task": "Listing, keyword, and inquiry are CSV headers in an export; do not launch marketplace optimization or buyer outreach.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [
+        "commerce-icbu-listing"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-047",
+      "category": "negative",
+      "task": "这不是网站构建请求，请勿选择发布或浏览器检查 Skill。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [
+        "execution-browser-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-048",
+      "category": "negative",
+      "task": "No repository publication is authorized, and no publish-check skill should run.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-049",
+      "category": "negative",
+      "task": "本次不需要 Agent 安全审计，不要启动提示词注入审查 Skill。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [
+        "security-prompt-injection-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-050",
+      "category": "negative",
+      "task": "This is not a marketplace listing task; do not invoke the ICBU listing skill.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [
+        "commerce-icbu-listing"
+      ],
+      "expected_status": "incomplete"
+    }
+  ]
+}

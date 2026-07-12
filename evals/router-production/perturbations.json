@@ -1,0 +1,604 @@
+{
+  "cases": [
+    {
+      "id": "perturbation-001",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Pls bild a responssive web-site and verify the mobile layout before launch.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-002",
+      "category": "multilingual_typo_paraphrase",
+      "task": "请做一个响应式 guanwang，包含 UI states 和 browser check。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-003",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Cod revu this PR, its bugfix, tests, and CI evidence before merge.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-004",
+      "category": "multilingual_typo_paraphrase",
+      "task": "帮我 reveiw 这个拉取请求，重点看 regression risk。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-005",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Explor the codebase, debugg the failure, simplify the patch, n run tests.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-006",
+      "category": "multilingual_typo_paraphrase",
+      "task": "先 map 项目，再修 fug，最后测试并交付。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-007",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Build a codegraf index and inspect the call-graph blast radius.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-008",
+      "category": "multilingual_typo_paraphrase",
+      "task": "用 symbol graph 做 git diff 影响 fenxi，要回到源码确认。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-009",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Chek prompt-injecshun, connector perms, sandbox, and output guards.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-010",
+      "category": "multilingual_typo_paraphrase",
+      "task": "审计 Agent safty：提示词注入、tool permission、secret 泄漏。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-011",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Clarify fuzzie reqs and decompos a bounded multi agent workflow.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-012",
+      "category": "multilingual_typo_paraphrase",
+      "task": "先深挖需求，再做 multi-Agent 方案 chaijie 和 handoff。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-013",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Reserch Reddit/Youtube/GitHub public srcs with fresh citations.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-014",
+      "category": "multilingual_typo_paraphrase",
+      "task": "做 kua pingtai 公开源搜索，覆盖 Bilibili 和 xiaohongshu，保留引用。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-015",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Prep an investmnt memo with valuashun assumptions + a bear-case.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-016",
+      "category": "multilingual_typo_paraphrase",
+      "task": "请做 value investing touyan，列出资本配置和反方观点。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-017",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Desgin an expert-agent role libary with handof conflict rules.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-018",
+      "category": "multilingual_typo_paraphrase",
+      "task": "搭一个 AI agency jiaoseku，定义专家 Agent 的边界与交接。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-019",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Create a DESIGN MD source-of-truth for tokens, states n a11y.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-020",
+      "category": "multilingual_typo_paraphrase",
+      "task": "完善 Design.md：设计 token、component state、responsive 和 accessibility。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-021",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Revu E2EE private msging, metadata minimisation, retention, and abuse handling.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-022",
+      "category": "multilingual_typo_paraphrase",
+      "task": "审查 sim plex chat 方案的无标识符、元数据 yinsi 和端到端加密。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-023",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Convert PDFs + offce docs into md chunks for a knowlege base.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-024",
+      "category": "multilingual_typo_paraphrase",
+      "task": "把 PDF/DOCX zhuan 成 Markdown，分块并进入知识 ku。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-025",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Plan copy, a content matrx, and a short-vidio script handoff.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-026",
+      "category": "multilingual_typo_paraphrase",
+      "task": "做内容 celue + duanshipin 脚本 + Remotion 媒体交付。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-027",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Use a ref vid to plan agentic-media provider routng, cost, and render QA.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-028",
+      "category": "multilingual_typo_paraphrase",
+      "task": "粘贴参考 shipin，规划 Agentic Video 管线、chengben 与渲染质检。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-029",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Clen the xlsx, analyse tables, and propose honest viz for the rpt.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-030",
+      "category": "multilingual_typo_paraphrase",
+      "task": "分析 spreadsheet shuju，检查表格质量并规划 chart 报告。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-031",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Prep the repo for open-sorce releese: license, deps, docs, publish checks.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-032",
+      "category": "multilingual_typo_paraphrase",
+      "task": "把这个 cangku 做开源 release，核对 license 和 supply-chain。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-033",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Draf an SEO artcle, fact chek it, then prep the social post.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-034",
+      "category": "multilingual_typo_paraphrase",
+      "task": "写一篇 gongkai SEO blog，要 source check 和 editorial review。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-035",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Desgin a citation-grounded R A G agent with vector retrival + schema output.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-036",
+      "category": "multilingual_typo_paraphrase",
+      "task": "构建 zhishiku Agent：向量检索、citation、structured output 和 guardrail。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-037",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Defne long term memry tenant isolation, recall disclosure, correction n forget paths.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-038",
+      "category": "multilingual_typo_paraphrase",
+      "task": "设计 Agent changqi jiyi，要有租户隔离、更正和 forget 路径。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-039",
+      "category": "multilingual_typo_paraphrase",
+      "task": "Revu smart skil-router auto composishun, bundle overlap, and eval gates.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "perturbation-040",
+      "category": "multilingual_typo_paraphrase",
+      "task": "审计 sikll router 的自动 xuanze、task pack 和回归质量门。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    }
+  ]
+}

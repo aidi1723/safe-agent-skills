@@ -1,0 +1,3004 @@
+{
+  "cases": [
+    {
+      "id": "normal-001",
+      "category": "normal",
+      "task": "为新客户门户实现移动优先的首页和仪表盘，核对空、错误、加载状态及键盘可达性。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-002",
+      "category": "normal",
+      "task": "Rework the pricing landing page around the existing brand tokens, then capture desktop and mobile browser evidence for responsive acceptance review.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-003",
+      "category": "normal",
+      "task": "在保留现有路由和业务逻辑的前提下，统一 SaaS 后台的字体、间距、表单状态与响应式布局。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-004",
+      "category": "normal",
+      "task": "Build a responsive product website for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-005",
+      "category": "normal",
+      "task": "构建响应式产品官网，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-006",
+      "category": "normal",
+      "task": "Build a responsive product website; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-007",
+      "category": "normal",
+      "task": "构建响应式产品官网，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-008",
+      "category": "normal",
+      "task": "Build a responsive product website under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-009",
+      "category": "normal",
+      "task": "审查支付重试修复，重点检查幂等性、异常分支、新增依赖和回归测试缺口。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-010",
+      "category": "normal",
+      "task": "Before merging the cache refactor, inspect behavioral regressions, concurrency assumptions, CI coverage, and rollback risk.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-011",
+      "category": "normal",
+      "task": "对自动生成的 API Schema 变更做高风险评审，对照调用方、契约测试和供应链证据。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-012",
+      "category": "normal",
+      "task": "Review the pull request and regression tests for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-013",
+      "category": "normal",
+      "task": "审查拉取请求与回归测试，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-014",
+      "category": "normal",
+      "task": "Review the pull request and regression tests; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-015",
+      "category": "normal",
+      "task": "审查拉取请求与回归测试，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-016",
+      "category": "normal",
+      "task": "Review the pull request and regression tests under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-017",
+      "category": "normal",
+      "task": "先画出订单服务的模块边界，再定位超时故障、实现最小修复，并用回归测试证明行为。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-018",
+      "category": "normal",
+      "task": "Take ownership of a failing CLI workflow from repository mapping through root-cause debugging, implementation, simplification, tests, and handoff notes.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-019",
+      "category": "normal",
+      "task": "理解这个存量数据管道后更换有问题的解析分支，清理死路径，补齐边界样例与 CI 检查。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-020",
+      "category": "normal",
+      "task": "Map the codebase and implement, debug, and test the change for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-021",
+      "category": "normal",
+      "task": "摸清代码库并实现、调试、测试变更，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-022",
+      "category": "normal",
+      "task": "Map the codebase and implement, debug, and test the change; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-023",
+      "category": "normal",
+      "task": "摸清代码库并实现、调试、测试变更，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-024",
+      "category": "normal",
+      "task": "Map the codebase and implement, debug, and test the change under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-025",
+      "category": "normal",
+      "task": "基于符号图追踪一个公共类型更名的调用方，区分静态索引结论与源码确认结论。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-026",
+      "category": "normal",
+      "task": "Use the code graph to answer which entry points reach the legacy parser and what the current diff can break; cite source locations.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-027",
+      "category": "normal",
+      "task": "为架构评审构建有边界的 call graph，验证索引新鲜度并标注 MCP 查询不能代替的手工核对。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-028",
+      "category": "normal",
+      "task": "Build a code graph and analyze call-chain impact for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-029",
+      "category": "normal",
+      "task": "建立代码图谱并分析调用链影响，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-030",
+      "category": "normal",
+      "task": "Build a code graph and analyze call-chain impact; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-031",
+      "category": "normal",
+      "task": "建立代码图谱并分析调用链影响，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-032",
+      "category": "normal",
+      "task": "Build a code graph and analyze call-chain impact under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-033",
+      "category": "normal",
+      "task": "对客服 Agent 做红队评审：恶意知识文档、工具越权、秘密回显和不受控的输出。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-034",
+      "category": "normal",
+      "task": "Threat-model a connector-enabled assistant and specify input scanning, output validation, privacy checks, and host-controlled permission gates.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-035",
+      "category": "normal",
+      "task": "审计外部 Skill 的供应链来源与 prompt injection 面，给出可测试的拒绝和降级条件。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-036",
+      "category": "normal",
+      "task": "Audit prompt injection, tool permissions, and output guardrails for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-037",
+      "category": "normal",
+      "task": "审计提示词注入、工具权限与输出护栏，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-038",
+      "category": "normal",
+      "task": "Audit prompt injection, tool permissions, and output guardrails; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-039",
+      "category": "normal",
+      "task": "审计提示词注入、工具权限与输出护栏，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-040",
+      "category": "normal",
+      "task": "Audit prompt injection, tool permissions, and output guardrails under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-041",
+      "category": "normal",
+      "task": "采访产品负责人来消除范围歧义，再拆成有明确输入、交接物和停止条件的 Agent 工作流。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-042",
+      "category": "normal",
+      "task": "Turn an underspecified migration request into bounded workstreams, role ownership, dependency order, approval points, and review criteria.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-043",
+      "category": "normal",
+      "task": "为三个专业 Agent 设计冲突解决与交叉审查机制，防止工具集过载和责任空白。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-044",
+      "category": "normal",
+      "task": "Clarify fuzzy requirements and decompose a multi-agent plan for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-045",
+      "category": "normal",
+      "task": "澄清模糊需求并拆解多 Agent 协作计划，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-046",
+      "category": "normal",
+      "task": "Clarify fuzzy requirements and decompose a multi-agent plan; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-047",
+      "category": "normal",
+      "task": "澄清模糊需求并拆解多 Agent 协作计划，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-048",
+      "category": "normal",
+      "task": "Clarify fuzzy requirements and decompose a multi-agent plan under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-049",
+      "category": "normal",
+      "task": "为竞品调研设计 GitHub、Reddit、YouTube 与 Bilibili 公开源检索路线，按主张绑定引用和新鲜度。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-050",
+      "category": "normal",
+      "task": "Map current community evidence for an open-source tool across forums, code hosts, and video platforms without assuming account or connector access.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-051",
+      "category": "normal",
+      "task": "调查一个行业话题的公开讨论，将一手来源、转述来源和无法证实的说法分开。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-052",
+      "category": "normal",
+      "task": "Research public sources across reddit, youtube, and github with citations for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-053",
+      "category": "normal",
+      "task": "调研 Reddit、YouTube、GitHub 等公开平台并保留引用，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-054",
+      "category": "normal",
+      "task": "Research public sources across reddit, youtube, and github with citations; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-055",
+      "category": "normal",
+      "task": "调研 Reddit、YouTube、GitHub 等公开平台并保留引用，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-056",
+      "category": "normal",
+      "task": "Research public sources across reddit, youtube, and github with citations under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-057",
+      "category": "normal",
+      "task": "为投委会编写一份不构成个人建议的价值投资备忘录，拆开估值、资本配置与反方情景。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-058",
+      "category": "normal",
+      "task": "Diligence a software company using source-backed unit economics, explicit valuation assumptions, management risks, and a falsifiable bear case.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-059",
+      "category": "normal",
+      "task": "复核一份投研结论的证据质量，区分事实、假设、敏感性及受监管表述边界。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-060",
+      "category": "normal",
+      "task": "Prepare an investment memo with valuation assumptions and a bear case for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-061",
+      "category": "normal",
+      "task": "编写含估值假设和反方观点的投资备忘录，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-062",
+      "category": "normal",
+      "task": "Prepare an investment memo with valuation assumptions and a bear case; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-063",
+      "category": "normal",
+      "task": "编写含估值假设和反方观点的投资备忘录，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-064",
+      "category": "normal",
+      "task": "Prepare an investment memo with valuation assumptions and a bear case under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-065",
+      "category": "normal",
+      "task": "为咨询型 AI Agency 定义研究、分析、评审角色的能力边界、交接契约和冲突升级路径。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-066",
+      "category": "normal",
+      "task": "Review an expert-agent catalog for duplicate mandates, hidden tool authority, missing handoff fields, and unsafe role composition.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-067",
+      "category": "normal",
+      "task": "设计可复用角色模板，但保留项目级权限、责任人和最终裁决的宿主控制。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-068",
+      "category": "normal",
+      "task": "Design an expert-agent role library with handoff and conflict rules for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-069",
+      "category": "normal",
+      "task": "设计专家 Agent 角色库与交接冲突规则，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-070",
+      "category": "normal",
+      "task": "Design an expert-agent role library with handoff and conflict rules; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-071",
+      "category": "normal",
+      "task": "设计专家 Agent 角色库与交接冲突规则，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-072",
+      "category": "normal",
+      "task": "Design an expert-agent role library with handoff and conflict rules under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-073",
+      "category": "normal",
+      "task": "从现有界面反推 DESIGN.md，将色彩、字体、间距、表面和组件状态映射到可实施令牌。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-074",
+      "category": "normal",
+      "task": "Audit DESIGN.md against the shipped React components for token drift, missing interaction states, responsive gaps, and accessibility regressions.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-075",
+      "category": "normal",
+      "task": "为跨产品设计系统定义变更治理：谁修改源事实、如何验证、如何处理例外。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-076",
+      "category": "normal",
+      "task": "Establish a design.md contract for tokens, component states, and accessibility for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-077",
+      "category": "normal",
+      "task": "建立 DESIGN.md 令牌、组件状态与可访问性契约，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-078",
+      "category": "normal",
+      "task": "Establish a design.md contract for tokens, component states, and accessibility; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-079",
+      "category": "normal",
+      "task": "建立 DESIGN.md 令牌、组件状态与可访问性契约，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-080",
+      "category": "normal",
+      "task": "Establish a design.md contract for tokens, component states, and accessibility under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-081",
+      "category": "normal",
+      "task": "评审医疗团队私密通讯流程，限制标识符、元数据、保留期与滥用处理的暴露。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-082",
+      "category": "normal",
+      "task": "Compare an E2EE messenger design against identifier minimization, metadata privacy, key-boundary, retention, and abuse-reporting requirements.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-083",
+      "category": "normal",
+      "task": "为内部安全聊天制定凭证脱敏和记录策略，明确端到端加密无法覆盖的边界。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-084",
+      "category": "normal",
+      "task": "Review e2ee, metadata minimization, and retention boundaries for private messaging for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-085",
+      "category": "normal",
+      "task": "评审私密通讯的 E2EE、元数据最小化和保留边界，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-086",
+      "category": "normal",
+      "task": "Review e2ee, metadata minimization, and retention boundaries for private messaging; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-087",
+      "category": "normal",
+      "task": "评审私密通讯的 E2EE、元数据最小化和保留边界，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-088",
+      "category": "normal",
+      "task": "Review e2ee, metadata minimization, and retention boundaries for private messaging under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-089",
+      "category": "normal",
+      "task": "盘点合同 PDF、表格和扫描件，保留页码与来源后转换、分块并进入内部知识库。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-090",
+      "category": "normal",
+      "task": "Convert a mixed office-file archive into retrieval-ready Markdown while preserving tables, document identity, conversion caveats, and citations.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-091",
+      "category": "normal",
+      "task": "为产品手册建立文档分区、去重、摘要和来源核对流程，不把转换结果当成新事实。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-092",
+      "category": "normal",
+      "task": "Turn pdf and office documents into a markdown knowledge base for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-093",
+      "category": "normal",
+      "task": "将 PDF 和办公文档转为 Markdown 知识库，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-094",
+      "category": "normal",
+      "task": "Turn pdf and office documents into a markdown knowledge base; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-095",
+      "category": "normal",
+      "task": "将 PDF 和办公文档转为 Markdown 知识库，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-096",
+      "category": "normal",
+      "task": "Turn pdf and office documents into a markdown knowledge base under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-097",
+      "category": "normal",
+      "task": "为 B2B 新品设计一周内容矩阵，交付三条短视频脚本、声称核查和素材交接表。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-098",
+      "category": "normal",
+      "task": "Turn a campaign brief into channel-specific copy, a short-form video script, an asset checklist, and a publish-readiness handoff.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-099",
+      "category": "normal",
+      "task": "复核程序化视频方案的文案语气、公开声称、镜头结构与素材权利。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-100",
+      "category": "normal",
+      "task": "Plan a content matrix, short-video script, and media handoff for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-101",
+      "category": "normal",
+      "task": "策划内容矩阵、短视频脚本与媒体交付，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-102",
+      "category": "normal",
+      "task": "Plan a content matrix, short-video script, and media handoff; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-103",
+      "category": "normal",
+      "task": "策划内容矩阵、短视频脚本与媒体交付，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-104",
+      "category": "normal",
+      "task": "Plan a content matrix, short-video script, and media handoff under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-105",
+      "category": "normal",
+      "task": "分析一条参考广告的镜头和节奏，比较生成提供方，给出成本区间、渲染质检和权利门。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-106",
+      "category": "normal",
+      "task": "Plan an agent-driven video pipeline from reference analysis through provider routing, caption checks, post-render inspection, and failure fallback.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-107",
+      "category": "normal",
+      "task": "为批量短视频建立路由决策表，区分可自动的方法与必须由宿主批准的调用。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-108",
+      "category": "normal",
+      "task": "Design an agentic media pipeline from a reference video with cost and render qa for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-109",
+      "category": "normal",
+      "task": "根据参考视频设计 Agentic 媒体管线、成本与渲染质检，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-110",
+      "category": "normal",
+      "task": "Design an agentic media pipeline from a reference video with cost and render qa; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-111",
+      "category": "normal",
+      "task": "根据参考视频设计 Agentic 媒体管线、成本与渲染质检，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-112",
+      "category": "normal",
+      "task": "Design an agentic media pipeline from a reference video with cost and render qa under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-113",
+      "category": "normal",
+      "task": "检查月度销售表的缺失、重复和口径变化，计算渠道指标并为管理层规划不误导的图表。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-114",
+      "category": "normal",
+      "task": "Analyze an experiment workbook, separate data-quality caveats from findings, and prepare a concise report with reproducible table calculations.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-115",
+      "category": "normal",
+      "task": "为研究团队整理 CSV 样本，标记异常值处理、统计假设、图表选择和结论限制。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-116",
+      "category": "normal",
+      "task": "Clean the spreadsheet, analyze the data, and plan a chart report for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-117",
+      "category": "normal",
+      "task": "清洗表格、分析数据并规划图表报告，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-118",
+      "category": "normal",
+      "task": "Clean the spreadsheet, analyze the data, and plan a chart report; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-119",
+      "category": "normal",
+      "task": "清洗表格、分析数据并规划图表报告，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-120",
+      "category": "normal",
+      "task": "Clean the spreadsheet, analyze the data, and plan a chart report under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-121",
+      "category": "normal",
+      "task": "为 Python 库做公开发布前准备，核对版本、许可证、第三方依赖、文档和回滚条件。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-122",
+      "category": "normal",
+      "task": "Prepare a source repository for maintainer approval with provenance checks, release notes, license review, package verification, and a publication checklist.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-123",
+      "category": "normal",
+      "task": "审查待开源目录中的私有信息、生成产物和供应链风险，只交付准备证据，不代替发布授权。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-124",
+      "category": "normal",
+      "task": "Prepare license, supply-chain, and publication checks for an open-source repository for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-125",
+      "category": "normal",
+      "task": "准备开源仓库的许可证、供应链与发布清单，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-126",
+      "category": "normal",
+      "task": "Prepare license, supply-chain, and publication checks for an open-source repository; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-127",
+      "category": "normal",
+      "task": "准备开源仓库的许可证、供应链与发布清单，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-128",
+      "category": "normal",
+      "task": "Prepare license, supply-chain, and publication checks for an open-source repository under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-129",
+      "category": "normal",
+      "task": "为一个技术主题制定搜索意图与大纲，写作后核对来源、时效性、公开声称和内部链接。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-130",
+      "category": "normal",
+      "task": "Refresh an aging blog post using current primary sources, editorial review, honest metadata, and a channel-appropriate social summary.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-131",
+      "category": "normal",
+      "task": "为产品教程撰写 SEO 文章，分离可证事实、示例和促销语，并给出发布前编辑清单。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-132",
+      "category": "normal",
+      "task": "Draft, fact-check, and optimize a public seo article for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-133",
+      "category": "normal",
+      "task": "撰写、核查并优化 SEO 公开文章，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-134",
+      "category": "normal",
+      "task": "Draft, fact-check, and optimize a public seo article; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-135",
+      "category": "normal",
+      "task": "撰写、核查并优化 SEO 公开文章，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-136",
+      "category": "normal",
+      "task": "Draft, fact-check, and optimize a public seo article under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-137",
+      "category": "normal",
+      "task": "为内部政策问答设计 RAG Agent，明确分块、命名空间、检索、引用、Schema 与恶意文档防护。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-138",
+      "category": "normal",
+      "task": "Architect a source-grounded support agent with vector retrieval, abstention rules, citation display, structured output evaluation, and tenant isolation.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-139",
+      "category": "normal",
+      "task": "复核知识 Agent 的检索失败样例，将索引质量、召回、引用和生成护栏问题分开。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-140",
+      "category": "normal",
+      "task": "Design a rag agent with vector retrieval, citations, and structured output for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-141",
+      "category": "normal",
+      "task": "设计带向量检索、引用和结构化输出的 RAG Agent，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-142",
+      "category": "normal",
+      "task": "Design a rag agent with vector retrieval, citations, and structured output; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-143",
+      "category": "normal",
+      "task": "设计带向量检索、引用和结构化输出的 RAG Agent，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-144",
+      "category": "normal",
+      "task": "Design a rag agent with vector retrieval, citations, and structured output under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-145",
+      "category": "normal",
+      "task": "为多租户 Agent 定义可持久记忆契约，包括写入来源、召回披露、纠正、删除和租户隔离。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-146",
+      "category": "normal",
+      "task": "Review a graph-memory design for accidental cross-user recall, unsupported claims, retention drift, and verifiable forget operations.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-147",
+      "category": "normal",
+      "task": "设计用户可见的记忆管理路径，让用户知道何时被记住、如何修正以及如何彻底删除。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-148",
+      "category": "normal",
+      "task": "Define tenant isolation, correction, and forgetting paths for agent long-term memory for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-149",
+      "category": "normal",
+      "task": "定义 Agent 长期记忆的租户隔离、更正与忘却路径，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-150",
+      "category": "normal",
+      "task": "Define tenant isolation, correction, and forgetting paths for agent long-term memory; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-151",
+      "category": "normal",
+      "task": "定义 Agent 长期记忆的租户隔离、更正与忘却路径，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-152",
+      "category": "normal",
+      "task": "Define tenant isolation, correction, and forgetting paths for agent long-term memory under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-153",
+      "category": "normal",
+      "task": "盘点剩余 candidate 和 reference-only Claude Skills，按业务价值、重叠、供应链风险与 owner 分类。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-154",
+      "category": "normal",
+      "task": "Build a bounded backlog for untrusted skill candidates, separating coverage gaps from duplicates and recording why each item is promoted, deferred, or removed.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-155",
+      "category": "normal",
+      "task": "评审各类积压 Skill 的正文深度和验证条件，只对高频缺口制定信任化计划。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-156",
+      "category": "normal",
+      "task": "Inventory and cluster the remaining claude skills candidate and reference-only backlog for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-157",
+      "category": "normal",
+      "task": "盘点并分类剩余 Claude Skills 候选与 reference-only 积压，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-158",
+      "category": "normal",
+      "task": "Inventory and cluster the remaining claude skills candidate and reference-only backlog; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-159",
+      "category": "normal",
+      "task": "盘点并分类剩余 Claude Skills 候选与 reference-only 积压，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-160",
+      "category": "normal",
+      "task": "Inventory and cluster the remaining claude skills candidate and reference-only backlog under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-161",
+      "category": "normal",
+      "task": "审计中英文复合任务的 intent 分解、scenario 选择、依赖边和 fail-closed 质量门。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-162",
+      "category": "normal",
+      "task": "Evaluate a smart skill router using held-out labels, capability coverage, forbidden selections, DAG coherence, confidence calibration, and reproducible evidence.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-163",
+      "category": "normal",
+      "task": "检查 Bundle 重叠与 Task Pack 噪音，区分选中、编译、宿主审批和执行失败的责任边界。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-164",
+      "category": "normal",
+      "task": "Review skill router selection, bundle composition, and regression evidence for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-165",
+      "category": "normal",
+      "task": "评审 Skill Router 的自动选择、Bundle 组合与回归证据，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-166",
+      "category": "normal",
+      "task": "Review skill router selection, bundle composition, and regression evidence; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-167",
+      "category": "normal",
+      "task": "评审 Skill Router 的自动选择、Bundle 组合与回归证据，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-168",
+      "category": "normal",
+      "task": "Review skill router selection, bundle composition, and regression evidence under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-169",
+      "category": "normal",
+      "task": "为医疗 AI 试点整理用户、业务流程、受监管边界、数据质量和可验证的解决方案包。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-170",
+      "category": "normal",
+      "task": "Profile a manufacturing quality workflow and select domain methods without treating skill availability as permission to access production systems.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-171",
+      "category": "normal",
+      "task": "比较教育、金融和房地产三类用户的共性编排与各自合规、证据和交付差异。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-172",
+      "category": "normal",
+      "task": "Design an industry ai solution with compliance boundaries and data-quality controls for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-173",
+      "category": "normal",
+      "task": "设计含合规边界与数据质量的行业 AI 解决方案，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-174",
+      "category": "normal",
+      "task": "Design an industry ai solution with compliance boundaries and data-quality controls; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-175",
+      "category": "normal",
+      "task": "设计含合规边界与数据质量的行业 AI 解决方案，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-176",
+      "category": "normal",
+      "task": "Design an industry ai solution with compliance boundaries and data-quality controls under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-177",
+      "category": "normal",
+      "task": "为建材产品线整理类目、买家搜索意图、关键词组和不夸大的 Listing 信息层级。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-178",
+      "category": "normal",
+      "task": "Diagnose weak marketplace inquiries by separating category fit, keyword coverage, SKU depth, claim quality, and response usefulness.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-179",
+      "category": "normal",
+      "task": "根据一批真实询盘设计回复模板，保留产品匹配、证据、交期与人工确认边界。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-180",
+      "category": "normal",
+      "task": "Optimize marketplace listings, keywords, and buyer inquiry replies for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-181",
+      "category": "normal",
+      "task": "优化市场平台 Listing、关键词和买家询盘回复，作为下周评审输入；交付可复核结果与检查记录。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-182",
+      "category": "normal",
+      "task": "Optimize marketplace listings, keywords, and buyer inquiry replies; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-183",
+      "category": "normal",
+      "task": "优化市场平台 Listing、关键词和买家询盘回复，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-184",
+      "category": "normal",
+      "task": "Optimize marketplace listings, keywords, and buyer inquiry replies under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-185",
+      "category": "normal",
+      "task": "改造这个 SaaS 仪表盘的响应式 UI，并用浏览器证据检查发布准备度。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-186",
+      "category": "normal",
+      "task": "Review the authentication bug fix for regression, dependency, and CI risks before acceptance.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-187",
+      "category": "normal",
+      "task": "先理解这个 Python 服务，再修复疑难 bug、简化实现并跑完测试。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-188",
+      "category": "normal",
+      "task": "Use a symbol and call graph to explain the blast radius of this git diff.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-189",
+      "category": "normal",
+      "task": "检查这个 Agent Connector 对提示词注入、秘密外泄和越权调用的防护。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-190",
+      "category": "normal",
+      "task": "Interview the owner to resolve fuzzy scope, then produce bounded agent roles and handoff contracts.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-191",
+      "category": "normal",
+      "task": "把这批 PDF、DOCX 和 XLSX 转成带来源标记的检索知识库条目。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-192",
+      "category": "normal",
+      "task": "Audit workbook quality, analyze the sales table, and specify honest charts for the executive report.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-193",
+      "category": "normal",
+      "task": "为这个 Python 包整理开源许可、依赖风险、README 和发布前核对。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-194",
+      "category": "normal",
+      "task": "Draft a source-backed SEO article, perform editorial review, and prepare its social post.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-195",
+      "category": "normal",
+      "task": "设计一个引用可追溯的客服 RAG Agent，包含向量检索和输出 Schema。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-196",
+      "category": "normal",
+      "task": "Audit automatic skill selection, overlap handling, task-pack composition, and router regression gates.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-197",
+      "category": "normal",
+      "task": "把现有 DESIGN.md 收敛为令牌、交互状态、响应式与可访问性的唯一事实源。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-198",
+      "category": "normal",
+      "task": "Map current public evidence from GitHub, Reddit, YouTube, and Bilibili with freshness dates and citations.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-199",
+      "category": "normal",
+      "task": "为建材产品规划平台 Listing、搜索关键词和买家询盘回复。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-200",
+      "category": "normal",
+      "task": "Profile a healthcare AI pilot, including regulated boundaries, evidence quality, and solution packaging.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    }
+  ]
+}

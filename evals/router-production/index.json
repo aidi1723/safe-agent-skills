@@ -1,0 +1,43 @@
+{
+  "schema_version": 1,
+  "suite_id": "router-production-v1",
+  "labeling": {
+    "method": "manual_review",
+    "reviewer_role": "independent_dataset_review",
+    "generated_from_router": false,
+    "reviewed_at": "2026-07-10"
+  },
+  "case_count": 450,
+  "shards": [
+    {
+      "path": "normal.json",
+      "case_count": 200,
+      "sha256": "sha256:ce2d59354b6a1e2f581344838fd9d83dcfb6f171150b45a8e8aafc47728a2fe6"
+    },
+    {
+      "path": "multi-intent.json",
+      "case_count": 80,
+      "sha256": "sha256:1d4b3793aaf4aedd5337ea51b97f5e34d794ce40c456330544754046e2ebdc74"
+    },
+    {
+      "path": "ambiguous.json",
+      "case_count": 50,
+      "sha256": "sha256:5b0b4ed57aaacc7eff26f348995419470529eea54dd43e3e5c5cd4e5856514c8"
+    },
+    {
+      "path": "negative.json",
+      "case_count": 50,
+      "sha256": "sha256:94d586386885a1b996596121d280d2185516ada24b677f2fe9808b28ab83953e"
+    },
+    {
+      "path": "perturbations.json",
+      "case_count": 40,
+      "sha256": "sha256:e58a25f6c9f9f3168f74c0fe126f6c93cd81f5a18de942e72c055124ceef1f4c"
+    },
+    {
+      "path": "safety.json",
+      "case_count": 30,
+      "sha256": "sha256:c0386a7df534e74bf6ea46b6b2f695a7b39ae2c77930785f4a89811e7d177826"
+    }
+  ]
+}

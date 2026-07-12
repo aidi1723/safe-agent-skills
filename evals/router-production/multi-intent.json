@@ -1,0 +1,1564 @@
+{
+  "cases": [
+    {
+      "id": "multi-intent-001",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：构建响应式产品官网；同时审查拉取请求与回归测试，分别给出证据。",
+      "expected_intents": [
+        "website_build",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-002",
+      "category": "multi_intent",
+      "task": "工作流顺序：先构建响应式产品官网；完成后再审查拉取请求与回归测试。",
+      "expected_intents": [
+        "website_build",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "website_build",
+          "code_review"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-003",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: clarify fuzzy requirements and decompose a multi-agent plan; in parallel, build a responsive product website.",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-004",
+      "category": "multi_intent",
+      "task": "First clarify fuzzy requirements and decompose a multi-agent plan; after that result is complete, build a responsive product website.",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_planning_orchestration",
+          "website_build"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-005",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：调研 Reddit、YouTube、GitHub 等公开平台并保留引用；同时编写含估值假设和反方观点的投资备忘录，分别给出证据。",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-006",
+      "category": "multi_intent",
+      "task": "工作流顺序：先调研 Reddit、YouTube、GitHub 等公开平台并保留引用；完成后再编写含估值假设和反方观点的投资备忘录。",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [
+        [
+          "multi_platform_research_discovery",
+          "investment_research_diligence"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-007",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: turn PDF and office documents into a Markdown knowledge base; in parallel, design a RAG agent with vector retrieval, citations, and structured output.",
+      "expected_intents": [
+        "document_knowledge_base",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-008",
+      "category": "multi_intent",
+      "task": "First turn PDF and office documents into a Markdown knowledge base; after that result is complete, design a RAG agent with vector retrieval, citations, and structured output.",
+      "expected_intents": [
+        "document_knowledge_base",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [
+        [
+          "document_knowledge_base",
+          "rag_agent"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-009",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：清洗表格、分析数据并规划图表报告；同时撰写、核查并优化 SEO 公开文章，分别给出证据。",
+      "expected_intents": [
+        "data_analysis",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-010",
+      "category": "multi_intent",
+      "task": "工作流顺序：先清洗表格、分析数据并规划图表报告；完成后再撰写、核查并优化 SEO 公开文章。",
+      "expected_intents": [
+        "data_analysis",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [
+        [
+          "data_analysis",
+          "content_seo"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-011",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: plan a content matrix, short-video script, and media handoff; in parallel, design an agentic media pipeline from a reference video with cost and render QA.",
+      "expected_intents": [
+        "content_video_production",
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production",
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-012",
+      "category": "multi_intent",
+      "task": "First plan a content matrix, short-video script, and media handoff; after that result is complete, design an agentic media pipeline from a reference video with cost and render QA.",
+      "expected_intents": [
+        "content_video_production",
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production",
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [
+        [
+          "content_video_production",
+          "agentic_media_production"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-013",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：审计提示词注入、工具权限与输出护栏；同时准备开源仓库的许可证、供应链与发布清单，分别给出证据。",
+      "expected_intents": [
+        "agent_security",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-014",
+      "category": "multi_intent",
+      "task": "工作流顺序：先审计提示词注入、工具权限与输出护栏；完成后再准备开源仓库的许可证、供应链与发布清单。",
+      "expected_intents": [
+        "agent_security",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_security",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-015",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: establish a DESIGN.md contract for tokens, component states, and accessibility; in parallel, build a responsive product website.",
+      "expected_intents": [
+        "design_md_system_governance",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-016",
+      "category": "multi_intent",
+      "task": "First establish a DESIGN.md contract for tokens, component states, and accessibility; after that result is complete, build a responsive product website.",
+      "expected_intents": [
+        "design_md_system_governance",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [
+        [
+          "design_md_system_governance",
+          "website_build"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-017",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：定义 Agent 长期记忆的租户隔离、更正与忘却路径；同时设计带向量检索、引用和结构化输出的 RAG Agent，分别给出证据。",
+      "expected_intents": [
+        "agent_long_term_memory_governance",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-018",
+      "category": "multi_intent",
+      "task": "工作流顺序：先定义 Agent 长期记忆的租户隔离、更正与忘却路径；完成后再设计带向量检索、引用和结构化输出的 RAG Agent。",
+      "expected_intents": [
+        "agent_long_term_memory_governance",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_long_term_memory_governance",
+          "rag_agent"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-019",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: inventory and cluster the remaining Claude Skills candidate and reference-only backlog; in parallel, review Skill Router selection, bundle composition, and regression evidence.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage",
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage",
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-020",
+      "category": "multi_intent",
+      "task": "First inventory and cluster the remaining Claude Skills candidate and reference-only backlog; after that result is complete, review Skill Router selection, bundle composition, and regression evidence.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage",
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage",
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [
+        [
+          "claude_skills_backlog_coverage",
+          "skill_router_review"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-021",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：设计含合规边界与数据质量的行业 AI 解决方案；同时清洗表格、分析数据并规划图表报告，分别给出证据。",
+      "expected_intents": [
+        "industry_application_orchestration",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-022",
+      "category": "multi_intent",
+      "task": "工作流顺序：先设计含合规边界与数据质量的行业 AI 解决方案；完成后再清洗表格、分析数据并规划图表报告。",
+      "expected_intents": [
+        "industry_application_orchestration",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [
+        [
+          "industry_application_orchestration",
+          "data_analysis"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-023",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: optimize marketplace listings, keywords, and buyer inquiry replies; in parallel, draft, fact-check, and optimize a public SEO article.",
+      "expected_intents": [
+        "commerce_growth",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-024",
+      "category": "multi_intent",
+      "task": "First optimize marketplace listings, keywords, and buyer inquiry replies; after that result is complete, draft, fact-check, and optimize a public SEO article.",
+      "expected_intents": [
+        "commerce_growth",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [
+        [
+          "commerce_growth",
+          "content_seo"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-025",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：评审私密通讯的 E2EE、元数据最小化和保留边界；同时将 PDF 和办公文档转为 Markdown 知识库，分别给出证据。",
+      "expected_intents": [
+        "private_communication_governance",
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-026",
+      "category": "multi_intent",
+      "task": "工作流顺序：先评审私密通讯的 E2EE、元数据最小化和保留边界；完成后再将 PDF 和办公文档转为 Markdown 知识库。",
+      "expected_intents": [
+        "private_communication_governance",
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [
+        [
+          "private_communication_governance",
+          "document_knowledge_base"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-027",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: design an expert-agent role library with handoff and conflict rules; in parallel, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "expected_intents": [
+        "agent_role_library_governance",
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance",
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-028",
+      "category": "multi_intent",
+      "task": "First design an expert-agent role library with handoff and conflict rules; after that result is complete, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "expected_intents": [
+        "agent_role_library_governance",
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance",
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_role_library_governance",
+          "agent_planning_orchestration"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-029",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：摸清代码库并实现、调试、测试变更；同时审查拉取请求与回归测试，分别给出证据。",
+      "expected_intents": [
+        "codebase_change_lifecycle",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-030",
+      "category": "multi_intent",
+      "task": "工作流顺序：先摸清代码库并实现、调试、测试变更；完成后再审查拉取请求与回归测试。",
+      "expected_intents": [
+        "codebase_change_lifecycle",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "codebase_change_lifecycle",
+          "code_review"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-031",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: build a code graph and analyze call-chain impact; in parallel, map the codebase and implement, debug, and test the change.",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-032",
+      "category": "multi_intent",
+      "task": "First build a code graph and analyze call-chain impact; after that result is complete, map the codebase and implement, debug, and test the change.",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [
+        [
+          "codebase_graph_intelligence",
+          "codebase_change_lifecycle"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-033",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：调研 Reddit、YouTube、GitHub 等公开平台并保留引用；同时撰写、核查并优化 SEO 公开文章，分别给出证据。",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-034",
+      "category": "multi_intent",
+      "task": "工作流顺序：先调研 Reddit、YouTube、GitHub 等公开平台并保留引用；完成后再撰写、核查并优化 SEO 公开文章。",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [
+        [
+          "multi_platform_research_discovery",
+          "content_seo"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-035",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: prepare an investment memo with valuation assumptions and a bear case; in parallel, audit prompt injection, tool permissions, and output guardrails.",
+      "expected_intents": [
+        "investment_research_diligence",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-036",
+      "category": "multi_intent",
+      "task": "First prepare an investment memo with valuation assumptions and a bear case; after that result is complete, audit prompt injection, tool permissions, and output guardrails.",
+      "expected_intents": [
+        "investment_research_diligence",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [
+        [
+          "investment_research_diligence",
+          "agent_security"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-037",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：策划内容矩阵、短视频脚本与媒体交付；同时准备开源仓库的许可证、供应链与发布清单，分别给出证据。",
+      "expected_intents": [
+        "content_video_production",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "content-video-production",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-038",
+      "category": "multi_intent",
+      "task": "工作流顺序：先策划内容矩阵、短视频脚本与媒体交付；完成后再准备开源仓库的许可证、供应链与发布清单。",
+      "expected_intents": [
+        "content_video_production",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "content-video-production",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "content_video_production",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-039",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: design an agentic media pipeline from a reference video with cost and render QA; in parallel, prepare license, supply-chain, and publication checks for an open-source repository.",
+      "expected_intents": [
+        "agentic_media_production",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-040",
+      "category": "multi_intent",
+      "task": "First design an agentic media pipeline from a reference video with cost and render QA; after that result is complete, prepare license, supply-chain, and publication checks for an open-source repository.",
+      "expected_intents": [
+        "agentic_media_production",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "agentic_media_production",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-041",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：清洗表格、分析数据并规划图表报告；同时优化市场平台 Listing、关键词和买家询盘回复，分别给出证据。",
+      "expected_intents": [
+        "data_analysis",
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-042",
+      "category": "multi_intent",
+      "task": "工作流顺序：先清洗表格、分析数据并规划图表报告；完成后再优化市场平台 Listing、关键词和买家询盘回复。",
+      "expected_intents": [
+        "data_analysis",
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report",
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [
+        [
+          "data_analysis",
+          "commerce_growth"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-043",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: design an industry AI solution with compliance boundaries and data-quality controls; in parallel, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "expected_intents": [
+        "industry_application_orchestration",
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-044",
+      "category": "multi_intent",
+      "task": "First design an industry AI solution with compliance boundaries and data-quality controls; after that result is complete, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "expected_intents": [
+        "industry_application_orchestration",
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration",
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [
+        [
+          "industry_application_orchestration",
+          "agent_planning_orchestration"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-045",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：评审 Skill Router 的自动选择、Bundle 组合与回归证据；同时审查拉取请求与回归测试，分别给出证据。",
+      "expected_intents": [
+        "skill_router_review",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-046",
+      "category": "multi_intent",
+      "task": "工作流顺序：先评审 Skill Router 的自动选择、Bundle 组合与回归证据；完成后再审查拉取请求与回归测试。",
+      "expected_intents": [
+        "skill_router_review",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "skill_router_review",
+          "code_review"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-047",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: review E2EE, metadata minimization, and retention boundaries for private messaging; in parallel, audit prompt injection, tool permissions, and output guardrails.",
+      "expected_intents": [
+        "private_communication_governance",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-048",
+      "category": "multi_intent",
+      "task": "First review E2EE, metadata minimization, and retention boundaries for private messaging; after that result is complete, audit prompt injection, tool permissions, and output guardrails.",
+      "expected_intents": [
+        "private_communication_governance",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [
+        [
+          "private_communication_governance",
+          "agent_security"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-049",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：将 PDF 和办公文档转为 Markdown 知识库；同时清洗表格、分析数据并规划图表报告，分别给出证据。",
+      "expected_intents": [
+        "document_knowledge_base",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-050",
+      "category": "multi_intent",
+      "task": "工作流顺序：先将 PDF 和办公文档转为 Markdown 知识库；完成后再清洗表格、分析数据并规划图表报告。",
+      "expected_intents": [
+        "document_knowledge_base",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [
+        [
+          "document_knowledge_base",
+          "data_analysis"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-051",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: design a RAG agent with vector retrieval, citations, and structured output; in parallel, audit prompt injection, tool permissions, and output guardrails.",
+      "expected_intents": [
+        "rag_agent",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-052",
+      "category": "multi_intent",
+      "task": "First design a RAG agent with vector retrieval, citations, and structured output; after that result is complete, audit prompt injection, tool permissions, and output guardrails.",
+      "expected_intents": [
+        "rag_agent",
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app",
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [
+        [
+          "rag_agent",
+          "agent_security"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-053",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：定义 Agent 长期记忆的租户隔离、更正与忘却路径；同时评审私密通讯的 E2EE、元数据最小化和保留边界，分别给出证据。",
+      "expected_intents": [
+        "agent_long_term_memory_governance",
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance",
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-054",
+      "category": "multi_intent",
+      "task": "工作流顺序：先定义 Agent 长期记忆的租户隔离、更正与忘却路径；完成后再评审私密通讯的 E2EE、元数据最小化和保留边界。",
+      "expected_intents": [
+        "agent_long_term_memory_governance",
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance",
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_long_term_memory_governance",
+          "private_communication_governance"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-055",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: design an expert-agent role library with handoff and conflict rules; in parallel, establish a DESIGN.md contract for tokens, component states, and accessibility.",
+      "expected_intents": [
+        "agent_role_library_governance",
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance",
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-056",
+      "category": "multi_intent",
+      "task": "First design an expert-agent role library with handoff and conflict rules; after that result is complete, establish a DESIGN.md contract for tokens, component states, and accessibility.",
+      "expected_intents": [
+        "agent_role_library_governance",
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance",
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_role_library_governance",
+          "design_md_system_governance"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-057",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：盘点并分类剩余 Claude Skills 候选与 reference-only 积压；同时调研 Reddit、YouTube、GitHub 等公开平台并保留引用，分别给出证据。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage",
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage",
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-058",
+      "category": "multi_intent",
+      "task": "工作流顺序：先盘点并分类剩余 Claude Skills 候选与 reference-only 积压；完成后再调研 Reddit、YouTube、GitHub 等公开平台并保留引用。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage",
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage",
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [
+        [
+          "claude_skills_backlog_coverage",
+          "multi_platform_research_discovery"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-059",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: build a code graph and analyze call-chain impact; in parallel, design a RAG agent with vector retrieval, citations, and structured output.",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-060",
+      "category": "multi_intent",
+      "task": "First build a code graph and analyze call-chain impact; after that result is complete, design a RAG agent with vector retrieval, citations, and structured output.",
+      "expected_intents": [
+        "codebase_graph_intelligence",
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence",
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [
+        [
+          "codebase_graph_intelligence",
+          "rag_agent"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-061",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：优化市场平台 Listing、关键词和买家询盘回复；同时构建响应式产品官网，分别给出证据。",
+      "expected_intents": [
+        "commerce_growth",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-062",
+      "category": "multi_intent",
+      "task": "工作流顺序：先优化市场平台 Listing、关键词和买家询盘回复；完成后再构建响应式产品官网。",
+      "expected_intents": [
+        "commerce_growth",
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth",
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [
+        [
+          "commerce_growth",
+          "website_build"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-063",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: draft, fact-check, and optimize a public SEO article; in parallel, plan a content matrix, short-video script, and media handoff.",
+      "expected_intents": [
+        "content_seo",
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication",
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-064",
+      "category": "multi_intent",
+      "task": "First draft, fact-check, and optimize a public SEO article; after that result is complete, plan a content matrix, short-video script, and media handoff.",
+      "expected_intents": [
+        "content_seo",
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication",
+        "content-video-production"
+      ],
+      "required_dependency_edges": [
+        [
+          "content_seo",
+          "content_video_production"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-065",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：编写含估值假设和反方观点的投资备忘录；同时清洗表格、分析数据并规划图表报告，分别给出证据。",
+      "expected_intents": [
+        "investment_research_diligence",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-066",
+      "category": "multi_intent",
+      "task": "工作流顺序：先编写含估值假设和反方观点的投资备忘录；完成后再清洗表格、分析数据并规划图表报告。",
+      "expected_intents": [
+        "investment_research_diligence",
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence",
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [
+        [
+          "investment_research_diligence",
+          "data_analysis"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-067",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: clarify fuzzy requirements and decompose a multi-agent plan; in parallel, design an industry AI solution with compliance boundaries and data-quality controls.",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-068",
+      "category": "multi_intent",
+      "task": "First clarify fuzzy requirements and decompose a multi-agent plan; after that result is complete, design an industry AI solution with compliance boundaries and data-quality controls.",
+      "expected_intents": [
+        "agent_planning_orchestration",
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration",
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_planning_orchestration",
+          "industry_application_orchestration"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-069",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：摸清代码库并实现、调试、测试变更；同时准备开源仓库的许可证、供应链与发布清单，分别给出证据。",
+      "expected_intents": [
+        "codebase_change_lifecycle",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-070",
+      "category": "multi_intent",
+      "task": "工作流顺序：先摸清代码库并实现、调试、测试变更；完成后再准备开源仓库的许可证、供应链与发布清单。",
+      "expected_intents": [
+        "codebase_change_lifecycle",
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle",
+        "open-source-release"
+      ],
+      "required_dependency_edges": [
+        [
+          "codebase_change_lifecycle",
+          "open_source_release"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-071",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: establish a DESIGN.md contract for tokens, component states, and accessibility; in parallel, review the pull request and regression tests.",
+      "expected_intents": [
+        "design_md_system_governance",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-072",
+      "category": "multi_intent",
+      "task": "First establish a DESIGN.md contract for tokens, component states, and accessibility; after that result is complete, review the pull request and regression tests.",
+      "expected_intents": [
+        "design_md_system_governance",
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance",
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [
+        [
+          "design_md_system_governance",
+          "code_review"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-073",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：调研 Reddit、YouTube、GitHub 等公开平台并保留引用；同时策划内容矩阵、短视频脚本与媒体交付，分别给出证据。",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-074",
+      "category": "multi_intent",
+      "task": "工作流顺序：先调研 Reddit、YouTube、GitHub 等公开平台并保留引用；完成后再策划内容矩阵、短视频脚本与媒体交付。",
+      "expected_intents": [
+        "multi_platform_research_discovery",
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery",
+        "content-video-production"
+      ],
+      "required_dependency_edges": [
+        [
+          "multi_platform_research_discovery",
+          "content_video_production"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-075",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: review Skill Router selection, bundle composition, and regression evidence; in parallel, inventory and cluster the remaining Claude Skills candidate and reference-only backlog.",
+      "expected_intents": [
+        "skill_router_review",
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review",
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-076",
+      "category": "multi_intent",
+      "task": "First review Skill Router selection, bundle composition, and regression evidence; after that result is complete, inventory and cluster the remaining Claude Skills candidate and reference-only backlog.",
+      "expected_intents": [
+        "skill_router_review",
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review",
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [
+        [
+          "skill_router_review",
+          "claude_skills_backlog_coverage"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-077",
+      "category": "multi_intent",
+      "task": "并行处理两项交付：审计提示词注入、工具权限与输出护栏；同时评审私密通讯的 E2EE、元数据最小化和保留边界，分别给出证据。",
+      "expected_intents": [
+        "agent_security",
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails",
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-078",
+      "category": "multi_intent",
+      "task": "工作流顺序：先审计提示词注入、工具权限与输出护栏；完成后再评审私密通讯的 E2EE、元数据最小化和保留边界。",
+      "expected_intents": [
+        "agent_security",
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails",
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [
+        [
+          "agent_security",
+          "private_communication_governance"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-079",
+      "category": "multi_intent",
+      "task": "Run these as independent tracks: design a RAG agent with vector retrieval, citations, and structured output; in parallel, define tenant isolation, correction, and forgetting paths for agent long-term memory.",
+      "expected_intents": [
+        "rag_agent",
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app",
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "multi-intent-080",
+      "category": "multi_intent",
+      "task": "First design a RAG agent with vector retrieval, citations, and structured output; after that result is complete, define tenant isolation, correction, and forgetting paths for agent long-term memory.",
+      "expected_intents": [
+        "rag_agent",
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app",
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [
+        [
+          "rag_agent",
+          "agent_long_term_memory_governance"
+        ]
+      ],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    }
+  ]
+}
