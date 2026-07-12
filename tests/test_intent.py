@@ -95,6 +95,65 @@ class IntentTest(unittest.TestCase):
                     )
                 )
 
+    def test_release_actions_require_proposition_anchored_request_grammar(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        requests = (
+            "Prepare a repository release checklist.",
+            "Please prepare a repository release checklist.",
+            "Kindly review the release checklist for v1.0.",
+            "We need to prepare a repository release checklist.",
+            "I should review the release checklist for v1.0.",
+            "You must prepare a repository release checklist.",
+            "The team wants to review the release checklist for v1.0.",
+            "Maintainers need to prepare a repository release checklist.",
+            "Could you prepare a repository release checklist?",
+            "Would you kindly review the release checklist for v1.0?",
+            "Can you please prepare a repository release checklist?",
+            "For v1.0, prepare a repository release checklist.",
+            "Before publishing, review the repository release checklist.",
+            "请准备仓库发布清单。",
+            "请你审查仓库发布清单。",
+            "我们需要准备仓库发布清单。",
+            "维护者应审查仓库发布清单。",
+            "团队要准备仓库发布清单。",
+            "并行处理两项交付：审计提示词注入、工具权限与输出护栏；同时准备"
+            "开源仓库的许可证、供应链与发布清单，分别给出证据。",
+        )
+        for source in requests:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    any(
+                        item.polarity == "positive"
+                        and item.discourse_role == "request"
+                        for item in parse(source)
+                    )
+                )
+
+        controls = (
+            "Under no circumstances prepare a repository release checklist.",
+            "We are unable to prepare a repository release checklist.",
+            "It is forbidden to prepare a repository release checklist.",
+            "I cannot bring myself to prepare a repository release checklist.",
+            "Review everything other than the repository release checklist.",
+            "The report states that maintainers should prepare a repository release checklist.",
+            "The report recommends that maintainers prepare a repository release checklist.",
+            "According to the report, prepare a repository release checklist.",
+            "The guide instructs maintainers to prepare a repository release checklist.",
+            "Documentation requires us to prepare a repository release checklist.",
+        )
+        for source in controls:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    any(
+                        item.polarity == "positive"
+                        and item.discourse_role == "request"
+                        for item in parse(source)
+                    )
+                )
+
     def test_release_readiness_proposition_parser_binds_local_action_and_object(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"
@@ -140,8 +199,12 @@ class IntentTest(unittest.TestCase):
                     tuple(item.polarity for item in propositions),
                     expected_polarities,
                 )
-                self.assertTrue(
-                    all(item.discourse_role == "request" for item in propositions)
+                self.assertEqual(
+                    tuple(item.discourse_role for item in propositions),
+                    tuple(
+                        "request" if polarity == "positive" else "reference"
+                        for polarity in expected_polarities
+                    ),
                 )
                 for item in propositions:
                     span = source[item.start : item.end]
@@ -520,6 +583,11 @@ class IntentTest(unittest.TestCase):
             "审查仓库发布清单条目。",
             "审查仓库发布清单字段。",
             "审查仓库发布清单记录。",
+            "仓库准备流程和发布清单。",
+            "仓库准备事项和发布清单。",
+            "记录仓库已发布清单。",
+            "仓库审查报告包含发布清单。",
+            "仓库记录中的发布清单。",
         )
         for source in controls:
             with self.subTest(source=source):
@@ -744,6 +812,8 @@ class IntentTest(unittest.TestCase):
             "[Prepare a repository release packet](docs/release.md)",
             "<h2>Prepare a repository release checklist</h2>",
             "<code>Prepare a repository release packet</code>",
+            "<pre>Prepare a repository release checklist</pre>",
+            "<pre class=\"example\">Prepare a repository release checklist",
         )
         for source in references:
             with self.subTest(source=source):
@@ -773,6 +843,29 @@ class IntentTest(unittest.TestCase):
         )
         self.assertFalse(
             any(item.discourse_role == "request" for item in parse(saturated))
+        )
+        pre_mixed = (
+            "<pre>Prepare a repository release packet</pre> "
+            "Prepare a repository release checklist."
+        )
+        self.assertEqual(
+            tuple(item.discourse_role for item in parse(pre_mixed)),
+            ("reference", "request"),
+        )
+        overlapping_pre = (
+            "<pre>`Prepare a repository release packet`</pre> "
+            "Prepare a repository release checklist."
+        )
+        self.assertEqual(
+            tuple(item.discourse_role for item in parse(overlapping_pre)),
+            ("reference", "request"),
+        )
+        saturated_pre = (
+            ("<pre>x</pre>" * 256)
+            + "Prepare a repository release checklist."
+        )
+        self.assertFalse(
+            any(item.discourse_role == "request" for item in parse(saturated_pre))
         )
 
     def test_release_tokens_are_unicode_exact_and_fullwidth_boundaries_are_hard(self):

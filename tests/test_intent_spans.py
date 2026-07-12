@@ -122,6 +122,71 @@ class IntentSpansTest(unittest.TestCase):
                 )
                 self.assertEqual(graph.validate(), [])
 
+    def test_narrative_and_prohibition_readiness_forms_downgrade_safely(self):
+        tasks = (
+            "Under no circumstances prepare a repository release checklist.",
+            "We are unable to prepare a repository release checklist.",
+            "It is forbidden to prepare a repository release checklist.",
+            "I cannot bring myself to prepare a repository release checklist.",
+            "Review everything other than the repository release checklist.",
+            "The report states that maintainers should prepare a repository release checklist.",
+            "The report recommends that maintainers prepare a repository release checklist.",
+            "According to the report, prepare a repository release checklist.",
+            "The guide instructs maintainers to prepare a repository release checklist.",
+            "Documentation requires us to prepare a repository release checklist.",
+            "<pre>Prepare a repository release checklist</pre>",
+            "仓库准备流程和发布清单。",
+            "仓库准备事项和发布清单。",
+            "记录仓库已发布清单。",
+            "仓库审查报告包含发布清单。",
+            "仓库记录中的发布清单。",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_anchored_request_prefixes_retain_release_readiness(self):
+        tasks = (
+            "Please prepare a repository release checklist.",
+            "Kindly review the release checklist for v1.0.",
+            "We need to prepare a repository release checklist.",
+            "I should review the release checklist for v1.0.",
+            "You must prepare a repository release checklist.",
+            "The team wants to review the release checklist for v1.0.",
+            "Maintainers need to prepare a repository release checklist.",
+            "Could you prepare a repository release checklist?",
+            "Would you kindly review the release checklist for v1.0?",
+            "Can you please prepare a repository release checklist?",
+            "For v1.0, prepare a repository release checklist.",
+            "Before publishing, review the repository release checklist.",
+            "请准备仓库发布清单。",
+            "请你审查仓库发布清单。",
+            "我们需要准备仓库发布清单。",
+            "维护者应审查仓库发布清单。",
+            "团队要准备仓库发布清单。",
+            "并行处理两项交付：审计提示词注入、工具权限与输出护栏；同时准备"
+            "开源仓库的许可证、供应链与发布清单，分别给出证据。",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    sum(
+                        item.task_type == "open_source_release"
+                        and item.release_mode == "readiness"
+                        for item in graph.intent_evidence
+                    ),
+                    1,
+                )
+                self.assertEqual(graph.validate(), [])
+
     def test_release_readiness_decomposition_scopes_context_per_segment(self):
         tasks = (
             "Review code for unauthorized access; prepare a repository release packet.",

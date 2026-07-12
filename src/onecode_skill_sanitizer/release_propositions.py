@@ -42,7 +42,7 @@ _SOFTWARE_ANCHOR_RE = re.compile(
     re.IGNORECASE,
 )
 _COORDINATOR_RE = re.compile(
-    r"\s*(?:,\s*)?(?:\b(?:and|but|then)\b|然后|但是|但要|不过|再)\s*|"
+    r"\s*(?:,\s*)?(?:\b(?:and|but|then)\b|然后|但是|但要|不过|同时|再)\s*|"
     r"[;；\n。]|\s*[+＋]\s*",
     re.IGNORECASE,
 )
@@ -80,6 +80,33 @@ _POSITIVE_OBLIGATION_RE = re.compile(
     re.IGNORECASE,
 )
 _NOT_ONLY_RE = re.compile(r"\bnot\s+only\s*$", re.IGNORECASE)
+_ENGLISH_REQUEST_PREFIX_RE = re.compile(
+    r"^\s*[.,;:!?\"'”’\)\]}-]*\s*(?:"
+    r"(?:[^\W\d_]+ly\s+){0,2}|"
+    r"(?:please|kindly)(?:\s+[^\W\d_]+ly){0,2}\s+|"
+    r"however\s*,\s*|"
+    r"(?:could|would|can)\s+you(?:\s+(?:please|kindly))?\s+|"
+    r"(?:(?:the\s+)?(?:team|maintainers?)|we|i|you)\s+"
+    r"(?:(?:needs?|wants?)\s+to|should|must)\s+|"
+    r"use\b[^,;!?\n]{0,80}\bto\s+|"
+    r"(?:for|before|after|once|when|while|during|at|in|as\s+part\s+of)\b"
+    r"[^,;!?\n]{0,80},\s*(?:(?:please|kindly)\s+)?"
+    r")$",
+    re.IGNORECASE,
+)
+_NARRATIVE_CONTEXT_RE = re.compile(
+    r"\b(?:according\s+to|report|recommendation|instruction|"
+    r"documentation|guide)\b",
+    re.IGNORECASE,
+)
+_CHINESE_REQUEST_PREFIX_RE = re.compile(
+    r"^\s*[，。！？；：”’）】]*\s*(?:(?:请(?:你)?|我们需要|维护者应|团队要)"
+    r"(?:立即|马上|仔细|认真|谨慎|再|先)?\s*)?$"
+)
+_CHINESE_ACTION_OBJECT_GAP_RE = re.compile(
+    r"^(?:\s|该|本|这个|一份|完整|好|一下|仓库|代码库|软件包|"
+    r"维护者|开源|软件|版本|许可证|供应链|的|、|与|和|及|以及)*$"
+)
 _CHINESE_ACTION_NEGATION_RE = re.compile(
     r"(?:请勿|不能|不会|不可|不需要|无需|不得|不要|不打算|禁止|"
     r"暂不|先不|别|未授权)"
@@ -88,6 +115,7 @@ _CHINESE_ACTION_NEGATION_RE = re.compile(
 _OBJECT_EXCLUSION_RE = re.compile(
     r"(?:\b(?:rather\s+than|instead\s+of|excluding|except)\s+"
     r"(?:(?:the|an?)\s+)?|"
+    r"\bother\s+than\s+(?:(?:the|an?)\s+)?(?:repository\s+)?|"
     r"[\s,，]*(?:not\s+(?:(?:the|an?)\s+)?|而不是(?:这个|该)?))$",
     re.IGNORECASE,
 )
@@ -196,7 +224,7 @@ def parse_release_readiness_propositions(
         if chinese_object:
             object_prefix = source[max(0, object_start - 1) : object_start]
             object_suffix = source[object_end:]
-            if object_prefix in {"未", "不"} or object_suffix.startswith(
+            if object_prefix in {"已", "未", "不"} or object_suffix.startswith(
                 ("项", "条目", "字段", "记录", "化")
             ):
                 continue
@@ -291,12 +319,22 @@ def parse_release_readiness_propositions(
             item
             for item in raw_actions
             if item not in invalid_actions
-            and (not chinese_object or item.end() <= local_object_start)
+            and (
+                not chinese_object
+                or _chinese_action_governs_object(
+                    item, proposition, local_object_start
+                )
+            )
         )
         if raw_actions and not actions and chinese_object:
             continue
+        request_actions = tuple(
+            item
+            for item in actions
+            if _action_has_request_prefix(item, proposition)
+        )
         action = min(
-            actions,
+            request_actions or actions,
             key=lambda item: (
                 max(
                     local_object_start - item.end(),
@@ -357,7 +395,11 @@ def parse_release_readiness_propositions(
                 action.group().casefold(),
                 object_text,
                 polarity,
-                "request",
+                (
+                    "request"
+                    if action in request_actions
+                    else "reference"
+                ),
             )
         )
     return tuple(propositions)
@@ -444,6 +486,44 @@ def _action_is_negated(prefix: str, between_action_and_object: str) -> bool:
     )
 
 
+def _action_has_request_prefix(
+    action: re.Match[str], proposition: str
+) -> bool:
+    prefix = _without_structural_reference_spans(
+        proposition[: action.start()]
+    )
+    if _is_chinese_action(action.group()):
+        return _CHINESE_REQUEST_PREFIX_RE.fullmatch(prefix) is not None
+    if _POSITIVE_OBLIGATION_RE.search(prefix) or _NOT_ONLY_RE.search(prefix):
+        return True
+    if _NARRATIVE_CONTEXT_RE.search(prefix):
+        return False
+    return _ENGLISH_REQUEST_PREFIX_RE.fullmatch(prefix) is not None
+
+
+def _without_structural_reference_spans(source: str) -> str:
+    spans = _structural_reference_spans(source)
+    if not spans:
+        return source
+    pieces: list[str] = []
+    cursor = 0
+    for start, end in spans:
+        if start > cursor:
+            pieces.append(source[cursor:start])
+        cursor = max(cursor, end)
+    pieces.append(source[cursor:])
+    return "".join(pieces)
+
+
+def _chinese_action_governs_object(
+    action: re.Match[str], proposition: str, object_start: int
+) -> bool:
+    if action.end() > object_start:
+        return False
+    gap = proposition[action.end() : object_start]
+    return len(gap) <= 32 and _CHINESE_ACTION_OBJECT_GAP_RE.fullmatch(gap) is not None
+
+
 def _structural_reference_spans(
     source: str,
 ) -> tuple[tuple[int, int], ...]:
@@ -456,6 +536,7 @@ def _structural_reference_spans(
         *_quote_spans(source, "“", "”"),
         *_quote_spans(source, "‘", "’"),
         *_quote_spans(source, "'", "'", require_word_boundary=True),
+        *_html_pre_spans(source),
     )
     for span in scanned_spans:
         spans.append(span)
@@ -467,6 +548,26 @@ def _structural_reference_spans(
             if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
                 return ((0, len(source)),)
     return tuple(sorted(spans))
+
+
+def _html_pre_spans(source: str) -> tuple[tuple[int, int], ...]:
+    opening = re.compile(r"<pre\b[^>]*>", re.IGNORECASE)
+    closing = re.compile(r"</pre\s*>", re.IGNORECASE)
+    spans: list[tuple[int, int]] = []
+    cursor = 0
+    while cursor < len(source):
+        start_match = opening.search(source, cursor)
+        if start_match is None:
+            break
+        close_match = closing.search(source, start_match.end())
+        if close_match is None:
+            spans.append((start_match.start(), len(source)))
+            break
+        spans.append((start_match.start(), close_match.end()))
+        if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
+            return ((0, len(source)),)
+        cursor = close_match.end()
+    return tuple(spans)
 
 
 def _reported_instruction_reference_spans(
@@ -615,8 +716,8 @@ def _chinese_action_is_nominalized(match: re.Match[str], source: str) -> bool:
     if not _is_chinese_action(action):
         return False
     suffix = source[match.end() :]
-    return suffix.startswith("度") or (
-        action == "准备" and suffix.startswith(("工作", "阶段", "性", "项"))
+    return suffix.startswith(("度", "工作", "流程", "阶段", "事项", "报告", "中")) or (
+        action == "准备" and suffix.startswith(("性", "项"))
     )
 
 
