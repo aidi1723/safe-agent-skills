@@ -22,12 +22,12 @@
     {
       "path": "ambiguous.json",
       "case_count": 50,
-      "sha256": "sha256:9a5e1d0f9a7ec0db4638c18cb0c66ad81e124a241559af25ca9f6a85afce8ffb"
+      "sha256": "sha256:85b3c1ee1d220a5fde6c9cfa3a3d66c57b690678dae0c27e9c74c77dffa525da"
     },
     {
       "path": "negative.json",
       "case_count": 50,
-      "sha256": "sha256:94d586386885a1b996596121d280d2185516ada24b677f2fe9808b28ab83953e"
+      "sha256": "sha256:7b178e7042806b3159237f68ad9fc218135923688cf4a24756481178789c326d"
     },
     {
       "path": "perturbations.json",

@@ -129,6 +129,94 @@ FORBIDDEN_SKILL_CUES = {
     "commerce-inquiry-reply": ("buyer message", "buyer", "inquiry", "买家消息", "买家", "询盘"),
 }
 
+NEGATIVE_MODE_CUES = {
+    "future_hypothetical": re.compile(
+        r"roadmap|future|hypothetical|someday|next quarter|\u672a\u6765|\u4ee5\u540e|\u5047\u8bbe|\u4e0b\u5b63\u5ea6|\u8def\u7ebf\u56fe",
+        re.I,
+    ),
+    "historical_completion": re.compile(
+        r"already|completed|closed|archived|\u5df2\u5b8c\u6210|\u5df2\u5173\u95ed|\u5f52\u6863|\u5386\u53f2",
+        re.I,
+    ),
+    "inventory_mention": re.compile(
+        r"inventory|index|filename|column|header|glossary|\u6e05\u5355|\u7d22\u5f15|\u6587\u4ef6\u540d|\u5217\u540d|\u8868\u5934|\u672f\u8bed",
+        re.I,
+    ),
+    "quoted_example": re.compile(
+        r"quoted|example|sample|template|style guide|\u793a\u4f8b|\u6837\u4f8b|\u6a21\u677f|\u5f15\u6587",
+        re.I,
+    ),
+    "missing_authorization": re.compile(
+        r"not approved|no approval|no authority|not authorized|\u672a\u6279\u51c6|\u672a\u6388\u6743|\u6ca1\u6709\u6388\u6743|\u65e0\u6743",
+        re.I,
+    ),
+    "explicit_exclusion": re.compile(
+        r"out of scope|explicitly excludes|must not|do not|\u4e0d\u5f97|\u660e\u786e\u6392\u9664|\u4e0d\u5728\u8303\u56f4",
+        re.I,
+    ),
+    "assigned_elsewhere": re.compile(
+        r"another team|separate team|vendor owns|external reviewer|external owner|elsewhere|\u53e6\u4e00\u4e2a\u56e2\u961f|\u5176\u4ed6\u56e2\u961f|\u4f9b\u5e94\u5546\u8d1f\u8d23|\u5916\u90e8",
+        re.I,
+    ),
+    "blocked_input": re.compile(
+        r"missing|unavailable|not attached|\u7f3a\u5c11|\u672a\u63d0\u4f9b|\u4e0d\u53ef\u7528|\u672a\u9644",
+        re.I,
+    ),
+}
+
+NEGATIVE_CONTEXT_AUDIT = {
+    "negative-001": ("future_hypothetical", "Q4 portal roadmap"),
+    "negative-002": ("assigned_elsewhere", "agency statement of work"),
+    "negative-003": ("historical_completion", "payment retry patch"),
+    "negative-004": ("assigned_elsewhere", "database vendor"),
+    "negative-005": ("inventory_mention", "disaster-recovery manifest"),
+    "negative-006": ("missing_authorization", "acquisition data room"),
+    "negative-007": ("inventory_mention", "architecture glossary"),
+    "negative-008": ("explicit_exclusion", "incident timeline"),
+    "negative-009": ("future_hypothetical", "security offsite agenda"),
+    "negative-010": ("assigned_elsewhere", "red-team supplier"),
+    "negative-011": ("inventory_mention", "org chart"),
+    "negative-012": ("future_hypothetical", "2028 operating model"),
+    "negative-013": ("quoted_example", "training workbook"),
+    "negative-014": ("missing_authorization", "market-research consent form"),
+    "negative-015": ("historical_completion", "retired fund folder"),
+    "negative-016": ("quoted_example", "analyst onboarding template"),
+    "negative-017": ("inventory_mention", "procurement register"),
+    "negative-018": ("assigned_elsewhere", "HR architecture group"),
+    "negative-019": ("inventory_mention", "migration checksum"),
+    "negative-020": ("explicit_exclusion", "brand refresh charter"),
+    "negative-021": ("future_hypothetical", "messaging comparison slide"),
+    "negative-022": ("missing_authorization", "privacy counsel approval"),
+    "negative-023": ("inventory_mention", "legal hold index"),
+    "negative-024": ("historical_completion", "records migration receipt"),
+    "negative-025": ("quoted_example", "editorial rubric"),
+    "negative-026": ("assigned_elsewhere", "production studio"),
+    "negative-027": ("inventory_mention", "asset provenance ledger"),
+    "negative-028": ("blocked_input", "talent release"),
+    "negative-029": ("inventory_mention", "finance import specification"),
+    "negative-030": ("blocked_input", "source workbook"),
+    "negative-031": ("missing_authorization", "maintainer vote"),
+    "negative-032": ("assigned_elsewhere", "release engineering group"),
+    "negative-033": ("quoted_example", "CMS schema documentation"),
+    "negative-034": ("historical_completion", "campaign archive"),
+    "negative-035": ("future_hypothetical", "architecture options paper"),
+    "negative-036": ("explicit_exclusion", "search replacement contract"),
+    "negative-037": ("quoted_example", "conversation fixture"),
+    "negative-038": ("missing_authorization", "retention policy owner"),
+    "negative-039": ("inventory_mention", "quarterly capacity dashboard"),
+    "negative-040": ("historical_completion", "intake closure report"),
+    "negative-041": ("inventory_mention", "status-page label"),
+    "negative-042": ("assigned_elsewhere", "evaluation working group"),
+    "negative-043": ("future_hypothetical", "conference demo deck"),
+    "negative-044": ("missing_authorization", "sector sponsor"),
+    "negative-045": ("inventory_mention", "ERP export header"),
+    "negative-046": ("assigned_elsewhere", "regional distributor"),
+    "negative-047": ("quoted_example", "accessibility tutorial"),
+    "negative-048": ("historical_completion", "private mirror handoff"),
+    "negative-049": ("explicit_exclusion", "risk committee minutes"),
+    "negative-050": ("quoted_example", "buyer-message localization guide"),
+}
+
 
 def normalized_lexemes(text: str) -> set[str]:
     lowered = text.casefold()
@@ -339,10 +427,25 @@ class RouterEvalV2Tests(unittest.TestCase):
                 near_duplicates.append((left["id"], right["id"], round(similarity, 3)))
         self.assertEqual(near_duplicates, [])
 
-    def test_multi_intent_tasks_have_no_cross_case_long_ngram_scaffolds(self):
-        cases = [case for case in production_cases() if case["category"] == "multi_intent"]
+    def test_production_tasks_have_no_cross_case_long_ngram_scaffolds(self):
+        cases = production_cases()
 
         self.assertEqual(repeated_scaffold_ngrams(cases), {})
+
+    def test_long_ngram_audit_detects_repeated_middle_scaffolds(self):
+        cases = [
+            {"id": "synthetic-a", "task": "Alpha request begins. This fixed middle scaffold assigns hidden authority. Red ending."},
+            {"id": "synthetic-b", "task": "Beta context differs. This fixed middle scaffold assigns hidden authority. Blue ending."},
+            {"id": "synthetic-c", "task": "Gamma work is unique. This fixed middle scaffold assigns hidden authority. Green ending."},
+        ]
+
+        repeated = repeated_scaffold_ngrams(cases)
+
+        self.assertIn("en:this fixed middle scaffold assigns", repeated)
+        self.assertEqual(
+            repeated["en:this fixed middle scaffold assigns"],
+            ["synthetic-a", "synthetic-b", "synthetic-c"],
+        )
 
     def test_production_multi_intent_tasks_cover_realistic_forms_and_three_intent_work(self):
         cases = [case for case in production_cases() if case["category"] == "multi_intent"]
@@ -435,6 +538,32 @@ class RouterEvalV2Tests(unittest.TestCase):
                 if not any(cue in lowered for cue in FORBIDDEN_SCENARIO_CUES[scenario]):
                     unsupported.append((case["id"], scenario))
         self.assertEqual(unsupported, [])
+
+    def test_negative_scenario_examples_use_distinct_reviewed_modes_and_facts(self):
+        cases = {
+            case["id"]: case
+            for case in production_cases()
+            if case["category"] == "negative"
+        }
+
+        self.assertEqual(set(cases), set(NEGATIVE_CONTEXT_AUDIT))
+        modes_by_scenario: dict[str, list[str]] = {}
+        facts_by_scenario: dict[str, list[str]] = {}
+        unsupported = []
+        for case_id, (mode, contextual_fact) in NEGATIVE_CONTEXT_AUDIT.items():
+            case = cases[case_id]
+            if not NEGATIVE_MODE_CUES[mode].search(case["task"]):
+                unsupported.append((case_id, mode))
+            self.assertIn(contextual_fact.casefold(), case["task"].casefold(), case_id)
+            for scenario in case["forbidden_scenarios"]:
+                modes_by_scenario.setdefault(scenario, []).append(mode)
+                facts_by_scenario.setdefault(scenario, []).append(contextual_fact.casefold())
+
+        self.assertEqual(unsupported, [])
+        for scenario, modes in modes_by_scenario.items():
+            self.assertEqual(len(modes), len(set(modes)), (scenario, modes))
+        for scenario, facts in facts_by_scenario.items():
+            self.assertEqual(len(facts), len(set(facts)), (scenario, facts))
 
     def test_gold_dataset_has_exact_count_distribution_and_contract(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2

@@ -3,7 +3,7 @@
     {
       "id": "negative-001",
       "category": "negative",
-      "task": "路线图中的“官网”是下个季度的备选项，当前工单未授权 UI 实现、浏览器检查或上线。",
+      "task": "The Q4 portal roadmap lists a future website launch, but this ticket authorizes neither browser work nor a publish check.",
       "expected_intents": [
         "general"
       ],
@@ -20,7 +20,7 @@
     {
       "id": "negative-002",
       "category": "negative",
-      "task": "The roadmap merely references a future portal; no UI build, browser run, or launch workflow is approved in this ticket.",
+      "task": "An agency statement of work says another team owns the portal UI and launch; this inventory review must not invoke website publishing.",
       "expected_intents": [
         "general"
       ],
@@ -37,7 +37,7 @@
     {
       "id": "negative-003",
       "category": "negative",
-      "task": "这份记录只说明 PR 已在外部完成评审，不要再启动代码审查或 CI 复核。",
+      "task": "支付重试补丁 payment retry patch 已完成并通过代码审查，本轮只记录结论，不重启 PR 风险复核。",
       "expected_intents": [
         "general"
       ],
@@ -54,7 +54,7 @@
     {
       "id": "negative-004",
       "category": "negative",
-      "task": "This note records that a PR was already reviewed elsewhere; it does not request another code-review workflow or specialist.",
+      "task": "A database vendor is the external reviewer for the SQL pull request; our documentation team must not run a second code review.",
       "expected_intents": [
         "general"
       ],
@@ -71,7 +71,7 @@
     {
       "id": "negative-005",
       "category": "negative",
-      "task": "仓库路径仅用于资产清点，没有读取、修改、调试或运行测试的权限。",
+      "task": "The disaster-recovery manifest is an inventory of repository paths, not permission to explore or map the codebase.",
       "expected_intents": [
         "general"
       ],
@@ -88,7 +88,7 @@
     {
       "id": "negative-006",
       "category": "negative",
-      "task": "Repository names are supplied for inventory only, with no authority to explore, modify, debug, or test their contents.",
+      "task": "The acquisition data room has no authority to expose, debug, modify, or test the listed repository contents.",
       "expected_intents": [
         "general"
       ],
@@ -105,7 +105,7 @@
     {
       "id": "negative-007",
       "category": "negative",
-      "task": "附录中的“调用图”只是架构术语，本次不建索引、不查符号图、不做 diff 影响分析。",
+      "task": "这份 architecture glossary 只是调用图与符号图术语索引，不建代码图也不做影响分析。",
       "expected_intents": [
         "general"
       ],
@@ -122,7 +122,7 @@
     {
       "id": "negative-008",
       "category": "negative",
-      "task": "A diagram mentions call graphs as background terminology; do not index the repository or run structural impact analysis.",
+      "task": "The incident timeline explicitly excludes call-graph indexing and structural impact analysis; those activities are out of scope.",
       "expected_intents": [
         "general"
       ],
@@ -139,7 +139,7 @@
     {
       "id": "negative-009",
       "category": "negative",
-      "task": "会议议程把 Agent 护栏列为未来专题，当前不执行提示词注入、权限或沙箱审计。",
+      "task": "下季度的 security offsite agenda 将提示词注入与沙箱列为未来主题，今日不启动 Agent 安全审计。",
       "expected_intents": [
         "general"
       ],
@@ -156,7 +156,7 @@
     {
       "id": "negative-010",
       "category": "negative",
-      "task": "The agenda lists security guardrails as a future topic, but this session does not authorize an agent-safety audit.",
+      "task": "A red-team supplier is the separate team assigned to test prompt injection and permissions; this product workshop must not duplicate that guardrail review.",
       "expected_intents": [
         "general"
       ],
@@ -173,7 +173,7 @@
     {
       "id": "negative-011",
       "category": "negative",
-      "task": "附件里的团队角色是组织架构说明，不需要拆解多 Agent 计划或设计交接。",
+      "task": "The org chart is an inventory of team roles and handoff names, not a request for multi-agent planning or orchestration.",
       "expected_intents": [
         "general"
       ],
@@ -190,7 +190,7 @@
     {
       "id": "negative-012",
       "category": "negative",
-      "task": "Team roles shown in the appendix are descriptive; no multi-agent decomposition or coordination plan should be created.",
+      "task": "那份 2028 operating model 是假设的未来团队图，不得将它拆成当前的多 Agent 任务。",
       "expected_intents": [
         "general"
       ],
@@ -207,7 +207,7 @@
     {
       "id": "negative-013",
       "category": "negative",
-      "task": "Reddit、YouTube 和 GitHub 是来源类型示例，不构成搜索、采集或调用连接器的指令。",
+      "task": "A training workbook contains a quoted example search across Reddit and YouTube; it does not authorize a research connector.",
       "expected_intents": [
         "general"
       ],
@@ -224,7 +224,7 @@
     {
       "id": "negative-014",
       "category": "negative",
-      "task": "Reddit, YouTube, and GitHub appear only as source examples; do not search them or invoke a research connector.",
+      "task": "The market-research consent form is not approved; public-source search and evidence collection remain unauthorized.",
       "expected_intents": [
         "general"
       ],
@@ -241,7 +241,7 @@
     {
       "id": "negative-015",
       "category": "negative",
-      "task": "“投资备忘录”只是历史文件名，请勿展开估值、尽调、反方案例或金融建议。",
+      "task": "这个 retired fund folder 中的投资备忘已完成并归档，不需要重新估值或撰写反方观点。",
       "expected_intents": [
         "general"
       ],
@@ -258,7 +258,7 @@
     {
       "id": "negative-016",
       "category": "negative",
-      "task": "The phrase 'investment memo' is a document title, not a request for valuation, diligence, or regulated financial analysis.",
+      "task": "An analyst onboarding template uses valuation assumptions as a quoted example; no investment research framework should be applied.",
       "expected_intents": [
         "general"
       ],
@@ -275,7 +275,7 @@
     {
       "id": "negative-017",
       "category": "negative",
-      "task": "这批专家 Agent 名称正在归档，本次不重构角色库、责任边界或交接契约。",
+      "task": "The procurement register is an inventory of expert-agent role names, not authority to redesign the role library or handoffs.",
       "expected_intents": [
         "general"
       ],
@@ -292,7 +292,7 @@
     {
       "id": "negative-018",
       "category": "negative",
-      "task": "Existing expert-agent role names are being archived; do not redesign the role library or its handoff rules.",
+      "task": "The HR architecture group is the separate team that owns expert-agent governance; this audit must not alter its role contracts.",
       "expected_intents": [
         "general"
       ],
@@ -309,7 +309,7 @@
     {
       "id": "negative-019",
       "category": "negative",
-      "task": "DESIGN.md 在迁移清单中仅代表一个文件，不要因此审计令牌、组件状态或可访问性。",
+      "task": "迁移记录的 migration checksum 清单把 DESIGN.md 当作文件名索引，不启动 design token 或组件状态审查。",
       "expected_intents": [
         "general"
       ],
@@ -326,7 +326,7 @@
     {
       "id": "negative-020",
       "category": "negative",
-      "task": "DESIGN.md is cited as a filename in migration notes; no token audit, component review, or design-system governance is requested.",
+      "task": "The brand refresh charter explicitly excludes DESIGN.md governance, component-state review, and design-token changes.",
       "expected_intents": [
         "general"
       ],
@@ -343,7 +343,7 @@
     {
       "id": "negative-021",
       "category": "negative",
-      "task": "产品对比表提到 E2EE，但没有要求评估用户标识、元数据、保留期或滥用处理。",
+      "task": "A messaging comparison slide proposes E2EE and metadata minimization as a future option, not a current privacy-governance assignment.",
       "expected_intents": [
         "general"
       ],
@@ -360,7 +360,7 @@
     {
       "id": "negative-022",
       "category": "negative",
-      "task": "The product comparison mentions E2EE, but there is no request to assess identifiers, metadata, retention, or abuse handling.",
+      "task": "Without privacy counsel approval, there is no authority to assess identifier retention, abuse handling, or private-messaging metadata.",
       "expected_intents": [
         "general"
       ],
@@ -377,7 +377,7 @@
     {
       "id": "negative-023",
       "category": "negative",
-      "task": "PDF 和 DOCX 路径是邮件附件索引，当前不转换、不分块、不摘要、不导入知识库。",
+      "task": "The legal hold index is an inventory of PDF and DOCX paths; do not convert, partition, or ingest those documents.",
       "expected_intents": [
         "general"
       ],
@@ -394,7 +394,7 @@
     {
       "id": "negative-024",
       "category": "negative",
-      "task": "These PDF and DOCX paths are attachment references only; do not convert, partition, summarize, or ingest them.",
+      "task": "A records migration receipt confirms the handbook conversion already completed and was archived; no new PDF knowledge-base work remains.",
       "expected_intents": [
         "general"
       ],
@@ -411,7 +411,7 @@
     {
       "id": "negative-025",
       "category": "negative",
-      "task": "短视频脚本只是审计档案的附件，没有新建文案、内容矩阵或媒体交付的任务。",
+      "task": "编辑 editorial rubric 中的短视频脚本是引文示例，不得生成内容矩阵或媒体交付。",
       "expected_intents": [
         "general"
       ],
@@ -428,7 +428,7 @@
     {
       "id": "negative-026",
       "category": "negative",
-      "task": "A short-video script is attached for record keeping; do not create copy, a content matrix, or a media handoff.",
+      "task": "The production studio is the external owner of the short-video script, content matrix, and asset handoff; this records task must not invoke production review.",
       "expected_intents": [
         "general"
       ],
@@ -445,7 +445,7 @@
     {
       "id": "negative-027",
       "category": "negative",
-      "task": "参考视频链接用于记录素材来源，不允许分析视频、选提供方、估算费用或渲染。",
+      "task": "The asset provenance ledger is an inventory containing a reference-video URL, not approval to select providers, estimate costs, or render media.",
       "expected_intents": [
         "general"
       ],
@@ -462,7 +462,7 @@
     {
       "id": "negative-028",
       "category": "negative",
-      "task": "The reference-video URL is provenance metadata, not permission to analyze it, route providers, estimate cost, or render media.",
+      "task": "The talent release is not attached; reference-video provider selection and render planning remain unauthorized.",
       "expected_intents": [
         "general"
       ],
@@ -479,7 +479,7 @@
     {
       "id": "negative-029",
       "category": "negative",
-      "task": "表格列名是导入格式说明，本次不清洗数据、计算指标、画图或编写报告。",
+      "task": "这份 finance import specification 只列出 spreadsheet、chart 和指标表头，不执行表格分析。",
       "expected_intents": [
         "general"
       ],
@@ -496,7 +496,7 @@
     {
       "id": "negative-030",
       "category": "negative",
-      "task": "Spreadsheet columns are listed to explain an import format; no cleanup, analysis, visualization, or report is in scope.",
+      "task": "The source workbook is missing and unavailable; do not clean rows, calculate metrics, or create a chart report.",
       "expected_intents": [
         "general"
       ],
@@ -513,7 +513,7 @@
     {
       "id": "negative-031",
       "category": "negative",
-      "task": "维护者尚未批准公开化，不得准备发布、推送仓库、执行 publish check 或对外宣布。",
+      "task": "The maintainer vote is not approved, so no open-source release, repository push, or publish check is authorized.",
       "expected_intents": [
         "general"
       ],
@@ -530,7 +530,7 @@
     {
       "id": "negative-032",
       "category": "negative",
-      "task": "Maintainers have not approved publication; no license workflow, release preparation, repository push, or publish check may run.",
+      "task": "A release engineering group is the separate team that owns license review and publication; this support task must not publish the repository.",
       "expected_intents": [
         "general"
       ],
@@ -547,7 +547,7 @@
     {
       "id": "negative-033",
       "category": "negative",
-      "task": "SEO、blog 和 social post 是 Schema 字段样例，不要撰写、优化、核查或发布公开内容。",
+      "task": "CMS schema documentation contains a quoted SEO and social-post example; do not draft or optimize public content from it.",
       "expected_intents": [
         "general"
       ],
@@ -564,7 +564,7 @@
     {
       "id": "negative-034",
       "category": "negative",
-      "task": "SEO and social-post fields are examples in a schema; do not draft, optimize, fact-check, or publish public content.",
+      "task": "The campaign archive confirms the blog and SEO copy already completed last year; no new content brief should be created.",
       "expected_intents": [
         "general"
       ],
@@ -581,7 +581,7 @@
     {
       "id": "negative-035",
       "category": "negative",
-      "task": "RAG 在文档中是一个假设的替代架构，现在不设计向量检索、引用或知识 Agent。",
+      "task": "那份 architecture options paper 把 RAG 向量检索列为未来假设，当前不设计知识 Agent。",
       "expected_intents": [
         "general"
       ],
@@ -598,7 +598,7 @@
     {
       "id": "negative-036",
       "category": "negative",
-      "task": "RAG is discussed as an architectural alternative only; do not design retrieval, vectors, citations, or a knowledge agent.",
+      "task": "The search replacement contract explicitly excludes RAG, vector retrieval, citations, and knowledge-agent implementation.",
       "expected_intents": [
         "general"
       ],
@@ -615,7 +615,7 @@
     {
       "id": "negative-037",
       "category": "negative",
-      "task": "对话样例中的“记住我”是测试文本，不授权持久化、召回、保留或删除记忆。",
+      "task": "A conversation fixture contains the quoted example 'remember me'; it must not create persistent memory or recall behavior.",
       "expected_intents": [
         "general"
       ],
@@ -632,7 +632,7 @@
     {
       "id": "negative-038",
       "category": "negative",
-      "task": "The word 'remember' appears in sample dialogue; it does not authorize persistent memory, recall, retention, or deletion design.",
+      "task": "The retention policy owner has not approved long-term memory storage, correction, or forgetting; no graph-memory contract is authorized.",
       "expected_intents": [
         "general"
       ],
@@ -649,7 +649,7 @@
     {
       "id": "negative-039",
       "category": "negative",
-      "task": "候选 Skill 数量用于历史统计，不进行积压分类、信任提升或 catalog 扩充。",
+      "task": "The quarterly capacity dashboard is an inventory of candidate Skill and backlog counts, not a request to cluster or promote them.",
       "expected_intents": [
         "general"
       ],
@@ -666,7 +666,7 @@
     {
       "id": "negative-040",
       "category": "negative",
-      "task": "Candidate-skill counts are reported for history only; do not cluster, promote, or extend the Claude Skills backlog.",
+      "task": "An intake closure report says the Claude Skills backlog review already completed and was archived; do not reopen coverage work.",
       "expected_intents": [
         "general"
       ],
@@ -683,7 +683,7 @@
     {
       "id": "negative-041",
       "category": "negative",
-      "task": "状态页只展示 Skill Router 这个能力名，不要运行评测、审查 Bundle 或修改路由。",
+      "task": "The status-page label is an inventory string naming Skill Router and evaluator health, not authority to run routing evaluation.",
       "expected_intents": [
         "general"
       ],
@@ -700,7 +700,7 @@
     {
       "id": "negative-042",
       "category": "negative",
-      "task": "A status page names the skill router, but no selection audit, bundle review, evaluator run, or routing change is requested.",
+      "task": "The evaluation working group is another team assigned to bundle and router quality review; this status update must not invoke its evaluator.",
       "expected_intents": [
         "general"
       ],
@@ -717,7 +717,7 @@
     {
       "id": "negative-043",
       "category": "negative",
-      "task": "医疗、金融和教育是演示受众，不代表可以分析行业、选领域 Skill 或打包合规方案。",
+      "task": "A conference demo deck presents healthcare AI as a future hypothetical; it does not authorize an industry workflow or compliance intake.",
       "expected_intents": [
         "general"
       ],
@@ -734,7 +734,7 @@
     {
       "id": "negative-044",
       "category": "negative",
-      "task": "Healthcare and finance are audience examples, not authority to profile an industry or package a regulated AI solution.",
+      "task": "The sector sponsor has not approved the finance solution; vertical-industry orchestration work cannot start.",
       "expected_intents": [
         "general"
       ],
@@ -751,7 +751,7 @@
     {
       "id": "negative-045",
       "category": "negative",
-      "task": "Listing、keyword 和 inquiry 是导出 CSV 的表头，不启动平台运营、关键词优化或买家联系。",
+      "task": "The ERP export header is an inventory of listing, keyword, and inquiry columns; do not optimize marketplace products.",
       "expected_intents": [
         "general"
       ],
@@ -768,7 +768,7 @@
     {
       "id": "negative-046",
       "category": "negative",
-      "task": "Listing, keyword, and inquiry are CSV headers in an export; do not launch marketplace optimization or buyer outreach.",
+      "task": "A regional distributor is the separate team responsible for listing copy and buyer inquiry replies; our data export task must not invoke commerce operations.",
       "expected_intents": [
         "general"
       ],
@@ -785,7 +785,7 @@
     {
       "id": "negative-047",
       "category": "negative",
-      "task": "这不是网站构建请求，请勿选择发布或浏览器检查 Skill。",
+      "task": "An accessibility tutorial uses 'publish the website and take a browser screenshot' as a quoted example, not a request to build or launch UI.",
       "expected_intents": [
         "general"
       ],
@@ -802,7 +802,7 @@
     {
       "id": "negative-048",
       "category": "negative",
-      "task": "No repository publication is authorized, and no publish-check skill should run.",
+      "task": "The private mirror handoff completed and was archived; it grants no public repository release or publish-check authority.",
       "expected_intents": [
         "general"
       ],
@@ -819,7 +819,7 @@
     {
       "id": "negative-049",
       "category": "negative",
-      "task": "本次不需要 Agent 安全审计，不要启动提示词注入审查 Skill。",
+      "task": "The risk committee minutes explicitly exclude prompt-injection and sandbox testing; do not invoke an Agent safety review.",
       "expected_intents": [
         "general"
       ],
@@ -836,7 +836,7 @@
     {
       "id": "negative-050",
       "category": "negative",
-      "task": "This is not a marketplace listing task; do not invoke the ICBU listing skill.",
+      "task": "A buyer-message localization guide contains a quoted example listing and inquiry reply; it is not a marketplace operations request.",
       "expected_intents": [
         "general"
       ],

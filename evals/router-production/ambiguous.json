@@ -391,7 +391,7 @@
     {
       "id": "ambiguous-026",
       "category": "ambiguous",
-      "task": "当前明确请求：构建响应式产品官网。\nNo authority for this request comes from the stale private messaging and E2EE topic.",
+      "task": "当前交付是保留登录流程并修好客户门户的移动表单。附件中那份已撤回的 E2EE 私密通讯简报不属于本次范围。",
       "expected_intents": [
         "website_build"
       ],
@@ -408,7 +408,7 @@
     {
       "id": "ambiguous-027",
       "category": "ambiguous",
-      "task": "Current explicit request: review the pull request and regression tests.\nNo authority for this request comes from the stale PDF knowledge-base conversion topic.",
+      "task": "Review the payment-retry pull request and its regression tests. A document-conversion plan copied from the previous onboarding project is stale context, not a request to process PDFs.",
       "expected_intents": [
         "code_review"
       ],
@@ -425,7 +425,7 @@
     {
       "id": "ambiguous-028",
       "category": "ambiguous",
-      "task": "当前明确请求：摸清代码库并实现、调试、测试变更。\nNo authority for this request comes from the stale short-video production topic.",
+      "task": "请定位并修复 Windows 资产路径缺陷，补齐回归。会议录像里讨论过的短视频制作计划已作废。",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -442,7 +442,7 @@
     {
       "id": "ambiguous-029",
       "category": "ambiguous",
-      "task": "Current explicit request: build a code graph and analyze call-chain impact.\nNo authority for this request comes from the stale reference-video rendering topic.",
+      "task": "Build a symbol index for the settlement package and trace its call graph. The reference-video rendering pilot in an abandoned ticket must not be revived.",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -459,7 +459,7 @@
     {
       "id": "ambiguous-030",
       "category": "ambiguous",
-      "task": "当前明确请求：审计提示词注入、工具权限与输出护栏。\nNo authority for this request comes from the stale spreadsheet chart analysis topic.",
+      "task": "当前只审计邮件 Agent 的提示词注入、凭证和工具权限。历史工单中的表格图表报告已由运营组关闭。",
       "expected_intents": [
         "agent_security"
       ],
@@ -476,7 +476,7 @@
     {
       "id": "ambiguous-031",
       "category": "ambiguous",
-      "task": "Current explicit request: clarify fuzzy requirements and decompose a multi-agent plan.\nNo authority for this request comes from the stale public repository release topic.",
+      "task": "Interview the owner and decompose the vague AI-team request into roles and dependencies. An old email saying a public repository release was approved has expired and grants no publication authority.",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -493,7 +493,7 @@
     {
       "id": "ambiguous-032",
       "category": "ambiguous",
-      "task": "当前明确请求：调研 Reddit、YouTube、GitHub 等公开平台并保留引用。\nNo authority for this request comes from the stale SEO article publication topic.",
+      "task": "调研公开社区对本地 AI 工具的真实反馈，保留原链接。上月 SEO 文章发布排期不应被带入本轮。",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -510,7 +510,7 @@
     {
       "id": "ambiguous-033",
       "category": "ambiguous",
-      "task": "Current explicit request: prepare an investment memo with valuation assumptions and a bear case.\nNo authority for this request comes from the stale RAG vector retrieval topic.",
+      "task": "Prepare a downside-focused investment memo for the payment processor. The retired RAG vector-retrieval prototype is mentioned only in the diligence archive.",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -527,7 +527,7 @@
     {
       "id": "ambiguous-034",
       "category": "ambiguous",
-      "task": "当前明确请求：设计专家 Agent 角色库与交接冲突规则。\nNo authority for this request comes from the stale long-term memory retention topic.",
+      "task": "重整客服专家 Agent 角色库，消除职责冲突并定义交接。白板上的长期记忆保留草案来自另一个团队。",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -544,7 +544,7 @@
     {
       "id": "ambiguous-035",
       "category": "ambiguous",
-      "task": "Current explicit request: establish a DESIGN.md contract for tokens, component states, and accessibility.\nNo authority for this request comes from the stale candidate Skill backlog topic.",
+      "task": "Bring component states, spacing, and accessibility into the current DESIGN.md contract. A copied candidate Skill backlog table is merely appendix material.",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -561,7 +561,7 @@
     {
       "id": "ambiguous-036",
       "category": "ambiguous",
-      "task": "当前明确请求：评审私密通讯的 E2EE、元数据最小化和保留边界。\nNo authority for this request comes from the stale Skill Router quality review topic.",
+      "task": "评审加密通讯的标识符、元数据和删除边界。状态页上那份 Skill Router 质量报告是上个版本的记录。",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -578,7 +578,7 @@
     {
       "id": "ambiguous-037",
       "category": "ambiguous",
-      "task": "Current explicit request: turn PDF and office documents into a Markdown knowledge base.\nNo authority for this request comes from the stale healthcare industry workflow topic.",
+      "task": "Convert the policy PDFs into linked Markdown pages with page-level provenance. The healthcare-industry workflow in a rejected proposal supplies no authority for sector orchestration.",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -595,7 +595,7 @@
     {
       "id": "ambiguous-038",
       "category": "ambiguous",
-      "task": "当前明确请求：策划内容矩阵、短视频脚本与媒体交付。\nNo authority for this request comes from the stale marketplace listing keywords topic.",
+      "task": "为公益活动编辑短视频脚本和素材清单。采购邮件附带的 marketplace listing 关键词表只是过期参考。",
       "expected_intents": [
         "content_video_production"
       ],
@@ -612,7 +612,7 @@
     {
       "id": "ambiguous-039",
       "category": "ambiguous",
-      "task": "Current explicit request: design an agentic media pipeline from a reference video with cost and render QA.\nNo authority for this request comes from the stale responsive website launch topic.",
+      "task": "Design a provider-neutral media pipeline from the approved reference video, including cost and render QA. Do not infer a website launch from the deprecated campaign brief.",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -629,7 +629,7 @@
     {
       "id": "ambiguous-040",
       "category": "ambiguous",
-      "task": "当前明确请求：清洗表格、分析数据并规划图表报告。\nNo authority for this request comes from the stale pull-request code review topic.",
+      "task": "请核对销售工作簿、解释退货口径并生成图表。附录里的 PR 代码审查截图已经归档。",
       "expected_intents": [
         "data_analysis"
       ],
@@ -646,7 +646,7 @@
     {
       "id": "ambiguous-041",
       "category": "ambiguous",
-      "task": "Current explicit request: prepare license, supply-chain, and publication checks for an open-source repository.\nNo authority for this request comes from the stale repository debugging lifecycle topic.",
+      "task": "Prepare license, provenance, and sensitive-history evidence for the approved open-source repository. A closed bug-fix ticket does not reopen codebase debugging work.",
       "expected_intents": [
         "open_source_release"
       ],
@@ -663,7 +663,7 @@
     {
       "id": "ambiguous-042",
       "category": "ambiguous",
-      "task": "当前明确请求：撰写、核查并优化 SEO 公开文章。\nNo authority for this request comes from the stale call graph impact analysis topic.",
+      "task": "撰写带来源的家庭储能 SEO 文章。编辑备注中的 call graph impact analysis 来自已停止的架构审查。",
       "expected_intents": [
         "content_seo"
       ],
@@ -680,7 +680,7 @@
     {
       "id": "ambiguous-043",
       "category": "ambiguous",
-      "task": "Current explicit request: design a RAG agent with vector retrieval, citations, and structured output.\nNo authority for this request comes from the stale prompt injection and sandbox audit topic.",
+      "task": "Build a permission-aware retrieval assistant over the runbooks with citations and abstention. The prompt-injection exercise in last quarter's security drill is not being rerun.",
       "expected_intents": [
         "rag_agent"
       ],
@@ -697,7 +697,7 @@
     {
       "id": "ambiguous-044",
       "category": "ambiguous",
-      "task": "当前明确请求：定义 Agent 长期记忆的租户隔离、更正与忘却路径。\nNo authority for this request comes from the stale multi-agent team planning topic.",
+      "task": "定义销售助手记忆的租户隔离、更正与忘却路径。工作区中的 multi-agent team planning 便签没有经过审批。",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -714,7 +714,7 @@
     {
       "id": "ambiguous-045",
       "category": "ambiguous",
-      "task": "Current explicit request: inventory and cluster the remaining Claude Skills candidate and reference-only backlog.\nNo authority for this request comes from the stale Reddit and YouTube public-source research topic.",
+      "task": "Classify the remaining reference-only and candidate Skill backlog with owners and evidence gaps. A Reddit and YouTube public-source research brief belongs to a cancelled discovery sprint.",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -731,7 +731,7 @@
     {
       "id": "ambiguous-046",
       "category": "ambiguous",
-      "task": "当前明确请求：评审 Skill Router 的自动选择、Bundle 组合与回归证据。\nNo authority for this request comes from the stale investment valuation memo topic.",
+      "task": "用人工标签集复核 Skill Router 选择、Bundle 组合与依赖边。投委会历史文件中的 valuation memo 不是本次投研指令。",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -748,7 +748,7 @@
     {
       "id": "ambiguous-047",
       "category": "ambiguous",
-      "task": "Current explicit request: design an industry AI solution with compliance boundaries and data-quality controls.\nNo authority for this request comes from the stale expert-agent role library topic.",
+      "task": "Design the manufacturing AI intake with data-quality controls, human escalation, and sector compliance. The expert-agent role library shown in the vendor demo is not part of this engagement.",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -765,7 +765,7 @@
     {
       "id": "ambiguous-048",
       "category": "ambiguous",
-      "task": "当前明确请求：优化市场平台 Listing、关键词和买家询盘回复。\nNo authority for this request comes from the stale DESIGN.md component-state audit topic.",
+      "task": "优化工业泵的 marketplace listing、keyword 和买家 inquiry 回复。设计组过期的 DESIGN.md component-state audit 不应被同步执行。",
       "expected_intents": [
         "commerce_growth"
       ],
