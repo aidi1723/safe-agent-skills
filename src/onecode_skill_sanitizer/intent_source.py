@@ -22,9 +22,10 @@ _RELEASE_ACTION_PHRASE = (
 )
 _RELEASE_ACTION_RE = re.compile(_RELEASE_ACTION_PHRASE, re.IGNORECASE)
 _RELEASE_ACTION_CLAUSE_BOUNDARY_RE = re.compile(
-    r"[.;；\n。！？!?]|(?<=[,.，])\s*(?:and\s+)?(?:then|but|so|therefore)\b",
+    r"[;；\n。！？!?]|(?<=[,.，])\s*(?:and\s+)?(?:then|but|so|therefore)\b",
     re.IGNORECASE,
 )
+_RELEASE_ACTION_DOT_ABBREVIATIONS = ("e.g.", "i.e.")
 _RELEASE_ACTION_NEGATED_PREFIX_RE = re.compile(
     r"(?:\b(?:do|must|should|will|can)\s+not|"
     r"\b(?:do|ca|wo|must|should)n['’]t|\bnever|"
@@ -91,12 +92,12 @@ def is_release_action_text(text: str, *, allow_bare: bool = False) -> bool:
 def source_contains_release_action(text: str) -> bool:
     """Find a positive host release action inside a bounded task source."""
     text = bound_task_text(text)
-    boundaries = iter(_RELEASE_ACTION_CLAUSE_BOUNDARY_RE.finditer(text))
+    boundaries = iter(_release_action_clause_boundary_ends(text))
     boundary = next(boundaries, None)
     clause_start = 0
     for action in _RELEASE_ACTION_RE.finditer(text):
-        while boundary is not None and boundary.end() <= action.start():
-            clause_start = boundary.end()
+        while boundary is not None and boundary <= action.start():
+            clause_start = boundary
             boundary = next(boundaries, None)
         prefix = text[clause_start : action.start()]
         if (
@@ -105,6 +106,37 @@ def source_contains_release_action(text: str) -> bool:
         ):
             return True
     return False
+
+
+def _release_action_clause_boundary_ends(text: str) -> tuple[int, ...]:
+    boundaries = [
+        match.end() for match in _RELEASE_ACTION_CLAUSE_BOUNDARY_RE.finditer(text)
+    ]
+    boundaries.extend(
+        index + 1
+        for index, character in enumerate(text)
+        if character == "." and _is_release_sentence_dot(text, index)
+    )
+    return tuple(sorted(boundaries))
+
+
+def _is_release_sentence_dot(text: str, index: int) -> bool:
+    if (
+        index > 0
+        and index + 1 < len(text)
+        and text[index - 1].isdigit()
+        and text[index + 1].isdigit()
+    ):
+        return False
+    for abbreviation in _RELEASE_ACTION_DOT_ABBREVIATIONS:
+        first_start = max(0, index - len(abbreviation) + 1)
+        last_start = min(index, len(text) - len(abbreviation))
+        if any(
+            text[start : start + len(abbreviation)].casefold() == abbreviation
+            for start in range(first_start, last_start + 1)
+        ):
+            return False
+    return True
 
 
 def parse_approval_release(text: str) -> tuple[str, str] | None:

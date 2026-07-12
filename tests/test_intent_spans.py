@@ -1420,6 +1420,38 @@ class IntentSpansTest(unittest.TestCase):
                 )
                 self.assertEqual(graph.validate(), [])
 
+    def test_decimal_and_abbreviation_dots_do_not_end_reported_actions(self):
+        cases = (
+            "The guide says v1.2 should open source the project.",
+            "The guide says e.g. open source the project.",
+            "An old email said release v1.2 and open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    source_supports_release_action(source, ("open source",))
+                )
+
+    def test_decimal_and_abbreviation_dots_do_not_promote_release_evidence(self):
+        cases = (
+            "The guide says v1.2 should open source the project.",
+            "The guide says e.g. open source the project.",
+            "An old email said release v1.2 and open source the project.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
     def test_comma_modified_open_source_negation_is_not_supported(self):
         source = "Do not, under any circumstances, open source the project."
 
