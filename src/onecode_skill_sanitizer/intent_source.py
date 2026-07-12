@@ -71,6 +71,19 @@ _RELEASE_ACTION_HOST_PREFIX_RE = re.compile(
     r")?",
     re.IGNORECASE,
 )
+_RELEASE_ACTION_REFERENCE_PREFIX_RE = re.compile(
+    r"^\s*(?:"
+    r"(?:quoted\s+)?example|for\s+example|reference|quoted|label|terms?|"
+    r"navigation|headings?|menu|title|readme|description"
+    r")\s*[:：]",
+    re.IGNORECASE,
+)
+_RELEASE_ACTION_QUOTE_PAIRS = (
+    ('"', '"'),
+    ("“", "”"),
+    ("‘", "’"),
+    ("'", "'"),
+)
 _BARE_RELEASE_ACTION_RE = re.compile(
     r"(?:publish|release|push)(?:\s+now)?|"
     r"(?:发布|上线|推送)(?:现在|立即)?",
@@ -123,6 +136,8 @@ def is_release_action_text(text: str, *, allow_bare: bool = False) -> bool:
 def source_contains_release_action(text: str) -> bool:
     """Find a positive host release action inside a bounded task source."""
     text = bound_task_text(text)
+    if _is_release_action_reference_source(text):
+        return False
     boundaries = iter(_release_action_clause_boundary_ends(text))
     boundary = next(boundaries, None)
     clause_start = 0
@@ -138,6 +153,18 @@ def source_contains_release_action(text: str) -> bool:
         if _RELEASE_ACTION_HOST_PREFIX_RE.fullmatch(prefix) is not None:
             return True
     return False
+
+
+def _is_release_action_reference_source(text: str) -> bool:
+    if _RELEASE_ACTION_REFERENCE_PREFIX_RE.match(text) is not None:
+        return True
+    stripped = text.strip()
+    return any(
+        len(stripped) >= 2
+        and stripped.startswith(opening)
+        and stripped.endswith(closing)
+        for opening, closing in _RELEASE_ACTION_QUOTE_PAIRS
+    )
 
 
 def _release_action_clause_boundary_ends(text: str) -> tuple[int, ...]:

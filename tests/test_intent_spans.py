@@ -1506,6 +1506,54 @@ class IntentSpansTest(unittest.TestCase):
                 )
                 self.assertEqual(graph.validate(), [])
 
+    def test_structural_release_action_references_remain_non_actionable(self):
+        cases = (
+            "Example: Review code. Publish update.",
+            "Example:\nPublish update.",
+            "Label:\nOpen source the project.",
+            "Quoted example:\nReview code; publish update.",
+            "For example:\nPublish update.",
+            "Reference:\nPublish update.",
+            "Quoted:\nPublish update.",
+            "Title:\nPublish update.",
+            "Description: Review code. Publish update.",
+            "Terms:\nPublish update.",
+            "Navigation:\nPublish update.",
+            "Heading:\nPublish update.",
+            "Headings:\nPublish update.",
+            "Menu:\nPublish update.",
+            "README:\nPublish update.",
+            '"Review code. Publish update."',
+            "“Review code. Publish update.”",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertFalse(source_supports_release_action(source))
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertFalse(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_unwrapped_sentence_boundary_still_starts_host_release_action(self):
+        source = "Review code. Publish update."
+
+        self.assertTrue(source_supports_release_action(source))
+        graph = decompose_task_detailed(source).intent_graph
+        self.assertTrue(
+            any(
+                evidence.task_type == "open_source_release"
+                and evidence.release_mode == "action"
+                for evidence in graph.intent_evidence
+            )
+        )
+        self.assertEqual(graph.validate(), [])
+
     def test_unbounded_negation_rejects_forged_release_evidence(self):
         source = (
             "Do not under any circumstances whatsoever even consider to open "
