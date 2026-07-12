@@ -99,6 +99,7 @@ _ENGLISH_REQUEST_PREFIX_RE = re.compile(
     r")$",
     re.IGNORECASE,
 )
+_CAUSAL_REQUEST_TRANSITION_RE = re.compile(r",\s*so\s*$", re.IGNORECASE)
 _NARRATIVE_REFERENCE_PREFIX_RE = re.compile(
     r"^\s*(?:"
     r"according\s+to\s+(?:the\s+)?"
@@ -186,7 +187,7 @@ _NARRATIVE_GOVERNOR_START_RE = re.compile(
     re.IGNORECASE,
 )
 _NARRATIVE_INSTRUCTION_STOP_RE = re.compile(
-    r"\s*(?:,\s*)?(?:\bbut\b|\bhowever\b|但是|但)",
+    r"\s*(?:,\s*)?(?:\bbut\b|\bhowever\b|\bso\b|\band\s+now\b|但是|但)",
     re.IGNORECASE,
 )
 _SENTENCE_REFERENCE_RE = re.compile(
@@ -523,6 +524,8 @@ def _action_has_request_prefix(
     if _is_chinese_action(action.group()):
         return _CHINESE_REQUEST_PREFIX_RE.fullmatch(prefix) is not None
     if _POSITIVE_OBLIGATION_RE.search(prefix) or _NOT_ONLY_RE.search(prefix):
+        return True
+    if _CAUSAL_REQUEST_TRANSITION_RE.search(prefix):
         return True
     if _NARRATIVE_REFERENCE_PREFIX_RE.fullmatch(prefix):
         return False

@@ -707,6 +707,12 @@ class IntentTest(unittest.TestCase):
             "checklist.",
             "Prepare a repository release checklist, and the report says tests "
             "passed.",
+            "The report says tests passed, so prepare a repository release "
+            "checklist.",
+            "The report says tests passed and now prepare a repository release "
+            "checklist.",
+            "According to the report, tests passed, so prepare a repository release "
+            "checklist.",
         )
         for source in independent:
             with self.subTest(source=source):

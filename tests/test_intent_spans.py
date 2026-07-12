@@ -555,6 +555,12 @@ class IntentSpansTest(unittest.TestCase):
             "but review the actual maintainer release checklist.",
             "The report states that the team should prepare a repository release "
             "packet; prepare a maintainer release checklist.",
+            "The report says tests passed, so prepare a repository release "
+            "checklist.",
+            "The report says tests passed and now prepare a repository release "
+            "checklist.",
+            "According to the report, tests passed, so prepare a repository release "
+            "checklist.",
         )
         for task in requests:
             with self.subTest(task=task):
