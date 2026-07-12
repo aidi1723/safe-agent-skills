@@ -16,6 +16,7 @@ from onecode_skill_sanitizer.intent_evidence import (
     IntentEvidence,
     bind_intent_evidence,
     source_supports_release_action,
+    validate_intent_evidence,
 )
 from onecode_skill_sanitizer.intent_spans import (
     ProfileSignalSpan,
@@ -1388,6 +1389,80 @@ class IntentSpansTest(unittest.TestCase):
                     )
                 )
                 self.assertEqual(graph.validate(), [])
+
+    def test_independent_sentence_release_actions_remain_supported(self):
+        cases = (
+            "The guide says tests passed. Open source the project.",
+            "An old email said open source the project. Publish update.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                self.assertTrue(
+                    source_supports_release_action(source, ("open source",))
+                )
+
+    def test_independent_sentence_release_actions_promote_release_evidence(self):
+        cases = (
+            "The guide says tests passed. Open source the project.",
+            "An old email said open source the project. Publish update.",
+        )
+
+        for source in cases:
+            with self.subTest(source=source):
+                graph = decompose_task_detailed(source).intent_graph
+                self.assertTrue(
+                    any(
+                        evidence.task_type == "open_source_release"
+                        and evidence.release_mode == "action"
+                        for evidence in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+    def test_comma_modified_open_source_negation_is_not_supported(self):
+        source = "Do not, under any circumstances, open source the project."
+
+        self.assertFalse(
+            source_supports_release_action(source, ("open source",))
+        )
+
+    def test_comma_modified_open_source_negation_does_not_promote_evidence(self):
+        source = "Do not, under any circumstances, open source the project."
+
+        graph = decompose_task_detailed(source).intent_graph
+        self.assertFalse(
+            any(
+                evidence.task_type == "open_source_release"
+                and evidence.release_mode == "action"
+                for evidence in graph.intent_evidence
+            )
+        )
+        self.assertEqual(graph.validate(), [])
+
+    def test_comma_modified_negation_rejects_forged_release_evidence(self):
+        source = "Do not, under any circumstances, open source the project."
+        evidence = bind_intent_evidence(
+            (
+                IntentEvidence(
+                    "open_source_release",
+                    "action",
+                    "positive",
+                    "action",
+                    "single",
+                    ("open source",),
+                    4,
+                ),
+            ),
+            source,
+        )
+
+        self.assertIn(
+            "intent evidence 1 release action evidence requires action context",
+            validate_intent_evidence(
+                evidence, ("open_source_release",), source
+            ),
+        )
 
     def test_github_research_context_remains_research_evidence(self):
         result = decompose_task_detailed(

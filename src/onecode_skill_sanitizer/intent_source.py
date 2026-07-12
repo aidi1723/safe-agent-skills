@@ -22,14 +22,15 @@ _RELEASE_ACTION_PHRASE = (
 )
 _RELEASE_ACTION_RE = re.compile(_RELEASE_ACTION_PHRASE, re.IGNORECASE)
 _RELEASE_ACTION_CLAUSE_BOUNDARY_RE = re.compile(
-    r"[;；\n。！？!?]|(?<=[,.，])\s*(?:and\s+)?(?:then|but|so|therefore)\b",
+    r"[.;；\n。！？!?]|(?<=[,.，])\s*(?:and\s+)?(?:then|but|so|therefore)\b",
     re.IGNORECASE,
 )
 _RELEASE_ACTION_NEGATED_PREFIX_RE = re.compile(
     r"(?:\b(?:do|must|should|will|can)\s+not|"
     r"\b(?:do|ca|wo|must|should)n['’]t|\bnever|"
-    r"\bno\s+need\s+to|\bnot\s+authorized\s+to)"
-    r"(?:\s+[^\s,;.!?。！？；，]+){0,4}\s*$",
+    r"\bno\s+need\s+to|\bnot\s+authorized\s+to)\b"
+    r"(?:(?:\s*,\s*|\s+)[^\s,;.!?。！？；，]+){0,4}"
+    r"\s*,?\s*$",
     re.IGNORECASE,
 )
 _RELEASE_ACTION_REPORTED_PREFIX_RE = re.compile(
