@@ -14,6 +14,7 @@ from .intent_source import (
     parse_approval_release,
     source_contains_release_action,
 )
+from .release_propositions import parse_release_readiness_propositions
 
 
 EVIDENCE_CONTEXTS = frozenset({"action", "descriptive", "how_to", "ambiguous"})
@@ -24,23 +25,8 @@ RELATION_MODES = frozenset(
 )
 GATE_MODES = frozenset({"none", "completion", "verification"})
 MAX_MATCHED_SCORE = 512
-RELEASE_READINESS_PATTERNS = (
-    ("发布清单", re.compile(r"发布清单")),
-    (
-        "release checklist",
-        re.compile(r"(?<![a-z0-9])release[\s-]+checklist(?![a-z0-9])", re.I),
-    ),
-    (
-        "release packet",
-        re.compile(r"(?<![a-z0-9])release[\s-]+packet(?![a-z0-9])", re.I),
-    ),
-    (
-        "release readiness",
-        re.compile(r"(?<![a-z0-9])release[\s-]+readiness(?![a-z0-9])", re.I),
-    ),
-)
 RELEASE_READINESS_SIGNALS = frozenset(
-    signal for signal, _ in RELEASE_READINESS_PATTERNS
+    {"发布清单", "release checklist", "release packet", "release readiness"}
 )
 RELEASE_READINESS_EVIDENCE_SIGNALS = RELEASE_READINESS_SIGNALS | {"release"}
 RELEASE_ACTION_SIGNALS = frozenset(
@@ -61,55 +47,6 @@ RELEASE_ACTION_SIGNALS = frozenset(
         "publish update",
     }
 )
-_READINESS_SEGMENT_BOUNDARY_RE = re.compile(
-    r"[;；\n。]|\s*[+＋]\s*|(?<=[.!?])\s+|"
-    r",\s*(?:(?:and\s+)?then|but)\s+|"
-    r"，\s*(?:然后|再|但(?:是|要)?|不过)\s*",
-    re.IGNORECASE,
-)
-_NON_ACTION_MODALITY_RE = re.compile(
-    r"^\s*(?:hypothetical(?:ly)?|suppose\b|if\b)", re.IGNORECASE
-)
-_DESCRIPTIVE_REFERENCE_RE = re.compile(
-    r"\b(?:text|description|document)\s+(?:mentions|contains|lists)\b",
-    re.IGNORECASE,
-)
-_READINESS_ACTION_RE = re.compile(
-    r"\b(?:prepare|review|check|verify|audit|assess|assemble|create|build|"
-    r"draft|produce|document)\b|(?:准备|审查|检查|验证|审计|评估|生成|创建)",
-    re.IGNORECASE,
-)
-_READINESS_LABEL_RE = re.compile(
-    r"^\s*(?:(?:example|label|terms?|navigation|headings?|menu|title)\s*[:：]|"
-    r"(?:[-*+]|\d+[.)、])\s+(?:\[[ xX]\]\s*)?)",
-    re.IGNORECASE,
-)
-_MARKUP_HEADING_RE = re.compile(
-    r"^\s*(?:#{1,6}\s+|>\s+|<h[1-6]\b[^>]*>)", re.IGNORECASE
-)
-_READINESS_FILENAME_SUFFIX_RE = re.compile(
-    r"\.(?:md|markdown|json|ya?ml|toml|txt|html?|xml|csv)\b", re.IGNORECASE
-)
-_QUOTED_TEXT_PATTERNS = (
-    re.compile(r'"[^"\n]*"'),
-    re.compile(r"(?<![a-z0-9])'[^'\n]+'(?![a-z0-9])", re.I),
-    re.compile(r"“[^”\n]*”"),
-    re.compile(r"‘[^’\n]*’"),
-    re.compile(r"`[^`\n]*`"),
-)
-_SOFTWARE_RELEASE_ANCHOR_RE = re.compile(
-    r"\b(?:repository|repo|package|cli(?:\s+project)?|codebase|software|"
-    r"open[ -]source|code\s+artifact|maintainer)\b|"
-    r"(?:代码库|仓库|软件包|维护者|开源|软件)",
-    re.IGNORECASE,
-)
-_LEGACY_CHECKLIST_COMMAND_RE = re.compile(
-    r"^\s*(?:(?:a|the)\s+)?(?:draft\s+)?release\s+checklist"
-    r"(?:\s+draft)?[.!]?\s*$|^\s*(?:一份)?发布清单(?:\s*草案)?[。！]?$",
-    re.IGNORECASE,
-)
-
-
 @dataclass(frozen=True)
 class IntentEvidence:
     """Profile and relation evidence aligned by index with an internal intent."""
@@ -259,78 +196,9 @@ def source_supports_release_readiness(
     ):
         return False
     return any(
-        _readiness_occurrence_is_request(
-            source, signal, match.start(), match.end()
-        )
-        for signal, pattern in RELEASE_READINESS_PATTERNS
-        for match in pattern.finditer(source)
-    )
-
-
-def _readiness_occurrence_is_request(
-    source: str, signal: str, start: int, end: int
-) -> bool:
-    segment, local_start, local_end = _local_readiness_segment(
-        source, start, end
-    )
-    if (
-        _occurrence_is_quoted(segment, local_start, local_end)
-        or _MARKUP_HEADING_RE.search(segment)
-        or _READINESS_LABEL_RE.search(segment)
-        or _READINESS_FILENAME_SUFFIX_RE.match(segment[local_end:])
-        or _NON_ACTION_MODALITY_RE.search(segment)
-        or _DESCRIPTIVE_REFERENCE_RE.search(segment)
-    ):
-        return False
-    if signal in {"release checklist", "发布清单"} and (
-        _LEGACY_CHECKLIST_COMMAND_RE.fullmatch(segment)
-    ):
-        return True
-    return bool(
-        _pattern_matches_near(
-            _READINESS_ACTION_RE, segment, local_start, local_end
-        )
-        and _pattern_matches_near(
-            _SOFTWARE_RELEASE_ANCHOR_RE,
-            segment,
-            local_start,
-            local_end,
-        )
-    )
-
-
-def _local_readiness_segment(
-    source: str, start: int, end: int
-) -> tuple[str, int, int]:
-    segment_start = 0
-    segment_end = len(source)
-    for boundary in _READINESS_SEGMENT_BOUNDARY_RE.finditer(source):
-        if boundary.end() <= start:
-            segment_start = boundary.end()
-        elif boundary.start() >= end:
-            segment_end = boundary.start()
-            break
-    return (
-        source[segment_start:segment_end],
-        start - segment_start,
-        end - segment_start,
-    )
-
-
-def _occurrence_is_quoted(segment: str, start: int, end: int) -> bool:
-    return any(
-        match.start() <= start and end <= match.end()
-        for pattern in _QUOTED_TEXT_PATTERNS
-        for match in pattern.finditer(segment)
-    )
-
-
-def _pattern_matches_near(
-    pattern: re.Pattern[str], segment: str, start: int, end: int
-) -> bool:
-    return any(
-        max(start - match.end(), match.start() - end, 0) <= 192
-        for match in pattern.finditer(segment)
+        proposition.polarity == "positive"
+        and proposition.discourse_role == "request"
+        for proposition in parse_release_readiness_propositions(source)
     )
 
 

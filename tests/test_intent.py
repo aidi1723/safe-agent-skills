@@ -1,4 +1,5 @@
 import dataclasses
+import importlib
 import json
 from pathlib import Path
 import unittest
@@ -22,6 +23,123 @@ from onecode_skill_sanitizer.intent_dependencies import infer_intent_relations
 
 
 class IntentTest(unittest.TestCase):
+    def test_release_readiness_proposition_parser_contract(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+
+        positive_cases = (
+            "Prepare a repository release packet for review, but do not publish it.",
+            "Do not publish it yet, but prepare a repository release checklist.",
+            "Audit unauthorized access and prepare a repository release packet.",
+            "Prepare an npm release packet.",
+            "Draft a Docker image release checklist.",
+            "Review the release checklist for v1.0.",
+            "Prepare a maintainer-ready release packet for a CLI project.",
+            "Prepare package release readiness checks.",
+            "release checklist",
+            "发布清单",
+        )
+        for source in positive_cases:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                positive = [
+                    item
+                    for item in propositions
+                    if item.polarity == "positive"
+                    and item.discourse_role == "request"
+                ]
+                self.assertEqual(len(positive), 1)
+                item = positive[0]
+                self.assertGreaterEqual(item.start, 0)
+                self.assertGreater(item.end, item.start)
+                self.assertLessEqual(item.end, len(source))
+                self.assertTrue(item.action)
+                self.assertTrue(item.object_text)
+                self.assertIn(item.object_text, source[item.start : item.end])
+
+    def test_release_readiness_proposition_parser_rejects_references_and_negation(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        rejected_cases = (
+            "Can't prepare a repository release packet.",
+            "Cannot prepare a repository release packet.",
+            "No need to prepare a repository release packet.",
+            "Not authorized to prepare a repository release packet.",
+            "Mustn't prepare a repository release packet.",
+            "Should not prepare a repository release checklist.",
+            '"Prepare a repository release packet"',
+            "# Prepare a repository release checklist",
+            "> Prepare a repository release checklist",
+            "- [ ] Prepare a repository release checklist",
+            "<h2>Prepare a repository release checklist</h2>",
+            "Label: Prepare a repository release checklist",
+            "Title: Prepare a repository release checklist",
+            "Navigation: Prepare a repository release checklist",
+            "release-checklist.json",
+            "README: prepare a repository release checklist",
+            "Prepare a talent release packet for a photo shoot",
+            "Prepare a model release packet for the photographer",
+            "Prepare a content release packet for the campaign",
+        )
+        for source in rejected_cases:
+            with self.subTest(source=source):
+                self.assertFalse(
+                    any(
+                        item.polarity == "positive"
+                        and item.discourse_role == "request"
+                        for item in parse(source)
+                    )
+                )
+
+    def test_release_readiness_proposition_parser_binds_local_action_and_object(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        variants = (
+            "Prepare a repository release packet, but do not publish it.",
+            "Do not publish it, but prepare a repository release packet.",
+            "Do not publish it; prepare a repository release packet.",
+            "Prepare a repository release packet; do not publish it.",
+        )
+        for source in variants:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                readiness = [
+                    item
+                    for item in propositions
+                    if item.object_text.casefold().endswith("release packet")
+                ]
+                self.assertEqual(len(readiness), 1)
+                self.assertEqual(readiness[0].action, "prepare")
+                self.assertEqual(readiness[0].polarity, "positive")
+                self.assertEqual(readiness[0].discourse_role, "request")
+
+    def test_release_readiness_proposition_parser_is_bounded_and_total(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        proposition_type = module.ReleaseReadinessProposition
+        command = "Prepare a repository release packet."
+
+        self.assertEqual(parse("x" * 20_000 + command), ())
+        exact = "x" * (20_000 - len(command)) + command
+        self.assertEqual(len(parse(exact)), 1)
+        repeated = " ".join([command] * 256)
+        self.assertEqual(len(parse(repeated)), 128)
+        for source in ("", "\u0000", "“", "'", "release", "发布"):
+            with self.subTest(source=source):
+                self.assertIsInstance(parse(source), tuple)
+
+        proposition = proposition_type(0, 1, "prepare", "x", "positive", "request")
+        with self.assertRaises(dataclasses.FrozenInstanceError):
+            proposition.action = "review"
+
     def test_release_readiness_evidence_accepts_explicit_packet_requests(self):
         cases = (
             (

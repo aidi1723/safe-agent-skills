@@ -6,9 +6,9 @@ import re
 from .intent_evidence import (
     IntentEvidence,
     source_supports_release_action,
-    source_supports_release_readiness,
 )
 from .intent_source import bound_task_text
+from .release_propositions import parse_release_readiness_propositions
 from .routing_profiles import (
     SCENARIO_PROFILES,
     is_design_governance_composite,
@@ -436,9 +436,9 @@ def _single_clause_evidence(
     release_spans = [
         span for span in spans if span.task_type == "open_source_release"
     ]
-    release_signals = tuple(span.signal.casefold() for span in release_spans)
-    if release_spans and source_supports_release_readiness(
-        clause, release_signals, polarity=polarity
+    if release_spans and any(
+        item.polarity == "positive" and item.discourse_role == "request"
+        for item in parse_release_readiness_propositions(clause)
     ):
         return _profile_evidence(
             "open_source_release",
@@ -487,10 +487,24 @@ def _profile_evidence(
             for combined in signals
             for signal in combined.split(" / ")
         }
-        if source_supports_release_readiness(
-            clause, tuple(normalized_signals), polarity=polarity
-        ):
+        readiness_proposition = next(
+            (
+                item
+                for item in parse_release_readiness_propositions(clause)
+                if item.polarity == "positive"
+                and item.discourse_role == "request"
+            ),
+            None,
+        )
+        if readiness_proposition and normalized_signals & {
+            "release",
+            "release checklist",
+            "release packet",
+            "release readiness",
+            "发布清单",
+        }:
             release_mode = "readiness"
+            polarity = readiness_proposition.polarity
         elif source_supports_release_action(
             clause, tuple(normalized_signals)
         ):

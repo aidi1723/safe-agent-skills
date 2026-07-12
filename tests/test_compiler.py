@@ -75,6 +75,10 @@ class CompilerTest(unittest.TestCase):
 
     def test_release_readiness_controls_never_compile_as_invalid_intent_graph(self):
         tasks = (
+            "Can't prepare a repository release packet.",
+            "Cannot prepare a repository release packet.",
+            "No need to prepare a repository release packet.",
+            "Not authorized to prepare a repository release packet.",
             "Must not prepare a repository release packet.",
             "Mustn't approve a repository release packet.",
             "Should not prepare a repository release checklist.",
@@ -82,9 +86,17 @@ class CompilerTest(unittest.TestCase):
             '"Prepare a repository release packet"',
             "# Release readiness",
             "> Release readiness",
+            "- [ ] Prepare a repository release checklist",
+            "<h2>Release checklist</h2>",
+            "Label: Prepare a repository release checklist",
+            "Title: Release readiness",
+            "Navigation: Release readiness",
             "Release readiness.md",
             "release-checklist.json",
+            "README: prepare a repository release checklist",
+            "Prepare a talent release packet for a photo shoot",
             "Prepare a model release packet for the photographer",
+            "Prepare a content release packet for the campaign",
         )
 
         for task in tasks:
@@ -99,6 +111,12 @@ class CompilerTest(unittest.TestCase):
                 )
 
                 self.assertEqual(graph.validate(), [])
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        for item in graph.intent_evidence
+                    )
+                )
                 self.assertNotIn(
                     "invalid_intent_graph", compiled["reason_codes"]
                 )

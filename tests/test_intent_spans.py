@@ -131,6 +131,11 @@ class IntentSpansTest(unittest.TestCase):
             "清理过期缓存；然后 prepare a repository release packet.",
             "Prepare a repository release packet documenting stale artifacts.",
             "Prepare a repository release packet without publishing it.",
+            "Prepare a repository release packet for review, but do not publish it.",
+            "Do not publish it yet, but prepare a repository release checklist.",
+            "Prepare an npm release packet.",
+            "Draft a Docker image release checklist.",
+            "Review the release checklist for v1.0.",
         )
 
         for task in tasks:
@@ -149,6 +154,10 @@ class IntentSpansTest(unittest.TestCase):
 
     def test_release_readiness_decomposition_rejects_negated_and_syntax_controls(self):
         tasks = (
+            "Can't prepare a repository release packet.",
+            "Cannot prepare a repository release packet.",
+            "No need to prepare a repository release packet.",
+            "Not authorized to prepare a repository release packet.",
             "Must not prepare a repository release packet.",
             "Mustn't approve a repository release packet.",
             "Should not prepare a repository release checklist.",
@@ -164,11 +173,13 @@ class IntentSpansTest(unittest.TestCase):
             "- [ ] Prepare a repository release checklist",
             "<h2>Release checklist</h2>",
             "Navigation: Release readiness",
+            "Label: Prepare a repository release checklist",
             "Title: Release readiness",
             "Release readiness.md",
             "release_packet.yaml",
             "release-checklist.json",
             "Example: prepare a repository release checklist",
+            "README: prepare a repository release checklist",
             "- Release checklist",
             "Prepare a talent release packet for a photo shoot",
             "Prepare a model release packet for the photographer",
