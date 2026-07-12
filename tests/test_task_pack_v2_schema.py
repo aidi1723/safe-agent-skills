@@ -787,6 +787,140 @@ class TaskPackV2SchemaTest(unittest.TestCase):
                     with self.assertRaises(ValueError):
                         validator(payload)
 
+    def test_semantic_validator_binds_node_host_actions_to_selected_skill_contracts(self):
+        validator = task_packs.validate_task_pack_v2_semantics
+        ready_browser_invariant = _smart_payload(
+            "build a landing page", "--invariants", "必须使用浏览器自动化"
+        )
+        fallback_browser_invariant = _smart_payload(
+            "help me with this", "--invariants", "必须使用浏览器自动化"
+        )
+
+        def forge_host_action(baseline, *, approval_class, invariant, value):
+            payload = copy.deepcopy(baseline)
+            skills = {item["name"]: item for item in payload["selected_skills"]}
+            node = next(
+                item
+                for item in payload["execution_graph"]["nodes"]
+                if ("invariant_capability" in item) is invariant
+                and (
+                    approval_class is None
+                    and not item["host_action"]
+                    or approval_class
+                    in skills[item["skill"]].get("contract", {}).get("approval_classes", [])
+                )
+            )
+            node["host_action"] = value
+            return payload
+
+        mutations = {
+            "ordinary_shell_true_to_false": forge_host_action(
+                self.payloads["complete"],
+                approval_class="shell_execution",
+                invariant=False,
+                value=False,
+            ),
+            "ordinary_browser_true_to_false": forge_host_action(
+                self.payloads["complete"],
+                approval_class="browser_automation",
+                invariant=False,
+                value=False,
+            ),
+            "ordinary_no_approval_false_to_true": forge_host_action(
+                self.payloads["complete"],
+                approval_class=None,
+                invariant=False,
+                value=True,
+            ),
+            "ready_invariant_browser_true_to_false": forge_host_action(
+                ready_browser_invariant,
+                approval_class="browser_automation",
+                invariant=True,
+                value=False,
+            ),
+            "fallback_invariant_browser_true_to_false": forge_host_action(
+                fallback_browser_invariant,
+                approval_class="browser_automation",
+                invariant=True,
+                value=False,
+            ),
+            "ready_invariant_no_approval_false_to_true": forge_host_action(
+                self.invariant_ready_payload,
+                approval_class=None,
+                invariant=True,
+                value=True,
+            ),
+            "fallback_invariant_no_approval_false_to_true": forge_host_action(
+                self.invariant_incomplete_payload,
+                approval_class=None,
+                invariant=True,
+                value=True,
+            ),
+        }
+        for label, payload in mutations.items():
+            with self.subTest(label=label), self.assertRaises(ValueError):
+                validator(payload)
+
+    def test_semantic_validator_requires_each_graph_node_skill_to_be_selected(self):
+        payload = copy.deepcopy(self.payloads["complete"])
+        omitted_name = "execution-browser-use-web-task"
+        self.assertNotIn(
+            omitted_name,
+            {
+                skill_name
+                for capability in payload["capability_resolution"]["capabilities"]
+                for skill_name in capability["skills"]
+            },
+        )
+        payload["selected_skills"] = [
+            skill for skill in payload["selected_skills"] if skill["name"] != omitted_name
+        ]
+        payload["routing_metrics"]["selected_skill_count"] -= 1
+        payload["routing_metrics"]["required_skills_omitted"] = [omitted_name]
+
+        with self.assertRaises(ValueError):
+            task_packs.validate_task_pack_v2_semantics(payload)
+
+    def test_semantic_validator_bounds_malformed_host_action_contract_types(self):
+        validator = task_packs.validate_task_pack_v2_semantics
+
+        def malformed_contract(value):
+            payload = copy.deepcopy(self.payloads["complete"])
+            skill = next(item for item in payload["selected_skills"] if "contract" in item)
+            skill["contract"] = value
+            for node in payload["execution_graph"]["nodes"]:
+                if node["skill"] == skill["name"]:
+                    node["host_action"] = False
+            return payload
+
+        def malformed_approvals(value):
+            payload = copy.deepcopy(self.payloads["complete"])
+            skill = next(item for item in payload["selected_skills"] if "contract" in item)
+            skill["contract"]["approval_classes"] = value
+            for node in payload["execution_graph"]["nodes"]:
+                if node["skill"] == skill["name"]:
+                    node["host_action"] = bool(value)
+            return payload
+
+        def malformed_node_host_action(value):
+            payload = copy.deepcopy(self.payloads["complete"])
+            payload["execution_graph"]["nodes"][0]["host_action"] = value
+            return payload
+
+        mutations = {
+            "null_contract": malformed_contract(None),
+            "list_contract": malformed_contract([]),
+            "null_approval_classes": malformed_approvals(None),
+            "object_approval_classes": malformed_approvals({}),
+            "string_approval_classes": malformed_approvals("shell_execution"),
+            "boolean_approval_class": malformed_approvals([True]),
+            "null_host_action": malformed_node_host_action(None),
+            "string_host_action": malformed_node_host_action("false"),
+        }
+        for label, payload in mutations.items():
+            with self.subTest(label=label), self.assertRaises(ValueError):
+                validator(payload)
+
     def test_semantic_validator_rejects_every_derivable_count_mismatch(self):
         validator = getattr(task_packs, "validate_task_pack_v2_semantics", None)
         self.assertIsNotNone(validator)

@@ -852,14 +852,23 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         "selected skill names",
     )
     selected_skill_name_set = set(selected_skill_names)
+    selected_skill_host_actions = {}
+    for skill in selected_skills:
+        if "contract" in skill:
+            contract = _semantic_object(skill.get("contract"), "selected skill contract")
+            if "approval_classes" in contract:
+                approval_classes = _semantic_text_list(
+                    contract.get("approval_classes"), "selected skill approval classes"
+                )
+                if len(approval_classes) != len(set(approval_classes)):
+                    _semantic_error("selected skill approval classes")
+        selected_skill_host_actions[skill["name"]] = _v2_skill_host_action(skill)
     routing_metrics = _semantic_object(root.get("routing_metrics"), "routing_metrics")
     declared_omitted_skills = _semantic_text_list(
         routing_metrics.get("required_skills_omitted"), "required skills omitted"
     )
     if len(declared_omitted_skills) != len(set(declared_omitted_skills)):
         _semantic_error("required skills omitted")
-    allowed_graph_skill_names = selected_skill_name_set | set(declared_omitted_skills)
-
     capability_resolution = _semantic_object(
         root.get("capability_resolution"), "capability_resolution"
     )
@@ -922,7 +931,7 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
         and not selected_intent_ids
     )
     nodes = _semantic_object_list(execution_graph.get("nodes"), "execution_graph.nodes")
-    maximum_node_count = (len(intent_ids) + 1) * len(allowed_graph_skill_names)
+    maximum_node_count = (len(intent_ids) + 1) * len(selected_skill_name_set)
     if len(nodes) > maximum_node_count:
         _semantic_error("execution node count")
     node_ids = _unique_semantic_values(
@@ -940,6 +949,7 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
             node.get("scenario_ids"), "execution node scenario ids"
         )
         skill_name = _semantic_text(node.get("skill"), "execution node skill")
+        host_action = node.get("host_action")
         is_invariant_node = "invariant_capability" in node
         empty_invariant_fallback = (
             is_invariant_node and invariant_only_fallback and not node_intents
@@ -950,9 +960,14 @@ def validate_task_pack_v2_semantics(payload: object) -> None:
             or not set(node_intents) <= selected_intent_id_set
             or len(node_scenarios) != len(set(node_scenarios))
             or not set(node_scenarios) <= scenario_id_set
-            or skill_name not in allowed_graph_skill_names
+            or skill_name not in selected_skill_name_set
         ):
             _semantic_error("execution node references")
+        if (
+            type(host_action) is not bool
+            or host_action != selected_skill_host_actions[skill_name]
+        ):
+            _semantic_error("execution node host action")
         if is_invariant_node:
             invariant_capability = _semantic_text(
                 node.get("invariant_capability"), "invariant node capability"
