@@ -142,6 +142,27 @@ def lexical_similarity(left: str, right: str) -> float:
     return len(left_terms & right_terms) / len(left_terms | right_terms)
 
 
+def repeated_scaffold_ngrams(cases: list[dict]) -> dict[str, list[str]]:
+    occurrences: dict[str, set[str]] = {}
+    for case in cases:
+        task = re.sub(r"\s+", " ", case["task"].casefold()).strip()
+        if re.search(r"[\u3400-\u9fff]", task):
+            cjk_text = "".join(re.findall(r"[\u3400-\u9fff]", task))
+            for index in range(len(cjk_text) - 8):
+                ngram = cjk_text[index : index + 9]
+                occurrences.setdefault(f"cjk:{ngram}", set()).add(case["id"])
+        words = re.findall(r"[a-z0-9]+", task)
+        for size in (5, 6):
+            for index in range(len(words) - size + 1):
+                ngram = " ".join(words[index : index + size])
+                occurrences.setdefault(f"en:{ngram}", set()).add(case["id"])
+    return {
+        ngram: sorted(case_ids)
+        for ngram, case_ids in occurrences.items()
+        if len(case_ids) > 2
+    }
+
+
 def bundle_scenario_ids() -> set[str]:
     bundles = json.loads((ROOT / "bundles" / "index.json").read_text(encoding="utf-8"))["bundles"]
     return {bundle["id"] for bundle in bundles}
@@ -318,6 +339,11 @@ class RouterEvalV2Tests(unittest.TestCase):
                 near_duplicates.append((left["id"], right["id"], round(similarity, 3)))
         self.assertEqual(near_duplicates, [])
 
+    def test_multi_intent_tasks_have_no_cross_case_long_ngram_scaffolds(self):
+        cases = [case for case in production_cases() if case["category"] == "multi_intent"]
+
+        self.assertEqual(repeated_scaffold_ngrams(cases), {})
+
     def test_production_multi_intent_tasks_cover_realistic_forms_and_three_intent_work(self):
         cases = [case for case in production_cases() if case["category"] == "multi_intent"]
         forms = {
@@ -345,6 +371,19 @@ class RouterEvalV2Tests(unittest.TestCase):
         self.assertGreaterEqual(sum(len(case["expected_intents"]) >= 3 for case in cases), 8)
         self.assertGreaterEqual(sum(bool(case["required_dependency_edges"]) for case in cases), 24)
         self.assertGreaterEqual(sum(not case["required_dependency_edges"] for case in cases), 24)
+
+    def test_strong_release_language_requires_open_source_release_labels(self):
+        cases = [case for case in production_cases() if case["category"] == "multi_intent"]
+        strong_release = re.compile(
+            r"release readiness|public release|go[- ]live|\u53d1布就绪|\u516c开发布|\u4ed3库发布|\u63a8送发布|\u4e0a线门禁",
+            re.I,
+        )
+        release_cases = [case for case in cases if strong_release.search(case["task"])]
+
+        self.assertGreaterEqual(len(release_cases), 5)
+        for case in release_cases:
+            self.assertIn("open_source_release", case["expected_intents"], case["id"])
+            self.assertIn("open-source-release", case["expected_scenarios"], case["id"])
 
     def test_forbidden_labels_are_trusted_supported_and_semantically_tempting(self):
         self.maxDiff = None
