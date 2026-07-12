@@ -3,7 +3,7 @@
     {
       "id": "multi-intent-001",
       "category": "multi_intent",
-      "task": "并行处理两项交付：构建响应式产品官网；同时审查拉取请求与回归测试，分别给出证据。",
+      "task": "并行项分别是：重做客户端订阅页、inspect the parser patch and its boundary tests；各工作线不互相阻塞。",
       "expected_intents": [
         "website_build",
         "code_review"
@@ -20,7 +20,7 @@
     {
       "id": "multi-intent-002",
       "category": "multi_intent",
-      "task": "工作流顺序：先构建响应式产品官网；完成后再审查拉取请求与回归测试。",
+      "task": "交付顺序：先执行“重做客户端订阅页”；验收结束后再执行“inspect the parser patch and its boundary tests”。",
       "expected_intents": [
         "website_build",
         "code_review"
@@ -42,7 +42,7 @@
     {
       "id": "multi-intent-003",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: clarify fuzzy requirements and decompose a multi-agent plan; in parallel, build a responsive product website.",
+      "task": "turn the vague AI-team request into owned work packages / 补齐手机端结算流程；两项分别交付证据，不设虚假依赖。",
       "expected_intents": [
         "agent_planning_orchestration",
         "website_build"
@@ -59,7 +59,7 @@
     {
       "id": "multi-intent-004",
       "category": "multi_intent",
-      "task": "First clarify fuzzy requirements and decompose a multi-agent plan; after that result is complete, build a responsive product website.",
+      "task": "1. turn the vague AI-team request into owned work packages\n2. 待第 1 项证据通过后，补齐手机端结算流程",
       "expected_intents": [
         "agent_planning_orchestration",
         "website_build"
@@ -81,7 +81,7 @@
     {
       "id": "multi-intent-005",
       "category": "multi_intent",
-      "task": "并行处理两项交付：调研 Reddit、YouTube、GitHub 等公开平台并保留引用；同时编写含估值假设和反方观点的投资备忘录，分别给出证据。",
+      "task": "并行任务清单：\n- 追踪开源项目一年内的用户反馈\n- test the retailer margin-recovery thesis\n各项单独验收。",
       "expected_intents": [
         "multi_platform_research_discovery",
         "investment_research_diligence"
@@ -98,7 +98,7 @@
     {
       "id": "multi-intent-006",
       "category": "multi_intent",
-      "task": "工作流顺序：先调研 Reddit、YouTube、GitHub 等公开平台并保留引用；完成后再编写含估值假设和反方观点的投资备忘录。",
+      "task": "Stage 1: 追踪开源项目一年内的用户反馈. Only after it is complete, begin stage 2: test the retailer margin-recovery thesis. The handoff must cite stage 1.",
       "expected_intents": [
         "multi_platform_research_discovery",
         "investment_research_diligence"
@@ -120,7 +120,7 @@
     {
       "id": "multi-intent-007",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: turn PDF and office documents into a Markdown knowledge base; in parallel, design a RAG agent with vector retrieval, citations, and structured output.",
+      "task": "Readiness review workstreams: migrate the legacy wiki with cross-links intact; 设计能返回条款定位的制度问答助手. Independent evidence is required for 设计能返回条款定位的制度问答助手.",
       "expected_intents": [
         "document_knowledge_base",
         "rag_agent"
@@ -137,7 +137,7 @@
     {
       "id": "multi-intent-008",
       "category": "multi_intent",
-      "task": "First turn PDF and office documents into a Markdown knowledge base; after that result is complete, design a RAG agent with vector retrieval, citations, and structured output.",
+      "task": "发布就绪流程：先做“migrate the legacy wiki with cross-links intact”；通过检查后做“设计能返回条款定位的制度问答助手”。",
       "expected_intents": [
         "document_knowledge_base",
         "rag_agent"
@@ -159,7 +159,7 @@
     {
       "id": "multi-intent-009",
       "category": "multi_intent",
-      "task": "并行处理两项交付：清洗表格、分析数据并规划图表报告；同时撰写、核查并优化 SEO 公开文章，分别给出证据。",
+      "task": "本周同时推进：清理门店销售明细并可视化退货趋势；revise the migration guide around real search questions。各项结果不需串行等待。",
       "expected_intents": [
         "data_analysis",
         "content_seo"
@@ -176,7 +176,7 @@
     {
       "id": "multi-intent-010",
       "category": "multi_intent",
-      "task": "工作流顺序：先清洗表格、分析数据并规划图表报告；完成后再撰写、核查并优化 SEO 公开文章。",
+      "task": "Stage one: 清理门店销售明细并可视化退货趋势. Stage two begins only after completion: revise the migration guide around real search questions. Downstream evidence must name: 清理门店销售明细并可视化退货趋势.",
       "expected_intents": [
         "data_analysis",
         "content_seo"
@@ -198,7 +198,7 @@
     {
       "id": "multi-intent-011",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: plan a content matrix, short-video script, and media handoff; in parallel, design an agentic media pipeline from a reference video with cost and render QA.",
+      "task": "并行项分别是：adapt the interview into three evidence-checked clips、建立多比例成片的渲染验收；各工作线不互相阻塞。",
       "expected_intents": [
         "content_video_production",
         "agentic_media_production"
@@ -215,7 +215,7 @@
     {
       "id": "multi-intent-012",
       "category": "multi_intent",
-      "task": "First plan a content matrix, short-video script, and media handoff; after that result is complete, design an agentic media pipeline from a reference video with cost and render QA.",
+      "task": "交付顺序：先执行“adapt the interview into three evidence-checked clips”；验收结束后再执行“建立多比例成片的渲染验收”。",
       "expected_intents": [
         "content_video_production",
         "agentic_media_production"
@@ -254,7 +254,7 @@
     {
       "id": "multi-intent-014",
       "category": "multi_intent",
-      "task": "工作流顺序：先审计提示词注入、工具权限与输出护栏；完成后再准备开源仓库的许可证、供应链与发布清单。",
+      "task": "1. 验证宿主对越权删除的拦截\n2. 待第 1 项证据通过后，verify package artifacts before public transfer",
       "expected_intents": [
         "agent_security",
         "open_source_release"
@@ -276,7 +276,7 @@
     {
       "id": "multi-intent-015",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: establish a DESIGN.md contract for tokens, component states, and accessibility; in parallel, build a responsive product website.",
+      "task": "并行任务清单：\n- document responsive and accessibility rules\n- 重做客户端订阅页\n各项单独验收。",
       "expected_intents": [
         "design_md_system_governance",
         "website_build"
@@ -293,7 +293,7 @@
     {
       "id": "multi-intent-016",
       "category": "multi_intent",
-      "task": "First establish a DESIGN.md contract for tokens, component states, and accessibility; after that result is complete, build a responsive product website.",
+      "task": "Stage 1: document responsive and accessibility rules. Only after it is complete, begin stage 2: 重做客户端订阅页. The handoff must cite stage 1.",
       "expected_intents": [
         "design_md_system_governance",
         "website_build"
@@ -315,7 +315,7 @@
     {
       "id": "multi-intent-017",
       "category": "multi_intent",
-      "task": "并行处理两项交付：定义 Agent 长期记忆的租户隔离、更正与忘却路径；同时设计带向量检索、引用和结构化输出的 RAG Agent，分别给出证据。",
+      "task": "Readiness review workstreams: 定义销售助手记忆的更正与过期路径; build hybrid retrieval over engineering runbooks. Independent evidence is required for build hybrid retrieval over engineering runbooks.",
       "expected_intents": [
         "agent_long_term_memory_governance",
         "rag_agent"
@@ -332,7 +332,7 @@
     {
       "id": "multi-intent-018",
       "category": "multi_intent",
-      "task": "工作流顺序：先定义 Agent 长期记忆的租户隔离、更正与忘却路径；完成后再设计带向量检索、引用和结构化输出的 RAG Agent。",
+      "task": "发布就绪流程：先做“定义销售助手记忆的更正与过期路径”；通过检查后做“build hybrid retrieval over engineering runbooks”。",
       "expected_intents": [
         "agent_long_term_memory_governance",
         "rag_agent"
@@ -354,7 +354,7 @@
     {
       "id": "multi-intent-019",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: inventory and cluster the remaining Claude Skills candidate and reference-only backlog; in parallel, review Skill Router selection, bundle composition, and regression evidence.",
+      "task": "本周同时推进：assign owners and evidence to the reference-only backlog；审核 Bundle 重叠与能力覆盖。各项结果不需串行等待。",
       "expected_intents": [
         "claude_skills_backlog_coverage",
         "skill_router_review"
@@ -371,7 +371,7 @@
     {
       "id": "multi-intent-020",
       "category": "multi_intent",
-      "task": "First inventory and cluster the remaining Claude Skills candidate and reference-only backlog; after that result is complete, review Skill Router selection, bundle composition, and regression evidence.",
+      "task": "Stage one: assign owners and evidence to the reference-only backlog. Stage two begins only after completion: 审核 Bundle 重叠与能力覆盖. Downstream evidence must name: assign owners and evidence to the reference-only backlog.",
       "expected_intents": [
         "claude_skills_backlog_coverage",
         "skill_router_review"
@@ -393,14 +393,16 @@
     {
       "id": "multi-intent-021",
       "category": "multi_intent",
-      "task": "并行处理两项交付：设计含合规边界与数据质量的行业 AI 解决方案；同时清洗表格、分析数据并规划图表报告，分别给出证据。",
+      "task": "并行项分别是：为律所合同审阅组合不可自批的能力、build a reproducible subscription cohort analysis、审计外部邮件中的指令与凭证边界；各工作线不互相阻塞。",
       "expected_intents": [
         "industry_application_orchestration",
-        "data_analysis"
+        "data_analysis",
+        "agent_security"
       ],
       "expected_scenarios": [
         "industry-application-orchestration",
-        "data-analysis-report"
+        "data-analysis-report",
+        "security-agent-guardrails"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [],
@@ -410,19 +412,25 @@
     {
       "id": "multi-intent-022",
       "category": "multi_intent",
-      "task": "工作流顺序：先设计含合规边界与数据质量的行业 AI 解决方案；完成后再清洗表格、分析数据并规划图表报告。",
+      "task": "交付顺序：先执行“为律所合同审阅组合不可自批的能力”；验收结束后再执行“build a reproducible subscription cohort analysis”；最后执行“审计外部邮件中的指令与凭证边界”。",
       "expected_intents": [
         "industry_application_orchestration",
-        "data_analysis"
+        "data_analysis",
+        "agent_security"
       ],
       "expected_scenarios": [
         "industry-application-orchestration",
-        "data-analysis-report"
+        "data-analysis-report",
+        "security-agent-guardrails"
       ],
       "required_dependency_edges": [
         [
           "industry_application_orchestration",
           "data_analysis"
+        ],
+        [
+          "data_analysis",
+          "agent_security"
         ]
       ],
       "forbidden_scenarios": [],
@@ -432,14 +440,16 @@
     {
       "id": "multi-intent-023",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: optimize marketplace listings, keywords, and buyer inquiry replies; in parallel, draft, fact-check, and optimize a public SEO article.",
+      "task": "audit catalog keywords and inquiry handoff / 撰写有来源的家庭储能选型文章 / analyze support response-time bottlenecks；三项分别交付证据，不设虚假依赖。",
       "expected_intents": [
         "commerce_growth",
-        "content_seo"
+        "content_seo",
+        "data_analysis"
       ],
       "expected_scenarios": [
         "commerce-listing-growth",
-        "content-seo-publication"
+        "content-seo-publication",
+        "data-analysis-report"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [],
@@ -449,19 +459,25 @@
     {
       "id": "multi-intent-024",
       "category": "multi_intent",
-      "task": "First optimize marketplace listings, keywords, and buyer inquiry replies; after that result is complete, draft, fact-check, and optimize a public SEO article.",
+      "task": "1. audit catalog keywords and inquiry handoff\n2. 待第 1 项证据通过后，撰写有来源的家庭储能选型文章\n3. 完成前两项后，analyze support response-time bottlenecks",
       "expected_intents": [
         "commerce_growth",
-        "content_seo"
+        "content_seo",
+        "data_analysis"
       ],
       "expected_scenarios": [
         "commerce-listing-growth",
-        "content-seo-publication"
+        "content-seo-publication",
+        "data-analysis-report"
       ],
       "required_dependency_edges": [
         [
           "commerce_growth",
           "content_seo"
+        ],
+        [
+          "content_seo",
+          "data_analysis"
         ]
       ],
       "forbidden_scenarios": [],
@@ -471,14 +487,16 @@
     {
       "id": "multi-intent-025",
       "category": "multi_intent",
-      "task": "并行处理两项交付：评审私密通讯的 E2EE、元数据最小化和保留边界；同时将 PDF 和办公文档转为 Markdown 知识库，分别给出证据。",
+      "task": "并行任务清单：\n- 评审医患通讯的元数据泄露\n- convert the operations handbook without losing tables\n- 验证宿主对越权删除的拦截\n各项单独验收。",
       "expected_intents": [
         "private_communication_governance",
-        "document_knowledge_base"
+        "document_knowledge_base",
+        "agent_security"
       ],
       "expected_scenarios": [
         "private-communication-governance",
-        "document-to-knowledge-base"
+        "document-to-knowledge-base",
+        "security-agent-guardrails"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [],
@@ -488,19 +506,25 @@
     {
       "id": "multi-intent-026",
       "category": "multi_intent",
-      "task": "工作流顺序：先评审私密通讯的 E2EE、元数据最小化和保留边界；完成后再将 PDF 和办公文档转为 Markdown 知识库。",
+      "task": "Stage 1: 评审医患通讯的元数据泄露. Only after it is complete, begin stage 2: convert the operations handbook without losing tables. Then begin stage 3: 验证宿主对越权删除的拦截. The handoff must cite stage 1.",
       "expected_intents": [
         "private_communication_governance",
-        "document_knowledge_base"
+        "document_knowledge_base",
+        "agent_security"
       ],
       "expected_scenarios": [
         "private-communication-governance",
-        "document-to-knowledge-base"
+        "document-to-knowledge-base",
+        "security-agent-guardrails"
       ],
       "required_dependency_edges": [
         [
           "private_communication_governance",
           "document_knowledge_base"
+        ],
+        [
+          "document_knowledge_base",
+          "agent_security"
         ]
       ],
       "forbidden_scenarios": [],
@@ -510,14 +534,16 @@
     {
       "id": "multi-intent-027",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: design an expert-agent role library with handoff and conflict rules; in parallel, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "task": "Readiness review workstreams: audit support roles for conflicting mandates; 建立研发与运营的依赖图; review the migration diff for blockers. Independent evidence is required for 建立研发与运营的依赖图.",
       "expected_intents": [
         "agent_role_library_governance",
-        "agent_planning_orchestration"
+        "agent_planning_orchestration",
+        "code_review"
       ],
       "expected_scenarios": [
         "agent-role-library-governance",
-        "agent-planning-orchestration"
+        "agent-planning-orchestration",
+        "code-review-hardening"
       ],
       "required_dependency_edges": [],
       "forbidden_scenarios": [],
@@ -527,19 +553,25 @@
     {
       "id": "multi-intent-028",
       "category": "multi_intent",
-      "task": "First design an expert-agent role library with handoff and conflict rules; after that result is complete, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "task": "发布就绪流程：先做“audit support roles for conflicting mandates”；通过检查后做“建立研发与运营的依赖图”；收尾时做“review the migration diff for blockers”。",
       "expected_intents": [
         "agent_role_library_governance",
-        "agent_planning_orchestration"
+        "agent_planning_orchestration",
+        "code_review"
       ],
       "expected_scenarios": [
         "agent-role-library-governance",
-        "agent-planning-orchestration"
+        "agent-planning-orchestration",
+        "code-review-hardening"
       ],
       "required_dependency_edges": [
         [
           "agent_role_library_governance",
           "agent_planning_orchestration"
+        ],
+        [
+          "agent_planning_orchestration",
+          "code_review"
         ]
       ],
       "forbidden_scenarios": [],
@@ -549,7 +581,7 @@
     {
       "id": "multi-intent-029",
       "category": "multi_intent",
-      "task": "并行处理两项交付：摸清代码库并实现、调试、测试变更；同时审查拉取请求与回归测试，分别给出证据。",
+      "task": "本周同时推进：摸清代码后收敛重复金额逻辑；review the migration diff for blockers。各项结果不需串行等待。",
       "expected_intents": [
         "codebase_change_lifecycle",
         "code_review"
@@ -566,7 +598,7 @@
     {
       "id": "multi-intent-030",
       "category": "multi_intent",
-      "task": "工作流顺序：先摸清代码库并实现、调试、测试变更；完成后再审查拉取请求与回归测试。",
+      "task": "Stage one: 摸清代码后收敛重复金额逻辑. Stage two begins only after completion: review the migration diff for blockers. Downstream evidence must name: 摸清代码后收敛重复金额逻辑.",
       "expected_intents": [
         "codebase_change_lifecycle",
         "code_review"
@@ -588,7 +620,7 @@
     {
       "id": "multi-intent-031",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: build a code graph and analyze call-chain impact; in parallel, map the codebase and implement, debug, and test the change.",
+      "task": "并行项分别是：map implementations behind the storage protocol、定位并修复时区导出缺陷；各工作线不互相阻塞。",
       "expected_intents": [
         "codebase_graph_intelligence",
         "codebase_change_lifecycle"
@@ -605,7 +637,7 @@
     {
       "id": "multi-intent-032",
       "category": "multi_intent",
-      "task": "First build a code graph and analyze call-chain impact; after that result is complete, map the codebase and implement, debug, and test the change.",
+      "task": "交付顺序：先执行“map implementations behind the storage protocol”；验收结束后再执行“定位并修复时区导出缺陷”。",
       "expected_intents": [
         "codebase_graph_intelligence",
         "codebase_change_lifecycle"
@@ -627,7 +659,7 @@
     {
       "id": "multi-intent-033",
       "category": "multi_intent",
-      "task": "并行处理两项交付：调研 Reddit、YouTube、GitHub 等公开平台并保留引用；同时撰写、核查并优化 SEO 公开文章，分别给出证据。",
+      "task": "收集公开社区对本地 AI 工具的证据 / revise the migration guide around real search questions；两项分别交付证据，不设虚假依赖。",
       "expected_intents": [
         "multi_platform_research_discovery",
         "content_seo"
@@ -644,7 +676,7 @@
     {
       "id": "multi-intent-034",
       "category": "multi_intent",
-      "task": "工作流顺序：先调研 Reddit、YouTube、GitHub 等公开平台并保留引用；完成后再撰写、核查并优化 SEO 公开文章。",
+      "task": "1. 收集公开社区对本地 AI 工具的证据\n2. 待第 1 项证据通过后，revise the migration guide around real search questions",
       "expected_intents": [
         "multi_platform_research_discovery",
         "content_seo"
@@ -666,7 +698,7 @@
     {
       "id": "multi-intent-035",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: prepare an investment memo with valuation assumptions and a bear case; in parallel, audit prompt injection, tool permissions, and output guardrails.",
+      "task": "并行任务清单：\n- prepare a downside-focused memo on the payment processor\n- 验证宿主对越权删除的拦截\n各项单独验收。",
       "expected_intents": [
         "investment_research_diligence",
         "agent_security"
@@ -683,7 +715,7 @@
     {
       "id": "multi-intent-036",
       "category": "multi_intent",
-      "task": "First prepare an investment memo with valuation assumptions and a bear case; after that result is complete, audit prompt injection, tool permissions, and output guardrails.",
+      "task": "Stage 1: prepare a downside-focused memo on the payment processor. Only after it is complete, begin stage 2: 验证宿主对越权删除的拦截. The handoff must cite stage 1.",
       "expected_intents": [
         "investment_research_diligence",
         "agent_security"
@@ -705,7 +737,7 @@
     {
       "id": "multi-intent-037",
       "category": "multi_intent",
-      "task": "并行处理两项交付：策划内容矩阵、短视频脚本与媒体交付；同时准备开源仓库的许可证、供应链与发布清单，分别给出证据。",
+      "task": "Readiness review workstreams: 为公益活动编写不夸大的视频文案; verify package artifacts before public transfer. Independent evidence is required for verify package artifacts before public transfer.",
       "expected_intents": [
         "content_video_production",
         "open_source_release"
@@ -722,7 +754,7 @@
     {
       "id": "multi-intent-038",
       "category": "multi_intent",
-      "task": "工作流顺序：先策划内容矩阵、短视频脚本与媒体交付；完成后再准备开源仓库的许可证、供应链与发布清单。",
+      "task": "发布就绪流程：先做“为公益活动编写不夸大的视频文案”；通过检查后做“verify package artifacts before public transfer”。",
       "expected_intents": [
         "content_video_production",
         "open_source_release"
@@ -744,7 +776,7 @@
     {
       "id": "multi-intent-039",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: design an agentic media pipeline from a reference video with cost and render QA; in parallel, prepare license, supply-chain, and publication checks for an open-source repository.",
+      "task": "本周同时推进：plan deterministic assembly from licensed assets；核对内部 Python 库公开前的许可与敏感历史。各项结果不需串行等待。",
       "expected_intents": [
         "agentic_media_production",
         "open_source_release"
@@ -761,7 +793,7 @@
     {
       "id": "multi-intent-040",
       "category": "multi_intent",
-      "task": "First design an agentic media pipeline from a reference video with cost and render QA; after that result is complete, prepare license, supply-chain, and publication checks for an open-source repository.",
+      "task": "Stage one: plan deterministic assembly from licensed assets. Stage two begins only after completion: 核对内部 Python 库公开前的许可与敏感历史. Downstream evidence must name: plan deterministic assembly from licensed assets.",
       "expected_intents": [
         "agentic_media_production",
         "open_source_release"
@@ -783,7 +815,7 @@
     {
       "id": "multi-intent-041",
       "category": "multi_intent",
-      "task": "并行处理两项交付：清洗表格、分析数据并规划图表报告；同时优化市场平台 Listing、关键词和买家询盘回复，分别给出证据。",
+      "task": "并行项分别是：清理门店销售明细并可视化退货趋势、separate marketplace listings by buyer intent；各工作线不互相阻塞。",
       "expected_intents": [
         "data_analysis",
         "commerce_growth"
@@ -800,7 +832,7 @@
     {
       "id": "multi-intent-042",
       "category": "multi_intent",
-      "task": "工作流顺序：先清洗表格、分析数据并规划图表报告；完成后再优化市场平台 Listing、关键词和买家询盘回复。",
+      "task": "交付顺序：先执行“清理门店销售明细并可视化退货趋势”；验收结束后再执行“separate marketplace listings by buyer intent”。",
       "expected_intents": [
         "data_analysis",
         "commerce_growth"
@@ -822,7 +854,7 @@
     {
       "id": "multi-intent-043",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: design an industry AI solution with compliance boundaries and data-quality controls; in parallel, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "task": "shape predictive maintenance into a governed manufacturing workflow / 建立研发与运营的依赖图；两项分别交付证据，不设虚假依赖。",
       "expected_intents": [
         "industry_application_orchestration",
         "agent_planning_orchestration"
@@ -839,7 +871,7 @@
     {
       "id": "multi-intent-044",
       "category": "multi_intent",
-      "task": "First design an industry AI solution with compliance boundaries and data-quality controls; after that result is complete, clarify fuzzy requirements and decompose a multi-agent plan.",
+      "task": "1. shape predictive maintenance into a governed manufacturing workflow\n2. 待第 1 项证据通过后，建立研发与运营的依赖图",
       "expected_intents": [
         "industry_application_orchestration",
         "agent_planning_orchestration"
@@ -861,7 +893,7 @@
     {
       "id": "multi-intent-045",
       "category": "multi_intent",
-      "task": "并行处理两项交付：评审 Skill Router 的自动选择、Bundle 组合与回归证据；同时审查拉取请求与回归测试，分别给出证据。",
+      "task": "并行任务清单：\n- 审核 Bundle 重叠与能力覆盖\n- review the migration diff for blockers\n各项单独验收。",
       "expected_intents": [
         "skill_router_review",
         "code_review"
@@ -878,7 +910,7 @@
     {
       "id": "multi-intent-046",
       "category": "multi_intent",
-      "task": "工作流顺序：先评审 Skill Router 的自动选择、Bundle 组合与回归证据；完成后再审查拉取请求与回归测试。",
+      "task": "Stage 1: 审核 Bundle 重叠与能力覆盖. Only after it is complete, begin stage 2: review the migration diff for blockers. The handoff must cite stage 1.",
       "expected_intents": [
         "skill_router_review",
         "code_review"
@@ -900,7 +932,7 @@
     {
       "id": "multi-intent-047",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: review E2EE, metadata minimization, and retention boundaries for private messaging; in parallel, audit prompt injection, tool permissions, and output guardrails.",
+      "task": "Readiness review workstreams: threat-model relay and notification metadata; 审计外部邮件中的指令与凭证边界. Independent evidence is required for 审计外部邮件中的指令与凭证边界.",
       "expected_intents": [
         "private_communication_governance",
         "agent_security"
@@ -917,7 +949,7 @@
     {
       "id": "multi-intent-048",
       "category": "multi_intent",
-      "task": "First review E2EE, metadata minimization, and retention boundaries for private messaging; after that result is complete, audit prompt injection, tool permissions, and output guardrails.",
+      "task": "发布就绪流程：先做“threat-model relay and notification metadata”；通过检查后做“审计外部邮件中的指令与凭证边界”。",
       "expected_intents": [
         "private_communication_governance",
         "agent_security"
@@ -939,7 +971,7 @@
     {
       "id": "multi-intent-049",
       "category": "multi_intent",
-      "task": "并行处理两项交付：将 PDF 和办公文档转为 Markdown 知识库；同时清洗表格、分析数据并规划图表报告，分别给出证据。",
+      "task": "本周同时推进：将政策文档整理为带页码来源的 Markdown 手册；analyze support response-time bottlenecks。各项结果不需串行等待。",
       "expected_intents": [
         "document_knowledge_base",
         "data_analysis"
@@ -956,7 +988,7 @@
     {
       "id": "multi-intent-050",
       "category": "multi_intent",
-      "task": "工作流顺序：先将 PDF 和办公文档转为 Markdown 知识库；完成后再清洗表格、分析数据并规划图表报告。",
+      "task": "Stage one: 将政策文档整理为带页码来源的 Markdown 手册. Stage two begins only after completion: analyze support response-time bottlenecks. Downstream evidence must name: 将政策文档整理为带页码来源的 Markdown 手册.",
       "expected_intents": [
         "document_knowledge_base",
         "data_analysis"
@@ -978,7 +1010,7 @@
     {
       "id": "multi-intent-051",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: design a RAG agent with vector retrieval, citations, and structured output; in parallel, audit prompt injection, tool permissions, and output guardrails.",
+      "task": "并行项分别是：build hybrid retrieval over engineering runbooks、验证宿主对越权删除的拦截；各工作线不互相阻塞。",
       "expected_intents": [
         "rag_agent",
         "agent_security"
@@ -995,7 +1027,7 @@
     {
       "id": "multi-intent-052",
       "category": "multi_intent",
-      "task": "First design a RAG agent with vector retrieval, citations, and structured output; after that result is complete, audit prompt injection, tool permissions, and output guardrails.",
+      "task": "交付顺序：先执行“build hybrid retrieval over engineering runbooks”；验收结束后再执行“验证宿主对越权删除的拦截”。",
       "expected_intents": [
         "rag_agent",
         "agent_security"
@@ -1017,7 +1049,7 @@
     {
       "id": "multi-intent-053",
       "category": "multi_intent",
-      "task": "并行处理两项交付：定义 Agent 长期记忆的租户隔离、更正与忘却路径；同时评审私密通讯的 E2EE、元数据最小化和保留边界，分别给出证据。",
+      "task": "建立用户可见的错误记忆修正机制 / threat-model relay and notification metadata；两项分别交付证据，不设虚假依赖。",
       "expected_intents": [
         "agent_long_term_memory_governance",
         "private_communication_governance"
@@ -1034,7 +1066,7 @@
     {
       "id": "multi-intent-054",
       "category": "multi_intent",
-      "task": "工作流顺序：先定义 Agent 长期记忆的租户隔离、更正与忘却路径；完成后再评审私密通讯的 E2EE、元数据最小化和保留边界。",
+      "task": "1. 建立用户可见的错误记忆修正机制\n2. 待第 1 项证据通过后，threat-model relay and notification metadata",
       "expected_intents": [
         "agent_long_term_memory_governance",
         "private_communication_governance"
@@ -1056,7 +1088,7 @@
     {
       "id": "multi-intent-055",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: design an expert-agent role library with handoff and conflict rules; in parallel, establish a DESIGN.md contract for tokens, component states, and accessibility.",
+      "task": "并行任务清单：\n- design governed role cards for research specialists\n- 从现有界面提炼可执行的 DESIGN.md\n各项单独验收。",
       "expected_intents": [
         "agent_role_library_governance",
         "design_md_system_governance"
@@ -1073,7 +1105,7 @@
     {
       "id": "multi-intent-056",
       "category": "multi_intent",
-      "task": "First design an expert-agent role library with handoff and conflict rules; after that result is complete, establish a DESIGN.md contract for tokens, component states, and accessibility.",
+      "task": "Stage 1: design governed role cards for research specialists. Only after it is complete, begin stage 2: 从现有界面提炼可执行的 DESIGN.md. The handoff must cite stage 1.",
       "expected_intents": [
         "agent_role_library_governance",
         "design_md_system_governance"
@@ -1095,7 +1127,7 @@
     {
       "id": "multi-intent-057",
       "category": "multi_intent",
-      "task": "并行处理两项交付：盘点并分类剩余 Claude Skills 候选与 reference-only 积压；同时调研 Reddit、YouTube、GitHub 等公开平台并保留引用，分别给出证据。",
+      "task": "Readiness review workstreams: 按缺口与重复盘点未纳入的候选 Skill; compare product complaints across forums and videos. Independent evidence is required for compare product complaints across forums and videos.",
       "expected_intents": [
         "claude_skills_backlog_coverage",
         "multi_platform_research_discovery"
@@ -1112,7 +1144,7 @@
     {
       "id": "multi-intent-058",
       "category": "multi_intent",
-      "task": "工作流顺序：先盘点并分类剩余 Claude Skills 候选与 reference-only 积压；完成后再调研 Reddit、YouTube、GitHub 等公开平台并保留引用。",
+      "task": "发布就绪流程：先做“按缺口与重复盘点未纳入的候选 Skill”；通过检查后做“compare product complaints across forums and videos”。",
       "expected_intents": [
         "claude_skills_backlog_coverage",
         "multi_platform_research_discovery"
@@ -1134,7 +1166,7 @@
     {
       "id": "multi-intent-059",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: build a code graph and analyze call-chain impact; in parallel, design a RAG agent with vector retrieval, citations, and structured output.",
+      "task": "本周同时推进：trace callers of the settlement adapter structurally；为客服资料加入权限过滤与拒答。各项结果不需串行等待。",
       "expected_intents": [
         "codebase_graph_intelligence",
         "rag_agent"
@@ -1151,7 +1183,7 @@
     {
       "id": "multi-intent-060",
       "category": "multi_intent",
-      "task": "First build a code graph and analyze call-chain impact; after that result is complete, design a RAG agent with vector retrieval, citations, and structured output.",
+      "task": "Stage one: trace callers of the settlement adapter structurally. Stage two begins only after completion: 为客服资料加入权限过滤与拒答. Downstream evidence must name: trace callers of the settlement adapter structurally.",
       "expected_intents": [
         "codebase_graph_intelligence",
         "rag_agent"
@@ -1173,7 +1205,7 @@
     {
       "id": "multi-intent-061",
       "category": "multi_intent",
-      "task": "并行处理两项交付：优化市场平台 Listing、关键词和买家询盘回复；同时构建响应式产品官网，分别给出证据。",
+      "task": "并行项分别是：根据真实询盘规划型材 SKU、implement the approved dashboard states；各工作线不互相阻塞。",
       "expected_intents": [
         "commerce_growth",
         "website_build"
@@ -1190,7 +1222,7 @@
     {
       "id": "multi-intent-062",
       "category": "multi_intent",
-      "task": "工作流顺序：先优化市场平台 Listing、关键词和买家询盘回复；完成后再构建响应式产品官网。",
+      "task": "交付顺序：先执行“根据真实询盘规划型材 SKU”；验收结束后再执行“implement the approved dashboard states”。",
       "expected_intents": [
         "commerce_growth",
         "website_build"
@@ -1212,7 +1244,7 @@
     {
       "id": "multi-intent-063",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: draft, fact-check, and optimize a public SEO article; in parallel, plan a content matrix, short-video script, and media handoff.",
+      "task": "audit the blog cluster for unsupported claims / 策划户外电源的选题矩阵与短片脚本；两项分别交付证据，不设虚假依赖。",
       "expected_intents": [
         "content_seo",
         "content_video_production"
@@ -1229,7 +1261,7 @@
     {
       "id": "multi-intent-064",
       "category": "multi_intent",
-      "task": "First draft, fact-check, and optimize a public SEO article; after that result is complete, plan a content matrix, short-video script, and media handoff.",
+      "task": "1. audit the blog cluster for unsupported claims\n2. 待第 1 项证据通过后，策划户外电源的选题矩阵与短片脚本",
       "expected_intents": [
         "content_seo",
         "content_video_production"
@@ -1251,7 +1283,7 @@
     {
       "id": "multi-intent-065",
       "category": "multi_intent",
-      "task": "并行处理两项交付：编写含估值假设和反方观点的投资备忘录；同时清洗表格、分析数据并规划图表报告，分别给出证据。",
+      "task": "并行任务清单：\n- 评估云安全公司的现金流质量\n- analyze support response-time bottlenecks\n各项单独验收。",
       "expected_intents": [
         "investment_research_diligence",
         "data_analysis"
@@ -1268,7 +1300,7 @@
     {
       "id": "multi-intent-066",
       "category": "multi_intent",
-      "task": "工作流顺序：先编写含估值假设和反方观点的投资备忘录；完成后再清洗表格、分析数据并规划图表报告。",
+      "task": "Stage 1: 评估云安全公司的现金流质量. Only after it is complete, begin stage 2: analyze support response-time bottlenecks. The handoff must cite stage 1.",
       "expected_intents": [
         "investment_research_diligence",
         "data_analysis"
@@ -1290,7 +1322,7 @@
     {
       "id": "multi-intent-067",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: clarify fuzzy requirements and decompose a multi-agent plan; in parallel, design an industry AI solution with compliance boundaries and data-quality controls.",
+      "task": "Readiness review workstreams: turn the vague AI-team request into owned work packages; 为律所合同审阅组合不可自批的能力. Independent evidence is required for 为律所合同审阅组合不可自批的能力.",
       "expected_intents": [
         "agent_planning_orchestration",
         "industry_application_orchestration"
@@ -1307,7 +1339,7 @@
     {
       "id": "multi-intent-068",
       "category": "multi_intent",
-      "task": "First clarify fuzzy requirements and decompose a multi-agent plan; after that result is complete, design an industry AI solution with compliance boundaries and data-quality controls.",
+      "task": "发布就绪流程：先做“turn the vague AI-team request into owned work packages”；通过检查后做“为律所合同审阅组合不可自批的能力”。",
       "expected_intents": [
         "agent_planning_orchestration",
         "industry_application_orchestration"
@@ -1329,7 +1361,7 @@
     {
       "id": "multi-intent-069",
       "category": "multi_intent",
-      "task": "并行处理两项交付：摸清代码库并实现、调试、测试变更；同时准备开源仓库的许可证、供应链与发布清单，分别给出证据。",
+      "task": "本周同时推进：摸清代码后收敛重复金额逻辑；verify package artifacts before public transfer。各项结果不需串行等待。",
       "expected_intents": [
         "codebase_change_lifecycle",
         "open_source_release"
@@ -1346,7 +1378,7 @@
     {
       "id": "multi-intent-070",
       "category": "multi_intent",
-      "task": "工作流顺序：先摸清代码库并实现、调试、测试变更；完成后再准备开源仓库的许可证、供应链与发布清单。",
+      "task": "Stage one: 摸清代码后收敛重复金额逻辑. Stage two begins only after completion: verify package artifacts before public transfer. Downstream evidence must name: 摸清代码后收敛重复金额逻辑.",
       "expected_intents": [
         "codebase_change_lifecycle",
         "open_source_release"
@@ -1368,7 +1400,7 @@
     {
       "id": "multi-intent-071",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: establish a DESIGN.md contract for tokens, component states, and accessibility; in parallel, review the pull request and regression tests.",
+      "task": "并行项分别是：document responsive and accessibility rules、复核支付重试 PR 的回归风险；各工作线不互相阻塞。",
       "expected_intents": [
         "design_md_system_governance",
         "code_review"
@@ -1385,7 +1417,7 @@
     {
       "id": "multi-intent-072",
       "category": "multi_intent",
-      "task": "First establish a DESIGN.md contract for tokens, component states, and accessibility; after that result is complete, review the pull request and regression tests.",
+      "task": "交付顺序：先执行“document responsive and accessibility rules”；验收结束后再执行“复核支付重试 PR 的回归风险”。",
       "expected_intents": [
         "design_md_system_governance",
         "code_review"
@@ -1407,7 +1439,7 @@
     {
       "id": "multi-intent-073",
       "category": "multi_intent",
-      "task": "并行处理两项交付：调研 Reddit、YouTube、GitHub 等公开平台并保留引用；同时策划内容矩阵、短视频脚本与媒体交付，分别给出证据。",
+      "task": "收集公开社区对本地 AI 工具的证据 / adapt the interview into three evidence-checked clips；两项分别交付证据，不设虚假依赖。",
       "expected_intents": [
         "multi_platform_research_discovery",
         "content_video_production"
@@ -1424,7 +1456,7 @@
     {
       "id": "multi-intent-074",
       "category": "multi_intent",
-      "task": "工作流顺序：先调研 Reddit、YouTube、GitHub 等公开平台并保留引用；完成后再策划内容矩阵、短视频脚本与媒体交付。",
+      "task": "1. 收集公开社区对本地 AI 工具的证据\n2. 待第 1 项证据通过后，adapt the interview into three evidence-checked clips",
       "expected_intents": [
         "multi_platform_research_discovery",
         "content_video_production"
@@ -1446,7 +1478,7 @@
     {
       "id": "multi-intent-075",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: review Skill Router selection, bundle composition, and regression evidence; in parallel, inventory and cluster the remaining Claude Skills candidate and reference-only backlog.",
+      "task": "并行任务清单：\n- evaluate selection against manually labeled cases\n- 将待验证 Skill 分批并定义去留理由\n各项单独验收。",
       "expected_intents": [
         "skill_router_review",
         "claude_skills_backlog_coverage"
@@ -1463,7 +1495,7 @@
     {
       "id": "multi-intent-076",
       "category": "multi_intent",
-      "task": "First review Skill Router selection, bundle composition, and regression evidence; after that result is complete, inventory and cluster the remaining Claude Skills candidate and reference-only backlog.",
+      "task": "Stage 1: evaluate selection against manually labeled cases. Only after it is complete, begin stage 2: 将待验证 Skill 分批并定义去留理由. The handoff must cite stage 1.",
       "expected_intents": [
         "skill_router_review",
         "claude_skills_backlog_coverage"
@@ -1485,7 +1517,7 @@
     {
       "id": "multi-intent-077",
       "category": "multi_intent",
-      "task": "并行处理两项交付：审计提示词注入、工具权限与输出护栏；同时评审私密通讯的 E2EE、元数据最小化和保留边界，分别给出证据。",
+      "task": "Readiness review workstreams: 验证宿主对越权删除的拦截; threat-model relay and notification metadata. Independent evidence is required for threat-model relay and notification metadata.",
       "expected_intents": [
         "agent_security",
         "private_communication_governance"
@@ -1502,7 +1534,7 @@
     {
       "id": "multi-intent-078",
       "category": "multi_intent",
-      "task": "工作流顺序：先审计提示词注入、工具权限与输出护栏；完成后再评审私密通讯的 E2EE、元数据最小化和保留边界。",
+      "task": "发布就绪流程：先做“验证宿主对越权删除的拦截”；通过检查后做“threat-model relay and notification metadata”。",
       "expected_intents": [
         "agent_security",
         "private_communication_governance"
@@ -1524,7 +1556,7 @@
     {
       "id": "multi-intent-079",
       "category": "multi_intent",
-      "task": "Run these as independent tracks: design a RAG agent with vector retrieval, citations, and structured output; in parallel, define tenant isolation, correction, and forgetting paths for agent long-term memory.",
+      "task": "本周同时推进：evaluate citation support and abstention quality；定义销售助手记忆的更正与过期路径。各项结果不需串行等待。",
       "expected_intents": [
         "rag_agent",
         "agent_long_term_memory_governance"
@@ -1541,7 +1573,7 @@
     {
       "id": "multi-intent-080",
       "category": "multi_intent",
-      "task": "First design a RAG agent with vector retrieval, citations, and structured output; after that result is complete, define tenant isolation, correction, and forgetting paths for agent long-term memory.",
+      "task": "Stage one: evaluate citation support and abstention quality. Stage two begins only after completion: 定义销售助手记忆的更正与过期路径. Downstream evidence must name: evaluate citation support and abstention quality.",
       "expected_intents": [
         "rag_agent",
         "agent_long_term_memory_governance"

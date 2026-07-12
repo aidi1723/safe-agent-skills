@@ -3,11 +3,13 @@ from __future__ import annotations
 import hashlib
 import json
 import math
+import re
 import subprocess
 import sys
 import tempfile
 import unittest
 from collections import Counter
+from itertools import combinations
 from pathlib import Path
 
 
@@ -52,6 +54,92 @@ VALID_STATUS_GRAPH_PAIRS = [
     ("incomplete", "blocked", True),
     ("blocked", "blocked", True),
 ]
+
+CORPUS_BOILERPLATE = (
+    "as next week's review input",
+    "for an owner review",
+    "under the existing project constraints",
+    "for an independent reviewer",
+    "separate verified findings, unresolved questions, and residual risks",
+    "document assumptions, boundaries, and acceptance evidence",
+    "作为下周评审输入",
+    "交付可复核结果与检查记录",
+    "但不扩大宿主权限",
+    "列出所需输入、验收条件和降级路径",
+    "run these as independent tracks",
+    "in parallel",
+    "after that result is complete",
+    "并行处理两项交付",
+    "分别给出证据",
+    "工作流顺序",
+    "完成后再",
+)
+
+FORBIDDEN_SCENARIO_CUES = {
+    "website-build-launch": ("website", "portal", "ui", "browser", "launch", "官网", "网站", "上线"),
+    "code-review-hardening": ("code review", "pull request", "pr ", "tests", "代码审查", "测试"),
+    "codebase-change-lifecycle": ("repository", "codebase", "debug", "modify", "代码库", "代码仓库", "调试", "修改"),
+    "codebase-graph-intelligence": ("call graph", "symbol graph", "impact", "调用图", "符号图", "影响分析"),
+    "security-agent-guardrails": ("prompt injection", "security guardrail", "agent-safety", "permission", "sandbox", "secret", "提示词注入", "权限", "密钥"),
+    "agent-planning-orchestration": ("multi-agent", "multi agent", "team roles", "agent plan", "多 agent", "团队角色"),
+    "multi-platform-research-discovery": ("reddit", "youtube", "xiaohongshu", "public-source", "public search", "browse public", "小红书", "公开源", "公开搜索"),
+    "investment-research-diligence": ("investment", "valuation", "bear case", "投资", "估值", "反方"),
+    "agent-role-library-governance": ("role library", "expert-agent", "handoff", "角色库", "专家 agent", "交接"),
+    "design-md-system-governance": ("design.md", "design token", "component state", "设计令牌", "组件状态"),
+    "private-communication-governance": ("e2ee", "private mess", "metadata", "私密通讯", "元数据"),
+    "document-to-knowledge-base": ("pdf", "docx", "knowledge base", "knowledge-base", "知识库", "文档"),
+    "content-video-production": ("short-video", "short video", "content-video", "content matrix", "短视频", "内容矩阵"),
+    "agentic-media-production": ("reference-video", "reference video", "render", "provider", "参考视频", "渲染"),
+    "data-analysis-report": ("spreadsheet", "workbook", "data-analysis", "chart", "dataset", "表格", "图表", "数据集"),
+    "open-source-release": ("open source", "public repository", "public repo", "publication", "publish", "release", "repository push", "开源", "公开仓库", "发布", "推送"),
+    "content-seo-publication": ("seo", "blog", "social post", "public content", "公开文章", "社媒"),
+    "rag-agent-knowledge-app": ("rag", "retrieval", "vector", "citation", "向量", "检索", "引用"),
+    "agent-long-term-memory-governance": ("long-term memory", "durable memory", "remember", "recall", "tenant", "长期记忆", "记住", "召回", "租户", "忘却"),
+    "claude-skills-backlog-coverage": ("candidate skill", "skills backlog", "reference-only", "候选 skill", "积压"),
+    "skill-router-quality-review": ("skill router", "bundle", "routing", "自动选择", "路由"),
+    "industry-application-orchestration": ("healthcare", "finance", "industry", "vertical", "医疗", "金融", "行业"),
+    "commerce-listing-growth": ("listing", "keyword", "inquiry", "marketplace", "询盘", "买家"),
+}
+
+FORBIDDEN_SKILL_CUES = {
+    "execution-publish-check": ("publish", "publication", "release", "launch", "push", "upload", "deploy", "发布", "上线", "推送", "上传"),
+    "execution-browser-check": ("browser", "screenshot", "viewport", "浏览器", "截图"),
+    "execution-browser-use-web-task": ("browser", "connector", "cookie", "web", "浏览器", "连接器"),
+    "code-review-risk": ("code review", "pull request", "pr ", "代码审查"),
+    "codebase-explore-map": ("repository", "codebase", "explore", "代码库", "仓库"),
+    "code-codebase-graph-index-boundary": ("call graph", "index", "impact analysis", "调用图", "索引", "影响分析"),
+    "security-prompt-injection-review": ("prompt injection", "injection", "security guardrail", "agent-safety", "提示词注入", "注入", "护栏"),
+    "ai-langchain-agent-orchestration": ("multi-agent", "multi agent", "agent decomposition", "多 agent"),
+    "research-multi-platform-search-boundary": ("reddit", "youtube", "search", "connector", "搜索", "连接器"),
+    "business-value-investment-research-framework": ("investment", "valuation", "投资", "估值"),
+    "ai-agent-role-library-governance": ("role library", "expert-agent", "角色库", "专家 agent"),
+    "design-design-md-system-contract": ("design.md", "design token", "component", "设计令牌", "组件"),
+    "compliance-private-communication-boundary": ("e2ee", "metadata", "identifier", "元数据", "标识符"),
+    "office-pdf-report": ("pdf", "docx", "document", "文档"),
+    "media-video-script-review": ("video script", "short-video", "短视频脚本"),
+    "media-agentic-video-pipeline-plan": ("reference-video", "reference video", "provider", "render", "参考视频", "渲染"),
+    "data-table-analysis": ("spreadsheet", "table", "chart", "表格", "图表"),
+    "content-seo-brief": ("seo", "blog", "social", "社媒"),
+    "ai-llamaindex-rag-knowledge-workflow": ("rag", "retrieval", "vector", "向量", "检索"),
+    "ai-graph-memory-contract": ("remember", "memory", "recall", "记忆", "召回"),
+    "business-claude-skills-backlog-orchestration": ("candidate skill", "skills backlog", "候选 skill", "积压"),
+    "ai-output-schema-eval": ("skill router", "evaluator", "routing", "路由", "评测"),
+    "vertical-industry-intake-orchestration": ("healthcare", "finance", "industry", "医疗", "金融", "行业"),
+    "commerce-icbu-listing": ("listing", "marketplace", "商品"),
+    "commerce-inquiry-reply": ("buyer message", "buyer", "inquiry", "买家消息", "买家", "询盘"),
+}
+
+
+def normalized_lexemes(text: str) -> set[str]:
+    lowered = text.casefold()
+    words = re.findall(r"[a-z0-9]+|[\u3400-\u9fff]", lowered)
+    return set(words) | {"".join(words[index : index + 3]) for index in range(len(words) - 2)}
+
+
+def lexical_similarity(left: str, right: str) -> float:
+    left_terms = normalized_lexemes(left)
+    right_terms = normalized_lexemes(right)
+    return len(left_terms & right_terms) / len(left_terms | right_terms)
 
 
 def bundle_scenario_ids() -> set[str]:
@@ -181,6 +269,116 @@ class RouterEvalV2Tests(unittest.TestCase):
             all(case["category"] in {"negative", "safety_sensitive"} for case in supported)
         )
         self.assertTrue({"negative", "safety_sensitive"} <= {case["category"] for case in supported})
+
+    def test_production_normal_and_multi_tasks_do_not_copy_profile_phrases(self):
+        from onecode_skill_sanitizer.routing_profiles import SCENARIO_PROFILES
+
+        distinctive_signals = {
+            signal.casefold()
+            for profile in SCENARIO_PROFILES
+            for signal in profile["signals"]
+            if (" " in signal and len(signal) >= 12)
+            or (re.search(r"[\u3400-\u9fff]", signal) and len(signal) >= 6)
+        }
+        audited = [
+            case
+            for case in production_cases()
+            if case["category"] in {"normal", "multi_intent"}
+        ]
+        leaking = [
+            case["id"]
+            for case in audited
+            if any(signal in case["task"].casefold() for signal in distinctive_signals)
+        ]
+
+        self.assertLessEqual(len(leaking) / len(audited), 0.25, leaking)
+
+    def test_production_tasks_have_no_repeated_authoring_skeletons_or_near_duplicates(self):
+        cases = production_cases()
+        tasks = {case["id"]: case["task"].casefold() for case in cases}
+        boilerplate_hits = {
+            case_id: [phrase for phrase in CORPUS_BOILERPLATE if phrase in task]
+            for case_id, task in tasks.items()
+        }
+        boilerplate_hits = {
+            case_id: phrases for case_id, phrases in boilerplate_hits.items() if phrases
+            if case_id != "multi-intent-013"
+        }
+        self.assertEqual(boilerplate_hits, {})
+
+        prefixes = Counter(re.sub(r"\s+", " ", task)[:36] for task in tasks.values())
+        suffixes = Counter(re.sub(r"\s+", " ", task)[-36:] for task in tasks.values())
+        self.assertLessEqual(max(prefixes.values()), 2, prefixes.most_common(5))
+        self.assertLessEqual(max(suffixes.values()), 2, suffixes.most_common(5))
+
+        near_duplicates = []
+        for left, right in combinations(cases, 2):
+            similarity = lexical_similarity(left["task"], right["task"])
+            if similarity >= 0.72:
+                near_duplicates.append((left["id"], right["id"], round(similarity, 3)))
+        self.assertEqual(near_duplicates, [])
+
+    def test_production_multi_intent_tasks_cover_realistic_forms_and_three_intent_work(self):
+        cases = [case for case in production_cases() if case["category"] == "multi_intent"]
+        forms = {
+            "comma": lambda task: bool(re.search(r"[,\uff0c]", task)),
+            "enumeration_comma": lambda task: "、" in task,
+            "slash": lambda task: "/" in task,
+            "conjunction": lambda task: bool(
+                re.search(r"\b(?:and|while|then|plus)\b|\u5e76且|\u540c时|\u7136后|\u4ee5及", task, re.I)
+            ),
+            "list": lambda task: bool(re.search(r"(?:^|\n)\s*(?:[-*]|\d+[.)])\s", task)),
+            "mixed_language": lambda task: bool(re.search(r"[a-z]", task, re.I))
+            and bool(re.search(r"[\u3400-\u9fff]", task)),
+            "parallel": lambda task: bool(re.search(r"\bparallel\b|\u5e76行|\u540c时", task, re.I)),
+            "sequential": lambda task: bool(re.search(r"\b(?:first|after|before|then)\b|\u5148|\u518d|\u4e4b后|\u7136后", task, re.I)),
+            "completion": lambda task: bool(re.search(r"\b(?:complete|finish|done)\b|\u5b8c成|\u6536尾", task, re.I)),
+            "verification": lambda task: bool(re.search(r"\b(?:verify|evidence|test|check)\b|\u9a8c证|\u8bc1据|\u6d4b试|\u68c0查", task, re.I)),
+            "release_readiness": lambda task: bool(re.search(r"\b(?:release|readiness|ship|publish)\b|\u53d1布|\u4e0a线|\u5c31绪", task, re.I)),
+        }
+        counts = {
+            form: sum(predicate(case["task"]) for case in cases)
+            for form, predicate in forms.items()
+        }
+
+        self.assertTrue(all(count >= 5 for count in counts.values()), counts)
+        self.assertGreaterEqual(sum(len(case["expected_intents"]) >= 3 for case in cases), 8)
+        self.assertGreaterEqual(sum(bool(case["required_dependency_edges"]) for case in cases), 24)
+        self.assertGreaterEqual(sum(not case["required_dependency_edges"] for case in cases), 24)
+
+    def test_forbidden_labels_are_trusted_supported_and_semantically_tempting(self):
+        self.maxDiff = None
+        catalog = json.loads((ROOT / "catalog" / "index.json").read_text(encoding="utf-8"))
+        trusted = {skill["name"] for skill in catalog["skills"] if skill["status"] == "trusted"}
+        cases = production_cases()
+        labeled = [
+            case for case in cases if case["category"] in {"negative", "safety_sensitive"}
+        ]
+
+        self.assertGreaterEqual(sum(len(case["forbidden_skills"]) for case in labeled), 80)
+        unsupported = []
+        for case in labeled:
+            lowered = case["task"].casefold()
+            for skill in case["forbidden_skills"]:
+                self.assertIn(skill, trusted, case["id"])
+                self.assertIn(skill, FORBIDDEN_SKILL_CUES, case["id"])
+                if not any(cue in lowered for cue in FORBIDDEN_SKILL_CUES[skill]):
+                    unsupported.append((case["id"], "skill", skill))
+            for scenario in case["forbidden_scenarios"]:
+                self.assertIn(scenario, FORBIDDEN_SCENARIO_CUES, case["id"])
+                if not any(cue in lowered for cue in FORBIDDEN_SCENARIO_CUES[scenario]):
+                    unsupported.append((case["id"], "scenario", scenario))
+        self.assertEqual(unsupported, [])
+
+    def test_ambiguous_forbidden_scenarios_are_plausible_confusions(self):
+        cases = [case for case in production_cases() if case["category"] == "ambiguous"]
+        unsupported = []
+        for case in cases:
+            lowered = case["task"].casefold()
+            for scenario in case["forbidden_scenarios"]:
+                if not any(cue in lowered for cue in FORBIDDEN_SCENARIO_CUES[scenario]):
+                    unsupported.append((case["id"], scenario))
+        self.assertEqual(unsupported, [])
 
     def test_gold_dataset_has_exact_count_distribution_and_contract(self):
         from onecode_skill_sanitizer.router_eval_v2 import load_eval_dataset_v2

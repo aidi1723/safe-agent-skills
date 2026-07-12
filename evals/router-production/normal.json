@@ -3,7 +3,7 @@
     {
       "id": "normal-001",
       "category": "normal",
-      "task": "为新客户门户实现移动优先的首页和仪表盘，核对空、错误、加载状态及键盘可达性。",
+      "task": "重做会员中心首屏，保留现有登录流程，补齐空态、异常态和键盘导航验收。",
       "expected_intents": [
         "website_build"
       ],
@@ -18,7 +18,7 @@
     {
       "id": "normal-002",
       "category": "normal",
-      "task": "Rework the pricing landing page around the existing brand tokens, then capture desktop and mobile browser evidence for responsive acceptance review.",
+      "task": "Bring the pricing page in line with the brand kit and provide phone, tablet, and desktop captures for the design review.",
       "expected_intents": [
         "website_build"
       ],
@@ -33,7 +33,7 @@
     {
       "id": "normal-003",
       "category": "normal",
-      "task": "在保留现有路由和业务逻辑的前提下，统一 SaaS 后台的字体、间距、表单状态与响应式布局。",
+      "task": "运营后台在小屏上无法操作；请调整表格、抽屉和表单，不要改动接口契约。",
       "expected_intents": [
         "website_build"
       ],
@@ -48,7 +48,7 @@
     {
       "id": "normal-004",
       "category": "normal",
-      "task": "Build a responsive product website for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Create the public launch page for a payroll product, including comparison content, accessible forms, and measurable acceptance criteria.",
       "expected_intents": [
         "website_build"
       ],
@@ -63,7 +63,7 @@
     {
       "id": "normal-005",
       "category": "normal",
-      "task": "构建响应式产品官网，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "为医院预约系统补一套统一的界面规则，并检查高对比模式下的焦点状态。",
       "expected_intents": [
         "website_build"
       ],
@@ -78,7 +78,7 @@
     {
       "id": "normal-006",
       "category": "normal",
-      "task": "Build a responsive product website; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Polish the onboarding dashboard without changing routes or business rules; include loading behavior and reduced-motion treatment.",
       "expected_intents": [
         "website_build"
       ],
@@ -93,7 +93,7 @@
     {
       "id": "normal-007",
       "category": "normal",
-      "task": "构建响应式产品官网，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "重构活动页的信息层级，让商品、优惠和主操作在手机上可快速扫读。",
       "expected_intents": [
         "website_build"
       ],
@@ -108,7 +108,7 @@
     {
       "id": "normal-008",
       "category": "normal",
-      "task": "Build a responsive product website under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Implement the approved Figma treatment for account settings and verify hover, focus, validation, and disabled states in a real browser.",
       "expected_intents": [
         "website_build"
       ],
@@ -123,7 +123,7 @@
     {
       "id": "normal-009",
       "category": "normal",
-      "task": "审查支付重试修复，重点检查幂等性、异常分支、新增依赖和回归测试缺口。",
+      "task": "请审查这个支付重试 PR，重点找重复扣款、幂等性和缺失回归用例。",
       "expected_intents": [
         "code_review"
       ],
@@ -138,7 +138,7 @@
     {
       "id": "normal-010",
       "category": "normal",
-      "task": "Before merging the cache refactor, inspect behavioral regressions, concurrency assumptions, CI coverage, and rollback risk.",
+      "task": "Review the cache invalidation change for correctness under concurrent writes and report only findings backed by file and line evidence.",
       "expected_intents": [
         "code_review"
       ],
@@ -153,7 +153,7 @@
     {
       "id": "normal-011",
       "category": "normal",
-      "task": "对自动生成的 API Schema 变更做高风险评审，对照调用方、契约测试和供应链证据。",
+      "task": "检查生成的数据迁移代码，确认回滚、空值和大表锁定风险是否被覆盖。",
       "expected_intents": [
         "code_review"
       ],
@@ -168,7 +168,7 @@
     {
       "id": "normal-012",
       "category": "normal",
-      "task": "Review the pull request and regression tests for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Audit the authentication patch for privilege escalation, session fixation, and tests that merely mirror the implementation.",
       "expected_intents": [
         "code_review"
       ],
@@ -183,7 +183,7 @@
     {
       "id": "normal-013",
       "category": "normal",
-      "task": "审查拉取请求与回归测试，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "对这次类型系统重构做发布前审查，区分阻断项、建议项和未验证假设。",
       "expected_intents": [
         "code_review"
       ],
@@ -198,7 +198,7 @@
     {
       "id": "normal-014",
       "category": "normal",
-      "task": "Review the pull request and regression tests; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Inspect the CSV parser fix with malformed encodings and oversized rows in mind; identify missing boundary tests.",
       "expected_intents": [
         "code_review"
       ],
@@ -213,7 +213,7 @@
     {
       "id": "normal-015",
       "category": "normal",
-      "task": "审查拉取请求与回归测试，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "复核订单状态机改动，检查非法跳转、并发更新与错误恢复路径。",
       "expected_intents": [
         "code_review"
       ],
@@ -228,7 +228,7 @@
     {
       "id": "normal-016",
       "category": "normal",
-      "task": "Review the pull request and regression tests under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Read the dependency upgrade diff for breaking API changes, transitive risk, and whether the existing test suite proves compatibility.",
       "expected_intents": [
         "code_review"
       ],
@@ -243,7 +243,7 @@
     {
       "id": "normal-017",
       "category": "normal",
-      "task": "先画出订单服务的模块边界，再定位超时故障、实现最小修复，并用回归测试证明行为。",
+      "task": "先定位批量导入偶发丢行的根因，用最小复现锁定边界，再修复并跑相关回归。",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -258,7 +258,7 @@
     {
       "id": "normal-018",
       "category": "normal",
-      "task": "Take ownership of a failing CLI workflow from repository mapping through root-cause debugging, implementation, simplification, tests, and handoff notes.",
+      "task": "Map the notification service before changing retry ownership, implement the smallest fix, and leave the module simpler than you found it.",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -273,7 +273,7 @@
     {
       "id": "normal-019",
       "category": "normal",
-      "task": "理解这个存量数据管道后更换有问题的解析分支，清理死路径，补齐边界样例与 CI 检查。",
+      "task": "用户导出在夏令时跨日时少一天；请诊断、写失败用例、修复并说明发布风险。",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -288,7 +288,7 @@
     {
       "id": "normal-020",
       "category": "normal",
-      "task": "Map the codebase and implement, debug, and test the change for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Trace the configuration-loading path, remove the environment-specific failure, and verify startup behavior on clean and upgraded installs.",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -303,7 +303,7 @@
     {
       "id": "normal-021",
       "category": "normal",
-      "task": "摸清代码库并实现、调试、测试变更，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "摸清权限校验在 API 和异步任务之间的边界，修复绕过问题并补契约测试。",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -318,7 +318,7 @@
     {
       "id": "normal-022",
       "category": "normal",
-      "task": "Map the codebase and implement, debug, and test the change; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Investigate a memory regression introduced by the new importer, profile the hot path, then land a bounded change with evidence.",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -333,7 +333,7 @@
     {
       "id": "normal-023",
       "category": "normal",
-      "task": "摸清代码库并实现、调试、测试变更，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "将三处分散的订单金额计算收敛到现有领域层，保持对外行为并补差异测试。",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -348,7 +348,7 @@
     {
       "id": "normal-024",
       "category": "normal",
-      "task": "Map the codebase and implement, debug, and test the change under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Understand why Windows paths fail in the asset pipeline, correct the portability defect, and exercise both separators in CI-level tests.",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -363,7 +363,7 @@
     {
       "id": "normal-025",
       "category": "normal",
-      "task": "基于符号图追踪一个公共类型更名的调用方，区分静态索引结论与源码确认结论。",
+      "task": "为计费服务建立可更新的符号关系索引，回答修改税率模型会影响哪些入口。",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -378,7 +378,7 @@
     {
       "id": "normal-026",
       "category": "normal",
-      "task": "Use the code graph to answer which entry points reach the legacy parser and what the current diff can break; cite source locations.",
+      "task": "Index only the payments package, then trace callers of the settlement adapter and flag stale graph assumptions explicitly.",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -393,7 +393,7 @@
     {
       "id": "normal-027",
       "category": "normal",
-      "task": "为架构评审构建有边界的 call graph，验证索引新鲜度并标注 MCP 查询不能代替的手工核对。",
+      "task": "基于当前 diff 分析用户删除接口的上游调用与下游事件订阅者。",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -408,7 +408,7 @@
     {
       "id": "normal-028",
       "category": "normal",
-      "task": "Build a code graph and analyze call-chain impact for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Answer an architecture question about how request identity reaches the audit writer, citing indexed symbols rather than keyword guesses.",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -423,7 +423,7 @@
     {
       "id": "normal-029",
       "category": "normal",
-      "task": "建立代码图谱并分析调用链影响，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "重建过期的代码关系数据，然后识别移除旧配置类前必须迁移的依赖点。",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -438,7 +438,7 @@
     {
       "id": "normal-030",
       "category": "normal",
-      "task": "Build a code graph and analyze call-chain impact; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Use structural references to compare the two authorization paths and explain where their dependency chains diverge.",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -453,7 +453,7 @@
     {
       "id": "normal-031",
       "category": "normal",
-      "task": "建立代码图谱并分析调用链影响，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "只对此次变更涉及的包做关系探索，列出需要重跑的集成测试边界。",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -468,7 +468,7 @@
     {
       "id": "normal-032",
       "category": "normal",
-      "task": "Build a code graph and analyze call-chain impact under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Find every concrete implementation behind the storage protocol and show which command paths instantiate each one.",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -483,7 +483,7 @@
     {
       "id": "normal-033",
       "category": "normal",
-      "task": "对客服 Agent 做红队评审：恶意知识文档、工具越权、秘密回显和不受控的输出。",
+      "task": "审计客服 Agent 处理外部邮件时的指令优先级，特别检查凭证和工具调用边界。",
       "expected_intents": [
         "agent_security"
       ],
@@ -498,7 +498,7 @@
     {
       "id": "normal-034",
       "category": "normal",
-      "task": "Threat-model a connector-enabled assistant and specify input scanning, output validation, privacy checks, and host-controlled permission gates.",
+      "task": "Threat-model a support connector that can read tickets and draft replies but must never send or expose hidden context without approval.",
       "expected_intents": [
         "agent_security"
       ],
@@ -513,7 +513,7 @@
     {
       "id": "normal-035",
       "category": "normal",
-      "task": "审计外部 Skill 的供应链来源与 prompt injection 面，给出可测试的拒绝和降级条件。",
+      "task": "为文档摄取链路设计恶意指令隔离、敏感字段脱敏和审批失败策略。",
       "expected_intents": [
         "agent_security"
       ],
@@ -528,7 +528,7 @@
     {
       "id": "normal-036",
       "category": "normal",
-      "task": "Audit prompt injection, tool permissions, and output guardrails for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Review the agent's browser permissions, including origin scope, download handling, and what evidence is required before consequential actions.",
       "expected_intents": [
         "agent_security"
       ],
@@ -543,7 +543,7 @@
     {
       "id": "normal-037",
       "category": "normal",
-      "task": "审计提示词注入、工具权限与输出护栏，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "检查一个多租户助手是否可能通过历史摘要泄露其他客户的上下文。",
       "expected_intents": [
         "agent_security"
       ],
@@ -558,7 +558,7 @@
     {
       "id": "normal-038",
       "category": "normal",
-      "task": "Audit prompt injection, tool permissions, and output guardrails; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Define guardrails for an agent that receives untrusted CSV cells and can call an internal lookup tool.",
       "expected_intents": [
         "agent_security"
       ],
@@ -573,7 +573,7 @@
     {
       "id": "normal-039",
       "category": "normal",
-      "task": "审计提示词注入、工具权限与输出护栏，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "模拟诱导模型跳过确认的攻击，核对宿主在发送、删除和付费操作前的拦截。",
       "expected_intents": [
         "agent_security"
       ],
@@ -588,7 +588,7 @@
     {
       "id": "normal-040",
       "category": "normal",
-      "task": "Audit prompt injection, tool permissions, and output guardrails under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Assess whether tool results can smuggle new instructions into the planner and specify containment tests for that channel.",
       "expected_intents": [
         "agent_security"
       ],
@@ -603,7 +603,7 @@
     {
       "id": "normal-041",
       "category": "normal",
-      "task": "采访产品负责人来消除范围歧义，再拆成有明确输入、交接物和停止条件的 Agent 工作流。",
+      "task": "与需求方澄清‘自动化销售运营’的边界，再拆分角色、交付物、前置条件和停止门。",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -618,7 +618,7 @@
     {
       "id": "normal-042",
       "category": "normal",
-      "task": "Turn an underspecified migration request into bounded workstreams, role ownership, dependency order, approval points, and review criteria.",
+      "task": "Turn a vague request for an AI operations team into an executable plan with owners, dependencies, review gates, and unresolved decisions.",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -633,7 +633,7 @@
     {
       "id": "normal-043",
       "category": "normal",
-      "task": "为三个专业 Agent 设计冲突解决与交叉审查机制，防止工具集过载和责任空白。",
+      "task": "为跨部门客诉处理设计协作方案，明确哪些信息能传递、哪些冲突需要升级。",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -648,7 +648,7 @@
     {
       "id": "normal-044",
       "category": "normal",
-      "task": "Clarify fuzzy requirements and decompose a multi-agent plan for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Interview the product owner about an underspecified research assistant, then propose a phased team topology rather than inventing requirements.",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -663,7 +663,7 @@
     {
       "id": "normal-045",
       "category": "normal",
-      "task": "澄清模糊需求并拆解多 Agent 协作计划，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "将‘帮我做个智能营销系统’转成有验收标准的工作包，标出外部授权点。",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -678,7 +678,7 @@
     {
       "id": "normal-046",
       "category": "normal",
-      "task": "Clarify fuzzy requirements and decompose a multi-agent plan; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Design a handoff sequence for research, legal review, and publication while keeping each role's authority explicit.",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -693,7 +693,7 @@
     {
       "id": "normal-047",
       "category": "normal",
-      "task": "澄清模糊需求并拆解多 Agent 协作计划，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "整理一个已经反复变更的 Agent 项目方向，区分已确认事实、假设和待决策项。",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -708,7 +708,7 @@
     {
       "id": "normal-048",
       "category": "normal",
-      "task": "Clarify fuzzy requirements and decompose a multi-agent plan under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Plan concurrent specialist work for a migration program and define how evidence is merged without allowing one role to approve its own output.",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -723,7 +723,7 @@
     {
       "id": "normal-049",
       "category": "normal",
-      "task": "为竞品调研设计 GitHub、Reddit、YouTube 与 Bilibili 公开源检索路线，按主张绑定引用和新鲜度。",
+      "task": "调研开发者社区如何评价本地优先的 AI 编码工具，保留原始链接和发布日期。",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -738,7 +738,7 @@
     {
       "id": "normal-050",
       "category": "normal",
-      "task": "Map current community evidence for an open-source tool across forums, code hosts, and video platforms without assuming account or connector access.",
+      "task": "Compare recurring complaints about three note-taking products across public forums, videos, and issue trackers with source-level citations.",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -753,7 +753,7 @@
     {
       "id": "normal-051",
       "category": "normal",
-      "task": "调查一个行业话题的公开讨论，将一手来源、转述来源和无法证实的说法分开。",
+      "task": "从中英文社媒、视频评论和开源讨论中搜集对家用机器人的真实抱怨。",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -768,7 +768,7 @@
     {
       "id": "normal-052",
       "category": "normal",
-      "task": "Research public sources across reddit, youtube, and github with citations for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Find primary public evidence for how creators use AI captioning, separating product claims from user demonstrations.",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -783,7 +783,7 @@
     {
       "id": "normal-053",
       "category": "normal",
-      "task": "调研 Reddit、YouTube、GitHub 等公开平台并保留引用，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "追踪某开源项目一年内的用户反馈变化，将 issue、论坛和演示视频串联起来。",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -798,7 +798,7 @@
     {
       "id": "normal-054",
       "category": "normal",
-      "task": "Research public sources across reddit, youtube, and github with citations; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Survey public conversations about cross-border seller software and return a citation table grouped by workflow pain point.",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -813,7 +813,7 @@
     {
       "id": "normal-055",
       "category": "normal",
-      "task": "调研 Reddit、YouTube、GitHub 等公开平台并保留引用，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "查找教师使用 AI 备课的实际案例，每个结论都要能回到原帖或原视频。",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -828,7 +828,7 @@
     {
       "id": "normal-056",
       "category": "normal",
-      "task": "Research public sources across reddit, youtube, and github with citations under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Research how users migrate away from a discontinued SaaS across communities in two languages, noting evidence gaps.",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -843,7 +843,7 @@
     {
       "id": "normal-057",
       "category": "normal",
-      "task": "为投委会编写一份不构成个人建议的价值投资备忘录，拆开估值、资本配置与反方情景。",
+      "task": "评估一家云安全公司的持续收入质量，建模关键假设，并写出最强反方论点。",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -858,7 +858,7 @@
     {
       "id": "normal-058",
       "category": "normal",
-      "task": "Diligence a software company using source-backed unit economics, explicit valuation assumptions, management risks, and a falsifiable bear case.",
+      "task": "Prepare a diligence memo on a listed payment processor, covering unit economics, capital allocation, downside cases, and source confidence.",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -873,7 +873,7 @@
     {
       "id": "normal-059",
       "category": "normal",
-      "task": "复核一份投研结论的证据质量，区分事实、假设、敏感性及受监管表述边界。",
+      "task": "比较两家工业软件公司的护城河与估值敏感性，不要隐去数据缺口。",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -888,7 +888,7 @@
     {
       "id": "normal-060",
       "category": "normal",
-      "task": "Prepare an investment memo with valuation assumptions and a bear case for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Analyze whether a retailer's reported margin recovery is structural or cyclical, with a falsifiable bear thesis.",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -903,7 +903,7 @@
     {
       "id": "normal-061",
       "category": "normal",
-      "task": "编写含估值假设和反方观点的投资备忘录，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "审阅某消费品公司近五年的现金流与回购纪律，建立可复算的价值区间。",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -918,7 +918,7 @@
     {
       "id": "normal-062",
       "category": "normal",
-      "task": "Prepare an investment memo with valuation assumptions and a bear case; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Write an investment committee brief on a vertical SaaS vendor, including customer concentration and evidence that could invalidate the thesis.",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -933,7 +933,7 @@
     {
       "id": "normal-063",
       "category": "normal",
-      "task": "编写含估值假设和反方观点的投资备忘录，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "核对一家制造企业的产能扩张故事，区分管理层口径与可验证经营数据。",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -948,7 +948,7 @@
     {
       "id": "normal-064",
       "category": "normal",
-      "task": "Prepare an investment memo with valuation assumptions and a bear case under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Assess a marketplace business through cohort durability, take rate, competitive response, and a conservative valuation range.",
       "expected_intents": [
         "investment_research_diligence"
       ],
@@ -963,7 +963,7 @@
     {
       "id": "normal-065",
       "category": "normal",
-      "task": "为咨询型 AI Agency 定义研究、分析、评审角色的能力边界、交接契约和冲突升级路径。",
+      "task": "为产品研发团队整理专家 Agent 目录，消除职责重叠并定义交接输入。",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -978,7 +978,7 @@
     {
       "id": "normal-066",
       "category": "normal",
-      "task": "Review an expert-agent catalog for duplicate mandates, hidden tool authority, missing handoff fields, and unsafe role composition.",
+      "task": "Review an existing library of support-agent roles for conflicting mandates, missing escalation paths, and accidental tool authority.",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -993,7 +993,7 @@
     {
       "id": "normal-067",
       "category": "normal",
-      "task": "设计可复用角色模板，但保留项目级权限、责任人和最终裁决的宿主控制。",
+      "task": "将法务、财务和运营角色改成可组合的契约，明确谁能建议、谁能批准。",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -1008,7 +1008,7 @@
     {
       "id": "normal-068",
       "category": "normal",
-      "task": "Design an expert-agent role library with handoff and conflict rules for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Design role cards for a research service with evidence requirements, conflict resolution, and explicit non-authorities.",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -1023,7 +1023,7 @@
     {
       "id": "normal-069",
       "category": "normal",
-      "task": "设计专家 Agent 角色库与交接冲突规则，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "审查现有 Agent 团队中的同名能力，合并重复角色但保留专业责任边界。",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -1038,7 +1038,7 @@
     {
       "id": "normal-070",
       "category": "normal",
-      "task": "Design an expert-agent role library with handoff and conflict rules; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Create a governance model for reusable engineering specialists, including version ownership and deprecation rules.",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -1053,7 +1053,7 @@
     {
       "id": "normal-071",
       "category": "normal",
-      "task": "设计专家 Agent 角色库与交接冲突规则，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "为客户交付团队补齐角色选择条件、失败升级和证据回传字段。",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -1068,7 +1068,7 @@
     {
       "id": "normal-072",
       "category": "normal",
-      "task": "Design an expert-agent role library with handoff and conflict rules under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Audit a marketing-agent roster for hidden publication permissions and ambiguous ownership of factual claims.",
       "expected_intents": [
         "agent_role_library_governance"
       ],
@@ -1083,7 +1083,7 @@
     {
       "id": "normal-073",
       "category": "normal",
-      "task": "从现有界面反推 DESIGN.md，将色彩、字体、间距、表面和组件状态映射到可实施令牌。",
+      "task": "从现有产品界面提炼一份 DESIGN.md，固化颜色、字体、间距与交互状态。",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1098,7 +1098,7 @@
     {
       "id": "normal-074",
       "category": "normal",
-      "task": "Audit DESIGN.md against the shipped React components for token drift, missing interaction states, responsive gaps, and accessibility regressions.",
+      "task": "Reconcile the component library with its design contract and document intentional exceptions rather than patching pages individually.",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1113,7 +1113,7 @@
     {
       "id": "normal-075",
       "category": "normal",
-      "task": "为跨产品设计系统定义变更治理：谁修改源事实、如何验证、如何处理例外。",
+      "task": "检查设计源事实与代码 token 的偏差，重点覆盖错误、禁用和焦点状态。",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1128,7 +1128,7 @@
     {
       "id": "normal-076",
       "category": "normal",
-      "task": "Establish a design.md contract for tokens, component states, and accessibility for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Write a compact visual contract for a data-heavy admin product, including density, hierarchy, responsive behavior, and accessibility.",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1143,7 +1143,7 @@
     {
       "id": "normal-077",
       "category": "normal",
-      "task": "建立 DESIGN.md 令牌、组件状态与可访问性契约，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "统一两个子产品的设计规范，明确哪些变量共享、哪些允许品牌化覆盖。",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1158,7 +1158,7 @@
     {
       "id": "normal-078",
       "category": "normal",
-      "task": "Establish a design.md contract for tokens, component states, and accessibility; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Review DESIGN.md after a redesign and close gaps in tables, forms, dialogs, empty states, and motion preferences.",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1173,7 +1173,7 @@
     {
       "id": "normal-079",
       "category": "normal",
-      "task": "建立 DESIGN.md 令牌、组件状态与可访问性契约，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "为移动与桌面端共用组件建立状态矩阵，防止各页面自行解释交互。",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1188,7 +1188,7 @@
     {
       "id": "normal-080",
       "category": "normal",
-      "task": "Establish a design.md contract for tokens, component states, and accessibility under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Convert a screenshot-based visual direction into source-owned tokens and reusable component rules with traceable decisions.",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -1203,7 +1203,7 @@
     {
       "id": "normal-081",
       "category": "normal",
-      "task": "评审医疗团队私密通讯流程，限制标识符、元数据、保留期与滥用处理的暴露。",
+      "task": "评审医患通讯方案中的端到端加密、推送元数据和账号恢复权衡。",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1218,7 +1218,7 @@
     {
       "id": "normal-082",
       "category": "normal",
-      "task": "Compare an E2EE messenger design against identifier minimization, metadata privacy, key-boundary, retention, and abuse-reporting requirements.",
+      "task": "Define privacy boundaries for a messenger that avoids global user identifiers while still handling abuse reports and device loss.",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1233,7 +1233,7 @@
     {
       "id": "normal-083",
       "category": "normal",
-      "task": "为内部安全聊天制定凭证脱敏和记录策略，明确端到端加密无法覆盖的边界。",
+      "task": "检查企业私聊产品在联系人发现、保留期和封禁处理上暴露的信息。",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1248,7 +1248,7 @@
     {
       "id": "normal-084",
       "category": "normal",
-      "task": "Review e2ee, metadata minimization, and retention boundaries for private messaging for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Threat-model metadata leakage across relay servers, notifications, backups, and link previews in a secure chat design.",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1263,7 +1263,7 @@
     {
       "id": "normal-085",
       "category": "normal",
-      "task": "评审私密通讯的 E2EE、元数据最小化和保留边界，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "为无中心账号的通讯系统制定设备迁移与密钥丢失处理边界。",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1278,7 +1278,7 @@
     {
       "id": "normal-086",
       "category": "normal",
-      "task": "Review e2ee, metadata minimization, and retention boundaries for private messaging; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Review whether moderation workflows preserve confidentiality and minimize durable associations between participants.",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1293,7 +1293,7 @@
     {
       "id": "normal-087",
       "category": "normal",
-      "task": "评审私密通讯的 E2EE、元数据最小化和保留边界，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "比较两种私密消息架构，重点说明离线投递与元数据最小化的冲突。",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1308,7 +1308,7 @@
     {
       "id": "normal-088",
       "category": "normal",
-      "task": "Review e2ee, metadata minimization, and retention boundaries for private messaging under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Set retention and deletion rules for encrypted team chat, including what administrators cannot recover.",
       "expected_intents": [
         "private_communication_governance"
       ],
@@ -1323,7 +1323,7 @@
     {
       "id": "normal-089",
       "category": "normal",
-      "task": "盘点合同 PDF、表格和扫描件，保留页码与来源后转换、分块并进入内部知识库。",
+      "task": "将一批政策 PDF、表格附件和会议纪要整理为可导航的 Markdown 手册，保留页码来源。",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1338,7 +1338,7 @@
     {
       "id": "normal-090",
       "category": "normal",
-      "task": "Convert a mixed office-file archive into retrieval-ready Markdown while preserving tables, document identity, conversion caveats, and citations.",
+      "task": "Convert the operations handbook from DOCX into a linked knowledge base without losing warnings, tables, or image captions.",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1353,7 +1353,7 @@
     {
       "id": "normal-091",
       "category": "normal",
-      "task": "为产品手册建立文档分区、去重、摘要和来源核对流程，不把转换结果当成新事实。",
+      "task": "为合规文档建立分层目录与稳定锚点，将无法可靠转换的页面列入人工队列。",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1368,7 +1368,7 @@
     {
       "id": "normal-092",
       "category": "normal",
-      "task": "Turn pdf and office documents into a markdown knowledge base for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Turn a mixed folder of slide decks and reports into topic pages with provenance, duplicate handling, and unresolved OCR notes.",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1383,7 +1383,7 @@
     {
       "id": "normal-093",
       "category": "normal",
-      "task": "将 PDF 和办公文档转为 Markdown 知识库，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "将产品手册的多个版本归并为当前知识站，保留历史差异和生效日期。",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1398,7 +1398,7 @@
     {
       "id": "normal-094",
       "category": "normal",
-      "task": "Turn pdf and office documents into a markdown knowledge base; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Extract procedures from scanned maintenance manuals, flag uncertain text, and produce reviewable Markdown rather than silent guesses.",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1413,7 +1413,7 @@
     {
       "id": "normal-095",
       "category": "normal",
-      "task": "将 PDF 和办公文档转为 Markdown 知识库，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "把客户交付包里的文档、图片和附录整理成一个可追溯来源的内部站点。",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1428,7 +1428,7 @@
     {
       "id": "normal-096",
       "category": "normal",
-      "task": "Turn pdf and office documents into a markdown knowledge base under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Migrate a legacy wiki export into concise topic files while preserving cross-references and identifying orphaned content.",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -1443,7 +1443,7 @@
     {
       "id": "normal-097",
       "category": "normal",
-      "task": "为 B2B 新品设计一周内容矩阵，交付三条短视频脚本、声称核查和素材交接表。",
+      "task": "为新款户外电源策划一周内容，交付主题矩阵、两条短片脚本和素材清单。",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1458,7 +1458,7 @@
     {
       "id": "normal-098",
       "category": "normal",
-      "task": "Turn a campaign brief into channel-specific copy, a short-form video script, an asset checklist, and a publish-readiness handoff.",
+      "task": "Develop a creator campaign from a one-line product insight through hooks, shot notes, caption variants, and editorial review.",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1473,7 +1473,7 @@
     {
       "id": "normal-099",
       "category": "normal",
-      "task": "复核程序化视频方案的文案语气、公开声称、镜头结构与素材权利。",
+      "task": "将一篇长访谈改编成三个竖屏叙事，标出事实核查和画面版权问题。",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1488,7 +1488,7 @@
     {
       "id": "normal-100",
       "category": "normal",
-      "task": "Plan a content matrix, short-video script, and media handoff for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Plan a month of educational clips for a B2B tool with audience stages, repeatable formats, and approval checkpoints.",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1503,7 +1503,7 @@
     {
       "id": "normal-101",
       "category": "normal",
-      "task": "策划内容矩阵、短视频脚本与媒体交付，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "为公益活动写不夸大的视频文案，将引用、口播和画面证据一一对应。",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1518,7 +1518,7 @@
     {
       "id": "normal-102",
       "category": "normal",
-      "task": "Plan a content matrix, short-video script, and media handoff; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Create a launch content kit for a mobile app, including channel adaptations, a filming plan, and handoff criteria for editors.",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1533,7 +1533,7 @@
     {
       "id": "normal-103",
       "category": "normal",
-      "task": "策划内容矩阵、短视频脚本与媒体交付，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "从用户问答中提炼六个视频选题，为每个选题设计开场、证据点和收束。",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1548,7 +1548,7 @@
     {
       "id": "normal-104",
       "category": "normal",
-      "task": "Plan a content matrix, short-video script, and media handoff under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Reshape a technical demo into social clips without changing its claims, and provide an asset-rights checklist.",
       "expected_intents": [
         "content_video_production"
       ],
@@ -1563,7 +1563,7 @@
     {
       "id": "normal-105",
       "category": "normal",
-      "task": "分析一条参考广告的镜头和节奏，比较生成提供方，给出成本区间、渲染质检和权利门。",
+      "task": "参考一条产品演示短片，拆解镜头节奏和声音层，再给出可控成本的制作管线。",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1578,7 +1578,7 @@
     {
       "id": "normal-106",
       "category": "normal",
-      "task": "Plan an agent-driven video pipeline from reference analysis through provider routing, caption checks, post-render inspection, and failure fallback.",
+      "task": "Design a provider-agnostic workflow for turning a source clip into localized variants, with cost ceilings and post-render QA.",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1593,7 +1593,7 @@
     {
       "id": "normal-107",
       "category": "normal",
-      "task": "为批量短视频建立路由决策表，区分可自动的方法与必须由宿主批准的调用。",
+      "task": "为电商广告的多比例成片规划生成、剪辑、字幕和技术验收步骤。",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1608,7 +1608,7 @@
     {
       "id": "normal-108",
       "category": "normal",
-      "task": "Design an agentic media pipeline from a reference video with cost and render qa for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Analyze a reference reel and propose a reproducible media pipeline without assuming access to paid providers or source assets.",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1623,7 +1623,7 @@
     {
       "id": "normal-109",
       "category": "normal",
-      "task": "根据参考视频设计 Agentic 媒体管线、成本与渲染质检，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "从故事板到最终文件设计可观测工流，记录每次外部调用的费用与失败。",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1638,7 +1638,7 @@
     {
       "id": "normal-110",
       "category": "normal",
-      "task": "Design an agentic media pipeline from a reference video with cost and render qa; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Plan how to reproduce a tutorial video's structure using licensed assets, deterministic assembly, and frame-level acceptance checks.",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1653,7 +1653,7 @@
     {
       "id": "normal-111",
       "category": "normal",
-      "task": "根据参考视频设计 Agentic 媒体管线、成本与渲染质检，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "对一批 AI 生成片段制定选择、组接和输出规则，避免在渲染后才发现尺寸错误。",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1668,7 +1668,7 @@
     {
       "id": "normal-112",
       "category": "normal",
-      "task": "Design an agentic media pipeline from a reference video with cost and render qa under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Build a media-production plan that can swap image, voice, and video vendors while preserving provenance and budget reporting.",
       "expected_intents": [
         "agentic_media_production"
       ],
@@ -1683,7 +1683,7 @@
     {
       "id": "normal-113",
       "category": "normal",
-      "task": "检查月度销售表的缺失、重复和口径变化，计算渠道指标并为管理层规划不误导的图表。",
+      "task": "清理三家门店的销售明细，解释退货口径，并生成管理层可复核的趋势图。",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1698,7 +1698,7 @@
     {
       "id": "normal-114",
       "category": "normal",
-      "task": "Analyze an experiment workbook, separate data-quality caveats from findings, and prepare a concise report with reproducible table calculations.",
+      "task": "Analyze support-ticket exports for response-time bottlenecks, documenting data exclusions and charting changes by queue.",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1713,7 +1713,7 @@
     {
       "id": "normal-115",
       "category": "normal",
-      "task": "为研究团队整理 CSV 样本，标记异常值处理、统计假设、图表选择和结论限制。",
+      "task": "合并两个调研表的编码差异，检查缺失与异常值，再比较人群分布。",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1728,7 +1728,7 @@
     {
       "id": "normal-116",
       "category": "normal",
-      "task": "Clean the spreadsheet, analyze the data, and plan a chart report for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Turn a messy subscription workbook into a reproducible retention analysis with clear cohort definitions and uncertainty notes.",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1743,7 +1743,7 @@
     {
       "id": "normal-117",
       "category": "normal",
-      "task": "清洗表格、分析数据并规划图表报告，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "核对仓库库存记录与盘点结果，分离时间差、单位差和真实损耗。",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1758,7 +1758,7 @@
     {
       "id": "normal-118",
       "category": "normal",
-      "task": "Clean the spreadsheet, analyze the data, and plan a chart report; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Prepare an executive view of campaign spend and qualified leads, including source lineage and sensitivity to attribution windows.",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1773,7 +1773,7 @@
     {
       "id": "normal-119",
       "category": "normal",
-      "task": "清洗表格、分析数据并规划图表报告，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "分析产线停机日志，统一时区和故障编码，找出主要损失时段。",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1788,7 +1788,7 @@
     {
       "id": "normal-120",
       "category": "normal",
-      "task": "Clean the spreadsheet, analyze the data, and plan a chart report under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Audit a KPI spreadsheet before a board meeting, reconcile formulas to raw rows, and visualize only defensible metrics.",
       "expected_intents": [
         "data_analysis"
       ],
@@ -1803,7 +1803,7 @@
     {
       "id": "normal-121",
       "category": "normal",
-      "task": "为 Python 库做公开发布前准备，核对版本、许可证、第三方依赖、文档和回滚条件。",
+      "task": "为一个内部 Python 库准备公开发布，核对许可证、依赖归属和敏感历史。",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1818,7 +1818,7 @@
     {
       "id": "normal-122",
       "category": "normal",
-      "task": "Prepare a source repository for maintainer approval with provenance checks, release notes, license review, package verification, and a publication checklist.",
+      "task": "Prepare a maintainer-ready release packet for a CLI project, including reproducible checks, provenance, and an explicit go/no-go decision.",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1833,7 +1833,7 @@
     {
       "id": "normal-123",
       "category": "normal",
-      "task": "审查待开源目录中的私有信息、生成产物和供应链风险，只交付准备证据，不代替发布授权。",
+      "task": "检查即将公开的模型评测仓库，清除私有路径并核实样例数据授权。",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1848,7 +1848,7 @@
     {
       "id": "normal-124",
       "category": "normal",
-      "task": "Prepare license, supply-chain, and publication checks for an open-source repository for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Harden a JavaScript package for its first public version with changelog, supply-chain review, artifact inspection, and rollback notes.",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1863,7 +1863,7 @@
     {
       "id": "normal-125",
       "category": "normal",
-      "task": "准备开源仓库的许可证、供应链与发布清单，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "为社区版软件制定发版门禁，要求测试、签名、安装验证和审批证据齐全。",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1878,7 +1878,7 @@
     {
       "id": "normal-126",
       "category": "normal",
-      "task": "Prepare license, supply-chain, and publication checks for an open-source repository; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Review whether a repository is fit to transfer to a public organization, with special attention to issue history and contributor attribution.",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1893,7 +1893,7 @@
     {
       "id": "normal-127",
       "category": "normal",
-      "task": "准备开源仓库的许可证、供应链与发布清单，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "整理一次已批准的开源迁移，将代码、文档和发布产物的校验证据串起来。",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1908,7 +1908,7 @@
     {
       "id": "normal-128",
       "category": "normal",
-      "task": "Prepare license, supply-chain, and publication checks for an open-source repository under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Create a pre-publication checklist for a security tool without claiming readiness until scans and independent review are recorded.",
       "expected_intents": [
         "open_source_release"
       ],
@@ -1923,7 +1923,7 @@
     {
       "id": "normal-129",
       "category": "normal",
-      "task": "为一个技术主题制定搜索意图与大纲，写作后核对来源、时效性、公开声称和内部链接。",
+      "task": "为‘家庭储能选型’写一篇面向普通业主的搜索文章，核对技术声明与来源。",
       "expected_intents": [
         "content_seo"
       ],
@@ -1938,7 +1938,7 @@
     {
       "id": "normal-130",
       "category": "normal",
-      "task": "Refresh an aging blog post using current primary sources, editorial review, honest metadata, and a channel-appropriate social summary.",
+      "task": "Revise a migration guide so it answers the actual query, cites product limits accurately, and earns a useful search snippet.",
       "expected_intents": [
         "content_seo"
       ],
@@ -1953,7 +1953,7 @@
     {
       "id": "normal-131",
       "category": "normal",
-      "task": "为产品教程撰写 SEO 文章，分离可证事实、示例和促销语，并给出发布前编辑清单。",
+      "task": "为 B2B 软件的定价页补充对比内容，不伪造客户成果，并优化标题层级。",
       "expected_intents": [
         "content_seo"
       ],
@@ -1968,7 +1968,7 @@
     {
       "id": "normal-132",
       "category": "normal",
-      "task": "Draft, fact-check, and optimize a public seo article for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Produce a fact-checked article about warehouse automation costs with source dates, caveats, and structured metadata.",
       "expected_intents": [
         "content_seo"
       ],
@@ -1983,7 +1983,7 @@
     {
       "id": "normal-133",
       "category": "normal",
-      "task": "撰写、核查并优化 SEO 公开文章，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "重写一组地区服务页，避免只替换城市名，使每页回答真实场景问题。",
       "expected_intents": [
         "content_seo"
       ],
@@ -1998,7 +1998,7 @@
     {
       "id": "normal-134",
       "category": "normal",
-      "task": "Draft, fact-check, and optimize a public seo article; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Audit an existing blog cluster for cannibalized intent, unsupported claims, and pages that should be consolidated.",
       "expected_intents": [
         "content_seo"
       ],
@@ -2013,7 +2013,7 @@
     {
       "id": "normal-135",
       "category": "normal",
-      "task": "撰写、核查并优化 SEO 公开文章，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "撰写一篇采购指南，将产品参数、业界常见范围和企业自身能力分开表达。",
       "expected_intents": [
         "content_seo"
       ],
@@ -2028,7 +2028,7 @@
     {
       "id": "normal-136",
       "category": "normal",
-      "task": "Draft, fact-check, and optimize a public seo article under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Improve a technical comparison page for discoverability while preserving nuance around benchmarks and compatibility.",
       "expected_intents": [
         "content_seo"
       ],
@@ -2043,7 +2043,7 @@
     {
       "id": "normal-137",
       "category": "normal",
-      "task": "为内部政策问答设计 RAG Agent，明确分块、命名空间、检索、引用、Schema 与恶意文档防护。",
+      "task": "为内部制度问答设计检索助手，回答必须附条款定位并允许明确拒答。",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2058,7 +2058,7 @@
     {
       "id": "normal-138",
       "category": "normal",
-      "task": "Architect a source-grounded support agent with vector retrieval, abstention rules, citation display, structured output evaluation, and tenant isolation.",
+      "task": "Build a knowledge assistant over engineering runbooks with hybrid retrieval, source citations, and a typed answer contract.",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2073,7 +2073,7 @@
     {
       "id": "normal-139",
       "category": "normal",
-      "task": "复核知识 Agent 的检索失败样例，将索引质量、召回、引用和生成护栏问题分开。",
+      "task": "为客服知识库规划召回、重排和权限过滤，避免跨租户命中。",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2088,7 +2088,7 @@
     {
       "id": "normal-140",
       "category": "normal",
-      "task": "Design a rag agent with vector retrieval, citations, and structured output for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Design an evidence-grounded research assistant that distinguishes retrieved facts from synthesis and exposes retrieval misses.",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2103,7 +2103,7 @@
     {
       "id": "normal-141",
       "category": "normal",
-      "task": "设计带向量检索、引用和结构化输出的 RAG Agent，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "将产品规格与故障单接入一个问答流程，设定版本、时效与引用校验。",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2118,7 +2118,7 @@
     {
       "id": "normal-142",
       "category": "normal",
-      "task": "Design a rag agent with vector retrieval, citations, and structured output; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Plan evaluation for a retrieval application using answer support, abstention quality, and permission-aware test cases.",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2133,7 +2133,7 @@
     {
       "id": "normal-143",
       "category": "normal",
-      "task": "设计带向量检索、引用和结构化输出的 RAG Agent，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "为法务合同库设计可追溯回答格式，所有结论需返回原文片段与文档版本。",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2148,7 +2148,7 @@
     {
       "id": "normal-144",
       "category": "normal",
-      "task": "Design a rag agent with vector retrieval, citations, and structured output under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Create a retrieval architecture for multilingual manuals, including chunk boundaries, reranking, and structured uncertainty.",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2163,7 +2163,7 @@
     {
       "id": "normal-145",
       "category": "normal",
-      "task": "为多租户 Agent 定义可持久记忆契约，包括写入来源、召回披露、纠正、删除和租户隔离。",
+      "task": "为销售助手定义哪些客户偏好可长期保留，以及更正、过期和删除流程。",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2178,7 +2178,7 @@
     {
       "id": "normal-146",
       "category": "normal",
-      "task": "Review a graph-memory design for accidental cross-user recall, unsupported claims, retention drift, and verifiable forget operations.",
+      "task": "Design tenant-isolated durable memory for an assistant, with provenance, confidence decay, correction, and auditable forgetting.",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2193,7 +2193,7 @@
     {
       "id": "normal-147",
       "category": "normal",
-      "task": "设计用户可见的记忆管理路径，让用户知道何时被记住、如何修正以及如何彻底删除。",
+      "task": "检查 Agent 在摘要历史对话时是否把推测当事实，并建立用户可见的修正机制。",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2208,7 +2208,7 @@
     {
       "id": "normal-148",
       "category": "normal",
-      "task": "Define tenant isolation, correction, and forgetting paths for agent long-term memory for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Define memory scopes for a household assistant so one member's private facts never become another member's context.",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2223,7 +2223,7 @@
     {
       "id": "normal-149",
       "category": "normal",
-      "task": "定义 Agent 长期记忆的租户隔离、更正与忘却路径，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "为客服 Agent 制定记忆优先级和冲突规则，处理用户新说法与旧记录不一致的情况。",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2238,7 +2238,7 @@
     {
       "id": "normal-150",
       "category": "normal",
-      "task": "Define tenant isolation, correction, and forgetting paths for agent long-term memory; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Plan a migration between memory backends without losing source attribution or resurrecting deleted entries.",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2253,7 +2253,7 @@
     {
       "id": "normal-151",
       "category": "normal",
-      "task": "定义 Agent 长期记忆的租户隔离、更正与忘却路径，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "设计一组评测来验证 Agent 何时该记、何时该忘、何时必须再次确认。",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2268,7 +2268,7 @@
     {
       "id": "normal-152",
       "category": "normal",
-      "task": "Define tenant isolation, correction, and forgetting paths for agent long-term memory under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Audit a graph-backed memory layer for cross-user edges, stale beliefs, deletion completeness, and replay safety.",
       "expected_intents": [
         "agent_long_term_memory_governance"
       ],
@@ -2283,7 +2283,7 @@
     {
       "id": "normal-153",
       "category": "normal",
-      "task": "盘点剩余 candidate 和 reference-only Claude Skills，按业务价值、重叠、供应链风险与 owner 分类。",
+      "task": "盘点尚未纳入 catalog 的候选 Skill，按缺口、重复、证据不足和待退役分类。",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2298,7 +2298,7 @@
     {
       "id": "normal-154",
       "category": "normal",
-      "task": "Build a bounded backlog for untrusted skill candidates, separating coverage gaps from duplicates and recording why each item is promoted, deferred, or removed.",
+      "task": "Build an owned backlog for reference-only skills, recording source evidence, overlap, priority, and the next trust decision.",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2313,7 +2313,7 @@
     {
       "id": "normal-155",
       "category": "normal",
-      "task": "评审各类积压 Skill 的正文深度和验证条件，只对高频缺口制定信任化计划。",
+      "task": "审查一批 Claude Skills 备选项，区分真实能力空白与只是换名的旧能力。",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2328,7 +2328,7 @@
     {
       "id": "normal-156",
       "category": "normal",
-      "task": "Inventory and cluster the remaining claude skills candidate and reference-only backlog for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Reconcile candidate maps from several audits and assign an owner plus disposition rationale to every unresolved item.",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2343,7 +2343,7 @@
     {
       "id": "normal-157",
       "category": "normal",
-      "task": "盘点并分类剩余 Claude Skills 候选与 reference-only 积压，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "为待验证 Skill 建立分批队列，优先处理高频场景与无可替代能力。",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2358,7 +2358,7 @@
     {
       "id": "normal-158",
       "category": "normal",
-      "task": "Inventory and cluster the remaining claude skills candidate and reference-only backlog; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Review stale backlog entries against the current trusted catalog and close items whose coverage is now demonstrable.",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2373,7 +2373,7 @@
     {
       "id": "normal-159",
       "category": "normal",
-      "task": "盘点并分类剩余 Claude Skills 候选与 reference-only 积压，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "将非 trusted 项目的保留理由、缺失证据和下次复审时间写入可维护清单。",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2388,7 +2388,7 @@
     {
       "id": "normal-160",
       "category": "normal",
-      "task": "Inventory and cluster the remaining claude skills candidate and reference-only backlog under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Cluster a large skill intake by user outcome, then identify which proposals deserve synthesis instead of one-file promotion.",
       "expected_intents": [
         "claude_skills_backlog_coverage"
       ],
@@ -2403,7 +2403,7 @@
     {
       "id": "normal-161",
       "category": "normal",
-      "task": "审计中英文复合任务的 intent 分解、scenario 选择、依赖边和 fail-closed 质量门。",
+      "task": "审查 Skill Router 在中文复合请求上的意图拆分、场景选择和依赖边。",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2418,7 +2418,7 @@
     {
       "id": "normal-162",
       "category": "normal",
-      "task": "Evaluate a smart skill router using held-out labels, capability coverage, forbidden selections, DAG coherence, confidence calibration, and reproducible evidence.",
+      "task": "Evaluate automatic skill selection against a manually labeled suite, reporting support counts and fail-closed gate behavior.",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2433,7 +2433,7 @@
     {
       "id": "normal-163",
       "category": "normal",
-      "task": "检查 Bundle 重叠与 Task Pack 噪音，区分选中、编译、宿主审批和执行失败的责任边界。",
+      "task": "检查 Bundle 重叠是否导致重复阶段与过多 Skill，但不通过改 gold 掩盖错路由。",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2448,7 +2448,7 @@
     {
       "id": "normal-164",
       "category": "normal",
-      "task": "Review skill router selection, bundle composition, and regression evidence for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Audit router confidence calibration, especially confidently wrong selections and unsupported production claims.",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2463,7 +2463,7 @@
     {
       "id": "normal-165",
       "category": "normal",
-      "task": "评审 Skill Router 的自动选择、Bundle 组合与回归证据，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "对多意图评测的精确率、召回率与 DAG 一致性做可复现复核。",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2478,7 +2478,7 @@
     {
       "id": "normal-166",
       "category": "normal",
-      "task": "Review skill router selection, bundle composition, and regression evidence; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Review whether scenario composition preserves required capabilities and refuses malformed contract inputs.",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2493,7 +2493,7 @@
     {
       "id": "normal-167",
       "category": "normal",
-      "task": "评审 Skill Router 的自动选择、Bundle 组合与回归证据，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "核对生产门的身份绑定、独立审查证据与队值统计，确保缺样本时失败关闭。",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2508,7 +2508,7 @@
     {
       "id": "normal-168",
       "category": "normal",
-      "task": "Review skill router selection, bundle composition, and regression evidence under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Probe the router with ambiguous and safety-sensitive prompts, then separate compiler defects from labeling disagreements.",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2523,7 +2523,7 @@
     {
       "id": "normal-169",
       "category": "normal",
-      "task": "为医疗 AI 试点整理用户、业务流程、受监管边界、数据质量和可验证的解决方案包。",
+      "task": "为医疗预约场景设计 AI 应用方案，把临床、隐私和数据质量门禁放在技术选型之前。",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2538,7 +2538,7 @@
     {
       "id": "normal-170",
       "category": "normal",
-      "task": "Profile a manufacturing quality workflow and select domain methods without treating skill availability as permission to access production systems.",
+      "task": "Turn a manufacturer's predictive-maintenance idea into a governed workflow with data readiness, human escalation, and measurable value.",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2553,7 +2553,7 @@
     {
       "id": "normal-171",
       "category": "normal",
-      "task": "比较教育、金融和房地产三类用户的共性编排与各自合规、证据和交付差异。",
+      "task": "为律所的合同审阅场景组合能力，明确法律判断不能由模型自动批准。",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2568,7 +2568,7 @@
     {
       "id": "normal-172",
       "category": "normal",
-      "task": "Design an industry ai solution with compliance boundaries and data-quality controls for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Design a finance operations assistant with jurisdiction, auditability, and source-system controls defined at intake.",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2583,7 +2583,7 @@
     {
       "id": "normal-173",
       "category": "normal",
-      "task": "设计含合规边界与数据质量的行业 AI 解决方案，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "将教育机构的‘个性化学习’需求拆成可验证场景，限制未成年人数据使用。",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2598,7 +2598,7 @@
     {
       "id": "normal-174",
       "category": "normal",
-      "task": "Design an industry ai solution with compliance boundaries and data-quality controls; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Plan a real-estate document workflow that respects regional rules, record quality, and accountable human decisions.",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2613,7 +2613,7 @@
     {
       "id": "normal-175",
       "category": "normal",
-      "task": "设计含合规边界与数据质量的行业 AI 解决方案，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "为公共服务热线规划分级 AI 辅助，先处理公平性、可达性与申诉路径。",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2628,7 +2628,7 @@
     {
       "id": "normal-176",
       "category": "normal",
-      "task": "Design an industry ai solution with compliance boundaries and data-quality controls under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Assess whether a vertical SaaS vendor can safely add an agent workflow, covering tenant boundaries and operational ownership.",
       "expected_intents": [
         "industry_application_orchestration"
       ],
@@ -2643,7 +2643,7 @@
     {
       "id": "normal-177",
       "category": "normal",
-      "task": "为建材产品线整理类目、买家搜索意图、关键词组和不夸大的 Listing 信息层级。",
+      "task": "优化工业泵产品的市场平台页面，将搜索词、规格证据与买家问题对齐。",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2658,7 +2658,7 @@
     {
       "id": "normal-178",
       "category": "normal",
-      "task": "Diagnose weak marketplace inquiries by separating category fit, keyword coverage, SKU depth, claim quality, and response usefulness.",
+      "task": "Rework a supplier's listing portfolio around distinct buyer intents and create response guidance for qualification inquiries.",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2673,7 +2673,7 @@
     {
       "id": "normal-179",
       "category": "normal",
-      "task": "根据一批真实询盘设计回复模板，保留产品匹配、证据、交期与人工确认边界。",
+      "task": "根据真实询盘重组门窗型材 SKU，避免用同一标题覆盖不同采购场景。",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2688,7 +2688,7 @@
     {
       "id": "normal-180",
       "category": "normal",
-      "task": "Optimize marketplace listings, keywords, and buyer inquiry replies for an owner review; document assumptions, boundaries, and acceptance evidence.",
+      "task": "Analyze marketplace search terms for a building-material exporter and map them to defensible product claims and catalog depth.",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2703,7 +2703,7 @@
     {
       "id": "normal-181",
       "category": "normal",
-      "task": "优化市场平台 Listing、关键词和买家询盘回复，作为下周评审输入；交付可复核结果与检查记录。",
+      "task": "为定制设备供应商建立从商品页到资质审核的买家转化路径。",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2718,7 +2718,7 @@
     {
       "id": "normal-182",
       "category": "normal",
-      "task": "Optimize marketplace listings, keywords, and buyer inquiry replies; separate verified findings, unresolved questions, and residual risks for the handoff.",
+      "task": "Audit a marketplace catalog for duplicate keyword targeting, unsupported specifications, and weak inquiry handoff.",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2733,7 +2733,7 @@
     {
       "id": "normal-183",
       "category": "normal",
-      "task": "优化市场平台 Listing、关键词和买家询盘回复，但不扩大宿主权限；列出所需输入、验收条件和降级路径。",
+      "task": "按应用、材料与采购阶段拆分商品组，让销售回复能快速获取所需参数。",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2748,7 +2748,7 @@
     {
       "id": "normal-184",
       "category": "normal",
-      "task": "Optimize marketplace listings, keywords, and buyer inquiry replies under the existing project constraints, with concise evidence suitable for an independent reviewer.",
+      "task": "Create a keyword and inquiry plan for an OEM supplier entering a new regional marketplace, with evidence behind demand assumptions.",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2763,7 +2763,7 @@
     {
       "id": "normal-185",
       "category": "normal",
-      "task": "改造这个 SaaS 仪表盘的响应式 UI，并用浏览器证据检查发布准备度。",
+      "task": "给非营利组织做一个可维护的捐赠页，需兼顾慢网加载和屏幕阅读器播报。",
       "expected_intents": [
         "website_build"
       ],
@@ -2778,7 +2778,7 @@
     {
       "id": "normal-186",
       "category": "normal",
-      "task": "Review the authentication bug fix for regression, dependency, and CI risks before acceptance.",
+      "task": "评审通知去重修复，从时序、重试和多租户隔离三个方面给出结论。",
       "expected_intents": [
         "code_review"
       ],
@@ -2793,7 +2793,7 @@
     {
       "id": "normal-187",
       "category": "normal",
-      "task": "先理解这个 Python 服务，再修复疑难 bug、简化实现并跑完测试。",
+      "task": "审视整个邮件发送链路，修复重试风暴，同时删除已不需要的兼容分支。",
       "expected_intents": [
         "codebase_change_lifecycle"
       ],
@@ -2808,7 +2808,7 @@
     {
       "id": "normal-188",
       "category": "normal",
-      "task": "Use a symbol and call graph to explain the blast radius of this git diff.",
+      "task": "检查服务分层的实际依赖方向，找出绕过领域边界的调用链。",
       "expected_intents": [
         "codebase_graph_intelligence"
       ],
@@ -2823,7 +2823,7 @@
     {
       "id": "normal-189",
       "category": "normal",
-      "task": "检查这个 Agent Connector 对提示词注入、秘密外泄和越权调用的防护。",
+      "task": "为内部知识助手制定最小权限清单，并说明哪些请求必须人工复核。",
       "expected_intents": [
         "agent_security"
       ],
@@ -2838,7 +2838,7 @@
     {
       "id": "normal-190",
       "category": "normal",
-      "task": "Interview the owner to resolve fuzzy scope, then produce bounded agent roles and handoff contracts.",
+      "task": "为研发、数据和运营三方组成的任务建立依赖图，先解决范围冲突再开工。",
       "expected_intents": [
         "agent_planning_orchestration"
       ],
@@ -2853,7 +2853,7 @@
     {
       "id": "normal-191",
       "category": "normal",
-      "task": "把这批 PDF、DOCX 和 XLSX 转成带来源标记的检索知识库条目。",
+      "task": "为新人将零散制度文件编排成学习路径，每章链接回原始证据。",
       "expected_intents": [
         "document_knowledge_base"
       ],
@@ -2868,7 +2868,7 @@
     {
       "id": "normal-192",
       "category": "normal",
-      "task": "Audit workbook quality, analyze the sales table, and specify honest charts for the executive report.",
+      "task": "将运输时效数据按线路和承运商拆分，说明样本不完整对结论的影响。",
       "expected_intents": [
         "data_analysis"
       ],
@@ -2883,7 +2883,7 @@
     {
       "id": "normal-193",
       "category": "normal",
-      "task": "为这个 Python 包整理开源许可、依赖风险、README 和发布前核对。",
+      "task": "审计一个待发布模板仓库中的第三方字体、图片和示例配置，再给出是否可公开的结论。",
       "expected_intents": [
         "open_source_release"
       ],
@@ -2898,7 +2898,7 @@
     {
       "id": "normal-194",
       "category": "normal",
-      "task": "Draft a source-backed SEO article, perform editorial review, and prepare its social post.",
+      "task": "把一份专家问答编辑成可检索长文，保留原话边界并添加可验证引用。",
       "expected_intents": [
         "content_seo"
       ],
@@ -2913,7 +2913,7 @@
     {
       "id": "normal-195",
       "category": "normal",
-      "task": "设计一个引用可追溯的客服 RAG Agent，包含向量检索和输出 Schema。",
+      "task": "审视现有知识 Agent 的错误引用问题，定义重现集和可量化改进目标。",
       "expected_intents": [
         "rag_agent"
       ],
@@ -2928,7 +2928,7 @@
     {
       "id": "normal-196",
       "category": "normal",
-      "task": "Audit automatic skill selection, overlap handling, task-pack composition, and router regression gates.",
+      "task": "评审 Task Pack 中选中场景、能力节点和宿主操作是否与可验证契约一致。",
       "expected_intents": [
         "skill_router_review"
       ],
@@ -2943,7 +2943,7 @@
     {
       "id": "normal-197",
       "category": "normal",
-      "task": "把现有 DESIGN.md 收敛为令牌、交互状态、响应式与可访问性的唯一事实源。",
+      "task": "审核一份过度膨胀的设计规范，保留可执行契约并移除页面级噪音。",
       "expected_intents": [
         "design_md_system_governance"
       ],
@@ -2958,7 +2958,7 @@
     {
       "id": "normal-198",
       "category": "normal",
-      "task": "Map current public evidence from GitHub, Reddit, YouTube, and Bilibili with freshness dates and citations.",
+      "task": "对公开平台上的电商询盘自动化经验做来源可追溯的主题聚类。",
       "expected_intents": [
         "multi_platform_research_discovery"
       ],
@@ -2973,7 +2973,7 @@
     {
       "id": "normal-199",
       "category": "normal",
-      "task": "为建材产品规划平台 Listing、搜索关键词和买家询盘回复。",
+      "task": "检查高流量但低询盘的商品页，区分词不对、信任不足与规格不清。",
       "expected_intents": [
         "commerce_growth"
       ],
@@ -2988,7 +2988,7 @@
     {
       "id": "normal-200",
       "category": "normal",
-      "task": "Profile a healthcare AI pilot, including regulated boundaries, evidence quality, and solution packaging.",
+      "task": "设计跨医疗、制造与教育的共性接入框架，但保留各行业不可合并的合规门。",
       "expected_intents": [
         "industry_application_orchestration"
       ],
