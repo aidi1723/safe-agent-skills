@@ -8,7 +8,10 @@ from .intent_evidence import (
     source_supports_release_action,
 )
 from .intent_source import bound_task_text
-from .release_propositions import parse_release_readiness_propositions
+from .release_propositions import (
+    ReleaseReadinessProposition,
+    parse_release_readiness_propositions,
+)
 from .routing_profiles import (
     SCENARIO_PROFILES,
     is_design_governance_composite,
@@ -104,9 +107,14 @@ _WEBSITE_PUBLISH_PRECONDITION_RE = re.compile(
 def find_profile_signal_spans(
     clause: str,
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
+    release_propositions: tuple[ReleaseReadinessProposition, ...] | None = None,
+    source_offset: int = 0,
 ) -> tuple[tuple[ProfileSignalSpan, ...], int, bool]:
     """Find distinctive, unambiguous spans using bounded deterministic work."""
     clause = bound_task_text(clause)
+    if release_propositions is None:
+        release_propositions = parse_release_readiness_propositions(clause)
+        source_offset = 0
     candidates: list[ProfileSignalSpan] = []
     negation_ranges = (
         ((0, len(clause)),)
@@ -116,8 +124,8 @@ def find_profile_signal_spans(
         else _coordinated_negation_ranges(clause)
     )
     positive_readiness_ranges = tuple(
-        (item.start, item.end)
-        for item in parse_release_readiness_propositions(clause)
+        (item.start - source_offset, item.end - source_offset)
+        for item in release_propositions
         if item.polarity == "positive" and item.discourse_role == "request"
     )
     non_action_release_ranges = tuple(
@@ -196,11 +204,19 @@ def merge_same_profile_spans(
 def split_profile_enumeration(
     clause: str,
     candidate_limit: int = MAX_CANDIDATE_SIGNALS,
+    release_propositions: tuple[ReleaseReadinessProposition, ...] | None = None,
+    source_offset: int = 0,
 ) -> SpanDecomposition:
     """Split a profile-backed enumeration while preserving readable source text."""
     clause = bound_task_text(clause)
+    if release_propositions is None:
+        release_propositions = parse_release_readiness_propositions(clause)
+        source_offset = 0
     spans, observed, candidate_limit_exceeded = find_profile_signal_spans(
-        clause, candidate_limit
+        clause,
+        candidate_limit,
+        release_propositions,
+        source_offset,
     )
     spans = merge_same_profile_spans(spans)
     descriptive_release_ranges = _descriptive_release_ranges(clause)
@@ -259,7 +275,11 @@ def split_profile_enumeration(
         positive_prefix = _positive_prefix_before_coordinated_negation(clause)
         summary = positive_prefix or clause
         evidence = _single_clause_evidence(
-            summary, spans, polarity, relation_mode
+            summary,
+            spans,
+            polarity,
+            relation_mode,
+            release_propositions,
         )
         return SpanDecomposition(
             (summary,),
@@ -342,7 +362,15 @@ def split_profile_enumeration(
             observed,
             candidate_limit_exceeded,
             False,
-            (_single_clause_evidence(clause, spans, polarity, relation_mode),),
+            (
+                _single_clause_evidence(
+                    clause,
+                    spans,
+                    polarity,
+                    relation_mode,
+                    release_propositions,
+                ),
+            ),
         )
 
     local_groups: list[tuple[int, int, int, str, str]] = []
@@ -388,6 +416,7 @@ def split_profile_enumeration(
             clauses[index],
             polarity,
             relation_mode,
+            release_propositions,
         )
         for index, task_type in enumerate(task_order)
     )
@@ -433,6 +462,7 @@ def _single_clause_evidence(
     spans: tuple[ProfileSignalSpan, ...],
     polarity: str,
     relation_mode: str,
+    release_propositions: tuple[ReleaseReadinessProposition, ...],
 ) -> IntentEvidence:
     if _WEBSITE_PUBLISH_PRECONDITION_RE.fullmatch(clause):
         return IntentEvidence(
@@ -449,7 +479,7 @@ def _single_clause_evidence(
     ]
     if release_spans and any(
         item.polarity == "positive" and item.discourse_role == "request"
-        for item in parse_release_readiness_propositions(clause)
+        for item in release_propositions
     ):
         return _profile_evidence(
             "open_source_release",
@@ -457,6 +487,7 @@ def _single_clause_evidence(
             clause,
             polarity,
             relation_mode,
+            release_propositions,
         )
     if _has_positive_release_action(clause):
         return _profile_evidence(
@@ -465,6 +496,7 @@ def _single_clause_evidence(
             clause,
             polarity,
             relation_mode,
+            release_propositions,
         )
     task_types = {span.task_type for span in spans}
     if len(task_types) != 1:
@@ -479,7 +511,12 @@ def _single_clause_evidence(
         )
     task_type = next(iter(task_types))
     return _profile_evidence(
-        task_type, list(spans), clause, polarity, relation_mode
+        task_type,
+        list(spans),
+        clause,
+        polarity,
+        relation_mode,
+        release_propositions,
     )
 
 
@@ -489,6 +526,7 @@ def _profile_evidence(
     clause: str,
     polarity: str,
     relation_mode: str,
+    release_propositions: tuple[ReleaseReadinessProposition, ...],
 ) -> IntentEvidence:
     signals = tuple(dict.fromkeys(span.signal for span in spans))
     release_mode = "none"
@@ -501,7 +539,7 @@ def _profile_evidence(
         readiness_proposition = next(
             (
                 item
-                for item in parse_release_readiness_propositions(clause)
+                for item in release_propositions
                 if item.polarity == "positive"
                 and item.discourse_role == "request"
             ),

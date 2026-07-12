@@ -50,10 +50,13 @@ _ACTION_MODIFIER = (
 )
 _ENGLISH_ACTION_NEGATION_RE = re.compile(
     r"(?:\basked\s+(?:you|us|me|them)\s+not\s+to|"
+    r"\b(?:am|is|are)\s+not\s+going\s+to|"
+    r"\b(?:have|has)\s+no\s+plans?\s+to|"
+    r"\b(?:am|is|are)\s+not\s+to|"
     r"\b(?:do|will|can|must|should)\s+not|"
     r"\b(?:do|ca|wo|must|should)n['’]t|"
     r"\bcannot|\bnever|\bno\s+need\s+to|"
-    r"\bnot\s+authorized\s+to|\bnot)"
+    r"\bnot\s+authorized\s+to|\bnot\s+to|\bnot)"
     rf"(?:\s+{_ACTION_MODIFIER}){{0,3}}\s*$",
     re.IGNORECASE,
 )
@@ -74,7 +77,8 @@ _POSITIVE_OBLIGATION_RE = re.compile(
 )
 _NOT_ONLY_RE = re.compile(r"\bnot\s+only\s*$", re.IGNORECASE)
 _CHINESE_ACTION_NEGATION_RE = re.compile(
-    r"(?:不能|不会|不可|不需要|无需|不得|不要|暂不|先不|别|未授权)"
+    r"(?:请勿|不能|不会|不可|不需要|无需|不得|不要|不打算|禁止|"
+    r"暂不|先不|别|未授权)"
     r"(?:立即|马上|暂时|仔细|认真|谨慎|再|先)?\s*$"
 )
 _OBJECT_EXCLUSION_RE = re.compile(
@@ -123,15 +127,10 @@ _FILENAME_EXTENSION_RE = re.compile(
     re.IGNORECASE,
 )
 _STRUCTURAL_REFERENCE_PATTERNS = (
-    re.compile(r"```[\s\S]*?```"),
-    re.compile(r"`(?!`)[^\u0060]*?`"),
-    re.compile(r'"[\s\S]*?"'),
-    re.compile(r"“[\s\S]*?”"),
-    re.compile(r"‘[\s\S]*?’"),
-    re.compile(r"(?<!\w)'[\s\S]*?'(?!\w)"),
-    re.compile(r"\[[^\]\n]*\]\([^\)\n]*\)"),
+    re.compile(r"\[[^\]\n]*\](?:\([^\)\n]*\))?"),
     re.compile(r"<h[1-6]\b[^>]*>[\s\S]*?</h[1-6]\s*>", re.IGNORECASE),
     re.compile(r"<code\b[^>]*>[\s\S]*?</code\s*>", re.IGNORECASE),
+    re.compile(r"(?m)^(?: {4,}|\t).*(?:\n|$)"),
 )
 
 
@@ -156,6 +155,8 @@ def parse_release_readiness_propositions(
             break
         object_start, object_end = match.span()
         object_text = match.group()
+        if object_text == "发布清单" and source[object_end : object_end + 1] == "化":
+            continue
         line_start, line_end = _line_bounds(source, object_start, object_end)
         line = source[line_start:line_end]
         local_end = object_end - line_start
@@ -229,7 +230,16 @@ def parse_release_readiness_propositions(
                 )
             )
             continue
-        actions = tuple(_ACTION_RE.finditer(proposition))
+        raw_actions = tuple(_ACTION_RE.finditer(proposition))
+        invalid_actions = tuple(
+            item
+            for item in raw_actions
+            if _is_chinese_action(item.group())
+            and proposition[item.end() : item.end() + 1] == "度"
+        )
+        actions = tuple(item for item in raw_actions if item not in invalid_actions)
+        if invalid_actions and not actions:
+            continue
         action = min(
             actions,
             key=lambda item: (
@@ -380,12 +390,129 @@ def _structural_reference_spans(
     source: str,
 ) -> tuple[tuple[int, int], ...]:
     spans: list[tuple[int, int]] = []
+    scanned_spans = (
+        *_delimited_spans(source, "```", "```"),
+        *_inline_code_spans(source),
+        *_quote_spans(source, '"', '"'),
+        *_quote_spans(source, "“", "”"),
+        *_quote_spans(source, "‘", "’"),
+        *_quote_spans(source, "'", "'", require_word_boundary=True),
+    )
+    for span in scanned_spans:
+        spans.append(span)
+        if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
+            return ((0, len(source)),)
     for pattern in _STRUCTURAL_REFERENCE_PATTERNS:
         for match in pattern.finditer(source):
             spans.append(match.span())
             if len(spans) >= MAX_STRUCTURAL_REFERENCE_SPANS:
                 return ((0, len(source)),)
     return tuple(sorted(spans))
+
+
+def _delimited_spans(
+    source: str, opening: str, closing: str
+) -> tuple[tuple[int, int], ...]:
+    spans: list[tuple[int, int]] = []
+    cursor = 0
+    while cursor < len(source):
+        start = source.find(opening, cursor)
+        if start < 0:
+            break
+        close_start = source.find(closing, start + len(opening))
+        while close_start >= 0 and _is_escaped(source, close_start):
+            close_start = source.find(closing, close_start + len(closing))
+        if close_start < 0:
+            spans.append((start, len(source)))
+            break
+        end = close_start + len(closing)
+        spans.append((start, end))
+        cursor = end
+    return tuple(spans)
+
+
+def _inline_code_spans(source: str) -> tuple[tuple[int, int], ...]:
+    fence_spans = _delimited_spans(source, "```", "```")
+    spans: list[tuple[int, int]] = []
+    cursor = 0
+    while cursor < len(source):
+        start = source.find("`", cursor)
+        if start < 0:
+            break
+        if source.startswith("```", start) or _range_is_contained(
+            start, start + 1, fence_spans
+        ):
+            cursor = start + 1
+            continue
+        close_start = source.find("`", start + 1)
+        while close_start >= 0 and (
+            source.startswith("```", close_start)
+            or _is_escaped(source, close_start)
+        ):
+            close_start = source.find("`", close_start + 1)
+        if close_start < 0:
+            spans.append((start, len(source)))
+            break
+        spans.append((start, close_start + 1))
+        cursor = close_start + 1
+    return tuple(spans)
+
+
+def _quote_spans(
+    source: str,
+    opening: str,
+    closing: str,
+    *,
+    require_word_boundary: bool = False,
+) -> tuple[tuple[int, int], ...]:
+    spans: list[tuple[int, int]] = []
+    cursor = 0
+    while cursor < len(source):
+        start = source.find(opening, cursor)
+        while start >= 0 and (
+            _is_escaped(source, start)
+            or (
+                require_word_boundary
+                and start > 0
+                and (source[start - 1].isalnum() or source[start - 1] == "_")
+            )
+        ):
+            start = source.find(opening, start + len(opening))
+        if start < 0:
+            break
+        close_start = source.find(closing, start + len(opening))
+        while close_start >= 0 and (
+            _is_escaped(source, close_start)
+            or (
+                require_word_boundary
+                and close_start + len(closing) < len(source)
+                and (
+                    source[close_start + len(closing)].isalnum()
+                    or source[close_start + len(closing)] == "_"
+                )
+            )
+        ):
+            close_start = source.find(closing, close_start + len(closing))
+        if close_start < 0:
+            spans.append((start, len(source)))
+            break
+        end = close_start + len(closing)
+        spans.append((start, end))
+        cursor = end
+    return tuple(spans)
+
+
+def _is_escaped(source: str, index: int) -> bool:
+    backslashes = 0
+    index -= 1
+    while index >= 0 and source[index] == "\\":
+        backslashes += 1
+        index -= 1
+    return backslashes % 2 == 1
+
+
+def _is_chinese_action(action: str) -> bool:
+    return any("\u4e00" <= character <= "\u9fff" for character in action)
 
 
 def _range_is_contained(

@@ -344,6 +344,108 @@ class IntentTest(unittest.TestCase):
                 self.assertEqual(len(propositions), 1)
                 self.assertEqual(propositions[0].polarity, expected)
 
+    def test_release_parser_covers_explicit_prohibition_grammar(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        prohibited = (
+            "I am not going to prepare a repository release packet.",
+            "The team is not going to review the release checklist for v1.0.",
+            "We are not going to prepare a repository release packet.",
+            "Not to prepare a repository release packet.",
+            "We have no plans to prepare a repository release checklist.",
+            "You are not to review the release checklist for v1.0.",
+            "请勿准备仓库发布清单。",
+            "不会准备仓库发布清单。",
+            "不打算准备仓库发布清单。",
+            "禁止审查软件包发布清单。",
+            "不可准备仓库发布清单。",
+            "无需准备仓库发布清单。",
+        )
+        for source in prohibited:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertFalse(
+                    any(
+                        item.polarity == "positive"
+                        and item.discourse_role == "request"
+                        for item in propositions
+                    )
+                )
+
+        coordinated = (
+            "I am not going to prepare a repository release packet, but "
+            "prepare a repository release checklist.",
+            "请勿准备仓库发布清单；然后 prepare a repository release packet.",
+        )
+        for source in coordinated:
+            with self.subTest(source=source):
+                self.assertEqual(
+                    sorted(item.polarity for item in parse(source)),
+                    ["negative", "positive"],
+                )
+
+    def test_release_structural_scanner_fails_closed_for_unclosed_containers(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        unclosed = (
+            "```text\nPrepare a repository release checklist",
+            "`Prepare a repository release packet",
+            '"Prepare a repository release packet',
+            "“Prepare a repository release checklist",
+            "'Prepare a repository release packet",
+            "    Prepare a repository release checklist",
+        )
+        for source in unclosed:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].discourse_role, "reference")
+
+        escaped = (
+            '"Prepare a repository release packet with \\"quoted\\" metadata"'
+        )
+        self.assertEqual(parse(escaped)[0].discourse_role, "reference")
+
+        closed = (
+            "`Prepare a repository release packet` "
+            "Prepare a repository release checklist."
+        )
+        self.assertEqual(
+            tuple(item.discourse_role for item in parse(closed)),
+            ("reference", "request"),
+        )
+
+    def test_release_chinese_morphology_is_exact(self):
+        module = importlib.import_module(
+            "onecode_skill_sanitizer.release_propositions"
+        )
+        parse = module.parse_release_readiness_propositions
+        controls = (
+            "准备仓库发布清单化。",
+            "准备度发布清单。",
+            "审查度软件包发布清单。",
+        )
+        for source in controls:
+            with self.subTest(source=source):
+                self.assertEqual(parse(source), ())
+
+        positives = (
+            "准备仓库发布清单。",
+            "审查软件包发布清单。",
+            "生成维护者发布清单。",
+        )
+        for source in positives:
+            with self.subTest(source=source):
+                propositions = parse(source)
+                self.assertEqual(len(propositions), 1)
+                self.assertEqual(propositions[0].polarity, "positive")
+                self.assertEqual(propositions[0].discourse_role, "request")
+
     def test_release_sentence_discourse_role_covers_coordinated_propositions(self):
         module = importlib.import_module(
             "onecode_skill_sanitizer.release_propositions"
@@ -394,6 +496,7 @@ class IntentTest(unittest.TestCase):
             "'Prepare a repository\nrelease packet'",
             "`Prepare a repository release packet`",
             "```text\nPrepare a repository release checklist\n```",
+            "[Prepare a repository release checklist]",
             "[Prepare a repository release packet](docs/release.md)",
             "<h2>Prepare a repository release checklist</h2>",
             "<code>Prepare a repository release packet</code>",
@@ -1260,6 +1363,18 @@ class IntentTest(unittest.TestCase):
         self.assertEqual(normalized.history, "之前在写官网")
         self.assertEqual(normalized.stale, "发布旧版本")
         self.assertEqual(normalized.stale_policy, "ignore_for_routing")
+
+    def test_normalize_task_strips_padding_but_preserves_indented_code(self):
+        self.assertEqual(
+            normalize_task("  audit the skill router  \n").current,
+            "audit the skill router",
+        )
+        self.assertEqual(
+            normalize_task(
+                "    Prepare a repository release checklist  \n"
+            ).current,
+            "    Prepare a repository release checklist",
+        )
 
     def test_stale_context_is_ignored_for_routing(self):
         graph = decompose_task(

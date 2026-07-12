@@ -1292,7 +1292,11 @@ class TaskPackV2CliTest(unittest.TestCase):
 
     def test_smart_schema_v2_route_id_is_stable_and_changes_with_task(self):
         route_ids = []
-        for task in ["build a landing page", "build a landing page", "audit the skill router"]:
+        for task in [
+            "build a landing page",
+            "  build a landing page  \n",
+            "audit the skill router",
+        ]:
             out = io.StringIO()
             with contextlib.redirect_stdout(out):
                 self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)

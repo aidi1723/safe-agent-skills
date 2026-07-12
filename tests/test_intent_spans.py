@@ -7,6 +7,9 @@ from onecode_skill_sanitizer.intent import (
     TaskDecomposition,
     decompose_task_detailed,
 )
+from onecode_skill_sanitizer.release_propositions import (
+    parse_release_readiness_propositions,
+)
 from onecode_skill_sanitizer import intent_spans, routing_profiles
 from onecode_skill_sanitizer.intent_evidence import (
     IntentEvidence,
@@ -257,6 +260,65 @@ class IntentSpansTest(unittest.TestCase):
                 self.assertEqual(len(readiness), 1)
                 self.assertEqual(readiness[0].polarity, "positive")
                 self.assertEqual(graph.validate(), [])
+
+    def test_full_source_release_discourse_survives_broad_clause_splitting(self):
+        controls = (
+            "Example: prepare a repository release packet and review the "
+            "release checklist for v1.0.",
+            "Example: prepare a repository release packet then review the "
+            "release checklist for v1.0.",
+            "# Prepare a repository release packet; review the release "
+            "checklist for v1.0.",
+            "If authorized, prepare a repository release packet; review the "
+            "release checklist for v1.0.",
+            "Hypothetically, prepare a repository release packet; review the "
+            "release checklist for v1.0.",
+        )
+        for task in controls:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertFalse(
+                    any(
+                        item.task_type == "open_source_release"
+                        for item in graph.intent_evidence
+                    )
+                )
+                self.assertEqual(graph.validate(), [])
+
+        positives = (
+            "Example: prepare a repository release packet; review the release "
+            "checklist for v1.0. Prepare a repository release checklist.",
+            "Example: prepare a repository release packet; prepare a repository "
+            "release packet. Prepare a repository release packet.",
+            "前置说明。Example: prepare a repository release packet; review the "
+            "release checklist for v1.0。准备仓库发布清单。",
+        )
+        for task in positives:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                readiness = [
+                    item
+                    for item in graph.intent_evidence
+                    if item.task_type == "open_source_release"
+                    and item.release_mode == "readiness"
+                ]
+                self.assertEqual(len(readiness), 1)
+                self.assertEqual(readiness[0].polarity, "positive")
+                self.assertEqual(graph.validate(), [])
+
+    def test_detailed_decomposition_parses_release_propositions_once(self):
+        task = (
+            "Example: prepare a repository release packet; review the release "
+            "checklist for v1.0. Prepare a repository release checklist."
+        )
+        with patch(
+            "onecode_skill_sanitizer.intent.parse_release_readiness_propositions",
+            wraps=parse_release_readiness_propositions,
+        ) as parse:
+            decomposition = decompose_task_detailed(task)
+
+        self.assertEqual(parse.call_count, 1)
+        self.assertEqual(decomposition.intent_graph.validate(), [])
 
     def test_direct_text_helpers_share_exact_scan_boundary(self):
         evidence = IntentEvidence(

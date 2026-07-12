@@ -27,6 +27,7 @@ from .intent_source import (
     parse_approval_release_span,
     parse_release_precondition,
 )
+from .release_propositions import parse_release_readiness_propositions
 from .router import build_profile_for_task_type, build_task_profile, split_current_intent_text
 
 
@@ -35,6 +36,7 @@ _LIST_MARKER_RE = re.compile(
 )
 _ORDERED_LIST_MARKER_RE = re.compile(r"^\s*\d+[.)、]\s+")
 _UNORDERED_LIST_MARKER_RE = re.compile(r"^\s*[-*+](?:\s*\[[ xX]\])?\s+")
+_INDENTED_CODE_PREFIX_RE = re.compile(r"^(?: {4,}|\t)")
 _PARALLEL_MARKER_RE = re.compile(
     r"\bin\s+parallel\b|\bparallel\b|同时|并行", re.IGNORECASE
 )
@@ -368,7 +370,11 @@ def normalize_task(task: str) -> NormalizedTask:
     current = (
         context["current_intent_text"]
         if context["current_intent_detected"]
-        else bounded_task.strip()
+        else (
+            bounded_task.rstrip()
+            if _INDENTED_CODE_PREFIX_RE.match(bounded_task)
+            else bounded_task.strip()
+        )
     )
     return NormalizedTask(
         raw=task,
@@ -502,6 +508,8 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
     """Build canonical clauses and evidence from an already bounded source."""
     current = bound_task_text(source)
     broad_clauses = split_task_clauses(current)
+    release_propositions = parse_release_readiness_propositions(current)
+    broad_clause_ranges = _clause_source_ranges(current, broad_clauses)
     clauses: list[str] = []
     observed_candidate_count = 0
     candidate_signal_limit_exceeded = False
@@ -531,8 +539,22 @@ def _parse_bounded_intent_source(source: str) -> _ParsedIntentSource:
             candidate_budget = max(
                 0, MAX_CANDIDATE_SIGNALS - observed_candidate_count
             )
+            clause_start, clause_end = (
+                broad_clause_ranges[clause_index]
+                if broad_clause_ranges is not None
+                else (0, 0)
+            )
+            clause_release_propositions = tuple(
+                proposition
+                for proposition in release_propositions
+                if proposition.start < clause_end
+                and proposition.end > clause_start
+            )
             decomposition = split_profile_enumeration(
-                broad_clause, candidate_budget
+                broad_clause,
+                candidate_budget,
+                clause_release_propositions,
+                clause_start,
             )
         observed_candidate_count = min(
             129,
@@ -891,9 +913,18 @@ def _context_clause_indexes(
 def _clause_source_positions(
     source: str, clauses: tuple[str, ...]
 ) -> tuple[int, ...] | None:
+    ranges = _clause_source_ranges(source, clauses)
+    if ranges is None:
+        return None
+    return tuple(start for start, _ in ranges)
+
+
+def _clause_source_ranges(
+    source: str, clauses: tuple[str, ...]
+) -> tuple[tuple[int, int], ...] | None:
     bounded_source = bound_task_text(source)
     cursor = 0
-    positions: list[int] = []
+    ranges: list[tuple[int, int]] = []
     for clause in clauses:
         position = bounded_source.find(clause, cursor)
         if position < 0:
@@ -903,9 +934,9 @@ def _clause_source_positions(
             if fallback is None:
                 return None
             position = cursor + fallback.start()
-        positions.append(position)
         cursor = position + len(clause)
-    return tuple(positions)
+        ranges.append((position, cursor))
+    return tuple(ranges)
 
 
 def _append_canonical_gate(
