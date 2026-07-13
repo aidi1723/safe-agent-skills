@@ -33,6 +33,13 @@ class ProfileSignalSpan:
 
 
 @dataclass(frozen=True)
+class NonActionSourceRange:
+    start: int
+    end: int
+    context: str
+
+
+@dataclass(frozen=True)
 class SpanDecomposition:
     clauses: tuple[str, ...]
     observed_candidate_count: int
@@ -57,6 +64,16 @@ _NEGATION_MARKER_RE = re.compile(
 _PUNCTUATION_BOUNDARY_RE = re.compile(r"[,，;；]")
 _COORDINATING_CONTINUATION_RE = re.compile(r"\s*(?:\b(?:or|and)\b|或|和)", re.IGNORECASE)
 _ADVERSATIVE_BOUNDARY_RE = re.compile(r"\bbut\b|但是|但要", re.IGNORECASE)
+_CURRENT_ACTION_CONTINUATION_RE = re.compile(
+    r"[,，]\s*(?:and\s+)?(?:(?:please|kindly)\s+)?"
+    r"(?:complete|review|audit|check|verify|analyze|assess|prepare|draft|"
+    r"build|design|convert|classify|define|plan|write|create|implement|fix|"
+    r"research|investigate|evaluate|publish|release)\b|"
+    r"[,，]\s*(?:请(?:你|帮忙)?|帮我|麻烦(?:你)?|)"
+    r"(?:审查|审计|检查|验证|分析|评估|准备|起草|构建|设计|转换|分类|定义|"
+    r"规划|撰写|创建|实施|修复|调研|定位)",
+    re.IGNORECASE,
+)
 _POSITIVE_AFTER_NEGATION_RE = re.compile(r"[,，]\s*(?:只|仅|改为|而要)")
 _DESCRIPTIVE_ENUMERATION_RE = re.compile(
     r"\b(?:contains?|mentions?)\b|包含", re.IGNORECASE
@@ -65,6 +82,45 @@ _DESCRIPTIVE_LIST_PREFIX_RE = re.compile(
     r"^\s*(?:(?:artifacts?|objects?|terms?|file\s+lists?|supported\s+files?|"
     r"file\s+types?|files?)|(?:产物|对象|术语|文件列表|支持的文件|"
     r"支持文件|文件类型|文件))\s*[:：]",
+    re.IGNORECASE,
+)
+_NON_ACTION_STRUCTURAL_PREFIX_RE = re.compile(
+    r"^\s*(?:"
+    r"(?:inventory(?:\s+(?:entries|only))?|headings?\s+only|"
+    r"quoted\s+(?:text|example)|future\s+(?:roadmap|hypothesis)|"
+    r"(?:file|folder|archive)\s+(?:names?|labels?)|navigation\s+labels?)\s*[:：]|"
+    r"(?:这些只是|仅是)(?:文件夹名|文件名|术语|目录|标题|引文)\s*[:：]?"
+    r")",
+    re.IGNORECASE,
+)
+_NON_ACTION_AUTHORITY_RE = re.compile(
+    r"\b(?:does\s+not|do\s+not|did\s+not|not|no|without|neither|nor)\b"
+    r"[^\n。！？;；]{0,64}\b(?:authorize|authorise|authorization|authority|"
+    r"approval|permission|request(?:ed|ing)?|instruction|implementation|"
+    r"work|action|task)\b|"
+    r"(?:不|未|无|别|不得|禁止|无需|暂不|先不|不做)"
+    r"[^\n。！？;；]{0,24}(?:执行|实施|授权|权限|操作|启动)|"
+    r"(?:当前|本轮|本次|这次|今日)(?:[^\n。！？;；]{0,16})"
+    r"(?:不|未|无|别|不得|禁止|无需|暂不|先不|不做)"
+    r"[^\n。！？;；]{0,24}(?:设计|构建|审计|发布|上线|转换|搜索|分析|"
+    r"生成|处理|审查|复核|规划)",
+    re.IGNORECASE,
+)
+_HISTORICAL_NON_ACTION_RE = re.compile(
+    r"\b(?:already|previously|retired|stale|expired|closed|archived|"
+    r"withdrawn|abandoned)\b[^\n。！？;；]{0,64}\b(?:completed|closed|"
+    r"archived|retired|expired|withdrawn|abandoned|context|brief|ticket|"
+    r"plan|project|task|scope)\b|"
+    r"(?:已完成|已归档|已撤回|已作废|已关闭|过期|归档|撤回|作废)"
+    r"[^\n。！？;；]{0,48}(?:任务|项目|工单|计划|内容|指令|工作|范围|简报)?",
+    re.IGNORECASE,
+)
+_OTHER_OWNER_NON_ACTION_RE = re.compile(
+    r"\b(?:another|separate|external)\s+(?:team|group|owner|agency|"
+    r"vendor|supplier|studio|distributor)\b[^\n。！？;；]{0,64}"
+    r"\b(?:owns?|owned|assigned|responsible)\b|"
+    r"(?:另一个团队|其他团队|外部团队|运营组|设计组)[^\n。！？;；]{0,32}"
+    r"(?:负责|已关闭|不属于)",
     re.IGNORECASE,
 )
 _DESCRIPTIVE_RELEASE_ACTION_RE = re.compile(
@@ -116,6 +172,7 @@ def find_profile_signal_spans(
         release_propositions = parse_release_readiness_propositions(clause)
         source_offset = 0
     candidates: list[ProfileSignalSpan] = []
+    non_action_ranges = _non_action_source_ranges(clause)
     negation_ranges = (
         ((0, len(clause)),)
         if _is_negated_enumeration(clause)
@@ -155,6 +212,10 @@ def find_profile_signal_spans(
         if not negated and not (
             span.task_type in {"website_build", "open_source_release"}
             and _range_overlaps(span.start, span.end, non_action_release_ranges)
+        ) and not _range_overlaps(
+            span.start,
+            span.end,
+            tuple((item.start, item.end) for item in non_action_ranges),
         ):
             candidates.append(span)
 
@@ -219,6 +280,7 @@ def split_profile_enumeration(
         source_offset,
     )
     spans = merge_same_profile_spans(spans)
+    non_action_ranges = _non_action_source_ranges(clause)
     descriptive_release_ranges = _descriptive_release_ranges(clause)
     positive_readiness_ranges = tuple(
         (item.start - source_offset, item.end - source_offset)
@@ -256,6 +318,15 @@ def split_profile_enumeration(
             observed,
             candidate_limit_exceeded,
             "descriptive",
+            polarity,
+            relation_mode,
+        )
+    if non_action_ranges and not spans:
+        return _suppressed_decomposition(
+            clause,
+            observed,
+            candidate_limit_exceeded,
+            non_action_ranges[0].context,
             polarity,
             relation_mode,
         )
@@ -599,6 +670,49 @@ def _is_governance_enumeration(
         and _ENUMERATION_MARKER_RE.search(clause)
         and len({span.task_type for span in spans}) >= 2
     )
+
+
+def _non_action_source_ranges(clause: str) -> tuple[NonActionSourceRange, ...]:
+    """Find local source ranges that explicitly deny routing authority."""
+    structural = _NON_ACTION_STRUCTURAL_PREFIX_RE.match(clause)
+    if structural is not None:
+        context = (
+            "ambiguous"
+            if "future" in structural.group().lower()
+            else "descriptive"
+        )
+        _, end = _non_action_segment_bounds(clause, 0, structural.end())
+        return (NonActionSourceRange(0, end, context),)
+
+    ranges: list[NonActionSourceRange] = []
+    for pattern, context in (
+        (_NON_ACTION_AUTHORITY_RE, "ambiguous"),
+        (_HISTORICAL_NON_ACTION_RE, "descriptive"),
+        (_OTHER_OWNER_NON_ACTION_RE, "ambiguous"),
+    ):
+        for match in pattern.finditer(clause):
+            start, end = _non_action_segment_bounds(clause, match.start(), match.end())
+            ranges.append(NonActionSourceRange(start, end, context))
+    return tuple(sorted(ranges, key=lambda item: (item.start, item.end, item.context)))
+
+
+def _non_action_segment_bounds(
+    clause: str, match_start: int, match_end: int
+) -> tuple[int, int]:
+    start = 0
+    for boundary in re.finditer(r"[.。！？!?;；\n]", clause[:match_start]):
+        start = boundary.end()
+    end = len(clause)
+    boundary = re.search(r"[.。！？!?;；\n]", clause[match_end:])
+    if boundary is not None:
+        end = match_end + boundary.start()
+    adversative = _ADVERSATIVE_BOUNDARY_RE.search(clause, match_end)
+    if adversative is not None and adversative.start() < end:
+        end = adversative.start()
+    continuation = _CURRENT_ACTION_CONTINUATION_RE.search(clause, match_start)
+    if continuation is not None and continuation.start() < end:
+        end = continuation.start()
+    return start, end
 
 
 def relation_mode_for_text(clause: str) -> str:

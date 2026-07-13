@@ -1047,6 +1047,92 @@ class IntentSpansTest(unittest.TestCase):
                 )
                 self.assertEqual(result.diagnostics.status, "complete")
 
+    def test_non_action_contexts_do_not_emit_profile_evidence(self):
+        cases = (
+            "文档里有网站、SEO、发布三个章节，先别执行任何操作。",
+            "The sentence 'review the pull request' is an example in a style guide, not an instruction.",
+            "那份 architecture options paper 把 RAG 向量检索列为未来假设，当前不设计知识 Agent。",
+            "An accessibility tutorial uses 'publish the website and take a browser screenshot' as a quoted example, not a request to build or launch UI.",
+        )
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents], ["general"]
+                )
+                self.assertEqual(graph.intent_evidence[0].matched_signals, ())
+                self.assertEqual(graph.intent_evidence[0].matched_score, 0)
+
+    def test_inventory_quote_and_future_contexts_do_not_emit_profile_evidence(self):
+        cases = (
+            "Inventory entries: website launch, pull request, and browser screenshot.",
+            "Quoted text: review the pull request and publish the website.",
+            "Future roadmap: website launch and code review.",
+        )
+
+        for task in cases:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents], ["general"]
+                )
+                self.assertEqual(graph.intent_evidence[0].matched_signals, ())
+
+    def test_non_action_ranges_preserve_current_and_adversative_requests(self):
+        cases = (
+            (
+                "Build the website customer portal mobile form. A withdrawn E2EE brief is out of scope.",
+                ["website_build"],
+            ),
+            (
+                "Another team owns the archival review, but complete the website launch now.",
+                ["website_build"],
+            ),
+            (
+                "Another team owns the archival review, complete the website launch now.",
+                ["website_build"],
+            ),
+            (
+                "Another team owns the archival review, and complete the website launch now.",
+                ["website_build"],
+            ),
+            (
+                "Another team owns the archival review, and please complete the website launch now.",
+                ["website_build"],
+            ),
+            (
+                "Another team owns the archival review, and publish the website now.",
+                ["website_build"],
+            ),
+            ("外部团队负责归档审查，请构建网站。", ["website_build"]),
+            (
+                "Inventory entries: website launch, but build the website now.",
+                ["website_build"],
+            ),
+            (
+                "Future roadmap: website launch, but complete the code review now.",
+                ["code_review"],
+            ),
+        )
+
+        for task, expected_task_types in cases:
+            with self.subTest(task=task):
+                graph = decompose_task_detailed(task).intent_graph
+                self.assertEqual(
+                    [intent.task_type for intent in graph.intents], expected_task_types
+                )
+
+    def test_positive_code_review_request_remains_actionable(self):
+        graph = decompose_task_detailed(
+            "Review the pull request and run regression tests."
+        ).intent_graph
+
+        self.assertEqual(
+            [intent.task_type for intent in graph.intents], ["code_review"]
+        )
+        self.assertGreater(graph.intent_evidence[0].matched_score, 0)
+
     def test_adversative_boundary_drops_negated_release_before_plus_enumeration(self):
         cases = [
             "Do not publish update, but code review + analyze a spreadsheet",
