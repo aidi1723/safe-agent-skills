@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.example/schemas/router-eval-suite.schema.json",
+  "title": "Router Evaluation Suite Index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "suite_id", "labeling", "case_count", "shards"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "suite_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
+    "labeling": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["method", "reviewer_role", "generated_from_router", "reviewed_at"],
+      "properties": {
+        "method": {"const": "manual_review"},
+        "reviewer_role": {"const": "independent_dataset_review"},
+        "generated_from_router": {"const": false},
+        "reviewed_at": {"const": "2026-07-10"}
+      }
+    },
+    "case_count": {"type": "integer", "minimum": 1},
+    "shards": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "case_count", "sha256"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!/)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*\\\\)[^/]+(?:/[^/]+)*$"
+          },
+          "case_count": {"type": "integer", "minimum": 1},
+          "sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}
+        }
+      }
+    }
+  }
+}

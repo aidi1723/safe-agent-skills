@@ -60,6 +60,7 @@ Next development:
 
 Latest update:
 
+- [Multi-Intent Router Quality Remediation Closeout](updates/2026-07-13-multi-intent-router-quality-remediation-closeout.md)
 - [Maintenance Optimization Closure Report](maintenance-optimization-closure-report-2026-07-04.md)
 - [Structured Context Routing](updates/2026-07-04-structured-context-routing.md)
 - [Current Intent Routing](updates/2026-07-04-current-intent-routing.md)

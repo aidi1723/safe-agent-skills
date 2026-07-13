@@ -155,10 +155,15 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
   --eval evals/multi-intent-gold.json --registry catalog \
   --bundles bundles/index.json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
+  --eval evals/router-regression-v2.json --registry catalog \
+  --bundles bundles/index.json
 ```
 
-The v2 dataset is a separate corpus from `evals/router-quality-v2.json`. Its
-labels are manually curated and repository-declared as not generated from
+`evals/router-regression-v2.json` is the Schema v2 regression envelope for
+`router-eval`. It is not an input for `router-eval-v2`. The latter consumes the
+separate multi-intent gold/suite contract in `evals/multi-intent-gold.json`.
+Its labels are manually curated and repository-declared as not generated from
 router output. The current literal metadata values are enforced by the existing
 loader, but they do not evidence an external reviewer identity or persisted
 external review artifact. Independent external review remains a

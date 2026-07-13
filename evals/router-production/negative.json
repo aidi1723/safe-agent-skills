@@ -1,0 +1,854 @@
+{
+  "cases": [
+    {
+      "id": "negative-001",
+      "category": "negative",
+      "task": "The Q4 portal roadmap lists a future website launch, but this ticket authorizes neither browser work nor a publish check.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-002",
+      "category": "negative",
+      "task": "An agency statement of work says another team owns the portal UI and launch; this inventory review must not invoke website publishing.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-003",
+      "category": "negative",
+      "task": "支付重试补丁 payment retry patch 已完成并通过代码审查，本轮只记录结论，不重启 PR 风险复核。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [
+        "code-review-risk"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-004",
+      "category": "negative",
+      "task": "A database vendor is the external reviewer for the SQL pull request; our documentation team must not run a second code review.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [
+        "code-review-risk"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-005",
+      "category": "negative",
+      "task": "The disaster-recovery manifest is an inventory of repository paths, not permission to explore or map the codebase.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "forbidden_skills": [
+        "codebase-explore-map"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-006",
+      "category": "negative",
+      "task": "The acquisition data room has no authority to expose, debug, modify, or test the listed repository contents.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "forbidden_skills": [
+        "codebase-explore-map"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-007",
+      "category": "negative",
+      "task": "这份 architecture glossary 只是调用图与符号图术语索引，不建代码图也不做影响分析。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "forbidden_skills": [
+        "code-codebase-graph-index-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-008",
+      "category": "negative",
+      "task": "The incident timeline explicitly excludes call-graph indexing and structural impact analysis; those activities are out of scope.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "forbidden_skills": [
+        "code-codebase-graph-index-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-009",
+      "category": "negative",
+      "task": "下季度的 security offsite agenda 将提示词注入与沙箱列为未来主题，今日不启动 Agent 安全审计。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [
+        "security-prompt-injection-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-010",
+      "category": "negative",
+      "task": "A red-team supplier is the separate team assigned to test prompt injection and permissions; this product workshop must not duplicate that guardrail review.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [
+        "security-prompt-injection-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-011",
+      "category": "negative",
+      "task": "The org chart is an inventory of team roles and handoff names, not a request for multi-agent planning or orchestration.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "forbidden_skills": [
+        "ai-langchain-agent-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-012",
+      "category": "negative",
+      "task": "那份 2028 operating model 是假设的未来团队图，不得将它拆成当前的多 Agent 任务。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "forbidden_skills": [
+        "ai-langchain-agent-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-013",
+      "category": "negative",
+      "task": "A training workbook contains a quoted example search across Reddit and YouTube; it does not authorize a research connector.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "forbidden_skills": [
+        "research-multi-platform-search-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-014",
+      "category": "negative",
+      "task": "The market-research consent form is not approved; public-source search and evidence collection remain unauthorized.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "forbidden_skills": [
+        "research-multi-platform-search-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-015",
+      "category": "negative",
+      "task": "这个 retired fund folder 中的投资备忘已完成并归档，不需要重新估值或撰写反方观点。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "forbidden_skills": [
+        "business-value-investment-research-framework"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-016",
+      "category": "negative",
+      "task": "An analyst onboarding template uses valuation assumptions as a quoted example; no investment research framework should be applied.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "forbidden_skills": [
+        "business-value-investment-research-framework"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-017",
+      "category": "negative",
+      "task": "The procurement register is an inventory of expert-agent role names, not authority to redesign the role library or handoffs.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "forbidden_skills": [
+        "ai-agent-role-library-governance"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-018",
+      "category": "negative",
+      "task": "The HR architecture group is the separate team that owns expert-agent governance; this audit must not alter its role contracts.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "forbidden_skills": [
+        "ai-agent-role-library-governance"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-019",
+      "category": "negative",
+      "task": "迁移记录的 migration checksum 清单把 DESIGN.md 当作文件名索引，不启动 design token 或组件状态审查。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "design-md-system-governance"
+      ],
+      "forbidden_skills": [
+        "design-design-md-system-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-020",
+      "category": "negative",
+      "task": "The brand refresh charter explicitly excludes DESIGN.md governance, component-state review, and design-token changes.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "design-md-system-governance"
+      ],
+      "forbidden_skills": [
+        "design-design-md-system-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-021",
+      "category": "negative",
+      "task": "A messaging comparison slide proposes E2EE and metadata minimization as a future option, not a current privacy-governance assignment.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "forbidden_skills": [
+        "compliance-private-communication-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-022",
+      "category": "negative",
+      "task": "Without privacy counsel approval, there is no authority to assess identifier retention, abuse handling, or private-messaging metadata.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "forbidden_skills": [
+        "compliance-private-communication-boundary"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-023",
+      "category": "negative",
+      "task": "The legal hold index is an inventory of PDF and DOCX paths; do not convert, partition, or ingest those documents.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "forbidden_skills": [
+        "office-pdf-report"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-024",
+      "category": "negative",
+      "task": "A records migration receipt confirms the handbook conversion already completed and was archived; no new PDF knowledge-base work remains.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "forbidden_skills": [
+        "office-pdf-report"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-025",
+      "category": "negative",
+      "task": "编辑 editorial rubric 中的短视频脚本是引文示例，不得生成内容矩阵或媒体交付。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-video-production"
+      ],
+      "forbidden_skills": [
+        "media-video-script-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-026",
+      "category": "negative",
+      "task": "The production studio is the external owner of the short-video script, content matrix, and asset handoff; this records task must not invoke production review.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-video-production"
+      ],
+      "forbidden_skills": [
+        "media-video-script-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-027",
+      "category": "negative",
+      "task": "The asset provenance ledger is an inventory containing a reference-video URL, not approval to select providers, estimate costs, or render media.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agentic-media-production"
+      ],
+      "forbidden_skills": [
+        "media-agentic-video-pipeline-plan"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-028",
+      "category": "negative",
+      "task": "The talent release is not attached; reference-video provider selection and render planning remain unauthorized.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agentic-media-production"
+      ],
+      "forbidden_skills": [
+        "media-agentic-video-pipeline-plan"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-029",
+      "category": "negative",
+      "task": "这份 finance import specification 只列出 spreadsheet、chart 和指标表头，不执行表格分析。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [
+        "data-table-analysis"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-030",
+      "category": "negative",
+      "task": "The source workbook is missing and unavailable; do not clean rows, calculate metrics, or create a chart report.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [
+        "data-table-analysis"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-031",
+      "category": "negative",
+      "task": "The maintainer vote is not approved, so no open-source release, repository push, or publish check is authorized.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-032",
+      "category": "negative",
+      "task": "A release engineering group is the separate team that owns license review and publication; this support task must not publish the repository.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-033",
+      "category": "negative",
+      "task": "CMS schema documentation contains a quoted SEO and social-post example; do not draft or optimize public content from it.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-seo-publication"
+      ],
+      "forbidden_skills": [
+        "content-seo-brief"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-034",
+      "category": "negative",
+      "task": "The campaign archive confirms the blog and SEO copy already completed last year; no new content brief should be created.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-seo-publication"
+      ],
+      "forbidden_skills": [
+        "content-seo-brief"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-035",
+      "category": "negative",
+      "task": "那份 architecture options paper 把 RAG 向量检索列为未来假设，当前不设计知识 Agent。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "forbidden_skills": [
+        "ai-llamaindex-rag-knowledge-workflow"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-036",
+      "category": "negative",
+      "task": "The search replacement contract explicitly excludes RAG, vector retrieval, citations, and knowledge-agent implementation.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "forbidden_skills": [
+        "ai-llamaindex-rag-knowledge-workflow"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-037",
+      "category": "negative",
+      "task": "A conversation fixture contains the quoted example 'remember me'; it must not create persistent memory or recall behavior.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "forbidden_skills": [
+        "ai-graph-memory-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-038",
+      "category": "negative",
+      "task": "The retention policy owner has not approved long-term memory storage, correction, or forgetting; no graph-memory contract is authorized.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "forbidden_skills": [
+        "ai-graph-memory-contract"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-039",
+      "category": "negative",
+      "task": "The quarterly capacity dashboard is an inventory of candidate Skill and backlog counts, not a request to cluster or promote them.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "forbidden_skills": [
+        "business-claude-skills-backlog-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-040",
+      "category": "negative",
+      "task": "An intake closure report says the Claude Skills backlog review already completed and was archived; do not reopen coverage work.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "forbidden_skills": [
+        "business-claude-skills-backlog-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-041",
+      "category": "negative",
+      "task": "The status-page label is an inventory string naming Skill Router and evaluator health, not authority to run routing evaluation.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "forbidden_skills": [
+        "ai-output-schema-eval"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-042",
+      "category": "negative",
+      "task": "The evaluation working group is another team assigned to bundle and router quality review; this status update must not invoke its evaluator.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "forbidden_skills": [
+        "ai-output-schema-eval"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-043",
+      "category": "negative",
+      "task": "A conference demo deck presents healthcare AI as a future hypothetical; it does not authorize an industry workflow or compliance intake.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "forbidden_skills": [
+        "vertical-industry-intake-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-044",
+      "category": "negative",
+      "task": "The sector sponsor has not approved the finance solution; vertical-industry orchestration work cannot start.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "forbidden_skills": [
+        "vertical-industry-intake-orchestration"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-045",
+      "category": "negative",
+      "task": "The ERP export header is an inventory of listing, keyword, and inquiry columns; do not optimize marketplace products.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [
+        "commerce-icbu-listing"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-046",
+      "category": "negative",
+      "task": "A regional distributor is the separate team responsible for listing copy and buyer inquiry replies; our data export task must not invoke commerce operations.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [
+        "commerce-icbu-listing"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-047",
+      "category": "negative",
+      "task": "An accessibility tutorial uses 'publish the website and take a browser screenshot' as a quoted example, not a request to build or launch UI.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [
+        "execution-browser-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-048",
+      "category": "negative",
+      "task": "The private mirror handoff completed and was archived; it grants no public repository release or publish-check authority.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [
+        "execution-publish-check"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-049",
+      "category": "negative",
+      "task": "The risk committee minutes explicitly exclude prompt-injection and sandbox testing; do not invoke an Agent safety review.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [
+        "security-prompt-injection-review"
+      ],
+      "expected_status": "incomplete"
+    },
+    {
+      "id": "negative-050",
+      "category": "negative",
+      "task": "A buyer-message localization guide contains a quoted example listing and inquiry reply; it is not a marketplace operations request.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [
+        "commerce-icbu-listing"
+      ],
+      "expected_status": "incomplete"
+    }
+  ]
+}

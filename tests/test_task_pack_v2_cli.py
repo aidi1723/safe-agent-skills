@@ -1,10 +1,14 @@
 import contextlib
 import copy
+import hashlib
 import io
 import json
+import os
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import patch
 
 from jsonschema import Draft202012Validator
@@ -12,11 +16,620 @@ from jsonschema import Draft202012Validator
 from onecode_skill_sanitizer.cli import _routing_status
 from onecode_skill_sanitizer.cli import main
 from onecode_skill_sanitizer.cli import render_task_pack_v2_markdown
+from onecode_skill_sanitizer.registry import (
+    build_verified_registry_snapshot,
+    seal_manifest,
+    verify_registry,
+)
+from onecode_skill_sanitizer.task_packs import (
+    _v2_skill_stage,
+    load_trusted_skill_pack_items,
+)
 
 from tests.registry_cli_helpers import validate_task_pack_v2
 
 
 class TaskPackV2CliTest(unittest.TestCase):
+    def test_v2_snapshot_schema_guards_nested_manifest_objects_before_access(self):
+        mutations = [
+            ("hashes", []),
+            ("hashes", None),
+            ("hashes", "hashes"),
+            ("hashes", True),
+            ("source", []),
+            ("policy", "policy"),
+            ("taxonomy", None),
+        ]
+        for field, value in mutations:
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as tmp:
+                registry = Path(tmp) / "catalog"
+                shutil.copytree("catalog", registry)
+                manifest_path = registry / "research/research-source-check/skill.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                manifest[field] = value
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+
+                with self.assertRaises(ValueError):
+                    build_verified_registry_snapshot(registry)
+
+    def test_v2_smart_bounds_nested_manifest_schema_errors(self):
+        mutations = [
+            ("hashes", []),
+            ("hashes", None),
+            ("hashes", "hashes"),
+            ("hashes", True),
+            ("source", []),
+            ("policy", "policy"),
+            ("taxonomy", None),
+        ]
+        for field, value in mutations:
+            with self.subTest(field=field, value=value), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                registry = root / "catalog"
+                shutil.copytree("catalog", registry)
+                manifest_path = registry / "research/research-source-check/skill.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                manifest[field] = value
+                manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+                out = io.StringIO()
+
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+                result = json.loads(out.getvalue())
+                self.assertEqual(exit_code, 2)
+                self.assertEqual(result["error"]["code"], "invalid_input")
+                serialized = json.dumps(result)
+                self.assertNotIn("Traceback", serialized)
+                self.assertNotIn(str(root), serialized)
+
+    def test_v2_snapshot_rejects_nonobject_manifests_with_typed_error(self):
+        for payload in ([], None, "manifest", 7, True):
+            with self.subTest(payload=payload), tempfile.TemporaryDirectory() as tmp:
+                registry = Path(tmp) / "catalog"
+                shutil.copytree("catalog", registry)
+                manifest_path = registry / "research/research-source-check/skill.json"
+                manifest_path.write_text(json.dumps(payload), encoding="utf-8")
+
+                with self.assertRaises(ValueError):
+                    build_verified_registry_snapshot(registry)
+
+    def test_v2_smart_bounds_nonobject_manifest_errors(self):
+        for payload in ([], None, "manifest", 7, True):
+            with self.subTest(payload=payload), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                registry = root / "catalog"
+                shutil.copytree("catalog", registry)
+                manifest_path = registry / "research/research-source-check/skill.json"
+                manifest_path.write_text(json.dumps(payload), encoding="utf-8")
+                out = io.StringIO()
+
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+                result = json.loads(out.getvalue())
+                self.assertEqual(exit_code, 2)
+                self.assertEqual(result["error"]["code"], "invalid_input")
+                serialized = json.dumps(result)
+                self.assertNotIn("Traceback", serialized)
+                self.assertNotIn(str(root), serialized)
+
+    def test_v2_snapshot_rejects_core_file_and_directory_replacement_races(self):
+        targets = [
+            ("index", ("index.json",)),
+            ("manifest", ("research", "research-source-check", "skill.json")),
+            ("body", ("research", "research-source-check", "SKILL.md")),
+            ("category", ("research",)),
+            ("skill_directory", ("research", "research-source-check")),
+        ]
+        for label, components in targets:
+            with self.subTest(target=label), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                registry = root / "catalog"
+                shutil.copytree("catalog", registry)
+                target = registry.joinpath(*components)
+                outside = root / f"outside-{label}"
+                if target.is_dir():
+                    shutil.copytree(target, outside)
+                else:
+                    outside.write_bytes(target.read_bytes())
+                outside_files = (
+                    {
+                        (path.stat().st_dev, path.stat().st_ino)
+                        for path in outside.rglob("*")
+                        if path.is_file()
+                    }
+                    if outside.is_dir()
+                    else {(outside.stat().st_dev, outside.stat().st_ino)}
+                )
+                parent_identity = (target.parent.stat().st_dev, target.parent.stat().st_ino)
+                original_open = os.open
+                original_read = os.read
+                replaced = False
+                outside_read = False
+
+                def racing_open(path, flags, mode=0o777, *, dir_fd=None):
+                    nonlocal replaced
+                    if (
+                        not replaced
+                        and path == target.name
+                        and dir_fd is not None
+                        and (os.fstat(dir_fd).st_dev, os.fstat(dir_fd).st_ino) == parent_identity
+                    ):
+                        target.rename(target.with_name(f"{target.name}-parked"))
+                        target.symlink_to(outside, target_is_directory=outside.is_dir())
+                        replaced = True
+                    return original_open(path, flags, mode, dir_fd=dir_fd)
+
+                def guarded_read(fd: int, length: int) -> bytes:
+                    nonlocal outside_read
+                    opened = os.fstat(fd)
+                    if (opened.st_dev, opened.st_ino) in outside_files:
+                        outside_read = True
+                    return original_read(fd, length)
+
+                with patch.object(os, "open", racing_open):
+                    with patch.object(os, "read", guarded_read):
+                        with self.assertRaises(ValueError):
+                            build_verified_registry_snapshot(registry)
+
+                self.assertTrue(replaced)
+                self.assertFalse(outside_read)
+
+    def test_v2_platform_capability_failure_is_bounded(self):
+        out = io.StringIO()
+        with patch.object(os, "O_NOFOLLOW", None):
+            with contextlib.redirect_stdout(out):
+                exit_code = main(
+                    ["smart", "build a website", "--schema-version", "2", "--format", "json"]
+                )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["error"]["code"], "invalid_input")
+        self.assertNotIn("Traceback", json.dumps(payload))
+
+    def test_v2_contract_stage_is_authoritative_and_malformed_contracts_fail_closed(self):
+        manifest = json.loads(
+            Path("catalog/research/research-source-check/skill.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        valid = manifest["contract"]
+        self.assertEqual(
+            _v2_skill_stage(
+                {
+                    "name": "research-source-check",
+                    "contract": valid,
+                }
+            ),
+            "verification",
+        )
+        self.assertEqual(
+            _v2_skill_stage({"name": "research-source-check"}),
+            "source",
+        )
+
+        malformed = [
+            True,
+            [],
+            {**valid, "schema_version": True},
+            {**valid, "stage_hint": "unknown-stage"},
+            {**valid, "stage_hint": []},
+            {**valid, "retry_policy": {}},
+            {key: value for key, value in valid.items() if key != "stage_hint"},
+            {"schema_version": 2, "stage_hint": "verification"},
+        ]
+        for contract in malformed:
+            with self.subTest(contract=contract):
+                with self.assertRaisesRegex(ValueError, "invalid Contract v2"):
+                    _v2_skill_stage(
+                        {
+                            "name": "research-source-check",
+                            "contract": contract,
+                        }
+                    )
+
+    def test_v2_real_unversioned_contract_stages_are_authoritative(self):
+        expected_stages = {
+            "content-claims-compliance-filter": "review",
+            "content-marketing-pricing-strategy-review": "review",
+            "design-design-md-system-contract": "planning",
+            "execution-claude-skills-productivity-review": "review",
+        }
+        for name, expected_stage in expected_stages.items():
+            entry = next(
+                item
+                for item in json.loads(
+                    Path("catalog/index.json").read_text(encoding="utf-8")
+                )["skills"]
+                if item["name"] == name
+            )
+            manifest = json.loads(
+                (Path("catalog") / entry["registry_path"] / "skill.json").read_text(
+                    encoding="utf-8"
+                )
+            )
+            self.assertNotIn("schema_version", manifest["contract"])
+            self.assertEqual(
+                _v2_skill_stage(
+                    {"name": name, "contract": manifest["contract"]}
+                ),
+                expected_stage,
+            )
+
+        cases = [
+            (
+                "create DESIGN.md as the design system source of truth",
+                "design-design-md-system-contract",
+                "planning",
+            ),
+            (
+                "review the remaining claude-skills backlog",
+                "execution-claude-skills-productivity-review",
+                "review",
+            ),
+        ]
+        for task, skill_name, expected_stage in cases:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        ["smart", task, "--schema-version", "2", "--format", "json"]
+                    )
+                payload = json.loads(out.getvalue())
+                node = next(
+                    node
+                    for node in payload["execution_graph"]["nodes"]
+                    if node["skill"] == skill_name
+                )
+                self.assertEqual(exit_code, 0)
+                self.assertEqual(node["stage"], expected_stage)
+
+    def test_v2_hash_consistent_malformed_manifest_contract_returns_bounded_error(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "catalog"
+            bundles = root / "bundles.json"
+            shutil.copytree("catalog", registry)
+            shutil.copyfile("bundles/index.json", bundles)
+
+            manifest_path = (
+                registry / "research" / "research-source-check" / "skill.json"
+            )
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            valid_contract = manifest["contract"]
+            index_path = registry / "index.json"
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            entry = next(
+                item
+                for item in index["skills"]
+                if item["name"] == "research-source-check"
+            )
+
+            def route() -> tuple[int, dict]:
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--bundles",
+                            str(bundles),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+                return exit_code, json.loads(out.getvalue())
+
+            def write_manifest(updated: dict) -> None:
+                seal_manifest(updated)
+                manifest_path.write_text(
+                    json.dumps(updated, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                entry["hashes"]["manifest_sha256"] = updated["hashes"][
+                    "manifest_sha256"
+                ]
+                entry["status"] = updated["status"]
+                entry["risk_level"] = updated["risk_level"]
+                if isinstance(updated.get("contract"), dict):
+                    entry["contract"] = updated["contract"]
+                else:
+                    entry.pop("contract", None)
+                index_path.write_text(
+                    json.dumps(index, ensure_ascii=False, indent=2) + "\n",
+                    encoding="utf-8",
+                )
+                self.assertEqual(verify_registry(registry)["status"], "ok")
+
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 0)
+            source_node = next(
+                node
+                for node in payload["execution_graph"]["nodes"]
+                if node["skill"] == "research-source-check"
+            )
+            self.assertEqual(source_node["stage"], "verification")
+
+            legacy_manifest = dict(manifest)
+            legacy_manifest.pop("contract")
+            write_manifest(legacy_manifest)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 0)
+            source_node = next(
+                node
+                for node in payload["execution_graph"]["nodes"]
+                if node["skill"] == "research-source-check"
+            )
+            self.assertEqual(source_node["stage"], "source")
+
+            malformed_manifest = dict(manifest)
+            malformed_manifest["contract"] = {
+                **valid_contract,
+                "stage_hint": "unknown-stage",
+            }
+            write_manifest(malformed_manifest)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+            malformed_stage_type = dict(manifest)
+            malformed_stage_type["contract"] = {
+                **valid_contract,
+                "stage_hint": [],
+            }
+            write_manifest(malformed_stage_type)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+            malformed_retry_type = dict(manifest)
+            malformed_retry_type["contract"] = {
+                **valid_contract,
+                "retry_policy": {},
+            }
+            write_manifest(malformed_retry_type)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+            serialized_error = json.dumps(payload)
+            self.assertNotIn("Traceback", serialized_error)
+            self.assertNotIn(str(root), serialized_error)
+
+            malformed_policy = copy.deepcopy(manifest)
+            malformed_policy["policy"]["filesystem"]["scope"] = []
+            write_manifest(malformed_policy)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+            malformed_status = copy.deepcopy(manifest)
+            malformed_status["status"] = []
+            write_manifest(malformed_status)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+            malformed_legacy = dict(manifest)
+            malformed_legacy["contract"] = {
+                key: value
+                for key, value in valid_contract.items()
+                if key not in {"schema_version", "stage_hint"}
+            }
+            write_manifest(malformed_legacy)
+            exit_code, payload = route()
+            self.assertEqual(exit_code, 2)
+            self.assertEqual(payload["status"], "error")
+            self.assertEqual(payload["error"]["code"], "invalid_input")
+
+    def test_v2_registry_snapshot_rejects_stale_or_unbound_index_state(self):
+        mutations = [
+            "path_points_to_other_manifest",
+            "name_mismatch",
+            "status_mismatch",
+            "hash_mismatch",
+            "missing_entry",
+            "extra_entry",
+            "missing_index",
+            "extra_manifest",
+        ]
+        for mutation in mutations:
+            with self.subTest(mutation=mutation), tempfile.TemporaryDirectory() as tmp:
+                root = Path(tmp)
+                registry = root / "catalog"
+                bundles = root / "bundles.json"
+                shutil.copytree("catalog", registry)
+                shutil.copyfile("bundles/index.json", bundles)
+                index_path = registry / "index.json"
+                index = json.loads(index_path.read_text(encoding="utf-8"))
+                entry = next(
+                    item
+                    for item in index["skills"]
+                    if item["name"] == "research-source-check"
+                )
+                other = next(
+                    item
+                    for item in index["skills"]
+                    if item["name"] == "code-review-risk"
+                )
+                if mutation == "path_points_to_other_manifest":
+                    entry["registry_path"] = other["registry_path"]
+                elif mutation == "name_mismatch":
+                    entry["name"] = "research-source-check-renamed"
+                elif mutation == "status_mismatch":
+                    entry["status"] = "disabled"
+                elif mutation == "hash_mismatch":
+                    entry["hashes"]["manifest_sha256"] = "0" * 64
+                elif mutation == "missing_entry":
+                    index["skills"].remove(entry)
+                    index["skill_count"] -= 1
+                elif mutation == "extra_entry":
+                    index["skills"].append({**entry, "name": "extra-index-skill"})
+                    index["skill_count"] += 1
+                elif mutation == "missing_index":
+                    index_path.unlink()
+                elif mutation == "extra_manifest":
+                    extra = registry / "extra" / "research-source-check-copy"
+                    shutil.copytree(
+                        registry / entry["registry_path"],
+                        extra,
+                    )
+                if mutation not in {"missing_index", "extra_manifest"}:
+                    index_path.write_text(
+                        json.dumps(index, ensure_ascii=False, indent=2) + "\n",
+                        encoding="utf-8",
+                    )
+
+                self.assertEqual(verify_registry(registry)["status"], "ok")
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--bundles",
+                            str(bundles),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+                payload = json.loads(out.getvalue())
+                self.assertEqual(exit_code, 2)
+                self.assertEqual(payload["status"], "error")
+                self.assertEqual(payload["error"]["code"], "invalid_input")
+
+    def test_v2_registry_snapshot_rejects_hash_consistent_auxiliary_symlink(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            registry = root / "catalog"
+            bundles = root / "bundles.json"
+            shutil.copytree("catalog", registry)
+            shutil.copyfile("bundles/index.json", bundles)
+            skill_dir = registry / "research" / "research-source-check"
+            outside = root / "secret.txt"
+            outside_content = b"secret\n"
+            outside.write_bytes(outside_content)
+            link = skill_dir / "references/secret-link.txt"
+            link.symlink_to(outside)
+            digest = hashlib.sha256()
+            auxiliary = {
+                path.relative_to(skill_dir).as_posix(): path.read_bytes()
+                for directory in ("assets", "references", "scripts")
+                if (skill_dir / directory).is_dir()
+                for path in (skill_dir / directory).rglob("*")
+                if path.is_file() and path != link
+            }
+            auxiliary["references/secret-link.txt"] = outside_content
+            for relative, content in sorted(auxiliary.items()):
+                digest.update(relative.encode("utf-8"))
+                digest.update(b"\0")
+                digest.update(content)
+                digest.update(b"\0")
+            manifest_path = skill_dir / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["hashes"]["auxiliary_sha256"] = digest.hexdigest()
+            seal_manifest(manifest)
+            manifest_path.write_text(json.dumps(manifest), encoding="utf-8")
+            index_path = registry / "index.json"
+            index = json.loads(index_path.read_text(encoding="utf-8"))
+            entry = next(
+                item for item in index["skills"] if item["name"] == manifest["name"]
+            )
+            entry["hashes"] = manifest["hashes"]
+            index_path.write_text(json.dumps(index), encoding="utf-8")
+
+            out = io.StringIO()
+            outside_read_attempted = False
+            original_read_bytes = Path.read_bytes
+
+            def guarded_read_bytes(path: Path) -> bytes:
+                nonlocal outside_read_attempted
+                if path == link:
+                    outside_read_attempted = True
+                    raise AssertionError("outside auxiliary target was read")
+                return original_read_bytes(path)
+
+            with patch.object(Path, "read_bytes", guarded_read_bytes):
+                with contextlib.redirect_stdout(out):
+                    exit_code = main(
+                        [
+                            "smart",
+                            "analyze a spreadsheet and prepare a report",
+                            "--registry",
+                            str(registry),
+                            "--bundles",
+                            str(bundles),
+                            "--schema-version",
+                            "2",
+                            "--format",
+                            "json",
+                        ]
+                    )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["status"], "error")
+        self.assertEqual(payload["error"]["code"], "invalid_input")
+        self.assertFalse(outside_read_attempted)
+        serialized = json.dumps(payload)
+        self.assertNotIn("Traceback", serialized)
+        self.assertNotIn(str(root), serialized)
+
+    def test_v2_stage_builder_uses_only_bound_registry_snapshot_data(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            registry = Path(tmp) / "catalog"
+            shutil.copytree("catalog", registry)
+            snapshot = build_verified_registry_snapshot(registry)
+            index_path = registry / "index.json"
+            index_path.write_text("{}", encoding="utf-8")
+
+            with patch.object(Path, "read_text", side_effect=AssertionError("unexpected reread")):
+                items = load_trusted_skill_pack_items(
+                    registry,
+                    snapshot=snapshot,
+                )
+
+            source_check = next(
+                item for item in items if item["name"] == "research-source-check"
+            )
+            self.assertEqual(_v2_skill_stage(source_check), "verification")
+
     def test_v2_routing_status_precedence_is_blocked_then_incomplete_then_complete(self):
         complete_capabilities = {"status": "complete", "missing_required_count": 0}
         incomplete_capabilities = {"status": "incomplete", "missing_required_count": 1}
@@ -52,6 +665,24 @@ class TaskPackV2CliTest(unittest.TestCase):
         self.assertEqual(
             _routing_status("complete", complete_capabilities, {"status": "ready", "reason_codes": []}),
             "complete",
+        )
+        self.assertEqual(
+            _routing_status(
+                "complete",
+                complete_capabilities,
+                {"status": "ready", "reason_codes": []},
+                "incomplete",
+            ),
+            "incomplete",
+        )
+        self.assertEqual(
+            _routing_status(
+                "complete",
+                complete_capabilities,
+                {"status": "blocked", "reason_codes": ["dependency_cycle"]},
+                "incomplete",
+            ),
+            "blocked",
         )
 
     def test_v2_markdown_escapes_untrusted_structure_in_single_lines(self):
@@ -303,6 +934,228 @@ class TaskPackV2CliTest(unittest.TestCase):
         self.assertLessEqual(payload["routing_metrics"]["optional_skill_limit"], 8)
         self.assertTrue(graph_skills.issubset(selected_skills))
 
+    def test_smart_schema_v2_exposes_high_frequency_decomposition_diagnostics(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    "优化高频场景：UI 设计、代码审查、浏览器验证、CI 排障、PDF/DOCX 文档、表格分析、SEO，验证后推送 GitHub",
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        payload = json.loads(out.getvalue())
+        decomposition = payload["routing_metrics"]["decomposition"]
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(decomposition["mode"], "profile_spans")
+        self.assertEqual(decomposition["emitted_intent_count"], 6)
+        self.assertEqual(decomposition["reason_codes"], [])
+        self.assertEqual(payload["routing_status"], "complete")
+        self.assertEqual(payload["execution_graph"]["status"], "ready")
+        self.assertTrue(payload["execution_graph"]["acyclic"])
+        self.assertEqual(payload["execution_graph"]["reason_codes"], [])
+        release_root = next(
+            node["id"]
+            for node in payload["execution_graph"]["nodes"]
+            if node["intent_ids"] == ["i6"]
+        )
+        verification_sources = {
+            edge["from"]
+            for edge in payload["execution_graph"]["edges"]
+            if edge["to"] == release_root
+            and edge["type"] == "intent_verification_dependency"
+        }
+        for intent_id in ("i3", "i4", "i5"):
+            self.assertIn(
+                f"skill:{intent_id}:research-source-check",
+                verification_sources,
+            )
+
+    def test_smart_schema_v2_marks_intent_limit_decomposition_incomplete(self):
+        task = ", ".join(
+            [
+                "landing page",
+                "code lifecycle",
+                "call graph",
+                "copywriting",
+                "agentic video",
+                "deep interview",
+                "multi-platform search",
+                "value investing",
+                "role library",
+                "design tokens",
+                "simplex",
+                "pull request",
+                "prompt injection",
+            ]
+        )
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(["smart", task, "--schema-version", "2", "--format", "json"])
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["routing_status"], "incomplete")
+        self.assertIn(
+            "intent_limit_exceeded",
+            payload["routing_metrics"]["decomposition"]["reason_codes"],
+        )
+        self.assertLessEqual(len(payload["intent_graph"]["intents"]), 12)
+
+    def test_smart_schema_v2_exposes_bounded_candidate_limit_diagnostics(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    ", ".join(["SEO"] * 129),
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        payload = json.loads(out.getvalue())
+        decomposition = payload["routing_metrics"]["decomposition"]
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(payload["routing_status"], "incomplete")
+        self.assertEqual(decomposition["observed_candidate_count"], 129)
+        self.assertEqual(
+            decomposition["reason_codes"],
+            ["candidate_signal_limit_exceeded"],
+        )
+
+    def test_smart_schema_v2_fails_closed_at_malformed_detailed_decomposition_boundary(self):
+        malformed = SimpleNamespace(
+            intent_graph=SimpleNamespace(intents=(), to_json=lambda: {"intents": []}),
+            diagnostics=SimpleNamespace(
+                status="complete",
+                to_json=lambda: {"mode": object()},
+            ),
+        )
+        out = io.StringIO()
+        with patch(
+            "onecode_skill_sanitizer.task_packs.decompose_task_detailed",
+            return_value=malformed,
+        ), contextlib.redirect_stdout(out):
+            exit_code = main(
+                ["smart", "build a website", "--schema-version", "2", "--format", "json"]
+            )
+
+        payload = json.loads(out.getvalue())
+        self.assertEqual(exit_code, 2)
+        self.assertEqual(payload["error"]["code"], "invalid_input")
+
+    def test_smart_schema_v2_routes_chinese_review_brief_release_task(self):
+        out = io.StringIO()
+        with contextlib.redirect_stdout(out):
+            exit_code = main(
+                [
+                    "smart",
+                    "代码审查 + 老板简报 + 发布清单",
+                    "--schema-version",
+                    "2",
+                    "--format",
+                    "json",
+                ]
+            )
+
+        payload = json.loads(out.getvalue())
+        scenario_ids = [
+            scenario["scenario_id"] for scenario in payload["selected_scenarios"]
+        ]
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(
+            [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+            ["code_review", "data_analysis", "open_source_release"],
+        )
+        self.assertEqual(
+            scenario_ids,
+            ["code-review-hardening", "data-analysis-report", "open-source-release"],
+        )
+        self.assertNotIn("website-build-launch", scenario_ids)
+        self.assertEqual(payload["routing_status"], "complete")
+        self.assertEqual(payload["execution_graph"]["status"], "ready")
+        self.assertTrue(payload["execution_graph"]["acyclic"])
+
+    def test_smart_schema_v2_fails_closed_for_non_action_plus_enumerations(self):
+        cases = [
+            "The description mentions code review + executive brief + release checklist",
+            "术语：代码审查 + 老板简报 + 发布清单",
+            "code review + 1 + release checklist",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(
+                        main(["smart", task, "--schema-version", "2", "--format", "json"]),
+                        0,
+                    )
+                payload = json.loads(out.getvalue())
+                self.assertEqual(
+                    [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+                    ["general"],
+                )
+                self.assertEqual(payload["routing_status"], "incomplete")
+                self.assertEqual(payload["selected_scenarios"], [])
+                self.assertEqual(payload["uncovered_intents"], ["i1"])
+
+    def test_smart_schema_v2_suppresses_descriptive_github_push_contexts(self):
+        cases = [
+            "Research how to push to GitHub + code review",
+            "Write a guide about push changes to GitHub + code review",
+        ]
+
+        for task in cases:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(
+                        main(["smart", task, "--schema-version", "2", "--format", "json"]),
+                        0,
+                    )
+                payload = json.loads(out.getvalue())
+                scenario_ids = {
+                    scenario["scenario_id"] for scenario in payload["selected_scenarios"]
+                }
+                self.assertEqual(
+                    [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+                    ["general"],
+                )
+                self.assertNotIn("open-source-release", scenario_ids)
+                self.assertEqual(payload["selected_scenarios"], [])
+                self.assertEqual(payload["routing_status"], "incomplete")
+
+    def test_smart_schema_v2_routes_single_release_readiness_request(self):
+        for task in ["发布清单", "release checklist"]:
+            with self.subTest(task=task):
+                out = io.StringIO()
+                with contextlib.redirect_stdout(out):
+                    self.assertEqual(
+                        main(["smart", task, "--schema-version", "2", "--format", "json"]),
+                        0,
+                    )
+                payload = json.loads(out.getvalue())
+                self.assertEqual(
+                    [intent["task_type"] for intent in payload["intent_graph"]["intents"]],
+                    ["open_source_release"],
+                )
+                self.assertEqual(
+                    [
+                        scenario["scenario_id"]
+                        for scenario in payload["selected_scenarios"]
+                    ],
+                    ["open-source-release"],
+                )
+                self.assertEqual(payload["routing_status"], "complete")
+
     def test_smart_schema_v2_marks_contract_approval_nodes_as_host_actions(self):
         out = io.StringIO()
         with contextlib.redirect_stdout(out):
@@ -342,6 +1195,7 @@ class TaskPackV2CliTest(unittest.TestCase):
                 0,
             )
         payload = json.loads(out.getvalue())
+        validate_task_pack_v2(payload)
         selected = {skill["name"]: skill for skill in payload["selected_skills"]}
 
         self.assertEqual(selected["engineering-build-release"]["contract"]["stage_hint"], "execution")
@@ -438,7 +1292,11 @@ class TaskPackV2CliTest(unittest.TestCase):
 
     def test_smart_schema_v2_route_id_is_stable_and_changes_with_task(self):
         route_ids = []
-        for task in ["build a landing page", "build a landing page", "audit the skill router"]:
+        for task in [
+            "build a landing page",
+            "  build a landing page  \n",
+            "audit the skill router",
+        ]:
             out = io.StringIO()
             with contextlib.redirect_stdout(out):
                 self.assertEqual(main(["smart", task, "--schema-version", "2", "--format", "json"]), 0)
@@ -861,7 +1719,10 @@ class TaskPackV2CliTest(unittest.TestCase):
             "security-llm-guard-io-scanning",
         }
         out = io.StringIO()
-        with patch("onecode_skill_sanitizer.task_packs.trusted_skill_names", return_value=trusted):
+        with patch(
+            "onecode_skill_sanitizer.registry.VerifiedRegistrySnapshot.trusted_skill_names",
+            return_value=frozenset(trusted),
+        ):
             with contextlib.redirect_stdout(out):
                 self.assertEqual(
                     main(

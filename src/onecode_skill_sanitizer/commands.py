@@ -33,6 +33,7 @@ from .contracts import contract_coverage
 from .paths import resolve_project_asset_path
 from .references import validate_external_references
 from .registry import build_registry_index as build_registry_index
+from .registry import build_verified_registry_snapshot as build_verified_registry_snapshot
 from .registry import comparable_registry_index as comparable_registry_index
 from .registry import load_manifest as load_manifest
 from .registry import load_registry_index as load_registry_index
@@ -65,9 +66,15 @@ from .router_evaluation import router_eval_trace_summary as router_eval_trace_su
 from .router_evaluation import run_router_eval as run_router_eval
 from .router_evaluation import validate_router_eval_case as validate_router_eval_case
 from .router_eval_v2 import DatasetValidationError
+from .router_eval_v2 import dataset_identity_v2
 from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
-from .router_eval_v2 import load_eval_dataset_v2
+from .router_eval_v2 import load_eval_dataset_envelope_v2
+from .router_eval_review import load_eval_suite
+from .router_eval_review import load_authoritative_project_root
+from .router_eval_review import load_review_evidence
+from .router_eval_review import validate_review_asset_paths
+from .router_quality_gate import build_quality_gate
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
 from .taxonomy import classify_skill, taxonomy_from_manifest
@@ -75,7 +82,6 @@ from .task_packs import TASK_PROFILE_CATEGORY_VALUES as TASK_PROFILE_CATEGORY_VA
 from .task_packs import _build_v2_capability_resolution as _build_v2_capability_resolution
 from .task_packs import _extend_v2_graph_with_invariants as _extend_v2_graph_with_invariants
 from .task_packs import _json_asset_content_hash as _json_asset_content_hash
-from .task_packs import _normalize_v2_graph_stages as _normalize_v2_graph_stages
 from .task_packs import _routing_status as _routing_status
 from .task_packs import _safe_v2_error as _safe_v2_error
 from .task_packs import _v2_skill_host_action as _v2_skill_host_action
@@ -550,25 +556,79 @@ def router_eval_command(args: argparse.Namespace) -> int:
     return 0 if result["status"] == "ok" else 2
 
 def router_eval_v2_command(args: argparse.Namespace) -> int:
-    eval_path = resolve_project_asset_path(args.eval)
     registry_dir = resolve_project_asset_path(args.registry)
     bundles_path = resolve_project_asset_path(args.bundles)
     try:
+        _validate_router_eval_v2_inputs(args)
+        review_path = getattr(args, "review", None)
+        authoritative_root = None
+        if review_path is not None:
+            authoritative_root = load_authoritative_project_root()
+            validate_review_asset_paths(
+                authoritative_root,
+                registry_dir,
+                bundles_path,
+            )
+        snapshot = build_verified_registry_snapshot(registry_dir)
         bundles_index = load_bundles_index(bundles_path)
         known_scenarios = {
             bundle["id"]
             for bundle in bundles_index.get("bundles", [])
             if isinstance(bundle, dict) and isinstance(bundle.get("id"), str)
         }
-        cases = load_eval_dataset_v2(eval_path, known_scenarios)
+        suite_path = getattr(args, "suite", None)
+        if suite_path is not None:
+            dataset = load_eval_suite(resolve_project_asset_path(suite_path), known_scenarios)
+            dataset_identity = dataset["identity"]
+            if review_path is not None:
+                review_evidence = load_review_evidence(
+                    resolve_project_asset_path(review_path),
+                    dataset["suite_identity"],
+                    authoritative_root,
+                )
+                review_identity = review_evidence["review_identity"]
+                source_identity = review_evidence["source_identity"]
+            else:
+                source_identity = None
+                review_identity = {}
+        else:
+            dataset = load_eval_dataset_envelope_v2(
+                resolve_project_asset_path(args.eval),
+                known_scenarios,
+            )
+            dataset_identity = dataset_identity_v2(dataset)
+            review_identity = {}
+            source_identity = None
+        cases = dataset["cases"]
+        capability_context = _bundle_required_capability_context(bundles_index)
+        contract_result = contract_coverage(
+            snapshot.index(),
+            bundles_index,
+            CORE_CONTRACT_SCENARIOS,
+            registry_root=registry_dir,
+            snapshot=snapshot,
+        )
         result = evaluate_router_v2(
             cases,
             route_builder=lambda case: build_task_pack_v2(
                 registry_dir,
                 case["task"],
                 bundles_path,
+                snapshot=snapshot,
             ),
             known_scenarios=known_scenarios,
+            bundle_required_capabilities=capability_context,
+            core_bundle_contract_counts=(
+                contract_result["covered_skill_count"],
+                contract_result["total_skill_count"],
+            ),
+        )
+        result["quality_gate"] = build_quality_gate(
+            result["metrics"],
+            support_counts={**result["counts"], "case_count": result["case_count"]},
+            dataset_identity=dataset_identity,
+            review_identity=review_identity,
+            source_identity=source_identity,
         )
     except (DatasetValidationError, EvaluatorError, ValueError, OSError, SystemExit) as exc:
         print(
@@ -581,7 +641,67 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         )
         return 2
     print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
+    if getattr(args, "require_production_ready", False) and not result["quality_gate"]["production_ready"]:
+        return 2
     return 0
+
+
+def _validate_router_eval_v2_inputs(args: argparse.Namespace) -> None:
+    suite_path = getattr(args, "suite", None)
+    review_path = getattr(args, "review", None)
+    if suite_path is not None and (not suite_path or suite_path != suite_path.strip()):
+        raise ValueError("--suite must be a nonblank path without surrounding whitespace")
+    if review_path is not None and (not review_path or review_path != review_path.strip()):
+        raise ValueError("--review must be a nonblank path without surrounding whitespace")
+    if review_path is not None and suite_path is None:
+        raise ValueError("--review is only valid with --suite")
+
+
+CORE_CONTRACT_SCENARIOS = [
+    "website-build-launch",
+    "code-review-hardening",
+    "codebase-change-lifecycle",
+    "skill-router-quality-review",
+    "open-source-release",
+    "rag-agent-knowledge-app",
+    "document-to-knowledge-base",
+    "security-agent-guardrails",
+]
+
+
+def _bundle_required_capability_context(bundles_index: object) -> dict[str, tuple[str, ...]]:
+    if not isinstance(bundles_index, dict) or not isinstance(bundles_index.get("bundles"), list):
+        raise ValueError("bundles index must contain a bundles list")
+    context: dict[str, tuple[str, ...]] = {}
+    for bundle in bundles_index["bundles"]:
+        if not isinstance(bundle, dict) or not isinstance(bundle.get("id"), str) or not bundle["id"].strip():
+            raise ValueError("bundle id must be a nonempty string")
+        bundle_id = bundle["id"]
+        if bundle_id in context:
+            raise ValueError(f"bundle ids must be unique: {bundle_id}")
+        capabilities = bundle.get("required_capabilities")
+        if not isinstance(capabilities, list):
+            raise ValueError(f"bundle {bundle_id} required_capabilities must be a list")
+        required = []
+        observed = set()
+        for capability in capabilities:
+            valid = (
+                isinstance(capability, dict)
+                and isinstance(capability.get("id"), str)
+                and bool(capability["id"].strip())
+                and capability["id"] == capability["id"].strip()
+                and type(capability.get("required")) is bool
+            )
+            if not valid:
+                raise ValueError(f"bundle {bundle_id} required capability is malformed")
+            capability_id = capability["id"]
+            if capability_id in observed:
+                raise ValueError(f"bundle {bundle_id} capability ids must be unique")
+            observed.add(capability_id)
+            if capability["required"]:
+                required.append(capability_id)
+        context[bundle_id] = tuple(required)
+    return dict(sorted(context.items()))
 
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []

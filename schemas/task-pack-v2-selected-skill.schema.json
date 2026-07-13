@@ -1,0 +1,272 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/task-pack-v2-selected-skill.schema.json",
+  "title": "OneCode Task Pack v2 Selected Skill",
+  "type": "object",
+  "required": [
+    "name",
+    "status",
+    "risk_level",
+    "match_score",
+    "taxonomy",
+    "source",
+    "hashes",
+    "registry_path",
+    "description",
+    "when_to_use",
+    "safe_workflow",
+    "expected_output",
+    "verifier_expectations",
+    "failure_handling",
+    "policy"
+  ],
+  "properties": {
+    "name": {"$ref": "#/$defs/skill_name"},
+    "status": {"const": "trusted"},
+    "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+    "match_score": {"type": "integer", "minimum": 0},
+    "taxonomy": {"$ref": "#/$defs/taxonomy"},
+    "source": {"$ref": "#/$defs/source"},
+    "hashes": {"$ref": "#/$defs/hashes"},
+    "registry_path": {
+      "type": "string",
+      "pattern": "^[a-z][a-z0-9_-]*/[a-z0-9][a-z0-9_-]{1,80}(?![\\s\\S])"
+    },
+    "description": {"type": "string"},
+    "when_to_use": {"type": "string"},
+    "safe_workflow": {"type": "string"},
+    "expected_output": {"type": "string"},
+    "verifier_expectations": {"type": "string"},
+    "failure_handling": {"type": "string"},
+    "policy": {"$ref": "#/$defs/policy"},
+    "contract": {
+      "oneOf": [
+        {
+          "allOf": [
+            {"$ref": "https://onecode.dev/schemas/contract-v2.schema.json"},
+            {"$ref": "#/$defs/contract_pattern_safety"}
+          ]
+        },
+        {
+          "allOf": [
+            {"$ref": "skill-manifest.schema.json#/$defs/legacyContract"},
+            {"$ref": "#/$defs/contract_pattern_safety"}
+          ]
+        }
+      ]
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "skill_name": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9_-]{1,80}(?![\\s\\S])"
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": ["category", "subcategory", "collection_priority"],
+      "properties": {
+        "category": {
+          "enum": [
+            "design",
+            "code",
+            "engineering",
+            "security",
+            "office",
+            "execution",
+            "research",
+            "data",
+            "business",
+            "content",
+            "commerce",
+            "media",
+            "compliance",
+            "ai",
+            "vertical"
+          ]
+        },
+        "subcategory": {
+          "type": "string",
+          "pattern": "^[a-z][a-z0-9_-]*(\\.[a-z][a-z0-9_-]*)?(?![\\s\\S])"
+        },
+        "task_intent": {"type": "string"},
+        "artifact_type": {"type": "string"},
+        "collection_priority": {"enum": ["P0", "P1", "P2", "P3"]}
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "allOf": [
+        {
+          "if": {"properties": {"type": {"const": "local_folder"}}},
+          "then": {"properties": {"usage": {"const": "local_authoring"}}}
+        },
+        {
+          "if": {
+            "properties": {"type": {"enum": ["github_reference", "web_reference"]}}
+          },
+          "then": {"properties": {"usage": {"const": "reference_only"}}}
+        },
+        {
+          "if": {
+            "properties": {"type": {"enum": ["archive", "git", "community_index"]}}
+          },
+          "then": {
+            "properties": {"usage": {"const": "source_import"}},
+            "required": ["capture"]
+          }
+        },
+        {
+          "if": {"properties": {"usage": {"const": "source_import"}}},
+          "then": {"required": ["capture"]}
+        }
+      ],
+      "required": [
+        "type",
+        "usage",
+        "path",
+        "url",
+        "author",
+        "license",
+        "reference",
+        "collected_by",
+        "captured_at"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "local_folder",
+            "archive",
+            "git",
+            "community_index",
+            "github_reference",
+            "web_reference"
+          ]
+        },
+        "usage": {"enum": ["source_import", "reference_only", "local_authoring"]},
+        "path": {"$ref": "#/$defs/provenance_text"},
+        "url": {"$ref": "#/$defs/provenance_text"},
+        "author": {"$ref": "#/$defs/provenance_text"},
+        "license": {"$ref": "#/$defs/provenance_text"},
+        "reference": {"$ref": "#/$defs/provenance_text"},
+        "collected_by": {"$ref": "#/$defs/provenance_text"},
+        "captured_at": {"$ref": "#/$defs/provenance_text"},
+        "commit": {"$ref": "#/$defs/provenance_text"},
+        "capture": {"$ref": "#/$defs/source_import_capture"}
+      },
+      "additionalProperties": false
+    },
+    "provenance_text": {
+      "type": "string",
+      "pattern": "^[^\\u0000-\\u001f\\u007f]+(?![\\s\\S])"
+    },
+    "source_import_capture": {
+      "type": "object",
+      "required": [
+        "upstream_url",
+        "upstream_ref_type",
+        "upstream_ref",
+        "captured_at",
+        "license_snapshot",
+        "upstream_sha256",
+        "content_path",
+        "capture_method"
+      ],
+      "properties": {
+        "upstream_url": {
+          "type": "string",
+          "pattern": "^https?://[^\\s]+(?![\\s\\S])"
+        },
+        "upstream_ref_type": {"enum": ["archive", "branch", "commit", "release", "tag"]},
+        "upstream_ref": {"$ref": "#/$defs/provenance_text"},
+        "captured_at": {"$ref": "#/$defs/provenance_text"},
+        "license_snapshot": {"$ref": "#/$defs/provenance_text"},
+        "upstream_sha256": {"$ref": "#/$defs/sha256"},
+        "content_path": {"$ref": "#/$defs/provenance_text"},
+        "capture_method": {"$ref": "#/$defs/provenance_text"}
+      },
+      "additionalProperties": false
+    },
+    "hashes": {
+      "type": "object",
+      "required": ["source_sha256", "sanitized_sha256", "manifest_sha256"],
+      "properties": {
+        "source_sha256": {"$ref": "#/$defs/sha256"},
+        "sanitized_sha256": {"$ref": "#/$defs/sha256"},
+        "manifest_sha256": {"$ref": "#/$defs/sha256"}
+      },
+      "additionalProperties": false
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}(?![\\s\\S])"
+    },
+    "contract_pattern_safety": {
+      "type": "object",
+      "properties": {
+        "requires_context": {"$ref": "#/$defs/contract_artifacts"},
+        "optional_context": {"$ref": "#/$defs/contract_artifacts"},
+        "produces_artifacts": {"$ref": "#/$defs/contract_artifacts"},
+        "produces_evidence": {"$ref": "#/$defs/contract_artifacts"},
+        "capability_vector": {"$ref": "#/$defs/contract_capabilities"}
+      }
+    },
+    "contract_artifacts": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]{1,80}(?![\\s\\S])"
+      }
+    },
+    "contract_capabilities": {
+      "type": "array",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "pattern": "^[a-z][a-z0-9_]*(\\.[a-z][a-z0-9_]*)+(?![\\s\\S])"
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": ["filesystem", "network", "approval"],
+      "properties": {
+        "filesystem": {
+          "type": "object",
+          "required": ["scope"],
+          "properties": {
+            "scope": {"enum": ["workspace_only", "read_only_workspace", "none"]}
+          },
+          "additionalProperties": false
+        },
+        "network": {
+          "type": "object",
+          "required": ["scope"],
+          "properties": {
+            "scope": {"enum": ["none", "approved_hosts", "onecode_api_only"]},
+            "approved_hosts": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/provenance_text"}
+            }
+          },
+          "additionalProperties": false
+        },
+        "approval": {
+          "type": "object",
+          "required": ["required_for"],
+          "properties": {
+            "required_for": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": {"$ref": "#/$defs/provenance_text"}
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -12,19 +12,24 @@ fi
 search_repo() {
   local pattern="$1"
   local exclude_path="${2:-}"
-  if command -v rg >/dev/null 2>&1; then
-    if [[ -n "$exclude_path" ]]; then
-      rg -n "$pattern" . --glob '!.git/**' --glob "!$exclude_path"
-    else
-      rg -n "$pattern" . --glob '!.git/**'
-    fi
-    return
-  fi
   if [[ -n "$exclude_path" ]]; then
-    grep -RInE --exclude-dir=.git --exclude="$(basename "$exclude_path")" -- "$pattern" .
+    git grep -n -E -- "$pattern" -- . ":(exclude,literal)$exclude_path"
   else
-    grep -RInE --exclude-dir=.git -- "$pattern" .
+    git grep -n -E -- "$pattern" -- .
   fi
+}
+
+assert_repo_has_no_matches() {
+  local status
+  if search_repo "$@"; then
+    return 1
+  else
+    status=$?
+  fi
+  if [[ "$status" -eq 1 ]]; then
+    return 0
+  fi
+  return "$status"
 }
 
 PYTHONPATH=src python3 -m compileall src tests
@@ -44,9 +49,7 @@ private_path_patterns=(
   '/one[ ]code/'
 )
 for private_path_pattern in "${private_path_patterns[@]}"; do
-  if search_repo "$private_path_pattern"; then
-    exit 1
-  fi
+  assert_repo_has_no_matches "$private_path_pattern"
 done
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
   --eval evals/router-quality.json \
@@ -126,8 +129,11 @@ python3 -m json.tool schemas/registry-index.schema.json >/dev/null
 python3 -m json.tool schemas/verify-report.schema.json >/dev/null
 python3 -m json.tool schemas/contract-v2.schema.json >/dev/null
 python3 -m json.tool schemas/intent-graph.schema.json >/dev/null
+python3 -m json.tool schemas/task-pack-v2-selected-skill.schema.json >/dev/null
 python3 -m json.tool schemas/task-pack-v2.schema.json >/dev/null
 python3 -m json.tool schemas/batch-index.schema.json >/dev/null
+python3 -m json.tool schemas/router-eval-suite.schema.json >/dev/null
+python3 -m json.tool schemas/router-eval-review.schema.json >/dev/null
 python3 -m json.tool catalog/depth-policy.json >/dev/null
 PYTHONPATH=src python3 - <<'PY'
 import json
@@ -142,19 +148,29 @@ contract_schema = json.loads(Path("schemas/contract-v2.schema.json").read_text(e
 intent_graph_schema = json.loads(Path("schemas/intent-graph.schema.json").read_text(encoding="utf-8"))
 manifest_schema = json.loads(Path("schemas/skill-manifest.schema.json").read_text(encoding="utf-8"))
 task_pack_schema = json.loads(Path("schemas/task-pack-v2.schema.json").read_text(encoding="utf-8"))
+selected_skill_schema = json.loads(Path("schemas/task-pack-v2-selected-skill.schema.json").read_text(encoding="utf-8"))
+router_eval_suite_schema = json.loads(Path("schemas/router-eval-suite.schema.json").read_text(encoding="utf-8"))
+router_eval_review_schema = json.loads(Path("schemas/router-eval-review.schema.json").read_text(encoding="utf-8"))
 Draft202012Validator.check_schema(contract_schema)
 Draft202012Validator.check_schema(intent_graph_schema)
 Draft202012Validator.check_schema(manifest_schema)
 Draft202012Validator.check_schema(task_pack_schema)
+Draft202012Validator.check_schema(selected_skill_schema)
+Draft202012Validator.check_schema(router_eval_suite_schema)
+Draft202012Validator.check_schema(router_eval_review_schema)
 strict_type_checker = Draft202012Validator.TYPE_CHECKER.redefine(
     "integer", lambda checker, value: isinstance(value, int) and not isinstance(value, bool)
 )
 strict_validator = validators.extend(Draft202012Validator, type_checker=strict_type_checker)
 contract_validator = strict_validator(contract_schema)
 manifest_validator = strict_validator(manifest_schema)
-schema_registry = Registry().with_resource(
-    intent_graph_schema["$id"],
-    Resource.from_contents(intent_graph_schema),
+schema_registry = Registry().with_resources(
+    [
+        (intent_graph_schema["$id"], Resource.from_contents(intent_graph_schema)),
+        (selected_skill_schema["$id"], Resource.from_contents(selected_skill_schema)),
+        (contract_schema["$id"], Resource.from_contents(contract_schema)),
+        (manifest_schema["$id"], Resource.from_contents(manifest_schema)),
+    ]
 )
 task_pack_validator = strict_validator(task_pack_schema, registry=schema_registry)
 intent_graph_validator = strict_validator(intent_graph_schema)
@@ -191,6 +207,4 @@ PY
 python3 -m json.tool examples/sanitization-report.example.json >/dev/null
 python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null
-if search_repo "TODO|FIXME|PLACEHOLDER|TBD|待定" "scripts/verify.sh"; then
-  exit 1
-fi
+assert_repo_has_no_matches "TODO|FIXME|PLACEHOLDER|TBD|待定" "scripts/verify.sh"

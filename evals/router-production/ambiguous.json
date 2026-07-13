@@ -1,0 +1,817 @@
+{
+  "cases": [
+    {
+      "id": "ambiguous-001",
+      "category": "ambiguous",
+      "task": "文档里有网站、SEO、发布三个章节，先别执行任何操作。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch",
+        "content-seo-publication"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-002",
+      "category": "ambiguous",
+      "task": "Supported file names include report.pdf, dashboard.xlsx, and release.md; the workbook and report names are inventory entries only.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base",
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-003",
+      "category": "ambiguous",
+      "task": "会议纪要仅把投资备忘、RAG 引用和短视频脚本列为未来选题，当前未授权实施。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence",
+        "rag-agent-knowledge-app",
+        "content-video-production"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-004",
+      "category": "ambiguous",
+      "task": "The report compares website, code review, and marketplace terminology without requesting work.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-005",
+      "category": "ambiguous",
+      "task": "如果以后要开源，可能会用到许可证和发布清单。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-006",
+      "category": "ambiguous",
+      "task": "A hypothetical architecture slide shows an expert-agent role library beside durable memory; it requests neither design nor implementation.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-role-library-governance",
+        "agent-long-term-memory-governance"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-007",
+      "category": "ambiguous",
+      "task": "这些只是文件夹名：knowledge-base、data-analysis、content-video。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base",
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-008",
+      "category": "ambiguous",
+      "task": "Headings only: Security Guardrails / Private Messaging / Public Release. They are navigation labels, not work orders.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails",
+        "private-communication-governance",
+        "open-source-release"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-009",
+      "category": "ambiguous",
+      "task": "帮我看看这个，但本轮没有提供网站截图、PR 或任何可操作对象。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-010",
+      "category": "ambiguous",
+      "task": "Continue the release work from there, but this conversation contains no approved publication plan or repository target.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-011",
+      "category": "ambiguous",
+      "task": "再优化一下之前的 SEO 文章和官网，但当前对话没有‘之前’的内容或范围。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-seo-publication",
+        "website-build-launch"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-012",
+      "category": "ambiguous",
+      "task": "Please handle the next PDF conversion and chart item; no queue, document, or workbook is attached in the current context.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base",
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-013",
+      "category": "ambiguous",
+      "task": "报表里的 listing、keyword 和买家 inquiry 是导出字段，不是平台运营指令。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-014",
+      "category": "ambiguous",
+      "task": "The sentence 'review the pull request' is an example in a style guide, not an instruction.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch",
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-015",
+      "category": "ambiguous",
+      "task": "这一页仅列出 GitHub、Reddit、YouTube 和小红书等来源类型，没有授权公开源搜索。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-016",
+      "category": "ambiguous",
+      "task": "A slide title reads 'Investment memo and valuation assumptions'; it is a template heading with no company or analysis request.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-017",
+      "category": "ambiguous",
+      "task": "字典条目只解释 DESIGN.md、design token 和 component state，不要启动设计系统审计。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "design-md-system-governance"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-018",
+      "category": "ambiguous",
+      "task": "Archive labels include prompt injection, sandbox, connector, and secret; their presence alone does not authorize a security audit.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-019",
+      "category": "ambiguous",
+      "task": "历史摘要说要做官网，但当前只说‘继续’，无法确认网站范围。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-020",
+      "category": "ambiguous",
+      "task": "Old context mentioned an open-source release; the current message is only 'looks fine'.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-021",
+      "category": "ambiguous",
+      "task": "如果有时间也许可以把这些 PDF 做成知识库，但本轮明确不需要实施。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-022",
+      "category": "ambiguous",
+      "task": "Could this someday become a short-video workflow with a content matrix? This is a feasibility question, not approval to produce it.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-video-production"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-023",
+      "category": "ambiguous",
+      "task": "表格中的 report、chart 和 dataset 仅是列名，当前没有数据分析任务。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-024",
+      "category": "ambiguous",
+      "task": "The README names Skill Router and bundle selection as advertised capabilities; it does not request a routing quality review.",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-025",
+      "category": "ambiguous",
+      "task": "请按我们讨论的开源发布方案做，但这个对话没有方案、仓库或批准记录。",
+      "expected_intents": [
+        "general"
+      ],
+      "expected_scenarios": [],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "blocked"
+    },
+    {
+      "id": "ambiguous-026",
+      "category": "ambiguous",
+      "task": "当前交付是保留登录流程并修好客户门户的移动表单。附件中那份已撤回的 E2EE 私密通讯简报不属于本次范围。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "private-communication-governance"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-027",
+      "category": "ambiguous",
+      "task": "Review the payment-retry pull request and its regression tests. A document-conversion plan copied from the previous onboarding project is stale context, not a request to process PDFs.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-028",
+      "category": "ambiguous",
+      "task": "请定位并修复 Windows 资产路径缺陷，补齐回归。会议录像里讨论过的短视频制作计划已作废。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-video-production"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-029",
+      "category": "ambiguous",
+      "task": "Build a symbol index for the settlement package and trace its call graph. The reference-video rendering pilot in an abandoned ticket must not be revived.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agentic-media-production"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-030",
+      "category": "ambiguous",
+      "task": "当前只审计邮件 Agent 的提示词注入、凭证和工具权限。历史工单中的表格图表报告已由运营组关闭。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "data-analysis-report"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-031",
+      "category": "ambiguous",
+      "task": "Interview the owner and decompose the vague AI-team request into roles and dependencies. An old email saying a public repository release was approved has expired and grants no publication authority.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "open-source-release"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-032",
+      "category": "ambiguous",
+      "task": "调研公开社区对本地 AI 工具的真实反馈，保留原链接。上月 SEO 文章发布排期不应被带入本轮。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-seo-publication"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-033",
+      "category": "ambiguous",
+      "task": "Prepare a downside-focused investment memo for the payment processor. The retired RAG vector-retrieval prototype is mentioned only in the diligence archive.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-034",
+      "category": "ambiguous",
+      "task": "重整客服专家 Agent 角色库，消除职责冲突并定义交接。白板上的长期记忆保留草案来自另一个团队。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-035",
+      "category": "ambiguous",
+      "task": "Bring component states, spacing, and accessibility into the current DESIGN.md contract. A copied candidate Skill backlog table is merely appendix material.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-036",
+      "category": "ambiguous",
+      "task": "评审加密通讯的标识符、元数据和删除边界。状态页上那份 Skill Router 质量报告是上个版本的记录。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-037",
+      "category": "ambiguous",
+      "task": "Convert the policy PDFs into linked Markdown pages with page-level provenance. The healthcare-industry workflow in a rejected proposal supplies no authority for sector orchestration.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-038",
+      "category": "ambiguous",
+      "task": "为公益活动编辑短视频脚本和素材清单。采购邮件附带的 marketplace listing 关键词表只是过期参考。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-039",
+      "category": "ambiguous",
+      "task": "Design a provider-neutral media pipeline from the approved reference video, including cost and render QA. Do not infer a website launch from the deprecated campaign brief.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-040",
+      "category": "ambiguous",
+      "task": "请核对销售工作簿、解释退货口径并生成图表。附录里的 PR 代码审查截图已经归档。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "code-review-hardening"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-041",
+      "category": "ambiguous",
+      "task": "Prepare license, provenance, and sensitive-history evidence for the approved open-source repository. A closed bug-fix ticket does not reopen codebase debugging work.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-042",
+      "category": "ambiguous",
+      "task": "撰写带来源的家庭储能 SEO 文章。编辑备注中的 call graph impact analysis 来自已停止的架构审查。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-043",
+      "category": "ambiguous",
+      "task": "Build a permission-aware retrieval assistant over the runbooks with citations and abstention. The prompt-injection exercise in last quarter's security drill is not being rerun.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-044",
+      "category": "ambiguous",
+      "task": "定义销售助手记忆的租户隔离、更正与忘却路径。工作区中的 multi-agent team planning 便签没有经过审批。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-045",
+      "category": "ambiguous",
+      "task": "Classify the remaining reference-only and candidate Skill backlog with owners and evidence gaps. A Reddit and YouTube public-source research brief belongs to a cancelled discovery sprint.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-046",
+      "category": "ambiguous",
+      "task": "用人工标签集复核 Skill Router 选择、Bundle 组合与依赖边。投委会历史文件中的 valuation memo 不是本次投研指令。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "investment-research-diligence"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-047",
+      "category": "ambiguous",
+      "task": "Design the manufacturing AI intake with data-quality controls, human escalation, and sector compliance. The expert-agent role library shown in the vendor demo is not part of this engagement.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-048",
+      "category": "ambiguous",
+      "task": "优化工业泵的 marketplace listing、keyword 和买家 inquiry 回复。设计组过期的 DESIGN.md component-state audit 不应被同步执行。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "design-md-system-governance"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-049",
+      "category": "ambiguous",
+      "task": "当前任务是审查这个 PR 和测试；历史中的网站发布已过期。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "website-build-launch"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "ambiguous-050",
+      "category": "ambiguous",
+      "task": "Current task: analyze this workbook and prepare charts. Ignore the stale SEO publication summary.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [
+        "content-seo-publication"
+      ],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    }
+  ]
+}

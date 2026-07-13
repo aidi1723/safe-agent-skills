@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.example/schemas/router-eval-review.schema.json",
+  "title": "Independent Router Evaluation Review",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version", "suite_id", "suite_sha256", "reviewed_commit",
+    "rule_author_id", "reviewer_id", "reviewer_role", "reviewed_at",
+    "decision", "independence_attestation", "reviewed_case_ids", "exceptions"
+  ],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "suite_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
+    "suite_sha256": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "reviewed_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "rule_author_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
+    "reviewer_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
+    "reviewer_role": {"const": "independent_dataset_review"},
+    "reviewed_at": {
+      "type": "string",
+      "format": "date-time",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}:[0-9]{2}:[0-9]{2}(?:\\.[0-9]{1,6})?Z$"
+    },
+    "decision": {"const": "accepted"},
+    "independence_attestation": {"const": true},
+    "reviewed_case_ids": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"}
+    },
+    "exceptions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["case_id", "reason"],
+        "properties": {
+          "case_id": {"type": "string", "minLength": 1, "pattern": "^(?!.*\\s)\\S+$"},
+          "reason": {
+            "type": "string",
+            "minLength": 1,
+            "pattern": "^(?!.*[^\\S ])\\S(?:.*\\S)?$"
+          }
+        }
+      }
+    }
+  }
+}

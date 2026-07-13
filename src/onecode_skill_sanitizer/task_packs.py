@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from types import MappingProxyType
 
 from . import __version__
 from .candidates import retrieve_scenario_candidates
@@ -11,12 +12,19 @@ from .compatibility import build_route_id
 from .compatibility import build_route_identity_payload
 from .compatibility import to_legacy_v1
 from .compiler import compile_execution_graph
+from .compiler import _is_acyclic as _compiler_graph_is_acyclic
 from .composer import compose_scenarios
-from .intent import decompose_task, normalize_task
+from .contracts import usable_contract
+from .intent import DecompositionDiagnostics
+from .intent import IntentGraph
+from .intent import TaskDecomposition
+from .intent import decompose_task_detailed, normalize_task
 from .registry import load_registry_index
 from .registry import manifest_index_entry
 from .registry import utc_now
 from .registry import verify_registry
+from .registry import VerifiedRegistrySnapshot
+from .registry import build_verified_registry_snapshot
 from .rendering import project_legacy_contracts
 from .router import CAPABILITY_SKILL_PREFERENCES
 from .router import PIPELINE_STAGE_ORDER
@@ -24,6 +32,7 @@ from .router import build_task_profile, capability_skill_names, parse_invariant_
 from .router import pipeline_stage_for_skill
 from .router import route_mesh_task, route_scenario_task
 from .taxonomy import classify_skill
+from .validation import validate_contract
 
 
 def skill_matches_task(entry: dict, task_taxonomy: dict, task_text: str) -> int:
@@ -118,8 +127,12 @@ def extract_markdown_sections(text: str) -> dict[str, str]:
 def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
     skill_dir = registry_dir / entry["registry_path"]
     skill_text = (skill_dir / "SKILL.md").read_text(encoding="utf-8")
-    sections = extract_markdown_sections(skill_text)
     manifest = json.loads((skill_dir / "skill.json").read_text(encoding="utf-8"))
+    return _build_skill_pack_item(entry, manifest, skill_text)
+
+
+def _build_skill_pack_item(entry: dict, manifest: dict, skill_text: str) -> dict:
+    sections = extract_markdown_sections(skill_text)
     item = {
         "name": entry["name"],
         "status": entry["status"],
@@ -141,11 +154,30 @@ def load_skill_pack_item(registry_dir: Path, entry: dict) -> dict:
         "failure_handling": sections.get("Failure Handling", ""),
         "policy": manifest.get("policy", {}),
     }
-    if isinstance(manifest.get("contract"), dict):
+    if "contract" in manifest:
         item["contract"] = manifest["contract"]
     return item
 
-def load_trusted_skill_pack_items(registry_dir: Path) -> list[dict]:
+def load_trusted_skill_pack_items(
+    registry_dir: Path,
+    *,
+    snapshot: VerifiedRegistrySnapshot | None = None,
+) -> list[dict]:
+    if snapshot is not None:
+        skills = []
+        for bound_skill in snapshot.skills:
+            entry = bound_skill.entry()
+            if entry.get("status") != "trusted":
+                continue
+            item = _build_skill_pack_item(
+                entry,
+                bound_skill.manifest(),
+                bound_skill.skill_text,
+            )
+            item["match_score"] = item.get("match_score", 0)
+            skills.append(item)
+        return skills
+
     index = load_registry_index(registry_dir)
     skills = []
     for entry in index["skills"]:
@@ -550,12 +582,13 @@ def build_task_pack_v2(
     invariants: list[str] | None = None,
     strategy: str = "balanced",
     overlap_groups_path: Path | None = None,
+    *,
+    snapshot: VerifiedRegistrySnapshot | None = None,
 ) -> dict:
     if not task.strip():
         raise ValueError("task must not be empty")
-    verification = verify_registry(registry_dir)
-    if verification["status"] != "ok":
-        raise SystemExit("registry verification failed; refusing to build task pack")
+    snapshot = snapshot or build_verified_registry_snapshot(registry_dir)
+    verification = snapshot.verification()
 
     bundles_index = load_bundles_index(bundles_path)
     overlap_groups = None
@@ -570,33 +603,34 @@ def build_task_pack_v2(
         if overlap_validation["issues"]:
             raise ValueError("overlap groups validation failed")
         overlap_policy = "validated_not_applied"
-    trusted_names = trusted_skill_names(registry_dir)
+    trusted_names = set(snapshot.trusted_skill_names())
     normalized_task = normalize_task(task)
-    intent_graph = decompose_task(task)
+    decomposition = decompose_task_detailed(task)
+    intent_graph, decomposition_diagnostics = _validated_decomposition(decomposition)
     candidates = retrieve_scenario_candidates(intent_graph, bundles_index, trusted_names)
     composition = compose_scenarios(intent_graph, candidates, bundles_index, trusted_names)
-    execution_graph = compile_execution_graph(intent_graph, composition, bundles_index, trusted_names)
-    invariant_capabilities = parse_invariant_capabilities(invariants)
-    invariant_skill_names = capability_skill_names(invariant_capabilities, trusted_names)
-
     trusted_items = {
         item["name"]: item
-        for item in load_trusted_skill_pack_items(registry_dir)
+        for item in load_trusted_skill_pack_items(registry_dir, snapshot=snapshot)
         if item["name"] in trusted_names
     }
-    stage_by_skill = {
-        name: _v2_skill_stage(item)
-        for name, item in trusted_items.items()
-    }
+    stage_by_skill = MappingProxyType(
+        {name: _v2_skill_stage(item) for name, item in trusted_items.items()}
+    )
     host_action_by_skill = {
         name: _v2_skill_host_action(item)
         for name, item in trusted_items.items()
     }
-    execution_graph = _normalize_v2_graph_stages(
-        execution_graph,
+    execution_graph = compile_execution_graph(
+        intent_graph,
+        composition,
+        bundles_index,
+        trusted_names,
         stage_by_skill,
-        host_action_by_skill,
     )
+    execution_graph = _apply_v2_graph_host_actions(execution_graph, host_action_by_skill)
+    invariant_capabilities = parse_invariant_capabilities(invariants)
+    invariant_skill_names = capability_skill_names(invariant_capabilities, trusted_names)
     execution_graph = _extend_v2_graph_with_invariants(
         execution_graph,
         invariant_capabilities,
@@ -641,7 +675,12 @@ def build_task_pack_v2(
         invariant_capabilities,
         stage_by_skill,
     )
-    routing_status = _routing_status(composition.status, capability_resolution, execution_graph)
+    routing_status = _routing_status(
+        composition.status,
+        capability_resolution,
+        execution_graph,
+        decomposition.diagnostics.status,
+    )
     provider = {
         "requested": "none",
         "used": "none",
@@ -676,12 +715,12 @@ def build_task_pack_v2(
         ),
         strategy=strategy,
         provider_identifier=provider["used"],
-        catalog_content_hash=_json_asset_content_hash(registry_dir / "index.json"),
+        catalog_content_hash=build_canonical_content_hash(snapshot.index()),
         bundle_content_hash=_json_asset_content_hash(bundles_path),
         overlap_content_hash=(
             build_canonical_content_hash(overlap_groups) if overlap_groups is not None else "none"
         ),
-        router_version="hybrid-router-v2-first-milestone",
+        router_version="hybrid-router-v2-quality-remediation",
         package_version=__version__,
     )
     payload = {
@@ -710,6 +749,7 @@ def build_task_pack_v2(
             "optional_skills_selected": 0,
             "required_skills_omitted": missing_graph_skills,
             "overlap_policy": overlap_policy,
+            "decomposition": decomposition_diagnostics,
         },
         "registry_verification": verification,
         "compatibility": {},
@@ -718,7 +758,431 @@ def build_task_pack_v2(
         "legacy_schema_version": 1,
         "compatibility_loss": to_legacy_v1(payload)["compatibility_loss"],
     }
+    validate_task_pack_v2_semantics(payload)
     return payload
+
+
+def validate_task_pack_v2_semantics(payload: object) -> None:
+    """Validate Task Pack relationships that JSON Schema cannot express."""
+
+    root = _semantic_object(payload, "payload")
+    intent_graph = _semantic_object(root.get("intent_graph"), "intent_graph")
+    intents = _semantic_object_list(intent_graph.get("intents"), "intent_graph.intents")
+    intent_ids = _unique_semantic_values(
+        [_semantic_text(item.get("id"), "intent.id") for item in intents],
+        "intent ids",
+    )
+    if not intent_ids or len(intent_ids) > 12:
+        _semantic_error("intent ids")
+    intent_id_set = set(intent_ids)
+    intent_edges = []
+    for intent in intents:
+        intent_id = _semantic_text(intent.get("id"), "intent.id")
+        dependencies = _semantic_text_list(intent.get("depends_on"), "intent.depends_on")
+        if (
+            len(dependencies) != len(set(dependencies))
+            or intent_id in dependencies
+            or not set(dependencies) <= intent_id_set
+        ):
+            _semantic_error("intent dependencies")
+        intent_edges.extend(
+            {"from": dependency_id, "to": intent_id, "type": "intent_dependency"}
+            for dependency_id in dependencies
+        )
+    if not _compiler_graph_is_acyclic(
+        [{"id": intent_id} for intent_id in intent_ids], intent_edges
+    ):
+        _semantic_error("intent dependency cycle")
+    unresolved_dependencies = _semantic_text_list(
+        intent_graph.get("unresolved_dependencies"), "unresolved dependencies"
+    )
+    if len(unresolved_dependencies) != len(set(unresolved_dependencies)):
+        _semantic_error("unresolved dependencies")
+    if unresolved_dependencies and root.get("routing_status") != "blocked":
+        _semantic_error("unresolved dependency routing status")
+
+    candidates = _semantic_object_list(root.get("scenario_candidates"), "scenario_candidates")
+    candidate_keys = []
+    for candidate in candidates:
+        intent_id = _semantic_text(candidate.get("intent_id"), "candidate.intent_id")
+        scenario_id = _semantic_text(candidate.get("scenario_id"), "candidate.scenario_id")
+        if intent_id not in intent_id_set:
+            _semantic_error("candidate intent reference")
+        candidate_keys.append((intent_id, scenario_id))
+    _require_unique_semantic_keys(candidate_keys, "candidate identities")
+
+    selections = _semantic_object_list(root.get("selected_scenarios"), "selected_scenarios")
+    scenario_ids = _unique_semantic_values(
+        [_semantic_text(item.get("scenario_id"), "selection.scenario_id") for item in selections],
+        "selected scenario ids",
+    )
+    scenario_id_set = set(scenario_ids)
+    selected_intent_ids: list[str] = []
+    selected_scenario_by_intent: dict[str, str] = {}
+    candidate_key_set = set(candidate_keys)
+    for selection in selections:
+        scenario_id = _semantic_text(selection.get("scenario_id"), "selection.scenario_id")
+        selection_intents = _semantic_text_list(selection.get("intent_ids"), "selection.intent_ids")
+        if (
+            not selection_intents
+            or len(selection_intents) != len(set(selection_intents))
+            or not set(selection_intents) <= intent_id_set
+        ):
+            _semantic_error("selected scenario intent references")
+        if any((intent_id, scenario_id) not in candidate_key_set for intent_id in selection_intents):
+            _semantic_error("selected scenario candidate references")
+        selected_intent_ids.extend(selection_intents)
+        selected_scenario_by_intent.update(
+            {intent_id: scenario_id for intent_id in selection_intents}
+        )
+    _require_unique_semantic_keys(selected_intent_ids, "selected intent ids")
+
+    uncovered_intents = _semantic_text_list(root.get("uncovered_intents"), "uncovered_intents")
+    if (
+        len(uncovered_intents) != len(set(uncovered_intents))
+        or not set(uncovered_intents) <= intent_id_set
+        or set(selected_intent_ids) & set(uncovered_intents)
+        or set(selected_intent_ids) | set(uncovered_intents) != intent_id_set
+    ):
+        _semantic_error("intent coverage")
+
+    selected_skills = _semantic_object_list(root.get("selected_skills"), "selected_skills")
+    selected_skill_names = _unique_semantic_values(
+        [_semantic_text(item.get("name"), "selected skill name") for item in selected_skills],
+        "selected skill names",
+    )
+    selected_skill_name_set = set(selected_skill_names)
+    selected_skill_host_actions = {}
+    for skill in selected_skills:
+        if "contract" in skill:
+            contract = _semantic_object(skill.get("contract"), "selected skill contract")
+            if "approval_classes" in contract:
+                approval_classes = _semantic_text_list(
+                    contract.get("approval_classes"), "selected skill approval classes"
+                )
+                if len(approval_classes) != len(set(approval_classes)):
+                    _semantic_error("selected skill approval classes")
+        selected_skill_host_actions[skill["name"]] = _v2_skill_host_action(skill)
+    routing_metrics = _semantic_object(root.get("routing_metrics"), "routing_metrics")
+    declared_omitted_skills = _semantic_text_list(
+        routing_metrics.get("required_skills_omitted"), "required skills omitted"
+    )
+    if len(declared_omitted_skills) != len(set(declared_omitted_skills)):
+        _semantic_error("required skills omitted")
+    capability_resolution = _semantic_object(
+        root.get("capability_resolution"), "capability_resolution"
+    )
+    capabilities = _semantic_object_list(
+        capability_resolution.get("capabilities"), "capability_resolution.capabilities"
+    )
+    capability_keys = []
+    expected_invariant_nodes: list[tuple[str, str, str, str]] = []
+    missing_required_count = 0
+    for capability in capabilities:
+        scenario_id = capability.get("scenario_id")
+        capability_id = capability.get("capability")
+        source = capability.get("source", "scenario")
+        if type(scenario_id) is not str or type(capability_id) is not str or type(source) is not str:
+            _semantic_error("capability identity")
+        if scenario_id and scenario_id not in scenario_id_set:
+            _semantic_error("capability scenario reference")
+        if source == "invariant" and scenario_id:
+            _semantic_error("invariant capability scenario")
+        skills = _semantic_text_list(capability.get("skills"), "capability.skills")
+        if len(skills) != len(set(skills)) or not set(skills) <= selected_skill_name_set:
+            _semantic_error("capability skill references")
+        required = capability.get("required")
+        status = capability.get("status")
+        if type(required) is not bool or status not in {"covered", "missing"}:
+            _semantic_error("capability status")
+        if (status == "covered") != bool(skills):
+            _semantic_error("capability coverage")
+        if source == "invariant" and status == "covered":
+            stage = _semantic_text(capability.get("stage"), "invariant capability stage")
+            expected_invariant_nodes.extend(
+                (
+                    f"invariant:{capability_id}:{skill_name}",
+                    capability_id,
+                    skill_name,
+                    stage,
+                )
+                for skill_name in skills
+            )
+        if required and status == "missing":
+            missing_required_count += 1
+        capability_keys.append((scenario_id, capability_id, source))
+    _require_unique_semantic_keys(capability_keys, "capability identities")
+    _require_semantic_count(
+        capability_resolution.get("missing_required_count"),
+        missing_required_count,
+        "missing required capability count",
+    )
+    expected_capability_status = "complete" if missing_required_count == 0 else "incomplete"
+    if capability_resolution.get("status") != expected_capability_status:
+        _semantic_error("capability resolution status")
+
+    execution_graph = _semantic_object(root.get("execution_graph"), "execution_graph")
+    reason_codes = _semantic_text_list(execution_graph.get("reason_codes"), "reason_codes")
+    invariant_only_fallback = (
+        root.get("routing_status") == "incomplete"
+        and execution_graph.get("status") == "blocked"
+        and execution_graph.get("acyclic") is False
+        and reason_codes == ["incomplete_composition"]
+        and not selected_intent_ids
+    )
+    nodes = _semantic_object_list(execution_graph.get("nodes"), "execution_graph.nodes")
+    maximum_node_count = (len(intent_ids) + 1) * len(selected_skill_name_set)
+    if len(nodes) > maximum_node_count:
+        _semantic_error("execution node count")
+    node_ids = _unique_semantic_values(
+        [_semantic_text(item.get("id"), "execution node id") for item in nodes],
+        "execution node ids",
+    )
+    node_id_set = set(node_ids)
+    required_skill_names: list[str] = []
+    standard_node_intents: set[str] = set()
+    actual_invariant_nodes: list[tuple[str, str, str, str]] = []
+    selected_intent_id_set = set(selected_intent_ids)
+    for node in nodes:
+        node_intents = _semantic_text_list(node.get("intent_ids"), "execution node intent ids")
+        node_scenarios = _semantic_text_list(
+            node.get("scenario_ids"), "execution node scenario ids"
+        )
+        skill_name = _semantic_text(node.get("skill"), "execution node skill")
+        host_action = node.get("host_action")
+        is_invariant_node = "invariant_capability" in node
+        empty_invariant_fallback = (
+            is_invariant_node and invariant_only_fallback and not node_intents
+        )
+        if (
+            (not node_intents and not empty_invariant_fallback)
+            or len(node_intents) != len(set(node_intents))
+            or not set(node_intents) <= selected_intent_id_set
+            or len(node_scenarios) != len(set(node_scenarios))
+            or not set(node_scenarios) <= scenario_id_set
+            or skill_name not in selected_skill_name_set
+        ):
+            _semantic_error("execution node references")
+        if (
+            type(host_action) is not bool
+            or host_action != selected_skill_host_actions[skill_name]
+        ):
+            _semantic_error("execution node host action")
+        if is_invariant_node:
+            invariant_capability = _semantic_text(
+                node.get("invariant_capability"), "invariant node capability"
+            )
+            node_stage = _semantic_text(node.get("stage"), "invariant node stage")
+            if (
+                (not empty_invariant_fallback and set(node_intents) != selected_intent_id_set)
+                or node_scenarios
+            ):
+                _semantic_error("invariant node mapping")
+            actual_invariant_nodes.append(
+                (node["id"], invariant_capability, skill_name, node_stage)
+            )
+        else:
+            if (
+                len(node_intents) != 1
+                or len(node_scenarios) != 1
+                or selected_scenario_by_intent.get(node_intents[0]) != node_scenarios[0]
+            ):
+                _semantic_error("execution node mapping")
+            standard_node_intents.add(node_intents[0])
+        if skill_name not in required_skill_names:
+            required_skill_names.append(skill_name)
+    if nodes and standard_node_intents != selected_intent_id_set:
+        _semantic_error("execution intent coverage")
+    if (
+        len(actual_invariant_nodes) != len(expected_invariant_nodes)
+        or set(actual_invariant_nodes) != set(expected_invariant_nodes)
+    ):
+        _semantic_error("invariant capability node projection")
+
+    edges = _semantic_object_list(execution_graph.get("edges"), "execution_graph.edges")
+    if len(edges) > 4 * len(nodes) * len(nodes):
+        _semantic_error("execution edge count")
+    edge_keys = []
+    for edge in edges:
+        source = _semantic_text(edge.get("from"), "execution edge source")
+        target = _semantic_text(edge.get("to"), "execution edge target")
+        edge_type = _semantic_text(edge.get("type"), "execution edge type")
+        if source not in node_id_set or target not in node_id_set:
+            _semantic_error("execution edge endpoint")
+        edge_keys.append((source, target, edge_type))
+    _require_unique_semantic_keys(edge_keys, "execution edges")
+    topology_acyclic = _compiler_graph_is_acyclic(nodes, edges)
+
+    if len(reason_codes) != len(set(reason_codes)):
+        _semantic_error("execution graph reason codes")
+    graph_status = execution_graph.get("status")
+    acyclic = execution_graph.get("acyclic")
+    if type(acyclic) is not bool or graph_status not in {"ready", "blocked"}:
+        _semantic_error("execution graph status")
+    expected_acyclic = bool(nodes) and topology_acyclic and not reason_codes
+    if acyclic != expected_acyclic:
+        _semantic_error("execution graph acyclic flag")
+    if nodes and not topology_acyclic and "dependency_cycle" not in reason_codes:
+        _semantic_error("execution graph cycle reason")
+    expected_graph_status = "ready" if expected_acyclic else "blocked"
+    if graph_status != expected_graph_status or (graph_status == "blocked" and not reason_codes):
+        _semantic_error("execution graph coherence")
+    if unresolved_dependencies and "invalid_intent_graph" not in reason_codes:
+        _semantic_error("unresolved dependency graph reason")
+
+    _require_semantic_count(routing_metrics.get("intent_count"), len(intents), "intent count")
+    _require_semantic_count(routing_metrics.get("candidate_count"), len(candidates), "candidate count")
+    _require_semantic_count(
+        routing_metrics.get("selected_scenario_count"), len(selections), "selected scenario count"
+    )
+    _require_semantic_count(
+        routing_metrics.get("required_skill_count"), len(required_skill_names), "required skill count"
+    )
+    _require_semantic_count(
+        routing_metrics.get("selected_skill_count"), len(selected_skills), "selected skill count"
+    )
+    _require_semantic_count(
+        routing_metrics.get("optional_skills_selected"), 0, "optional skills selected"
+    )
+    optional_skill_limit = routing_metrics.get("optional_skill_limit")
+    if type(optional_skill_limit) is not int or optional_skill_limit < 0:
+        _semantic_error("optional skill limit")
+    expected_omitted = [name for name in required_skill_names if name not in selected_skill_name_set]
+    if declared_omitted_skills != expected_omitted:
+        _semantic_error("required skills omitted")
+    expected_selected = [name for name in required_skill_names if name not in set(expected_omitted)]
+    if selected_skill_names != expected_selected:
+        _semantic_error("selected skill order")
+
+    decomposition = _semantic_object(routing_metrics.get("decomposition"), "decomposition")
+    _require_semantic_count(
+        decomposition.get("emitted_intent_count"), len(intents), "emitted intent count"
+    )
+    observed_candidates = decomposition.get("observed_candidate_count")
+    # Signal scans have no corresponding candidate-record array in the pack.
+    if type(observed_candidates) is not int or not 0 <= observed_candidates <= 129:
+        _semantic_error("observed candidate count")
+    decomposition_reasons = _semantic_text_list(
+        decomposition.get("reason_codes"), "decomposition reason codes"
+    )
+    if len(decomposition_reasons) != len(set(decomposition_reasons)):
+        _semantic_error("decomposition reason codes")
+    for flag, reason in (
+        ("candidate_signal_limit_exceeded", "candidate_signal_limit_exceeded"),
+        ("intent_limit_exceeded", "intent_limit_exceeded"),
+    ):
+        flag_value = decomposition.get(flag)
+        if type(flag_value) is not bool or flag_value != (reason in decomposition_reasons):
+            _semantic_error("decomposition status")
+
+    registry_verification = _semantic_object(
+        root.get("registry_verification"), "registry_verification"
+    )
+    issues = _semantic_object_list(registry_verification.get("issues"), "registry issues")
+    issue_keys = []
+    unknown_provenance_count = 0
+    tampered_count = 0
+    for issue in issues:
+        issue_id = _semantic_text(issue.get("id"), "registry issue id")
+        skill = _semantic_text(issue.get("skill"), "registry issue skill")
+        path = _semantic_text(issue.get("path"), "registry issue path")
+        issue_keys.append((issue_id, skill, path))
+        if issue_id == "unknown-provenance":
+            unknown_provenance_count += 1
+        else:
+            tampered_count += 1
+    _require_unique_semantic_keys(issue_keys, "registry issues")
+    # Registry totals have no corresponding Skill-record array in the pack.
+    skill_count = _semantic_nonnegative_int(registry_verification.get("skill_count"), "skill count")
+    trusted_count = _semantic_nonnegative_int(
+        registry_verification.get("trusted_count"), "trusted count"
+    )
+    if trusted_count > skill_count:
+        _semantic_error("trusted count")
+    if tampered_count > skill_count or unknown_provenance_count > skill_count:
+        _semantic_error("registry issue counts")
+    _require_semantic_count(
+        registry_verification.get("tampered_count"), tampered_count, "tampered count"
+    )
+    _require_semantic_count(
+        registry_verification.get("unknown_provenance_count"),
+        unknown_provenance_count,
+        "unknown provenance count",
+    )
+    expected_registry_status = "failed" if issues else "ok"
+    if registry_verification.get("status") != expected_registry_status:
+        _semantic_error("registry status")
+
+    compatibility = _semantic_object(root.get("compatibility"), "compatibility")
+    if compatibility.get("legacy_schema_version") != 1:
+        _semantic_error("compatibility schema version")
+    compatibility_loss = _semantic_object(
+        compatibility.get("compatibility_loss"), "compatibility loss"
+    )
+    expected_compatibility_loss = to_legacy_v1(root).get("compatibility_loss")
+    if compatibility_loss != expected_compatibility_loss:
+        _semantic_error("compatibility loss")
+
+    composition_status = "complete" if not uncovered_intents else "incomplete"
+    decomposition_status = "incomplete" if decomposition_reasons else "complete"
+    expected_routing_status = _routing_status(
+        composition_status,
+        capability_resolution,
+        execution_graph,
+        decomposition_status,
+    )
+    if root.get("routing_status") != expected_routing_status:
+        _semantic_error("routing status")
+
+
+def _semantic_error(field: str) -> None:
+    raise ValueError(f"task pack v2 semantic validation failed: {field}")
+
+
+def _semantic_object(value: object, field: str) -> dict:
+    if type(value) is not dict:
+        _semantic_error(field)
+    return value
+
+
+def _semantic_object_list(value: object, field: str) -> list[dict]:
+    if type(value) is not list or any(type(item) is not dict for item in value):
+        _semantic_error(field)
+    return value
+
+
+def _semantic_text(value: object, field: str) -> str:
+    if type(value) is not str or not value:
+        _semantic_error(field)
+    return value
+
+
+def _semantic_text_list(value: object, field: str) -> list[str]:
+    if type(value) is not list or any(type(item) is not str or not item for item in value):
+        _semantic_error(field)
+    return value
+
+
+def _semantic_nonnegative_int(value: object, field: str) -> int:
+    if type(value) is not int or value < 0:
+        _semantic_error(field)
+    return value
+
+
+def _require_semantic_count(value: object, expected: int, field: str) -> None:
+    if _semantic_nonnegative_int(value, field) != expected:
+        _semantic_error(field)
+
+
+def _unique_semantic_values(values: list[str], field: str) -> list[str]:
+    _require_unique_semantic_keys(values, field)
+    return values
+
+
+def _require_unique_semantic_keys(values: list, field: str) -> None:
+    if len(values) != len(set(values)):
+        _semantic_error(field)
+
 
 def _build_v2_capability_resolution(
     bundles_index: dict,
@@ -880,71 +1344,52 @@ def _extend_v2_graph_with_invariants(
     return graph
 
 def _v2_skill_stage(skill: dict) -> str:
-    contract = skill.get("contract")
-    if isinstance(contract, dict) and contract.get("stage_hint") in PIPELINE_STAGE_ORDER:
-        return contract["stage_hint"]
-    return pipeline_stage_for_skill(skill.get("name", ""))
+    if "contract" not in skill:
+        return pipeline_stage_for_skill(skill.get("name", ""))
+    contract = skill["contract"]
+    skill_name = skill.get("name", "")
+    issues: list[dict] = []
+    validate_contract(
+        {"name": skill_name, "contract": contract},
+        Path("skill.json"),
+        issues,
+    )
+    if issues or not isinstance(contract, dict):
+        raise ValueError(f"invalid Contract v2 or legacy contract: {skill_name}")
+    if contract.get("schema_version") == 2 and not usable_contract(
+        contract, skill_name=skill_name
+    ):
+        raise ValueError(f"invalid Contract v2 for trusted skill: {skill_name}")
+    stage_hint = contract.get("stage_hint")
+    if stage_hint == "execution":
+        return "production"
+    if stage_hint in PIPELINE_STAGE_ORDER:
+        return stage_hint
+    raise ValueError(f"invalid Contract v2 or legacy contract stage: {skill_name}")
 
 def _v2_skill_host_action(skill: dict) -> bool:
     contract = skill.get("contract")
     return bool(contract.get("approval_classes")) if isinstance(contract, dict) else False
 
-def _normalize_v2_graph_stages(
+def _apply_v2_graph_host_actions(
     execution_graph: dict,
-    stage_by_skill: dict[str, str],
     host_action_by_skill: dict[str, bool],
 ) -> dict:
     graph = dict(execution_graph)
-    nodes = [
+    graph["nodes"] = [
         {
             **node,
-            "stage": stage_by_skill.get(node.get("skill", ""), node.get("stage", "production")),
             "host_action": host_action_by_skill.get(node.get("skill", ""), False),
         }
         for node in execution_graph.get("nodes", [])
     ]
-    rank_by_stage = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}
-    original_rank = {node["id"]: rank for rank, node in enumerate(nodes)}
-    nodes_by_intent: dict[str, list[dict]] = {}
-    for node in nodes:
-        intent_ids = node.get("intent_ids", [])
-        if len(intent_ids) == 1:
-            nodes_by_intent.setdefault(intent_ids[0], []).append(node)
-    edges = [
-        dict(edge)
-        for edge in execution_graph.get("edges", [])
-        if edge.get("type") != "scenario_order"
-    ]
-    for intent_id in sorted(nodes_by_intent):
-        ordered = sorted(
-            nodes_by_intent[intent_id],
-            key=lambda node: (
-                rank_by_stage.get(node["stage"], len(rank_by_stage)),
-                original_rank[node["id"]],
-                node["id"],
-            ),
-        )
-        edges.extend(
-            {"from": source["id"], "to": target["id"], "type": "scenario_order"}
-            for source, target in zip(ordered, ordered[1:])
-        )
-    graph["nodes"] = nodes
-    graph["edges"] = sorted(
-        (
-            {"from": source, "to": target, "type": edge_type}
-            for source, target, edge_type in {
-                (edge["from"], edge["to"], edge["type"])
-                for edge in edges
-            }
-        ),
-        key=lambda edge: (edge["from"], edge["to"], edge["type"]),
-    )
     return graph
 
 def _routing_status(
     composition_status: str,
     capability_resolution: dict,
     execution_graph: dict,
+    decomposition_status: str = "complete",
 ) -> str:
     reason_codes = set(execution_graph.get("reason_codes", []))
     composition_only_block = reason_codes == {"incomplete_composition"} and composition_status != "complete"
@@ -952,11 +1397,69 @@ def _routing_status(
         return "blocked"
     if (
         composition_status != "complete"
+        or decomposition_status != "complete"
         or capability_resolution.get("status") != "complete"
         or capability_resolution.get("missing_required_count", 0) > 0
     ):
         return "incomplete"
     return "complete" if execution_graph.get("status") == "ready" else "blocked"
+
+
+def _validated_decomposition(
+    decomposition: TaskDecomposition,
+) -> tuple[IntentGraph, dict]:
+    if type(decomposition) is not TaskDecomposition:
+        raise ValueError("detailed decomposition must use the TaskDecomposition contract")
+    if type(decomposition.intent_graph) is not IntentGraph:
+        raise ValueError("detailed decomposition must contain an IntentGraph")
+    diagnostics = decomposition.diagnostics
+    if type(diagnostics) is not DecompositionDiagnostics:
+        raise ValueError("detailed decomposition must contain decomposition diagnostics")
+
+    payload = diagnostics.to_json()
+    expected_keys = {
+        "mode",
+        "observed_candidate_count",
+        "emitted_intent_count",
+        "candidate_signal_limit_exceeded",
+        "intent_limit_exceeded",
+        "reason_codes",
+    }
+    if set(payload) != expected_keys:
+        raise ValueError("decomposition diagnostics shape is invalid")
+    if payload["mode"] not in {"single_clause", "strong_clauses", "profile_spans"}:
+        raise ValueError("decomposition diagnostics mode is invalid")
+    for key in ("observed_candidate_count", "emitted_intent_count"):
+        maximum = 129 if key == "observed_candidate_count" else 12
+        if type(payload[key]) is not int or not 0 <= payload[key] <= maximum:
+            raise ValueError("decomposition diagnostics count is invalid")
+    if payload["emitted_intent_count"] != len(decomposition.intent_graph.intents):
+        raise ValueError("decomposition diagnostics intent count is inconsistent")
+    if payload["emitted_intent_count"] > 12:
+        raise ValueError("decomposition diagnostics intent count exceeds the limit")
+    for key in ("candidate_signal_limit_exceeded", "intent_limit_exceeded"):
+        if type(payload[key]) is not bool:
+            raise ValueError("decomposition diagnostics limit flag is invalid")
+
+    reason_codes = payload["reason_codes"]
+    reason_order = (
+        "task_scan_limit_exceeded",
+        "candidate_signal_limit_exceeded",
+        "intent_limit_exceeded",
+        "ambiguous_profile_enumeration",
+    )
+    if (
+        not isinstance(reason_codes, list)
+        or reason_codes != [code for code in reason_order if code in reason_codes]
+    ):
+        raise ValueError("decomposition diagnostics reason codes are invalid")
+    if payload["candidate_signal_limit_exceeded"] != (
+        "candidate_signal_limit_exceeded" in reason_codes
+    ):
+        raise ValueError("decomposition diagnostics candidate limit is inconsistent")
+    if payload["intent_limit_exceeded"] != ("intent_limit_exceeded" in reason_codes):
+        raise ValueError("decomposition diagnostics intent limit is inconsistent")
+    return decomposition.intent_graph, payload
 
 def _json_asset_content_hash(path: Path) -> str:
     return build_canonical_content_hash(json.loads(path.read_text(encoding="utf-8")))

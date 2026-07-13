@@ -4,6 +4,8 @@ import json
 import re
 from pathlib import Path
 
+from .validation import UnsafeAuxiliaryContentError, auxiliary_file_counts
+
 
 DEPTH_CLASSES = {"routing_card", "playbook", "specialist"}
 REQUIRED_SECTIONS = {
@@ -19,11 +21,6 @@ def _section_names(text: str) -> set[str]:
         match.group(1).strip()
         for match in re.finditer(r"^##\s+(.+?)\s*$", text, flags=re.MULTILINE)
     }
-
-
-def _asset_count(skill_dir: Path, directory: str) -> int:
-    root = skill_dir / directory
-    return sum(path.is_file() for path in root.rglob("*")) if root.is_dir() else 0
 
 
 def analyze_skill(skill_dir: Path, policy: dict) -> dict:
@@ -46,8 +43,13 @@ def analyze_skill(skill_dir: Path, policy: dict) -> dict:
     missing_sections = sorted(REQUIRED_SECTIONS - sections)
     if missing_sections:
         errors.append({"id": "missing-required-sections", "sections": missing_sections})
-    reference_count = _asset_count(skill_dir, "references")
-    script_count = _asset_count(skill_dir, "scripts")
+    try:
+        auxiliary_counts = auxiliary_file_counts(skill_dir)
+    except UnsafeAuxiliaryContentError:
+        errors.append({"id": "unsafe-auxiliary-content"})
+        auxiliary_counts = {}
+    reference_count = auxiliary_counts.get("references", 0)
+    script_count = auxiliary_counts.get("scripts", 0)
     word_count = len(re.findall(r"[\w-]+", text, flags=re.UNICODE))
     workflow_step_count = len(re.findall(r"^\d+\.\s+", text, flags=re.MULTILINE))
     has_examples = any("example" in section.lower() for section in sections)

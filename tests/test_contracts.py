@@ -6,6 +6,8 @@ from pathlib import Path
 from jsonschema import Draft202012Validator, validators
 
 from onecode_skill_sanitizer.contracts import contract_coverage
+from onecode_skill_sanitizer.registry import VerifiedRegistrySkill
+from onecode_skill_sanitizer.registry import VerifiedRegistrySnapshot
 
 
 CORE_SCENARIOS = [
@@ -79,6 +81,47 @@ def manifest_validator():
 
 
 class ContractCoverageTest(unittest.TestCase):
+    def test_contract_coverage_uses_verified_snapshot_without_manifest_reread(self):
+        registry = {
+            "skills": [
+                {
+                    "name": "alpha",
+                    "status": "trusted",
+                    "registry_path": "code/alpha",
+                }
+            ]
+        }
+        manifest = {
+            "name": "alpha",
+            "contract": {
+                "schema_version": 2,
+                "stage_hint": "review",
+                "capability_vector": ["code.review"],
+            },
+        }
+        snapshot = VerifiedRegistrySnapshot(
+            index_json=json.dumps(registry),
+            skills=(
+                VerifiedRegistrySkill(
+                    registry_path="code/alpha",
+                    entry_json=json.dumps(registry["skills"][0]),
+                    manifest_json=json.dumps(manifest),
+                    skill_text="---\nname: alpha\n---\n",
+                ),
+            ),
+            verification_json=json.dumps({"status": "ok"}),
+        )
+
+        result = contract_coverage(
+            registry,
+            {"bundles": [{"id": "core", "skills": ["alpha"]}]},
+            registry_root=Path("does-not-exist"),
+            snapshot=snapshot,
+        )
+
+        self.assertEqual(result["coverage_ratio"], 1.0)
+        self.assertEqual(result["covered_skill_names"], ["alpha"])
+
     def test_contract_v2_schema_is_strict(self):
         validator = contract_validator()
         valid_contract = {

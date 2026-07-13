@@ -1,16 +1,64 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import json
+import stat
 from datetime import datetime, timezone
 from pathlib import Path
+from pathlib import PurePosixPath
 
+from . import safe_fs
 from .validation import SOURCE_PROVENANCE_FIELDS
+from .validation import UnsafeAuxiliaryContentError
 from .validation import auxiliary_content_sha256
+from .validation import auxiliary_content_sha256_from_fd
 from .validation import manifest_sha256
 from .validation import seal_manifest
 from .validation import text_sha256
+from .validation import validate_registry_index_schema
 from .validation import validate_manifest_schema
+
+
+@dataclass(frozen=True)
+class VerifiedRegistrySkill:
+    registry_path: str
+    entry_json: str
+    manifest_json: str
+    skill_text: str
+
+    def entry(self) -> dict:
+        return _load_snapshot_object(self.entry_json, "entry")
+
+    def manifest(self) -> dict:
+        return _load_snapshot_object(self.manifest_json, "manifest")
+
+
+@dataclass(frozen=True)
+class VerifiedRegistrySnapshot:
+    index_json: str
+    skills: tuple[VerifiedRegistrySkill, ...]
+    verification_json: str
+
+    def index(self) -> dict:
+        return _load_snapshot_object(self.index_json, "index")
+
+    def verification(self) -> dict:
+        return _load_snapshot_object(self.verification_json, "verification")
+
+    def trusted_skill_names(self) -> frozenset[str]:
+        return frozenset(
+            skill.entry()["name"]
+            for skill in self.skills
+            if skill.entry().get("status") == "trusted"
+        )
+
+
+def _load_snapshot_object(serialized: str, label: str) -> dict:
+    payload = json.loads(serialized)
+    if type(payload) is not dict:
+        raise ValueError(f"registry snapshot {label} is malformed")
+    return payload
 
 
 def utc_now() -> str:
@@ -94,6 +142,135 @@ def load_registry_index(registry_dir: Path) -> dict:
         raise ValueError("registry index skill entries must be objects")
     return payload
 
+
+def _descriptor_registry_manifest_paths(root_fd: int) -> set[str]:
+    manifest_paths = set()
+    for category in safe_fs.directory_entries(root_fd):
+        if stat.S_ISREG(category.stat_result.st_mode):
+            continue
+        if not stat.S_ISDIR(category.stat_result.st_mode):
+            raise ValueError("registry snapshot root contains an unsafe entry")
+        with safe_fs.open_directory_at(root_fd, category.name, category.stat_result) as category_fd:
+            for skill in safe_fs.directory_entries(category_fd):
+                if not stat.S_ISDIR(skill.stat_result.st_mode):
+                    raise ValueError("registry snapshot category contains an unsafe entry")
+                with safe_fs.open_directory_at(category_fd, skill.name, skill.stat_result) as skill_fd:
+                    entries = {entry.name: entry for entry in safe_fs.directory_entries(skill_fd)}
+                    manifest = entries.get("skill.json")
+                    if manifest is None:
+                        continue
+                    if not stat.S_ISREG(manifest.stat_result.st_mode):
+                        raise ValueError("registry snapshot manifest entry is unsafe")
+                    manifest_paths.add(f"{category.name}/{skill.name}")
+    return manifest_paths
+
+
+def build_verified_registry_snapshot(registry_dir: Path) -> VerifiedRegistrySnapshot:
+    index_path = registry_dir / "index.json"
+    with safe_fs.open_root(registry_dir) as root_fd:
+        if root_fd is None:
+            raise ValueError("registry snapshot root is missing")
+        index = json.loads(safe_fs.read_file_at(root_fd, ("index.json",)).decode("utf-8"))
+        if type(index) is not dict:
+            raise ValueError("registry snapshot index is malformed")
+        if not isinstance(index.get("skills"), list):
+            raise ValueError("registry snapshot index is malformed")
+        entries = index["skills"]
+        if any(type(entry) is not dict for entry in entries):
+            raise ValueError("registry snapshot entries are malformed")
+        if any(
+            type(entry.get(field)) is not str or not entry[field].strip()
+            for entry in entries
+            for field in ("name", "status", "risk_level", "registry_path")
+        ):
+            raise ValueError("registry snapshot entry identity is malformed")
+        index_issues: list[dict] = []
+        validate_registry_index_schema(index, index_path, index_issues)
+        if index_issues:
+            raise ValueError("registry snapshot index validation failed")
+
+        paths: list[str] = []
+        names: list[str] = []
+        for entry in entries:
+            relative = PurePosixPath(entry["registry_path"])
+            if (
+                relative.is_absolute()
+                or "." in relative.parts
+                or ".." in relative.parts
+                or len(relative.parts) != 2
+            ):
+                raise ValueError("registry snapshot path is unsafe")
+            paths.append(relative.as_posix())
+            names.append(entry["name"])
+        if len(paths) != len(set(paths)) or len(names) != len(set(names)):
+            raise ValueError("registry snapshot identities must be unique")
+
+        actual_paths = _descriptor_registry_manifest_paths(root_fd)
+        if actual_paths != set(paths):
+            raise ValueError("registry snapshot index is stale")
+
+        snapshot_skills: list[VerifiedRegistrySkill] = []
+        trusted_count = 0
+        unknown_provenance_count = 0
+        for entry in sorted(entries, key=lambda item: item["registry_path"]):
+            relative = PurePosixPath(entry["registry_path"])
+            manifest_path = registry_dir.joinpath(*relative.parts, "skill.json")
+            with safe_fs.open_directory_at(root_fd, relative.parts[0]) as category_fd:
+                with safe_fs.open_directory_at(category_fd, relative.parts[1]) as skill_fd:
+                    manifest = json.loads(
+                        safe_fs.read_file_at(skill_fd, ("skill.json",)).decode("utf-8")
+                    )
+                    if type(manifest) is not dict:
+                        raise ValueError("registry snapshot manifest is malformed")
+                    manifest_issues: list[dict] = []
+                    validate_manifest_schema(manifest, manifest_path, manifest_issues)
+                    if manifest_issues:
+                        raise ValueError("registry snapshot manifest validation failed")
+                    skill_text = safe_fs.read_file_at(skill_fd, ("SKILL.md",)).decode("utf-8")
+                    expected_auxiliary = manifest.get("hashes", {}).get("auxiliary_sha256")
+                    if auxiliary_content_sha256_from_fd(skill_fd) != expected_auxiliary:
+                        raise ValueError("registry snapshot auxiliary content hash mismatch")
+            expected_entry = manifest_index_entry(manifest, Path(entry["registry_path"]))
+            if entry != expected_entry:
+                raise ValueError("registry snapshot entry does not match manifest")
+            if text_sha256(skill_text) != manifest["hashes"]["sanitized_sha256"]:
+                raise ValueError("registry snapshot skill content hash mismatch")
+            if manifest["status"] == "trusted":
+                trusted_count += 1
+            source = manifest.get("source", {})
+            if any(
+                source.get(field, "unknown") == "unknown"
+                for field in SOURCE_PROVENANCE_FIELDS
+            ):
+                unknown_provenance_count += 1
+            snapshot_skills.append(
+                VerifiedRegistrySkill(
+                    registry_path=entry["registry_path"],
+                    entry_json=json.dumps(entry, ensure_ascii=False, sort_keys=True),
+                    manifest_json=json.dumps(manifest, ensure_ascii=False, sort_keys=True),
+                    skill_text=skill_text,
+                )
+            )
+        if _descriptor_registry_manifest_paths(root_fd) != actual_paths:
+            raise ValueError("registry snapshot changed during construction")
+        if unknown_provenance_count:
+            raise ValueError("registry snapshot contains unknown provenance")
+    verification = {
+        "schema_version": 1,
+        "generated_at": utc_now(),
+        "status": "ok",
+        "skill_count": len(snapshot_skills),
+        "trusted_count": trusted_count,
+        "tampered_count": 0,
+        "unknown_provenance_count": unknown_provenance_count,
+        "issues": [],
+    }
+    return VerifiedRegistrySnapshot(
+        index_json=json.dumps(index, ensure_ascii=False, sort_keys=True),
+        skills=tuple(snapshot_skills),
+        verification_json=json.dumps(verification, ensure_ascii=False, sort_keys=True),
+    )
+
 def verify_registry(registry_dir: Path) -> dict:
     issues = []
     trusted_count = 0
@@ -147,7 +324,19 @@ def verify_registry(registry_dir: Path) -> dict:
                 )
 
         expected_auxiliary_hash = manifest.get("hashes", {}).get("auxiliary_sha256")
-        actual_auxiliary_hash = auxiliary_content_sha256(skill_dir)
+        try:
+            actual_auxiliary_hash = auxiliary_content_sha256(skill_dir)
+        except UnsafeAuxiliaryContentError:
+            tampered_count += 1
+            issues.append(
+                {
+                    "id": "unsafe-auxiliary-content",
+                    "severity": "critical",
+                    "skill": name,
+                    "path": skill_dir.as_posix(),
+                }
+            )
+            actual_auxiliary_hash = expected_auxiliary_hash
         if actual_auxiliary_hash != expected_auxiliary_hash and (
             actual_auxiliary_hash is not None or expected_auxiliary_hash is not None
         ):

@@ -97,7 +97,6 @@ from .task_packs import TASK_PROFILE_CATEGORY_VALUES as TASK_PROFILE_CATEGORY_VA
 from .task_packs import _build_v2_capability_resolution as _build_v2_capability_resolution
 from .task_packs import _extend_v2_graph_with_invariants as _extend_v2_graph_with_invariants
 from .task_packs import _json_asset_content_hash as _json_asset_content_hash
-from .task_packs import _normalize_v2_graph_stages as _normalize_v2_graph_stages
 from .task_packs import _routing_status as _routing_status
 from .task_packs import _safe_v2_error as _safe_v2_error
 from .task_packs import _v2_skill_host_action as _v2_skill_host_action
@@ -257,9 +256,13 @@ def build_parser() -> argparse.ArgumentParser:
     router_eval_parser.set_defaults(func=router_eval_command)
 
     router_eval_v2_parser = subparsers.add_parser("router-eval-v2")
-    router_eval_v2_parser.add_argument("--eval", required=True)
+    router_eval_v2_input = router_eval_v2_parser.add_mutually_exclusive_group(required=True)
+    router_eval_v2_input.add_argument("--eval")
+    router_eval_v2_input.add_argument("--suite")
+    router_eval_v2_parser.add_argument("--review")
     router_eval_v2_parser.add_argument("--registry", default="catalog")
     router_eval_v2_parser.add_argument("--bundles", default="bundles/index.json")
+    router_eval_v2_parser.add_argument("--require-production-ready", action="store_true")
     router_eval_v2_parser.set_defaults(func=router_eval_v2_command)
 
     claude_skills_bulk_plan_parser = subparsers.add_parser("claude-skills-bulk-plan")

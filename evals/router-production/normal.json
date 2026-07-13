@@ -1,0 +1,3004 @@
+{
+  "cases": [
+    {
+      "id": "normal-001",
+      "category": "normal",
+      "task": "重做会员中心首屏，保留现有登录流程，补齐空态、异常态和键盘导航验收。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-002",
+      "category": "normal",
+      "task": "Bring the pricing page in line with the brand kit and provide phone, tablet, and desktop captures for the design review.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-003",
+      "category": "normal",
+      "task": "运营后台在小屏上无法操作；请调整表格、抽屉和表单，不要改动接口契约。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-004",
+      "category": "normal",
+      "task": "Create the public launch page for a payroll product, including comparison content, accessible forms, and measurable acceptance criteria.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-005",
+      "category": "normal",
+      "task": "为医院预约系统补一套统一的界面规则，并检查高对比模式下的焦点状态。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-006",
+      "category": "normal",
+      "task": "Polish the onboarding dashboard without changing routes or business rules; include loading behavior and reduced-motion treatment.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-007",
+      "category": "normal",
+      "task": "重构活动页的信息层级，让商品、优惠和主操作在手机上可快速扫读。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-008",
+      "category": "normal",
+      "task": "Implement the approved Figma treatment for account settings and verify hover, focus, validation, and disabled states in a real browser.",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-009",
+      "category": "normal",
+      "task": "请审查这个支付重试 PR，重点找重复扣款、幂等性和缺失回归用例。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-010",
+      "category": "normal",
+      "task": "Review the cache invalidation change for correctness under concurrent writes and report only findings backed by file and line evidence.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-011",
+      "category": "normal",
+      "task": "检查生成的数据迁移代码，确认回滚、空值和大表锁定风险是否被覆盖。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-012",
+      "category": "normal",
+      "task": "Audit the authentication patch for privilege escalation, session fixation, and tests that merely mirror the implementation.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-013",
+      "category": "normal",
+      "task": "对这次类型系统重构做发布前审查，区分阻断项、建议项和未验证假设。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-014",
+      "category": "normal",
+      "task": "Inspect the CSV parser fix with malformed encodings and oversized rows in mind; identify missing boundary tests.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-015",
+      "category": "normal",
+      "task": "复核订单状态机改动，检查非法跳转、并发更新与错误恢复路径。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-016",
+      "category": "normal",
+      "task": "Read the dependency upgrade diff for breaking API changes, transitive risk, and whether the existing test suite proves compatibility.",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-017",
+      "category": "normal",
+      "task": "先定位批量导入偶发丢行的根因，用最小复现锁定边界，再修复并跑相关回归。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-018",
+      "category": "normal",
+      "task": "Map the notification service before changing retry ownership, implement the smallest fix, and leave the module simpler than you found it.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-019",
+      "category": "normal",
+      "task": "用户导出在夏令时跨日时少一天；请诊断、写失败用例、修复并说明发布风险。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-020",
+      "category": "normal",
+      "task": "Trace the configuration-loading path, remove the environment-specific failure, and verify startup behavior on clean and upgraded installs.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-021",
+      "category": "normal",
+      "task": "摸清权限校验在 API 和异步任务之间的边界，修复绕过问题并补契约测试。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-022",
+      "category": "normal",
+      "task": "Investigate a memory regression introduced by the new importer, profile the hot path, then land a bounded change with evidence.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-023",
+      "category": "normal",
+      "task": "将三处分散的订单金额计算收敛到现有领域层，保持对外行为并补差异测试。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-024",
+      "category": "normal",
+      "task": "Understand why Windows paths fail in the asset pipeline, correct the portability defect, and exercise both separators in CI-level tests.",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-025",
+      "category": "normal",
+      "task": "为计费服务建立可更新的符号关系索引，回答修改税率模型会影响哪些入口。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-026",
+      "category": "normal",
+      "task": "Index only the payments package, then trace callers of the settlement adapter and flag stale graph assumptions explicitly.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-027",
+      "category": "normal",
+      "task": "基于当前 diff 分析用户删除接口的上游调用与下游事件订阅者。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-028",
+      "category": "normal",
+      "task": "Answer an architecture question about how request identity reaches the audit writer, citing indexed symbols rather than keyword guesses.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-029",
+      "category": "normal",
+      "task": "重建过期的代码关系数据，然后识别移除旧配置类前必须迁移的依赖点。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-030",
+      "category": "normal",
+      "task": "Use structural references to compare the two authorization paths and explain where their dependency chains diverge.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-031",
+      "category": "normal",
+      "task": "只对此次变更涉及的包做关系探索，列出需要重跑的集成测试边界。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-032",
+      "category": "normal",
+      "task": "Find every concrete implementation behind the storage protocol and show which command paths instantiate each one.",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-033",
+      "category": "normal",
+      "task": "审计客服 Agent 处理外部邮件时的指令优先级，特别检查凭证和工具调用边界。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-034",
+      "category": "normal",
+      "task": "Threat-model a support connector that can read tickets and draft replies but must never send or expose hidden context without approval.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-035",
+      "category": "normal",
+      "task": "为文档摄取链路设计恶意指令隔离、敏感字段脱敏和审批失败策略。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-036",
+      "category": "normal",
+      "task": "Review the agent's browser permissions, including origin scope, download handling, and what evidence is required before consequential actions.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-037",
+      "category": "normal",
+      "task": "检查一个多租户助手是否可能通过历史摘要泄露其他客户的上下文。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-038",
+      "category": "normal",
+      "task": "Define guardrails for an agent that receives untrusted CSV cells and can call an internal lookup tool.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-039",
+      "category": "normal",
+      "task": "模拟诱导模型跳过确认的攻击，核对宿主在发送、删除和付费操作前的拦截。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-040",
+      "category": "normal",
+      "task": "Assess whether tool results can smuggle new instructions into the planner and specify containment tests for that channel.",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-041",
+      "category": "normal",
+      "task": "与需求方澄清‘自动化销售运营’的边界，再拆分角色、交付物、前置条件和停止门。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-042",
+      "category": "normal",
+      "task": "Turn a vague request for an AI operations team into an executable plan with owners, dependencies, review gates, and unresolved decisions.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-043",
+      "category": "normal",
+      "task": "为跨部门客诉处理设计协作方案，明确哪些信息能传递、哪些冲突需要升级。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-044",
+      "category": "normal",
+      "task": "Interview the product owner about an underspecified research assistant, then propose a phased team topology rather than inventing requirements.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-045",
+      "category": "normal",
+      "task": "将‘帮我做个智能营销系统’转成有验收标准的工作包，标出外部授权点。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-046",
+      "category": "normal",
+      "task": "Design a handoff sequence for research, legal review, and publication while keeping each role's authority explicit.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-047",
+      "category": "normal",
+      "task": "整理一个已经反复变更的 Agent 项目方向，区分已确认事实、假设和待决策项。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-048",
+      "category": "normal",
+      "task": "Plan concurrent specialist work for a migration program and define how evidence is merged without allowing one role to approve its own output.",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-049",
+      "category": "normal",
+      "task": "调研开发者社区如何评价本地优先的 AI 编码工具，保留原始链接和发布日期。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-050",
+      "category": "normal",
+      "task": "Compare recurring complaints about three note-taking products across public forums, videos, and issue trackers with source-level citations.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-051",
+      "category": "normal",
+      "task": "从中英文社媒、视频评论和开源讨论中搜集对家用机器人的真实抱怨。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-052",
+      "category": "normal",
+      "task": "Find primary public evidence for how creators use AI captioning, separating product claims from user demonstrations.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-053",
+      "category": "normal",
+      "task": "追踪某开源项目一年内的用户反馈变化，将 issue、论坛和演示视频串联起来。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-054",
+      "category": "normal",
+      "task": "Survey public conversations about cross-border seller software and return a citation table grouped by workflow pain point.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-055",
+      "category": "normal",
+      "task": "查找教师使用 AI 备课的实际案例，每个结论都要能回到原帖或原视频。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-056",
+      "category": "normal",
+      "task": "Research how users migrate away from a discontinued SaaS across communities in two languages, noting evidence gaps.",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-057",
+      "category": "normal",
+      "task": "评估一家云安全公司的持续收入质量，建模关键假设，并写出最强反方论点。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-058",
+      "category": "normal",
+      "task": "Prepare a diligence memo on a listed payment processor, covering unit economics, capital allocation, downside cases, and source confidence.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-059",
+      "category": "normal",
+      "task": "比较两家工业软件公司的护城河与估值敏感性，不要隐去数据缺口。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-060",
+      "category": "normal",
+      "task": "Analyze whether a retailer's reported margin recovery is structural or cyclical, with a falsifiable bear thesis.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-061",
+      "category": "normal",
+      "task": "审阅某消费品公司近五年的现金流与回购纪律，建立可复算的价值区间。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-062",
+      "category": "normal",
+      "task": "Write an investment committee brief on a vertical SaaS vendor, including customer concentration and evidence that could invalidate the thesis.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-063",
+      "category": "normal",
+      "task": "核对一家制造企业的产能扩张故事，区分管理层口径与可验证经营数据。",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-064",
+      "category": "normal",
+      "task": "Assess a marketplace business through cohort durability, take rate, competitive response, and a conservative valuation range.",
+      "expected_intents": [
+        "investment_research_diligence"
+      ],
+      "expected_scenarios": [
+        "investment-research-diligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-065",
+      "category": "normal",
+      "task": "为产品研发团队整理专家 Agent 目录，消除职责重叠并定义交接输入。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-066",
+      "category": "normal",
+      "task": "Review an existing library of support-agent roles for conflicting mandates, missing escalation paths, and accidental tool authority.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-067",
+      "category": "normal",
+      "task": "将法务、财务和运营角色改成可组合的契约，明确谁能建议、谁能批准。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-068",
+      "category": "normal",
+      "task": "Design role cards for a research service with evidence requirements, conflict resolution, and explicit non-authorities.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-069",
+      "category": "normal",
+      "task": "审查现有 Agent 团队中的同名能力，合并重复角色但保留专业责任边界。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-070",
+      "category": "normal",
+      "task": "Create a governance model for reusable engineering specialists, including version ownership and deprecation rules.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-071",
+      "category": "normal",
+      "task": "为客户交付团队补齐角色选择条件、失败升级和证据回传字段。",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-072",
+      "category": "normal",
+      "task": "Audit a marketing-agent roster for hidden publication permissions and ambiguous ownership of factual claims.",
+      "expected_intents": [
+        "agent_role_library_governance"
+      ],
+      "expected_scenarios": [
+        "agent-role-library-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-073",
+      "category": "normal",
+      "task": "从现有产品界面提炼一份 DESIGN.md，固化颜色、字体、间距与交互状态。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-074",
+      "category": "normal",
+      "task": "Reconcile the component library with its design contract and document intentional exceptions rather than patching pages individually.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-075",
+      "category": "normal",
+      "task": "检查设计源事实与代码 token 的偏差，重点覆盖错误、禁用和焦点状态。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-076",
+      "category": "normal",
+      "task": "Write a compact visual contract for a data-heavy admin product, including density, hierarchy, responsive behavior, and accessibility.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-077",
+      "category": "normal",
+      "task": "统一两个子产品的设计规范，明确哪些变量共享、哪些允许品牌化覆盖。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-078",
+      "category": "normal",
+      "task": "Review DESIGN.md after a redesign and close gaps in tables, forms, dialogs, empty states, and motion preferences.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-079",
+      "category": "normal",
+      "task": "为移动与桌面端共用组件建立状态矩阵，防止各页面自行解释交互。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-080",
+      "category": "normal",
+      "task": "Convert a screenshot-based visual direction into source-owned tokens and reusable component rules with traceable decisions.",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-081",
+      "category": "normal",
+      "task": "评审医患通讯方案中的端到端加密、推送元数据和账号恢复权衡。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-082",
+      "category": "normal",
+      "task": "Define privacy boundaries for a messenger that avoids global user identifiers while still handling abuse reports and device loss.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-083",
+      "category": "normal",
+      "task": "检查企业私聊产品在联系人发现、保留期和封禁处理上暴露的信息。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-084",
+      "category": "normal",
+      "task": "Threat-model metadata leakage across relay servers, notifications, backups, and link previews in a secure chat design.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-085",
+      "category": "normal",
+      "task": "为无中心账号的通讯系统制定设备迁移与密钥丢失处理边界。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-086",
+      "category": "normal",
+      "task": "Review whether moderation workflows preserve confidentiality and minimize durable associations between participants.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-087",
+      "category": "normal",
+      "task": "比较两种私密消息架构，重点说明离线投递与元数据最小化的冲突。",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-088",
+      "category": "normal",
+      "task": "Set retention and deletion rules for encrypted team chat, including what administrators cannot recover.",
+      "expected_intents": [
+        "private_communication_governance"
+      ],
+      "expected_scenarios": [
+        "private-communication-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-089",
+      "category": "normal",
+      "task": "将一批政策 PDF、表格附件和会议纪要整理为可导航的 Markdown 手册，保留页码来源。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-090",
+      "category": "normal",
+      "task": "Convert the operations handbook from DOCX into a linked knowledge base without losing warnings, tables, or image captions.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-091",
+      "category": "normal",
+      "task": "为合规文档建立分层目录与稳定锚点，将无法可靠转换的页面列入人工队列。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-092",
+      "category": "normal",
+      "task": "Turn a mixed folder of slide decks and reports into topic pages with provenance, duplicate handling, and unresolved OCR notes.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-093",
+      "category": "normal",
+      "task": "将产品手册的多个版本归并为当前知识站，保留历史差异和生效日期。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-094",
+      "category": "normal",
+      "task": "Extract procedures from scanned maintenance manuals, flag uncertain text, and produce reviewable Markdown rather than silent guesses.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-095",
+      "category": "normal",
+      "task": "把客户交付包里的文档、图片和附录整理成一个可追溯来源的内部站点。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-096",
+      "category": "normal",
+      "task": "Migrate a legacy wiki export into concise topic files while preserving cross-references and identifying orphaned content.",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-097",
+      "category": "normal",
+      "task": "为新款户外电源策划一周内容，交付主题矩阵、两条短片脚本和素材清单。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-098",
+      "category": "normal",
+      "task": "Develop a creator campaign from a one-line product insight through hooks, shot notes, caption variants, and editorial review.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-099",
+      "category": "normal",
+      "task": "将一篇长访谈改编成三个竖屏叙事，标出事实核查和画面版权问题。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-100",
+      "category": "normal",
+      "task": "Plan a month of educational clips for a B2B tool with audience stages, repeatable formats, and approval checkpoints.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-101",
+      "category": "normal",
+      "task": "为公益活动写不夸大的视频文案，将引用、口播和画面证据一一对应。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-102",
+      "category": "normal",
+      "task": "Create a launch content kit for a mobile app, including channel adaptations, a filming plan, and handoff criteria for editors.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-103",
+      "category": "normal",
+      "task": "从用户问答中提炼六个视频选题，为每个选题设计开场、证据点和收束。",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-104",
+      "category": "normal",
+      "task": "Reshape a technical demo into social clips without changing its claims, and provide an asset-rights checklist.",
+      "expected_intents": [
+        "content_video_production"
+      ],
+      "expected_scenarios": [
+        "content-video-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-105",
+      "category": "normal",
+      "task": "参考一条产品演示短片，拆解镜头节奏和声音层，再给出可控成本的制作管线。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-106",
+      "category": "normal",
+      "task": "Design a provider-agnostic workflow for turning a source clip into localized variants, with cost ceilings and post-render QA.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-107",
+      "category": "normal",
+      "task": "为电商广告的多比例成片规划生成、剪辑、字幕和技术验收步骤。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-108",
+      "category": "normal",
+      "task": "Analyze a reference reel and propose a reproducible media pipeline without assuming access to paid providers or source assets.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-109",
+      "category": "normal",
+      "task": "从故事板到最终文件设计可观测工流，记录每次外部调用的费用与失败。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-110",
+      "category": "normal",
+      "task": "Plan how to reproduce a tutorial video's structure using licensed assets, deterministic assembly, and frame-level acceptance checks.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-111",
+      "category": "normal",
+      "task": "对一批 AI 生成片段制定选择、组接和输出规则，避免在渲染后才发现尺寸错误。",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-112",
+      "category": "normal",
+      "task": "Build a media-production plan that can swap image, voice, and video vendors while preserving provenance and budget reporting.",
+      "expected_intents": [
+        "agentic_media_production"
+      ],
+      "expected_scenarios": [
+        "agentic-media-production"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-113",
+      "category": "normal",
+      "task": "清理三家门店的销售明细，解释退货口径，并生成管理层可复核的趋势图。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-114",
+      "category": "normal",
+      "task": "Analyze support-ticket exports for response-time bottlenecks, documenting data exclusions and charting changes by queue.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-115",
+      "category": "normal",
+      "task": "合并两个调研表的编码差异，检查缺失与异常值，再比较人群分布。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-116",
+      "category": "normal",
+      "task": "Turn a messy subscription workbook into a reproducible retention analysis with clear cohort definitions and uncertainty notes.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-117",
+      "category": "normal",
+      "task": "核对仓库库存记录与盘点结果，分离时间差、单位差和真实损耗。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-118",
+      "category": "normal",
+      "task": "Prepare an executive view of campaign spend and qualified leads, including source lineage and sensitivity to attribution windows.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-119",
+      "category": "normal",
+      "task": "分析产线停机日志，统一时区和故障编码，找出主要损失时段。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-120",
+      "category": "normal",
+      "task": "Audit a KPI spreadsheet before a board meeting, reconcile formulas to raw rows, and visualize only defensible metrics.",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-121",
+      "category": "normal",
+      "task": "为一个内部 Python 库准备公开发布，核对许可证、依赖归属和敏感历史。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-122",
+      "category": "normal",
+      "task": "Prepare a maintainer-ready release packet for a CLI project, including reproducible checks, provenance, and an explicit go/no-go decision.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-123",
+      "category": "normal",
+      "task": "检查即将公开的模型评测仓库，清除私有路径并核实样例数据授权。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-124",
+      "category": "normal",
+      "task": "Harden a JavaScript package for its first public version with changelog, supply-chain review, artifact inspection, and rollback notes.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-125",
+      "category": "normal",
+      "task": "为社区版软件制定发版门禁，要求测试、签名、安装验证和审批证据齐全。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-126",
+      "category": "normal",
+      "task": "Review whether a repository is fit to transfer to a public organization, with special attention to issue history and contributor attribution.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-127",
+      "category": "normal",
+      "task": "整理一次已批准的开源迁移，将代码、文档和发布产物的校验证据串起来。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-128",
+      "category": "normal",
+      "task": "Create a pre-publication checklist for a security tool without claiming readiness until scans and independent review are recorded.",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-129",
+      "category": "normal",
+      "task": "为‘家庭储能选型’写一篇面向普通业主的搜索文章，核对技术声明与来源。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-130",
+      "category": "normal",
+      "task": "Revise a migration guide so it answers the actual query, cites product limits accurately, and earns a useful search snippet.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-131",
+      "category": "normal",
+      "task": "为 B2B 软件的定价页补充对比内容，不伪造客户成果，并优化标题层级。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-132",
+      "category": "normal",
+      "task": "Produce a fact-checked article about warehouse automation costs with source dates, caveats, and structured metadata.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-133",
+      "category": "normal",
+      "task": "重写一组地区服务页，避免只替换城市名，使每页回答真实场景问题。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-134",
+      "category": "normal",
+      "task": "Audit an existing blog cluster for cannibalized intent, unsupported claims, and pages that should be consolidated.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-135",
+      "category": "normal",
+      "task": "撰写一篇采购指南，将产品参数、业界常见范围和企业自身能力分开表达。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-136",
+      "category": "normal",
+      "task": "Improve a technical comparison page for discoverability while preserving nuance around benchmarks and compatibility.",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-137",
+      "category": "normal",
+      "task": "为内部制度问答设计检索助手，回答必须附条款定位并允许明确拒答。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-138",
+      "category": "normal",
+      "task": "Build a knowledge assistant over engineering runbooks with hybrid retrieval, source citations, and a typed answer contract.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-139",
+      "category": "normal",
+      "task": "为客服知识库规划召回、重排和权限过滤，避免跨租户命中。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-140",
+      "category": "normal",
+      "task": "Design an evidence-grounded research assistant that distinguishes retrieved facts from synthesis and exposes retrieval misses.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-141",
+      "category": "normal",
+      "task": "将产品规格与故障单接入一个问答流程，设定版本、时效与引用校验。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-142",
+      "category": "normal",
+      "task": "Plan evaluation for a retrieval application using answer support, abstention quality, and permission-aware test cases.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-143",
+      "category": "normal",
+      "task": "为法务合同库设计可追溯回答格式，所有结论需返回原文片段与文档版本。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-144",
+      "category": "normal",
+      "task": "Create a retrieval architecture for multilingual manuals, including chunk boundaries, reranking, and structured uncertainty.",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-145",
+      "category": "normal",
+      "task": "为销售助手定义哪些客户偏好可长期保留，以及更正、过期和删除流程。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-146",
+      "category": "normal",
+      "task": "Design tenant-isolated durable memory for an assistant, with provenance, confidence decay, correction, and auditable forgetting.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-147",
+      "category": "normal",
+      "task": "检查 Agent 在摘要历史对话时是否把推测当事实，并建立用户可见的修正机制。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-148",
+      "category": "normal",
+      "task": "Define memory scopes for a household assistant so one member's private facts never become another member's context.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-149",
+      "category": "normal",
+      "task": "为客服 Agent 制定记忆优先级和冲突规则，处理用户新说法与旧记录不一致的情况。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-150",
+      "category": "normal",
+      "task": "Plan a migration between memory backends without losing source attribution or resurrecting deleted entries.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-151",
+      "category": "normal",
+      "task": "设计一组评测来验证 Agent 何时该记、何时该忘、何时必须再次确认。",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-152",
+      "category": "normal",
+      "task": "Audit a graph-backed memory layer for cross-user edges, stale beliefs, deletion completeness, and replay safety.",
+      "expected_intents": [
+        "agent_long_term_memory_governance"
+      ],
+      "expected_scenarios": [
+        "agent-long-term-memory-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-153",
+      "category": "normal",
+      "task": "盘点尚未纳入 catalog 的候选 Skill，按缺口、重复、证据不足和待退役分类。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-154",
+      "category": "normal",
+      "task": "Build an owned backlog for reference-only skills, recording source evidence, overlap, priority, and the next trust decision.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-155",
+      "category": "normal",
+      "task": "审查一批 Claude Skills 备选项，区分真实能力空白与只是换名的旧能力。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-156",
+      "category": "normal",
+      "task": "Reconcile candidate maps from several audits and assign an owner plus disposition rationale to every unresolved item.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-157",
+      "category": "normal",
+      "task": "为待验证 Skill 建立分批队列，优先处理高频场景与无可替代能力。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-158",
+      "category": "normal",
+      "task": "Review stale backlog entries against the current trusted catalog and close items whose coverage is now demonstrable.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-159",
+      "category": "normal",
+      "task": "将非 trusted 项目的保留理由、缺失证据和下次复审时间写入可维护清单。",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-160",
+      "category": "normal",
+      "task": "Cluster a large skill intake by user outcome, then identify which proposals deserve synthesis instead of one-file promotion.",
+      "expected_intents": [
+        "claude_skills_backlog_coverage"
+      ],
+      "expected_scenarios": [
+        "claude-skills-backlog-coverage"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-161",
+      "category": "normal",
+      "task": "审查 Skill Router 在中文复合请求上的意图拆分、场景选择和依赖边。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-162",
+      "category": "normal",
+      "task": "Evaluate automatic skill selection against a manually labeled suite, reporting support counts and fail-closed gate behavior.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-163",
+      "category": "normal",
+      "task": "检查 Bundle 重叠是否导致重复阶段与过多 Skill，但不通过改 gold 掩盖错路由。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-164",
+      "category": "normal",
+      "task": "Audit router confidence calibration, especially confidently wrong selections and unsupported production claims.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-165",
+      "category": "normal",
+      "task": "对多意图评测的精确率、召回率与 DAG 一致性做可复现复核。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-166",
+      "category": "normal",
+      "task": "Review whether scenario composition preserves required capabilities and refuses malformed contract inputs.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-167",
+      "category": "normal",
+      "task": "核对生产门的身份绑定、独立审查证据与队值统计，确保缺样本时失败关闭。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-168",
+      "category": "normal",
+      "task": "Probe the router with ambiguous and safety-sensitive prompts, then separate compiler defects from labeling disagreements.",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-169",
+      "category": "normal",
+      "task": "为医疗预约场景设计 AI 应用方案，把临床、隐私和数据质量门禁放在技术选型之前。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-170",
+      "category": "normal",
+      "task": "Turn a manufacturer's predictive-maintenance idea into a governed workflow with data readiness, human escalation, and measurable value.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-171",
+      "category": "normal",
+      "task": "为律所的合同审阅场景组合能力，明确法律判断不能由模型自动批准。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-172",
+      "category": "normal",
+      "task": "Design a finance operations assistant with jurisdiction, auditability, and source-system controls defined at intake.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-173",
+      "category": "normal",
+      "task": "将教育机构的‘个性化学习’需求拆成可验证场景，限制未成年人数据使用。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-174",
+      "category": "normal",
+      "task": "Plan a real-estate document workflow that respects regional rules, record quality, and accountable human decisions.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-175",
+      "category": "normal",
+      "task": "为公共服务热线规划分级 AI 辅助，先处理公平性、可达性与申诉路径。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-176",
+      "category": "normal",
+      "task": "Assess whether a vertical SaaS vendor can safely add an agent workflow, covering tenant boundaries and operational ownership.",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-177",
+      "category": "normal",
+      "task": "优化工业泵产品的市场平台页面，将搜索词、规格证据与买家问题对齐。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-178",
+      "category": "normal",
+      "task": "Rework a supplier's listing portfolio around distinct buyer intents and create response guidance for qualification inquiries.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-179",
+      "category": "normal",
+      "task": "根据真实询盘重组门窗型材 SKU，避免用同一标题覆盖不同采购场景。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-180",
+      "category": "normal",
+      "task": "Analyze marketplace search terms for a building-material exporter and map them to defensible product claims and catalog depth.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-181",
+      "category": "normal",
+      "task": "为定制设备供应商建立从商品页到资质审核的买家转化路径。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-182",
+      "category": "normal",
+      "task": "Audit a marketplace catalog for duplicate keyword targeting, unsupported specifications, and weak inquiry handoff.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-183",
+      "category": "normal",
+      "task": "按应用、材料与采购阶段拆分商品组，让销售回复能快速获取所需参数。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-184",
+      "category": "normal",
+      "task": "Create a keyword and inquiry plan for an OEM supplier entering a new regional marketplace, with evidence behind demand assumptions.",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-185",
+      "category": "normal",
+      "task": "给非营利组织做一个可维护的捐赠页，需兼顾慢网加载和屏幕阅读器播报。",
+      "expected_intents": [
+        "website_build"
+      ],
+      "expected_scenarios": [
+        "website-build-launch"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-186",
+      "category": "normal",
+      "task": "评审通知去重修复，从时序、重试和多租户隔离三个方面给出结论。",
+      "expected_intents": [
+        "code_review"
+      ],
+      "expected_scenarios": [
+        "code-review-hardening"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-187",
+      "category": "normal",
+      "task": "审视整个邮件发送链路，修复重试风暴，同时删除已不需要的兼容分支。",
+      "expected_intents": [
+        "codebase_change_lifecycle"
+      ],
+      "expected_scenarios": [
+        "codebase-change-lifecycle"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-188",
+      "category": "normal",
+      "task": "检查服务分层的实际依赖方向，找出绕过领域边界的调用链。",
+      "expected_intents": [
+        "codebase_graph_intelligence"
+      ],
+      "expected_scenarios": [
+        "codebase-graph-intelligence"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-189",
+      "category": "normal",
+      "task": "为内部知识助手制定最小权限清单，并说明哪些请求必须人工复核。",
+      "expected_intents": [
+        "agent_security"
+      ],
+      "expected_scenarios": [
+        "security-agent-guardrails"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-190",
+      "category": "normal",
+      "task": "为研发、数据和运营三方组成的任务建立依赖图，先解决范围冲突再开工。",
+      "expected_intents": [
+        "agent_planning_orchestration"
+      ],
+      "expected_scenarios": [
+        "agent-planning-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-191",
+      "category": "normal",
+      "task": "为新人将零散制度文件编排成学习路径，每章链接回原始证据。",
+      "expected_intents": [
+        "document_knowledge_base"
+      ],
+      "expected_scenarios": [
+        "document-to-knowledge-base"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-192",
+      "category": "normal",
+      "task": "将运输时效数据按线路和承运商拆分，说明样本不完整对结论的影响。",
+      "expected_intents": [
+        "data_analysis"
+      ],
+      "expected_scenarios": [
+        "data-analysis-report"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-193",
+      "category": "normal",
+      "task": "审计一个待发布模板仓库中的第三方字体、图片和示例配置，再给出是否可公开的结论。",
+      "expected_intents": [
+        "open_source_release"
+      ],
+      "expected_scenarios": [
+        "open-source-release"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-194",
+      "category": "normal",
+      "task": "把一份专家问答编辑成可检索长文，保留原话边界并添加可验证引用。",
+      "expected_intents": [
+        "content_seo"
+      ],
+      "expected_scenarios": [
+        "content-seo-publication"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-195",
+      "category": "normal",
+      "task": "审视现有知识 Agent 的错误引用问题，定义重现集和可量化改进目标。",
+      "expected_intents": [
+        "rag_agent"
+      ],
+      "expected_scenarios": [
+        "rag-agent-knowledge-app"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-196",
+      "category": "normal",
+      "task": "评审 Task Pack 中选中场景、能力节点和宿主操作是否与可验证契约一致。",
+      "expected_intents": [
+        "skill_router_review"
+      ],
+      "expected_scenarios": [
+        "skill-router-quality-review"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-197",
+      "category": "normal",
+      "task": "审核一份过度膨胀的设计规范，保留可执行契约并移除页面级噪音。",
+      "expected_intents": [
+        "design_md_system_governance"
+      ],
+      "expected_scenarios": [
+        "design-md-system-governance"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-198",
+      "category": "normal",
+      "task": "对公开平台上的电商询盘自动化经验做来源可追溯的主题聚类。",
+      "expected_intents": [
+        "multi_platform_research_discovery"
+      ],
+      "expected_scenarios": [
+        "multi-platform-research-discovery"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-199",
+      "category": "normal",
+      "task": "检查高流量但低询盘的商品页，区分词不对、信任不足与规格不清。",
+      "expected_intents": [
+        "commerce_growth"
+      ],
+      "expected_scenarios": [
+        "commerce-listing-growth"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    },
+    {
+      "id": "normal-200",
+      "category": "normal",
+      "task": "设计跨医疗、制造与教育的共性接入框架，但保留各行业不可合并的合规门。",
+      "expected_intents": [
+        "industry_application_orchestration"
+      ],
+      "expected_scenarios": [
+        "industry-application-orchestration"
+      ],
+      "required_dependency_edges": [],
+      "forbidden_scenarios": [],
+      "forbidden_skills": [],
+      "expected_status": "complete"
+    }
+  ]
+}

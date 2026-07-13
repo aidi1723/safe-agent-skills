@@ -4,15 +4,18 @@ from __future__ import annotations
 
 from collections import defaultdict, deque
 import re
+from types import MappingProxyType
 from typing import Any
 
 from .candidates import referenced_skill_names, validate_bundles_index
 from .composer import ScenarioComposition
-from .intent import IntentGraph
-from .router import pipeline_stage_for_skill
+from .intent import IntentGraph, IntentRelation
+from .router import PIPELINE_STAGE_ORDER, pipeline_stage_for_skill
+from .routing_profiles import SCENARIO_PROFILES
 
 
 _INTENT_ID_RE = re.compile(r"^i[1-9][0-9]*$")
+_KNOWN_TASK_TYPES = frozenset(profile["task_type"] for profile in SCENARIO_PROFILES)
 
 
 def compile_execution_graph(
@@ -20,6 +23,7 @@ def compile_execution_graph(
     composition: ScenarioComposition,
     bundles_index: dict,
     trusted_skill_names: set[str],
+    stage_by_skill: dict[str, str] | MappingProxyType | None = None,
 ) -> dict[str, Any]:
     reason_codes: list[str] = []
     details: list[str] = []
@@ -37,6 +41,10 @@ def compile_execution_graph(
         and all(isinstance(name, str) for name in trusted_skill_names)
         else set()
     )
+    validated_stages = _validated_stage_map(stage_by_skill, trusted_names)
+    if validated_stages is None:
+        _add_reason(reason_codes, "invalid_stage_map")
+        return _result(False, [], [], reason_codes, details)
 
     scenario_orders: dict[str, tuple[str, ...]] = {}
     for selection in selections:
@@ -61,6 +69,19 @@ def compile_execution_graph(
         ):
             _add_reason(reason_codes, "untrusted_scenario")
             continue
+        if stage_by_skill is not None:
+            original_rank = {name: rank for rank, name in enumerate(execution_order)}
+            stage_rank = {stage: rank for rank, stage in enumerate(PIPELINE_STAGE_ORDER)}
+            execution_order = sorted(
+                execution_order,
+                key=lambda name: (
+                    stage_rank[
+                        validated_stages.get(name, pipeline_stage_for_skill(name))
+                    ],
+                    original_rank[name],
+                    name,
+                ),
+            )
         scenario_orders[scenario_id] = tuple(execution_order)
 
     if _has_fatal_precompile_reason(reason_codes):
@@ -85,6 +106,7 @@ def compile_execution_graph(
     roots: dict[str, str] = {}
     verification_anchors: dict[str, tuple[str, ...]] = {}
     completion_anchors: dict[str, tuple[str, ...]] = {}
+    relation_requirements = _relation_verification_requirements(intent_graph)
     for intent_id in sorted(intents, key=_intent_sort_key):
         scenario_id = selected_for_intent[intent_id]
         node_ids: list[str] = []
@@ -97,7 +119,9 @@ def compile_execution_graph(
                     "intent_ids": [intent_id],
                     "scenario_ids": [scenario_id],
                     "skill": skill_name,
-                    "stage": pipeline_stage_for_skill(skill_name),
+                    "stage": validated_stages.get(
+                        skill_name, pipeline_stage_for_skill(skill_name)
+                    ),
                     "host_action": skill_name.startswith("execution-"),
                 }
             )
@@ -115,17 +139,21 @@ def compile_execution_graph(
         dependencies = intents[intent_id].depends_on
         for dependency_id in sorted(set(dependencies), key=_intent_sort_key):
             anchors = verification_anchors[dependency_id]
-            if not anchors:
+            if not anchors and _requires_verified_dependency(
+                intents[intent_id],
+                relation_requirements.get((dependency_id, intent_id)),
+            ):
                 _add_reason(reason_codes, "missing_intent_verification")
                 continue
-            edges.extend(
-                {
-                    "from": anchor_id,
-                    "to": roots[intent_id],
-                    "type": "intent_verification_dependency",
-                }
-                for anchor_id in anchors
-            )
+            if anchors:
+                edges.extend(
+                    {
+                        "from": anchor_id,
+                        "to": roots[intent_id],
+                        "type": "intent_verification_dependency",
+                    }
+                    for anchor_id in anchors
+                )
             edges.extend(
                 {
                     "from": anchor_id,
@@ -147,6 +175,63 @@ def compile_execution_graph(
     if not acyclic:
         _add_reason(reason_codes, "dependency_cycle")
     return _result(acyclic, nodes, edges, reason_codes, details)
+
+
+def _validated_stage_map(
+    stage_by_skill: dict[str, str] | MappingProxyType | None,
+    trusted_skill_names: set[str],
+) -> dict[str, str] | None:
+    if stage_by_skill is None:
+        return {}
+    if type(stage_by_skill) not in {dict, MappingProxyType}:
+        return None
+    if not stage_by_skill:
+        return None
+    if set(stage_by_skill) != trusted_skill_names:
+        return None
+    stages = set(PIPELINE_STAGE_ORDER)
+    result: dict[str, str] = {}
+    for skill_name, stage in stage_by_skill.items():
+        if (
+            type(skill_name) is not str
+            or not skill_name.strip()
+            or skill_name not in trusted_skill_names
+            or type(stage) is not str
+            or stage not in stages
+        ):
+            return None
+        result[skill_name] = stage
+    return result
+
+
+def _requires_verified_dependency(
+    target_intent: Any, metadata_requirement: bool | None
+) -> bool:
+    if (
+        target_intent.task_type not in _KNOWN_TASK_TYPES
+        or target_intent.task_type == "open_source_release"
+    ):
+        return True
+    if metadata_requirement is not None:
+        return metadata_requirement
+    return False
+
+
+def _relation_verification_requirements(
+    intent_graph: IntentGraph,
+) -> dict[tuple[str, str], bool]:
+    requirements: dict[tuple[str, str], bool] = {}
+    relations = getattr(intent_graph, "dependency_relations", ())
+    if not isinstance(relations, tuple):
+        return requirements
+    for relation in relations:
+        if type(relation) is not IntentRelation:
+            continue
+        pair = (relation.source_id, relation.target_id)
+        if pair in requirements:
+            return {}
+        requirements[pair] = relation.requires_verification
+    return requirements
 
 
 def _validate_intent_graph_boundary(

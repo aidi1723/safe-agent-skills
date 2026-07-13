@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import re
-from collections.abc import Iterable
+
+from collections.abc import Iterable, Iterator
+
+from .intent_source import MAX_TASK_SCAN_CHARS, bound_task_text
 
 
 SCENARIO_PROFILES = [
@@ -631,6 +634,7 @@ NORMALIZATION_ALIASES = [
 ]
 
 def normalize_task_text(task: str) -> str:
+    task = bound_task_text(task)
     text = task.lower().replace("-", " ").replace("_", " ")
     expansions = []
     for source, target in NORMALIZATION_ALIASES:
@@ -695,6 +699,7 @@ STALE_CONTEXT_LABELS = {
 }
 
 def structured_context_label_key(label: str) -> str:
+    label = bound_task_text(label)
     normalized = normalize_task_text(label)
     if normalized in CURRENT_CONTEXT_LABELS:
         return "current"
@@ -705,6 +710,7 @@ def structured_context_label_key(label: str) -> str:
     return ""
 
 def parse_structured_context_text(task: str) -> dict:
+    task = bound_task_text(task)
     fields = {"current": [], "history": [], "stale": []}
     active_key = ""
     saw_label = False
@@ -747,6 +753,7 @@ def empty_current_intent_metadata() -> dict:
     }
 
 def split_current_intent_text(task: str) -> dict:
+    task = bound_task_text(task)
     structured = parse_structured_context_text(task)
     if structured["structured_context_detected"]:
         return {
@@ -785,7 +792,114 @@ def split_current_intent_text(task: str) -> dict:
 
 AMBIGUOUS_PROFILE_SIGNALS = {"report", "报告"}
 
+PROFILE_SIGNAL_ALIASES = {
+    "website_build": ("ui design", "UI 设计", "browser verification", "浏览器验证"),
+    "code_review": (
+        "ci troubleshooting",
+        "CI 排障",
+        "review code",
+        "审查代码",
+    ),
+    "document_knowledge_base": ("docx", "DOCX", "PDF/DOCX"),
+    "data_analysis": ("老板简报", "管理层简报", "executive brief", "management brief"),
+    "open_source_release": (
+        "发布清单",
+        "release checklist",
+        "推送 github",
+        "推送到 github",
+        "推送代码到 github",
+        "push to github",
+        "push changes to github",
+        "push the repository to github",
+        "发布更新",
+        "publish update",
+    ),
+    "skill_router_review": ("skill 路由器",),
+    "agent_planning_orchestration": ("multi-agent",),
+    "multi_platform_research_discovery": ("public platforms",),
+    "investment_research_diligence": ("value-investing",),
+}
+
+MAX_SCAN_CHARACTERS = MAX_TASK_SCAN_CHARS
+
+
+def is_design_governance_composite(text: str) -> bool:
+    text = bound_task_text(text)
+    lowered = text.lower()
+    return "design system" in lowered and "component states" in lowered
+
+
+def _build_profile_signals_by_prefix() -> dict[str, tuple[tuple[str, str, int, int], ...]]:
+    by_prefix: dict[str, list[tuple[str, str, int, int]]] = {}
+    for profile_order, profile in enumerate(SCENARIO_PROFILES):
+        signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
+            profile["task_type"], ()
+        )
+        seen_signals: set[str] = set()
+        for signal in signals:
+            normalized_signal = signal.lower()
+            if (
+                not normalized_signal
+                or normalized_signal in seen_signals
+                or normalized_signal in AMBIGUOUS_PROFILE_SIGNALS
+            ):
+                continue
+            seen_signals.add(normalized_signal)
+            score = 4 if " " in normalized_signal else 2
+            by_prefix.setdefault(normalized_signal[0], []).append(
+                (normalized_signal, profile["task_type"], score, profile_order)
+            )
+    return {
+        prefix: tuple(
+            sorted(definitions, key=lambda item: (-item[2], item[3], len(item[0])))
+        )
+        for prefix, definitions in by_prefix.items()
+    }
+
+
+_PROFILE_SIGNALS_BY_PREFIX = _build_profile_signals_by_prefix()
+
+
+def iter_profile_signal_matches(text: str) -> Iterator[dict[str, object]]:
+    """Return deterministic configured-profile matches with source offsets."""
+    source = bound_task_text(text)
+    for start, source_character in enumerate(source):
+        prefix = source_character.lower()
+        if len(prefix) != 1:
+            continue
+        for signal, task_type, score, _ in _PROFILE_SIGNALS_BY_PREFIX.get(prefix, ()):
+            end = start + len(signal)
+            if end > len(source) or source[start:end].lower() != signal:
+                continue
+            if not _short_ascii_signal_has_boundaries(source, start, end, signal):
+                continue
+            yield _profile_signal_match_item(start, end, task_type, signal, score)
+
+
+def _profile_signal_match_item(
+    start: int, end: int, task_type: str, signal: str, score: int
+) -> dict[str, object]:
+    return {
+        "start": start,
+        "end": end,
+        "task_type": task_type,
+        "signal": signal,
+        "score": score,
+    }
+
+
+def _short_ascii_signal_has_boundaries(
+    text: str, start: int, end: int, signal: str
+) -> bool:
+    if len(signal) > 3 or re.fullmatch(r"[a-z0-9]+", signal) is None:
+        return True
+    return (
+        (start == 0 or not text[start - 1].isalnum() or not text[start - 1].isascii())
+        and (end == len(text) or not text[end].isalnum() or not text[end].isascii())
+    )
+
 def _signal_score(text: str, signals: Iterable[str]) -> int:
+    text = bound_task_text(text)
     score = 0
     distinctive_score = 0
     for signal in signals:
@@ -799,7 +913,21 @@ def _signal_score(text: str, signals: Iterable[str]) -> int:
         return 0
     return score
 
+
+def _longest_matching_signal(text: str, signals: Iterable[str]) -> int:
+    text = bound_task_text(text)
+    return max(
+        (
+            len(normalized_signal)
+            for signal in signals
+            if (normalized_signal := normalize_task_text(signal))
+            and signal_matches_text(normalized_signal, text)
+        ),
+        default=0,
+    )
+
 def signal_matches_text(signal: str, text: str) -> bool:
+    text = bound_task_text(text)
     if not signal:
         return False
     if " " in signal:
@@ -809,21 +937,35 @@ def signal_matches_text(signal: str, text: str) -> bool:
     return signal in text
 
 def build_task_profile(task: str) -> dict:
+    task = bound_task_text(task)
     intent = split_current_intent_text(task)
     full_text = normalize_task_text(task)
     text = intent["current_intent_text"] if intent["current_intent_detected"] else full_text
     history_text = intent["history_context_text"]
 
     def profile_score(profile: dict) -> int:
-        current_score = _signal_score(text, profile["signals"])
+        signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
+            profile["task_type"], ()
+        )
+        current_score = _signal_score(text, signals)
         if not intent["current_intent_detected"]:
             return current_score
         if current_score <= 0:
             return 0
-        history_score = _signal_score(history_text, profile["signals"])
+        history_score = _signal_score(history_text, signals)
         return current_score + int(history_score * HISTORY_CONTEXT_WEIGHT)
 
-    best = max(SCENARIO_PROFILES, key=lambda profile: (profile_score(profile), profile["task_type"]))
+    def profile_rank(profile: dict) -> tuple[int, int, str]:
+        signals = tuple(profile["signals"]) + PROFILE_SIGNAL_ALIASES.get(
+            profile["task_type"], ()
+        )
+        return (
+            profile_score(profile),
+            _longest_matching_signal(text, signals),
+            profile["task_type"],
+        )
+
+    best = max(SCENARIO_PROFILES, key=profile_rank)
     score = profile_score(best)
     if score <= 0:
         best = {
@@ -870,6 +1012,7 @@ def build_task_profile(task: str) -> dict:
     }
 
 def build_profile_for_task_type(task: str, task_type: str) -> dict:
+    task = bound_task_text(task)
     profile = build_task_profile(task)
     if profile["task_type"] == task_type:
         return profile
