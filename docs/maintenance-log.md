@@ -2,6 +2,29 @@
 
 Date: 2026-07-11
 
+## 2026-07-13 Multi-Intent Router Quality Remediation Closeout
+
+Recorded the non-action-context remediation slice at `11f6ef8`.
+
+The router now suppresses profile evidence in explicit inventories, quoted
+examples, future roadmaps, no-authority statements, historical records, and
+other-owner context while preserving tested direct work outside the local
+non-action range. Fresh `scripts/verify.sh` evidence is 747 tests OK.
+
+The 450-case production evaluation keeps `production_ready` false. DAG
+validity is 1.0 and core bundle contract coverage is 0.8125, but dependency
+recall, false-positive rates, high-confidence error, multi-intent exact match,
+capability recall, scenario F1, and task-type macro F1 remain below their
+required thresholds. The independent-label-review gate is also missing.
+
+The operator accepted a bounded residual risk: lexical comma continuations can
+mistake a noun phrase containing `build`, `design`, `plan`, `review`, or
+`release` for a direct command. This is documented for the next parser tranche
+and is not a production-readiness exemption.
+
+Update note:
+[Multi-Intent Router Quality Remediation Closeout](updates/2026-07-13-multi-intent-router-quality-remediation-closeout.md).
+
 ## 2026-07-11 High-Frequency Specialist Coverage Completion
 
 Completed the remaining eight high-frequency specialist upgrades in three
