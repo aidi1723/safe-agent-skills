@@ -2,11 +2,49 @@ from __future__ import annotations
 
 from collections import defaultdict, deque
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 from typing import Any
 
 
 SELECTION_THRESHOLD = 0.35
 CLARIFY_MARGIN = 0.08
+
+
+@dataclass(frozen=True)
+class _ConflictEvent:
+    kind: str
+    winner: str
+    rejected: str
+    members: tuple[str, ...]
+    margin: float
+
+
+@dataclass
+class _ConflictState:
+    hard_losers: set[str] = field(default_factory=set)
+    deferred: set[str] = field(default_factory=set)
+    resolutions: list[dict[str, Any]] = field(default_factory=list)
+
+    def unavailable(self, name: str) -> bool:
+        return name in self.hard_losers or name in self.deferred
+
+    def apply(self, event: _ConflictEvent) -> None:
+        if event.kind == "deferred":
+            self.deferred.update(event.members)
+            winner = ""
+            reason = "insufficient_margin"
+        else:
+            self.hard_losers.add(event.rejected)
+            winner = event.winner
+            reason = "higher_deterministic_score"
+        self.resolutions.append(
+            {
+                "winner": winner,
+                "rejected": event.rejected,
+                "reason": reason,
+                "margin": event.margin,
+            }
+        )
 
 
 def compose_skill_selection(
@@ -61,101 +99,36 @@ def compose_skill_selection(
         )
 
     required = list(dict.fromkeys(need["required_capabilities"]))
-    required_set = set(required)
-    explicit_skills = set(need.get("explicit_skills", ()))
-    mandatory_capabilities = set(need.get("mandatory_capabilities", ()))
     eligible = [
         item
         for item in candidates
         if not item.get("excluded")
         and float(item["final_score"]) >= SELECTION_THRESHOLD
     ]
-    conflict_losers, conflict_resolutions, clarification = _resolve_conflicts(
+    selected, contributions, conflicts = _stabilize_selection(
         eligible,
         profiles,
-        required_set,
-        explicit_skills,
+        set(required),
+        set(need.get("explicit_skills", ())),
+        set(need.get("mandatory_capabilities", ())),
     )
-    if clarification:
-        missing = sorted(
-            required_set
-            - _available_required(
-                eligible, profiles, required_set, conflict_losers
-            )
-        )
-        return _clarification_result(
-            candidates,
-            required,
-            missing,
-            list(need.get("missing_inputs", ())),
-            [*conflict_resolutions, clarification],
-        )
 
-    uncovered = set(required)
-    selected: list[str] = []
-    contributions: list[dict[str, Any]] = []
-    selectable = [
-        item for item in eligible if item["skill"] not in conflict_losers
-    ]
-    for item in selectable:
-        name = item["skill"]
-        profile = profiles[name]
-        marginal = sorted(uncovered & set(_profile_values(profile, "capabilities")))
-        explicitly_requested = name in explicit_skills
-        if not marginal and not explicitly_requested:
-            continue
-        selected.append(name)
-        uncovered.difference_update(marginal)
-        reason = "marginal_capability_coverage"
-        if set(marginal) & mandatory_capabilities:
-            reason = "mandatory_verification"
-        elif explicitly_requested and not marginal:
-            reason = "explicit_user_request"
-        contributions.append(
-            {"skill": name, "capabilities": marginal, "reason": reason}
-        )
-
-    selected, dependency_clarification = _include_required_producers(
-        selected,
-        profiles,
-        contributions,
-        eligible,
-        conflict_losers,
-        conflict_resolutions,
-    )
-    missing = sorted(
-        required_set
-        - {
-            capability
-            for name in selected
-            for capability in _profile_values(profiles[name], "capabilities")
-        }
-    )
-    conflict_missing_contexts = _conflict_missing_contexts(
-        selected,
-        eligible,
-        conflict_losers,
-        profiles,
-    )
+    selected_capabilities = {
+        capability
+        for name in selected
+        for capability in _profile_values(profiles[name], "capabilities")
+    }
+    deferred_capabilities = {
+        capability
+        for name in conflicts.deferred
+        for capability in _profile_values(profiles[name], "capabilities")
+    }
+    missing = sorted(set(required) - selected_capabilities - deferred_capabilities)
     missing_inputs = _append_missing_inputs(
         list(need.get("missing_inputs", ())),
-        conflict_missing_contexts,
+        _unmet_contexts(selected, profiles),
     )
-    if dependency_clarification:
-        unresolved_missing = sorted(
-            required_set
-            - _available_required(
-                eligible, profiles, required_set, conflict_losers
-            )
-        )
-        return _clarification_result(
-            candidates,
-            required,
-            unresolved_missing,
-            missing_inputs,
-            [*conflict_resolutions, dependency_clarification],
-        )
-
+    mandatory_capabilities = set(need.get("mandatory_capabilities", ()))
     mandatory_skills = {
         name
         for name in selected
@@ -163,12 +136,12 @@ def compose_skill_selection(
         & mandatory_capabilities
     }
     graph = _compile_graph(selected, profiles, explicit_order, mandatory_skills)
-    if graph["status"] == "blocked":
-        status = "blocked"
-    elif missing or missing_inputs:
-        status = "incomplete"
-    else:
-        status = "complete"
+    status = _routing_status(
+        graph,
+        missing,
+        missing_inputs,
+        unresolved=bool(conflicts.deferred),
+    )
     failure_reason = (
         "dependency_cycle"
         if status == "blocked"
@@ -184,179 +157,179 @@ def compose_skill_selection(
         candidates,
         required,
         missing,
-        "",
+        "conflicting_candidates_low_margin" if conflicts.deferred else "",
         graph,
         _confidence(candidates, status),
         missing_inputs=missing_inputs,
         failure_reason=failure_reason,
     )
     result["selection"]["marginal_contributions"] = contributions
-    result["selection"]["conflict_resolutions"] = conflict_resolutions
+    result["selection"]["conflict_resolutions"] = conflicts.resolutions
     return result
 
 
-def _resolve_conflicts(
+def _stabilize_selection(
     eligible: list[dict[str, Any]],
     profiles: Mapping[str, Mapping[str, Any]],
     required: set[str],
     explicit_skills: set[str],
-) -> tuple[set[str], list[dict[str, Any]], dict[str, Any] | None]:
-    indexed = list(enumerate(eligible))
-    potential = [
-        (index, item)
-        for index, item in indexed
+    mandatory_capabilities: set[str],
+) -> tuple[list[str], list[dict[str, Any]], _ConflictState]:
+    state = _ConflictState()
+    candidates_by_name = {item["skill"]: item for item in eligible}
+    candidate_order = {
+        item["skill"]: index for index, item in enumerate(eligible)
+    }
+    root_names = [
+        item["skill"]
+        for item in eligible
         if item["skill"] in explicit_skills
         or required & set(_profile_values(profiles[item["skill"]], "capabilities"))
     ]
-    potential.sort(key=lambda pair: (-float(pair[1]["final_score"]), pair[0]))
-    survivors: list[dict[str, Any]] = []
-    losers: set[str] = set()
-    resolutions: list[dict[str, Any]] = []
-    for _, item in potential:
-        name = item["skill"]
-        conflicting = next(
-            (
-                survivor
-                for survivor in survivors
-                if _conflicts(name, survivor["skill"], profiles)
-            ),
-            None,
+
+    for _ in range(2 * len(eligible) + 2):
+        event = _next_root_conflict(
+            root_names,
+            state,
+            candidates_by_name,
+            candidate_order,
+            profiles,
         )
-        if conflicting is None:
-            survivors.append(item)
+        if event is not None:
+            state.apply(event)
             continue
-        margin = round(
-            abs(float(item["final_score"]) - float(conflicting["final_score"])),
-            6,
+        roots, contributions = _select_roots(
+            eligible,
+            state,
+            profiles,
+            required,
+            explicit_skills,
+            mandatory_capabilities,
         )
-        if margin < CLARIFY_MARGIN:
-            return (
-                losers,
-                resolutions,
-                {
-                    "winner": "",
-                    "rejected": name,
-                    "reason": "insufficient_margin",
-                    "margin": margin,
-                },
-            )
-        losers.add(name)
-        resolutions.append(
-            {
-                "winner": conflicting["skill"],
-                "rejected": name,
-                "reason": "higher_deterministic_score",
-                "margin": margin,
-            }
+        selected, contributions, event = _expand_artifact_closure(
+            roots,
+            contributions,
+            eligible,
+            state,
+            candidates_by_name,
+            candidate_order,
+            profiles,
         )
-    return losers, resolutions, None
+        if event is not None:
+            state.apply(event)
+            continue
+        return selected, contributions, state
+    raise RuntimeError("skill selection conflict fixed point did not converge")
 
 
-def _include_required_producers(
-    selected: list[str],
+def _next_root_conflict(
+    root_names: Sequence[str],
+    state: _ConflictState,
+    candidates: Mapping[str, Mapping[str, Any]],
+    candidate_order: Mapping[str, int],
     profiles: Mapping[str, Mapping[str, Any]],
-    contributions: list[dict[str, Any]],
-    admitted: Sequence[dict[str, Any]],
-    rejected_conflicts: set[str],
-    conflict_resolutions: list[dict[str, Any]],
-) -> tuple[list[str], dict[str, Any] | None]:
-    expanded = list(selected)
-    admitted_names = [item["skill"] for item in admitted]
-    candidates_by_name = {item["skill"]: item for item in admitted}
-    candidate_order = {name: index for index, name in enumerate(admitted_names)}
+) -> _ConflictEvent | None:
+    active = [name for name in root_names if not state.unavailable(name)]
+    ranked = sorted(
+        active,
+        key=lambda name: (-float(candidates[name]["final_score"]), candidate_order[name]),
+    )
+    survivors: list[str] = []
+    for name in ranked:
+        winner = next(
+            (other for other in survivors if _conflicts(name, other, profiles)),
+            "",
+        )
+        if not winner:
+            survivors.append(name)
+            continue
+        margin = _score_margin(candidates[name], candidates[winner])
+        if margin < CLARIFY_MARGIN:
+            return _ConflictEvent(
+                "deferred", "", name, (winner, name), margin
+            )
+        return _ConflictEvent("hard", winner, name, (name,), margin)
+    return None
+
+
+def _select_roots(
+    eligible: Sequence[dict[str, Any]],
+    state: _ConflictState,
+    profiles: Mapping[str, Mapping[str, Any]],
+    required: set[str],
+    explicit_skills: set[str],
+    mandatory_capabilities: set[str],
+) -> tuple[list[str], list[dict[str, Any]]]:
+    uncovered = set(required)
+    selected: list[str] = []
+    contributions: list[dict[str, Any]] = []
+    for item in eligible:
+        name = item["skill"]
+        if state.unavailable(name):
+            continue
+        marginal = sorted(
+            uncovered & set(_profile_values(profiles[name], "capabilities"))
+        )
+        explicitly_requested = name in explicit_skills
+        if not marginal and not explicitly_requested:
+            continue
+        selected.append(name)
+        uncovered.difference_update(marginal)
+        reason = "marginal_capability_coverage"
+        if set(marginal) & mandatory_capabilities:
+            reason = "mandatory_verification"
+        elif explicitly_requested and not marginal:
+            reason = "explicit_user_request"
+        contributions.append(
+            {"skill": name, "capabilities": marginal, "reason": reason}
+        )
+    return selected, contributions
+
+
+def _expand_artifact_closure(
+    roots: list[str],
+    root_contributions: list[dict[str, Any]],
+    eligible: Sequence[dict[str, Any]],
+    state: _ConflictState,
+    candidates: Mapping[str, Mapping[str, Any]],
+    candidate_order: Mapping[str, int],
+    profiles: Mapping[str, Mapping[str, Any]],
+) -> tuple[list[str], list[dict[str, Any]], _ConflictEvent | None]:
+    selected = list(roots)
+    contributions = list(root_contributions)
     produced_by: dict[str, list[str]] = defaultdict(list)
-    for name in admitted_names:
-        profile = profiles[name]
-        for artifact in _produced_values(profile):
+    for item in eligible:
+        name = item["skill"]
+        if state.unavailable(name):
+            continue
+        for artifact in _produced_values(profiles[name]):
             if name not in produced_by[artifact]:
                 produced_by[artifact].append(name)
 
-    ready = deque(expanded)
-    deferred_conflicts: set[str] = set()
-    clarification: dict[str, Any] | None = None
+    ready = deque(selected)
     while ready:
         target = ready.popleft()
-        if target not in expanded:
-            continue
         for artifact in _profile_values(profiles[target], "requires_context"):
-            if any(
-                producer != target and producer in expanded
-                for producer in produced_by.get(artifact, ())
-            ):
+            if _has_selected_producer(target, artifact, selected, profiles):
                 continue
             producers = [
-                producer
-                for producer in produced_by.get(artifact, ())
-                if producer != target
+                name
+                for name in produced_by.get(artifact, ())
+                if name != target
             ]
-            if len(producers) != 1 or producers[0] in expanded:
+            if len(producers) != 1:
                 continue
             producer = producers[0]
-            if producer in rejected_conflicts or producer in deferred_conflicts:
-                continue
-            conflicting = [
-                name
-                for name in expanded
-                if _conflicts(producer, name, profiles)
-            ]
-            close_conflict = next(
-                (
-                    name
-                    for name in conflicting
-                    if _score_margin(
-                        candidates_by_name[producer], candidates_by_name[name]
-                    )
-                    < CLARIFY_MARGIN
-                ),
-                "",
+            event = _producer_conflict(
+                producer,
+                selected,
+                candidates,
+                candidate_order,
+                profiles,
             )
-            if close_conflict:
-                deferred_conflicts.add(producer)
-                if clarification is None:
-                    clarification = {
-                        "winner": "",
-                        "rejected": producer,
-                        "reason": "insufficient_margin",
-                        "margin": _score_margin(
-                            candidates_by_name[producer],
-                            candidates_by_name[close_conflict],
-                        ),
-                    }
-                continue
-            if conflicting:
-                winner = min(
-                    [producer, *conflicting],
-                    key=lambda name: (
-                        -float(candidates_by_name[name]["final_score"]),
-                        candidate_order[name],
-                    ),
-                )
-                if winner != producer:
-                    rejected_conflicts.add(producer)
-                    conflict_resolutions.append(
-                        _higher_score_resolution(
-                            winner,
-                            producer,
-                            candidates_by_name,
-                        )
-                    )
-                    continue
-                for loser in conflicting:
-                    expanded.remove(loser)
-                    rejected_conflicts.add(loser)
-                    conflict_resolutions.append(
-                        _higher_score_resolution(
-                            producer,
-                            loser,
-                            candidates_by_name,
-                        )
-                    )
-                contributions[:] = [
-                    item
-                    for item in contributions
-                    if item["skill"] not in rejected_conflicts
-                ]
-            expanded.append(producer)
+            if event is not None:
+                return selected, contributions, event
+            selected.append(producer)
             ready.append(producer)
             contributions.append(
                 {
@@ -365,123 +338,76 @@ def _include_required_producers(
                     "reason": f"required_artifact:{artifact}",
                 }
             )
-            if target not in expanded:
-                break
-    return expanded, clarification
+    return selected, contributions, None
 
 
-def _available_required(
-    candidates: Sequence[dict[str, Any]],
+def _producer_conflict(
+    producer: str,
+    selected: Sequence[str],
+    candidates: Mapping[str, Mapping[str, Any]],
+    candidate_order: Mapping[str, int],
     profiles: Mapping[str, Mapping[str, Any]],
-    required: set[str],
-    rejected_conflicts: set[str],
-) -> set[str]:
-    return required & {
-        capability
-        for item in candidates
-        if item["skill"] not in rejected_conflicts
-        for capability in _profile_values(
-            profiles[item["skill"]], "capabilities"
+) -> _ConflictEvent | None:
+    conflicting = [
+        name for name in selected if _conflicts(producer, name, profiles)
+    ]
+    if not conflicting:
+        return None
+    ranked = sorted(
+        [producer, *conflicting],
+        key=lambda name: (-float(candidates[name]["final_score"]), candidate_order[name]),
+    )
+    winner = ranked[0]
+    rejected = producer if winner != producer else ranked[1]
+    margin = _score_margin(candidates[winner], candidates[rejected])
+    if margin < CLARIFY_MARGIN:
+        return _ConflictEvent(
+            "deferred", "", rejected, (winner, rejected), margin
         )
-    }
+    return _ConflictEvent("hard", winner, rejected, (rejected,), margin)
 
 
-def _clarification_result(
-    candidates: list[dict[str, Any]],
-    required: list[str],
-    missing: list[str],
-    missing_inputs: list[str],
-    conflict_resolutions: list[dict[str, Any]],
-) -> dict[str, Any]:
-    status = "incomplete" if missing or missing_inputs else "clarify"
-    failure_reason = (
-        "missing_required_input"
-        if missing_inputs
-        else "missing_capability"
-        if missing
-        else ""
-    )
-    result = _result(
-        status,
-        [],
-        candidates,
-        required,
-        missing,
-        "conflicting_candidates_low_margin",
-        _empty_graph("ready"),
-        _confidence(candidates, status),
-        missing_inputs=missing_inputs,
-        failure_reason=failure_reason,
-    )
-    result["selection"]["conflict_resolutions"] = conflict_resolutions
-    return result
-
-
-def _conflict_missing_contexts(
-    selected: list[str],
-    admitted: Sequence[dict[str, Any]],
-    rejected_conflicts: set[str],
+def _unmet_contexts(
+    selected: Sequence[str],
     profiles: Mapping[str, Mapping[str, Any]],
 ) -> list[str]:
-    produced_by: dict[str, list[str]] = defaultdict(list)
-    for item in admitted:
-        name = item["skill"]
-        for artifact in _produced_values(profiles[name]):
-            if name not in produced_by[artifact]:
-                produced_by[artifact].append(name)
-
     missing: list[str] = []
     for target in selected:
         for artifact in _profile_values(profiles[target], "requires_context"):
-            if any(
-                producer != target and producer in selected
-                for producer in produced_by.get(artifact, ())
-            ):
-                continue
-            producers = [
-                producer
-                for producer in produced_by.get(artifact, ())
-                if producer != target
-            ]
             if (
-                len(producers) == 1
-                and producers[0] in rejected_conflicts
+                not _has_selected_producer(target, artifact, selected, profiles)
                 and artifact not in missing
             ):
                 missing.append(artifact)
     return missing
 
 
-def _append_missing_inputs(
-    caller_inputs: list[str], additional_inputs: Sequence[str]
-) -> list[str]:
-    combined = list(caller_inputs)
-    seen = set(caller_inputs)
-    for item in additional_inputs:
-        if item not in seen:
-            combined.append(item)
-            seen.add(item)
-    return combined
-
-
-def _score_margin(left: Mapping[str, Any], right: Mapping[str, Any]) -> float:
-    return round(
-        abs(float(left["final_score"]) - float(right["final_score"])),
-        6,
+def _has_selected_producer(
+    target: str,
+    artifact: str,
+    selected: Sequence[str],
+    profiles: Mapping[str, Mapping[str, Any]],
+) -> bool:
+    return any(
+        source != target and artifact in _produced_values(profiles[source])
+        for source in selected
     )
 
 
-def _higher_score_resolution(
-    winner: str,
-    rejected: str,
-    candidates: Mapping[str, Mapping[str, Any]],
-) -> dict[str, Any]:
-    return {
-        "winner": winner,
-        "rejected": rejected,
-        "reason": "higher_deterministic_score",
-        "margin": _score_margin(candidates[winner], candidates[rejected]),
-    }
+def _routing_status(
+    graph: Mapping[str, Any],
+    missing: Sequence[str],
+    missing_inputs: Sequence[str],
+    *,
+    unresolved: bool,
+) -> str:
+    if graph["status"] == "blocked":
+        return "blocked"
+    if missing or missing_inputs:
+        return "incomplete"
+    if unresolved:
+        return "clarify"
+    return "complete"
 
 
 def _compile_graph(
@@ -571,8 +497,7 @@ def _compile_graph(
     for node in nodes:
         node["parallel"] = node["id"] not in edge_nodes
 
-    acyclic = _is_acyclic([node["id"] for node in nodes], edges)
-    if not acyclic:
+    if not _is_acyclic([node["id"] for node in nodes], edges):
         return {
             "status": "blocked",
             "acyclic": False,
@@ -591,7 +516,7 @@ def _compile_graph(
     }
 
 
-def _is_acyclic(node_ids: list[str], edges: list[dict[str, str]]) -> bool:
+def _is_acyclic(node_ids: Sequence[str], edges: Sequence[Mapping[str, str]]) -> bool:
     indegree = {node_id: 0 for node_id in node_ids}
     outgoing: dict[str, list[str]] = defaultdict(list)
     for edge in edges:
@@ -621,6 +546,25 @@ def _conflicts(
         _profile_values(profiles[right], "conflicts_with")
     ) | set(_profile_values(profiles[right], "excludes"))
     return right in left_conflicts or left in right_conflicts
+
+
+def _score_margin(left: Mapping[str, Any], right: Mapping[str, Any]) -> float:
+    return round(
+        abs(float(left["final_score"]) - float(right["final_score"])),
+        6,
+    )
+
+
+def _append_missing_inputs(
+    caller_inputs: list[str], additional_inputs: Sequence[str]
+) -> list[str]:
+    combined = list(caller_inputs)
+    seen = set(caller_inputs)
+    for item in additional_inputs:
+        if item not in seen:
+            combined.append(item)
+            seen.add(item)
+    return combined
 
 
 def _empty_graph(status: str) -> dict[str, Any]:
@@ -731,7 +675,7 @@ def _produced_values(profile: Mapping[str, Any]) -> tuple[Any, ...]:
     )
 
 
-def _has_edge(edges: list[dict[str, str]], source: str, target: str) -> bool:
+def _has_edge(edges: Sequence[Mapping[str, str]], source: str, target: str) -> bool:
     return any(
         edge["from"] == source and edge["to"] == target for edge in edges
     )

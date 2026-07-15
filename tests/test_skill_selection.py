@@ -275,8 +275,12 @@ class SkillSelectionTest(unittest.TestCase):
             explicit_order=[],
         )
 
-        self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(result["routing_status"], "incomplete")
         self.assertEqual(result["selected_skill_names"], ["code-review-risk"])
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"],
+            ["change_set", "review_scope"],
+        )
 
     def test_unique_eligible_artifact_producer_is_added_without_capability_credit(self):
         result = compose_skill_selection(
@@ -587,6 +591,264 @@ class SkillSelectionTest(unittest.TestCase):
             [item["reason"] for item in result["selection"]["conflict_resolutions"]],
             ["higher_deterministic_score", "insufficient_margin"],
         )
+
+    def test_multiple_valid_producers_leave_required_context_incomplete(self):
+        result = compose_skill_selection(
+            need("single", ("execution.browser_check",)),
+            [
+                candidate("target", "execution.browser_check", 0.9),
+                candidate("producer-a", "design.ui_review", 0.7),
+                candidate("producer-b", "code.explore", 0.6),
+            ],
+            {
+                "target": profile(
+                    "target",
+                    "execution.browser_check",
+                    requires=("report",),
+                ),
+                "producer-a": profile(
+                    "producer-a", "design.ui_review", evidence=("report",)
+                ),
+                "producer-b": profile(
+                    "producer-b", "code.explore", produces=("report",)
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(result["selected_skill_names"], ["target"])
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"], ["report"]
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_required_input"
+        )
+        self.assertEqual(result["execution_graph"]["edges"], [])
+
+    def test_uniqueness_is_computed_after_prior_conflict_losers(self):
+        result = compose_skill_selection(
+            need(
+                "composite",
+                ("code.review", "execution.browser_check"),
+                explicit=("producer-loser",),
+            ),
+            [
+                candidate("review-root", "code.review", 0.95),
+                candidate("target", "execution.browser_check", 0.90),
+                candidate("valid-producer", "design.ui_review", 0.70),
+                candidate("producer-loser", "code.explore", 0.50),
+            ],
+            {
+                "review-root": profile(
+                    "review-root",
+                    "code.review",
+                    conflicts=("producer-loser",),
+                ),
+                "target": profile(
+                    "target",
+                    "execution.browser_check",
+                    requires=("report",),
+                ),
+                "valid-producer": profile(
+                    "valid-producer",
+                    "design.ui_review",
+                    evidence=("report",),
+                ),
+                "producer-loser": profile(
+                    "producer-loser",
+                    "code.explore",
+                    produces=("report",),
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(
+            result["selected_skill_names"],
+            ["review-root", "target", "valid-producer"],
+        )
+        self.assertEqual(
+            result["selection"]["marginal_contributions"][-1],
+            {
+                "skill": "valid-producer",
+                "capabilities": [],
+                "reason": "required_artifact:report",
+            },
+        )
+        self.assertEqual(
+            result["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:valid-producer",
+                    "to": "skill:target",
+                    "type": "artifact_dependency",
+                    "evidence": "report",
+                }
+            ],
+        )
+        self.assertNotIn("producer-loser", result["selected_skill_names"])
+
+    def test_initial_clarification_does_not_hide_independent_cycle(self):
+        result = compose_skill_selection(
+            need(
+                "composite",
+                ("code.review", "code.test", "design.ui_review"),
+            ),
+            [
+                candidate("a", "code.review", 0.90),
+                candidate("b", "code.test", 0.85),
+                candidate("review-1", "design.ui_review", 0.70),
+                candidate("review-2", "design.ui_review", 0.68),
+            ],
+            {
+                "a": profile("a", "code.review", after=("b",)),
+                "b": profile("b", "code.test", after=("a",)),
+                "review-1": profile(
+                    "review-1", "design.ui_review", conflicts=("review-2",)
+                ),
+                "review-2": profile("review-2", "design.ui_review"),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "blocked")
+        self.assertEqual(result["selected_skill_names"], ["a", "b"])
+        self.assertFalse(result["execution_graph"]["acyclic"])
+        self.assertEqual(
+            result["execution_graph"]["reason_codes"], ["dependency_cycle"]
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "dependency_cycle"
+        )
+        self.assertEqual(
+            result["selection"]["clarification_reason"],
+            "conflicting_candidates_low_margin",
+        )
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"][-1]["reason"],
+            "insufficient_margin",
+        )
+
+    def test_artifact_clarification_does_not_hide_independent_cycle(self):
+        result = compose_skill_selection(
+            need(
+                "composite",
+                ("code.review", "code.test", "execution.browser_check"),
+            ),
+            [
+                candidate("a", "code.review", 0.90),
+                candidate("b", "code.test", 0.85),
+                candidate("target", "execution.browser_check", 0.70),
+                candidate("producer", "design.ui_review", 0.68),
+            ],
+            {
+                "a": profile("a", "code.review", after=("b",)),
+                "b": profile("b", "code.test", after=("a",)),
+                "target": profile(
+                    "target",
+                    "execution.browser_check",
+                    requires=("report",),
+                    conflicts=("producer",),
+                ),
+                "producer": profile(
+                    "producer", "design.ui_review", evidence=("report",)
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "blocked")
+        self.assertEqual(result["selected_skill_names"], ["a", "b"])
+        self.assertFalse(result["execution_graph"]["acyclic"])
+        self.assertEqual(
+            result["execution_graph"]["reason_codes"], ["dependency_cycle"]
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "dependency_cycle"
+        )
+        self.assertEqual(
+            result["selection"]["clarification_reason"],
+            "conflicting_candidates_low_margin",
+        )
+
+    def test_consumer_loser_restarts_selection_and_prunes_orphan_producer(self):
+        result = compose_skill_selection(
+            need("single", ("execution.browser_check",)),
+            [
+                candidate("target", "execution.browser_check", 0.50),
+                candidate("producer", "design.ui_review", 0.90),
+                candidate("fallback", "execution.browser_check", 0.70),
+            ],
+            {
+                "target": profile(
+                    "target",
+                    "execution.browser_check",
+                    requires=("report",),
+                    conflicts=("producer",),
+                ),
+                "producer": profile(
+                    "producer", "design.ui_review", evidence=("report",)
+                ),
+                "fallback": profile(
+                    "fallback", "execution.browser_check"
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(result["selected_skill_names"], ["fallback"])
+        self.assertEqual(
+            result["selection"]["marginal_contributions"],
+            [
+                {
+                    "skill": "fallback",
+                    "capabilities": ["execution.browser_check"],
+                    "reason": "marginal_capability_coverage",
+                }
+            ],
+        )
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"],
+            [
+                {
+                    "winner": "producer",
+                    "rejected": "target",
+                    "reason": "higher_deterministic_score",
+                    "margin": 0.4,
+                }
+            ],
+        )
+
+    def test_consumer_loser_without_fallback_does_not_leave_orphan_producer(self):
+        result = compose_skill_selection(
+            need("single", ("execution.browser_check",)),
+            [
+                candidate("target", "execution.browser_check", 0.50),
+                candidate("producer", "design.ui_review", 0.90),
+            ],
+            {
+                "target": profile(
+                    "target",
+                    "execution.browser_check",
+                    requires=("report",),
+                    conflicts=("producer",),
+                ),
+                "producer": profile(
+                    "producer", "design.ui_review", evidence=("report",)
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(result["selected_skill_names"], [])
+        self.assertEqual(
+            result["missing_capabilities"], ["execution.browser_check"]
+        )
+        self.assertEqual(result["selection"]["marginal_contributions"], [])
 
     def test_high_margin_conflict_keeps_actual_higher_score_candidate(self):
         profiles = {
