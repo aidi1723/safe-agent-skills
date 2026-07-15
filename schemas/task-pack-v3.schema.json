@@ -1,0 +1,705 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/task-pack-v3.schema.json",
+  "title": "OneCode Task Pack v3",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "generated_at",
+    "route_id",
+    "routing_mode",
+    "routing_status",
+    "provider",
+    "normalized_task",
+    "need_decision",
+    "intent_graph",
+    "candidates",
+    "selection",
+    "capability_resolution",
+    "execution_graph",
+    "confidence",
+    "host_execution_protocol",
+    "routing_metrics",
+    "registry_verification",
+    "compatibility"
+  ],
+  "properties": {
+    "schema_version": {"const": 3},
+    "generated_at": {"type": "string", "minLength": 1},
+    "route_id": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "routing_mode": {"enum": ["deterministic", "semantic_shadow", "hybrid"]},
+    "routing_status": {"enum": ["none", "complete", "clarify", "incomplete", "blocked"]},
+    "provider": {"$ref": "#/$defs/provider"},
+    "normalized_task": {"$ref": "#/$defs/normalizedTask"},
+    "need_decision": {"$ref": "#/$defs/needDecision"},
+    "intent_graph": {"$ref": "#/$defs/intentGraph"},
+    "candidates": {
+      "type": "array",
+      "items": {"$ref": "#/$defs/candidate"}
+    },
+    "selection": {"$ref": "#/$defs/selection"},
+    "capability_resolution": {"$ref": "#/$defs/capabilityResolution"},
+    "execution_graph": {"$ref": "#/$defs/executionGraph"},
+    "confidence": {"$ref": "#/$defs/confidence"},
+    "host_execution_protocol": {"$ref": "#/$defs/hostProtocol"},
+    "routing_metrics": {"$ref": "#/$defs/routingMetrics"},
+    "registry_verification": {"$ref": "#/$defs/registryVerification"},
+    "compatibility": {"$ref": "#/$defs/compatibility"}
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "stringList": {
+      "type": "array",
+      "items": {"type": "string", "minLength": 1},
+      "uniqueItems": true
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^sha256:[0-9a-f]{64}$"
+    },
+    "rawHash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "provider": {
+      "type": "object",
+      "required": [
+        "requested",
+        "used",
+        "model_or_adapter",
+        "fallback_reason",
+        "candidate_scope_hash",
+        "response_status",
+        "validation_reason_codes"
+      ],
+      "properties": {
+        "requested": {"type": "string", "minLength": 1},
+        "used": {"type": "string", "minLength": 1},
+        "model_or_adapter": {"type": "string", "minLength": 1},
+        "fallback_reason": {"type": "string", "minLength": 1},
+        "candidate_scope_hash": {"$ref": "#/$defs/hash"},
+        "response_status": {
+          "enum": [
+            "not_requested",
+            "accepted_shadow",
+            "accepted_influence",
+            "rejected_fallback"
+          ]
+        },
+        "validation_reason_codes": {"$ref": "#/$defs/stringList"}
+      },
+      "additionalProperties": false
+    },
+    "normalizedTask": {
+      "type": "object",
+      "required": ["raw", "current", "history", "stale", "stale_policy"],
+      "properties": {
+        "raw": {"type": "string"},
+        "current": {"type": "string"},
+        "history": {"type": "string"},
+        "stale": {"type": "string"},
+        "stale_policy": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "needDecision": {
+      "type": "object",
+      "required": [
+        "decision",
+        "specialized_need",
+        "required_capabilities",
+        "explicit_skills",
+        "excluded_skills",
+        "explanation_only",
+        "inventory_only",
+        "missing_inputs",
+        "mandatory_capabilities",
+        "policy_block_reasons",
+        "reason_codes"
+      ],
+      "properties": {
+        "decision": {"enum": ["none", "single", "composite", "clarify"]},
+        "specialized_need": {"type": "boolean"},
+        "required_capabilities": {"$ref": "#/$defs/stringList"},
+        "explicit_skills": {"$ref": "#/$defs/stringList"},
+        "excluded_skills": {"$ref": "#/$defs/stringList"},
+        "explanation_only": {"type": "boolean"},
+        "inventory_only": {"type": "boolean"},
+        "missing_inputs": {"$ref": "#/$defs/stringList"},
+        "mandatory_capabilities": {"$ref": "#/$defs/stringList"},
+        "policy_block_reasons": {"$ref": "#/$defs/stringList"},
+        "reason_codes": {"$ref": "#/$defs/stringList"}
+      },
+      "additionalProperties": false
+    },
+    "intent": {
+      "type": "object",
+      "required": [
+        "id",
+        "summary",
+        "task_type",
+        "required_artifacts",
+        "risk_flags",
+        "depends_on",
+        "source",
+        "confidence"
+      ],
+      "properties": {
+        "id": {"type": "string", "pattern": "^i[1-9][0-9]*$"},
+        "summary": {"type": "string", "minLength": 1},
+        "task_type": {"type": "string", "minLength": 1},
+        "required_artifacts": {"$ref": "#/$defs/stringList"},
+        "risk_flags": {"$ref": "#/$defs/stringList"},
+        "depends_on": {
+          "type": "array",
+          "items": {"type": "string", "pattern": "^i[1-9][0-9]*$"},
+          "uniqueItems": true
+        },
+        "source": {"enum": ["deterministic", "semantic", "hybrid"]},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "intentGraph": {
+      "type": "object",
+      "required": ["intents", "unresolved_dependencies"],
+      "properties": {
+        "intents": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"$ref": "#/$defs/intent"}
+        },
+        "unresolved_dependencies": {"$ref": "#/$defs/stringList"}
+      },
+      "additionalProperties": false
+    },
+    "scoreEvidence": {
+      "type": "object",
+      "required": ["type", "value", "weight"],
+      "properties": {
+        "type": {
+          "enum": ["capability", "explicit_skill", "description", "reviewed_example", "near_miss"]
+        },
+        "value": {
+          "oneOf": [
+            {"type": "string", "minLength": 1},
+            {"type": "number", "minimum": 0, "maximum": 1},
+            {"$ref": "#/$defs/stringList"}
+          ]
+        },
+        "weight": {"type": "number", "minimum": -1, "maximum": 1},
+        "similarity": {"type": "number", "minimum": 0, "maximum": 1},
+        "token_overlap": {"type": "integer", "minimum": 0},
+        "token_union": {"type": "integer", "minimum": 0},
+        "contribution": {"type": "number", "minimum": -1, "maximum": 1}
+      },
+      "additionalProperties": false
+    },
+    "candidate": {
+      "type": "object",
+      "required": [
+        "skill",
+        "registry_path",
+        "status",
+        "description",
+        "deterministic_score",
+        "semantic_score",
+        "final_score",
+        "matched_intents",
+        "matched_capabilities",
+        "matched_examples",
+        "positive_evidence",
+        "penalties",
+        "exclusions",
+        "excluded",
+        "selected",
+        "reason_codes"
+      ],
+      "properties": {
+        "skill": {"type": "string", "minLength": 1},
+        "registry_path": {"type": "string", "minLength": 1},
+        "status": {"const": "trusted"},
+        "description": {"type": "string", "minLength": 1},
+        "deterministic_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "semantic_score": {"type": ["number", "null"], "minimum": 0, "maximum": 1},
+        "final_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "matched_intents": {"$ref": "#/$defs/stringList"},
+        "matched_capabilities": {"$ref": "#/$defs/stringList"},
+        "matched_examples": {"$ref": "#/$defs/stringList"},
+        "positive_evidence": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/scoreEvidence"}
+        },
+        "penalties": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/scoreEvidence"}
+        },
+        "exclusions": {"$ref": "#/$defs/stringList"},
+        "excluded": {"type": "boolean"},
+        "selected": {"type": "boolean"},
+        "reason_codes": {"$ref": "#/$defs/stringList"}
+      },
+      "additionalProperties": false
+    },
+    "taxonomy": {
+      "type": "object",
+      "required": [
+        "category",
+        "subcategory",
+        "task_intent",
+        "artifact_type",
+        "collection_priority"
+      ],
+      "properties": {
+        "category": {
+          "enum": [
+            "design",
+            "code",
+            "engineering",
+            "security",
+            "office",
+            "execution",
+            "research",
+            "data",
+            "business",
+            "content",
+            "commerce",
+            "media",
+            "compliance",
+            "ai",
+            "vertical"
+          ]
+        },
+        "subcategory": {"type": "string", "minLength": 1},
+        "task_intent": {"type": "string", "minLength": 1},
+        "artifact_type": {"type": "string", "minLength": 1},
+        "collection_priority": {"enum": ["P0", "P1", "P2", "P3"]}
+      },
+      "additionalProperties": false
+    },
+    "source": {
+      "type": "object",
+      "required": [
+        "type",
+        "usage",
+        "path",
+        "url",
+        "author",
+        "license",
+        "reference",
+        "collected_by",
+        "captured_at"
+      ],
+      "properties": {
+        "type": {
+          "enum": [
+            "local_folder",
+            "archive",
+            "git",
+            "community_index",
+            "github_reference",
+            "web_reference"
+          ]
+        },
+        "usage": {"enum": ["source_import", "reference_only", "local_authoring"]},
+        "path": {"type": "string"},
+        "url": {"type": "string"},
+        "author": {"type": "string"},
+        "license": {"type": "string"},
+        "reference": {"type": "string"},
+        "collected_by": {"type": "string"},
+        "commit": {"type": "string"},
+        "captured_at": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "skillHashes": {
+      "type": "object",
+      "required": ["source_sha256", "sanitized_sha256", "manifest_sha256"],
+      "properties": {
+        "source_sha256": {"$ref": "#/$defs/rawHash"},
+        "sanitized_sha256": {"$ref": "#/$defs/rawHash"},
+        "manifest_sha256": {"$ref": "#/$defs/rawHash"}
+      },
+      "additionalProperties": false
+    },
+    "policy": {
+      "type": "object",
+      "required": ["filesystem", "network", "approval"],
+      "properties": {
+        "filesystem": {
+          "type": "object",
+          "required": ["scope"],
+          "properties": {
+            "scope": {"enum": ["workspace_only", "read_only_workspace", "none"]}
+          },
+          "additionalProperties": false
+        },
+        "network": {
+          "type": "object",
+          "required": ["scope"],
+          "properties": {
+            "scope": {"enum": ["none", "approved_hosts", "onecode_api_only"]},
+            "approved_hosts": {"$ref": "#/$defs/stringList"}
+          },
+          "additionalProperties": false
+        },
+        "approval": {
+          "type": "object",
+          "required": ["required_for"],
+          "properties": {
+            "required_for": {"$ref": "#/$defs/stringList"}
+          },
+          "additionalProperties": false
+        }
+      },
+      "additionalProperties": false
+    },
+    "estimatedCost": {
+      "type": "object",
+      "required": ["time", "tokens", "runtime"],
+      "properties": {
+        "time": {"type": "integer", "minimum": 0, "maximum": 5},
+        "tokens": {"type": "integer", "minimum": 0, "maximum": 5},
+        "runtime": {"type": "integer", "minimum": 0, "maximum": 5}
+      },
+      "additionalProperties": false
+    },
+    "skillContract": {
+      "type": "object",
+      "required": ["schema_version", "stage_hint", "capability_vector"],
+      "properties": {
+        "schema_version": {"const": 2},
+        "stage_hint": {
+          "enum": ["preflight", "source", "planning", "review", "execution", "verification"]
+        },
+        "capability_vector": {"$ref": "#/$defs/stringList"},
+        "requires_context": {"$ref": "#/$defs/stringList"},
+        "optional_context": {"$ref": "#/$defs/stringList"},
+        "produces_artifacts": {"$ref": "#/$defs/stringList"},
+        "produces_evidence": {"$ref": "#/$defs/stringList"},
+        "requires_after": {"$ref": "#/$defs/stringList"},
+        "conflicts_with": {"$ref": "#/$defs/stringList"},
+        "excludes": {"$ref": "#/$defs/stringList"},
+        "cost_weight": {"type": "integer", "minimum": 1, "maximum": 10},
+        "approval_classes": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "browser_automation",
+              "network_access",
+              "publication",
+              "shell_execution",
+              "dependency_install",
+              "paid_provider",
+              "destructive_action"
+            ]
+          },
+          "uniqueItems": true
+        },
+        "estimated_cost": {"$ref": "#/$defs/estimatedCost"},
+        "idempotent": {"type": "boolean"},
+        "retry_policy": {"enum": ["host_decides", "never", "safe_once"]}
+      },
+      "additionalProperties": false
+    },
+    "selectedSkill": {
+      "type": "object",
+      "required": [
+        "name",
+        "status",
+        "risk_level",
+        "match_score",
+        "taxonomy",
+        "source",
+        "hashes",
+        "registry_path",
+        "description",
+        "when_to_use",
+        "safe_workflow",
+        "expected_output",
+        "verifier_expectations",
+        "failure_handling",
+        "policy"
+      ],
+      "properties": {
+        "name": {"type": "string", "minLength": 1},
+        "status": {"const": "trusted"},
+        "risk_level": {"enum": ["low", "medium", "high", "critical"]},
+        "match_score": {"type": "number", "minimum": 0},
+        "taxonomy": {"$ref": "#/$defs/taxonomy"},
+        "source": {"$ref": "#/$defs/source"},
+        "hashes": {"$ref": "#/$defs/skillHashes"},
+        "registry_path": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "when_to_use": {"type": "string"},
+        "safe_workflow": {"type": "string"},
+        "expected_output": {"type": "string"},
+        "verifier_expectations": {"type": "string"},
+        "failure_handling": {"type": "string"},
+        "policy": {"$ref": "#/$defs/policy"},
+        "contract": {"$ref": "#/$defs/skillContract"}
+      },
+      "additionalProperties": false
+    },
+    "marginalContribution": {
+      "type": "object",
+      "required": ["skill", "capabilities", "reason"],
+      "properties": {
+        "skill": {"type": "string", "minLength": 1},
+        "capabilities": {"$ref": "#/$defs/stringList"},
+        "reason": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "selection": {
+      "type": "object",
+      "required": [
+        "need_decision",
+        "selected_skill_names",
+        "selected_skills",
+        "marginal_contributions",
+        "rejected_adjacent_candidates",
+        "conflict_resolutions",
+        "clarification_reason",
+        "abstention_reason",
+        "failure_reason"
+      ],
+      "properties": {
+        "need_decision": {"enum": ["none", "single", "composite", "clarify"]},
+        "selected_skill_names": {"$ref": "#/$defs/stringList"},
+        "selected_skills": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/selectedSkill"}
+        },
+        "marginal_contributions": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/marginalContribution"}
+        },
+        "rejected_adjacent_candidates": {"$ref": "#/$defs/stringList"},
+        "conflict_resolutions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["winner", "rejected", "reason", "margin"],
+            "properties": {
+              "winner": {"type": "string"},
+              "rejected": {"type": "string", "minLength": 1},
+              "reason": {"enum": ["insufficient_margin", "higher_final_score"]},
+              "margin": {"type": "number", "minimum": 0, "maximum": 1}
+            },
+            "additionalProperties": false
+          }
+        },
+        "clarification_reason": {"type": "string"},
+        "abstention_reason": {"type": "string"},
+        "failure_reason": {"type": "string"}
+      },
+      "additionalProperties": false
+    },
+    "capabilityResolution": {
+      "type": "object",
+      "required": [
+        "required_capabilities",
+        "covered_capabilities",
+        "missing_capabilities",
+        "missing_inputs",
+        "covered_count",
+        "missing_count",
+        "status"
+      ],
+      "properties": {
+        "required_capabilities": {"$ref": "#/$defs/stringList"},
+        "covered_capabilities": {"$ref": "#/$defs/stringList"},
+        "missing_capabilities": {"$ref": "#/$defs/stringList"},
+        "missing_inputs": {"$ref": "#/$defs/stringList"},
+        "covered_count": {"type": "integer", "minimum": 0},
+        "missing_count": {"type": "integer", "minimum": 0},
+        "status": {"enum": ["complete", "incomplete"]}
+      },
+      "additionalProperties": false
+    },
+    "executionNode": {
+      "type": "object",
+      "required": ["id", "skill", "parallel"],
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "skill": {"type": "string", "minLength": 1},
+        "parallel": {"type": "boolean"}
+      },
+      "additionalProperties": false
+    },
+    "executionEdge": {
+      "type": "object",
+      "required": ["from", "to", "type", "evidence"],
+      "properties": {
+        "from": {"type": "string", "minLength": 1},
+        "to": {"type": "string", "minLength": 1},
+        "type": {
+          "enum": [
+            "artifact_dependency",
+            "requires_after",
+            "explicit_user_order",
+            "mandatory_verification_precondition"
+          ]
+        },
+        "evidence": {"type": "string", "minLength": 1}
+      },
+      "additionalProperties": false
+    },
+    "executionGraph": {
+      "type": "object",
+      "required": ["status", "acyclic", "nodes", "edges", "reason_codes", "details"],
+      "properties": {
+        "status": {"enum": ["ready", "blocked"]},
+        "acyclic": {"type": "boolean"},
+        "nodes": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/executionNode"}
+        },
+        "edges": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/executionEdge"}
+        },
+        "reason_codes": {"$ref": "#/$defs/stringList"},
+        "details": {"$ref": "#/$defs/stringList"}
+      },
+      "additionalProperties": false
+    },
+    "confidence": {
+      "type": "object",
+      "required": [
+        "overall",
+        "level",
+        "top_score",
+        "runner_up_score",
+        "margin",
+        "selection_threshold",
+        "clarify_margin",
+        "reason_codes"
+      ],
+      "properties": {
+        "overall": {"type": "number", "minimum": 0, "maximum": 1},
+        "level": {"enum": ["low", "medium", "high"]},
+        "top_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "runner_up_score": {"type": "number", "minimum": 0, "maximum": 1},
+        "margin": {"type": "number", "minimum": 0, "maximum": 1},
+        "selection_threshold": {"type": "number", "minimum": 0, "maximum": 1},
+        "clarify_margin": {"type": "number", "minimum": 0, "maximum": 1},
+        "reason_codes": {"$ref": "#/$defs/stringList"}
+      },
+      "additionalProperties": false
+    },
+    "hostProtocol": {
+      "type": "object",
+      "required": ["mode", "runtime_boundary", "node_statuses"],
+      "properties": {
+        "mode": {"const": "method_only"},
+        "runtime_boundary": {
+          "const": "The host runtime controls permissions and execution."
+        },
+        "node_statuses": {
+          "type": "array",
+          "items": {
+            "enum": [
+              "pending",
+              "ready",
+              "running",
+              "waiting_approval",
+              "completed",
+              "failed",
+              "blocked",
+              "skipped"
+            ]
+          },
+          "uniqueItems": true
+        }
+      },
+      "additionalProperties": false
+    },
+    "routingMetrics": {
+      "type": "object",
+      "required": [
+        "candidate_count",
+        "selected_skill_count",
+        "required_capability_count",
+        "covered_capability_count",
+        "runtime_example_count",
+        "cohort_candidate_count"
+      ],
+      "properties": {
+        "candidate_count": {"type": "integer", "minimum": 0},
+        "selected_skill_count": {"type": "integer", "minimum": 0},
+        "required_capability_count": {"type": "integer", "minimum": 0},
+        "covered_capability_count": {"type": "integer", "minimum": 0},
+        "runtime_example_count": {"type": "integer", "minimum": 0},
+        "cohort_candidate_count": {"type": "integer", "minimum": 0}
+      },
+      "additionalProperties": false
+    },
+    "registryCatalogVerification": {
+      "type": "object",
+      "required": [
+        "schema_version",
+        "generated_at",
+        "status",
+        "skill_count",
+        "trusted_count",
+        "tampered_count",
+        "unknown_provenance_count",
+        "issues"
+      ],
+      "properties": {
+        "schema_version": {"const": 1},
+        "generated_at": {"type": "string", "minLength": 1},
+        "status": {"const": "ok"},
+        "skill_count": {"type": "integer", "minimum": 0},
+        "trusted_count": {"type": "integer", "minimum": 0},
+        "tampered_count": {"const": 0},
+        "unknown_provenance_count": {"const": 0},
+        "issues": {
+          "type": "array",
+          "maxItems": 0
+        }
+      },
+      "additionalProperties": false
+    },
+    "routingExamplesVerification": {
+      "type": "object",
+      "required": ["status", "count", "content_hash"],
+      "properties": {
+        "status": {"const": "ok"},
+        "count": {"type": "integer", "minimum": 0},
+        "content_hash": {"$ref": "#/$defs/hash"}
+      },
+      "additionalProperties": false
+    },
+    "registryVerification": {
+      "type": "object",
+      "required": ["catalog", "routing_examples"],
+      "properties": {
+        "catalog": {"$ref": "#/$defs/registryCatalogVerification"},
+        "routing_examples": {"$ref": "#/$defs/routingExamplesVerification"}
+      },
+      "additionalProperties": false
+    },
+    "compatibilityVersion": {
+      "type": "object",
+      "required": ["lossless", "losses"],
+      "properties": {
+        "lossless": {"type": "boolean"},
+        "losses": {"$ref": "#/$defs/stringList"}
+      },
+      "additionalProperties": false
+    },
+    "compatibility": {
+      "type": "object",
+      "required": ["v2", "v1"],
+      "properties": {
+        "v2": {"$ref": "#/$defs/compatibilityVersion"},
+        "v1": {"$ref": "#/$defs/compatibilityVersion"}
+      },
+      "additionalProperties": false
+    }
+  }
+}

@@ -108,6 +108,35 @@ def build_canonical_content_hash(value: Any) -> str:
     return f"sha256:{hashlib.sha256(canonical).hexdigest()}"
 
 
+def v3_compatibility_report(payload: dict[str, Any]) -> dict[str, Any]:
+    source = payload if isinstance(payload, dict) else {}
+    selection = _object(source.get("selection"))
+    selected = _object_list(selection.get("selected_skills"))
+    provider = _object(source.get("provider"))
+    need = _object(source.get("need_decision"))
+    losses = ["skill_level_selection"] if selected else []
+    if isinstance(source.get("confidence"), dict) or need.get("decision") in {"none", "clarify"}:
+        losses.append("confidence_and_abstention")
+    if provider.get("used") not in {None, "", "none"}:
+        losses.append("semantic_provider_evidence")
+    if len(selected) > 1:
+        losses.append("multi_skill_exact_set")
+    return {
+        "v2": {"lossless": not losses, "losses": sorted(set(losses))},
+        "v1": {
+            "lossless": False,
+            "losses": sorted(
+                set(losses)
+                | {
+                    "candidate_trace",
+                    "marginal_capability_contributions",
+                    "real_dependency_evidence",
+                }
+            ),
+        },
+    }
+
+
 def to_legacy_v1(payload: dict) -> dict:
     source = payload if isinstance(payload, dict) else {}
     intents = _object_list(_object(source.get("intent_graph")).get("intents"))

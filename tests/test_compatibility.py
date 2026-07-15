@@ -4,6 +4,7 @@ import unittest
 from onecode_skill_sanitizer.compatibility import build_route_id
 from onecode_skill_sanitizer.compatibility import build_route_identity_payload
 from onecode_skill_sanitizer.compatibility import to_legacy_v1
+from onecode_skill_sanitizer.compatibility import v3_compatibility_report
 
 
 class CompatibilityTest(unittest.TestCase):
@@ -214,6 +215,52 @@ class CompatibilityTest(unittest.TestCase):
                 self.assertEqual(legacy["schema_version"], 1)
                 self.assertEqual(legacy["selected_scenario"], {})
                 self.assertEqual(legacy["compatibility_loss"]["scenarios_dropped"], [])
+
+    def test_v3_compatibility_report_records_v2_and_v1_projection_losses(self):
+        report = v3_compatibility_report(
+            {
+                "need_decision": {"decision": "composite"},
+                "selection": {
+                    "selected_skills": [
+                        {"name": "code-review-risk"},
+                        {"name": "code-test-regression"},
+                    ]
+                },
+                "provider": {"used": "fake"},
+                "confidence": {"level": "medium"},
+                "execution_graph": {"edges": [{"type": "artifact_dependency"}]},
+            }
+        )
+
+        self.assertFalse(report["v2"]["lossless"])
+        self.assertIn("skill_level_selection", report["v2"]["losses"])
+        self.assertIn("semantic_provider_evidence", report["v1"]["losses"])
+        self.assertIn("confidence_and_abstention", report["v1"]["losses"])
+
+    def test_v3_compatibility_report_is_bounded_deterministic_and_deduplicated(self):
+        malformed_inputs = (
+            {},
+            None,
+            {"selection": {"selected_skills": "bad"}, "provider": [], "need_decision": "bad"},
+            {
+                "selection": {
+                    "selected_skills": [
+                        {"name": "code-review-risk"},
+                        {"name": "code-review-risk"},
+                    ]
+                },
+                "provider": {"used": "fake"},
+                "confidence": {},
+            },
+        )
+        for payload in malformed_inputs:
+            with self.subTest(payload=payload):
+                first = v3_compatibility_report(payload)
+                second = v3_compatibility_report(payload)
+                self.assertEqual(first, second)
+                for version in ("v2", "v1"):
+                    losses = first[version]["losses"]
+                    self.assertEqual(losses, sorted(set(losses)))
 
 
 if __name__ == "__main__":
