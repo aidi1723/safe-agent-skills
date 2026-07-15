@@ -357,6 +357,38 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             ],
         )
 
+    def assert_binary_precedes_overlapping_xian_sequence(self, task: str):
+        payload = self.build(task)
+
+        self.assertNotEqual(payload["routing_status"], "blocked")
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-test-regression",
+                    "to": "skill:code-review-risk",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                }
+            ],
+        )
+
+    def test_binary_temporal_relation_precedes_xian_text_order(self):
+        self.assert_binary_precedes_overlapping_xian_sequence(
+            "先在审查这个补丁之前，补一个回归测试"
+        )
+
+    def test_binary_temporal_relation_precedes_mixed_xian_text_order(self):
+        self.assert_binary_precedes_overlapping_xian_sequence(
+            "先 review this patch after adding a regression test"
+        )
+
+    def test_repeated_complement_skill_mentions_preserve_the_grouped_anchor(self):
+        self.assert_grouped_review_order(
+            "review this patch after adding a regression test and checking test coverage, "
+            "but before verifying these claims against primary sources"
+        )
+
     def test_schema_has_strict_v3_structure_and_current_conflict_reasons(self):
         schema = json.loads(
             (ROOT / "schemas/task-pack-v3.schema.json").read_text(encoding="utf-8")

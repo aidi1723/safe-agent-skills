@@ -224,7 +224,8 @@ def _binary_order_relations(
             previous = connectors[index - 1]
             gap = clause[previous.end() : connector.start()]
             gap_mentions = _skill_mentions(gap, required, admitted)
-            continues_group = _GROUP_CONTINUATION_RE.search(gap) and len(gap_mentions) <= 1
+            gap_actions = _unique_skill_mentions(gap_mentions)
+            continues_group = _GROUP_CONTINUATION_RE.search(gap) and len(gap_actions) <= 1
             if not continues_group:
                 active_anchor = gap_mentions[-1][2] if gap_mentions else _last_skill(
                     clause[: connector.start()], required, admitted
@@ -259,8 +260,11 @@ def _sequence_order_relations(
             relations.append((left, right))
 
     xian = _XIAN_RE.search(clause)
-    if xian is not None:
-        ordered = [item[2] for item in _skill_mentions(clause[xian.end() :], required, admitted)]
+    if xian is not None and not _BINARY_ORDER_CONNECTOR_RE.search(clause[xian.end() :]):
+        ordered = [
+            item[2]
+            for item in _skill_mentions(clause[xian.end() :], required, admitted)
+        ]
         relations.extend(zip(ordered, ordered[1:]))
     return relations
 
@@ -288,3 +292,15 @@ def _skill_mentions(
                 (match.start(), match.end(), skill) for match in pattern.finditer(text)
             )
     return sorted(mentions, key=lambda item: (item[0], item[1], item[2]))
+
+
+def _unique_skill_mentions(
+    mentions: list[tuple[int, int, str]],
+) -> list[tuple[int, int, str]]:
+    unique: list[tuple[int, int, str]] = []
+    seen: set[str] = set()
+    for mention in mentions:
+        if mention[2] not in seen:
+            unique.append(mention)
+            seen.add(mention[2])
+    return unique
