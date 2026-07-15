@@ -44,7 +44,9 @@ _COMPOUND_GERUND_RE = re.compile(
     r"\b[a-z]+ing\s+and\s+(?:(?:then|[a-z]+ly)\s+)?[a-z]+ing\b",
     re.IGNORECASE,
 )
-_XIAN_SCOPE_BOUNDARY_RE = re.compile(r"\bbut\b|但是|但", re.IGNORECASE)
+_XIAN_SCOPE_BOUNDARY_RE = re.compile(
+    r"\b(?:but|independently|separately)\b|但是|但|同时", re.IGNORECASE
+)
 _XIAN_RE = re.compile(r"先(?!不)")
 
 

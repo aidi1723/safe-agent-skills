@@ -25,8 +25,10 @@ class FixtureSemanticProvider:
 
     def __init__(self, model_or_adapter: str):
         self.model_or_adapter = model_or_adapter
+        self.requests = []
 
     def rerank(self, request):
+        self.requests.append(copy.deepcopy(request))
         candidates = request["candidates"]
         return {
             "status": "ok",
@@ -187,6 +189,71 @@ class TaskPackV3BuilderTest(unittest.TestCase):
         self.assertIn("api_key=browser", browser["normalized_task"]["current"])
         self.assertIn("api_key=banana", banana["normalized_task"]["raw"])
         self.assertIn("api_key=banana", banana["normalized_task"]["current"])
+
+    def assert_authorization_credentials_are_route_inert(
+        self,
+        first_task: str,
+        second_task: str,
+        forbidden_values: tuple[str, ...],
+    ):
+        first_provider = FixtureSemanticProvider("adapter-a")
+        second_provider = FixtureSemanticProvider("adapter-a")
+        first = self.build(first_task, semantic_provider=first_provider)
+        second = self.build(second_task, semantic_provider=second_provider)
+
+        for field in (
+            "route_id",
+            "routing_mode",
+            "routing_status",
+            "need_decision",
+            "intent_graph",
+            "candidates",
+            "selection",
+            "capability_resolution",
+            "execution_graph",
+            "confidence",
+            "provider",
+            "routing_metrics",
+        ):
+            with self.subTest(field=field):
+                self.assertEqual(first[field], second[field])
+
+        for provider in (first_provider, second_provider):
+            self.assertEqual(len(provider.requests), 1)
+            current_intent = provider.requests[0]["current_intent"]
+            self.assertIn("[REDACTED]", current_intent)
+            self.assertIn("add a regression test", current_intent)
+            for forbidden in forbidden_values:
+                with self.subTest(forbidden=forbidden):
+                    self.assertNotIn(forbidden, current_intent)
+
+    def test_basic_authorization_credentials_are_fully_route_inert(self):
+        self.assert_authorization_credentials_are_route_inert(
+            "review this patch authorization: Basic dXNlcjpwYXNzd29yZA==, "
+            "and add a regression test",
+            "review this patch authorization: Basic YWxpY2U6c2VjcmV0, "
+            "and add a regression test",
+            ("Basic", "dXNlcjpwYXNzd29yZA==", "YWxpY2U6c2VjcmV0"),
+        )
+
+    def test_digest_authorization_credentials_are_fully_route_inert(self):
+        self.assert_authorization_credentials_are_route_inert(
+            'review this patch authorization: Digest username="Mufasa", '
+            'realm="testrealm@host.com", nonce="nonce-a", uri="/dir/index.html", '
+            'response="response-a", qop=auth, and add a regression test',
+            'review this patch authorization: Digest username="Circle Of Life", '
+            'realm="second.example", nonce="nonce-b", uri="/other", '
+            'response="response-b", qop=auth, and add a regression test',
+            (
+                "Digest",
+                "Mufasa",
+                "Circle Of Life",
+                "nonce-a",
+                "nonce-b",
+                "response-a",
+                "response-b",
+            ),
+        )
 
     def test_route_id_binds_max_candidates(self):
         one = self.build("review this patch", max_candidates=1)
@@ -433,6 +500,24 @@ class TaskPackV3BuilderTest(unittest.TestCase):
         payload = self.build(
             "先 review this patch, add a regression test, but independently verify "
             "these claims against primary sources"
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:code-test-regression",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                }
+            ],
+        )
+
+    def test_xian_scope_stops_at_explicit_parallel_coordination(self):
+        payload = self.build(
+            "先 review this patch, add a regression test，同时 verify these claims "
+            "against primary sources"
         )
 
         self.assertEqual(

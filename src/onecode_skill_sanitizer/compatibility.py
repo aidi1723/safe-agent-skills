@@ -28,6 +28,19 @@ _SECRET_ASSIGNMENT_RE = re.compile(
     r"(?P<value>\"[^\"\r\n]*\"|'[^'\r\n]*'|[^\s,;，；]+)",
     re.IGNORECASE,
 )
+_DIGEST_AUTH_PARAMETER = (
+    r"[A-Za-z][A-Za-z0-9_-]*\s*=\s*"
+    r'(?:"[^"\r\n]*"|\'[^\'\r\n]*\'|[^\s,;，；]+)'
+)
+_AUTHORIZATION_CREDENTIAL_RE = re.compile(
+    r"(?P<label>\bauthorization\b)(?P<separator>\s*[=:：＝]\s*)"
+    r"(?:"
+    r"(?:Basic|Bearer)\s+[A-Za-z0-9._~+/=-]+|"
+    rf"Digest\s+{_DIGEST_AUTH_PARAMETER}"
+    rf"(?:\s*,\s*{_DIGEST_AUTH_PARAMETER})*"
+    r")",
+    re.IGNORECASE,
+)
 _BEARER_RE = re.compile(r"\bBearer\s+[A-Za-z0-9._~+/=-]+", re.IGNORECASE)
 _URI_CREDENTIAL_RE = re.compile(
     r"(?P<scheme>\b[a-z][a-z0-9+.-]*://)(?P<user>[^\s/@:]+):(?P<password>[^\s/@]+)@",
@@ -86,6 +99,10 @@ def redact_route_identity_text(value: Any) -> str:
     text = value if isinstance(value, str) else ""
     text = _URI_CREDENTIAL_RE.sub(
         lambda match: f"{match.group('scheme')}{match.group('user')}:[REDACTED]@",
+        text,
+    )
+    text = _AUTHORIZATION_CREDENTIAL_RE.sub(
+        lambda match: f"{match.group('label')}{match.group('separator')}[REDACTED]",
         text,
     )
     text = _BEARER_RE.sub("Bearer [REDACTED]", text)
