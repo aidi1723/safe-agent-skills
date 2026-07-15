@@ -6,11 +6,15 @@ import unittest
 from collections import Counter
 from pathlib import Path
 
+from onecode_skill_sanitizer.intent import normalize_task
+from onecode_skill_sanitizer.need_gate import decide_skill_need
 from onecode_skill_sanitizer.skill_candidates import (
     HIGH_FREQUENCY_ENTRY_NAMES,
     HIGH_FREQUENCY_SKILL_NAMES,
     RoutingExampleError,
+    load_cohort_profiles,
     load_routing_examples,
+    retrieve_skill_candidates,
 )
 
 
@@ -186,6 +190,46 @@ class SkillCandidateTest(unittest.TestCase):
         payload["examples"][0]["review"]["reviewed_at"] = "2027-01-01"
 
         self.assertEqual(len(self._load_temporary_payload(payload)), 35)
+
+    def test_profiles_come_only_from_trusted_catalog_sources(self):
+        profiles = load_cohort_profiles(ROOT / "catalog")
+
+        self.assertEqual(tuple(profiles), HIGH_FREQUENCY_SKILL_NAMES)
+        self.assertTrue(all(profile["status"] == "trusted" for profile in profiles.values()))
+        self.assertTrue(all(profile["description"].startswith("Use when") for profile in profiles.values()))
+        self.assertTrue(all(profile["capabilities"] for profile in profiles.values()))
+
+    def test_retrieval_returns_top_three_with_decomposed_evidence(self):
+        task = normalize_task("review this patch and add a regression test")
+        need = decide_skill_need(task)
+        candidates = retrieve_skill_candidates(
+            task,
+            need,
+            load_cohort_profiles(ROOT / "catalog"),
+            load_routing_examples(EXAMPLES),
+            top_k=3,
+        )
+
+        self.assertEqual([item["skill"] for item in candidates[:2]], ["code-review-risk", "code-test-regression"])
+        self.assertTrue(all(0 <= item["deterministic_score"] <= 1 for item in candidates))
+        self.assertTrue(all(item["positive_evidence"] for item in candidates[:2]))
+        self.assertIn("code.review", candidates[0]["matched_capabilities"])
+
+    def test_near_miss_and_explicit_exclusion_cannot_win(self):
+        task = normalize_task("Do not critique design; run the existing UI flow in a browser")
+        need = decide_skill_need(task)
+        candidates = retrieve_skill_candidates(
+            task,
+            need,
+            load_cohort_profiles(ROOT / "catalog"),
+            load_routing_examples(EXAMPLES),
+            top_k=3,
+        )
+        by_name = {item["skill"]: item for item in candidates}
+
+        self.assertEqual(candidates[0]["skill"], "execution-browser-check")
+        self.assertTrue(by_name["design-ui-review"]["excluded"])
+        self.assertIn("explicit_exclusion", by_name["design-ui-review"]["reason_codes"])
 
     def _assert_payload_rejected(self, payload):
         with self.assertRaises(RoutingExampleError):
