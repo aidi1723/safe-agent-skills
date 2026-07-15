@@ -4,6 +4,7 @@ import unittest
 
 from onecode_skill_sanitizer.intent import normalize_task
 from onecode_skill_sanitizer.need_gate import decide_skill_need
+from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 
 
 class NeedGateTest(unittest.TestCase):
@@ -67,6 +68,188 @@ class NeedGateTest(unittest.TestCase):
         self.assertEqual(missing["missing_inputs"], ["behavior_or_change_under_test"])
         self.assertEqual(risky["mandatory_capabilities"], ["code.test"])
         self.assertIn("code.test", risky["required_capabilities"])
+
+    def test_mandatory_verification_requires_an_affirmative_action(self):
+        decision = decide_skill_need(normalize_task("do not fix the parser bug"))
+
+        self.assertEqual(decision["decision"], "none")
+        self.assertEqual(decision["required_capabilities"], [])
+        self.assertEqual(decision["mandatory_capabilities"], [])
+
+    def test_mandatory_verification_respects_explicit_exclusions(self):
+        cases = (
+            ("fix the parser bug; do not test it", False),
+            ("fix the parser bug; do not use any skills", True),
+            ("不要使用任何技能；修复解析器", True),
+        )
+        for task, excludes_all in cases:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "clarify")
+                self.assertEqual(
+                    decision["reason_codes"], ["conflicting_explicit_constraint"]
+                )
+                self.assertEqual(decision["required_capabilities"], [])
+                self.assertEqual(decision["mandatory_capabilities"], [])
+                self.assertIn("code-test-regression", decision["excluded_skills"])
+                if excludes_all:
+                    self.assertEqual(
+                        decision["excluded_skills"],
+                        list(HIGH_FREQUENCY_SKILL_NAMES),
+                    )
+
+    def test_canonical_skill_matching_survives_current_intent_normalization(self):
+        test_request = decide_skill_need(
+            normalize_task(
+                "History: use code-review-risk. Current request: use code-test-regression"
+            )
+        )
+        conflict = decide_skill_need(
+            normalize_task(
+                "History: x. Current request: Use design-ui-review and do not use design-ui-review"
+            )
+        )
+
+        self.assertEqual(test_request["decision"], "single")
+        self.assertEqual(test_request["explicit_skills"], ["code-test-regression"])
+        self.assertEqual(test_request["required_capabilities"], ["code.test"])
+        self.assertNotIn("code-review-risk", test_request["explicit_skills"])
+        self.assertEqual(conflict["decision"], "clarify")
+        self.assertEqual(conflict["explicit_skills"], ["design-ui-review"])
+        self.assertIn("design-ui-review", conflict["excluded_skills"])
+        self.assertEqual(
+            conflict["reason_codes"], ["conflicting_explicit_constraint"]
+        )
+
+    def test_canonical_skill_matching_uses_token_boundaries(self):
+        decision = decide_skill_need(normalize_task("use xcode-test-regressioner"))
+
+        self.assertEqual(decision["decision"], "none")
+        self.assertEqual(decision["explicit_skills"], [])
+        self.assertEqual(decision["required_capabilities"], [])
+
+    def test_negation_is_clause_and_object_scoped(self):
+        canonical = decide_skill_need(
+            normalize_task("do not use design-ui-review; use code-review-risk")
+        )
+        mixed_review = decide_skill_need(
+            normalize_task("do not review the UI; review this patch")
+        )
+
+        self.assertEqual(canonical["decision"], "single")
+        self.assertEqual(canonical["required_capabilities"], ["code.review"])
+        self.assertEqual(canonical["explicit_skills"], ["code-review-risk"])
+        self.assertIn("design-ui-review", canonical["excluded_skills"])
+        self.assertNotIn("code-review-risk", canonical["excluded_skills"])
+        self.assertEqual(mixed_review["decision"], "single")
+        self.assertEqual(mixed_review["required_capabilities"], ["code.review"])
+        self.assertIn("design-ui-review", mixed_review["excluded_skills"])
+        self.assertNotIn("code-review-risk", mixed_review["excluded_skills"])
+
+    def test_negation_scope_stops_at_required_clause_boundaries(self):
+        for separator in (".", ";", "\n", "。", "；", "！", "？", "!", "?"):
+            task = f"do not review the UI{separator} review this patch"
+            with self.subTest(separator=separator):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "single")
+                self.assertEqual(decision["required_capabilities"], ["code.review"])
+                self.assertIn("design-ui-review", decision["excluded_skills"])
+                self.assertNotIn("code-review-risk", decision["excluded_skills"])
+
+    def test_guarded_negative_code_review_does_not_hide_supply_chain_action(self):
+        for task in (
+            "Audit package provenance only; this is not a general code review.",
+            "Audit package provenance only; no general code review.",
+        ):
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "single")
+                self.assertEqual(
+                    decision["required_capabilities"], ["security.supply_chain"]
+                )
+                self.assertIn("code-review-risk", decision["excluded_skills"])
+
+    def test_explanation_and_inventory_clauses_take_precedence(self):
+        explanation_cases = (
+            "Explain test strategy; do not create regression coverage.",
+            "什么是浏览器检查 Skill？只解释。",
+        )
+        for task in explanation_cases:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "none")
+                self.assertTrue(decision["explanation_only"])
+                self.assertFalse(decision["inventory_only"])
+                self.assertEqual(decision["required_capabilities"], [])
+                self.assertEqual(decision["reason_codes"], ["explanation_only"])
+
+        inventory = decide_skill_need(
+            normalize_task("list the seven skills and show which supports browser testing")
+        )
+        self.assertEqual(inventory["decision"], "none")
+        self.assertFalse(inventory["explanation_only"])
+        self.assertTrue(inventory["inventory_only"])
+        self.assertEqual(inventory["required_capabilities"], [])
+        self.assertEqual(inventory["reason_codes"], ["inventory_only"])
+
+    def test_separate_action_clause_survives_explanation_or_inventory(self):
+        explained = decide_skill_need(
+            normalize_task("Explain code-review-risk, then review this patch")
+        )
+        inventoried = decide_skill_need(
+            normalize_task("list the skills, then open the page in a real browser")
+        )
+
+        self.assertEqual(explained["decision"], "single")
+        self.assertEqual(explained["required_capabilities"], ["code.review"])
+        self.assertEqual(explained["explicit_skills"], [])
+        self.assertFalse(explained["explanation_only"])
+        self.assertEqual(inventoried["decision"], "single")
+        self.assertEqual(
+            inventoried["required_capabilities"], ["execution.browser_check"]
+        )
+        self.assertFalse(inventoried["inventory_only"])
+
+    def test_positive_explicit_requests_are_distinct_from_exclusions(self):
+        negative_only = decide_skill_need(
+            normalize_task("review this patch; do not use code-test-regression")
+        )
+        partial_conflict = decide_skill_need(
+            normalize_task(
+                "Use execution-browser-check and code-test-regression; "
+                "do not use execution-browser-check"
+            )
+        )
+
+        self.assertEqual(negative_only["decision"], "single")
+        self.assertEqual(negative_only["required_capabilities"], ["code.review"])
+        self.assertEqual(negative_only["explicit_skills"], [])
+        self.assertIn("code-test-regression", negative_only["excluded_skills"])
+        self.assertEqual(partial_conflict["decision"], "clarify")
+        self.assertEqual(
+            partial_conflict["explicit_skills"],
+            ["code-test-regression", "execution-browser-check"],
+        )
+        self.assertIn("execution-browser-check", partial_conflict["excluded_skills"])
+        self.assertEqual(partial_conflict["required_capabilities"], [])
+        self.assertEqual(
+            partial_conflict["reason_codes"], ["conflicting_explicit_constraint"]
+        )
+
+    def test_non_action_browser_evidence_is_clause_local(self):
+        combined = decide_skill_need(
+            normalize_task(
+                "Screenshot is attached; open the page in a real browser and verify the flow"
+            )
+        )
+        attachment = decide_skill_need(normalize_task("Screenshot is attached"))
+
+        self.assertEqual(combined["decision"], "single")
+        self.assertEqual(
+            combined["required_capabilities"], ["execution.browser_check"]
+        )
+        self.assertEqual(attachment["decision"], "none")
+        self.assertEqual(attachment["required_capabilities"], [])
 
 
 if __name__ == "__main__":
