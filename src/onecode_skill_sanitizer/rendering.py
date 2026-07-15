@@ -312,12 +312,12 @@ def render_task_pack_v3_markdown(task_pack: dict) -> str:
         "",
         "## Task",
         "",
-        markdown_safe_line(task_pack["normalized_task"]["current"]),
+        _v3_markdown_safe_line(task_pack["normalized_task"]["current"]),
         "",
         "## Need Decision",
         "",
-        f"- decision: {markdown_safe_line(need['decision'])}",
-        f"- specialized need: {markdown_safe_line(need['specialized_need'])}",
+        f"- decision: {_v3_markdown_safe_line(need['decision'])}",
+        f"- specialized need: {_v3_markdown_safe_line(need['specialized_need'])}",
         f"- required capabilities: {_markdown_safe_values(need['required_capabilities'])}",
         f"- reason codes: {_markdown_safe_values(need['reason_codes'])}",
         "",
@@ -328,8 +328,8 @@ def render_task_pack_v3_markdown(task_pack: dict) -> str:
         for skill in selection["selected_skills"]:
             contribution = contributions.get(skill["name"], {})
             lines.append(
-                f"- {markdown_safe_line(skill['name'])}: "
-                f"{markdown_safe_line(contribution.get('reason', 'not_recorded'))}; "
+                f"- {_v3_markdown_safe_line(skill['name'])}: "
+                f"{_v3_markdown_safe_line(contribution.get('reason', 'not_recorded'))}; "
                 f"capabilities: {_markdown_safe_values(contribution.get('capabilities', []))}"
             )
     else:
@@ -339,43 +339,44 @@ def render_task_pack_v3_markdown(task_pack: dict) -> str:
             "",
             "## Confidence",
             "",
-            f"- level: {markdown_safe_line(confidence['level'])}",
-            f"- overall: {markdown_safe_line(confidence['overall'])}",
-            f"- top score: {markdown_safe_line(confidence['top_score'])}",
-            f"- runner up score: {markdown_safe_line(confidence['runner_up_score'])}",
-            f"- margin: {markdown_safe_line(confidence['margin'])}",
+            f"- level: {_v3_markdown_safe_line(confidence['level'])}",
+            f"- overall: {_v3_markdown_safe_line(confidence['overall'])}",
+            f"- top score: {_v3_markdown_safe_line(confidence['top_score'])}",
+            f"- runner up score: {_v3_markdown_safe_line(confidence['runner_up_score'])}",
+            f"- margin: {_v3_markdown_safe_line(confidence['margin'])}",
             f"- reason codes: {_markdown_safe_values(confidence['reason_codes'])}",
             "",
             "## Provider",
             "",
-            f"- requested: {markdown_safe_line(provider['requested'])}",
-            f"- used: {markdown_safe_line(provider['used'])}",
-            f"- model or adapter: {markdown_safe_line(provider['model_or_adapter'])}",
-            f"- response status: {markdown_safe_line(provider['response_status'])}",
-            f"- fallback reason: {markdown_safe_line(provider['fallback_reason'])}",
+            f"- requested: {_v3_markdown_safe_line(provider['requested'])}",
+            f"- used: {_v3_markdown_safe_line(provider['used'])}",
+            f"- model or adapter: {_v3_markdown_safe_line(provider['model_or_adapter'])}",
+            f"- response status: {_v3_markdown_safe_line(provider['response_status'])}",
+            f"- fallback reason: {_v3_markdown_safe_line(provider['fallback_reason'])}",
             f"- validation reason codes: {_markdown_safe_values(provider['validation_reason_codes'])}",
             "",
             "## Execution Graph",
             "",
-            f"- status: {markdown_safe_line(graph['status'])}",
-            f"- acyclic: {markdown_safe_line(graph['acyclic'])}",
+            f"- status: {_v3_markdown_safe_line(graph['status'])}",
+            f"- acyclic: {_v3_markdown_safe_line(graph['acyclic'])}",
         ]
     )
     if graph["nodes"]:
         for node in graph["nodes"]:
             lines.append(
-                f"- node {markdown_safe_line(node['id'])}: "
-                f"{markdown_safe_line(node['skill'])}; parallel: "
-                f"{markdown_safe_line(node['parallel'])}"
+                f"- node {_v3_markdown_safe_line(node['id'])}: "
+                f"{_v3_markdown_safe_line(node['skill'])}; parallel: "
+                f"{_v3_markdown_safe_line(node['parallel'])}"
             )
     else:
         lines.append("- nodes: none")
     if graph["edges"]:
         for edge in graph["edges"]:
             lines.append(
-                f"- edge {markdown_safe_line(edge['from'])} to "
-                f"{markdown_safe_line(edge['to'])}: {markdown_safe_line(edge['type'])}; "
-                f"evidence: {markdown_safe_line(edge['evidence'])}"
+                f"- edge {_v3_markdown_safe_line(edge['from'])} to "
+                f"{_v3_markdown_safe_line(edge['to'])}: "
+                f"{_v3_markdown_safe_line(edge['type'])}; "
+                f"evidence: {_v3_markdown_safe_line(edge['evidence'])}"
             )
     else:
         lines.append("- edges: none")
@@ -384,8 +385,8 @@ def render_task_pack_v3_markdown(task_pack: dict) -> str:
             "",
             "## Routing Diagnostics",
             "",
-            f"- routing status: {markdown_safe_line(task_pack['routing_status'])}",
-            f"- capability status: {markdown_safe_line(capability['status'])}",
+            f"- routing status: {_v3_markdown_safe_line(task_pack['routing_status'])}",
+            f"- capability status: {_v3_markdown_safe_line(capability['status'])}",
             f"- missing capabilities: {_markdown_safe_values(capability['missing_capabilities'])}",
             f"- missing inputs: {_markdown_safe_values(capability['missing_inputs'])}",
             f"- graph reason codes: {_markdown_safe_values(graph['reason_codes'])}",
@@ -393,8 +394,8 @@ def render_task_pack_v3_markdown(task_pack: dict) -> str:
             "",
             "## Safety Boundary",
             "",
-            f"- mode: {markdown_safe_line(protocol['mode'])}",
-            f"- {markdown_safe_line(protocol['runtime_boundary'])}",
+            f"- mode: {_v3_markdown_safe_line(protocol['mode'])}",
+            f"- {_v3_markdown_safe_line(protocol['runtime_boundary'])}",
             "",
         ]
     )
@@ -404,7 +405,11 @@ def render_task_pack_v3_markdown(task_pack: dict) -> str:
 def _markdown_safe_values(values: object) -> str:
     if not isinstance(values, (list, tuple)) or not values:
         return "none"
-    return ", ".join(markdown_safe_line(value) for value in values)
+    return ", ".join(_v3_markdown_safe_line(value) for value in values)
+
+
+def _v3_markdown_safe_line(value: object) -> str:
+    return markdown_safe_line(value).replace("~", r"\~")
 
 
 def markdown_safe_line(value: object) -> str:

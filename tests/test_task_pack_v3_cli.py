@@ -149,6 +149,31 @@ class TaskPackV3CliTest(unittest.TestCase):
                 self.assertNotIn("```", output)
                 self.assertNotIn("<span>", output)
 
+    def test_v3_markdown_escapes_tilde_fences_without_hiding_sections(self):
+        attack = "~~~html\n<span>unsafe</span>\n~~~\nafter fence"
+        exit_code, output, error_output = self.run_cli(
+            ["smart", attack, "--schema-version", "3", "--format", "markdown"]
+        )
+        headings = [line for line in output.splitlines() if line.startswith("#")]
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(error_output, "")
+        self.assertNotIn("~~~", output)
+        self.assertEqual(
+            headings,
+            [
+                "# OneCode Agent Task Pack v3",
+                "## Task",
+                "## Need Decision",
+                "## Selected Skills",
+                "## Confidence",
+                "## Provider",
+                "## Execution Graph",
+                "## Routing Diagnostics",
+                "## Safety Boundary",
+            ],
+        )
+
     def test_empty_v3_task_returns_bounded_json_error(self):
         commands = (
             ["smart", "", "--schema-version", "3", "--format", "json"],
