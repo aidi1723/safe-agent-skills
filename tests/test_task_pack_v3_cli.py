@@ -280,6 +280,13 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             ],
         )
 
+    def test_xian_scope_keeps_then_inside_a_compound_gerund(self):
+        self.assert_explicit_order_edge(
+            "先 writing and then running a regression test, review this patch",
+            "code-test-regression",
+            "code-review-risk",
+        )
+
     def test_xian_orders_adjacent_actions_in_one_sequence_clause(self):
         payload = self.build(
             "先 review this patch, add a regression test, verify these claims against primary sources"

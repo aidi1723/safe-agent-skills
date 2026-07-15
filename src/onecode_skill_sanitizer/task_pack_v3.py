@@ -276,11 +276,11 @@ def _sequence_order_relations(
 
     xian = _XIAN_RE.search(clause)
     if xian is not None:
-        scope_end = _next_order_boundary_start(
-            clause,
-            xian.end(),
-            (_BINARY_ORDER_CONNECTOR_RE, _SEQUENCE_ORDER_CONNECTOR_RE),
+        binary_boundary = _next_order_boundary_start(
+            clause, xian.end(), (_BINARY_ORDER_CONNECTOR_RE,)
         )
+        sequence_boundary = _next_sequence_order_boundary_start(clause, xian.end())
+        scope_end = min(binary_boundary, sequence_boundary)
         ordered = [
             item[2]
             for item in _skill_mentions(
@@ -300,11 +300,8 @@ def _next_order_boundary_start(
     return min(matches, default=len(text))
 
 
-def _next_binary_complement_boundary_start(text: str, start: int) -> int:
-    binary_boundary = _next_order_boundary_start(
-        text, start, (_BINARY_ORDER_CONNECTOR_RE,)
-    )
-    sequence_boundary = next(
+def _next_sequence_order_boundary_start(text: str, start: int) -> int:
+    return next(
         (
             match.start()
             for match in _SEQUENCE_ORDER_CONNECTOR_RE.finditer(text, start)
@@ -312,6 +309,13 @@ def _next_binary_complement_boundary_start(text: str, start: int) -> int:
         ),
         len(text),
     )
+
+
+def _next_binary_complement_boundary_start(text: str, start: int) -> int:
+    binary_boundary = _next_order_boundary_start(
+        text, start, (_BINARY_ORDER_CONNECTOR_RE,)
+    )
+    sequence_boundary = _next_sequence_order_boundary_start(text, start)
     local_boundary = next(
         (
             match.start()
