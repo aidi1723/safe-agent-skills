@@ -80,6 +80,8 @@ from .rendering import markdown_safe_line as markdown_safe_line
 from .rendering import project_legacy_contracts as project_legacy_contracts
 from .rendering import render_task_pack_markdown as render_task_pack_markdown
 from .rendering import render_task_pack_v2_markdown as render_task_pack_v2_markdown
+from .router_eval_v3 import evaluate_router_v3 as evaluate_router_v3
+from .router_eval_v3 import load_eval_dataset_v3 as load_eval_dataset_v3
 from .router_evaluation import ROUTER_EVAL_OPTIONAL_STRING_FIELDS as ROUTER_EVAL_OPTIONAL_STRING_FIELDS
 from .router_evaluation import ROUTER_EVAL_ROUTER_VALUES as ROUTER_EVAL_ROUTER_VALUES
 from .router_evaluation import ROUTER_EVAL_STRATEGY_VALUES as ROUTER_EVAL_STRATEGY_VALUES
@@ -122,6 +124,7 @@ from .task_packs import task_taxonomy_from_profile as task_taxonomy_from_profile
 from .task_packs import trusted_skill_names as trusted_skill_names
 from .task_packs import validate_overlap_groups as validate_overlap_groups
 from .task_packs import validate_overlap_skill_reference as validate_overlap_skill_reference
+from .task_pack_v3 import build_task_pack_v3 as build_task_pack_v3
 from .validation import SOURCE_USAGE_VALUES
 
 
@@ -206,7 +209,8 @@ def build_parser() -> argparse.ArgumentParser:
     task_pack_parser.add_argument("--invariants", action="append")
     task_pack_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
     task_pack_parser.add_argument("--overlap-groups")
-    task_pack_parser.add_argument("--schema-version", type=int, choices=[1, 2], default=2)
+    task_pack_parser.add_argument("--schema-version", type=int, choices=[1, 2, 3], default=2)
+    task_pack_parser.add_argument("--routing-examples", default="catalog/routing-examples.json")
     task_pack_parser.set_defaults(func=task_pack_command)
 
     smart_parser = subparsers.add_parser("smart")
@@ -218,7 +222,8 @@ def build_parser() -> argparse.ArgumentParser:
     smart_parser.add_argument("--strategy", choices=["fast", "balanced", "deep"], default="balanced")
     smart_parser.add_argument("--max-skills", type=positive_int, default=8)
     smart_parser.add_argument("--format", choices=["json", "markdown"], default="json")
-    smart_parser.add_argument("--schema-version", type=int, choices=[1, 2], default=2)
+    smart_parser.add_argument("--schema-version", type=int, choices=[1, 2, 3], default=2)
+    smart_parser.add_argument("--routing-examples", default="catalog/routing-examples.json")
     smart_parser.set_defaults(func=smart_command)
 
     verify_parser = subparsers.add_parser("verify")
