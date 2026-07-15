@@ -30,6 +30,7 @@ _BINARY_ORDER_CONNECTOR_RE = re.compile(
 )
 _SEQUENCE_ORDER_CONNECTOR_RE = re.compile(r"\bthen\b|然后|再|最后", re.IGNORECASE)
 _GROUP_CONTINUATION_RE = re.compile(r"(?:\b(?:but|and)\b|但是|但|并且|且)\s*[,，]?\s*$", re.IGNORECASE)
+_LOCAL_ORDER_BOUNDARY_RE = re.compile(r"[,，]|\b(?:but|and)\b|但是|但|并且|且", re.IGNORECASE)
 _XIAN_RE = re.compile(r"先(?!不)")
 
 
@@ -218,8 +219,20 @@ def _binary_order_relations(
     active_anchor = _last_skill(clause[: connectors[0].start()], required, admitted)
     relations: list[tuple[str, str]] = []
     for index, connector in enumerate(connectors):
-        next_start = connectors[index + 1].start() if index + 1 < len(connectors) else len(clause)
-        complement = _first_skill(clause[connector.end() : next_start], required, admitted)
+        separator = re.match(r"\s*[,，]?\s*", clause[connector.end() :])
+        complement_start = connector.end() + (separator.end() if separator else 0)
+        complement_end = _next_order_boundary_start(
+            clause,
+            complement_start,
+            (
+                _BINARY_ORDER_CONNECTOR_RE,
+                _SEQUENCE_ORDER_CONNECTOR_RE,
+                _LOCAL_ORDER_BOUNDARY_RE,
+            ),
+        )
+        complement = _first_skill(
+            clause[complement_start:complement_end], required, admitted
+        )
         if index:
             previous = connectors[index - 1]
             gap = clause[previous.end() : connector.start()]
@@ -260,13 +273,29 @@ def _sequence_order_relations(
             relations.append((left, right))
 
     xian = _XIAN_RE.search(clause)
-    if xian is not None and not _BINARY_ORDER_CONNECTOR_RE.search(clause[xian.end() :]):
+    if xian is not None:
+        scope_end = _next_order_boundary_start(
+            clause,
+            xian.end(),
+            (_BINARY_ORDER_CONNECTOR_RE, _SEQUENCE_ORDER_CONNECTOR_RE),
+        )
         ordered = [
             item[2]
-            for item in _skill_mentions(clause[xian.end() :], required, admitted)
+            for item in _skill_mentions(
+                clause[xian.end() : scope_end], required, admitted
+            )
         ]
         relations.extend(zip(ordered, ordered[1:]))
     return relations
+
+
+def _next_order_boundary_start(
+    text: str,
+    start: int,
+    patterns: tuple[re.Pattern[str], ...],
+) -> int:
+    matches = [match.start() for pattern in patterns if (match := pattern.search(text, start))]
+    return min(matches, default=len(text))
 
 
 def _first_skill(text: str, required: set[str], admitted: set[str]) -> str | None:

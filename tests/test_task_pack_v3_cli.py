@@ -389,6 +389,52 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             "but before verifying these claims against primary sources"
         )
 
+    def test_xian_scope_stops_at_the_first_explicit_connector(self):
+        payload = self.build(
+            "先 review this patch, add a regression test, then verify these claims "
+            "against primary sources before running a browser check"
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:code-test-regression",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+                {
+                    "from": "skill:code-test-regression",
+                    "to": "skill:research-source-check",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+                {
+                    "from": "skill:research-source-check",
+                    "to": "skill:execution-browser-check",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+            ],
+        )
+
+    def assert_unmapped_binary_complement_is_skipped(self, task: str):
+        payload = self.build(task)
+
+        self.assertNotEqual(payload["routing_status"], "blocked")
+        self.assertEqual(payload["execution_graph"]["edges"], [])
+
+    def test_binary_complement_stops_at_comma_coordination_boundary(self):
+        self.assert_unmapped_binary_complement_is_skipped(
+            "review this patch after deployment, and verify these claims against primary sources"
+        )
+
+    def test_binary_complement_stops_at_coordination_boundary(self):
+        self.assert_unmapped_binary_complement_is_skipped(
+            "review this patch after deployment and verify these claims against primary sources"
+        )
+
     def test_schema_has_strict_v3_structure_and_current_conflict_reasons(self):
         schema = json.loads(
             (ROOT / "schemas/task-pack-v3.schema.json").read_text(encoding="utf-8")
