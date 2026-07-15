@@ -183,20 +183,59 @@ def _extract_explicit_skill_order(
     need: dict[str, Any],
     candidates: list[dict[str, Any]],
 ) -> list[tuple[str, str]]:
-    order_signal = re.compile(
-        r"\b(?:then|after|before)\b|然后|之后|之前|先|再|最后",
-        re.IGNORECASE,
-    )
-    if not order_signal.search(current):
-        return []
-
     admitted = {item["skill"] for item in candidates}
     required = set(need["required_capabilities"])
-    positions: list[tuple[int, str]] = []
+    relations: list[tuple[str, str]] = []
+    binary_connectors = re.compile(
+        r"(?P<after>\bafter\b)|(?P<before>\bbefore\b)|"
+        r"(?P<after_zh>之后)|(?P<before_zh>之前)",
+        re.IGNORECASE,
+    )
+    for connector in binary_connectors.finditer(current):
+        pair = _skills_around_connector(current, connector, required, admitted)
+        if pair is None:
+            continue
+        left, right = pair
+        if connector.lastgroup == "after":
+            relations.append((right, left))
+        elif connector.lastgroup == "before":
+            relations.append((left, right))
+        # Chinese temporal connectors are postfixes attached to the left action.
+        elif connector.lastgroup == "after_zh":
+            relations.append((left, right))
+        else:
+            relations.append((right, left))
+
+    sequence_connectors = re.compile(r"\bthen\b|然后|再|最后", re.IGNORECASE)
+    for connector in sequence_connectors.finditer(current):
+        pair = _skills_around_connector(current, connector, required, admitted)
+        if pair is not None:
+            relations.append(pair)
+
+    return list(dict.fromkeys(relation for relation in relations if relation[0] != relation[1]))
+
+
+def _skills_around_connector(
+    current: str,
+    connector: re.Match[str],
+    required: set[str],
+    admitted: set[str],
+) -> tuple[str, str] | None:
+    left = _skill_mentions(current[: connector.start()], required, admitted)
+    right = _skill_mentions(current[connector.end() :], required, admitted)
+    if not left or not right:
+        return None
+    return left[-1][1], right[0][1]
+
+
+def _skill_mentions(
+    text: str,
+    required: set[str],
+    admitted: set[str],
+) -> list[tuple[int, str]]:
+    mentions: list[tuple[int, str]] = []
     for capability, pattern in CAPABILITY_PATTERNS.items():
-        match = pattern.search(current)
         skill = CAPABILITY_SKILL[capability]
-        if capability in required and match and skill in admitted:
-            positions.append((match.start(), skill))
-    ordered = list(dict.fromkeys(skill for _, skill in sorted(positions)))
-    return list(zip(ordered, ordered[1:]))
+        if capability in required and skill in admitted:
+            mentions.extend((match.start(), skill) for match in pattern.finditer(text))
+    return sorted(mentions, key=lambda item: (item[0], item[1]))

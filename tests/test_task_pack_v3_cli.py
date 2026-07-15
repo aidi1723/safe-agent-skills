@@ -141,6 +141,105 @@ class TaskPackV3BuilderTest(unittest.TestCase):
 
         self.assertNotEqual(first["route_id"], changed["route_id"])
 
+    def assert_explicit_order_edge(self, task: str, source: str, target: str):
+        payload = self.build(task)
+
+        self.assertEqual(
+            payload["selection"]["selected_skill_names"],
+            ["code-review-risk", "code-test-regression"],
+        )
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": f"skill:{source}",
+                    "to": f"skill:{target}",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                }
+            ],
+        )
+
+    def test_builder_reverses_textual_order_for_after_connector(self):
+        self.assert_explicit_order_edge(
+            "review this patch after adding a regression test",
+            "code-test-regression",
+            "code-review-risk",
+        )
+
+    def test_builder_preserves_textual_order_for_before_connector(self):
+        self.assert_explicit_order_edge(
+            "review this patch before adding a regression test",
+            "code-review-risk",
+            "code-test-regression",
+        )
+
+    def test_builder_reverses_textual_order_for_chinese_before_phrase(self):
+        self.assert_explicit_order_edge(
+            "审查这个补丁之前先补回归测试",
+            "code-test-regression",
+            "code-review-risk",
+        )
+
+    def test_builder_preserves_chinese_postfix_after_semantics(self):
+        self.assert_explicit_order_edge(
+            "审查这个补丁之后补回归测试",
+            "code-review-risk",
+            "code-test-regression",
+        )
+
+    def test_binary_connector_does_not_serialize_an_unrelated_third_skill(self):
+        payload = self.build(
+            "review this patch after adding a regression test and verify these claims "
+            "against primary sources"
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-test-regression",
+                    "to": "skill:code-review-risk",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                }
+            ],
+        )
+
+    def test_then_connectors_order_only_adjacent_explicit_items(self):
+        payload = self.build(
+            "review this patch, then add a regression test, then verify these claims "
+            "against primary sources"
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:code-test-regression",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+                {
+                    "from": "skill:code-test-regression",
+                    "to": "skill:research-source-check",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+            ],
+        )
+
+    def test_contradictory_connectors_are_blocked_by_the_selection_dag(self):
+        payload = self.build(
+            "review this patch before adding a regression test, then review this patch "
+            "after adding a regression test"
+        )
+
+        self.assertEqual(payload["routing_status"], "blocked")
+        self.assertEqual(payload["execution_graph"]["status"], "blocked")
+        self.assertEqual(payload["execution_graph"]["reason_codes"], ["dependency_cycle"])
+
     def test_schema_has_strict_v3_structure_and_current_conflict_reasons(self):
         schema = json.loads(
             (ROOT / "schemas/task-pack-v3.schema.json").read_text(encoding="utf-8")
