@@ -9,6 +9,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Callable
 
+from onecode_skill_sanitizer.need_gate import CAPABILITY_SKILL
 from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_ENTRY_NAMES
 from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 
@@ -21,6 +22,11 @@ CANDIDATE_NAMES = list(HIGH_FREQUENCY_SKILL_NAMES)
 EXPECTED_COHORT = {
     "entry_names": list(HIGH_FREQUENCY_ENTRY_NAMES),
     "candidate_names": list(HIGH_FREQUENCY_SKILL_NAMES),
+}
+SKILL_CAPABILITIES = {
+    skill: capability
+    for capability, skill in CAPABILITY_SKILL.items()
+    if skill in HIGH_FREQUENCY_SKILL_NAMES
 }
 EXPECTED_LABELING = {
     "method": "manual_review",
@@ -139,6 +145,20 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
         self.assertEqual(payload["labeling"], EXPECTED_LABELING)
         self.assertTrue(
             all(set(case) == EXPECTED_CASE_KEYS for case in payload["cases"])
+        )
+
+    def test_gold_expected_intents_follow_canonical_required_skill_capabilities(self):
+        self.assertEqual(set(SKILL_CAPABILITIES), set(HIGH_FREQUENCY_SKILL_NAMES))
+        mismatched_ids = []
+        for case in gold_payload()["cases"]:
+            expected = [SKILL_CAPABILITIES[skill] for skill in case["required_skills"]]
+            if case["expected_intents"] != expected:
+                mismatched_ids.append(case["id"])
+
+        self.assertEqual(
+            len(mismatched_ids),
+            0,
+            f"{len(mismatched_ids)} cases use noncanonical expected_intents",
         )
 
     def test_gold_dataset_has_exact_ids_split_parity_and_unique_queries(self):
@@ -387,6 +407,15 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             "intents match required skills": lambda payload: payload["cases"][0].__setitem__(
                 "expected_intents", ["code.review"]
             ),
+            "legacy browser capability alias": lambda payload: case_by_id(
+                payload, "hf-single-022"
+            ).__setitem__("expected_intents", ["execution.browser"]),
+            "legacy research capability alias": lambda payload: case_by_id(
+                payload, "hf-single-029"
+            ).__setitem__("expected_intents", ["research.verify"]),
+            "legacy design capability alias": lambda payload: case_by_id(
+                payload, "hf-single-036"
+            ).__setitem__("expected_intents", ["design.review"]),
             "clarify requires reason": lambda payload: case_by_id(
                 payload, "hf-dependency-009"
             ).__setitem__("expected_reason", ""),

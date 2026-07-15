@@ -5,6 +5,7 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Callable
 
+from .need_gate import CAPABILITY_SKILL
 from .skill_candidates import HIGH_FREQUENCY_ENTRY_NAMES
 from .skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 
@@ -46,15 +47,19 @@ _EXPECTED_LABELING = {
     "reviewed_at": "2026-07-15",
     "runtime_examples_visible_during_labeling": False,
 }
+_COHORT_CAPABILITY_ITEMS = [
+    (capability, skill)
+    for capability, skill in CAPABILITY_SKILL.items()
+    if skill in HIGH_FREQUENCY_SKILL_NAMES
+]
 _SKILL_CAPABILITIES = {
-    "codebase-explore-map": "code.explore",
-    "code-review-risk": "code.review",
-    "code-test-regression": "code.test",
-    "execution-browser-check": "execution.browser",
-    "research-source-check": "research.verify",
-    "design-ui-review": "design.review",
-    "security-supply-chain-review": "security.supply_chain",
+    skill: capability for capability, skill in _COHORT_CAPABILITY_ITEMS
 }
+if (
+    len(_COHORT_CAPABILITY_ITEMS) != len(HIGH_FREQUENCY_SKILL_NAMES)
+    or set(_SKILL_CAPABILITIES) != _CANDIDATE_NAME_SET
+):
+    raise RuntimeError("high-frequency capabilities must map one-to-one to the cohort")
 _CATEGORY_ID_PREFIXES = {
     "single_positive": "hf-single",
     "near_miss": "hf-near",
