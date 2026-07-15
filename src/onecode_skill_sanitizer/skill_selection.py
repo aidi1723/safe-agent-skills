@@ -36,7 +36,7 @@ class _ConflictState:
         else:
             self.hard_losers.add(event.rejected)
             winner = event.winner
-            reason = "higher_deterministic_score"
+            reason = "higher_final_score"
         self.resolutions.append(
             {
                 "winner": winner,

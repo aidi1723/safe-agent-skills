@@ -365,7 +365,7 @@ class SkillSelectionTest(unittest.TestCase):
                 {
                     "winner": "browser-check",
                     "rejected": "review-producer",
-                    "reason": "higher_deterministic_score",
+                    "reason": "higher_final_score",
                     "margin": 0.4,
                 }
             ],
@@ -459,7 +459,7 @@ class SkillSelectionTest(unittest.TestCase):
                 {
                     "winner": "review-producer",
                     "rejected": "source-producer",
-                    "reason": "higher_deterministic_score",
+                    "reason": "higher_final_score",
                     "margin": 0.3,
                 }
             ],
@@ -589,7 +589,7 @@ class SkillSelectionTest(unittest.TestCase):
         self.assertEqual(result["missing_capabilities"], ["code.test"])
         self.assertEqual(
             [item["reason"] for item in result["selection"]["conflict_resolutions"]],
-            ["higher_deterministic_score", "insufficient_margin"],
+            ["higher_final_score", "insufficient_margin"],
         )
 
     def test_multiple_valid_producers_leave_required_context_incomplete(self):
@@ -816,7 +816,7 @@ class SkillSelectionTest(unittest.TestCase):
                 {
                     "winner": "producer",
                     "rejected": "target",
-                    "reason": "higher_deterministic_score",
+                    "reason": "higher_final_score",
                     "margin": 0.4,
                 }
             ],
@@ -877,8 +877,50 @@ class SkillSelectionTest(unittest.TestCase):
                 {
                     "winner": "higher",
                     "rejected": "lower",
-                    "reason": "higher_deterministic_score",
+                    "reason": "higher_final_score",
                     "margin": 0.25,
+                }
+            ],
+        )
+
+    def test_semantic_final_score_winner_has_truthful_conflict_evidence(self):
+        deterministic_winner = candidate(
+            "deterministic-winner", "design.ui_review", 0.525
+        )
+        deterministic_winner["deterministic_score"] = 0.70
+        deterministic_winner["semantic_score"] = 0.35
+        semantic_winner = candidate(
+            "semantic-winner", "design.ui_review", 0.70
+        )
+        semantic_winner["deterministic_score"] = 0.60
+        semantic_winner["semantic_score"] = 0.80
+        result = compose_skill_selection(
+            need("single", ("design.ui_review",)),
+            [deterministic_winner, semantic_winner],
+            {
+                "deterministic-winner": profile(
+                    "deterministic-winner",
+                    "design.ui_review",
+                    conflicts=("semantic-winner",),
+                ),
+                "semantic-winner": profile(
+                    "semantic-winner",
+                    "design.ui_review",
+                    conflicts=("deterministic-winner",),
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["selected_skill_names"], ["semantic-winner"])
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"],
+            [
+                {
+                    "winner": "semantic-winner",
+                    "rejected": "deterministic-winner",
+                    "reason": "higher_final_score",
+                    "margin": 0.175,
                 }
             ],
         )
