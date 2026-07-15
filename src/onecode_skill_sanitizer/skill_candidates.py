@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from collections.abc import Mapping
 from dataclasses import asdict, dataclass
 from datetime import date
 import json
@@ -7,10 +8,11 @@ import math
 from pathlib import Path
 from pathlib import PurePosixPath
 import re
+from types import MappingProxyType
 from typing import Any
 
 from .intent import NormalizedTask
-from .task_packs import extract_frontmatter_description
+from .validation import validate_contract
 
 
 HIGH_FREQUENCY_ENTRY_NAMES = (
@@ -24,16 +26,45 @@ HIGH_FREQUENCY_ENTRY_NAMES = (
     "security-supply-chain-review",
 )
 HIGH_FREQUENCY_SKILL_NAMES = HIGH_FREQUENCY_ENTRY_NAMES[1:]
+_COHORT_IDENTITY = MappingProxyType({
+    "codebase-explore-map": MappingProxyType({
+        "registry_path": "code/codebase-explore-map",
+        "capability_vector": ("code.explore",),
+        "subcategory": "code.explore",
+    }),
+    "code-review-risk": MappingProxyType({
+        "registry_path": "code/code-review-risk",
+        "capability_vector": ("code.review",),
+        "subcategory": "code.review",
+    }),
+    "code-test-regression": MappingProxyType({
+        "registry_path": "code/code-test-regression",
+        "capability_vector": ("code.test",),
+        "subcategory": "code.test",
+    }),
+    "execution-browser-check": MappingProxyType({
+        "registry_path": "execution/execution-browser-check",
+        "capability_vector": ("execution.browser_check",),
+        "subcategory": "execution.browser",
+    }),
+    "research-source-check": MappingProxyType({
+        "registry_path": "research/research-source-check",
+        "capability_vector": ("research.source",),
+        "subcategory": "research.source",
+    }),
+    "design-ui-review": MappingProxyType({
+        "registry_path": "design/design-ui-review",
+        "capability_vector": ("design.ui_review",),
+        "subcategory": "design.review",
+    }),
+    "security-supply-chain-review": MappingProxyType({
+        "registry_path": "security/security-supply-chain-review",
+        "capability_vector": ("security.supply_chain",),
+        "subcategory": "security.supply_chain",
+    }),
+})
 _HIGH_FREQUENCY_CAPABILITIES = frozenset(
-    {
-        "code.explore",
-        "code.review",
-        "code.test",
-        "execution.browser_check",
-        "research.source",
-        "design.ui_review",
-        "security.supply_chain",
-    }
+    identity["capability_vector"][0] for identity in _COHORT_IDENTITY.values()
 )
 EXAMPLE_CLASSES = {"positive", "near_miss", "negation", "explanation_only", "composition"}
 NEED_DECISIONS = {"none", "single", "composite", "clarify"}
@@ -52,10 +83,65 @@ _PROFILE_LIST_FIELDS = (
     "conflicts_with",
     "excludes",
 )
+_FRONTMATTER_NONSTRING_VALUES = {
+    "null", "~", "true", "false", "yes", "no", "on", "off",
+    ".nan", ".inf", "+.inf", "-.inf",
+}
+_FRONTMATTER_NUMBER_RE = re.compile(
+    r"[-+]?(?:(?:\d[\d_]*)(?:\.[\d_]*)?|\.\d[\d_]*)(?:[eE][-+]?\d[\d_]*)?|"
+    r"[-+]?0[xXoObB][0-9a-fA-F_]+"
+)
 
 
 class RoutingExampleError(ValueError):
     pass
+
+
+_PROFILE_LOADER_SENTINEL = object()
+
+
+class _VerifiedCohortProfiles(Mapping[str, Mapping[str, Any]]):
+    __slots__ = ("__profiles", "__provenance", "__sealed")
+
+    def __init__(self, profiles: Mapping[str, Mapping[str, Any]], provenance: object):
+        if provenance is not _PROFILE_LOADER_SENTINEL:
+            raise TypeError("verified cohort profiles can only be created by the cohort loader")
+        frozen = {
+            name: MappingProxyType(
+                {field: _freeze_profile_value(value) for field, value in profile.items()}
+            )
+            for name, profile in profiles.items()
+        }
+        object.__setattr__(self, "_VerifiedCohortProfiles__profiles", MappingProxyType(frozen))
+        object.__setattr__(self, "_VerifiedCohortProfiles__provenance", provenance)
+        object.__setattr__(self, "_VerifiedCohortProfiles__sealed", True)
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if getattr(self, "_VerifiedCohortProfiles__sealed", False):
+            raise TypeError("verified cohort profiles are immutable")
+        object.__setattr__(self, name, value)
+
+    def __getitem__(self, name: str) -> Mapping[str, Any]:
+        return self.__profiles[name]
+
+    def __iter__(self):
+        return iter(self.__profiles)
+
+    def __len__(self) -> int:
+        return len(self.__profiles)
+
+    def _is_loader_verified(self) -> bool:
+        return self.__provenance is _PROFILE_LOADER_SENTINEL
+
+
+def _freeze_profile_value(value: Any) -> Any:
+    if isinstance(value, Mapping):
+        return MappingProxyType(
+            {key: _freeze_profile_value(item) for key, item in value.items()}
+        )
+    if isinstance(value, (list, tuple)):
+        return tuple(_freeze_profile_value(item) for item in value)
+    return value
 
 
 @dataclass(frozen=True)
@@ -81,7 +167,15 @@ class SkillCandidate:
         return asdict(self)
 
 
-def load_cohort_profiles(registry_dir: Path) -> dict[str, dict[str, Any]]:
+@dataclass(frozen=True)
+class _ExampleMatch:
+    similarity: float
+    example_id: str
+    token_overlap: int
+    token_union: int
+
+
+def load_cohort_profiles(registry_dir: Path) -> Mapping[str, Mapping[str, Any]]:
     registry_root = _resolved_registry_root(registry_dir)
     index_path = _confined_source_path(
         registry_root,
@@ -93,8 +187,14 @@ def load_cohort_profiles(registry_dir: Path) -> dict[str, dict[str, Any]]:
     profiles: dict[str, dict[str, Any]] = {}
     for name in HIGH_FREQUENCY_SKILL_NAMES:
         item = indexed[name]
+        identity = _COHORT_IDENTITY[name]
         if item.get("status") != "trusted":
             raise RoutingExampleError(f"cohort {name} index status must be trusted")
+        if item.get("registry_path") != identity["registry_path"]:
+            raise RoutingExampleError(
+                f"cohort {name} index must use canonical registry_path "
+                f"{identity['registry_path']}"
+            )
         registry_path = _normalized_registry_path(item.get("registry_path"), name)
         skill_dir = _confined_source_path(
             registry_root,
@@ -113,7 +213,11 @@ def load_cohort_profiles(registry_dir: Path) -> dict[str, dict[str, Any]]:
             skill_dir / "SKILL.md",
             f"cohort {name} SKILL.md source path",
         )
-        manifest = _validated_profile_manifest(_read_json(manifest_path, f"cohort {name} manifest"), name)
+        manifest = _validated_profile_manifest(
+            _read_json(manifest_path, f"cohort {name} manifest"),
+            name,
+            manifest_path,
+        )
         skill_text = _read_text(skill_path, f"cohort {name} SKILL.md")
         frontmatter_name, description = _profile_frontmatter(skill_text, name)
         if frontmatter_name != name:
@@ -130,7 +234,7 @@ def load_cohort_profiles(registry_dir: Path) -> dict[str, dict[str, Any]]:
             "capabilities": contract["capability_vector"],
             **{field: contract.get(field, []) for field in _PROFILE_LIST_FIELDS},
         }
-    return profiles
+    return _VerifiedCohortProfiles(profiles, _PROFILE_LOADER_SENTINEL)
 
 
 def _resolved_registry_root(registry_dir: Path) -> Path:
@@ -215,7 +319,11 @@ def _normalized_registry_path(
     return path
 
 
-def _validated_profile_manifest(manifest: Any, name: str) -> dict[str, Any]:
+def _validated_profile_manifest(
+    manifest: Any,
+    name: str,
+    manifest_path: Path,
+) -> dict[str, Any]:
     if not isinstance(manifest, dict):
         raise RoutingExampleError(f"cohort {name} manifest must be an object")
     if manifest.get("name") != name:
@@ -231,9 +339,26 @@ def _validated_profile_manifest(manifest: Any, name: str) -> dict[str, Any]:
             raise RoutingExampleError(
                 f"cohort {name} manifest taxonomy.{field} must be a nonempty string"
             )
+    identity = _COHORT_IDENTITY[name]
+    if taxonomy["subcategory"] != identity["subcategory"]:
+        raise RoutingExampleError(
+            f"cohort {name} manifest must use fixed taxonomy subcategory "
+            f"{identity['subcategory']}"
+        )
     contract = manifest.get("contract")
     if not isinstance(contract, dict):
         raise RoutingExampleError(f"cohort {name} manifest contract must be an object")
+    contract_issues: list[dict[str, Any]] = []
+    validate_contract(
+        {"name": name, "contract": contract},
+        manifest_path,
+        contract_issues,
+    )
+    if contract_issues:
+        summary = str(contract_issues[0].get("summary", "invalid contract"))
+        raise RoutingExampleError(
+            f"cohort {name} manifest canonical contract validation failed: {summary}"
+        )
     schema_version = contract.get("schema_version")
     if (
         isinstance(schema_version, bool)
@@ -243,13 +368,10 @@ def _validated_profile_manifest(manifest: Any, name: str) -> dict[str, Any]:
         raise RoutingExampleError(
             f"cohort {name} manifest contract.schema_version must be the integer 2"
         )
-    capabilities = _strict_string_list(
-        contract.get("capability_vector"),
-        f"cohort {name} manifest contract.capability_vector",
-    )
-    if not capabilities:
+    expected_capabilities = identity["capability_vector"]
+    if tuple(contract.get("capability_vector", ())) != expected_capabilities:
         raise RoutingExampleError(
-            f"cohort {name} manifest contract.capability_vector must not be empty"
+            f"cohort {name} manifest must use fixed capability vector {expected_capabilities}"
         )
     for field in _PROFILE_LIST_FIELDS:
         if field in contract:
@@ -262,38 +384,96 @@ def _profile_frontmatter(skill_text: str, name: str) -> tuple[str, str]:
     if not frontmatter_match:
         raise RoutingExampleError(f"cohort {name} SKILL.md frontmatter is missing")
     frontmatter = frontmatter_match.group("body")
-    names = re.findall(r"^name:\s*(.*?)\s*$", frontmatter, re.MULTILINE)
-    if len(names) != 1 or not names[0]:
-        raise RoutingExampleError(f"cohort {name} frontmatter name must be a nonempty string")
-    description = extract_frontmatter_description(frontmatter)
-    if not description:
-        raise RoutingExampleError(f"cohort {name} frontmatter description must be a nonempty string")
-    return names[0], description
+    values: dict[str, str] = {}
+    for line_number, line in enumerate(frontmatter.splitlines(), start=1):
+        if not line.strip() or line.lstrip().startswith("#"):
+            continue
+        if line[0].isspace():
+            raise RoutingExampleError(
+                f"cohort {name} frontmatter line {line_number} must be a top-level string scalar"
+            )
+        field_match = re.fullmatch(r"([A-Za-z_][A-Za-z0-9_-]*):[ \t]*(.*)", line)
+        if not field_match:
+            raise RoutingExampleError(
+                f"cohort {name} frontmatter line {line_number} must be a top-level string scalar"
+            )
+        field, raw_value = field_match.groups()
+        if field in values:
+            raise RoutingExampleError(
+                f"cohort {name} frontmatter {field} must appear exactly once"
+            )
+        values[field] = _parse_frontmatter_string(raw_value, name, field)
+    for field in ("name", "description"):
+        if field not in values:
+            raise RoutingExampleError(
+                f"cohort {name} frontmatter {field} must appear exactly once"
+            )
+    return values["name"], values["description"]
+
+
+def _parse_frontmatter_string(raw_value: str, name: str, field: str) -> str:
+    value = raw_value.strip()
+    error_message = f"cohort {name} frontmatter {field} must be a nonempty string scalar"
+    if not value:
+        raise RoutingExampleError(error_message)
+    if value.startswith('"'):
+        try:
+            parsed = json.loads(value)
+        except json.JSONDecodeError as error:
+            raise RoutingExampleError(error_message) from error
+        if not isinstance(parsed, str) or not parsed.strip():
+            raise RoutingExampleError(error_message)
+        return parsed
+    if value.startswith("'"):
+        if len(value) < 2 or not value.endswith("'"):
+            raise RoutingExampleError(error_message)
+        inner = value[1:-1]
+        if "'" in inner.replace("''", ""):
+            raise RoutingExampleError(error_message)
+        parsed = inner.replace("''", "'")
+        if not parsed.strip():
+            raise RoutingExampleError(error_message)
+        return parsed
+    if value.endswith(("'", '"')):
+        raise RoutingExampleError(error_message)
+    if (
+        value.casefold() in _FRONTMATTER_NONSTRING_VALUES
+        or value.startswith(("[", "{", "|", ">"))
+        or _FRONTMATTER_NUMBER_RE.fullmatch(value)
+    ):
+        raise RoutingExampleError(error_message)
+    return value
 
 
 def _validate_retrieval_profiles(profiles: Any) -> None:
-    if not isinstance(profiles, dict) or set(profiles) != set(HIGH_FREQUENCY_SKILL_NAMES):
+    if (
+        type(profiles) is not _VerifiedCohortProfiles
+        or not profiles._is_loader_verified()
+    ):
+        raise RoutingExampleError("profiles must come from the verified cohort loader")
+    if set(profiles) != set(HIGH_FREQUENCY_SKILL_NAMES):
         raise RoutingExampleError("profiles must be an exact mapping of the fixed cohort")
     for name in HIGH_FREQUENCY_SKILL_NAMES:
         profile = profiles[name]
         context = f"profile {name}"
-        if not isinstance(profile, dict):
+        if not isinstance(profile, Mapping):
             raise RoutingExampleError(f"{context} must be an object")
         if profile.get("name") != name:
             raise RoutingExampleError(f"{context} name must match its fixed cohort key")
         if profile.get("status") != "trusted":
             raise RoutingExampleError(f"{context} status must be trusted")
-        _normalized_registry_path(profile.get("registry_path"), name, context=context)
+        identity = _COHORT_IDENTITY[name]
+        if profile.get("registry_path") != identity["registry_path"]:
+            raise RoutingExampleError(f"{context} registry_path must match fixed cohort identity")
+        if profile.get("subcategory") != identity["subcategory"]:
+            raise RoutingExampleError(f"{context} subcategory must match fixed cohort identity")
         for field in ("description", "task_intent"):
             value = profile.get(field)
             if not isinstance(value, str) or not value.strip():
                 raise RoutingExampleError(f"{context} {field} must be a nonempty string")
-        capabilities = _strict_string_list(profile.get("capabilities"), f"{context} capabilities")
-        if not capabilities:
-            raise RoutingExampleError(f"{context} capabilities must not be empty")
-        unknown = set(capabilities) - _HIGH_FREQUENCY_CAPABILITIES
-        if unknown:
-            raise RoutingExampleError(f"{context} capabilities contain an unknown capability")
+        capabilities = profile.get("capabilities")
+        if capabilities != _COHORT_IDENTITY[name]["capability_vector"]:
+            raise RoutingExampleError(f"{context} capabilities must match fixed cohort identity")
 
 
 def _validate_retrieval_need(need: Any) -> None:
@@ -316,7 +496,7 @@ def _validate_retrieval_need(need: Any) -> None:
 def retrieve_skill_candidates(
     normalized: NormalizedTask,
     need: dict[str, Any],
-    profiles: dict[str, dict[str, Any]],
+    profiles: Mapping[str, Mapping[str, Any]],
     examples: list[dict[str, Any]],
     *,
     top_k: int = 3,
@@ -340,8 +520,10 @@ def retrieve_skill_candidates(
         description_similarity = _jaccard(query_tokens, description_tokens)
         positive_examples = _matching_examples(query_tokens, examples, name, "required_skills")
         negative_examples = _matching_examples(query_tokens, examples, name, "forbidden_skills")
-        positive_similarity = max((score for score, _ in positive_examples), default=0.0)
-        negative_similarity = max((score for score, _ in negative_examples), default=0.0)
+        positive_match = positive_examples[0] if positive_examples else None
+        negative_match = negative_examples[0] if negative_examples else None
+        positive_similarity = positive_match.similarity if positive_match else 0.0
+        negative_similarity = negative_match.similarity if negative_match else 0.0
         evidence = []
         if matched_capabilities:
             evidence.append({"type": "capability", "value": matched_capabilities, "weight": 0.55})
@@ -353,8 +535,10 @@ def retrieve_skill_candidates(
             evidence.append(
                 {
                     "type": "reviewed_example",
-                    "value": positive_examples[0][1],
+                    "value": positive_match.example_id,
                     "similarity": round(positive_similarity, 6),
+                    "token_overlap": positive_match.token_overlap,
+                    "token_union": positive_match.token_union,
                     "weight": 0.30,
                     "contribution": round(0.30 * positive_similarity, 6),
                 }
@@ -364,8 +548,10 @@ def retrieve_skill_candidates(
             penalties.append(
                 {
                     "type": "near_miss",
-                    "value": negative_examples[0][1],
+                    "value": negative_match.example_id,
                     "similarity": round(negative_similarity, 6),
+                    "token_overlap": negative_match.token_overlap,
+                    "token_union": negative_match.token_union,
                     "weight": -0.65,
                     "contribution": round(-0.65 * negative_similarity, 6),
                 }
@@ -394,7 +580,7 @@ def retrieve_skill_candidates(
                 final_score=round(score, 6),
                 matched_intents=tuple(matched_capabilities),
                 matched_capabilities=tuple(matched_capabilities),
-                matched_examples=tuple(item[1] for item in positive_examples[:3]),
+                matched_examples=tuple(item.example_id for item in positive_examples[:3]),
                 positive_evidence=tuple(evidence),
                 penalties=tuple(penalties),
                 exclusions=tuple(exclusions),
@@ -513,6 +699,22 @@ def _matching_examples(
     examples: list[dict[str, Any]],
     skill: str,
     label: str,
-) -> list[tuple[float, str]]:
-    matches = [(_jaccard(query_tokens, _tokens(item["query"])), item["id"]) for item in examples if skill in item[label]]
-    return sorted((item for item in matches if item[0] > 0), key=lambda item: (-item[0], item[1]))
+) -> list[_ExampleMatch]:
+    matches: list[_ExampleMatch] = []
+    for item in examples:
+        if skill not in item[label]:
+            continue
+        example_tokens = _tokens(item["query"])
+        token_overlap = len(query_tokens & example_tokens)
+        token_union = len(query_tokens | example_tokens)
+        similarity = token_overlap / token_union if token_union else 0.0
+        if similarity > 0:
+            matches.append(
+                _ExampleMatch(
+                    similarity=similarity,
+                    example_id=item["id"],
+                    token_overlap=token_overlap,
+                    token_union=token_union,
+                )
+            )
+    return sorted(matches, key=lambda item: (-item.similarity, item.example_id))

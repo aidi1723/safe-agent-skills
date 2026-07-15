@@ -328,6 +328,109 @@ class SkillCandidateTest(unittest.TestCase):
                     r"code-review-risk.*frontmatter.*description",
                 )
 
+    def test_profile_loader_binds_each_skill_to_fixed_independent_identity(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            catalog, index = self._copy_cohort_catalog(temp_dir)
+            alternate = catalog / "alternate/code-review-risk"
+            alternate.parent.mkdir()
+            shutil.copytree(catalog / "code/code-test-regression", alternate)
+            manifest_path = alternate / "skill.json"
+            manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+            manifest["name"] = "code-review-risk"
+            self._write_json(manifest_path, manifest)
+            self._replace_frontmatter_field(alternate / "SKILL.md", "name", "code-review-risk")
+            self._cohort_entry(index, "code-review-risk")["registry_path"] = (
+                "alternate/code-review-risk"
+            )
+            self._write_json(catalog / "index.json", index)
+
+            self._assert_routing_error(
+                lambda: load_cohort_profiles(catalog),
+                r"code-review-risk.*canonical registry_path",
+            )
+
+        fixed_cases = (
+            ("capability", ("contract", "capability_vector"), ["code.test"]),
+            ("subcategory", ("taxonomy", "subcategory"), "code.test"),
+        )
+        for label, path, value in fixed_cases:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temp_dir:
+                catalog, _ = self._copy_cohort_catalog(temp_dir)
+                manifest_path = catalog / "code/code-review-risk/skill.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                manifest[path[0]][path[1]] = value
+                self._write_json(manifest_path, manifest)
+
+                self._assert_routing_error(
+                    lambda: load_cohort_profiles(catalog),
+                    rf"code-review-risk.*fixed.*{label}",
+                )
+
+    def test_profile_loader_reuses_canonical_contract_v2_validation(self):
+        cases = (
+            ("missing stage", "stage_hint", DELETE),
+            ("bad capability", "capability_vector", ["bad"]),
+            ("invalid artifact", "requires_context", ["x"]),
+            ("self conflict", "conflicts_with", ["code-review-risk"]),
+            ("extra field", "unsupported_field", True),
+        )
+        for label, field, value in cases:
+            with self.subTest(label=label), tempfile.TemporaryDirectory() as temp_dir:
+                catalog, _ = self._copy_cohort_catalog(temp_dir)
+                manifest_path = catalog / "code/code-review-risk/skill.json"
+                manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+                if value is DELETE:
+                    manifest["contract"].pop(field)
+                else:
+                    manifest["contract"][field] = value
+                self._write_json(manifest_path, manifest)
+
+                self._assert_routing_error(
+                    lambda: load_cohort_profiles(catalog),
+                    r"code-review-risk.*canonical contract",
+                )
+
+    def test_profile_loader_requires_strict_frontmatter_string_scalars(self):
+        invalid_values = (
+            "null",
+            "~",
+            "true",
+            "123",
+            "0X10",
+            "[]",
+            "{}",
+            "|",
+            ">",
+            '""',
+            "''",
+            '"unterminated',
+        )
+        for value in invalid_values:
+            with self.subTest(value=value), tempfile.TemporaryDirectory() as temp_dir:
+                catalog, _ = self._copy_cohort_catalog(temp_dir)
+                self._replace_frontmatter_field(
+                    catalog / "code/code-review-risk/SKILL.md",
+                    "description",
+                    value,
+                )
+                self._assert_routing_error(
+                    lambda: load_cohort_profiles(catalog),
+                    r"code-review-risk.*frontmatter.*description.*string",
+                )
+
+        for field in ("name", "description"):
+            with self.subTest(duplicate=field), tempfile.TemporaryDirectory() as temp_dir:
+                catalog, _ = self._copy_cohort_catalog(temp_dir)
+                skill_path = catalog / "code/code-review-risk/SKILL.md"
+                lines = skill_path.read_text(encoding="utf-8").splitlines()
+                insert_at = lines.index("---", 1)
+                lines.insert(insert_at, f"{field}: duplicate")
+                skill_path.write_text("\n".join(lines) + "\n", encoding="utf-8")
+                self._assert_routing_error(
+                    lambda: load_cohort_profiles(catalog),
+                    rf"code-review-risk.*frontmatter.*{field}.*exactly once",
+                )
+
     def test_profile_loader_rejects_malformed_index_and_manifest_contracts(self):
         index_cases = (
             ("index object", []),
@@ -403,7 +506,7 @@ class SkillCandidateTest(unittest.TestCase):
                 manifest["contract"].pop(field, None)
             self._write_json(manifest_path, manifest)
             profile = load_cohort_profiles(catalog)["code-review-risk"]
-            self.assertTrue(all(profile[field] == [] for field in optional_fields))
+            self.assertTrue(all(profile[field] == () for field in optional_fields))
 
     def test_profile_loader_wraps_missing_and_invalid_source_files(self):
         cases = ("index invalid JSON", "index missing", "manifest invalid JSON", "manifest missing", "skill missing")
@@ -472,48 +575,36 @@ class SkillCandidateTest(unittest.TestCase):
             r"normalized\.current",
         )
 
-        mapping_cases = ("not object", "missing", "extra")
-        for label in mapping_cases:
-            with self.subTest(label=label):
-                changed = json.loads(json.dumps(profiles))
-                if label == "not object":
-                    changed = []
-                elif label == "missing":
-                    changed.pop("code-review-risk")
-                else:
-                    changed["safe-agent-router"] = json.loads(
-                        json.dumps(changed["code-review-risk"])
-                    )
-                self._assert_routing_error(
-                    lambda: retrieve_skill_candidates(task, need, changed, examples),
-                    r"profiles.*fixed cohort",
-                )
-
-        profile_cases = (
-            ("profile object", (), []),
-            ("embedded identity", ("name",), "safe-agent-router"),
-            ("status", ("status",), "review_required"),
-            ("path escape", ("registry_path",), "../code-review-risk"),
-            ("path identity", ("registry_path",), "code/code-test-regression"),
-            ("description", ("description",), " "),
-            ("task intent", ("task_intent",), 1),
-            ("capability type", ("capabilities",), "code.review"),
-            ("capability empty", ("capabilities",), []),
-            ("capability blank", ("capabilities",), [" "]),
-            ("capability duplicate", ("capabilities",), ["code.review", "code.review"]),
-            ("capability unknown", ("capabilities",), ["safe-agent-router"]),
+        forged = {name: dict(profile) for name, profile in profiles.items()}
+        forged["code-review-risk"]["description"] = "UNREVIEWED INSTRUCTIONS"
+        self._assert_routing_error(
+            lambda: retrieve_skill_candidates(task, need, forged, examples),
+            r"profiles.*verified cohort loader",
         )
-        for label, path, value in profile_cases:
-            with self.subTest(label=label):
-                changed = json.loads(json.dumps(profiles))
-                if path:
-                    changed["code-review-risk"][path[0]] = value
-                else:
-                    changed["code-review-risk"] = value
-                self._assert_routing_error(
-                    lambda: retrieve_skill_candidates(task, need, changed, examples),
-                    r"profile code-review-risk",
-                )
+
+    def test_loaded_profiles_are_deeply_immutable_and_provenance_sealed(self):
+        task, need, profiles, examples = self._valid_retrieval_inputs()
+        self.assertEqual(len(profiles), 7)
+        self.assertEqual(tuple(profiles), HIGH_FREQUENCY_SKILL_NAMES)
+        self.assertEqual(
+            tuple(name for name, _ in profiles.items()),
+            HIGH_FREQUENCY_SKILL_NAMES,
+        )
+
+        with self.assertRaises(TypeError):
+            profiles["safe-agent-router"] = {}
+        with self.assertRaises(TypeError):
+            profiles["code-review-risk"]["description"] = "UNREVIEWED INSTRUCTIONS"
+        with self.assertRaises(TypeError):
+            profiles["code-review-risk"]["capabilities"][0] = "code.test"
+        with self.assertRaises(TypeError):
+            profiles._provenance = object()
+
+        plain_copy = dict(profiles)
+        self._assert_routing_error(
+            lambda: retrieve_skill_candidates(task, need, plain_copy, examples),
+            r"profiles.*verified cohort loader",
+        )
 
     def test_retrieval_rejects_malformed_need_contract_but_allows_constraint_overlap(self):
         task, need, profiles, examples = self._valid_retrieval_inputs()
@@ -591,16 +682,44 @@ class SkillCandidateTest(unittest.TestCase):
         )
         penalty = next(item for item in review["penalties"] if item["type"] == "near_miss")
         self.assertEqual(positive["value"], review["matched_examples"][0])
-        self.assertEqual(
-            positive["contribution"],
-            round(positive["weight"] * positive["similarity"], 6),
+        for evidence in (positive, penalty):
+            self.assertIn("token_overlap", evidence)
+            self.assertIn("token_union", evidence)
+            exact_similarity = evidence["token_overlap"] / evidence["token_union"]
+            self.assertEqual(evidence["similarity"], round(exact_similarity, 6))
+            self.assertEqual(
+                evidence["contribution"],
+                round(evidence["weight"] * exact_similarity, 6),
+            )
+
+    def test_example_evidence_counts_preserve_exact_rounding_inputs(self):
+        task = normalize_task("review zz0 zz1 zz2 zz3 zz4")
+        need = decide_skill_need(task)
+        candidates = retrieve_skill_candidates(
+            task,
+            need,
+            load_cohort_profiles(ROOT / "catalog"),
+            load_routing_examples(EXAMPLES),
         )
-        self.assertEqual(
-            penalty["contribution"],
-            round(penalty["weight"] * penalty["similarity"], 6),
+        review = next(item for item in candidates if item["skill"] == "code-review-risk")
+        evidence_items = (
+            next(
+                item
+                for item in review["positive_evidence"]
+                if item["type"] == "reviewed_example"
+            ),
+            next(item for item in review["penalties"] if item["type"] == "near_miss"),
         )
-        self.assertGreater(positive["similarity"], 0)
-        self.assertGreater(penalty["similarity"], 0)
+
+        for evidence in evidence_items:
+            self.assertIn("token_overlap", evidence)
+            self.assertIn("token_union", evidence)
+            exact_similarity = evidence["token_overlap"] / evidence["token_union"]
+            self.assertEqual(evidence["similarity"], round(exact_similarity, 6))
+            self.assertEqual(
+                evidence["contribution"],
+                round(evidence["weight"] * exact_similarity, 6),
+            )
 
     def test_excluded_zero_score_candidates_sort_after_eligible_ties(self):
         task = normalize_task("别用code-review-risk")
@@ -662,6 +781,12 @@ class SkillCandidateTest(unittest.TestCase):
     @staticmethod
     def _write_json(path, payload):
         path.write_text(json.dumps(payload), encoding="utf-8")
+
+    @staticmethod
+    def _replace_frontmatter_field(path, field, value):
+        lines = path.read_text(encoding="utf-8").splitlines()
+        lines = [f"{field}: {value}" if line.startswith(f"{field}:") else line for line in lines]
+        path.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     def _load_temporary_payload(self, payload):
         with tempfile.TemporaryDirectory() as temp_dir:
