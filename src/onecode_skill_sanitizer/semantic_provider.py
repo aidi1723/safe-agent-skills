@@ -13,15 +13,15 @@ from .skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 
 _MODES = frozenset({"none", "shadow", "influence"})
 _NEED_DECISIONS = frozenset({"none", "single", "composite", "clarify"})
-_KNOWN_CAPABILITIES = frozenset({
-    "code.explore",
-    "code.review",
-    "code.test",
-    "execution.browser_check",
-    "research.source",
-    "design.ui_review",
-    "security.supply_chain",
-})
+_CANONICAL_CAPABILITIES = {
+    "codebase-explore-map": "code.explore",
+    "code-review-risk": "code.review",
+    "code-test-regression": "code.test",
+    "execution-browser-check": "execution.browser_check",
+    "research-source-check": "research.source",
+    "design-ui-review": "design.ui_review",
+    "security-supply-chain-review": "security.supply_chain",
+}
 _CONSTRAINT_KEYS = frozenset({
     "decision",
     "specialized_need",
@@ -49,12 +49,31 @@ _CANDIDATE_REQUIRED_FIELDS = frozenset({
     "deterministic_score",
     "matched_capabilities",
 })
+_CANDIDATE_FIELDS = frozenset({
+    "skill",
+    "registry_path",
+    "status",
+    "description",
+    "deterministic_score",
+    "semantic_score",
+    "final_score",
+    "matched_intents",
+    "matched_capabilities",
+    "matched_examples",
+    "positive_evidence",
+    "penalties",
+    "exclusions",
+    "excluded",
+    "selected",
+    "reason_codes",
+})
 _MAX_INTENT_CHARS = 16 * 1024
 _MAX_DESCRIPTION_CHARS = 4 * 1024
 _MAX_IDENTIFIER_CHARS = 128
 _MAX_CONSTRAINT_ITEMS = 64
 _MAX_CONSTRAINT_STRING_CHARS = 4 * 1024
 _MAX_REQUEST_BYTES = 64 * 1024
+_MAX_CANDIDATE_BYTES = 64 * 1024
 
 
 class SemanticProvider(Protocol):
@@ -226,6 +245,8 @@ def _deterministic_baseline(value: Any) -> list[dict[str, Any]]:
         keys = tuple(item.keys())
         if any(type(key) is not str for key in keys):
             raise ValueError(f"{context} contains an invalid field")
+        if not set(keys).issubset(_CANDIDATE_FIELDS):
+            raise ValueError(f"{context} contains an unknown field")
         if not _CANDIDATE_REQUIRED_FIELDS.issubset(keys):
             raise ValueError(f"{context} is missing required fields")
         name = item["skill"]
@@ -240,35 +261,47 @@ def _deterministic_baseline(value: Any) -> list[dict[str, Any]]:
         score = item["deterministic_score"]
         if type(score) not in (int, float) or not math.isfinite(score) or not 0 <= score <= 1:
             raise ValueError(f"{context}.deterministic_score must be finite from 0 to 1")
+        if item["excluded"] and score != 0:
+            raise ValueError(f"{context}.deterministic_score must be zero when excluded")
         description = item["description"]
         if type(description) is not str or len(description) > _MAX_DESCRIPTION_CHARS:
             raise ValueError(f"{context}.description must be a bounded string")
-        _validate_matched_capabilities(item["matched_capabilities"], context)
+        _validate_matched_capabilities(item["matched_capabilities"], name, context)
         try:
             cloned = copy.deepcopy(item)
         except Exception as exc:
             raise ValueError(f"{context} could not be cloned") from exc
         cloned["semantic_score"] = None
         cloned["final_score"] = score
+        _validate_candidate_envelope(cloned, context)
         baseline.append(cloned)
         names.add(name)
     return baseline
 
 
-def _validate_matched_capabilities(value: Any, context: str) -> None:
-    if type(value) not in (list, tuple) or len(value) > len(_KNOWN_CAPABILITIES):
+def _validate_matched_capabilities(value: Any, name: str, context: str) -> None:
+    if type(value) not in (list, tuple) or len(value) > 1:
         raise ValueError(f"{context}.matched_capabilities must be a bounded list")
-    seen: set[str] = set()
-    for item in value:
-        if (
-            type(item) is not str
-            or not item.strip()
-            or len(item) > _MAX_IDENTIFIER_CHARS
-            or item not in _KNOWN_CAPABILITIES
-            or item in seen
-        ):
-            raise ValueError(f"{context}.matched_capabilities contains an invalid value")
-        seen.add(item)
+    if value and (
+        type(value[0]) is not str
+        or value[0] != _CANONICAL_CAPABILITIES[name]
+    ):
+        raise ValueError(f"{context}.matched_capabilities contains an invalid value")
+
+
+def _validate_candidate_envelope(value: dict[str, Any], context: str) -> None:
+    try:
+        encoded = json.dumps(
+            value,
+            allow_nan=False,
+            ensure_ascii=False,
+            separators=(",", ":"),
+            sort_keys=True,
+        ).encode("utf-8")
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"{context} must be strict JSON") from exc
+    if len(encoded) > _MAX_CANDIDATE_BYTES:
+        raise ValueError(f"{context} exceeds 65536 bytes")
 
 
 def _validate_request_envelope(request: dict[str, Any]) -> None:

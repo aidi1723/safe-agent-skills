@@ -28,6 +28,15 @@ RECORD_KEYS = {
     "response_status",
     "validation_reason_codes",
 }
+CANONICAL_CAPABILITIES = {
+    "codebase-explore-map": "code.explore",
+    "code-review-risk": "code.review",
+    "code-test-regression": "code.test",
+    "execution-browser-check": "execution.browser_check",
+    "research-source-check": "research.source",
+    "design-ui-review": "design.ui_review",
+    "security-supply-chain-review": "security.supply_chain",
+}
 
 
 class FakeProvider:
@@ -55,6 +64,10 @@ class ExplodingAccessProvider:
 
 
 class FloatSubclass(float):
+    pass
+
+
+class Extra:
     pass
 
 
@@ -197,7 +210,11 @@ class SemanticProviderTest(unittest.TestCase):
                 "shadow",
                 [
                     candidates(contaminated=True)[0],
-                    {**candidates(contaminated=True)[1], "excluded": True},
+                    {
+                        **candidates(contaminated=True)[1],
+                        "excluded": True,
+                        "deterministic_score": 0.0,
+                    },
                 ],
             ),
         )
@@ -259,6 +276,75 @@ class SemanticProviderTest(unittest.TestCase):
             with self.subTest(label=label):
                 with self.assertRaises(ValueError) as context:
                     rerank_candidates("review the UI", {}, value, None, mode="none")
+                self.assertLessEqual(len(str(context.exception)), 128)
+
+    def test_candidate_capabilities_are_bound_to_each_fixed_skill_identity(self):
+        for skill, capability in CANONICAL_CAPABILITIES.items():
+            with self.subTest(skill=skill, valid="empty"):
+                routed, _ = rerank_candidates(
+                    "review", {}, [candidate(skill, 0.5, "")], None, mode="none"
+                )
+                self.assertEqual(routed[0]["matched_capabilities"], [])
+            with self.subTest(skill=skill, valid="canonical"):
+                routed, _ = rerank_candidates(
+                    "review", {}, [candidate(skill, 0.5, capability)], None, mode="none"
+                )
+                self.assertEqual(routed[0]["matched_capabilities"], [capability])
+
+        invalid = (
+            ["security.supply_chain"],
+            ["design.ui_review", "security.supply_chain"],
+        )
+        for capabilities in invalid:
+            with self.subTest(capabilities=capabilities):
+                item = candidate("design-ui-review", 0.5, "")
+                item["matched_capabilities"] = capabilities
+                with self.assertRaisesRegex(
+                    ValueError,
+                    r"^candidate\[0\]\.matched_capabilities",
+                ):
+                    rerank_candidates("review", {}, [item], None, mode="none")
+
+    def test_excluded_candidate_requires_zero_deterministic_score(self):
+        item = candidate(
+            "design-ui-review", 1.0, "design.ui_review", excluded=True
+        )
+
+        with self.assertRaisesRegex(
+            ValueError,
+            r"^candidate\[0\]\.deterministic_score",
+        ):
+            rerank_candidates("review", {}, [item], None, mode="none")
+
+        for zero in (0, 0.0):
+            with self.subTest(zero=zero):
+                valid = candidate(
+                    "design-ui-review", zero, "", excluded=True
+                )
+                routed, _ = rerank_candidates(
+                    "review", {}, [valid], None, mode="none"
+                )
+                self.assertEqual(routed[0]["final_score"], zero)
+
+    def test_complete_candidate_output_is_allowlisted_bounded_strict_json(self):
+        unknown = candidate("design-ui-review", 0.5, "design.ui_review")
+        unknown["unexpected"] = Extra()
+        custom = candidate("design-ui-review", 0.5, "design.ui_review")
+        custom["positive_evidence"] = [Extra()]
+        nonfinite = candidate("design-ui-review", 0.5, "design.ui_review")
+        nonfinite["positive_evidence"] = [{"weight": math.nan}]
+        oversized = candidate("design-ui-review", 0.5, "design.ui_review")
+        oversized["reason_codes"] = ["x" * (64 * 1024)]
+
+        for label, value in (
+            ("unknown custom field", unknown),
+            ("custom allowed field", custom),
+            ("nonfinite allowed field", nonfinite),
+            ("oversized allowed field", oversized),
+        ):
+            with self.subTest(label=label):
+                with self.assertRaises(ValueError) as context:
+                    rerank_candidates("review", {}, [value], None, mode="none")
                 self.assertLessEqual(len(str(context.exception)), 128)
 
     def test_excluded_task4_candidate_never_enters_or_expands_provider_scope(self):
