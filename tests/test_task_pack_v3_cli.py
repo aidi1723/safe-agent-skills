@@ -167,6 +167,13 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             "code-review-risk",
         )
 
+    def test_builder_preserves_compound_gerund_after_complement(self):
+        self.assert_explicit_order_edge(
+            "review this patch after writing and running a regression test",
+            "code-test-regression",
+            "code-review-risk",
+        )
+
     def test_builder_preserves_textual_order_for_before_connector(self):
         self.assert_explicit_order_edge(
             "review this patch before adding a regression test",
@@ -325,6 +332,12 @@ class TaskPackV3BuilderTest(unittest.TestCase):
         self.assert_grouped_review_order(
             "review this patch after adding a regression test but before verifying "
             "these claims against primary sources"
+        )
+
+    def test_but_before_follows_a_compound_gerund_after_complement(self):
+        self.assert_grouped_review_order(
+            "review this patch after writing and running a regression test but before "
+            "verifying these claims against primary sources"
         )
 
     def test_and_before_reuses_the_grouped_main_action(self):

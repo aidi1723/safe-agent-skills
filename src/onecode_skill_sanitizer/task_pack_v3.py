@@ -30,7 +30,11 @@ _BINARY_ORDER_CONNECTOR_RE = re.compile(
 )
 _SEQUENCE_ORDER_CONNECTOR_RE = re.compile(r"\bthen\b|然后|再|最后", re.IGNORECASE)
 _GROUP_CONTINUATION_RE = re.compile(r"(?:\b(?:but|and)\b|但是|但|并且|且)\s*[,，]?\s*$", re.IGNORECASE)
-_LOCAL_ORDER_BOUNDARY_RE = re.compile(r"[,，]|\b(?:but|and)\b|但是|但|并且|且", re.IGNORECASE)
+_LOCAL_ORDER_BOUNDARY_RE = re.compile(
+    r"(?P<comma>[,，])|(?P<but>\bbut\b)|(?P<and>\band\b)|"
+    r"(?P<coordination_zh>但是|但|并且|且)",
+    re.IGNORECASE,
+)
 _XIAN_RE = re.compile(r"先(?!不)")
 
 
@@ -221,15 +225,7 @@ def _binary_order_relations(
     for index, connector in enumerate(connectors):
         separator = re.match(r"\s*[,，]?\s*", clause[connector.end() :])
         complement_start = connector.end() + (separator.end() if separator else 0)
-        complement_end = _next_order_boundary_start(
-            clause,
-            complement_start,
-            (
-                _BINARY_ORDER_CONNECTOR_RE,
-                _SEQUENCE_ORDER_CONNECTOR_RE,
-                _LOCAL_ORDER_BOUNDARY_RE,
-            ),
-        )
+        complement_end = _next_binary_complement_boundary_start(clause, complement_start)
         complement = _first_skill(
             clause[complement_start:complement_end], required, admitted
         )
@@ -296,6 +292,36 @@ def _next_order_boundary_start(
 ) -> int:
     matches = [match.start() for pattern in patterns if (match := pattern.search(text, start))]
     return min(matches, default=len(text))
+
+
+def _next_binary_complement_boundary_start(text: str, start: int) -> int:
+    connector_boundary = _next_order_boundary_start(
+        text,
+        start,
+        (_BINARY_ORDER_CONNECTOR_RE, _SEQUENCE_ORDER_CONNECTOR_RE),
+    )
+    local_boundary = next(
+        (
+            match.start()
+            for match in _LOCAL_ORDER_BOUNDARY_RE.finditer(text, start)
+            if not _is_internal_gerund_conjunction(text, match)
+        ),
+        len(text),
+    )
+    return min(connector_boundary, local_boundary)
+
+
+def _is_internal_gerund_conjunction(text: str, match: re.Match[str]) -> bool:
+    if match.lastgroup != "and":
+        return False
+    left = re.search(r"\b([a-z]+)\s*$", text[: match.start()], re.IGNORECASE)
+    right = re.match(r"\s*([a-z]+)\b", text[match.end() :], re.IGNORECASE)
+    return bool(
+        left
+        and right
+        and left.group(1).lower().endswith("ing")
+        and right.group(1).lower().endswith("ing")
+    )
 
 
 def _first_skill(text: str, required: set[str], admitted: set[str]) -> str | None:
