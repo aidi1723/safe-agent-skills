@@ -389,6 +389,21 @@ class NeedGateTest(unittest.TestCase):
         )
         self.assertIn("design-ui-review", negated["excluded_skills"])
 
+    def test_browser_flow_actions_honor_negation(self):
+        for task in (
+            "Do not run the existing UI flow in a browser",
+            "Don't test the UI flow in a browser",
+            "Never exercise the UI flow in a browser",
+        ):
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertNotIn(
+                    "execution.browser_check", decision["required_capabilities"]
+                )
+                self.assertIn(
+                    "execution-browser-check", decision["excluded_skills"]
+                )
+
 
 if __name__ == "__main__":
     unittest.main()

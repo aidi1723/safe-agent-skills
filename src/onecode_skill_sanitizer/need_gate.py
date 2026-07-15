@@ -84,9 +84,12 @@ CAPABILITY_NEGATION_PATTERNS = {
         re.I,
     ),
     "execution.browser_check": re.compile(
-        rf"{NEGATION_PREFIX}\s*(?:(?:open|run|use|check|verify|打开|使用|运行|检查|验证)\s*)?"
+        rf"{NEGATION_PREFIX}\s*(?:"
+        r"(?:run|check|verify|test|exercise)\s+(?:the\s+)?(?:existing\s+)?"
+        r"UI flow\s+(?:in\s+)?(?:a\s+)?(?:real\s+)?browser|"
+        r"(?:(?:open|run|use|check|verify|打开|使用|运行|检查|验证)\s*)?"
         r"(?:(?:a\s+|the\s+)?(?:real\s+)?(?:browser|playwright)(?![A-Za-z0-9_])|"
-        r"浏览器)",
+        r"浏览器))",
         re.I,
     ),
     "research.source": re.compile(
