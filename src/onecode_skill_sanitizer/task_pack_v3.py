@@ -35,6 +35,10 @@ _LOCAL_ORDER_BOUNDARY_RE = re.compile(
     r"(?P<coordination_zh>但是|但|并且|且)",
     re.IGNORECASE,
 )
+_COMPOUND_GERUND_RE = re.compile(
+    r"\b[a-z]+ing\s+and\s+(?:(?:then|[a-z]+ly)\s+)?[a-z]+ing\b",
+    re.IGNORECASE,
+)
 _XIAN_RE = re.compile(r"先(?!不)")
 
 
@@ -263,6 +267,8 @@ def _sequence_order_relations(
 ) -> list[tuple[str, str]]:
     relations: list[tuple[str, str]] = []
     for connector in _SEQUENCE_ORDER_CONNECTOR_RE.finditer(clause):
+        if _is_internal_compound_gerund_marker(clause, connector):
+            continue
         left = _last_skill(clause[: connector.start()], required, admitted)
         right = _first_skill(clause[connector.end() :], required, admitted)
         if left is not None and right is not None:
@@ -295,10 +301,16 @@ def _next_order_boundary_start(
 
 
 def _next_binary_complement_boundary_start(text: str, start: int) -> int:
-    connector_boundary = _next_order_boundary_start(
-        text,
-        start,
-        (_BINARY_ORDER_CONNECTOR_RE, _SEQUENCE_ORDER_CONNECTOR_RE),
+    binary_boundary = _next_order_boundary_start(
+        text, start, (_BINARY_ORDER_CONNECTOR_RE,)
+    )
+    sequence_boundary = next(
+        (
+            match.start()
+            for match in _SEQUENCE_ORDER_CONNECTOR_RE.finditer(text, start)
+            if not _is_internal_compound_gerund_marker(text, match)
+        ),
+        len(text),
     )
     local_boundary = next(
         (
@@ -308,19 +320,17 @@ def _next_binary_complement_boundary_start(text: str, start: int) -> int:
         ),
         len(text),
     )
-    return min(connector_boundary, local_boundary)
+    return min(binary_boundary, sequence_boundary, local_boundary)
 
 
 def _is_internal_gerund_conjunction(text: str, match: re.Match[str]) -> bool:
-    if match.lastgroup != "and":
-        return False
-    left = re.search(r"\b([a-z]+)\s*$", text[: match.start()], re.IGNORECASE)
-    right = re.match(r"\s*([a-z]+)\b", text[match.end() :], re.IGNORECASE)
-    return bool(
-        left
-        and right
-        and left.group(1).lower().endswith("ing")
-        and right.group(1).lower().endswith("ing")
+    return match.lastgroup == "and" and _is_internal_compound_gerund_marker(text, match)
+
+
+def _is_internal_compound_gerund_marker(text: str, match: re.Match[str]) -> bool:
+    return any(
+        compound.start() < match.start() and match.end() < compound.end()
+        for compound in _COMPOUND_GERUND_RE.finditer(text)
     )
 
 

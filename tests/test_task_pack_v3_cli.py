@@ -174,6 +174,20 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             "code-review-risk",
         )
 
+    def test_builder_preserves_adverb_modified_compound_gerund_after_complement(self):
+        self.assert_explicit_order_edge(
+            "review this patch after writing and successfully running a regression test",
+            "code-test-regression",
+            "code-review-risk",
+        )
+
+    def test_builder_treats_then_as_internal_to_compound_gerund_after_complement(self):
+        self.assert_explicit_order_edge(
+            "review this patch after writing and then running a regression test",
+            "code-test-regression",
+            "code-review-risk",
+        )
+
     def test_builder_preserves_textual_order_for_before_connector(self):
         self.assert_explicit_order_edge(
             "review this patch before adding a regression test",
