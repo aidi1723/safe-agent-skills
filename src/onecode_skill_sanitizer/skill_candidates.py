@@ -84,13 +84,14 @@ _PROFILE_LIST_FIELDS = (
     "excludes",
 )
 _FRONTMATTER_NONSTRING_VALUES = {
-    "null", "~", "true", "false", "yes", "no", "on", "off",
+    "null", "~", "true", "false", "yes", "no", "y", "n", "on", "off",
     ".nan", ".inf", "+.inf", "-.inf",
 }
 _FRONTMATTER_NUMBER_RE = re.compile(
     r"[-+]?(?:(?:\d[\d_]*)(?:\.[\d_]*)?|\.\d[\d_]*)(?:[eE][-+]?\d[\d_]*)?|"
     r"[-+]?0[xXoObB][0-9a-fA-F_]+"
 )
+_FRONTMATTER_DATE_RE = re.compile(r"\d{4}-\d{2}-\d{2}")
 
 
 class RoutingExampleError(ValueError):
@@ -434,12 +435,18 @@ def _parse_frontmatter_string(raw_value: str, name: str, field: str) -> str:
         if not parsed.strip():
             raise RoutingExampleError(error_message)
         return parsed
+    comment_match = re.search(r"(?:^|\s)#", value)
+    if comment_match:
+        value = value[:comment_match.start()].rstrip()
+    if not value:
+        raise RoutingExampleError(error_message)
     if value.endswith(("'", '"')):
         raise RoutingExampleError(error_message)
     if (
         value.casefold() in _FRONTMATTER_NONSTRING_VALUES
         or value.startswith(("[", "{", "|", ">"))
         or _FRONTMATTER_NUMBER_RE.fullmatch(value)
+        or _FRONTMATTER_DATE_RE.fullmatch(value)
     ):
         raise RoutingExampleError(error_message)
     return value

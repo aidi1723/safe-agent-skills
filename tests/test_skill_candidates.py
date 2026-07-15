@@ -393,9 +393,18 @@ class SkillCandidateTest(unittest.TestCase):
     def test_profile_loader_requires_strict_frontmatter_string_scalars(self):
         invalid_values = (
             "null",
+            "null # comment",
             "~",
             "true",
+            "true # comment",
+            "y",
+            "Y",
+            "n",
+            "N",
             "123",
+            "123 # comment",
+            "# comment",
+            "2026-07-16",
             "0X10",
             "[]",
             "{}",
@@ -416,6 +425,24 @@ class SkillCandidateTest(unittest.TestCase):
                 self._assert_routing_error(
                     lambda: load_cohort_profiles(catalog),
                     r"code-review-risk.*frontmatter.*description.*string",
+                )
+
+        quoted_values = (
+            ('"null # comment"', "null # comment"),
+            ("'2026-07-16'", "2026-07-16"),
+        )
+        for value, expected in quoted_values:
+            with self.subTest(value=value), tempfile.TemporaryDirectory() as temp_dir:
+                catalog, _ = self._copy_cohort_catalog(temp_dir)
+                self._replace_frontmatter_field(
+                    catalog / "code/code-review-risk/SKILL.md",
+                    "description",
+                    value,
+                )
+
+                self.assertEqual(
+                    load_cohort_profiles(catalog)["code-review-risk"]["description"],
+                    expected,
                 )
 
         for field in ("name", "description"):
