@@ -20,6 +20,27 @@ from onecode_skill_sanitizer.task_pack_v3 import build_task_pack_v3
 ROOT = Path(__file__).resolve().parents[1]
 
 
+class FixtureSemanticProvider:
+    name = "fixture-provider"
+
+    def __init__(self, model_or_adapter: str):
+        self.model_or_adapter = model_or_adapter
+
+    def rerank(self, request):
+        candidates = request["candidates"]
+        return {
+            "status": "ok",
+            "scores": [
+                {
+                    "skill": item["skill"],
+                    "score": round((index + 1) / len(candidates), 6),
+                    "confidence": 0.9,
+                }
+                for index, item in enumerate(candidates)
+            ],
+        }
+
+
 class TaskPackV3CliTest(unittest.TestCase):
     def assert_v3_json_fails_closed(self, argv: list[str]) -> None:
         out = io.StringIO()
@@ -90,12 +111,13 @@ class TaskPackV3CliTest(unittest.TestCase):
 
 
 class TaskPackV3BuilderTest(unittest.TestCase):
-    def build(self, task: str):
+    def build(self, task: str, **kwargs):
         return build_task_pack_v3(
             ROOT / "catalog",
             task,
             ROOT / "bundles/index.json",
             ROOT / "catalog/routing-examples.json",
+            **kwargs,
         )
 
     def test_builder_emits_strict_composite_selection_with_parallel_graph(self):
@@ -140,6 +162,73 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             )
 
         self.assertNotEqual(first["route_id"], changed["route_id"])
+
+    def test_secret_values_do_not_change_routing_decisions_or_traces(self):
+        browser = self.build("review this patch api_key=browser")
+        banana = self.build("review this patch api_key=banana")
+
+        self.assertEqual(browser["route_id"], banana["route_id"])
+        for field in (
+            "routing_mode",
+            "routing_status",
+            "need_decision",
+            "intent_graph",
+            "candidates",
+            "selection",
+            "capability_resolution",
+            "execution_graph",
+            "confidence",
+            "provider",
+            "routing_metrics",
+        ):
+            with self.subTest(field=field):
+                self.assertEqual(browser[field], banana[field])
+        self.assertIn("api_key=browser", browser["normalized_task"]["raw"])
+        self.assertIn("api_key=browser", browser["normalized_task"]["current"])
+        self.assertIn("api_key=banana", banana["normalized_task"]["raw"])
+        self.assertIn("api_key=banana", banana["normalized_task"]["current"])
+
+    def test_route_id_binds_max_candidates(self):
+        one = self.build("review this patch", max_candidates=1)
+        three = self.build("review this patch", max_candidates=3)
+
+        self.assertNotEqual(one["candidates"], three["candidates"])
+        self.assertNotEqual(one["route_id"], three["route_id"])
+
+    def test_route_id_binds_semantic_mode(self):
+        task = "review this patch and add a regression test"
+        shadow = self.build(
+            task,
+            semantic_provider=FixtureSemanticProvider("adapter-a"),
+            semantic_mode="shadow",
+        )
+        influence = self.build(
+            task,
+            semantic_provider=FixtureSemanticProvider("adapter-a"),
+            semantic_mode="influence",
+        )
+
+        self.assertNotEqual(shadow["provider"], influence["provider"])
+        self.assertNotEqual(shadow["route_id"], influence["route_id"])
+
+    def test_route_id_binds_provider_adapter(self):
+        task = "review this patch and add a regression test"
+        adapter_a = self.build(
+            task,
+            semantic_provider=FixtureSemanticProvider("adapter-a"),
+        )
+        adapter_b = self.build(
+            task,
+            semantic_provider=FixtureSemanticProvider("adapter-b"),
+        )
+
+        self.assertEqual(adapter_a["provider"]["requested"], "fixture-provider")
+        self.assertEqual(adapter_b["provider"]["requested"], "fixture-provider")
+        self.assertNotEqual(
+            adapter_a["provider"]["model_or_adapter"],
+            adapter_b["provider"]["model_or_adapter"],
+        )
+        self.assertNotEqual(adapter_a["route_id"], adapter_b["route_id"])
 
     def assert_explicit_order_edge(self, task: str, source: str, target: str):
         payload = self.build(task)
@@ -251,6 +340,18 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             ],
         )
 
+    def test_then_does_not_skip_an_unmapped_independent_action(self):
+        payload = self.build(
+            "review this patch, then deploy it, and separately verify these claims "
+            "against primary sources"
+        )
+
+        self.assertEqual(
+            set(payload["selection"]["selected_skill_names"]),
+            {"code-review-risk", "research-source-check"},
+        )
+        self.assertEqual(payload["execution_graph"]["edges"], [])
+
     def test_contradictory_connectors_are_blocked_by_the_selection_dag(self):
         payload = self.build(
             "review this patch before adding a regression test, then review this patch "
@@ -328,6 +429,24 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             ],
         )
 
+    def test_xian_scope_stops_at_independent_adversative_coordination(self):
+        payload = self.build(
+            "先 review this patch, add a regression test, but independently verify "
+            "these claims against primary sources"
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:code-test-regression",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                }
+            ],
+        )
+
     def assert_grouped_review_order(self, task: str):
         payload = self.build(task)
 
@@ -364,6 +483,12 @@ class TaskPackV3BuilderTest(unittest.TestCase):
     def test_and_before_reuses_the_grouped_main_action(self):
         self.assert_grouped_review_order(
             "review this patch after adding a regression test and before verifying "
+            "these claims against primary sources"
+        )
+
+    def test_comma_elided_binary_complements_reuse_the_main_action(self):
+        self.assert_grouped_review_order(
+            "review this patch after adding a regression test, before verifying "
             "these claims against primary sources"
         )
 

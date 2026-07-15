@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from dataclasses import replace
 import json
 from pathlib import Path
 import re
@@ -9,6 +10,7 @@ from . import __version__
 from .compatibility import build_canonical_content_hash
 from .compatibility import build_route_id
 from .compatibility import build_route_identity_payload
+from .compatibility import redact_route_identity_text
 from .compatibility import v3_compatibility_report
 from .intent import decompose_task, normalize_task
 from .need_gate import CAPABILITY_PATTERNS, CAPABILITY_SKILL, decide_skill_need
@@ -29,7 +31,10 @@ _BINARY_ORDER_CONNECTOR_RE = re.compile(
     re.IGNORECASE,
 )
 _SEQUENCE_ORDER_CONNECTOR_RE = re.compile(r"\bthen\b|然后|再|最后", re.IGNORECASE)
-_GROUP_CONTINUATION_RE = re.compile(r"(?:\b(?:but|and)\b|但是|但|并且|且)\s*[,，]?\s*$", re.IGNORECASE)
+_GROUP_CONTINUATION_RE = re.compile(
+    r"(?:\b(?:but|and)\b|但是|但|并且|且)\s*[,，]?\s*$", re.IGNORECASE
+)
+_ELIDED_GROUP_CONTINUATION_RE = re.compile(r"\s*[,，]\s*$")
 _LOCAL_ORDER_BOUNDARY_RE = re.compile(
     r"(?P<comma>[,，])|(?P<but>\bbut\b)|(?P<and>\band\b)|"
     r"(?P<coordination_zh>但是|但|并且|且)",
@@ -39,6 +44,7 @@ _COMPOUND_GERUND_RE = re.compile(
     r"\b[a-z]+ing\s+and\s+(?:(?:then|[a-z]+ly)\s+)?[a-z]+ing\b",
     re.IGNORECASE,
 )
+_XIAN_SCOPE_BOUNDARY_RE = re.compile(r"\bbut\b|但是|但", re.IGNORECASE)
 _XIAN_RE = re.compile(r"先(?!不)")
 
 
@@ -62,12 +68,14 @@ def build_task_pack_v3(
         raise SystemExit("registry verification failed; refusing to build task pack")
 
     normalized = normalize_task(task)
-    intent_graph = decompose_task(task)
-    need = decide_skill_need(normalized)
+    routing_current = redact_route_identity_text(normalized.current)
+    routing_normalized = replace(normalized, current=routing_current)
+    intent_graph = decompose_task(routing_current)
+    need = decide_skill_need(routing_normalized)
     examples = load_routing_examples(routing_examples_path)
     profiles = load_cohort_profiles(registry_dir)
     candidates = retrieve_skill_candidates(
-        normalized,
+        routing_normalized,
         need,
         profiles,
         examples,
@@ -75,13 +83,13 @@ def build_task_pack_v3(
     )
     active_provider = None if need["decision"] == "none" else semantic_provider
     candidates, provider_record = rerank_candidates(
-        normalized.current,
+        routing_current,
         need,
         candidates,
         active_provider,
         mode="none" if active_provider is None else semantic_mode,
     )
-    explicit_order = _extract_explicit_skill_order(normalized.current, need, candidates)
+    explicit_order = _extract_explicit_skill_order(routing_current, need, candidates)
     composed = compose_skill_selection(
         need,
         candidates,
@@ -121,6 +129,16 @@ def build_task_pack_v3(
         ),
         "routing_examples_content_hash": examples_content_hash,
         "cohort_names": list(HIGH_FREQUENCY_ENTRY_NAMES),
+        "routing_configuration": {
+            "max_candidates": max_candidates,
+            "semantic_mode": semantic_mode,
+            "provider": {
+                "requested": provider_record["requested"],
+                "used": provider_record["used"],
+                "model_or_adapter": provider_record["model_or_adapter"],
+                "candidate_scope_hash": provider_record["candidate_scope_hash"],
+            },
+        },
         "constraints": {
             "excluded_skills": need["excluded_skills"],
             "missing_inputs": need["missing_inputs"],
@@ -229,7 +247,7 @@ def _binary_order_relations(
     for index, connector in enumerate(connectors):
         separator = re.match(r"\s*[,，]?\s*", clause[connector.end() :])
         complement_start = connector.end() + (separator.end() if separator else 0)
-        complement_end = _next_binary_complement_boundary_start(clause, complement_start)
+        complement_end = _next_local_complement_boundary_start(clause, complement_start)
         complement = _first_skill(
             clause[complement_start:complement_end], required, admitted
         )
@@ -238,7 +256,12 @@ def _binary_order_relations(
             gap = clause[previous.end() : connector.start()]
             gap_mentions = _skill_mentions(gap, required, admitted)
             gap_actions = _unique_skill_mentions(gap_mentions)
-            continues_group = _GROUP_CONTINUATION_RE.search(gap) and len(gap_actions) <= 1
+            continues_group = bool(_GROUP_CONTINUATION_RE.search(gap)) and len(gap_actions) <= 1
+            if not continues_group and gap_mentions and len(gap_actions) <= 1:
+                complement_suffix = gap[gap_mentions[-1][1] :]
+                continues_group = bool(
+                    _ELIDED_GROUP_CONTINUATION_RE.fullmatch(complement_suffix)
+                )
             if not continues_group:
                 active_anchor = gap_mentions[-1][2] if gap_mentions else _last_skill(
                     clause[: connector.start()], required, admitted
@@ -269,8 +292,13 @@ def _sequence_order_relations(
     for connector in _SEQUENCE_ORDER_CONNECTOR_RE.finditer(clause):
         if _is_internal_compound_gerund_marker(clause, connector):
             continue
+        separator = re.match(r"\s*[,，]?\s*", clause[connector.end() :])
+        complement_start = connector.end() + (separator.end() if separator else 0)
+        complement_end = _next_local_complement_boundary_start(clause, complement_start)
         left = _last_skill(clause[: connector.start()], required, admitted)
-        right = _first_skill(clause[connector.end() :], required, admitted)
+        right = _first_skill(
+            clause[complement_start:complement_end], required, admitted
+        )
         if left is not None and right is not None:
             relations.append((left, right))
 
@@ -280,7 +308,10 @@ def _sequence_order_relations(
             clause, xian.end(), (_BINARY_ORDER_CONNECTOR_RE,)
         )
         sequence_boundary = _next_sequence_order_boundary_start(clause, xian.end())
-        scope_end = min(binary_boundary, sequence_boundary)
+        adversative_boundary = _next_order_boundary_start(
+            clause, xian.end(), (_XIAN_SCOPE_BOUNDARY_RE,)
+        )
+        scope_end = min(binary_boundary, sequence_boundary, adversative_boundary)
         ordered = [
             item[2]
             for item in _skill_mentions(
@@ -311,7 +342,7 @@ def _next_sequence_order_boundary_start(text: str, start: int) -> int:
     )
 
 
-def _next_binary_complement_boundary_start(text: str, start: int) -> int:
+def _next_local_complement_boundary_start(text: str, start: int) -> int:
     binary_boundary = _next_order_boundary_start(
         text, start, (_BINARY_ORDER_CONNECTOR_RE,)
     )
