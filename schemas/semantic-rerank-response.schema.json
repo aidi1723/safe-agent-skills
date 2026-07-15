@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://onecode.local/schemas/semantic-rerank-response.schema.json",
+  "type": "object",
+  "required": ["status", "scores"],
+  "properties": {
+    "status": {"const": "ok"},
+    "scores": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["skill", "score", "confidence"],
+        "properties": {
+          "skill": {"type": "string", "minLength": 1},
+          "score": {"type": "number", "minimum": 0, "maximum": 1},
+          "confidence": {"type": "number", "minimum": 0, "maximum": 1}
+        },
+        "additionalProperties": false
+      }
+    }
+  },
+  "additionalProperties": false
+}
