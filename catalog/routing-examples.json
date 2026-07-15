@@ -1,0 +1,411 @@
+{
+  "schema_version": 1,
+  "scope": {
+    "entry_names": [
+      "safe-agent-router",
+      "codebase-explore-map",
+      "code-review-risk",
+      "code-test-regression",
+      "execution-browser-check",
+      "research-source-check",
+      "design-ui-review",
+      "security-supply-chain-review"
+    ],
+    "candidate_names": [
+      "codebase-explore-map",
+      "code-review-risk",
+      "code-test-regression",
+      "execution-browser-check",
+      "research-source-check",
+      "design-ui-review",
+      "security-supply-chain-review"
+    ]
+  },
+  "examples": [
+    {
+      "id": "rt-explore-01",
+      "query": "Map this unfamiliar repository before we change the auth flow.",
+      "expected_need": "single",
+      "required_skills": ["codebase-explore-map"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["code.explore"],
+      "capability_labels": ["code.explore"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-explore-02",
+      "query": "先梳理这个陌生代码库的入口、模块和测试命令。",
+      "expected_need": "single",
+      "required_skills": ["codebase-explore-map"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["code.explore"],
+      "capability_labels": ["code.explore"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-explore-03",
+      "query": "Where does request validation live and what consumes it?",
+      "expected_need": "single",
+      "required_skills": ["codebase-explore-map"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["code.explore"],
+      "capability_labels": ["code.explore"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-review-01",
+      "query": "Review this patch for bugs and missing edge cases.",
+      "expected_need": "single",
+      "required_skills": ["code-review-risk"],
+      "forbidden_skills": ["code-test-regression"],
+      "intent_labels": ["code.review"],
+      "capability_labels": ["code.review"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-review-02",
+      "query": "审查这个 PR 是否有回归风险，不要直接改代码。",
+      "expected_need": "single",
+      "required_skills": ["code-review-risk"],
+      "forbidden_skills": ["code-test-regression"],
+      "intent_labels": ["code.review"],
+      "capability_labels": ["code.review"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-review-03",
+      "query": "Find correctness problems in the current diff.",
+      "expected_need": "single",
+      "required_skills": ["code-review-risk"],
+      "forbidden_skills": ["codebase-explore-map"],
+      "intent_labels": ["code.review"],
+      "capability_labels": ["code.review"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-test-01",
+      "query": "Add a regression test that fails on the old parser bug.",
+      "expected_need": "single",
+      "required_skills": ["code-test-regression"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["code.test"],
+      "capability_labels": ["code.test"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-test-02",
+      "query": "为这次修复补一个能证明旧行为失败的回归测试。",
+      "expected_need": "single",
+      "required_skills": ["code-test-regression"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["code.test"],
+      "capability_labels": ["code.test"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-test-03",
+      "query": "Choose the smallest reliable test boundary for this defect.",
+      "expected_need": "single",
+      "required_skills": ["code-test-regression"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["code.test"],
+      "capability_labels": ["code.test"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-browser-01",
+      "query": "Open the page in a real browser and verify the checkout flow.",
+      "expected_need": "single",
+      "required_skills": ["execution-browser-check"],
+      "forbidden_skills": ["design-ui-review"],
+      "intent_labels": ["execution.browser_check"],
+      "capability_labels": ["execution.browser_check"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-browser-02",
+      "query": "用浏览器跑一遍表单并截图记录失败状态。",
+      "expected_need": "single",
+      "required_skills": ["execution-browser-check"],
+      "forbidden_skills": ["design-ui-review"],
+      "intent_labels": ["execution.browser_check"],
+      "capability_labels": ["execution.browser_check"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-browser-03",
+      "query": "Smoke test the visible route, URL, and DOM state.",
+      "expected_need": "single",
+      "required_skills": ["execution-browser-check"],
+      "forbidden_skills": ["design-ui-review"],
+      "intent_labels": ["execution.browser_check"],
+      "capability_labels": ["execution.browser_check"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-research-01",
+      "query": "Verify these claims against current primary sources with citations.",
+      "expected_need": "single",
+      "required_skills": ["research-source-check"],
+      "forbidden_skills": ["codebase-explore-map"],
+      "intent_labels": ["research.source"],
+      "capability_labels": ["research.source"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-research-02",
+      "query": "全网查证这组事实，优先官方和一手资料。",
+      "expected_need": "single",
+      "required_skills": ["research-source-check"],
+      "forbidden_skills": ["codebase-explore-map"],
+      "intent_labels": ["research.source"],
+      "capability_labels": ["research.source"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-research-03",
+      "query": "Check whether this statistic is still current and cite the source.",
+      "expected_need": "single",
+      "required_skills": ["research-source-check"],
+      "forbidden_skills": ["security-supply-chain-review"],
+      "intent_labels": ["research.source"],
+      "capability_labels": ["research.source"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-design-01",
+      "query": "Review this dashboard's hierarchy, spacing, states, and responsive layout.",
+      "expected_need": "single",
+      "required_skills": ["design-ui-review"],
+      "forbidden_skills": ["execution-browser-check"],
+      "intent_labels": ["design.ui_review"],
+      "capability_labels": ["design.ui_review"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-design-02",
+      "query": "优化现有后台页面的视觉一致性和可访问性。",
+      "expected_need": "single",
+      "required_skills": ["design-ui-review"],
+      "forbidden_skills": ["execution-browser-check"],
+      "intent_labels": ["design.ui_review"],
+      "capability_labels": ["design.ui_review"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-design-03",
+      "query": "Critique the UI composition without running a browser flow.",
+      "expected_need": "single",
+      "required_skills": ["design-ui-review"],
+      "forbidden_skills": ["execution-browser-check"],
+      "intent_labels": ["design.ui_review"],
+      "capability_labels": ["design.ui_review"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-supply-01",
+      "query": "Audit this npm package's provenance and install scripts before adoption.",
+      "expected_need": "single",
+      "required_skills": ["security-supply-chain-review"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["security.supply_chain"],
+      "capability_labels": ["security.supply_chain"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-supply-02",
+      "query": "引入这个社区 Skill 前检查来源、许可证和权限风险。",
+      "expected_need": "single",
+      "required_skills": ["security-supply-chain-review"],
+      "forbidden_skills": ["research-source-check"],
+      "intent_labels": ["security.supply_chain"],
+      "capability_labels": ["security.supply_chain"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-supply-03",
+      "query": "Review the plugin maintainer and update-chain risk.",
+      "expected_need": "single",
+      "required_skills": ["security-supply-chain-review"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["security.supply_chain"],
+      "capability_labels": ["security.supply_chain"],
+      "example_class": "positive",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-near-01",
+      "query": "The repository is already mapped; review only the supplied diff for defects.",
+      "expected_need": "single",
+      "required_skills": ["code-review-risk"],
+      "forbidden_skills": ["codebase-explore-map"],
+      "intent_labels": ["code.review"],
+      "capability_labels": ["code.review"],
+      "example_class": "near_miss",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-near-02",
+      "query": "Do not review the whole patch; only add the failing regression case.",
+      "expected_need": "single",
+      "required_skills": ["code-test-regression"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["code.test"],
+      "capability_labels": ["code.test"],
+      "example_class": "near_miss",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-near-03",
+      "query": "Do not critique visual design; just run the existing UI flow in a browser.",
+      "expected_need": "single",
+      "required_skills": ["execution-browser-check"],
+      "forbidden_skills": ["design-ui-review"],
+      "intent_labels": ["execution.browser_check"],
+      "capability_labels": ["execution.browser_check"],
+      "example_class": "near_miss",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-near-04",
+      "query": "不要打开浏览器，只评审间距、层级和响应式布局。",
+      "expected_need": "single",
+      "required_skills": ["design-ui-review"],
+      "forbidden_skills": ["execution-browser-check"],
+      "intent_labels": ["design.ui_review"],
+      "capability_labels": ["design.ui_review"],
+      "example_class": "near_miss",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-near-05",
+      "query": "Search the local repository for the owner; no web research or citations.",
+      "expected_need": "single",
+      "required_skills": ["codebase-explore-map"],
+      "forbidden_skills": ["research-source-check"],
+      "intent_labels": ["code.explore"],
+      "capability_labels": ["code.explore"],
+      "example_class": "near_miss",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-near-06",
+      "query": "Verify the public claim, not the package's install-chain security.",
+      "expected_need": "single",
+      "required_skills": ["research-source-check"],
+      "forbidden_skills": ["security-supply-chain-review"],
+      "intent_labels": ["research.source"],
+      "capability_labels": ["research.source"],
+      "example_class": "near_miss",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-near-07",
+      "query": "Audit package provenance only; this is not a general code review.",
+      "expected_need": "single",
+      "required_skills": ["security-supply-chain-review"],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": ["security.supply_chain"],
+      "capability_labels": ["security.supply_chain"],
+      "example_class": "near_miss",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-none-01",
+      "query": "Explain what code-review-risk is; do not invoke it.",
+      "expected_need": "none",
+      "required_skills": [],
+      "forbidden_skills": ["code-review-risk"],
+      "intent_labels": [],
+      "capability_labels": [],
+      "example_class": "explanation_only",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-none-02",
+      "query": "不需要 Skill，只告诉我当前目录名。",
+      "expected_need": "none",
+      "required_skills": [],
+      "forbidden_skills": ["codebase-explore-map", "code-review-risk", "code-test-regression", "execution-browser-check", "research-source-check", "design-ui-review", "security-supply-chain-review"],
+      "intent_labels": [],
+      "capability_labels": [],
+      "example_class": "negation",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-compose-01",
+      "query": "Map the unfamiliar repo, then review the auth diff.",
+      "expected_need": "composite",
+      "required_skills": ["codebase-explore-map", "code-review-risk"],
+      "forbidden_skills": [],
+      "intent_labels": ["code.explore", "code.review"],
+      "capability_labels": ["code.explore", "code.review"],
+      "example_class": "composition",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-compose-02",
+      "query": "Review the patch and add regression coverage for confirmed defects.",
+      "expected_need": "composite",
+      "required_skills": ["code-review-risk", "code-test-regression"],
+      "forbidden_skills": [],
+      "intent_labels": ["code.review", "code.test"],
+      "capability_labels": ["code.review", "code.test"],
+      "example_class": "composition",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-compose-03",
+      "query": "Polish the UI, then verify the result in a browser at mobile and desktop sizes.",
+      "expected_need": "composite",
+      "required_skills": ["design-ui-review", "execution-browser-check"],
+      "forbidden_skills": [],
+      "intent_labels": ["design.ui_review", "execution.browser_check"],
+      "capability_labels": ["design.ui_review", "execution.browser_check"],
+      "example_class": "composition",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-compose-04",
+      "query": "Research the community package and audit its provenance before we adopt it.",
+      "expected_need": "composite",
+      "required_skills": ["research-source-check", "security-supply-chain-review"],
+      "forbidden_skills": [],
+      "intent_labels": ["research.source", "security.supply_chain"],
+      "capability_labels": ["research.source", "security.supply_chain"],
+      "example_class": "composition",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    },
+    {
+      "id": "rt-compose-05",
+      "query": "先梳理陌生代码库，再补回归测试，最后浏览器验证页面。",
+      "expected_need": "composite",
+      "required_skills": ["codebase-explore-map", "code-test-regression", "execution-browser-check"],
+      "forbidden_skills": [],
+      "intent_labels": ["code.explore", "code.test", "execution.browser_check"],
+      "capability_labels": ["code.explore", "code.test", "execution.browser_check"],
+      "example_class": "composition",
+      "review": {"status": "approved", "reviewed_at": "2026-07-15", "reviewer_role": "operator_review", "source_classification": "local_curated", "generated_from_router": false}
+    }
+  ]
+}
