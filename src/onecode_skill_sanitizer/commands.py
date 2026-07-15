@@ -369,8 +369,11 @@ def _run_v3_task_pack_command(args: argparse.Namespace) -> int:
             resolve_project_asset_path(args.routing_examples),
             max_candidates=3,
         )
-    except (json.JSONDecodeError, OSError, ValueError, SystemExit) as exc:
-        error = _safe_v2_error(exc)
+    except (json.JSONDecodeError, OSError, ValueError, SystemExit):
+        error = {
+            "code": "invalid_input",
+            "message": "Routing input or assets are invalid.",
+        }
         if args.format == "markdown":
             print(
                 "\n".join(
