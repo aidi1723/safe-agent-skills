@@ -51,6 +51,7 @@ from .rendering import markdown_safe_line as markdown_safe_line
 from .rendering import project_legacy_contracts
 from .rendering import render_task_pack_markdown
 from .rendering import render_task_pack_v2_markdown
+from .rendering import render_task_pack_v3_markdown
 from .router_evaluation import ROUTER_EVAL_OPTIONAL_STRING_FIELDS as ROUTER_EVAL_OPTIONAL_STRING_FIELDS
 from .router_evaluation import ROUTER_EVAL_ROUTER_VALUES as ROUTER_EVAL_ROUTER_VALUES
 from .router_evaluation import ROUTER_EVAL_STRATEGY_VALUES as ROUTER_EVAL_STRATEGY_VALUES
@@ -100,6 +101,7 @@ from .task_packs import task_taxonomy_from_profile as task_taxonomy_from_profile
 from .task_packs import trusted_skill_names as trusted_skill_names
 from .task_packs import validate_overlap_groups as validate_overlap_groups
 from .task_packs import validate_overlap_skill_reference as validate_overlap_skill_reference
+from .task_pack_v3 import build_task_pack_v3 as build_task_pack_v3
 from .validation import SOURCE_DEFAULT_USAGE_BY_TYPE
 from .validation import add_issue
 from .validation import seal_manifest
@@ -358,35 +360,47 @@ def select_command(args: argparse.Namespace) -> int:
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
-def _run_v3_not_ready_command(args: argparse.Namespace) -> int:
-    error = {
-        "code": "feature_not_ready",
-        "message": "Task-pack v3 is not implemented yet.",
-    }
+def _run_v3_task_pack_command(args: argparse.Namespace) -> int:
+    try:
+        task_pack = build_task_pack_v3(
+            resolve_project_asset_path(args.registry),
+            args.task,
+            resolve_project_asset_path(args.bundles),
+            resolve_project_asset_path(args.routing_examples),
+            max_candidates=3,
+        )
+    except (json.JSONDecodeError, OSError, ValueError, SystemExit) as exc:
+        error = _safe_v2_error(exc)
+        if args.format == "markdown":
+            print(
+                "\n".join(
+                    [
+                        "# OneCode Task Pack v3 Error",
+                        "",
+                        f"- code: {markdown_safe_line(error['code'])}",
+                        f"- message: {markdown_safe_line(error['message'])}",
+                    ]
+                )
+            )
+        else:
+            print(
+                json.dumps(
+                    {"schema_version": 3, "status": "error", "error": error},
+                    indent=2,
+                    sort_keys=True,
+                    allow_nan=False,
+                )
+            )
+        return 2
     if args.format == "markdown":
-        print(
-            "\n".join(
-                [
-                    "# OneCode Task Pack v3 Error",
-                    "",
-                    f"- code: `{error['code']}`",
-                    f"- message: {error['message']}",
-                ]
-            )
-        )
+        print(render_task_pack_v3_markdown(task_pack))
     else:
-        print(
-            json.dumps(
-                {"schema_version": 3, "status": "error", "error": error},
-                indent=2,
-                sort_keys=True,
-            )
-        )
-    return 2
+        print(json.dumps(task_pack, indent=2, sort_keys=True, allow_nan=False))
+    return 0
 
 def task_pack_command(args: argparse.Namespace) -> int:
     if args.schema_version == 3:
-        return _run_v3_not_ready_command(args)
+        return _run_v3_task_pack_command(args)
     if args.schema_version == 2:
         return _run_v2_task_pack_command(args)
     else:
@@ -412,7 +426,7 @@ def task_pack_command(args: argparse.Namespace) -> int:
 
 def smart_command(args: argparse.Namespace) -> int:
     if args.schema_version == 3:
-        return _run_v3_not_ready_command(args)
+        return _run_v3_task_pack_command(args)
     if args.schema_version == 2:
         return _run_v2_task_pack_command(args)
     else:

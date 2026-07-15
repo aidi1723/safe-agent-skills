@@ -44,21 +44,29 @@ class FixtureSemanticProvider:
 
 
 class TaskPackV3CliTest(unittest.TestCase):
-    def assert_v3_json_fails_closed(self, argv: list[str]) -> None:
+    def run_cli(self, argv: list[str]) -> tuple[int, str, str]:
         out = io.StringIO()
         err = io.StringIO()
         with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
             exit_code = main(argv)
-        output = out.getvalue()
-        payload = json.loads(output)
+        return exit_code, out.getvalue(), err.getvalue()
 
-        self.assertEqual(exit_code, 2)
-        self.assertEqual(err.getvalue(), "")
+    def assert_v3_json_success(self, argv: list[str]) -> dict:
+        exit_code, output, error_output = self.run_cli(argv)
+        payload = json.loads(output)
+        schema = json.loads(
+            (ROOT / "schemas/task-pack-v3.schema.json").read_text(encoding="utf-8")
+        )
+
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(error_output, "")
         self.assertNotIn("Traceback", output)
+        self.assertNotRegex(output, r"\b(?:NaN|Infinity|-Infinity)\b")
         self.assertEqual(payload["schema_version"], 3)
-        self.assertEqual(payload["status"], "error")
-        self.assertEqual(payload["error"]["code"], "feature_not_ready")
-        self.assertEqual(payload["error"]["message"], "Task-pack v3 is not implemented yet.")
+        self.assertEqual(set(payload), set(schema["required"]))
+        if Draft202012Validator is not None:
+            self.assertEqual(list(Draft202012Validator(schema).iter_errors(payload)), [])
+        return payload
 
     def test_v3_is_opt_in_and_v2_remains_default(self):
         parser = build_parser()
@@ -73,13 +81,9 @@ class TaskPackV3CliTest(unittest.TestCase):
         self.assertEqual(task_pack.schema_version, 3)
         self.assertEqual(explicit.routing_examples, "catalog/routing-examples.json")
 
-    def test_smart_v3_json_fails_closed(self):
-        self.assert_v3_json_fails_closed(
-            ["smart", "review this patch", "--schema-version", "3", "--format", "json"]
-        )
-
-    def test_task_pack_v3_json_fails_closed(self):
-        self.assert_v3_json_fails_closed(
+    def test_smart_and_task_pack_v3_emit_strict_json(self):
+        commands = (
+            ["smart", "review this patch", "--schema-version", "3", "--format", "json"],
             [
                 "task-pack",
                 "review this patch",
@@ -89,27 +93,70 @@ class TaskPackV3CliTest(unittest.TestCase):
                 "3",
                 "--format",
                 "json",
-            ]
+            ],
         )
+        for argv in commands:
+            with self.subTest(command=argv[0]):
+                payload = self.assert_v3_json_success(argv)
+                self.assertEqual(payload["normalized_task"]["current"], "review this patch")
 
-    def test_v3_markdown_fails_closed(self):
+    def test_v3_markdown_escapes_dynamic_heading_fence_and_html_injection(self):
+        attack = "review this patch\n## Injected\n```html\n<span>unsafe</span>"
+        expected_headings = [
+            "# OneCode Agent Task Pack v3",
+            "## Task",
+            "## Need Decision",
+            "## Selected Skills",
+            "## Confidence",
+            "## Provider",
+            "## Execution Graph",
+            "## Routing Diagnostics",
+            "## Safety Boundary",
+        ]
         for command in ("smart", "task-pack"):
             with self.subTest(command=command):
-                argv = [command, "review this patch", "--schema-version", "3", "--format", "markdown"]
+                argv = [command, attack, "--schema-version", "3", "--format", "markdown"]
                 if command == "task-pack":
                     argv.extend(["--registry", "catalog"])
-                out = io.StringIO()
-                err = io.StringIO()
-                with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-                    exit_code = main(argv)
-                output = out.getvalue()
+                exit_code, output, error_output = self.run_cli(argv)
+                headings = [line for line in output.splitlines() if line.startswith("#")]
+
+                self.assertEqual(exit_code, 0)
+                self.assertEqual(error_output, "")
+                self.assertNotIn("Traceback", output)
+                self.assertEqual(headings, expected_headings)
+                self.assertNotIn("## Injected", output)
+                self.assertNotIn("```", output)
+                self.assertNotIn("<span>", output)
+
+    def test_empty_v3_task_returns_bounded_json_error(self):
+        commands = (
+            ["smart", "", "--schema-version", "3", "--format", "json"],
+            [
+                "task-pack",
+                "",
+                "--registry",
+                "catalog",
+                "--schema-version",
+                "3",
+                "--format",
+                "json",
+            ],
+        )
+        for argv in commands:
+            with self.subTest(command=argv[0]):
+                exit_code, output, error_output = self.run_cli(argv)
+                payload = json.loads(output)
 
                 self.assertEqual(exit_code, 2)
-                self.assertEqual(err.getvalue(), "")
+                self.assertEqual(error_output, "")
                 self.assertNotIn("Traceback", output)
-                self.assertIn("# OneCode Task Pack v3 Error", output)
-                self.assertIn("- code: `feature_not_ready`", output)
-                self.assertIn("- message: Task-pack v3 is not implemented yet.", output)
+                self.assertEqual(set(payload), {"schema_version", "status", "error"})
+                self.assertEqual(payload["schema_version"], 3)
+                self.assertEqual(payload["status"], "error")
+                self.assertEqual(set(payload["error"]), {"code", "message"})
+                self.assertEqual(payload["error"]["code"], "invalid_input")
+                self.assertTrue(payload["error"]["message"])
 
 
 class TaskPackV3BuilderTest(unittest.TestCase):

@@ -5,6 +5,7 @@ import math
 from pathlib import Path
 
 from .commands import _run_v2_task_pack_command as _run_v2_task_pack_command
+from .commands import _run_v3_task_pack_command as _run_v3_task_pack_command
 from .commands import approve_command as approve_command
 from .commands import audit_command as audit_command
 from .commands import batch_check_command as batch_check_command
@@ -80,6 +81,7 @@ from .rendering import markdown_safe_line as markdown_safe_line
 from .rendering import project_legacy_contracts as project_legacy_contracts
 from .rendering import render_task_pack_markdown as render_task_pack_markdown
 from .rendering import render_task_pack_v2_markdown as render_task_pack_v2_markdown
+from .rendering import render_task_pack_v3_markdown as render_task_pack_v3_markdown
 from .router_eval_v3 import evaluate_router_v3 as evaluate_router_v3
 from .router_eval_v3 import load_eval_dataset_v3 as load_eval_dataset_v3
 from .router_evaluation import ROUTER_EVAL_OPTIONAL_STRING_FIELDS as ROUTER_EVAL_OPTIONAL_STRING_FIELDS

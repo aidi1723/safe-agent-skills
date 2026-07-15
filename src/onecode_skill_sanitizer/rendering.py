@@ -296,6 +296,117 @@ def render_task_pack_v2_markdown(task_pack: dict) -> str:
     return "\n".join(lines)
 
 
+def render_task_pack_v3_markdown(task_pack: dict) -> str:
+    need = task_pack["need_decision"]
+    selection = task_pack["selection"]
+    capability = task_pack["capability_resolution"]
+    confidence = task_pack["confidence"]
+    provider = task_pack["provider"]
+    graph = task_pack["execution_graph"]
+    protocol = task_pack["host_execution_protocol"]
+    contributions = {
+        item["skill"]: item for item in selection["marginal_contributions"]
+    }
+    lines = [
+        "# OneCode Agent Task Pack v3",
+        "",
+        "## Task",
+        "",
+        markdown_safe_line(task_pack["normalized_task"]["current"]),
+        "",
+        "## Need Decision",
+        "",
+        f"- decision: {markdown_safe_line(need['decision'])}",
+        f"- specialized need: {markdown_safe_line(need['specialized_need'])}",
+        f"- required capabilities: {_markdown_safe_values(need['required_capabilities'])}",
+        f"- reason codes: {_markdown_safe_values(need['reason_codes'])}",
+        "",
+        "## Selected Skills",
+        "",
+    ]
+    if selection["selected_skills"]:
+        for skill in selection["selected_skills"]:
+            contribution = contributions.get(skill["name"], {})
+            lines.append(
+                f"- {markdown_safe_line(skill['name'])}: "
+                f"{markdown_safe_line(contribution.get('reason', 'not_recorded'))}; "
+                f"capabilities: {_markdown_safe_values(contribution.get('capabilities', []))}"
+            )
+    else:
+        lines.append("- none")
+    lines.extend(
+        [
+            "",
+            "## Confidence",
+            "",
+            f"- level: {markdown_safe_line(confidence['level'])}",
+            f"- overall: {markdown_safe_line(confidence['overall'])}",
+            f"- top score: {markdown_safe_line(confidence['top_score'])}",
+            f"- runner up score: {markdown_safe_line(confidence['runner_up_score'])}",
+            f"- margin: {markdown_safe_line(confidence['margin'])}",
+            f"- reason codes: {_markdown_safe_values(confidence['reason_codes'])}",
+            "",
+            "## Provider",
+            "",
+            f"- requested: {markdown_safe_line(provider['requested'])}",
+            f"- used: {markdown_safe_line(provider['used'])}",
+            f"- model or adapter: {markdown_safe_line(provider['model_or_adapter'])}",
+            f"- response status: {markdown_safe_line(provider['response_status'])}",
+            f"- fallback reason: {markdown_safe_line(provider['fallback_reason'])}",
+            f"- validation reason codes: {_markdown_safe_values(provider['validation_reason_codes'])}",
+            "",
+            "## Execution Graph",
+            "",
+            f"- status: {markdown_safe_line(graph['status'])}",
+            f"- acyclic: {markdown_safe_line(graph['acyclic'])}",
+        ]
+    )
+    if graph["nodes"]:
+        for node in graph["nodes"]:
+            lines.append(
+                f"- node {markdown_safe_line(node['id'])}: "
+                f"{markdown_safe_line(node['skill'])}; parallel: "
+                f"{markdown_safe_line(node['parallel'])}"
+            )
+    else:
+        lines.append("- nodes: none")
+    if graph["edges"]:
+        for edge in graph["edges"]:
+            lines.append(
+                f"- edge {markdown_safe_line(edge['from'])} to "
+                f"{markdown_safe_line(edge['to'])}: {markdown_safe_line(edge['type'])}; "
+                f"evidence: {markdown_safe_line(edge['evidence'])}"
+            )
+    else:
+        lines.append("- edges: none")
+    lines.extend(
+        [
+            "",
+            "## Routing Diagnostics",
+            "",
+            f"- routing status: {markdown_safe_line(task_pack['routing_status'])}",
+            f"- capability status: {markdown_safe_line(capability['status'])}",
+            f"- missing capabilities: {_markdown_safe_values(capability['missing_capabilities'])}",
+            f"- missing inputs: {_markdown_safe_values(capability['missing_inputs'])}",
+            f"- graph reason codes: {_markdown_safe_values(graph['reason_codes'])}",
+            f"- graph details: {_markdown_safe_values(graph['details'])}",
+            "",
+            "## Safety Boundary",
+            "",
+            f"- mode: {markdown_safe_line(protocol['mode'])}",
+            f"- {markdown_safe_line(protocol['runtime_boundary'])}",
+            "",
+        ]
+    )
+    return "\n".join(lines)
+
+
+def _markdown_safe_values(values: object) -> str:
+    if not isinstance(values, (list, tuple)) or not values:
+        return "none"
+    return ", ".join(markdown_safe_line(value) for value in values)
+
+
 def markdown_safe_line(value: object) -> str:
     normalized = " ".join(str(value).split())
     escaped = html.escape(normalized, quote=True).replace("\\", "\\\\")

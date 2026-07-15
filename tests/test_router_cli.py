@@ -892,6 +892,61 @@ class RouterCliTest(unittest.TestCase):
         self.assertEqual(task_pack["selected_scenarios"][0]["scenario_id"], "skill-router-quality-review")
         self.assertIn("execution_graph", task_pack)
 
+    def test_task_pack_script_supports_explicit_v3_without_changing_default(self):
+        script = Path("integrations/skills/safe-agent-router/scripts/task_pack.sh").resolve()
+        default = subprocess.run(
+            ["sh", str(script), "review this patch", "--format", "json"],
+            cwd=Path.cwd(),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        explicit_v3 = subprocess.run(
+            [
+                "sh",
+                str(script),
+                "review this patch",
+                "--format",
+                "json",
+                "--routing-examples",
+                "catalog/routing-examples.json",
+                "--max-skills",
+                "3",
+                "--schema-version",
+                "3",
+            ],
+            cwd=Path.cwd(),
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+
+        self.assertEqual(default.returncode, 0, default.stderr)
+        self.assertEqual(json.loads(default.stdout)["schema_version"], 2)
+        self.assertEqual(explicit_v3.returncode, 0, explicit_v3.stderr)
+        self.assertEqual(json.loads(explicit_v3.stdout)["schema_version"], 3)
+
+    def test_task_pack_script_rejects_unsupported_schema_and_missing_values(self):
+        script = Path("integrations/skills/safe-agent-router/scripts/task_pack.sh").resolve()
+        invalid_arguments = (
+            ["--schema-version", "1"],
+            ["--schema-version", "4"],
+            ["--schema-version"],
+            ["--routing-examples"],
+        )
+        for arguments in invalid_arguments:
+            with self.subTest(arguments=arguments):
+                result = subprocess.run(
+                    ["sh", str(script), "review this patch", *arguments],
+                    cwd=Path.cwd(),
+                    capture_output=True,
+                    text=True,
+                    check=False,
+                )
+
+                self.assertEqual(result.returncode, 2)
+                self.assertNotIn("Traceback", result.stderr)
+
     def test_real_catalog_scenario_router_routes_audit_followup_to_skill_router_bundle(self):
         task_pack_out = io.StringIO()
         with contextlib.redirect_stdout(task_pack_out):
