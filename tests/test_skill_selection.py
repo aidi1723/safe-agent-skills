@@ -319,6 +319,275 @@ class SkillSelectionTest(unittest.TestCase):
             "artifact_dependency",
         )
 
+    def test_artifact_producer_conflict_rejects_lower_and_marks_context_missing(self):
+        result = compose_skill_selection(
+            need(
+                "single",
+                ("execution.browser_check",),
+                missing_inputs=("target_page_or_flow",),
+            ),
+            [
+                candidate("browser-check", "execution.browser_check", 0.9),
+                candidate("review-producer", "design.ui_review", 0.5),
+            ],
+            {
+                "browser-check": profile(
+                    "browser-check",
+                    "execution.browser_check",
+                    requires=("ui_review_report",),
+                    excludes=("review-producer",),
+                ),
+                "review-producer": profile(
+                    "review-producer",
+                    "design.ui_review",
+                    evidence=("ui_review_report",),
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(result["selected_skill_names"], ["browser-check"])
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"],
+            ["target_page_or_flow", "ui_review_report"],
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_required_input"
+        )
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"],
+            [
+                {
+                    "winner": "browser-check",
+                    "rejected": "review-producer",
+                    "reason": "higher_deterministic_score",
+                    "margin": 0.4,
+                }
+            ],
+        )
+        self.assertEqual(result["execution_graph"]["edges"], [])
+
+    def test_low_margin_artifact_conflict_clarifies_when_other_inputs_complete(self):
+        result = compose_skill_selection(
+            need("single", ("execution.browser_check",)),
+            [
+                candidate("browser-check", "execution.browser_check", 0.70),
+                candidate("review-producer", "design.ui_review", 0.68),
+            ],
+            {
+                "browser-check": profile(
+                    "browser-check",
+                    "execution.browser_check",
+                    requires=("ui_review_report",),
+                ),
+                "review-producer": profile(
+                    "review-producer",
+                    "design.ui_review",
+                    evidence=("ui_review_report",),
+                    conflicts=("browser-check",),
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "clarify")
+        self.assertEqual(result["selected_skill_names"], [])
+        self.assertEqual(result["missing_capabilities"], [])
+        self.assertEqual(result["capability_resolution"]["missing_inputs"], [])
+        self.assertEqual(
+            result["selection"]["clarification_reason"],
+            "conflicting_candidates_low_margin",
+        )
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"],
+            [
+                {
+                    "winner": "",
+                    "rejected": "review-producer",
+                    "reason": "insufficient_margin",
+                    "margin": 0.02,
+                }
+            ],
+        )
+
+    def test_transitive_artifact_closure_applies_conflicts_at_every_step(self):
+        result = compose_skill_selection(
+            need("single", ("execution.browser_check",)),
+            [
+                candidate("browser-check", "execution.browser_check", 0.9),
+                candidate("review-producer", "design.ui_review", 0.8),
+                candidate("source-producer", "code.explore", 0.5),
+            ],
+            {
+                "browser-check": profile(
+                    "browser-check",
+                    "execution.browser_check",
+                    requires=("ui_review_report",),
+                ),
+                "review-producer": profile(
+                    "review-producer",
+                    "design.ui_review",
+                    requires=("source_map",),
+                    evidence=("ui_review_report",),
+                    conflicts=("source-producer",),
+                ),
+                "source-producer": profile(
+                    "source-producer",
+                    "code.explore",
+                    produces=("source_map",),
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(
+            result["selected_skill_names"],
+            ["browser-check", "review-producer"],
+        )
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"], ["source_map"]
+        )
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"],
+            [
+                {
+                    "winner": "review-producer",
+                    "rejected": "source-producer",
+                    "reason": "higher_deterministic_score",
+                    "margin": 0.3,
+                }
+            ],
+        )
+
+    def test_unreachable_adjacent_conflict_does_not_affect_selection(self):
+        result = compose_skill_selection(
+            need("single", ("execution.browser_check",)),
+            [
+                candidate("browser-check", "execution.browser_check", 0.70),
+                candidate("unrelated-review", "design.ui_review", 0.68),
+            ],
+            {
+                "browser-check": profile(
+                    "browser-check",
+                    "execution.browser_check",
+                    conflicts=("unrelated-review",),
+                ),
+                "unrelated-review": profile(
+                    "unrelated-review", "design.ui_review"
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(result["selected_skill_names"], ["browser-check"])
+        self.assertEqual(result["selection"]["conflict_resolutions"], [])
+
+    def test_missing_capability_takes_precedence_over_conflict_clarification(self):
+        result = compose_skill_selection(
+            need("composite", ("design.ui_review", "code.test")),
+            [
+                candidate("a", "design.ui_review", 0.70),
+                candidate("b", "design.ui_review", 0.68),
+            ],
+            {
+                "a": profile("a", "design.ui_review", conflicts=("b",)),
+                "b": profile("b", "design.ui_review", conflicts=("a",)),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(result["selected_skill_names"], [])
+        self.assertEqual(result["missing_capabilities"], ["code.test"])
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_capability"
+        )
+        self.assertEqual(
+            result["selection"]["clarification_reason"],
+            "conflicting_candidates_low_margin",
+        )
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"][0]["reason"],
+            "insufficient_margin",
+        )
+
+    def test_missing_input_takes_precedence_over_conflict_clarification(self):
+        result = compose_skill_selection(
+            need(
+                "single",
+                ("design.ui_review",),
+                missing_inputs=("behavior_or_change_under_test",),
+            ),
+            [
+                candidate("a", "design.ui_review", 0.70),
+                candidate("b", "design.ui_review", 0.68),
+            ],
+            {
+                "a": profile("a", "design.ui_review", conflicts=("b",)),
+                "b": profile("b", "design.ui_review", conflicts=("a",)),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"],
+            ["behavior_or_change_under_test"],
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_required_input"
+        )
+        self.assertEqual(
+            result["selection"]["clarification_reason"],
+            "conflicting_candidates_low_margin",
+        )
+        self.assertEqual(
+            result["selection"]["conflict_resolutions"][0]["reason"],
+            "insufficient_margin",
+        )
+
+    def test_clarification_coverage_excludes_prior_high_margin_losers(self):
+        result = compose_skill_selection(
+            need(
+                "composite",
+                ("code.review", "code.test", "execution.browser_check"),
+            ),
+            [
+                candidate("review", "code.review", 0.95),
+                candidate("browser", "execution.browser_check", 0.80),
+                candidate("review-producer", "design.ui_review", 0.78),
+                candidate("test-loser", "code.test", 0.50),
+            ],
+            {
+                "review": profile(
+                    "review", "code.review", conflicts=("test-loser",)
+                ),
+                "browser": profile(
+                    "browser",
+                    "execution.browser_check",
+                    requires=("ui_review_report",),
+                ),
+                "review-producer": profile(
+                    "review-producer",
+                    "design.ui_review",
+                    evidence=("ui_review_report",),
+                    conflicts=("browser",),
+                ),
+                "test-loser": profile("test-loser", "code.test"),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(result["missing_capabilities"], ["code.test"])
+        self.assertEqual(
+            [item["reason"] for item in result["selection"]["conflict_resolutions"]],
+            ["higher_deterministic_score", "insufficient_margin"],
+        )
+
     def test_high_margin_conflict_keeps_actual_higher_score_candidate(self):
         profiles = {
             "lower": profile(
