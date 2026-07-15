@@ -22,6 +22,17 @@ from .skill_selection import compose_skill_selection
 from .task_packs import load_skill_pack_item
 
 
+_STRONG_ORDER_BOUNDARY_RE = re.compile(r"[.;\n。；！？!?]+")
+_BINARY_ORDER_CONNECTOR_RE = re.compile(
+    r"(?P<after>\bafter\b)|(?P<before>\bbefore\b)|"
+    r"(?P<after_zh>之后)|(?P<before_zh>之前)",
+    re.IGNORECASE,
+)
+_SEQUENCE_ORDER_CONNECTOR_RE = re.compile(r"\bthen\b|然后|再|最后", re.IGNORECASE)
+_GROUP_CONTINUATION_RE = re.compile(r"(?:\b(?:but|and)\b|但是|但|并且|且)\s*[,，]?\s*$", re.IGNORECASE)
+_XIAN_RE = re.compile(r"先(?!不)")
+
+
 def build_task_pack_v3(
     registry_dir: Path,
     task: str,
@@ -186,56 +197,94 @@ def _extract_explicit_skill_order(
     admitted = {item["skill"] for item in candidates}
     required = set(need["required_capabilities"])
     relations: list[tuple[str, str]] = []
-    binary_connectors = re.compile(
-        r"(?P<after>\bafter\b)|(?P<before>\bbefore\b)|"
-        r"(?P<after_zh>之后)|(?P<before_zh>之前)",
-        re.IGNORECASE,
-    )
-    for connector in binary_connectors.finditer(current):
-        pair = _skills_around_connector(current, connector, required, admitted)
-        if pair is None:
+    for clause in _STRONG_ORDER_BOUNDARY_RE.split(current):
+        if not clause.strip():
             continue
-        left, right = pair
-        if connector.lastgroup == "after":
-            relations.append((right, left))
-        elif connector.lastgroup == "before":
-            relations.append((left, right))
-        # Chinese temporal connectors are postfixes attached to the left action.
-        elif connector.lastgroup == "after_zh":
-            relations.append((left, right))
-        else:
-            relations.append((right, left))
-
-    sequence_connectors = re.compile(r"\bthen\b|然后|再|最后", re.IGNORECASE)
-    for connector in sequence_connectors.finditer(current):
-        pair = _skills_around_connector(current, connector, required, admitted)
-        if pair is not None:
-            relations.append(pair)
+        relations.extend(_binary_order_relations(clause, required, admitted))
+        relations.extend(_sequence_order_relations(clause, required, admitted))
 
     return list(dict.fromkeys(relation for relation in relations if relation[0] != relation[1]))
 
 
-def _skills_around_connector(
-    current: str,
-    connector: re.Match[str],
+def _binary_order_relations(
+    clause: str,
     required: set[str],
     admitted: set[str],
-) -> tuple[str, str] | None:
-    left = _skill_mentions(current[: connector.start()], required, admitted)
-    right = _skill_mentions(current[connector.end() :], required, admitted)
-    if not left or not right:
-        return None
-    return left[-1][1], right[0][1]
+) -> list[tuple[str, str]]:
+    connectors = list(_BINARY_ORDER_CONNECTOR_RE.finditer(clause))
+    if not connectors:
+        return []
+
+    active_anchor = _last_skill(clause[: connectors[0].start()], required, admitted)
+    relations: list[tuple[str, str]] = []
+    for index, connector in enumerate(connectors):
+        next_start = connectors[index + 1].start() if index + 1 < len(connectors) else len(clause)
+        complement = _first_skill(clause[connector.end() : next_start], required, admitted)
+        if index:
+            previous = connectors[index - 1]
+            gap = clause[previous.end() : connector.start()]
+            gap_mentions = _skill_mentions(gap, required, admitted)
+            continues_group = _GROUP_CONTINUATION_RE.search(gap) and len(gap_mentions) <= 1
+            if not continues_group:
+                active_anchor = gap_mentions[-1][2] if gap_mentions else _last_skill(
+                    clause[: connector.start()], required, admitted
+                )
+        if active_anchor is None or complement is None:
+            continue
+        relations.append(_direct_binary_relation(connector.lastgroup, active_anchor, complement))
+    return relations
+
+
+def _direct_binary_relation(kind: str | None, anchor: str, complement: str) -> tuple[str, str]:
+    if kind == "after":
+        return complement, anchor
+    if kind == "before":
+        return anchor, complement
+    # Chinese temporal connectors are postfixes attached to the anchor action.
+    if kind == "after_zh":
+        return anchor, complement
+    return complement, anchor
+
+
+def _sequence_order_relations(
+    clause: str,
+    required: set[str],
+    admitted: set[str],
+) -> list[tuple[str, str]]:
+    relations: list[tuple[str, str]] = []
+    for connector in _SEQUENCE_ORDER_CONNECTOR_RE.finditer(clause):
+        left = _last_skill(clause[: connector.start()], required, admitted)
+        right = _first_skill(clause[connector.end() :], required, admitted)
+        if left is not None and right is not None:
+            relations.append((left, right))
+
+    xian = _XIAN_RE.search(clause)
+    if xian is not None:
+        ordered = [item[2] for item in _skill_mentions(clause[xian.end() :], required, admitted)]
+        relations.extend(zip(ordered, ordered[1:]))
+    return relations
+
+
+def _first_skill(text: str, required: set[str], admitted: set[str]) -> str | None:
+    mentions = _skill_mentions(text, required, admitted)
+    return mentions[0][2] if mentions else None
+
+
+def _last_skill(text: str, required: set[str], admitted: set[str]) -> str | None:
+    mentions = _skill_mentions(text, required, admitted)
+    return mentions[-1][2] if mentions else None
 
 
 def _skill_mentions(
     text: str,
     required: set[str],
     admitted: set[str],
-) -> list[tuple[int, str]]:
-    mentions: list[tuple[int, str]] = []
+) -> list[tuple[int, int, str]]:
+    mentions: list[tuple[int, int, str]] = []
     for capability, pattern in CAPABILITY_PATTERNS.items():
         skill = CAPABILITY_SKILL[capability]
         if capability in required and skill in admitted:
-            mentions.extend((match.start(), skill) for match in pattern.finditer(text))
-    return sorted(mentions, key=lambda item: (item[0], item[1]))
+            mentions.extend(
+                (match.start(), match.end(), skill) for match in pattern.finditer(text)
+            )
+    return sorted(mentions, key=lambda item: (item[0], item[1], item[2]))

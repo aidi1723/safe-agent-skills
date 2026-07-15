@@ -240,6 +240,123 @@ class TaskPackV3BuilderTest(unittest.TestCase):
         self.assertEqual(payload["execution_graph"]["status"], "blocked")
         self.assertEqual(payload["execution_graph"]["reason_codes"], ["dependency_cycle"])
 
+    def test_xian_orders_two_actions_in_its_local_clause(self):
+        payload = self.build("先审查这个补丁，补一个回归测试")
+
+        self.assertEqual(
+            set(payload["selection"]["selected_skill_names"]),
+            {"code-review-risk", "code-test-regression"},
+        )
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:code-test-regression",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                }
+            ],
+        )
+
+    def test_xian_orders_adjacent_actions_in_one_sequence_clause(self):
+        payload = self.build(
+            "先 review this patch, add a regression test, verify these claims against primary sources"
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:code-test-regression",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+                {
+                    "from": "skill:code-test-regression",
+                    "to": "skill:research-source-check",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+            ],
+        )
+
+    def test_xian_sequence_does_not_cross_a_strong_clause_boundary(self):
+        payload = self.build(
+            "先 review this patch, add a regression test. "
+            "Verify these claims against primary sources."
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:code-test-regression",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                }
+            ],
+        )
+
+    def assert_grouped_review_order(self, task: str):
+        payload = self.build(task)
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-review-risk",
+                    "to": "skill:research-source-check",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+                {
+                    "from": "skill:code-test-regression",
+                    "to": "skill:code-review-risk",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+            ],
+        )
+
+    def test_but_before_reuses_the_grouped_main_action(self):
+        self.assert_grouped_review_order(
+            "review this patch after adding a regression test but before verifying "
+            "these claims against primary sources"
+        )
+
+    def test_and_before_reuses_the_grouped_main_action(self):
+        self.assert_grouped_review_order(
+            "review this patch after adding a regression test and before verifying "
+            "these claims against primary sources"
+        )
+
+    def test_new_left_action_starts_a_new_connector_relation(self):
+        payload = self.build(
+            "review this patch after adding a regression test, and verify these claims "
+            "before running a browser check"
+        )
+
+        self.assertEqual(
+            payload["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:code-test-regression",
+                    "to": "skill:code-review-risk",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+                {
+                    "from": "skill:research-source-check",
+                    "to": "skill:execution-browser-check",
+                    "type": "explicit_user_order",
+                    "evidence": "current_request",
+                },
+            ],
+        )
+
     def test_schema_has_strict_v3_structure_and_current_conflict_reasons(self):
         schema = json.loads(
             (ROOT / "schemas/task-pack-v3.schema.json").read_text(encoding="utf-8")
