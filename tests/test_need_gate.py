@@ -251,6 +251,110 @@ class NeedGateTest(unittest.TestCase):
         self.assertEqual(attachment["decision"], "none")
         self.assertEqual(attachment["required_capabilities"], [])
 
+    def test_latin_skill_names_allow_natural_cjk_adjacency(self):
+        requested = decide_skill_need(normalize_task("使用code-test-regression"))
+        excluded = decide_skill_need(
+            normalize_task("修复解析器；不要使用code-test-regression")
+        )
+
+        self.assertEqual(requested["decision"], "single")
+        self.assertEqual(requested["explicit_skills"], ["code-test-regression"])
+        self.assertEqual(requested["required_capabilities"], ["code.test"])
+        self.assertEqual(excluded["decision"], "clarify")
+        self.assertIn("code-test-regression", excluded["excluded_skills"])
+        self.assertEqual(excluded["required_capabilities"], [])
+        self.assertEqual(excluded["mandatory_capabilities"], [])
+
+    def test_cjk_capability_negation_allows_natural_adjacency(self):
+        cases = (
+            ("不要优化页面的视觉一致性", "design-ui-review"),
+            ("不要打开浏览器验证页面", "execution-browser-check"),
+        )
+        for task, excluded_skill in cases:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "none")
+                self.assertIn(excluded_skill, decision["excluded_skills"])
+                self.assertEqual(decision["required_capabilities"], [])
+
+    def test_same_clause_information_only_suppresses_later_evidence(self):
+        review = decide_skill_need(
+            normalize_task("Review this patch and explain regression test coverage")
+        )
+        explicit = decide_skill_need(
+            normalize_task("Use code-review-risk to explain this patch")
+        )
+
+        self.assertEqual(review["decision"], "single")
+        self.assertEqual(review["required_capabilities"], ["code.review"])
+        self.assertFalse(review["explanation_only"])
+        self.assertEqual(explicit["decision"], "single")
+        self.assertEqual(explicit["required_capabilities"], ["code.review"])
+        self.assertEqual(explicit["explicit_skills"], ["code-review-risk"])
+        self.assertFalse(explicit["explanation_only"])
+
+        for task in ("Explain code-review-risk", "Explain how to use code-review-risk"):
+            with self.subTest(task=task):
+                explanation = decide_skill_need(normalize_task(task))
+                self.assertEqual(explanation["decision"], "none")
+                self.assertTrue(explanation["explanation_only"])
+                self.assertEqual(explanation["explicit_skills"], [])
+                self.assertEqual(explanation["required_capabilities"], [])
+
+    def test_bare_canonical_exclusion_is_distinct_from_positive_request(self):
+        for task in (
+            "Use design-ui-review, not code-review-risk",
+            "Use design-ui-review, but not code-review-risk",
+        ):
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "single")
+                self.assertEqual(
+                    decision["required_capabilities"], ["design.ui_review"]
+                )
+                self.assertEqual(decision["explicit_skills"], ["design-ui-review"])
+                self.assertIn("code-review-risk", decision["excluded_skills"])
+
+        conflict = decide_skill_need(
+            normalize_task(
+                "Use design-ui-review and code-review-risk, but not code-review-risk"
+            )
+        )
+        self.assertEqual(conflict["decision"], "clarify")
+        self.assertEqual(
+            conflict["explicit_skills"],
+            ["code-review-risk", "design-ui-review"],
+        )
+        self.assertIn("code-review-risk", conflict["excluded_skills"])
+        self.assertEqual(conflict["required_capabilities"], [])
+        self.assertEqual(
+            conflict["reason_codes"], ["conflicting_explicit_constraint"]
+        )
+
+        not_only = decide_skill_need(normalize_task("Use not only design-ui-review"))
+        self.assertEqual(not_only["decision"], "single")
+        self.assertEqual(not_only["explicit_skills"], ["design-ui-review"])
+        self.assertNotIn("design-ui-review", not_only["excluded_skills"])
+
+    def test_quoted_current_request_marker_stays_in_explanation_scope(self):
+        decision = decide_skill_need(
+            normalize_task('Explain the phrase "current request: review this patch"')
+        )
+
+        self.assertEqual(decision["decision"], "none")
+        self.assertTrue(decision["explanation_only"])
+        self.assertEqual(decision["required_capabilities"], [])
+
+    def test_ambiguous_match_negation_is_local_to_the_match(self):
+        mixed = decide_skill_need(normalize_task("do not test, review this change"))
+        negated = decide_skill_need(normalize_task("do not review this change"))
+
+        self.assertEqual(mixed["decision"], "clarify")
+        self.assertEqual(mixed["reason_codes"], ["adjacent_capability_ambiguous"])
+        self.assertIn("code-test-regression", mixed["excluded_skills"])
+        self.assertEqual(negated["decision"], "none")
+        self.assertNotIn("adjacent_capability_ambiguous", negated["reason_codes"])
+
 
 if __name__ == "__main__":
     unittest.main()

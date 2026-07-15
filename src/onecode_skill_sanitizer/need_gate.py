@@ -58,9 +58,12 @@ AMBIGUOUS_SPECIALIZED_RE = re.compile(
     re.I,
 )
 CLAUSE_BOUNDARY_RE = re.compile(r"[.;\n。；！？!?]+|(?:,\s*)?\bthen\b", re.I)
-INLINE_CURRENT_REQUEST_RE = re.compile(r"\bcurrent\s+request\s*:\s*", re.I)
+HISTORICAL_CONTEXT_RE = re.compile(
+    r"^\s*(?:earlier|previously)\b.*\b(?:planned|discussed)\b", re.I
+)
 SKILL_DIRECTIVE_RE = re.compile(
     rf"(?P<negative>{NEGATION_PREFIX}\s*(?:(?:use|invoke|使用|调用)\s*)?)|"
+    r"(?P<bare_negative>(?:\bbut\s+)?\bnot\s+(?!only\b)(?:use\s+)?)|"
     r"(?P<positive>\b(?:use|invoke)\b|使用|调用)",
     re.I,
 )
@@ -76,12 +79,14 @@ CAPABILITY_NEGATION_PATTERNS = {
     ),
     "code.test": re.compile(
         rf"{NEGATION_PREFIX}\s*(?:(?:create|add|run|write|perform|创建|添加|运行|编写)\s*)?"
-        r"(?:regression coverage|regression tests?|tests?|testing|回归覆盖|回归测试|测试)\b",
+        r"(?:(?:regression coverage|regression tests?|tests?|testing)(?![A-Za-z0-9_])|"
+        r"回归覆盖|回归测试|测试)",
         re.I,
     ),
     "execution.browser_check": re.compile(
         rf"{NEGATION_PREFIX}\s*(?:(?:open|run|use|check|verify|打开|使用|运行|检查|验证)\s*)?"
-        r"(?:a\s+|the\s+)?(?:real\s+)?(?:browser|playwright|浏览器)\b",
+        r"(?:(?:a\s+|the\s+)?(?:real\s+)?(?:browser|playwright)(?![A-Za-z0-9_])|"
+        r"浏览器)",
         re.I,
     ),
     "research.source": re.compile(
@@ -90,7 +95,8 @@ CAPABILITY_NEGATION_PATTERNS = {
     ),
     "design.ui_review": re.compile(
         rf"{NEGATION_PREFIX}\s*(?:(?:review|polish|check|审查|评审|检查|优化)\s*)?"
-        r"(?:the\s+)?(?:ui|dashboard|layout|design|interface|页面|界面|设计|视觉)\b",
+        r"(?:(?:the\s+)?(?:ui|dashboard|layout|design|interface)(?![A-Za-z0-9_])|"
+        r"页面|界面|设计|视觉)",
         re.I,
     ),
     "security.supply_chain": re.compile(
@@ -104,7 +110,7 @@ CAPABILITY_NEGATION_PATTERNS = {
 def _canonical_skill_pattern(name: str) -> re.Pattern[str]:
     separator = r"(?:-|\s+)"
     body = separator.join(re.escape(part) for part in name.split("-"))
-    return re.compile(rf"(?<![\w-]){body}(?![\w-])", re.I)
+    return re.compile(rf"(?<![A-Za-z0-9_-]){body}(?![A-Za-z0-9_-])", re.I)
 
 
 SKILL_NAME_PATTERNS = {
@@ -113,7 +119,7 @@ SKILL_NAME_PATTERNS = {
 
 
 def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
-    current = _current_request_scope(normalized.current.strip())
+    current = normalized.current.strip()
     clauses = _request_clauses(current)
     capability_indexes = {
         capability: index for index, capability in enumerate(CAPABILITY_SKILL)
@@ -126,21 +132,32 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
     inventory_seen = False
 
     for clause, offset in clauses:
-        explanation_clause = bool(EXPLANATION_RE.search(clause))
-        inventory_clause = bool(INVENTORY_RE.search(clause))
-        explanation_seen = explanation_seen or explanation_clause
-        inventory_seen = inventory_seen or inventory_clause
-        informational_clause = explanation_clause or inventory_clause
+        explanation_match = EXPLANATION_RE.search(clause)
+        inventory_match = INVENTORY_RE.search(clause)
+        explanation_seen = explanation_seen or bool(explanation_match)
+        inventory_seen = inventory_seen or bool(inventory_match)
+        information_positions = [
+            match.start()
+            for match in (explanation_match, inventory_match)
+            if match is not None
+        ]
+        information_position = min(information_positions, default=None)
+        if HISTORICAL_CONTEXT_RE.search(clause):
+            information_position = 0
 
         if GENERIC_SKILL_EXCLUSION_RE.search(clause):
             excluded_skills.update(HIGH_FREQUENCY_SKILL_NAMES)
 
         for name, pattern in SKILL_NAME_PATTERNS.items():
             for match in pattern.finditer(clause):
-                directive = _skill_directive_before(clause, match.start())
+                directive, directive_position = _skill_directive_before(
+                    clause, match.start()
+                )
                 if directive == "negative":
                     excluded_skills.add(name)
-                elif directive == "positive" and not informational_clause:
+                elif directive == "positive" and _before_information(
+                    directive_position, information_position
+                ):
                     positive_skills.add(name)
                     capability = _capability_for_skill(name)
                     _record_evidence(
@@ -160,13 +177,12 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
             CAPABILITY_SKILL[capability] for capability in negated_capabilities
         )
 
-        if informational_clause:
-            continue
-
         for capability, pattern in CAPABILITY_PATTERNS.items():
             if capability in negated_capabilities:
                 continue
             for match in pattern.finditer(masked_clause):
+                if not _before_information(match.start(), information_position):
+                    continue
                 if (
                     capability == "execution.browser_check"
                     and _is_non_action_browser_match(masked_clause, match)
@@ -180,6 +196,8 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
                 )
 
         for match in MANDATORY_TEST_RE.finditer(masked_clause):
+            if not _before_information(match.start(), information_position):
+                continue
             if _match_has_negation_prefix(masked_clause, match.start()):
                 continue
             derived_mandatory.add("code.test")
@@ -251,11 +269,6 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
     )
 
 
-def _current_request_scope(text: str) -> str:
-    matches = list(INLINE_CURRENT_REQUEST_RE.finditer(text))
-    return text[matches[-1].end() :].strip() if matches else text
-
-
 def _request_clauses(text: str) -> list[tuple[str, int]]:
     clauses: list[tuple[str, int]] = []
     start = 0
@@ -275,11 +288,23 @@ def _append_clause(
         clauses.append((clause, start + len(raw) - len(raw.lstrip())))
 
 
-def _skill_directive_before(text: str, position: int) -> str:
+def _skill_directive_before(text: str, position: int) -> tuple[str, int]:
     directive_kind = ""
+    directive_position = -1
     for directive in SKILL_DIRECTIVE_RE.finditer(text, 0, position):
-        directive_kind = "negative" if directive.lastgroup == "negative" else "positive"
-    return directive_kind
+        if directive.lastgroup == "bare_negative" and directive.end() != position:
+            continue
+        directive_kind = (
+            "negative"
+            if directive.lastgroup in {"negative", "bare_negative"}
+            else "positive"
+        )
+        directive_position = directive.start()
+    return directive_kind, directive_position
+
+
+def _before_information(position: int, information_position: int | None) -> bool:
+    return information_position is None or position < information_position
 
 
 def _capability_for_skill(skill: str) -> str:
@@ -322,13 +347,21 @@ def _is_non_action_browser_match(text: str, match: re.Match[str]) -> bool:
 
 def _has_ambiguous_specialized_request(clauses: list[tuple[str, int]]) -> bool:
     for clause, _ in clauses:
-        if EXPLANATION_RE.search(clause) or INVENTORY_RE.search(clause):
-            continue
+        information_positions = [
+            match.start()
+            for pattern in (EXPLANATION_RE, INVENTORY_RE)
+            if (match := pattern.search(clause)) is not None
+        ]
+        information_position = min(information_positions, default=None)
+        if HISTORICAL_CONTEXT_RE.search(clause):
+            information_position = 0
         masked_clause = _mask_canonical_skill_names(clause)
-        if re.search(NEGATION_PREFIX, masked_clause, re.I):
-            continue
-        if AMBIGUOUS_SPECIALIZED_RE.search(masked_clause):
-            return True
+        for match in AMBIGUOUS_SPECIALIZED_RE.finditer(masked_clause):
+            if (
+                _before_information(match.start(), information_position)
+                and not _match_has_negation_prefix(masked_clause, match.start())
+            ):
+                return True
     return False
 
 
