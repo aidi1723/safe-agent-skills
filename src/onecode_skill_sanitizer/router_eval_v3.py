@@ -5,6 +5,9 @@ from collections import Counter
 from pathlib import Path
 from typing import Any, Callable
 
+from .skill_candidates import HIGH_FREQUENCY_ENTRY_NAMES
+from .skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
+
 
 CASE_KEYS = {
     "id",
@@ -30,25 +33,11 @@ CATEGORY_COUNTS = {
 NEED_VALUES = {"none", "single", "composite", "clarify"}
 STATUS_VALUES = {"none", "clarify", "complete", "incomplete", "blocked"}
 
-HIGH_FREQUENCY_DATASET_PATH = (
-    Path(__file__).resolve().parents[2]
-    / "evals"
-    / "high-frequency-skill-selection.json"
-)
 _TOP_LEVEL_KEYS = {"schema_version", "cohort", "labeling", "cases"}
-_CANDIDATE_NAMES = [
-    "codebase-explore-map",
-    "code-review-risk",
-    "code-test-regression",
-    "execution-browser-check",
-    "research-source-check",
-    "design-ui-review",
-    "security-supply-chain-review",
-]
-_CANDIDATE_NAME_SET = set(_CANDIDATE_NAMES)
+_CANDIDATE_NAME_SET = set(HIGH_FREQUENCY_SKILL_NAMES)
 _EXPECTED_COHORT = {
-    "entry_names": ["safe-agent-router", *_CANDIDATE_NAMES],
-    "candidate_names": _CANDIDATE_NAMES,
+    "entry_names": list(HIGH_FREQUENCY_ENTRY_NAMES),
+    "candidate_names": list(HIGH_FREQUENCY_SKILL_NAMES),
 }
 _EXPECTED_LABELING = {
     "method": "manual_review",

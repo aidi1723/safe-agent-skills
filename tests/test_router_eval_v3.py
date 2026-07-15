@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import copy
+import inspect
 import json
 import tempfile
 import unittest
@@ -8,23 +9,18 @@ from collections import Counter
 from pathlib import Path
 from typing import Callable
 
+from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_ENTRY_NAMES
+from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
+
 
 ROOT = Path(__file__).resolve().parents[1]
 EVAL_PATH = ROOT / "evals" / "high-frequency-skill-selection.json"
 SRC_PACKAGE = ROOT / "src" / "onecode_skill_sanitizer"
 
-CANDIDATE_NAMES = [
-    "codebase-explore-map",
-    "code-review-risk",
-    "code-test-regression",
-    "execution-browser-check",
-    "research-source-check",
-    "design-ui-review",
-    "security-supply-chain-review",
-]
+CANDIDATE_NAMES = list(HIGH_FREQUENCY_SKILL_NAMES)
 EXPECTED_COHORT = {
-    "entry_names": ["safe-agent-router", *CANDIDATE_NAMES],
-    "candidate_names": CANDIDATE_NAMES,
+    "entry_names": list(HIGH_FREQUENCY_ENTRY_NAMES),
+    "candidate_names": list(HIGH_FREQUENCY_SKILL_NAMES),
 }
 EXPECTED_LABELING = {
     "method": "manual_review",
@@ -84,6 +80,28 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as temp_dir:
             with self.assertRaises(DatasetValidationError):
                 load_eval_dataset_v3(write_payload(temp_dir, payload))
+
+    def test_evaluator_reuses_canonical_high_frequency_cohort_constants(self):
+        from onecode_skill_sanitizer import router_eval_v3
+
+        self.assertIs(
+            getattr(router_eval_v3, "HIGH_FREQUENCY_ENTRY_NAMES", None),
+            HIGH_FREQUENCY_ENTRY_NAMES,
+        )
+        self.assertIs(
+            getattr(router_eval_v3, "HIGH_FREQUENCY_SKILL_NAMES", None),
+            HIGH_FREQUENCY_SKILL_NAMES,
+        )
+        self.assertNotIn("_CANDIDATE_NAMES", vars(router_eval_v3))
+
+    def test_loader_has_no_implicit_default_dataset_path(self):
+        from onecode_skill_sanitizer import router_eval_v3
+
+        self.assertNotIn("HIGH_FREQUENCY_DATASET_PATH", vars(router_eval_v3))
+        path_parameter = inspect.signature(router_eval_v3.load_eval_dataset_v3).parameters[
+            "path"
+        ]
+        self.assertIs(path_parameter.default, inspect.Parameter.empty)
 
     def test_gold_dataset_has_exact_count_distribution_and_balanced_splits(self):
         from onecode_skill_sanitizer.router_eval_v3 import load_eval_dataset_v3
