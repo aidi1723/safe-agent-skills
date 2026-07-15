@@ -355,6 +355,20 @@ class NeedGateTest(unittest.TestCase):
         self.assertEqual(negated["decision"], "none")
         self.assertNotIn("adjacent_capability_ambiguous", negated["reason_codes"])
 
+    def test_browser_flow_action_survives_design_exclusion(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Do not critique design; run the existing UI flow in a browser"
+            )
+        )
+
+        self.assertEqual(decision["decision"], "single")
+        self.assertEqual(
+            decision["required_capabilities"], ["execution.browser_check"]
+        )
+        self.assertIn("design-ui-review", decision["excluded_skills"])
+        self.assertNotIn("execution-browser-check", decision["excluded_skills"])
+
 
 if __name__ == "__main__":
     unittest.main()

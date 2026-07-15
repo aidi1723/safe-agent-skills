@@ -20,7 +20,7 @@ CAPABILITY_PATTERNS = {
     "code.explore": re.compile(r"unfamiliar repo|map (?:the )?repo|repository map|repository orientation|source ownership|data flow|entry points?|where does|architecture|陌生代码库|梳理.*(?:代码库|repo|入口|模块)|(?:代码库|repo).*(?:映射|梳理)|调用链", re.I),
     "code.review": re.compile(r"review (?:this |the )?(?:diff|patch|pr|code)|code review|pr.*review|risk[- ]review|code delta|find (?:bugs|defects)|check this change.*(?:concurrency|cleanup|regression)|审查.*(?:diff|PR|补丁|代码)|评审.*(?:缺陷|代码|补丁|变更)|代码变更.*(?:问题|风险)|回归风险", re.I),
     "code.test": re.compile(r"regression test|regression coverage|test coverage|failing test|test boundary|contract test|old behavior.*fail|red[- ]green|回归测试|补.*测试|失败用例", re.I),
-    "execution.browser_check": re.compile(r"real browser|browser (?:check|flow|test)|playwright|screenshot|DOM state|canvas|console error|浏览器.*(?:验证|检查|跑|截图|复现)|打开.*页面", re.I),
+    "execution.browser_check": re.compile(r"real browser|(?:existing )?UI flow (?:in )?(?:a )?(?:real )?browser|browser (?:check|flow|test)|playwright|screenshot|DOM state|canvas|console error|浏览器.*(?:验证|检查|跑|截图|复现)|打开.*页面", re.I),
     "research.source": re.compile(r"primary sources?|official (?:sources?|documentation|records?)|citations?|fact[- ]check|verify (?:the |these )?claims?|research (?:the )?(?:claims|sources|package|community skill)|standards?.*evidence|web research|全网搜索|一手资料|官方资料|权威来源|查证|核实|引用|事实核查", re.I),
     "design.ui_review": re.compile(r"polish (?:the )?(?:UI|dashboard)|review (?:the )?(?:UI|dashboard|layout)|visual hierarchy|spacing|responsive layout|accessibility|优化.*(?:UI|页面|界面)|视觉一致|响应式布局|可访问性", re.I),
     "security.supply_chain": re.compile(r"supply[- ]chain|package (?:provenance|trust|before adoption)|install scripts?|plugin maintainer|community skill|dependency (?:risk|provenance|trust)|connector.*permissions?|供应链|包.*(?:来源|信任)|社区 Skill|插件.*风险|connector.*权限|许可证.*权限", re.I),
@@ -94,7 +94,7 @@ CAPABILITY_NEGATION_PATTERNS = {
         re.I,
     ),
     "design.ui_review": re.compile(
-        rf"{NEGATION_PREFIX}\s*(?:(?:review|polish|check|审查|评审|检查|优化)\s*)?"
+        rf"{NEGATION_PREFIX}\s*(?:(?:review|polish|check|critique|审查|评审|检查|优化)\s*)?"
         r"(?:(?:the\s+)?(?:ui|dashboard|layout|design|interface)(?![A-Za-z0-9_])|"
         r"页面|界面|设计|视觉)",
         re.I,
