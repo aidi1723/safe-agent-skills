@@ -358,7 +358,35 @@ def select_command(args: argparse.Namespace) -> int:
     print(json.dumps(result, indent=2, sort_keys=True))
     return 0
 
+def _run_v3_not_ready_command(args: argparse.Namespace) -> int:
+    error = {
+        "code": "feature_not_ready",
+        "message": "Task-pack v3 is not implemented yet.",
+    }
+    if args.format == "markdown":
+        print(
+            "\n".join(
+                [
+                    "# OneCode Task Pack v3 Error",
+                    "",
+                    f"- code: `{error['code']}`",
+                    f"- message: {error['message']}",
+                ]
+            )
+        )
+    else:
+        print(
+            json.dumps(
+                {"schema_version": 3, "status": "error", "error": error},
+                indent=2,
+                sort_keys=True,
+            )
+        )
+    return 2
+
 def task_pack_command(args: argparse.Namespace) -> int:
+    if args.schema_version == 3:
+        return _run_v3_not_ready_command(args)
     if args.schema_version == 2:
         return _run_v2_task_pack_command(args)
     else:
@@ -383,6 +411,8 @@ def task_pack_command(args: argparse.Namespace) -> int:
     return 0
 
 def smart_command(args: argparse.Namespace) -> int:
+    if args.schema_version == 3:
+        return _run_v3_not_ready_command(args)
     if args.schema_version == 2:
         return _run_v2_task_pack_command(args)
     else:
