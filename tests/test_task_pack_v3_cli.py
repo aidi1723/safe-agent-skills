@@ -255,6 +255,28 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             ),
         )
 
+    def test_digest_extended_parameter_credentials_are_fully_route_inert(self):
+        self.assert_authorization_credentials_are_route_inert(
+            "review this patch authorization: Digest "
+            "username*=UTF-8''M%C3%BCller, realm=first.example, "
+            "nonce=nonce-a, response=response-a, and add a regression test",
+            "review this patch authorization: Digest "
+            "username*=UTF-8''Alice, realm=second.example, "
+            "nonce=nonce-b, response=response-b, and add a regression test",
+            (
+                "Digest",
+                "username*",
+                "M%C3%BCller",
+                "Alice",
+                "first.example",
+                "second.example",
+                "nonce-a",
+                "nonce-b",
+                "response-a",
+                "response-b",
+            ),
+        )
+
     def test_route_id_binds_max_candidates(self):
         one = self.build("review this patch", max_candidates=1)
         three = self.build("review this patch", max_candidates=3)

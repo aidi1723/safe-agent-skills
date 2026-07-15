@@ -29,7 +29,7 @@ _SECRET_ASSIGNMENT_RE = re.compile(
     re.IGNORECASE,
 )
 _DIGEST_AUTH_PARAMETER = (
-    r"[A-Za-z][A-Za-z0-9_-]*\s*=\s*"
+    r"[A-Za-z][A-Za-z0-9_-]*\*?\s*=\s*"
     r'(?:"[^"\r\n]*"|\'[^\'\r\n]*\'|[^\s,;，；]+)'
 )
 _AUTHORIZATION_CREDENTIAL_RE = re.compile(
