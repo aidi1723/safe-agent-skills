@@ -3,7 +3,10 @@ from __future__ import annotations
 import unittest
 
 from onecode_skill_sanitizer.intent import normalize_task
-from onecode_skill_sanitizer.need_gate import decide_skill_need
+from onecode_skill_sanitizer.need_gate import (
+    _positive_explicit_skill_occurrences,
+    decide_skill_need,
+)
 from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 
 
@@ -495,6 +498,41 @@ class NeedGateTest(unittest.TestCase):
         )
         self.assertEqual(explanation["decision"], "none")
         self.assertEqual(explanation["explicit_skills"], [])
+
+    def test_positive_explicit_skill_occurrences_are_span_local(self):
+        informational = (
+            "Use code-review-risk and code-test-regression, but explain "
+            "code-review-risk before code-test-regression."
+        )
+        repeated = (
+            "Use code-review-risk before code-test-regression, then use "
+            "code-test-regression after code-review-risk."
+        )
+
+        informational_occurrences = _positive_explicit_skill_occurrences(
+            informational
+        )
+        repeated_occurrences = _positive_explicit_skill_occurrences(repeated)
+
+        self.assertEqual(
+            [name for name, _, _ in informational_occurrences],
+            ["code-review-risk", "code-test-regression"],
+        )
+        self.assertEqual(
+            [name for name, _, _ in repeated_occurrences],
+            [
+                "code-review-risk",
+                "code-test-regression",
+                "code-test-regression",
+                "code-review-risk",
+            ],
+        )
+        for text, occurrences in (
+            (informational, informational_occurrences),
+            (repeated, repeated_occurrences),
+        ):
+            for name, start, end in occurrences:
+                self.assertEqual(text[start:end], name)
 
     def test_non_action_browser_evidence_is_clause_local(self):
         combined = decide_skill_need(

@@ -18,6 +18,7 @@ from .need_gate import (
     CAPABILITY_SKILL,
     SKILL_NAME_PATTERNS,
     _mask_canonical_skill_names,
+    _positive_explicit_skill_occurrences,
     decide_skill_need,
 )
 from .registry import load_registry_index, utc_now, verify_registry
@@ -235,13 +236,16 @@ def _extract_explicit_skill_order(
     for clause in _STRONG_ORDER_BOUNDARY_RE.split(current):
         if not clause.strip():
             continue
-        clause_need = decide_skill_need(normalize_task(clause))
-        explicit = set(clause_need.get("explicit_skills", ()))
+        positive_occurrences = _positive_explicit_skill_occurrences(clause)
+        order_clause = _mask_unauthorized_canonical_skill_names(
+            clause, positive_occurrences
+        )
+        explicit = {name for name, _, _ in positive_occurrences}
         relations.extend(
-            _binary_order_relations(clause, required, admitted, explicit)
+            _binary_order_relations(order_clause, required, admitted, explicit)
         )
         relations.extend(
-            _sequence_order_relations(clause, required, admitted, explicit)
+            _sequence_order_relations(order_clause, required, admitted, explicit)
         )
 
     return list(dict.fromkeys(relation for relation in relations if relation[0] != relation[1]))
@@ -431,6 +435,22 @@ def _skill_mentions(
                 for match in name_pattern.finditer(text)
             )
     return sorted(mentions, key=lambda item: (item[0], item[1], item[2]))
+
+
+def _mask_unauthorized_canonical_skill_names(
+    text: str,
+    authorized: list[tuple[str, int, int]],
+) -> str:
+    authorized_spans = set(authorized)
+    masked = list(text)
+    for name, pattern in SKILL_NAME_PATTERNS.items():
+        for match in pattern.finditer(text):
+            occurrence = (name, match.start(), match.end())
+            if occurrence not in authorized_spans:
+                masked[match.start() : match.end()] = " " * (
+                    match.end() - match.start()
+                )
+    return "".join(masked)
 
 
 def _unique_skill_mentions(

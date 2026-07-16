@@ -122,7 +122,10 @@ AMBIGUOUS_SPECIALIZED_RE = re.compile(
 )
 CLAUSE_BOUNDARY_RE = re.compile(r"[.;\n。；！？!?]+|(?:,\s*)?\bthen\b", re.I)
 HISTORICAL_CONTEXT_RE = re.compile(
-    r"^\s*(?:earlier|previously)\b.*\b(?:planned|discussed)\b", re.I
+    r"\b(?:earlier|previously)\b.*\b(?:planned|discussed)\b", re.I
+)
+REFERENCE_CONTEXT_RE = re.compile(
+    r"\b(?:mentions?|mentioned|discussed|planned)\b", re.I
 )
 SKILL_DIRECTIVE_RE = re.compile(
     rf"(?P<negative>{NEGATION_PREFIX}\s*(?:(?:use|invoke|使用|调用)\s*)?)|"
@@ -192,58 +195,37 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
         capability: index for index, capability in enumerate(CAPABILITY_SKILL)
     }
     evidence: dict[str, tuple[int, int]] = {}
-    positive_skills: set[str] = set()
+    positive_occurrences = _positive_explicit_skill_occurrences(current)
+    positive_skills = {name for name, _, _ in positive_occurrences}
     excluded_skills: set[str] = set()
     derived_mandatory: set[str] = set()
     explanation_seen = False
     inventory_seen = False
-    previous_clause_requested_skill = False
 
-    for clause_index, (clause, offset) in enumerate(clauses):
-        clause_requested_skill = False
+    for name, start, _ in positive_occurrences:
+        capability = _capability_for_skill(name)
+        _record_evidence(
+            evidence,
+            capability,
+            start,
+            capability_indexes[capability],
+        )
+
+    for clause, offset in clauses:
         explanation_match = EXPLANATION_RE.search(clause)
         inventory_match = INVENTORY_RE.search(clause)
         explanation_seen = explanation_seen or bool(explanation_match)
         inventory_seen = inventory_seen or bool(inventory_match)
-        information_positions = [
-            match.start()
-            for match in (explanation_match, inventory_match)
-            if match is not None
-        ]
-        information_position = min(information_positions, default=None)
-        if HISTORICAL_CONTEXT_RE.search(clause):
-            information_position = 0
+        information_position = _information_position(clause)
 
         if GENERIC_SKILL_EXCLUSION_RE.search(clause):
             excluded_skills.update(HIGH_FREQUENCY_SKILL_NAMES)
 
         for name, pattern in SKILL_NAME_PATTERNS.items():
             for match in pattern.finditer(clause):
-                directive, directive_position = _skill_directive_before(
-                    clause, match.start()
-                )
-                if (
-                    not directive
-                    and previous_clause_requested_skill
-                    and match.start() == 0
-                    and _follows_then_boundary(current, clauses, clause_index)
-                ):
-                    directive = "positive"
-                    directive_position = match.start()
+                directive, _ = _skill_directive_before(clause, match.start())
                 if directive == "negative":
                     excluded_skills.add(name)
-                elif directive == "positive" and _before_information(
-                    directive_position, information_position
-                ):
-                    positive_skills.add(name)
-                    clause_requested_skill = True
-                    capability = _capability_for_skill(name)
-                    _record_evidence(
-                        evidence,
-                        capability,
-                        offset + match.start(),
-                        capability_indexes[capability],
-                    )
 
         masked_clause = _mask_canonical_skill_names(clause)
         negated_capabilities = {
@@ -290,8 +272,6 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
                 offset + match.start(),
                 capability_indexes["code.test"],
             )
-
-        previous_clause_requested_skill = clause_requested_skill
 
     explicit = [
         name for name in HIGH_FREQUENCY_SKILL_NAMES if name in positive_skills
@@ -371,6 +351,54 @@ def _append_clause(
     clause = raw.strip()
     if clause:
         clauses.append((clause, start + len(raw) - len(raw.lstrip())))
+
+
+def _positive_explicit_skill_occurrences(
+    text: str,
+) -> list[tuple[str, int, int]]:
+    clauses = _request_clauses(text)
+    occurrences: list[tuple[str, int, int]] = []
+    previous_clause_requested_skill = False
+
+    for clause_index, (clause, offset) in enumerate(clauses):
+        clause_requested_skill = False
+        information_position = _information_position(clause)
+        matches = sorted(
+            (match.start(), match.end(), name)
+            for name, pattern in SKILL_NAME_PATTERNS.items()
+            for match in pattern.finditer(clause)
+        )
+        for start, end, name in matches:
+            directive, _ = _skill_directive_before(clause, start)
+            if (
+                not directive
+                and previous_clause_requested_skill
+                and start == 0
+                and _follows_then_boundary(text, clauses, clause_index)
+            ):
+                directive = "positive"
+            if directive == "positive" and _before_information(
+                start, information_position
+            ):
+                occurrences.append((name, offset + start, offset + end))
+                clause_requested_skill = True
+        previous_clause_requested_skill = clause_requested_skill
+
+    return occurrences
+
+
+def _information_position(text: str) -> int | None:
+    positions = [
+        match.start()
+        for pattern in (
+            EXPLANATION_RE,
+            INVENTORY_RE,
+            HISTORICAL_CONTEXT_RE,
+            REFERENCE_CONTEXT_RE,
+        )
+        if (match := pattern.search(text)) is not None
+    ]
+    return min(positions, default=None)
 
 
 def _follows_then_boundary(
@@ -453,14 +481,7 @@ def _is_non_action_code_review_match(text: str, match: re.Match[str]) -> bool:
 
 def _has_ambiguous_specialized_request(clauses: list[tuple[str, int]]) -> bool:
     for clause, _ in clauses:
-        information_positions = [
-            match.start()
-            for pattern in (EXPLANATION_RE, INVENTORY_RE)
-            if (match := pattern.search(clause)) is not None
-        ]
-        information_position = min(information_positions, default=None)
-        if HISTORICAL_CONTEXT_RE.search(clause):
-            information_position = 0
+        information_position = _information_position(clause)
         masked_clause = _mask_canonical_skill_names(clause)
         for match in AMBIGUOUS_SPECIALIZED_RE.finditer(masked_clause):
             if (
