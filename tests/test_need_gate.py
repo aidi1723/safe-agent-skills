@@ -473,6 +473,29 @@ class NeedGateTest(unittest.TestCase):
             partial_conflict["reason_codes"], ["conflicting_explicit_constraint"]
         )
 
+    def test_then_inherits_an_explicit_canonical_skill_directive(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Use code-review-risk, then code-test-regression."
+            )
+        )
+        explanation = decide_skill_need(
+            normalize_task(
+                "Explain code-review-risk, then code-test-regression."
+            )
+        )
+
+        self.assertEqual(decision["decision"], "composite")
+        self.assertEqual(
+            decision["required_capabilities"], ["code.review", "code.test"]
+        )
+        self.assertEqual(
+            decision["explicit_skills"],
+            ["code-review-risk", "code-test-regression"],
+        )
+        self.assertEqual(explanation["decision"], "none")
+        self.assertEqual(explanation["explicit_skills"], [])
+
     def test_non_action_browser_evidence_is_clause_local(self):
         combined = decide_skill_need(
             normalize_task(

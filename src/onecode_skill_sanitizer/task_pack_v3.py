@@ -13,7 +13,13 @@ from .compatibility import build_route_identity_payload
 from .compatibility import redact_route_identity_text
 from .compatibility import v3_compatibility_report
 from .intent import decompose_task, normalize_task
-from .need_gate import CAPABILITY_PATTERNS, CAPABILITY_SKILL, decide_skill_need
+from .need_gate import (
+    CAPABILITY_PATTERNS,
+    CAPABILITY_SKILL,
+    SKILL_NAME_PATTERNS,
+    _mask_canonical_skill_names,
+    decide_skill_need,
+)
 from .registry import load_registry_index, utc_now, verify_registry
 from .semantic_provider import SemanticProvider, rerank_candidates
 from .skill_candidates import HIGH_FREQUENCY_ENTRY_NAMES
@@ -225,12 +231,17 @@ def _extract_explicit_skill_order(
 ) -> list[tuple[str, str]]:
     admitted = {item["skill"] for item in candidates}
     required = set(need["required_capabilities"])
+    explicit = set(need.get("explicit_skills", ()))
     relations: list[tuple[str, str]] = []
     for clause in _STRONG_ORDER_BOUNDARY_RE.split(current):
         if not clause.strip():
             continue
-        relations.extend(_binary_order_relations(clause, required, admitted))
-        relations.extend(_sequence_order_relations(clause, required, admitted))
+        relations.extend(
+            _binary_order_relations(clause, required, admitted, explicit)
+        )
+        relations.extend(
+            _sequence_order_relations(clause, required, admitted, explicit)
+        )
 
     return list(dict.fromkeys(relation for relation in relations if relation[0] != relation[1]))
 
@@ -239,24 +250,27 @@ def _binary_order_relations(
     clause: str,
     required: set[str],
     admitted: set[str],
+    explicit: set[str],
 ) -> list[tuple[str, str]]:
     connectors = list(_BINARY_ORDER_CONNECTOR_RE.finditer(clause))
     if not connectors:
         return []
 
-    active_anchor = _last_skill(clause[: connectors[0].start()], required, admitted)
+    active_anchor = _last_skill(
+        clause[: connectors[0].start()], required, admitted, explicit
+    )
     relations: list[tuple[str, str]] = []
     for index, connector in enumerate(connectors):
         separator = re.match(r"\s*[,，]?\s*", clause[connector.end() :])
         complement_start = connector.end() + (separator.end() if separator else 0)
         complement_end = _next_local_complement_boundary_start(clause, complement_start)
         complement = _first_skill(
-            clause[complement_start:complement_end], required, admitted
+            clause[complement_start:complement_end], required, admitted, explicit
         )
         if index:
             previous = connectors[index - 1]
             gap = clause[previous.end() : connector.start()]
-            gap_mentions = _skill_mentions(gap, required, admitted)
+            gap_mentions = _skill_mentions(gap, required, admitted, explicit)
             gap_actions = _unique_skill_mentions(gap_mentions)
             continues_group = bool(_GROUP_CONTINUATION_RE.search(gap)) and len(gap_actions) <= 1
             if not continues_group and gap_mentions and len(gap_actions) <= 1:
@@ -266,7 +280,7 @@ def _binary_order_relations(
                 )
             if not continues_group:
                 active_anchor = gap_mentions[-1][2] if gap_mentions else _last_skill(
-                    clause[: connector.start()], required, admitted
+                    clause[: connector.start()], required, admitted, explicit
                 )
         if active_anchor is None or complement is None:
             continue
@@ -289,6 +303,7 @@ def _sequence_order_relations(
     clause: str,
     required: set[str],
     admitted: set[str],
+    explicit: set[str],
 ) -> list[tuple[str, str]]:
     relations: list[tuple[str, str]] = []
     for connector in _SEQUENCE_ORDER_CONNECTOR_RE.finditer(clause):
@@ -297,9 +312,11 @@ def _sequence_order_relations(
         separator = re.match(r"\s*[,，]?\s*", clause[connector.end() :])
         complement_start = connector.end() + (separator.end() if separator else 0)
         complement_end = _next_local_complement_boundary_start(clause, complement_start)
-        left = _last_skill(clause[: connector.start()], required, admitted)
+        left = _last_skill(
+            clause[: connector.start()], required, admitted, explicit
+        )
         right = _first_skill(
-            clause[complement_start:complement_end], required, admitted
+            clause[complement_start:complement_end], required, admitted, explicit
         )
         if left is not None and right is not None:
             relations.append((left, right))
@@ -317,7 +334,7 @@ def _sequence_order_relations(
         ordered = [
             item[2]
             for item in _skill_mentions(
-                clause[xian.end() : scope_end], required, admitted
+                clause[xian.end() : scope_end], required, admitted, explicit
             )
         ]
         relations.extend(zip(ordered, ordered[1:]))
@@ -371,13 +388,23 @@ def _is_internal_compound_gerund_marker(text: str, match: re.Match[str]) -> bool
     )
 
 
-def _first_skill(text: str, required: set[str], admitted: set[str]) -> str | None:
-    mentions = _skill_mentions(text, required, admitted)
+def _first_skill(
+    text: str,
+    required: set[str],
+    admitted: set[str],
+    explicit: set[str],
+) -> str | None:
+    mentions = _skill_mentions(text, required, admitted, explicit)
     return mentions[0][2] if mentions else None
 
 
-def _last_skill(text: str, required: set[str], admitted: set[str]) -> str | None:
-    mentions = _skill_mentions(text, required, admitted)
+def _last_skill(
+    text: str,
+    required: set[str],
+    admitted: set[str],
+    explicit: set[str],
+) -> str | None:
+    mentions = _skill_mentions(text, required, admitted, explicit)
     return mentions[-1][2] if mentions else None
 
 
@@ -385,13 +412,22 @@ def _skill_mentions(
     text: str,
     required: set[str],
     admitted: set[str],
+    explicit: set[str],
 ) -> list[tuple[int, int, str]]:
     mentions: list[tuple[int, int, str]] = []
+    masked_text = _mask_canonical_skill_names(text)
     for capability, pattern in CAPABILITY_PATTERNS.items():
         skill = CAPABILITY_SKILL[capability]
         if capability in required and skill in admitted:
             mentions.extend(
-                (match.start(), match.end(), skill) for match in pattern.finditer(text)
+                (match.start(), match.end(), skill)
+                for match in pattern.finditer(masked_text)
+            )
+        if capability in required and skill in admitted and skill in explicit:
+            name_pattern = SKILL_NAME_PATTERNS[skill]
+            mentions.extend(
+                (match.start(), match.end(), skill)
+                for match in name_pattern.finditer(text)
             )
     return sorted(mentions, key=lambda item: (item[0], item[1], item[2]))
 

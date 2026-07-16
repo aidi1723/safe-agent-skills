@@ -502,6 +502,96 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             ],
         )
 
+    def test_canonical_skill_names_preserve_explicit_user_order(self):
+        cases = (
+            (
+                "Use code-review-risk, then use code-test-regression.",
+                "code-review-risk",
+                "code-test-regression",
+            ),
+            (
+                "Use code-review-risk before code-test-regression.",
+                "code-review-risk",
+                "code-test-regression",
+            ),
+            (
+                "Use code-review-risk, then code-test-regression.",
+                "code-review-risk",
+                "code-test-regression",
+            ),
+            (
+                "Use code-review-risk after code-test-regression.",
+                "code-test-regression",
+                "code-review-risk",
+            ),
+            (
+                "使用 code-review-risk，然后 code-test-regression。",
+                "code-review-risk",
+                "code-test-regression",
+            ),
+        )
+        for task, source, target in cases:
+            with self.subTest(task=task):
+                payload = self.build(task)
+
+                self.assertEqual(
+                    set(payload["selection"]["selected_skill_names"]),
+                    {"code-review-risk", "code-test-regression"},
+                )
+                self.assertEqual(
+                    payload["need_decision"]["explicit_skills"],
+                    ["code-review-risk", "code-test-regression"],
+                )
+                self.assertEqual(
+                    payload["execution_graph"]["edges"],
+                    [
+                        {
+                            "from": f"skill:{source}",
+                            "to": f"skill:{target}",
+                            "type": "explicit_user_order",
+                            "evidence": "current_request",
+                        }
+                    ],
+                )
+
+    def test_canonical_skill_mentions_do_not_manufacture_order_edges(self):
+        cases = (
+            (
+                "Use code-review-risk, code-test-regression.",
+                {"code-review-risk", "code-test-regression"},
+            ),
+            (
+                "Use code-review-risk, then explain code-test-regression.",
+                {"code-review-risk"},
+            ),
+            (
+                "Use code-review-risk, then do not use code-test-regression.",
+                {"code-review-risk"},
+            ),
+            (
+                "The documentation mentions code-review-risk before "
+                "code-test-regression.",
+                set(),
+            ),
+            (
+                "History: use code-review-risk before code-test-regression. "
+                "Current request: review this patch.",
+                {"code-review-risk"},
+            ),
+            (
+                "Use code-review-risk. Independently, use code-test-regression.",
+                {"code-review-risk", "code-test-regression"},
+            ),
+        )
+        for task, selected in cases:
+            with self.subTest(task=task):
+                payload = self.build(task)
+
+                self.assertEqual(
+                    set(payload["selection"]["selected_skill_names"]), selected
+                )
+                self.assertEqual(payload["execution_graph"]["edges"], [])
+
     def test_builder_reverses_textual_order_for_after_connector(self):
         self.assert_explicit_order_edge(
             "review this patch after adding a regression test",

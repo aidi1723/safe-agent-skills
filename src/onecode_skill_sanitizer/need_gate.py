@@ -197,8 +197,10 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
     derived_mandatory: set[str] = set()
     explanation_seen = False
     inventory_seen = False
+    previous_clause_requested_skill = False
 
-    for clause, offset in clauses:
+    for clause_index, (clause, offset) in enumerate(clauses):
+        clause_requested_skill = False
         explanation_match = EXPLANATION_RE.search(clause)
         inventory_match = INVENTORY_RE.search(clause)
         explanation_seen = explanation_seen or bool(explanation_match)
@@ -220,12 +222,21 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
                 directive, directive_position = _skill_directive_before(
                     clause, match.start()
                 )
+                if (
+                    not directive
+                    and previous_clause_requested_skill
+                    and match.start() == 0
+                    and _follows_then_boundary(current, clauses, clause_index)
+                ):
+                    directive = "positive"
+                    directive_position = match.start()
                 if directive == "negative":
                     excluded_skills.add(name)
                 elif directive == "positive" and _before_information(
                     directive_position, information_position
                 ):
                     positive_skills.add(name)
+                    clause_requested_skill = True
                     capability = _capability_for_skill(name)
                     _record_evidence(
                         evidence,
@@ -279,6 +290,8 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
                 offset + match.start(),
                 capability_indexes["code.test"],
             )
+
+        previous_clause_requested_skill = clause_requested_skill
 
     explicit = [
         name for name in HIGH_FREQUENCY_SKILL_NAMES if name in positive_skills
@@ -358,6 +371,20 @@ def _append_clause(
     clause = raw.strip()
     if clause:
         clauses.append((clause, start + len(raw) - len(raw.lstrip())))
+
+
+def _follows_then_boundary(
+    text: str,
+    clauses: list[tuple[str, int]],
+    clause_index: int,
+) -> bool:
+    if clause_index == 0:
+        return False
+    previous_clause, previous_offset = clauses[clause_index - 1]
+    previous_end = previous_offset + len(previous_clause)
+    current_offset = clauses[clause_index][1]
+    boundary = text[previous_end:current_offset]
+    return bool(re.fullmatch(r"\s*,?\s*\bthen\b\s*", boundary, re.I))
 
 
 def _skill_directive_before(text: str, position: int) -> tuple[str, int]:
