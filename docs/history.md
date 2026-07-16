@@ -8,7 +8,8 @@ for provenance and decision review; current behavior is defined by the
 
 - [Update Statements](updates/)
 - [High-Frequency Intelligent Skill Selection v3 Update](updates/2026-07-16-high-frequency-intelligent-skill-selection-v3.md)
-- [GitHub Update Summary](github-update-summary-2026-07-03.md)
+- [GitHub Update Summary 2026-07-16](github-update-summary-2026-07-16.md)
+- [GitHub Update Summary 2026-07-03](github-update-summary-2026-07-03.md)
 - [Stage Acceptance Report](stage-acceptance-report-2026-07-04.md)
 
 ## Batch Records

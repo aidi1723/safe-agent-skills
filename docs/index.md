@@ -75,3 +75,4 @@ current system was reached. They do not override the current documents above.
 - [Maintenance Log](maintenance-log.md)
 - [Feature Log](feature-log.md)
 - [v3 Structural Delivery Update](updates/2026-07-16-high-frequency-intelligent-skill-selection-v3.md)
+- [GitHub Update Summary 2026-07-16](github-update-summary-2026-07-16.md)

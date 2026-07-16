@@ -22,6 +22,7 @@ one-shot and missing three-arm task evidence remain release blockers.
 Authoritative write-up:
 
 - [High-Frequency Intelligent Skill Selection v3 Closure Report](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
+- [GitHub Update Summary 2026-07-16](github-update-summary-2026-07-16.md)
 
 ## 2026-07-11 High-Frequency Specialist Coverage Completion
 
