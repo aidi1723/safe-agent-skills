@@ -646,6 +646,50 @@ class NeedGateTest(unittest.TestCase):
             ["information", "skill"],
         )
 
+        nominal_uses = (
+            "Explain the intended use for code-review-risk before "
+            "code-test-regression.",
+            "Describe proper use when code-review-risk is applied before "
+            "code-test-regression.",
+            "code-review-risk use cases before code-test-regression.",
+        )
+        for task in nominal_uses:
+            with self.subTest(task=task):
+                self.assertEqual(positive_explicit_skill_occurrences(task), [])
+                decision = decide_skill_need(normalize_task(task))
+                self.assertNotEqual(decision["decision"], "composite")
+                self.assertEqual(decision["required_capabilities"], [])
+
+        embedded_transitions = (
+            "The documentation mentions that reviewers should now review this patch.",
+            "List why we should now review this patch among the Skills.",
+        )
+        for task in embedded_transitions:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "none")
+                self.assertEqual(decision["required_capabilities"], [])
+
+        passive_variants = (
+            "Use code-review-risk, while code-test-regression was previously "
+            "mentioned in the documentation before execution-browser-check.",
+            "Use code-review-risk, while code-test-regression has been mentioned "
+            "in the documentation before execution-browser-check.",
+            "Use code-review-risk, while code-test-regression is currently listed "
+            "in the documentation before execution-browser-check.",
+        )
+        for task in passive_variants:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(
+                    decision["required_capabilities"],
+                    ["code.review"],
+                )
+                self.assertEqual(
+                    [name for name, _, _ in positive_explicit_skill_occurrences(task)],
+                    ["code-review-risk"],
+                )
+
     def test_bare_negative_action_event_requires_an_adjacent_skill(self):
         unrelated = (
             "Use code-review-risk, not the generic reviewer, before "

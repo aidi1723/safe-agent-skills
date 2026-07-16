@@ -130,9 +130,17 @@ REFERENCE_REPORT_RE = re.compile(
     re.I,
 )
 PASSIVE_SKILL_REPORT_RE = re.compile(
-    r"\s+(?:(?:(?:is|was)\s+"
-    r"(?:mentioned|listed|recorded|shown))|(?:appears?|appeared))\s+"
+    r"\s+(?:"
+    r"(?:(?:is|was|has been|have been)\s+"
+    r"(?:previously\s+|currently\s+|already\s+)?"
+    r"(?:mentioned|listed|recorded|shown))"
+    r"|(?:appears?|appeared)"
+    r")\s+"
     r"(?:in\s+)?(?:the\s+)?(?:documentation|docs?|history|inventory)\b",
+    re.I,
+)
+INFORMATION_REOPEN_BOUNDARY_RE = re.compile(
+    r",\s*\b(?:but|then)\b|[.;\n。；！？!?]",
     re.I,
 )
 CAPABILITY_ACTION_TRANSITION_RE = re.compile(
@@ -452,16 +460,36 @@ def _is_non_action_positive_directive(
             re.I,
         )
     )
+    if directive.group(0).casefold() != "use":
+        return embedded_explanation
+    suffix = text[directive.end() :]
     nominal_use = bool(
-        directive.group(0).casefold() == "use"
-        and re.match(r"\s+of\b", text[directive.end() :], re.I)
+        re.match(r"\s+(?:of|cases?)\b", suffix, re.I)
+        or re.search(
+            r"\b(?:intended|proper|correct|actual)\s+$",
+            prefix,
+            re.I,
+        )
     )
     return embedded_explanation or nominal_use
 
 
+def _extend_information_span(text: str, start: int, end: int) -> int:
+    """Grow a report/inventory cue through its complement, stopping at reopeners."""
+    boundary = INFORMATION_REOPEN_BOUNDARY_RE.search(text, end)
+    if boundary is None:
+        return len(text)
+    return boundary.start()
+
+
 def _information_events(text: str) -> list[tuple[int, int, str, str]]:
     events = [
-        (match.start(), match.end(), "information", "")
+        (
+            match.start(),
+            _extend_information_span(text, match.start(), match.end()),
+            "information",
+            "",
+        )
         for pattern in (
             EXPLANATION_RE,
             INVENTORY_RE,
@@ -475,7 +503,14 @@ def _information_events(text: str) -> list[tuple[int, int, str, str]]:
             report = PASSIVE_SKILL_REPORT_RE.match(text, skill_match.end())
             if report is not None:
                 events.append(
-                    (skill_match.start(), report.end(), "information", "")
+                    (
+                        skill_match.start(),
+                        _extend_information_span(
+                            text, skill_match.start(), report.end()
+                        ),
+                        "information",
+                        "",
+                    )
                 )
     return sorted(set(events))
 
@@ -493,12 +528,24 @@ def _is_capability_action_context(text: str, position: int) -> bool:
     ]
     event_priority = {"information": 0, "transition": 1}
     action_active = True
-    for start, _, event in sorted(
+    open_information_ends: list[int] = []
+    for start, end, event in sorted(
         events, key=lambda item: (item[0], event_priority[item[2]], item[1])
     ):
         if start >= position:
             break
-        action_active = event == "transition"
+        open_information_ends = [
+            info_end for info_end in open_information_ends if info_end > start
+        ]
+        if event == "information":
+            action_active = False
+            open_information_ends.append(end)
+            continue
+        # Transitions embedded inside an open information span are report content,
+        # not a new current-request reopening.
+        if any(start < info_end for info_end in open_information_ends):
+            continue
+        action_active = True
     return action_active
 
 
