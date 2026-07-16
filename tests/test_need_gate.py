@@ -82,9 +82,11 @@ class NeedGateTest(unittest.TestCase):
         negatives = (
             "Change the current source file before release.",
             "Return the latest record from the local cache.",
+            "Verify the current source file compiles before commit.",
         )
         positives = (
             "Verify whether the current source is authoritative and cite it.",
+            "Verify whether the current official source is authoritative and cite it.",
             "Research the latest official record and cite the publication.",
         )
 
@@ -118,12 +120,21 @@ class NeedGateTest(unittest.TestCase):
         code_only = decide_skill_need(
             normalize_task("Review the patch that changes CLI error colors.")
         )
+        code_and_database = decide_skill_need(
+            normalize_task(
+                "Review the patch that changes CLI colors and the database layout."
+            )
+        )
         design_only = decide_skill_need(
             normalize_task("Review the checkout UI colors and layout.")
         )
 
         self.assertEqual(code_only["decision"], "single")
         self.assertEqual(code_only["required_capabilities"], ["code.review"])
+        self.assertEqual(code_and_database["decision"], "single")
+        self.assertEqual(
+            code_and_database["required_capabilities"], ["code.review"]
+        )
         self.assertEqual(design_only["decision"], "single")
         self.assertEqual(
             design_only["required_capabilities"], ["design.ui_review"]

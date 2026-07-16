@@ -54,9 +54,6 @@ CAPABILITY_PATTERNS = {
     "research.source": re.compile(
         r"primary sources?|official (?:sources?|documentation|records?)|citations?|"
         r"(?:current|up[- ]to[- ]date|latest|fresh).{0,80}(?:cite|citation)\b|"
-        r"(?:verify|fact[- ]check|research)\b.{0,80}"
-        r"(?:current|up[- ]to[- ]date|latest|fresh)\b.{0,80}"
-        r"(?:source|publication|record)\b|"
         r"fact[- ]check|verify (?:the |these )?.{0,30}?\bclaims?|"
         r"research (?:the )?(?:claims|sources|package|community skill)|"
         r"standards?.*evidence|web research|全网搜索|一手资料|官方资料|"
@@ -68,7 +65,7 @@ CAPABILITY_PATTERNS = {
         r"review (?:the )?(?:UI|dashboard|layout)|(?:UI|layout|interface) critique|"
         r"critique (?:the )?(?:UI|layout|interface)|"
         r"(?:review|critique)"
-        r"(?=[^.;\n]{0,80}\b(?:UI|dashboard|interface|design|layout)\b)"
+        r"(?=[^.;\n]{0,80}\b(?:UI|dashboard|interface|design)\b)"
         r"[^.;\n]{0,80}\b(?:density|surfaces?|empty states?|colors?|layout|hierarchy)\b|"
         r"visual hierarchy|spacing|responsive layout|accessibility|"
         r"优化.*(?:UI|页面|界面)|"
