@@ -4,6 +4,7 @@ import unittest
 
 from onecode_skill_sanitizer.intent import normalize_task
 from onecode_skill_sanitizer.need_gate import (
+    _canonical_action_events,
     _positive_explicit_skill_occurrences,
     decide_skill_need,
 )
@@ -551,6 +552,38 @@ class NeedGateTest(unittest.TestCase):
         ):
             for name, start, end in occurrences:
                 self.assertEqual(text[start:end], name)
+
+    def test_action_span_events_distinguish_reporting_from_directives(self):
+        imperative = (
+            "Be sure to use code-review-risk before code-test-regression."
+        )
+        reports = (
+            "The documentation mentioned code-review-risk before "
+            "code-test-regression.",
+            "The documentation listed code-review-risk before "
+            "code-test-regression.",
+            "The documentation recorded code-review-risk before "
+            "code-test-regression.",
+            "The documentation showed code-review-risk before "
+            "code-test-regression.",
+            "Previously, we discussed code-review-risk before "
+            "code-test-regression.",
+        )
+
+        self.assertEqual(
+            [
+                name
+                for name, _, _ in _positive_explicit_skill_occurrences(imperative)
+            ],
+            ["code-review-risk", "code-test-regression"],
+        )
+        for task in reports:
+            with self.subTest(task=task):
+                self.assertIn(
+                    "information",
+                    [event for _, _, event, _ in _canonical_action_events(task)],
+                )
+                self.assertEqual(_positive_explicit_skill_occurrences(task), [])
 
     def test_non_action_browser_evidence_is_clause_local(self):
         combined = decide_skill_need(

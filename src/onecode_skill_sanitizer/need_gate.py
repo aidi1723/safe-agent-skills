@@ -122,11 +122,11 @@ AMBIGUOUS_SPECIALIZED_RE = re.compile(
 )
 CLAUSE_BOUNDARY_RE = re.compile(r"[.;\n。；！？!?]+|(?:,\s*)?\bthen\b", re.I)
 HISTORICAL_CONTEXT_RE = re.compile(
-    r"\b(?:earlier|previously)\s+we\s+(?:planned|discussed)\b", re.I
+    r"\b(?:earlier|previously)\s*,?\s+we\s+(?:planned|discussed)\b", re.I
 )
 REFERENCE_REPORT_RE = re.compile(
     r"\b(?:the\s+)?(?:documentation|docs?|history|inventory)\s+"
-    r"(?:mentions?|lists?|records?|shows?)\b",
+    r"(?:mentions?|mentioned|lists?|listed|records?|recorded|shows?|showed)\b",
     re.I,
 )
 SKILL_DIRECTIVE_RE = re.compile(
@@ -432,7 +432,7 @@ def _is_embedded_positive_directive(
     directive: re.Match[str],
 ) -> bool:
     prefix = text[: directive.start()]
-    return bool(re.search(r"(?:\b(?:how\s+)?to|\u5982\u4f55)\s*$", prefix, re.I))
+    return bool(re.search(r"(?:\bhow\s+to|\u5982\u4f55)\s*$", prefix, re.I))
 
 
 def _information_position(text: str) -> int | None:

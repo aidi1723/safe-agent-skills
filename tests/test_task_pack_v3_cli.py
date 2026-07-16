@@ -557,6 +557,11 @@ class TaskPackV3BuilderTest(unittest.TestCase):
                 "code-review-risk",
                 "code-test-regression",
             ),
+            (
+                "Be sure to use code-review-risk before code-test-regression.",
+                "code-review-risk",
+                "code-test-regression",
+            ),
         )
         for task, source, target in cases:
             with self.subTest(task=task):
@@ -647,6 +652,22 @@ class TaskPackV3BuilderTest(unittest.TestCase):
                 "Earlier we discussed code-review-risk before "
                 "code-test-regression.",
                 set(),
+            ),
+            (
+                "Previously, we discussed code-review-risk before "
+                "code-test-regression.",
+                set(),
+            ),
+            (
+                "Use code-review-risk and code-test-regression, but the "
+                "documentation mentioned code-review-risk before "
+                "code-test-regression.",
+                {"code-review-risk", "code-test-regression"},
+            ),
+            (
+                "Use code-review-risk and code-test-regression, but previously, "
+                "we discussed code-review-risk before code-test-regression.",
+                {"code-review-risk", "code-test-regression"},
             ),
         )
         for task, selected in cases:
