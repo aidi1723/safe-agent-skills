@@ -525,6 +525,12 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             "candidate score nonfinite": lambda route: route["candidates"][0].__setitem__(
                 "final_score", math.inf
             ),
+            "candidate score negative": lambda route: route["candidates"][0].__setitem__(
+                "final_score", -1e-9
+            ),
+            "candidate score above one": lambda route: route["candidates"][0].__setitem__(
+                "final_score", 1.000000001
+            ),
             "selected list malformed": lambda route: route["selection"].__setitem__(
                 "selected_skills", None
             ),
@@ -553,6 +559,18 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
                     route = replacement
                 with self.assertRaises(EvaluatorError):
                     evaluate_router_v3([case], route_builder=lambda current, route=route: route)
+
+    def test_evaluator_accepts_candidate_score_boundaries(self):
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_router_v3
+
+        for score in (0.0, 1.0):
+            with self.subTest(score=score):
+                route = synthetic_route(candidates=[("code-review-risk", score)])
+                report = evaluate_router_v3(
+                    [synthetic_case()],
+                    route_builder=lambda current, route=route: route,
+                )
+                self.assertTrue(report["cases"][0]["passed"])
 
     def test_evaluator_rejects_malformed_need_status_and_reason_records(self):
         from onecode_skill_sanitizer.router_eval_v3 import EvaluatorError
@@ -601,6 +619,71 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
                 mutate(route)
                 with self.assertRaises(EvaluatorError):
                     evaluate_router_v3([case], route_builder=lambda current, route=route: route)
+
+    def test_evaluator_rejects_whitespace_only_active_reasons(self):
+        from onecode_skill_sanitizer.router_eval_v3 import EvaluatorError
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_router_v3
+
+        blocked = synthetic_route(
+            selected=[],
+            routing_status="blocked",
+            graph_status="blocked",
+            acyclic=False,
+            failure_reason=" ",
+        )
+        blocked["execution_graph"]["reason_codes"] = [" "]
+        routes = {
+            "none": synthetic_route(
+                need="none",
+                intents=[],
+                candidates=[],
+                selected=[],
+                routing_status="none",
+                abstention_reason=" ",
+            ),
+            "clarify": synthetic_route(
+                need="clarify",
+                intents=[],
+                selected=[],
+                routing_status="clarify",
+                clarification_reason=" ",
+            ),
+            "incomplete": synthetic_route(
+                routing_status="incomplete",
+                failure_reason=" ",
+            ),
+            "blocked": blocked,
+        }
+
+        for status, route in routes.items():
+            with self.subTest(status=status), self.assertRaises(EvaluatorError):
+                evaluate_router_v3(
+                    [synthetic_case()],
+                    route_builder=lambda current, route=route: route,
+                )
+
+    def test_evaluator_compares_nonblank_reason_evidence_exactly(self):
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_router_v3
+
+        route = synthetic_route(
+            routing_status="incomplete",
+            failure_reason=" missing_required_input ",
+        )
+        report = evaluate_router_v3(
+            [
+                synthetic_case(
+                    expected_status="incomplete",
+                    expected_reason="missing_required_input",
+                )
+            ],
+            route_builder=lambda current: route,
+        )
+
+        self.assertFalse(report["cases"][0]["passed"])
+        self.assertIn("routing_reason", report["cases"][0]["failure_dimensions"])
+        self.assertEqual(
+            report["cases"][0]["actual_reason"], " missing_required_input "
+        )
 
     def test_evaluator_rejects_malformed_or_incoherent_execution_graphs(self):
         from onecode_skill_sanitizer.router_eval_v3 import EvaluatorError
@@ -1003,6 +1086,15 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
 
     def test_loader_rejects_invalid_dependency_edges(self):
         dependency_id = "hf-dependency-001"
+
+        def make_cycle(payload: dict) -> None:
+            case = case_by_id(payload, "hf-multi-001")
+            first, second = case["required_skills"][:2]
+            case["expected_dependency_edges"] = [
+                [first, second],
+                [second, first],
+            ]
+
         mutations = {
             "edges not list": lambda payload: case_by_id(
                 payload, dependency_id
@@ -1031,6 +1123,7 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
                 "expected_dependency_edges",
                 [["codebase-explore-map", "code-review-risk"]] * 2,
             ),
+            "cyclic oracle": make_cycle,
         }
         for name, mutator in mutations.items():
             with self.subTest(name=name):
@@ -1050,6 +1143,14 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             "incomplete status needs selection": lambda payload: case_by_id(
                 payload, "hf-dependency-013"
             ).__setitem__("expected_need", "clarify"),
+            "blocked status needs selection": lambda payload: case_by_id(
+                payload, "hf-none-001"
+            ).update(
+                {
+                    "expected_status": "blocked",
+                    "expected_reason": "dependency_cycle",
+                }
+            ),
             "single need has one required": lambda payload: payload["cases"][0].__setitem__(
                 "required_skills", []
             ),
@@ -1071,6 +1172,9 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             "clarify requires reason": lambda payload: case_by_id(
                 payload, "hf-dependency-009"
             ).__setitem__("expected_reason", ""),
+            "complete forbids reason": lambda payload: payload["cases"][0].__setitem__(
+                "expected_reason", "unexpected_reason"
+            ),
             "incomplete requires reason": lambda payload: case_by_id(
                 payload, "hf-dependency-013"
             ).__setitem__("expected_reason", ""),

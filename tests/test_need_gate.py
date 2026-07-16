@@ -78,6 +78,29 @@ class NeedGateTest(unittest.TestCase):
         self.assertEqual(decision["decision"], "single")
         self.assertEqual(decision["required_capabilities"], ["research.source"])
 
+    def test_freshness_words_without_source_verification_do_not_require_research(self):
+        negatives = (
+            "Change the current source file before release.",
+            "Return the latest record from the local cache.",
+        )
+        positives = (
+            "Verify whether the current source is authoritative and cite it.",
+            "Research the latest official record and cite the publication.",
+        )
+
+        for task in negatives:
+            with self.subTest(task=task, expected="none"):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "none")
+                self.assertEqual(decision["required_capabilities"], [])
+        for task in positives:
+            with self.subTest(task=task, expected="research"):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "single")
+                self.assertEqual(
+                    decision["required_capabilities"], ["research.source"]
+                )
+
     def test_specific_ui_critique_language_requires_design_review(self):
         tasks = (
             "UI critique: inspect density, surfaces, and empty states.",
@@ -90,6 +113,36 @@ class NeedGateTest(unittest.TestCase):
                 self.assertEqual(
                     decision["required_capabilities"], ["design.ui_review"]
                 )
+
+    def test_code_review_color_mentions_need_ui_context_for_design_review(self):
+        code_only = decide_skill_need(
+            normalize_task("Review the patch that changes CLI error colors.")
+        )
+        design_only = decide_skill_need(
+            normalize_task("Review the checkout UI colors and layout.")
+        )
+
+        self.assertEqual(code_only["decision"], "single")
+        self.assertEqual(code_only["required_capabilities"], ["code.review"])
+        self.assertEqual(design_only["decision"], "single")
+        self.assertEqual(
+            design_only["required_capabilities"], ["design.ui_review"]
+        )
+
+    def test_qualified_code_review_does_not_span_a_negated_pr_object(self):
+        source_only = decide_skill_need(
+            normalize_task("Review the primary source, not the PR.")
+        )
+        review_only = decide_skill_need(
+            normalize_task("Review the payment PR for regression risks.")
+        )
+
+        self.assertEqual(source_only["decision"], "single")
+        self.assertEqual(
+            source_only["required_capabilities"], ["research.source"]
+        )
+        self.assertEqual(review_only["decision"], "single")
+        self.assertEqual(review_only["required_capabilities"], ["code.review"])
 
     def test_hyphenated_browser_check_is_an_execution_action(self):
         decision = decide_skill_need(
@@ -117,6 +170,23 @@ class NeedGateTest(unittest.TestCase):
         )
         self.assertEqual(excluded["decision"], "none")
         self.assertIn("execution-browser-check", excluded["excluded_skills"])
+
+    def test_ui_flow_unit_tests_without_a_browser_are_not_browser_execution(self):
+        unit_tests = decide_skill_need(
+            normalize_task(
+                "Run the UI flow unit tests without opening a browser."
+            )
+        )
+        browser_flow = decide_skill_need(
+            normalize_task("Run the UI flow in a browser.")
+        )
+
+        self.assertEqual(unit_tests["decision"], "none")
+        self.assertEqual(unit_tests["required_capabilities"], [])
+        self.assertEqual(browser_flow["decision"], "single")
+        self.assertEqual(
+            browser_flow["required_capabilities"], ["execution.browser_check"]
+        )
 
     def test_browser_visible_smoke_test_is_an_execution_action(self):
         positive = decide_skill_need(

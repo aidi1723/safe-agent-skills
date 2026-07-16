@@ -255,6 +255,14 @@ def _validate_status_coherence(
         raise DatasetValidationError(
             f"{prefix}.expected_status {expected_status} requires a skill selection"
         )
+    if expected_status == "blocked" and expected_need not in {"single", "composite"}:
+        raise DatasetValidationError(
+            f"{prefix}.expected_status blocked requires a skill selection"
+        )
+    if expected_status == "complete" and expected_reason:
+        raise DatasetValidationError(
+            f"{prefix}.expected_status complete must not contain expected_reason"
+        )
     if expected_status in _REASON_REQUIRED_STATUSES and not expected_reason.strip():
         raise DatasetValidationError(
             f"{prefix}.expected_status {expected_status} requires expected_reason"
@@ -282,6 +290,23 @@ def _validate_edges(value: object, required_skills: list[str], prefix: str) -> N
         normalized.append((source, target))
     if len(normalized) != len(set(normalized)):
         raise DatasetValidationError(f"{field} must not contain duplicates")
+
+    indegree = {skill: 0 for skill in required}
+    outgoing = {skill: [] for skill in required}
+    for source, target in normalized:
+        outgoing[source].append(target)
+        indegree[target] += 1
+    ready = deque(skill for skill, degree in indegree.items() if degree == 0)
+    visited = 0
+    while ready:
+        source = ready.popleft()
+        visited += 1
+        for target in outgoing[source]:
+            indegree[target] -= 1
+            if indegree[target] == 0:
+                ready.append(target)
+    if visited != len(required):
+        raise DatasetValidationError(f"{field} must be acyclic")
 
 
 def _validate_dataset_shape(cases: list[dict[str, Any]]) -> None:
@@ -452,8 +477,11 @@ def _score_case(case: dict[str, Any], route: object) -> dict[str, Any]:
             isinstance(score, bool)
             or not isinstance(score, (int, float))
             or not math.isfinite(score)
+            or not 0.0 <= score <= 1.0
         ):
-            raise EvaluatorError("candidate final scores must be finite numbers")
+            raise EvaluatorError(
+                "candidate final scores must be finite numbers between 0 and 1"
+            )
         candidate_names.append(name)
     if len(candidate_names) != len(set(candidate_names)):
         raise EvaluatorError("candidate names must be unique")
@@ -580,6 +608,8 @@ def _selection_reasons(selection: dict[str, Any]) -> dict[str, str]:
         value = selection.get(field)
         if not isinstance(value, str):
             raise EvaluatorError(f"selection.{field} must be a string")
+        if value and not value.strip():
+            raise EvaluatorError(f"selection.{field} must not be whitespace-only")
         reasons[field] = value
     return reasons
 
@@ -596,13 +626,13 @@ def _validate_route_coherence(
     abstention = reasons["abstention_reason"]
     failure = reasons["failure_reason"]
     if routing_status == "none":
-        if decision != "none" or selected_skills or not abstention:
+        if decision != "none" or selected_skills or not abstention.strip():
             raise EvaluatorError("none routing status is incoherent")
         if clarification or failure:
             raise EvaluatorError("none routing status has an unrelated reason")
         actual_reason = abstention
     elif routing_status == "clarify":
-        if decision == "none" or not clarification:
+        if decision == "none" or not clarification.strip():
             raise EvaluatorError("clarify routing status is incoherent")
         if abstention or failure:
             raise EvaluatorError("clarify routing status has an unrelated reason")
@@ -614,13 +644,13 @@ def _validate_route_coherence(
             raise EvaluatorError("complete routing status must not contain a reason")
         actual_reason = ""
     elif routing_status == "incomplete":
-        if decision not in {"single", "composite"} or not failure:
+        if decision not in {"single", "composite"} or not failure.strip():
             raise EvaluatorError("incomplete routing status is incoherent")
         if abstention:
             raise EvaluatorError("incomplete routing status has an unrelated reason")
         actual_reason = failure
     else:
-        if decision not in {"single", "composite"} or not failure:
+        if decision not in {"single", "composite"} or not failure.strip():
             raise EvaluatorError("blocked routing status is incoherent")
         if abstention:
             raise EvaluatorError("blocked routing status has an unrelated reason")

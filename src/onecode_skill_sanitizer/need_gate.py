@@ -30,8 +30,9 @@ CAPABILITY_PATTERNS = {
         re.I,
     ),
     "code.review": re.compile(
-        r"review (?:this |the )?(?:diff|patch|pr|code)|"
-        r"(?:review|inspect) (?:only )?(?:this |the )?.{0,40}?(?:diff|patch|pr)\b|"
+        r"review (?:this |the )?(?:diff|patch|pr|code)\b|"
+        r"(?:review|inspect) (?:only )?(?:this |the )?"
+        r"(?:(?!not\b)[A-Za-z0-9_-]+\s+){0,4}(?:diff|patch|pr)\b|"
         r"code review|\bpr\b.*review|risk[- ]review|code delta|find (?:bugs|defects)|"
         r"check this change.*(?:concurrency|cleanup|regression)|"
         r"审查.*(?:diff|PR|补丁|代码)|评审.*(?:缺陷|代码|补丁|变更)|"
@@ -39,10 +40,23 @@ CAPABILITY_PATTERNS = {
         re.I,
     ),
     "code.test": re.compile(r"regression test|regression coverage|test coverage|failing test|test boundary|contract test|old behavior.*fail|red[- ]green|回归测试|补.*测试|失败用例", re.I),
-    "execution.browser_check": re.compile(r"real browser|(?:run|check|verify|test|exercise) (?:the )?(?:existing )?UI flow(?: (?:in )?(?:a )?(?:real )?browser)?|(?:smoke[- ]test|check|verify).*browser[- ]visible|browser[- ](?:check|flow|test)|playwright|screenshot|DOM state|canvas|console error|浏览器.*(?:验证|检查|跑|截图|复现)|打开.*页面", re.I),
+    "execution.browser_check": re.compile(
+        r"real browser|"
+        r"(?:run|check|verify|test|exercise) (?:the )?(?:existing )?UI flow"
+        r"(?!\s+(?:(?:unit|integration|regression|contract|end-to-end|e2e)\s+)?tests?\b)"
+        r"(?![^.;\n]*\bwithout\b[^.;\n]*\bbrowser\b)"
+        r"(?: (?:in )?(?:a )?(?:real )?browser)?|"
+        r"(?:smoke[- ]test|check|verify).*browser[- ]visible|"
+        r"browser[- ](?:check|flow|test)|playwright|screenshot|DOM state|canvas|"
+        r"console error|浏览器.*(?:验证|检查|跑|截图|复现)|打开.*页面",
+        re.I,
+    ),
     "research.source": re.compile(
         r"primary sources?|official (?:sources?|documentation|records?)|citations?|"
-        r"(?:current|up[- ]to[- ]date|latest|fresh).*(?:cite|citation|source|publication|record)|"
+        r"(?:current|up[- ]to[- ]date|latest|fresh).{0,80}(?:cite|citation)\b|"
+        r"(?:verify|fact[- ]check|research)\b.{0,80}"
+        r"(?:current|up[- ]to[- ]date|latest|fresh)\b.{0,80}"
+        r"(?:source|publication|record)\b|"
         r"fact[- ]check|verify (?:the |these )?.{0,30}?\bclaims?|"
         r"research (?:the )?(?:claims|sources|package|community skill)|"
         r"standards?.*evidence|web research|全网搜索|一手资料|官方资料|"
@@ -53,7 +67,9 @@ CAPABILITY_PATTERNS = {
         r"polish (?:the )?(?:UI|dashboard)|"
         r"review (?:the )?(?:UI|dashboard|layout)|(?:UI|layout|interface) critique|"
         r"critique (?:the )?(?:UI|layout|interface)|"
-        r"(?:review|critique).*(?:density|surfaces?|empty states?|colors?|layout|hierarchy)|"
+        r"(?:review|critique)"
+        r"(?=[^.;\n]{0,80}\b(?:UI|dashboard|interface|design|layout)\b)"
+        r"[^.;\n]{0,80}\b(?:density|surfaces?|empty states?|colors?|layout|hierarchy)\b|"
         r"visual hierarchy|spacing|responsive layout|accessibility|"
         r"优化.*(?:UI|页面|界面)|"
         r"评审.*(?:UI|页面|界面|配色|布局|视觉|密度|空状态)|"
