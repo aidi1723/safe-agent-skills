@@ -54,6 +54,33 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval \
   --bundles bundles/index.json >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
   --eval evals/multi-intent-gold.json >/dev/null
+python3 -m json.tool schemas/semantic-rerank-response.schema.json >/dev/null
+python3 -m json.tool schemas/task-pack-v3.schema.json >/dev/null
+python3 -m json.tool catalog/routing-examples.json >/dev/null
+python3 -m json.tool evals/high-frequency-skill-selection.json >/dev/null
+PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v3 \
+  --eval evals/high-frequency-skill-selection.json \
+  --registry catalog \
+  --bundles bundles/index.json \
+  --routing-examples catalog/routing-examples.json \
+  --split validation >/dev/null
+PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v3 \
+  --eval evals/high-frequency-skill-selection.json \
+  --registry catalog \
+  --bundles bundles/index.json \
+  --routing-examples catalog/routing-examples.json \
+  --split final_test >/dev/null
+if command -v rg >/dev/null 2>&1; then
+  if rg -n 'high-frequency-skill-selection[.]json' src/onecode_skill_sanitizer \
+    --glob '!router_eval_v3.py'; then
+    exit 1
+  fi
+else
+  if grep -RInE --exclude='router_eval_v3.py' \
+    'high-frequency-skill-selection[.]json' src/onecode_skill_sanitizer; then
+    exit 1
+  fi
+fi
 PYTHONPATH=src python3 -m onecode_skill_sanitizer schema-check --registry catalog >/dev/null
 PYTHONPATH=src python3 -m onecode_skill_sanitizer batch-check \
   --batches batches \

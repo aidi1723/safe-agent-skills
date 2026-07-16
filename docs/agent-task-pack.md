@@ -1,5 +1,29 @@
 # Agent Task Pack
 
+## Router v3 Opt-In Contract
+
+Router v3 remains opt-in; Router v2 remains the default. The v3 scope is the
+`safe-agent-router` entry plus exactly seven high-frequency candidates:
+`codebase-explore-map`, `code-review-risk`, `code-test-regression`,
+`execution-browser-check`, `research-source-check`, `design-ui-review`, and
+`security-supply-chain-review`. Deterministic selection is active. Adding an
+eighth candidate requires a separate frequency, trust, examples, evaluation,
+and operator-review decision.
+
+Semantic providers are candidate-bounded and run in shadow only.
+Semantic influence is disabled through the public CLI. A semantic shadow
+result cannot change the deterministic skill set or grant the host any
+additional runtime authority.
+
+The validation split passes, but the one permitted `final_test` run failed
+release acceptance (`final_acceptance_failed`). The
+`task_evaluation_missing` blocker records that no real three-arm task evidence
+was generated, so neither task-level nor final acceptance is established.
+Runtime examples are reviewed routing data.
+The isolated 120 held-out cases are evaluator-only and must not be runtime
+inputs.
+Skills are method guidance, not permission grants.
+
 ## Schema v2 Contract
 
 Schema v2 is the default for both `task-pack` and `smart`:

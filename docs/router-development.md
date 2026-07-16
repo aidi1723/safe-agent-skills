@@ -22,6 +22,37 @@ executor, unverified plugin loader, or permission grant.
 - Keep all execution guidance advisory; host runtimes still control files,
   shell, network, browsers, accounts, connectors, and production writes.
 
+## Router v3 Bounded Rollout
+
+Router v3 remains opt-in; Router v2 remains the default. Its scope is the
+router entry plus exactly seven high-frequency candidates:
+`codebase-explore-map`, `code-review-risk`, `code-test-regression`,
+`execution-browser-check`, `research-source-check`, `design-ui-review`, and
+`security-supply-chain-review`. It is not whole-catalog routing.
+Adding an eighth candidate requires a separate frequency, trust, examples,
+evaluation, and operator-review decision.
+
+Deterministic selection is active.
+Semantic providers are candidate-bounded and run in shadow only.
+Semantic influence is disabled through the public CLI.
+Shadow output may be recorded for comparison, but it does not change selected
+skills, ordering, execution guidance, or runtime authority.
+
+The validation split passes, but the one permitted `final_test` run failed
+release acceptance (`final_acceptance_failed`). Do not rerun that isolated
+split or represent v3 as having passed final acceptance. The
+`task_evaluation_missing` blocker means no real three-arm task evidence was
+generated, so task-level acceptance is not established. Local missing
+`jsonschema` coverage is an environment verification gap; it is not evidence
+that schema validation passed.
+
+Runtime examples are reviewed routing data and may support deterministic
+selection.
+The isolated 120 held-out cases are evaluator-only and must not be runtime
+inputs. Application code must not load or name the held-out dataset; only the
+isolated evaluator may receive its path.
+Skills are method guidance, not permission grants.
+
 ## Reference Patterns
 
 Community projects are useful references, but their runtime trust model should
@@ -139,12 +170,11 @@ Hybrid Router v2 contributions must satisfy these gates:
 - Sequential fixtures must assert required dependency edges, not merely intent
   or scenario selection.
 
-Run the release gates after installing development dependencies:
+Run the focused v2 gates after installing development dependencies:
 
 ```bash
 python3 -m pip install -e ".[dev]"
 python3 -m ruff check .
-bash scripts/verify.sh
 PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
   --registry catalog --bundles bundles/index.json \
   --scenario website-build-launch --scenario code-review-hardening \
@@ -156,6 +186,10 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
   --eval evals/multi-intent-gold.json --registry catalog \
   --bundles bundles/index.json
 ```
+
+The complete `scripts/verify.sh` release gate includes the one-shot v3
+`final_test`. Its permitted run is already exhausted for the current rollout,
+so do not invoke the complete gate during this rollout.
 
 The v2 dataset is a separate corpus from `evals/router-quality-v2.json`. Its
 labels are manually curated and repository-declared as not generated from
@@ -257,13 +291,10 @@ Focused command:
 PYTHONPATH=src python3 -m unittest tests.test_router.RouterTest -v
 ```
 
-Full verification:
-
-```bash
-bash scripts/verify.sh
-```
-
-Do not claim routing quality improved until fresh verification passes.
+The complete verification script is reserved for an explicitly authorized
+release evaluation. Do not invoke it for the current v3 rollout because its
+one permitted `final_test` run is already exhausted. Do not claim routing
+quality improved until the applicable fresh verification passes.
 
 ## Current Gap Policy
 

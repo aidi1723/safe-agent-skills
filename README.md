@@ -258,6 +258,28 @@ composes multiple trusted workflows, but remains method-only. It does not
 execute selected skills or grant runtime permissions. This deterministic first
 milestone is not an autonomous runtime and is not a semantic router yet.
 
+### Router v3 Evaluation Status
+
+Router v3 remains opt-in; Router v2 remains the default. The v3 evaluation
+scope is the router entry plus exactly seven high-frequency candidates:
+`codebase-explore-map`, `code-review-risk`, `code-test-regression`,
+`execution-browser-check`, `research-source-check`, `design-ui-review`, and
+`security-supply-chain-review`. Deterministic selection is active. Semantic
+providers are candidate-bounded and run in shadow only. Semantic influence is
+disabled through the public CLI.
+
+The validation split passes, but the one permitted `final_test` run failed
+release acceptance (`final_acceptance_failed`). The separate
+`task_evaluation_missing` blocker means that no real three-arm task evidence
+was generated, so task-level acceptance is not established. Router v3 has not
+passed final release acceptance.
+
+Runtime examples are reviewed routing data. The isolated 120 held-out cases
+are evaluator-only and must not be runtime inputs.
+Skills are method guidance, not permission grants. See the
+[Router Development Guide](docs/router-development.md) for the cohort and
+evaluation boundaries.
+
 ```bash
 onecode-skill-sanitizer smart "构建官网，同时审计 skill 路由器，验证通过后发布更新" \
   --schema-version 2 --format json
@@ -370,7 +392,11 @@ onecode skills approve pdf
 
 ```bash
 python3 -m pip install -e ".[dev]"
-bash scripts/verify.sh
+PYTHONPATH=src python3 -m unittest \
+  tests.test_verify_script tests.test_documentation -v
 ```
 
-`jsonschema` is required by the verification suite. Install development checks with: `python3 -m pip install -e ".[dev]"` before running `bash scripts/verify.sh`.
+`jsonschema` is required by the complete verification suite. The full
+`scripts/verify.sh` release gate now contains the isolated v3 `final_test`.
+That split's one permitted run for the current rollout is exhausted and failed,
+so do not rerun the complete gate for this rollout.

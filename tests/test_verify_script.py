@@ -40,6 +40,19 @@ class VerifyScriptTest(unittest.TestCase):
         self.assertIn("if command -v rg", script)
         self.assertIn("grep -RInE", script)
 
+    def test_verify_script_runs_v3_schemas_isolation_and_both_held_out_splits(self):
+        script = Path("scripts/verify.sh").read_text(encoding="utf-8")
+
+        self.assertIn("schemas/semantic-rerank-response.schema.json", script)
+        self.assertIn("schemas/task-pack-v3.schema.json", script)
+        self.assertIn("catalog/routing-examples.json", script)
+        self.assertIn("evals/high-frequency-skill-selection.json", script)
+        self.assertIn("router-eval-v2", script)
+        self.assertEqual(script.count("router-eval-v3"), 2)
+        self.assertIn("--split validation", script)
+        self.assertIn("--split final_test", script)
+        self.assertIn("--glob '!router_eval_v3.py'", script)
+
 
 if __name__ == "__main__":
     unittest.main()

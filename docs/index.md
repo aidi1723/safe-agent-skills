@@ -21,6 +21,23 @@ historical evidence unless a current guide links to them as normative input.
 - [Sanitization Policy](sanitization-policy.md)
 - [Source Baseline](source-baseline.md)
 
+## Router v3 Evaluation Record
+
+Router v3 remains opt-in; Router v2 remains the default. The bounded v3 cohort
+uses deterministic selection for the router entry and seven high-frequency
+candidates. Semantic providers are candidate-bounded and shadow-only; semantic
+influence is disabled through the public CLI. Skills remain method guidance,
+not permission grants.
+
+The validation split passes, but the one permitted `final_test` run failed
+release acceptance (`final_acceptance_failed`). No real three-arm task evidence
+was generated (`task_evaluation_missing`), so neither final nor task-level
+acceptance is established. The reviewed runtime examples are separate from the
+isolated 120 held-out evaluator-only cases.
+
+- [High-Frequency Intelligent Skill Selection Design](superpowers/specs/2026-07-15-high-frequency-intelligent-skill-selection-design.md)
+- [High-Frequency Intelligent Skill Selection Implementation Plan](superpowers/plans/2026-07-15-high-frequency-intelligent-skill-selection.md)
+
 ## Operator And Maintainer Guides
 
 - [Operator Guide](operator-guide.md)
