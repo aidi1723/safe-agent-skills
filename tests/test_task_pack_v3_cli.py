@@ -693,6 +693,38 @@ class TaskPackV3BuilderTest(unittest.TestCase):
                 "Use code-review-risk, not use code-test-regression.",
                 {"code-review-risk"},
             ),
+            (
+                "Explain the use of code-review-risk before "
+                "code-test-regression.",
+                set(),
+            ),
+            (
+                "Use code-review-risk, while code-test-regression was "
+                "mentioned in the documentation before "
+                "execution-browser-check.",
+                {"code-review-risk"},
+            ),
+            (
+                "code-test-regression appears in the inventory.",
+                set(),
+            ),
+            (
+                "code-test-regression appeared in docs.",
+                set(),
+            ),
+            (
+                "code-test-regression appeared in docs with review this patch.",
+                set(),
+            ),
+            (
+                "code-test-regression appeared in docs, but use "
+                "code-review-risk.",
+                {"code-review-risk"},
+            ),
+            (
+                "code-test-regression appeared in docs, but review this patch.",
+                {"code-review-risk"},
+            ),
         )
         for task, selected in cases:
             with self.subTest(task=task):

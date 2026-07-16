@@ -17,9 +17,10 @@ from .need_gate import (
     CAPABILITY_PATTERNS,
     CAPABILITY_SKILL,
     SKILL_NAME_PATTERNS,
-    _mask_canonical_skill_names,
-    _positive_explicit_skill_occurrences,
     decide_skill_need,
+    mask_canonical_skill_names,
+    mask_unauthorized_canonical_skill_occurrences,
+    positive_explicit_skill_occurrences,
 )
 from .registry import load_registry_index, utc_now, verify_registry
 from .semantic_provider import SemanticProvider, rerank_candidates
@@ -236,8 +237,8 @@ def _extract_explicit_skill_order(
     for clause in _STRONG_ORDER_BOUNDARY_RE.split(current):
         if not clause.strip():
             continue
-        positive_occurrences = _positive_explicit_skill_occurrences(clause)
-        order_clause = _mask_unauthorized_canonical_skill_names(
+        positive_occurrences = positive_explicit_skill_occurrences(clause)
+        order_clause = mask_unauthorized_canonical_skill_occurrences(
             clause, positive_occurrences
         )
         explicit = {name for name, _, _ in positive_occurrences}
@@ -420,7 +421,7 @@ def _skill_mentions(
     explicit: set[str],
 ) -> list[tuple[int, int, str]]:
     mentions: list[tuple[int, int, str]] = []
-    masked_text = _mask_canonical_skill_names(text)
+    masked_text = mask_canonical_skill_names(text)
     for capability, pattern in CAPABILITY_PATTERNS.items():
         skill = CAPABILITY_SKILL[capability]
         if capability in required and skill in admitted:
@@ -435,22 +436,6 @@ def _skill_mentions(
                 for match in name_pattern.finditer(text)
             )
     return sorted(mentions, key=lambda item: (item[0], item[1], item[2]))
-
-
-def _mask_unauthorized_canonical_skill_names(
-    text: str,
-    authorized: list[tuple[str, int, int]],
-) -> str:
-    authorized_spans = set(authorized)
-    masked = list(text)
-    for name, pattern in SKILL_NAME_PATTERNS.items():
-        for match in pattern.finditer(text):
-            occurrence = (name, match.start(), match.end())
-            if occurrence not in authorized_spans:
-                masked[match.start() : match.end()] = " " * (
-                    match.end() - match.start()
-                )
-    return "".join(masked)
 
 
 def _unique_skill_mentions(

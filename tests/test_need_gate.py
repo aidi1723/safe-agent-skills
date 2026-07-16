@@ -5,8 +5,8 @@ import unittest
 from onecode_skill_sanitizer.intent import normalize_task
 from onecode_skill_sanitizer.need_gate import (
     _canonical_action_events,
-    _positive_explicit_skill_occurrences,
     decide_skill_need,
+    positive_explicit_skill_occurrences,
 )
 from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 
@@ -510,10 +510,10 @@ class NeedGateTest(unittest.TestCase):
             "code-test-regression after code-review-risk."
         )
 
-        informational_occurrences = _positive_explicit_skill_occurrences(
+        informational_occurrences = positive_explicit_skill_occurrences(
             informational
         )
-        repeated_occurrences = _positive_explicit_skill_occurrences(repeated)
+        repeated_occurrences = positive_explicit_skill_occurrences(repeated)
 
         self.assertEqual(
             [name for name, _, _ in informational_occurrences],
@@ -537,7 +537,7 @@ class NeedGateTest(unittest.TestCase):
             "code-test-regression.",
         )
         active_occurrences = [
-            _positive_explicit_skill_occurrences(task) for task in active_cases
+            positive_explicit_skill_occurrences(task) for task in active_cases
         ]
         for task, occurrences in zip(active_cases, active_occurrences):
             with self.subTest(task=task):
@@ -552,6 +552,40 @@ class NeedGateTest(unittest.TestCase):
         ):
             for name, start, end in occurrences:
                 self.assertEqual(text[start:end], name)
+
+    def test_capability_actions_use_local_information_transitions(self):
+        reopened = decide_skill_need(
+            normalize_task(
+                "The documentation mentions old routing, but review this patch."
+            )
+        )
+        reported = decide_skill_need(
+            normalize_task("The documentation mentions review this patch.")
+        )
+        passive_reported = decide_skill_need(
+            normalize_task(
+                "code-test-regression appeared in docs with review this patch."
+            )
+        )
+        before_report = decide_skill_need(
+            normalize_task(
+                "Review this patch, but the documentation mentions old routing."
+            )
+        )
+        negated = decide_skill_need(
+            normalize_task(
+                "The documentation mentions old routing, but do not review this patch."
+            )
+        )
+
+        self.assertEqual(reopened["required_capabilities"], ["code.review"])
+        self.assertEqual(reported["decision"], "none")
+        self.assertEqual(reported["required_capabilities"], [])
+        self.assertEqual(passive_reported["decision"], "none")
+        self.assertEqual(passive_reported["required_capabilities"], [])
+        self.assertEqual(before_report["required_capabilities"], ["code.review"])
+        self.assertEqual(negated["decision"], "none")
+        self.assertIn("code-review-risk", negated["excluded_skills"])
 
     def test_action_span_events_distinguish_reporting_from_directives(self):
         imperative = (
@@ -573,7 +607,7 @@ class NeedGateTest(unittest.TestCase):
         self.assertEqual(
             [
                 name
-                for name, _, _ in _positive_explicit_skill_occurrences(imperative)
+                for name, _, _ in positive_explicit_skill_occurrences(imperative)
             ],
             ["code-review-risk", "code-test-regression"],
         )
@@ -583,9 +617,11 @@ class NeedGateTest(unittest.TestCase):
                     "information",
                     [event for _, _, event, _ in _canonical_action_events(task)],
                 )
-                self.assertEqual(_positive_explicit_skill_occurrences(task), [])
+                self.assertEqual(positive_explicit_skill_occurrences(task), [])
 
         explanations = (
+            "Explain the use of code-review-risk before "
+            "code-test-regression.",
             "Explain how best to use code-review-risk before "
             "code-test-regression.",
             "解释如何正确使用 code-review-risk before "
@@ -597,7 +633,18 @@ class NeedGateTest(unittest.TestCase):
                     "positive",
                     [event for _, _, event, _ in _canonical_action_events(task)],
                 )
-                self.assertEqual(_positive_explicit_skill_occurrences(task), [])
+                self.assertEqual(positive_explicit_skill_occurrences(task), [])
+
+        passive = (
+            "Use code-review-risk, while code-test-regression was mentioned "
+            "in the documentation before execution-browser-check."
+        )
+        passive_events = _canonical_action_events(passive)
+        reported_start = passive.index("code-test-regression")
+        self.assertEqual(
+            [event for start, _, event, _ in passive_events if start == reported_start],
+            ["information", "skill"],
+        )
 
     def test_bare_negative_action_event_requires_an_adjacent_skill(self):
         unrelated = (
@@ -615,7 +662,7 @@ class NeedGateTest(unittest.TestCase):
         self.assertEqual(
             [
                 name
-                for name, _, _ in _positive_explicit_skill_occurrences(unrelated)
+                for name, _, _ in positive_explicit_skill_occurrences(unrelated)
             ],
             ["code-review-risk", "code-test-regression"],
         )
@@ -624,7 +671,7 @@ class NeedGateTest(unittest.TestCase):
             [event for _, _, event, _ in _canonical_action_events(adjacent)],
         )
         self.assertEqual(
-            [name for name, _, _ in _positive_explicit_skill_occurrences(adjacent)],
+            [name for name, _, _ in positive_explicit_skill_occurrences(adjacent)],
             ["code-review-risk"],
         )
 

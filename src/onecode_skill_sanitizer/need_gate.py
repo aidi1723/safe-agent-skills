@@ -129,6 +129,16 @@ REFERENCE_REPORT_RE = re.compile(
     r"(?:mentions?|mentioned|lists?|listed|records?|recorded|shows?|showed)\b",
     re.I,
 )
+PASSIVE_SKILL_REPORT_RE = re.compile(
+    r"\s+(?:(?:(?:is|was)\s+"
+    r"(?:mentioned|listed|recorded|shown))|(?:appears?|appeared))\s+"
+    r"(?:in\s+)?(?:the\s+)?(?:documentation|docs?|history|inventory)\b",
+    re.I,
+)
+CAPABILITY_ACTION_TRANSITION_RE = re.compile(
+    r"\b(?:but|then|now|please)\b|\u4f46\u662f|\u4f46|\u7136\u540e|\u73b0\u5728|\u8bf7",
+    re.I,
+)
 SKILL_DIRECTIVE_RE = re.compile(
     rf"(?P<negative>{NEGATION_PREFIX}\s*(?:(?:use|invoke|使用|调用)\s*)?)|"
     r"(?P<bare_negative>(?:\bbut\s+)?\bnot\s+(?!only\b)(?:use\s+)?)|"
@@ -188,6 +198,7 @@ def _canonical_skill_pattern(name: str) -> re.Pattern[str]:
 SKILL_NAME_PATTERNS = {
     name: _canonical_skill_pattern(name) for name in HIGH_FREQUENCY_SKILL_NAMES
 }
+ExplicitSkillOccurrence = tuple[str, int, int]
 
 
 def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
@@ -197,7 +208,7 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
         capability: index for index, capability in enumerate(CAPABILITY_SKILL)
     }
     evidence: dict[str, tuple[int, int]] = {}
-    positive_occurrences = _positive_explicit_skill_occurrences(current)
+    positive_occurrences = positive_explicit_skill_occurrences(current)
     positive_skills = {name for name, _, _ in positive_occurrences}
     excluded_skills: set[str] = set()
     derived_mandatory: set[str] = set()
@@ -218,8 +229,6 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
         inventory_match = INVENTORY_RE.search(clause)
         explanation_seen = explanation_seen or bool(explanation_match)
         inventory_seen = inventory_seen or bool(inventory_match)
-        information_position = _information_position(clause)
-
         if GENERIC_SKILL_EXCLUSION_RE.search(clause):
             excluded_skills.update(HIGH_FREQUENCY_SKILL_NAMES)
 
@@ -229,7 +238,7 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
                 if directive == "negative":
                     excluded_skills.add(name)
 
-        masked_clause = _mask_canonical_skill_names(clause)
+        masked_clause = mask_canonical_skill_names(clause)
         negated_capabilities = {
             capability
             for capability, pattern in CAPABILITY_NEGATION_PATTERNS.items()
@@ -243,7 +252,9 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
             if capability in negated_capabilities:
                 continue
             for match in pattern.finditer(masked_clause):
-                if not _before_information(match.start(), information_position):
+                if not _is_capability_action_context(
+                    clause, match.start()
+                ):
                     continue
                 if (
                     capability == "execution.browser_check"
@@ -263,7 +274,7 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
                 )
 
         for match in MANDATORY_TEST_RE.finditer(masked_clause):
-            if not _before_information(match.start(), information_position):
+            if not _is_capability_action_context(clause, match.start()):
                 continue
             if _match_has_negation_prefix(masked_clause, match.start()):
                 continue
@@ -355,9 +366,9 @@ def _append_clause(
         clauses.append((clause, start + len(raw) - len(raw.lstrip())))
 
 
-def _positive_explicit_skill_occurrences(
+def positive_explicit_skill_occurrences(
     text: str,
-) -> list[tuple[str, int, int]]:
+) -> list[ExplicitSkillOccurrence]:
     clauses = _request_clauses(text)
     occurrences: list[tuple[str, int, int]] = []
     previous_clause_confirmed_action = False
@@ -410,22 +421,13 @@ def _canonical_action_events(
         ):
             continue
         if directive.lastgroup == "positive":
-            if _is_embedded_positive_directive(text, directive):
+            if _is_non_action_positive_directive(text, directive):
                 continue
             event = "positive"
         else:
             event = "negative"
         events.append((directive.start(), directive.end(), event, ""))
-    for pattern in (
-        EXPLANATION_RE,
-        INVENTORY_RE,
-        HISTORICAL_CONTEXT_RE,
-        REFERENCE_REPORT_RE,
-    ):
-        events.extend(
-            (match.start(), match.end(), "information", "")
-            for match in pattern.finditer(text)
-        )
+    events.extend(_information_events(text))
     events.extend(
         (start, end, "skill", name)
         for start, end, name in skill_occurrences
@@ -437,12 +439,12 @@ def _canonical_action_events(
     )
 
 
-def _is_embedded_positive_directive(
+def _is_non_action_positive_directive(
     text: str,
     directive: re.Match[str],
 ) -> bool:
     prefix = text[: directive.start()]
-    return bool(
+    embedded_explanation = bool(
         re.search(
             r"(?:\bhow(?:\s+[A-Za-z][A-Za-z-]*){0,3}\s+to|"
             r"\u5982\u4f55[\u4e00-\u9fff]{0,8})\s*$",
@@ -450,20 +452,54 @@ def _is_embedded_positive_directive(
             re.I,
         )
     )
+    nominal_use = bool(
+        directive.group(0).casefold() == "use"
+        and re.match(r"\s+of\b", text[directive.end() :], re.I)
+    )
+    return embedded_explanation or nominal_use
 
 
-def _information_position(text: str) -> int | None:
-    positions = [
-        match.start()
+def _information_events(text: str) -> list[tuple[int, int, str, str]]:
+    events = [
+        (match.start(), match.end(), "information", "")
         for pattern in (
             EXPLANATION_RE,
             INVENTORY_RE,
             HISTORICAL_CONTEXT_RE,
             REFERENCE_REPORT_RE,
         )
-        if (match := pattern.search(text)) is not None
+        for match in pattern.finditer(text)
     ]
-    return min(positions, default=None)
+    for pattern in SKILL_NAME_PATTERNS.values():
+        for skill_match in pattern.finditer(text):
+            report = PASSIVE_SKILL_REPORT_RE.match(text, skill_match.end())
+            if report is not None:
+                events.append(
+                    (skill_match.start(), report.end(), "information", "")
+                )
+    return sorted(set(events))
+
+
+def _is_capability_action_context(text: str, position: int) -> bool:
+    events = [
+        *(
+            (start, end, "information")
+            for start, end, _, _ in _information_events(text)
+        ),
+        *(
+            (match.start(), match.end(), "transition")
+            for match in CAPABILITY_ACTION_TRANSITION_RE.finditer(text)
+        ),
+    ]
+    event_priority = {"information": 0, "transition": 1}
+    action_active = True
+    for start, _, event in sorted(
+        events, key=lambda item: (item[0], event_priority[item[2]], item[1])
+    ):
+        if start >= position:
+            break
+        action_active = event == "transition"
+    return action_active
 
 
 def _follows_then_boundary(
@@ -495,10 +531,6 @@ def _skill_directive_before(text: str, position: int) -> tuple[str, int]:
     return directive_kind, directive_position
 
 
-def _before_information(position: int, information_position: int | None) -> bool:
-    return information_position is None or position < information_position
-
-
 def _capability_for_skill(skill: str) -> str:
     return next(
         capability
@@ -507,11 +539,27 @@ def _capability_for_skill(skill: str) -> str:
     )
 
 
-def _mask_canonical_skill_names(text: str) -> str:
+def mask_canonical_skill_names(text: str) -> str:
     masked = list(text)
     for pattern in SKILL_NAME_PATTERNS.values():
         for match in pattern.finditer(text):
             masked[match.start() : match.end()] = " " * (match.end() - match.start())
+    return "".join(masked)
+
+
+def mask_unauthorized_canonical_skill_occurrences(
+    text: str,
+    authorized: list[ExplicitSkillOccurrence],
+) -> str:
+    authorized_spans = set(authorized)
+    masked = list(text)
+    for name, pattern in SKILL_NAME_PATTERNS.items():
+        for match in pattern.finditer(text):
+            occurrence = (name, match.start(), match.end())
+            if occurrence not in authorized_spans:
+                masked[match.start() : match.end()] = " " * (
+                    match.end() - match.start()
+                )
     return "".join(masked)
 
 
@@ -546,11 +594,10 @@ def _is_non_action_code_review_match(text: str, match: re.Match[str]) -> bool:
 
 def _has_ambiguous_specialized_request(clauses: list[tuple[str, int]]) -> bool:
     for clause, _ in clauses:
-        information_position = _information_position(clause)
-        masked_clause = _mask_canonical_skill_names(clause)
+        masked_clause = mask_canonical_skill_names(clause)
         for match in AMBIGUOUS_SPECIALIZED_RE.finditer(masked_clause):
             if (
-                _before_information(match.start(), information_position)
+                _is_capability_action_context(clause, match.start())
                 and not _match_has_negation_prefix(masked_clause, match.start())
             ):
                 return True
