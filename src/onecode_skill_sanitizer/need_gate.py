@@ -122,10 +122,12 @@ AMBIGUOUS_SPECIALIZED_RE = re.compile(
 )
 CLAUSE_BOUNDARY_RE = re.compile(r"[.;\n。；！？!?]+|(?:,\s*)?\bthen\b", re.I)
 HISTORICAL_CONTEXT_RE = re.compile(
-    r"\b(?:earlier|previously)\b.*\b(?:planned|discussed)\b", re.I
+    r"\b(?:earlier|previously)\s+we\s+(?:planned|discussed)\b", re.I
 )
-REFERENCE_CONTEXT_RE = re.compile(
-    r"\b(?:mentions?|mentioned|discussed|planned)\b", re.I
+REFERENCE_REPORT_RE = re.compile(
+    r"\b(?:the\s+)?(?:documentation|docs?|history|inventory)\s+"
+    r"(?:mentions?|lists?|records?|shows?)\b",
+    re.I,
 )
 SKILL_DIRECTIVE_RE = re.compile(
     rf"(?P<negative>{NEGATION_PREFIX}\s*(?:(?:use|invoke|使用|调用)\s*)?)|"
@@ -358,33 +360,79 @@ def _positive_explicit_skill_occurrences(
 ) -> list[tuple[str, int, int]]:
     clauses = _request_clauses(text)
     occurrences: list[tuple[str, int, int]] = []
-    previous_clause_requested_skill = False
+    previous_clause_confirmed_action = False
 
     for clause_index, (clause, offset) in enumerate(clauses):
-        clause_requested_skill = False
-        information_position = _information_position(clause)
-        matches = sorted(
-            (match.start(), match.end(), name)
-            for name, pattern in SKILL_NAME_PATTERNS.items()
-            for match in pattern.finditer(clause)
+        action_active = False
+        clause_confirmed_action = False
+        inherit_action = (
+            previous_clause_confirmed_action
+            and _follows_then_boundary(text, clauses, clause_index)
         )
-        for start, end, name in matches:
-            directive, _ = _skill_directive_before(clause, start)
-            if (
-                not directive
-                and previous_clause_requested_skill
-                and start == 0
-                and _follows_then_boundary(text, clauses, clause_index)
-            ):
-                directive = "positive"
-            if directive == "positive" and _before_information(
-                start, information_position
-            ):
+
+        for start, end, event, name in _canonical_action_events(clause):
+            if event == "positive":
+                action_active = True
+                inherit_action = False
+                continue
+            if event in {"information", "negative"}:
+                action_active = False
+                inherit_action = False
+                continue
+            if inherit_action and start == 0:
+                action_active = True
+                inherit_action = False
+            if action_active:
                 occurrences.append((name, offset + start, offset + end))
-                clause_requested_skill = True
-        previous_clause_requested_skill = clause_requested_skill
+                clause_confirmed_action = True
+
+        previous_clause_confirmed_action = (
+            clause_confirmed_action and action_active
+        )
 
     return occurrences
+
+
+def _canonical_action_events(
+    text: str,
+) -> list[tuple[int, int, str, str]]:
+    events: list[tuple[int, int, str, str]] = []
+    for directive in SKILL_DIRECTIVE_RE.finditer(text):
+        if directive.lastgroup == "positive":
+            if _is_embedded_positive_directive(text, directive):
+                continue
+            event = "positive"
+        else:
+            event = "negative"
+        events.append((directive.start(), directive.end(), event, ""))
+    for pattern in (
+        EXPLANATION_RE,
+        INVENTORY_RE,
+        HISTORICAL_CONTEXT_RE,
+        REFERENCE_REPORT_RE,
+    ):
+        events.extend(
+            (match.start(), match.end(), "information", "")
+            for match in pattern.finditer(text)
+        )
+    for name, pattern in SKILL_NAME_PATTERNS.items():
+        events.extend(
+            (match.start(), match.end(), "skill", name)
+            for match in pattern.finditer(text)
+        )
+    event_priority = {"negative": 0, "information": 0, "positive": 1, "skill": 2}
+    return sorted(
+        events,
+        key=lambda item: (item[0], event_priority[item[2]], item[1], item[3]),
+    )
+
+
+def _is_embedded_positive_directive(
+    text: str,
+    directive: re.Match[str],
+) -> bool:
+    prefix = text[: directive.start()]
+    return bool(re.search(r"(?:\b(?:how\s+)?to|\u5982\u4f55)\s*$", prefix, re.I))
 
 
 def _information_position(text: str) -> int | None:
@@ -394,7 +442,7 @@ def _information_position(text: str) -> int | None:
             EXPLANATION_RE,
             INVENTORY_RE,
             HISTORICAL_CONTEXT_RE,
-            REFERENCE_CONTEXT_RE,
+            REFERENCE_REPORT_RE,
         )
         if (match := pattern.search(text)) is not None
     ]

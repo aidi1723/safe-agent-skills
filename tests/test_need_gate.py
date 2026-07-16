@@ -527,9 +527,27 @@ class NeedGateTest(unittest.TestCase):
                 "code-review-risk",
             ],
         )
+        active_cases = (
+            "Use, as planned, code-review-risk before code-test-regression.",
+            "As discussed, use code-review-risk before code-test-regression.",
+            "The documentation mentions old routing. Now use code-review-risk "
+            "before code-test-regression.",
+            "Explain code-review-risk, then use code-review-risk before "
+            "code-test-regression.",
+        )
+        active_occurrences = [
+            _positive_explicit_skill_occurrences(task) for task in active_cases
+        ]
+        for task, occurrences in zip(active_cases, active_occurrences):
+            with self.subTest(task=task):
+                self.assertEqual(
+                    [name for name, _, _ in occurrences],
+                    ["code-review-risk", "code-test-regression"],
+                )
         for text, occurrences in (
             (informational, informational_occurrences),
             (repeated, repeated_occurrences),
+            *zip(active_cases, active_occurrences),
         ):
             for name, start, end in occurrences:
                 self.assertEqual(text[start:end], name)
