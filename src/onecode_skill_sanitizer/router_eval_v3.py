@@ -93,6 +93,13 @@ _EXPECTED_IDS_BY_CATEGORY = {
 _EXPECTED_CASE_COUNT = sum(CATEGORY_COUNTS.values())
 _SPLIT_VALUES = {"validation", "final_test"}
 _REASON_REQUIRED_STATUSES = {"clarify", "incomplete", "blocked"}
+_TASK_OUTCOME_KEYS = {"case_id", "assertions", "contamination"}
+_TASK_ASSERTION_KEYS = {"id", "critical", "v3", "oracle", "no_skill"}
+_TASK_CONTAMINATION_KEYS = {
+    "v3_skill_evidence",
+    "oracle_skill_evidence",
+    "no_skill_skill_evidence",
+}
 
 
 class DatasetValidationError(ValueError):
@@ -101,6 +108,111 @@ class DatasetValidationError(ValueError):
 
 class EvaluatorError(ValueError):
     pass
+
+
+def evaluate_task_outcomes(outcomes: Any) -> dict[str, Any]:
+    if not isinstance(outcomes, list) or not outcomes:
+        raise DatasetValidationError("task outcomes must be a nonempty list")
+
+    seen_cases: set[str] = set()
+    assertion_count = 0
+    v3_passed = 0
+    oracle_passed = 0
+    critical_regressions: list[dict[str, str]] = []
+    contaminated_cases: list[str] = []
+
+    for case_index, outcome in enumerate(outcomes):
+        prefix = f"task outcome[{case_index}]"
+        if not isinstance(outcome, dict) or set(outcome) != _TASK_OUTCOME_KEYS:
+            raise DatasetValidationError(f"{prefix} has invalid fields")
+
+        case_id = outcome["case_id"]
+        if (
+            not isinstance(case_id, str)
+            or not case_id.strip()
+            or case_id in seen_cases
+        ):
+            raise DatasetValidationError(
+                f"{prefix}.case_id must be a unique nonempty string"
+            )
+
+        contamination = outcome["contamination"]
+        if (
+            not isinstance(contamination, dict)
+            or set(contamination) != _TASK_CONTAMINATION_KEYS
+            or any(type(value) is not bool for value in contamination.values())
+        ):
+            raise DatasetValidationError(
+                f"{prefix} contamination record is invalid"
+            )
+        if contamination["no_skill_skill_evidence"]:
+            contaminated_cases.append(case_id)
+
+        assertions = outcome["assertions"]
+        if not isinstance(assertions, list) or not assertions:
+            raise DatasetValidationError(f"{prefix} assertions must be nonempty")
+
+        seen_assertions: set[str] = set()
+        for assertion_index, assertion in enumerate(assertions):
+            assertion_prefix = f"{prefix}.assertions[{assertion_index}]"
+            if (
+                not isinstance(assertion, dict)
+                or set(assertion) != _TASK_ASSERTION_KEYS
+            ):
+                raise DatasetValidationError(
+                    f"{assertion_prefix} has invalid fields"
+                )
+
+            assertion_id = assertion["id"]
+            if (
+                not isinstance(assertion_id, str)
+                or not assertion_id.strip()
+                or assertion_id in seen_assertions
+            ):
+                raise DatasetValidationError(
+                    f"{prefix} assertion IDs must be unique nonempty strings"
+                )
+            if any(
+                type(assertion[field]) is not bool
+                for field in ("critical", "v3", "oracle", "no_skill")
+            ):
+                raise DatasetValidationError(
+                    f"{prefix} assertion outcomes must be booleans"
+                )
+
+            assertion_count += 1
+            v3_passed += int(assertion["v3"])
+            oracle_passed += int(assertion["oracle"])
+            if assertion["critical"] and assertion["oracle"] and not assertion["v3"]:
+                critical_regressions.append(
+                    {"case_id": case_id, "assertion_id": assertion_id}
+                )
+            seen_assertions.add(assertion_id)
+        seen_cases.add(case_id)
+
+    v3_pass_rate = v3_passed / assertion_count
+    oracle_pass_rate = oracle_passed / assertion_count
+    ratio_gate = 100 * v3_passed >= 95 * oracle_passed
+    point_gate = 100 * (oracle_passed - v3_passed) <= 5 * assertion_count
+    passed = (
+        ratio_gate
+        and point_gate
+        and not critical_regressions
+        and not contaminated_cases
+    )
+    report = {
+        "status": "passed" if passed else "failed",
+        "case_count": len(outcomes),
+        "assertion_count": assertion_count,
+        "v3_pass_rate": v3_pass_rate,
+        "oracle_pass_rate": oracle_pass_rate,
+        "ratio_gate": ratio_gate,
+        "percentage_point_gate": point_gate,
+        "critical_oracle_regressions": critical_regressions,
+        "no_skill_contamination_cases": contaminated_cases,
+    }
+    json.dumps(report, allow_nan=False)
+    return report
 
 
 def load_eval_dataset_v3(path: Path) -> list[dict[str, Any]]:

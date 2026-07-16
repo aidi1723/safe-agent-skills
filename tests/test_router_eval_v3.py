@@ -176,6 +176,48 @@ def synthetic_route(
     }
 
 
+def synthetic_task_assertion(
+    assertion_id: str = "contract",
+    *,
+    critical: bool = False,
+    v3: bool = True,
+    oracle: bool = True,
+    no_skill: bool = False,
+) -> dict:
+    return {
+        "id": assertion_id,
+        "critical": critical,
+        "v3": v3,
+        "oracle": oracle,
+        "no_skill": no_skill,
+    }
+
+
+def synthetic_task_outcome(
+    case_id: str = "task-1",
+    *,
+    assertions: list[dict] | None = None,
+    no_skill_contamination: bool = False,
+) -> dict:
+    return {
+        "case_id": case_id,
+        "assertions": (
+            [synthetic_task_assertion()] if assertions is None else assertions
+        ),
+        "contamination": {
+            "v3_skill_evidence": True,
+            "oracle_skill_evidence": True,
+            "no_skill_skill_evidence": no_skill_contamination,
+        },
+    }
+
+
+def changed_task_outcomes(mutator: Callable[[list[dict]], None]) -> object:
+    outcomes = [synthetic_task_outcome()]
+    mutator(outcomes)
+    return outcomes
+
+
 class RouterEvalV3DatasetTests(unittest.TestCase):
     def assert_payload_rejected(self, payload: object) -> None:
         from onecode_skill_sanitizer.router_eval_v3 import DatasetValidationError
@@ -1011,6 +1053,401 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
                 payload = json.loads(output.getvalue())
                 self.assertEqual(payload["status"], "error")
                 json.dumps(payload, allow_nan=False)
+
+    def test_task_outcomes_compare_selected_pack_with_oracle_without_mutation(self):
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        outcomes = [
+            {
+                "case_id": "task-1",
+                "assertions": [
+                    {
+                        "id": "critical-contract",
+                        "critical": True,
+                        "v3": True,
+                        "oracle": True,
+                        "no_skill": False,
+                    },
+                    {
+                        "id": "secondary-note",
+                        "critical": False,
+                        "v3": False,
+                        "oracle": True,
+                        "no_skill": False,
+                    },
+                ],
+                "contamination": {
+                    "v3_skill_evidence": True,
+                    "oracle_skill_evidence": True,
+                    "no_skill_skill_evidence": False,
+                },
+            }
+        ]
+        original = copy.deepcopy(outcomes)
+
+        report = evaluate_task_outcomes(outcomes)
+
+        self.assertEqual(outcomes, original)
+        self.assertEqual(
+            set(report),
+            {
+                "status",
+                "case_count",
+                "assertion_count",
+                "v3_pass_rate",
+                "oracle_pass_rate",
+                "ratio_gate",
+                "percentage_point_gate",
+                "critical_oracle_regressions",
+                "no_skill_contamination_cases",
+            },
+        )
+        self.assertEqual(report["case_count"], 1)
+        self.assertEqual(report["assertion_count"], 2)
+        self.assertEqual(report["v3_pass_rate"], 0.5)
+        self.assertEqual(report["oracle_pass_rate"], 1.0)
+        self.assertFalse(report["ratio_gate"])
+        self.assertFalse(report["percentage_point_gate"])
+        self.assertEqual(report["critical_oracle_regressions"], [])
+        self.assertEqual(report["no_skill_contamination_cases"], [])
+        self.assertEqual(report["status"], "failed")
+        json.dumps(report, allow_nan=False)
+
+    def test_task_outcomes_pass_at_ratio_and_percentage_point_boundaries(self):
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        assertions = [
+            synthetic_task_assertion(
+                f"assertion-{index}",
+                critical=index == 0,
+                v3=index < 19,
+            )
+            for index in range(20)
+        ]
+
+        report = evaluate_task_outcomes(
+            [synthetic_task_outcome(assertions=assertions)]
+        )
+
+        self.assertEqual(report["v3_pass_rate"], 0.95)
+        self.assertEqual(report["oracle_pass_rate"], 1.0)
+        self.assertTrue(report["ratio_gate"])
+        self.assertTrue(report["percentage_point_gate"])
+        self.assertEqual(report["critical_oracle_regressions"], [])
+        self.assertEqual(report["no_skill_contamination_cases"], [])
+        self.assertEqual(report["status"], "passed")
+
+    def test_task_outcomes_list_critical_oracle_regressions(self):
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        report = evaluate_task_outcomes(
+            [
+                synthetic_task_outcome(
+                    case_id="critical-case",
+                    assertions=[
+                        synthetic_task_assertion(
+                            "critical-contract",
+                            critical=True,
+                            v3=False,
+                            oracle=True,
+                        ),
+                        synthetic_task_assertion(
+                            "noncritical-contract",
+                            critical=False,
+                            v3=False,
+                            oracle=True,
+                        ),
+                    ],
+                )
+            ]
+        )
+
+        self.assertEqual(
+            report["critical_oracle_regressions"],
+            [
+                {
+                    "case_id": "critical-case",
+                    "assertion_id": "critical-contract",
+                }
+            ],
+        )
+        self.assertEqual(report["status"], "failed")
+
+    def test_task_outcomes_list_no_skill_contamination_cases(self):
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        report = evaluate_task_outcomes(
+            [
+                synthetic_task_outcome(
+                    case_id="clean-case",
+                    assertions=[
+                        synthetic_task_assertion("clean", no_skill=True)
+                    ],
+                ),
+                synthetic_task_outcome(
+                    case_id="contaminated-case",
+                    no_skill_contamination=True,
+                ),
+            ]
+        )
+
+        self.assertEqual(
+            report["no_skill_contamination_cases"], ["contaminated-case"]
+        )
+        self.assertEqual(report["status"], "failed")
+
+    def test_task_outcomes_reject_nonempty_list_and_outcome_contract_mutations(self):
+        from onecode_skill_sanitizer.router_eval_v3 import DatasetValidationError
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        invalid = {
+            "not a list": {},
+            "tuple": (synthetic_task_outcome(),),
+            "empty list": [],
+            "outcome not object": [[]],
+            "missing outcome field": changed_task_outcomes(
+                lambda outcomes: outcomes[0].pop("contamination")
+            ),
+            "extra outcome field": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__("extra", False)
+            ),
+            "case ID not string": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__("case_id", 1)
+            ),
+            "empty case ID": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__("case_id", "")
+            ),
+            "whitespace case ID": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__("case_id", " \t")
+            ),
+            "duplicate case ID": [
+                synthetic_task_outcome("duplicate"),
+                synthetic_task_outcome("duplicate"),
+            ],
+        }
+        for label, outcomes in invalid.items():
+            with self.subTest(label=label), self.assertRaises(
+                DatasetValidationError
+            ):
+                evaluate_task_outcomes(outcomes)
+
+    def test_task_outcomes_reject_contamination_contract_and_nonbool_values(self):
+        from onecode_skill_sanitizer.router_eval_v3 import DatasetValidationError
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        invalid = {
+            "contamination not object": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__("contamination", [])
+            ),
+            "missing contamination field": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["contamination"].pop(
+                    "v3_skill_evidence"
+                )
+            ),
+            "extra contamination field": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["contamination"].__setitem__(
+                    "extra", False
+                )
+            ),
+        }
+        contamination_fields = (
+            "v3_skill_evidence",
+            "oracle_skill_evidence",
+            "no_skill_skill_evidence",
+        )
+        for field in contamination_fields:
+            for value in (0, 1, None):
+                invalid[f"{field}={value!r}"] = changed_task_outcomes(
+                    lambda outcomes, field=field, value=value: outcomes[0][
+                        "contamination"
+                    ].__setitem__(field, value)
+                )
+
+        for label, outcomes in invalid.items():
+            with self.subTest(label=label), self.assertRaises(
+                DatasetValidationError
+            ):
+                evaluate_task_outcomes(outcomes)
+
+    def test_task_outcomes_reject_assertion_contract_ids_and_nonbool_values(self):
+        from onecode_skill_sanitizer.router_eval_v3 import DatasetValidationError
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        invalid = {
+            "assertions not list": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__("assertions", None)
+            ),
+            "assertions tuple": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__(
+                    "assertions", (synthetic_task_assertion(),)
+                )
+            ),
+            "empty assertions": changed_task_outcomes(
+                lambda outcomes: outcomes[0].__setitem__("assertions", [])
+            ),
+            "assertion not object": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["assertions"].__setitem__(0, [])
+            ),
+            "missing assertion field": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["assertions"][0].pop("no_skill")
+            ),
+            "extra assertion field": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["assertions"][0].__setitem__(
+                    "extra", False
+                )
+            ),
+            "assertion ID not string": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["assertions"][0].__setitem__(
+                    "id", 1
+                )
+            ),
+            "empty assertion ID": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["assertions"][0].__setitem__(
+                    "id", ""
+                )
+            ),
+            "whitespace assertion ID": changed_task_outcomes(
+                lambda outcomes: outcomes[0]["assertions"][0].__setitem__(
+                    "id", " \t"
+                )
+            ),
+            "duplicate assertion ID": [
+                synthetic_task_outcome(
+                    assertions=[
+                        synthetic_task_assertion("duplicate"),
+                        synthetic_task_assertion("duplicate"),
+                    ]
+                )
+            ],
+        }
+        assertion_fields = ("critical", "v3", "oracle", "no_skill")
+        for field in assertion_fields:
+            for value in (0, 1, None, math.nan):
+                invalid[f"{field}={value!r}"] = changed_task_outcomes(
+                    lambda outcomes, field=field, value=value: outcomes[0][
+                        "assertions"
+                    ][0].__setitem__(field, value)
+                )
+
+        for label, outcomes in invalid.items():
+            with self.subTest(label=label), self.assertRaises(
+                DatasetValidationError
+            ):
+                evaluate_task_outcomes(outcomes)
+
+    def test_task_outcome_cli_requires_results_and_returns_json_exit_codes(self):
+        from onecode_skill_sanitizer.cli import build_parser
+        from onecode_skill_sanitizer.cli import main
+
+        parser = build_parser()
+        with redirect_stdout(io.StringIO()), self.assertRaises(SystemExit):
+            parser.parse_args(["router-task-eval-v3"])
+
+        passing = [
+            synthetic_task_outcome(
+                assertions=[
+                    synthetic_task_assertion(
+                        f"assertion-{index}",
+                        critical=index == 0,
+                        v3=index < 19,
+                    )
+                    for index in range(20)
+                ]
+            )
+        ]
+        below_gates = [
+            synthetic_task_outcome(
+                assertions=[
+                    synthetic_task_assertion("below", v3=False, oracle=True)
+                ]
+            )
+        ]
+        with tempfile.TemporaryDirectory() as temp_dir:
+            fixtures = {
+                "passed": (passing, 0),
+                "failed": (below_gates, 1),
+                "invalid-contract": ([], 2),
+            }
+            for name, (payload, expected_code) in fixtures.items():
+                with self.subTest(name=name):
+                    path = Path(temp_dir) / f"{name}.json"
+                    path.write_text(json.dumps(payload), encoding="utf-8")
+                    with redirect_stdout(io.StringIO()) as output:
+                        code = main(
+                            ["router-task-eval-v3", "--results", str(path)]
+                        )
+                    report = json.loads(output.getvalue())
+                    self.assertEqual(code, expected_code)
+                    self.assertEqual(
+                        report["status"],
+                        "passed"
+                        if expected_code == 0
+                        else "failed"
+                        if expected_code == 1
+                        else "error",
+                    )
+                    json.dumps(report, allow_nan=False)
+
+            invalid_json = Path(temp_dir) / "invalid-json.json"
+            invalid_json.write_text("{", encoding="utf-8")
+            for name, path in (
+                ("invalid JSON", invalid_json),
+                ("missing file", Path(temp_dir) / "missing.json"),
+            ):
+                with self.subTest(name=name), redirect_stdout(
+                    io.StringIO()
+                ) as output:
+                    code = main(
+                        ["router-task-eval-v3", "--results", str(path)]
+                    )
+                    report = json.loads(output.getvalue())
+                    self.assertEqual(code, 2)
+                    self.assertEqual(report["status"], "error")
+                    json.dumps(report, allow_nan=False)
+
+    def test_task_outcome_cli_reads_only_caller_results_and_invokes_no_router(self):
+        from onecode_skill_sanitizer import commands
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            results_path = Path(temp_dir) / "synthetic-results.json"
+            results_path.write_text(
+                json.dumps([synthetic_task_outcome()]), encoding="utf-8"
+            )
+            args = mock.Mock(results=str(results_path))
+            forbidden = [
+                mock.patch.object(
+                    commands,
+                    "build_task_pack_v2",
+                    side_effect=AssertionError("v2 router invoked"),
+                ),
+                mock.patch.object(
+                    commands,
+                    "build_task_pack_v3",
+                    side_effect=AssertionError("v3 router invoked"),
+                ),
+                mock.patch.object(
+                    commands,
+                    "run_router_eval",
+                    side_effect=AssertionError("router evaluator invoked"),
+                ),
+                mock.patch(
+                    "socket.create_connection",
+                    side_effect=AssertionError("network invoked"),
+                ),
+                mock.patch(
+                    "subprocess.Popen",
+                    side_effect=AssertionError("external process invoked"),
+                ),
+            ]
+            with forbidden[0] as v2, forbidden[1] as v3, forbidden[2] as router:
+                with forbidden[3] as network, forbidden[4] as process:
+                    with redirect_stdout(io.StringIO()) as output:
+                        code = commands.router_task_eval_v3_command(args)
+
+            self.assertEqual(code, 0)
+            self.assertEqual(json.loads(output.getvalue())["status"], "passed")
+            for invocation in (v2, v3, router, network, process):
+                invocation.assert_not_called()
 
     def test_loader_rejects_invalid_string_lists_and_duplicates(self):
         list_fields = (

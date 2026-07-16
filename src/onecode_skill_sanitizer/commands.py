@@ -72,6 +72,7 @@ from .router_eval_v2 import load_eval_dataset_v2
 from .router_eval_v3 import DatasetValidationError as RouterEvalV3DatasetValidationError
 from .router_eval_v3 import EvaluatorError as RouterEvalV3EvaluatorError
 from .router_eval_v3 import evaluate_router_v3
+from .router_eval_v3 import evaluate_task_outcomes
 from .router_eval_v3 import load_eval_dataset_v3
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
@@ -673,6 +674,31 @@ def router_eval_v3_command(args: argparse.Namespace) -> int:
         return 2
     print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
     return 0 if report["acceptance"]["status"] == "passed" else 1
+
+
+def router_task_eval_v3_command(args: argparse.Namespace) -> int:
+    try:
+        results_path = resolve_project_asset_path(args.results)
+        outcomes = json.loads(results_path.read_text(encoding="utf-8"))
+        report = evaluate_task_outcomes(outcomes)
+    except (
+        json.JSONDecodeError,
+        RouterEvalV3DatasetValidationError,
+        OSError,
+        ValueError,
+    ) as exc:
+        print(
+            json.dumps(
+                {"status": "error", "error": str(exc)},
+                indent=2,
+                sort_keys=True,
+                allow_nan=False,
+            )
+        )
+        return 2
+    print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
+    return 0 if report["status"] == "passed" else 1
+
 
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []
