@@ -231,11 +231,12 @@ def _extract_explicit_skill_order(
 ) -> list[tuple[str, str]]:
     admitted = {item["skill"] for item in candidates}
     required = set(need["required_capabilities"])
-    explicit = set(need.get("explicit_skills", ()))
     relations: list[tuple[str, str]] = []
     for clause in _STRONG_ORDER_BOUNDARY_RE.split(current):
         if not clause.strip():
             continue
+        clause_need = decide_skill_need(normalize_task(clause))
+        explicit = set(clause_need.get("explicit_skills", ()))
         relations.extend(
             _binary_order_relations(clause, required, admitted, explicit)
         )

@@ -582,6 +582,18 @@ class TaskPackV3BuilderTest(unittest.TestCase):
                 "Use code-review-risk. Independently, use code-test-regression.",
                 {"code-review-risk", "code-test-regression"},
             ),
+            (
+                "Use code-review-risk and code-test-regression. "
+                "The documentation mentions code-review-risk before "
+                "code-test-regression.",
+                {"code-review-risk", "code-test-regression"},
+            ),
+            (
+                "Use code-review-risk and code-test-regression. "
+                "Earlier we discussed code-review-risk before "
+                "code-test-regression.",
+                {"code-review-risk", "code-test-regression"},
+            ),
         )
         for task, selected in cases:
             with self.subTest(task=task):
