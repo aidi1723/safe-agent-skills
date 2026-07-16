@@ -57,6 +57,12 @@ The local MVP is complete when the project can:
 - [x] Public open-source statement
 - [x] Standalone tool open-source statement
 - [x] At least 3 trusted skills in every top-level category
+- [x] Opt-in Router v3 structural delivery (need gate, seven-skill cohort,
+      task-pack v3, held-out evaluator, exact dependency edges)
+- [ ] Router v3 final-test release acceptance (exhausted fail;
+      `final_acceptance_failed`)
+- [ ] Router v3 three-arm task oracle evidence (`task_evaluation_missing`)
+- [ ] Router v3 default-schema decision (v2 remains default)
 
 ## Current Public Baseline
 
@@ -68,18 +74,20 @@ The local MVP is complete when the project can:
 - scenario bundles: 23 trusted
 - external references: 19
 - registry verification: ok
-- router eval cases: 42
-- full verification tests: 162
+- router eval cases: 42 (v1-era baseline) + multi-intent v2 gold + v3 held-out 120
+- full verification tests: 577 (local `main` at v3 structural closure)
 
 Latest delivery readiness:
 
 - [Delivery Readiness Report](delivery-readiness-report.md)
+- [High-Frequency Intelligent Skill Selection v3 Closure](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
 
 Closure report:
 
 - [Phase 001 Closure Report](phase-001-closure-report.md)
 - [Phase 002 Scenario Router Closure Report](phase-002-scenario-router-closure-report.md)
 - [Scenario Capability Expansion Closure Report](scenario-capability-expansion-closure-report.md)
+- [High-Frequency Intelligent Skill Selection v3 Closure](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
 
 ## Not In MVP
 

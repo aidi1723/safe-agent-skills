@@ -2,6 +2,24 @@
 
 Date: 2026-07-15
 
+> **Delivery status (2026-07-16):** Structural delivery for the opt-in Router
+> v3 cohort path is **closed** on local `main` at structural tip `6710ba8`.
+> Validation-split
+> acceptance **passed**. The one permitted `final_test` one-shot **failed**
+> (`final_acceptance_failed`). Three-arm task oracle evidence is **missing**
+> (`task_evaluation_missing`). Semantic influence remains disabled on the
+> public CLI. v2 remains the default schema.
+>
+> Wrap-up evaluation rigor beyond the original list: dependency edges use
+> **exact set equality**; aggregate `dependency_edge_precision` is tracked with
+> the same `>= 0.70` floor as recall; task-pack v3 candidates are bounded to
+> `maxItems: 7` with a `cohortSkillName` enum.
+>
+> Authoritative gate status:
+> [v3 Closure Report](../../high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
+> This design remains the normative intent for the milestone; it does not
+> override the closure report's delivery verdict.
+
 ## Outcome
 
 Improve skill-selection intelligence for the router and an initial cohort of
@@ -593,6 +611,8 @@ The v3 milestone must meet all of these on held-out data:
 - forbidden-scenario false-positive rate below 0.02;
 - DAG validity at least 0.98;
 - dependency-edge recall at least 0.70;
+- dependency-edge precision at least 0.70 (wrap-up rigor: exact edge-set
+  equality at the case level; unexpected edges fail the case);
 - multi-intent exact match at least 0.92;
 - scenario F1 at least 0.96;
 - high-frequency skill Recall@3 at least 0.95;

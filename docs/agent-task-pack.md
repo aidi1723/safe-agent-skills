@@ -31,6 +31,12 @@ The isolated 120 held-out cases are evaluator-only and must not be runtime
 inputs.
 Skills are method guidance, not permission grants.
 
+Task-pack v3 candidates are schema-bounded to at most seven cohort skills, and
+selected or execution skill names must stay inside the fixed high-frequency
+enum. Dependency-edge evaluation requires exact edge-set match (precision and
+recall). Structural delivery is closed; release acceptance is not. See
+[High-Frequency Intelligent Skill Selection v3 Closure](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
+
 Repository verification is separate from task-pack selection.
 `bash scripts/verify.sh` is the safe routine verification command and skips
 `final_test` by default. `ONECODE_RUN_ROUTER_V3_FINAL_TEST=1` is reserved for a

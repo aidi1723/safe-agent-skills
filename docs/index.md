@@ -41,6 +41,11 @@ isolated 120 held-out evaluator-only cases.
 future fresh, explicitly authorized one-shot release evaluation. Do not set it
 for the current rollout; its permitted run is exhausted and failed.
 
+Structural delivery for this opt-in path is closed on `main`. See the closure
+report for verification evidence, validation metrics, exact dependency-edge
+scoring, and remaining release blockers.
+
+- [High-Frequency Intelligent Skill Selection v3 Closure](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
 - [High-Frequency Intelligent Skill Selection Design](superpowers/specs/2026-07-15-high-frequency-intelligent-skill-selection-design.md)
 - [High-Frequency Intelligent Skill Selection Implementation Plan](superpowers/plans/2026-07-15-high-frequency-intelligent-skill-selection.md)
 
@@ -69,3 +74,4 @@ current system was reached. They do not override the current documents above.
 - [History Map](history.md)
 - [Maintenance Log](maintenance-log.md)
 - [Feature Log](feature-log.md)
+- [v3 Structural Delivery Update](updates/2026-07-16-high-frequency-intelligent-skill-selection-v3.md)

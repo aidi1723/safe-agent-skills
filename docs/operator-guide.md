@@ -28,9 +28,16 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   --schema-version 2 --format json
 PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
   "build a product website" --schema-version 1 --format json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "review this patch" --schema-version 3 --format json
 PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
   --eval evals/multi-intent-gold.json --registry catalog \
   --bundles bundles/index.json
+PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v3 \
+  --eval evals/high-frequency-skill-selection.json \
+  --registry catalog --bundles bundles/index.json \
+  --routing-examples catalog/routing-examples.json \
+  --split validation
 ```
 
 Interpret v2 states conservatively: `complete` is fully covered, `incomplete`
@@ -38,6 +45,12 @@ requires host clarification or additional method coverage, and `blocked` must
 not execute. `route_id` is only a privacy-aware correlation hash, never an
 authorization token. The provider fields remain `none` with a semantic-provider
 fallback placeholder in this deterministic milestone.
+
+Router v3 remains opt-in for the seven high-frequency candidates only. Do not
+set `ONECODE_RUN_ROUTER_V3_FINAL_TEST=1` during routine work; the permitted
+one-shot final-test run is exhausted and failed. Structural closure and
+remaining blockers are recorded in
+[High-Frequency Intelligent Skill Selection v3 Closure](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
 
 ## Folder Layout
 

@@ -1,6 +1,6 @@
 # Feature Log
 
-Date: 2026-07-03
+Date: 2026-07-16
 
 ## User-Facing Entry
 
@@ -16,6 +16,10 @@ scenario bundles from this repository. The router emits a task pack with:
 - verifier expectations
 - fixed safety boundary
 
+Schema v2 is the default pack. Schema v3 is opt-in (`--schema-version 3`) for
+the high-frequency cohort path only; see the
+[v3 Closure Report](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
+
 ## Current Catalog Size
 
 ```text
@@ -24,8 +28,9 @@ scenario bundles from this repository. The router emits a task pack with:
 23 trusted scenario bundles
 15 top-level categories
 7 trusted overlap groups
-42 router eval cases
-162 full verification tests
+42 router eval cases (v1-era baseline)
+v2 multi-intent gold + v3 held-out 120 cases
+577 full verification tests (v3 structural closure on main)
 336 / 336 tracked claude-skills candidates covered
 ```
 
@@ -79,7 +84,25 @@ scenario bundles from this repository. The router emits a task pack with:
 
 ## Newest Capability Expansion
 
-The latest expansion adds five reference-pattern bundles and five trusted local
+### 2026-07-16 Opt-In Router v3 Structural Delivery
+
+Closed structural delivery of the high-frequency intelligent skill-selection
+path on local `main`:
+
+- need gate (`none` / `single` / `composite` / `clarify`)
+- fixed seven-skill cohort recall with reviewed routing examples
+- marginal composition and real dependency edges
+- strict task-pack v3 (`maxItems: 7`, `cohortSkillName` enum)
+- held-out evaluator with exact dependency-edge scoring and precision/recall
+- semantic shadow plumbing only (influence disabled on the public CLI)
+
+Validation-split acceptance passed. Final-test release acceptance and three-arm
+task oracle evidence remain blockers. Details:
+[v3 Closure Report](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
+
+### Earlier Reference-Pattern Expansion
+
+Earlier expansion added five reference-pattern bundles and five trusted local
 skills:
 
 - `research-multi-platform-search-boundary`

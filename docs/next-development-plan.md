@@ -7,6 +7,12 @@ Date: 2026-06-12
 This plan starts after the audit hardening closure. It tracks capability
 upgrades that are larger than the completed remediation work.
 
+Status note (2026-07-16): opt-in Router v3 structural delivery is closed. The
+remaining v3 release blockers (final-test re-authorization after task evidence,
+three-arm task oracle, default-schema decision) are recorded in the
+[v3 Closure Report](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
+and supersede older "router quality only" framing for that cohort path.
+
 The next phase should preserve the current project boundary:
 
 - skills provide method guidance only

@@ -55,10 +55,15 @@ implementation is split by ownership:
 - `cli.py`: parser wiring, argument validation, compatibility exports, and main
 - `commands.py`: command handlers and command-level orchestration
 - `registry.py`: registry IO, indexing, trust status, verification, and resealing
-- `rendering.py`: Schema v1 and v2 Markdown rendering
+- `rendering.py`: Schema v1, v2, and opt-in v3 Markdown rendering
 - `bulk.py`: metadata-only candidate planning, drafts, and assessment
 - `task_packs.py`: trusted selection and Schema v1/v2 task-pack assembly
+- `need_gate.py`, `skill_candidates.py`, `skill_selection.py`, `task_pack_v3.py`:
+  opt-in Router v3 need decision, cohort recall, composition, and pack build
+- `semantic_provider.py`: candidate-bounded semantic shadow plumbing only
 - `router_evaluation.py`: deterministic router evaluation and quality summaries
+- `router_eval_v3.py`: held-out v3 evaluation (exact dependency edges; precision
+  and recall gates)
 - `routing_profiles.py`: normalization, signals, profiles, and capability selection
 - `routing_execution.py`: stages, approvals, selection trace, and contract graphs
 - `batch_lifecycle.py`: non-runtime batch inventory and promotion validation
@@ -297,6 +302,27 @@ Two boundaries are intentionally reserved for later work:
   reranking through a strict protocol, privacy policy, structured output, and
   deterministic fallback. The current provider is `none`; this milestone is
   not a semantic router yet.
+
+## Opt-In Router v3 Cohort Flow
+
+Schema v2 remains the default for `smart` and `task-pack`. Schema v3 is an
+explicit opt-in path (`--schema-version 3`) for the router entry plus exactly
+seven high-frequency candidates. Structural delivery is closed; final-test and
+task-level release acceptance are not. See the
+[v3 Closure Report](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
+
+```text
+current-intent need gate
+  -> fixed seven-skill cohort recall (reviewed routing examples)
+  -> optional candidate-bounded semantic shadow (no public influence)
+  -> marginal composition + real dependency edges
+  -> confidence / none / clarify / incomplete / blocked
+  -> strict task-pack v3 serialization
+  -> host-owned planning, approval, execution, and verification
+```
+
+v3 remains method-only. Semantic shadow cannot expand the candidate set or
+grant permissions. Whole-catalog intelligent routing is out of scope.
 - Host-replanning boundary: future host integration may submit execution
   events and request a method-only replan. The current router does not observe
   runtime events, retry work, approve actions, or replan automatically.

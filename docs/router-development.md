@@ -55,6 +55,17 @@ inputs. Application code must not load or name the held-out dataset; only the
 isolated evaluator may receive its path.
 Skills are method guidance, not permission grants.
 
+Evaluator and schema contracts for this cohort:
+
+- Dependency edges must match the expected set exactly; unexpected edges fail
+  the case the same way missing edges do.
+- Track both `dependency_edge_precision` and `dependency_edge_recall`
+  (acceptance floor `0.70` each on the validation split).
+- `schemas/task-pack-v3.schema.json` bounds `candidates` to `maxItems: 7` and
+  constrains skill names through the `cohortSkillName` enum.
+- Structural closure evidence lives in
+  [High-Frequency Intelligent Skill Selection v3 Closure](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
+
 ## Reference Patterns
 
 Community projects are useful references, but their runtime trust model should

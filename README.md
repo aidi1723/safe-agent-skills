@@ -278,9 +278,11 @@ passed final release acceptance.
 
 Runtime examples are reviewed routing data. The isolated 120 held-out cases
 are evaluator-only and must not be runtime inputs.
-Skills are method guidance, not permission grants. See the
-[Router Development Guide](docs/router-development.md) for the cohort and
-evaluation boundaries.
+Skills are method guidance, not permission grants. Structural delivery for the
+opt-in path is closed on `main`; see the
+[v3 Closure Report](docs/high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
+and the [Router Development Guide](docs/router-development.md) for cohort,
+exact dependency-edge scoring, and evaluation boundaries.
 
 ```bash
 onecode-skill-sanitizer smart "review this patch" \

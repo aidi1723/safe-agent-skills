@@ -32,7 +32,10 @@ scripts/task_pack.sh "$USER_TASK" --schema-version 3 --format json
 ```
 
 Keep v2 as the default until the caller explicitly requests v3. Pass a reviewed
-example set with `--routing-examples PATH` when needed.
+example set with `--routing-examples PATH` when needed. v3 covers the router
+entry plus exactly seven high-frequency candidates; it is structural and
+validation-gated, not final-release-accepted. Skills remain method guidance,
+not permission grants.
 
 ## Agent Workflow
 

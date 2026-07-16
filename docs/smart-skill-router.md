@@ -84,6 +84,28 @@ programmatic `to_legacy_v1` projection keeps one primary v2 scenario and reports
 `multi_intent_dropped`, `scenarios_dropped`, and
 `cross_scenario_edges_dropped`.
 
+## Router v3 Opt-In Cohort Path
+
+Router v3 remains opt-in; Router v2 remains the default. Request v3 only for
+the fixed high-frequency cohort path:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "review this patch" --schema-version 3 --format json
+```
+
+v3 adds a need gate, reviewed routing-example retrieval, seven-skill candidate
+bounds, marginal composition with real dependency edges, and a strict
+task-pack v3 envelope. Deterministic selection is active. Semantic providers
+are candidate-bounded and run in shadow only; semantic influence is disabled
+through the public CLI. Skills remain method guidance, not permission grants.
+
+The validation split passes. Final-test release acceptance and three-arm task
+oracle evidence are not established. Prefer the
+[Agent Task Pack](agent-task-pack.md) v3 section and the
+[v3 Closure Report](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
+for current gate status.
+
 ## Design References
 
 `smart` adopts the practical shape of modern open tool orchestration without

@@ -2,6 +2,17 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Delivery status (2026-07-16):** Structural implementation tasks for this
+> plan are **delivered** on local `main` (structural tip `6710ba8`); the
+> feature branch and worktree were removed after a local fast-forward merge.
+> Routine verification
+> (`bash scripts/verify.sh`) and validation-split acceptance passed. Release
+> blockers remain: exhausted failed `final_test` (`final_acceptance_failed`)
+> and missing three-arm task evidence (`task_evaluation_missing`). Do not treat
+> unchecked step boxes below as incomplete code work; they are the historical
+> execution checklist. Current status:
+> [v3 Closure Report](../../high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md).
+
 **Goal:** Add an opt-in Router v3 that decides whether specialized guidance is needed, selects the minimum useful set from seven high-frequency trusted catalog Skills, constructs evidence-backed dependencies, and abstains or asks for clarification when evidence is insufficient.
 
 **Architecture:** Keep v1 and v2 frozen. Route v3 through a dedicated pipeline: current-intent Need Gate, cohort-only deterministic recall, optional candidate-bounded semantic reranking, marginal capability composition, real dependency compilation, confidence gating, and strict task-pack v3 serialization. `safe-agent-router` remains the eighth cohort entry and user-facing gateway; it is not a candidate that can recursively select itself.

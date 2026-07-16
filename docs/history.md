@@ -7,6 +7,7 @@ for provenance and decision review; current behavior is defined by the
 ## Dated Updates
 
 - [Update Statements](updates/)
+- [High-Frequency Intelligent Skill Selection v3 Update](updates/2026-07-16-high-frequency-intelligent-skill-selection-v3.md)
 - [GitHub Update Summary](github-update-summary-2026-07-03.md)
 - [Stage Acceptance Report](stage-acceptance-report-2026-07-04.md)
 
@@ -20,11 +21,14 @@ for provenance and decision review; current behavior is defined by the
 
 - [Design Specifications](superpowers/specs/)
 - [Implementation Plans](superpowers/plans/)
+- [High-Frequency Intelligent Skill Selection Design](superpowers/specs/2026-07-15-high-frequency-intelligent-skill-selection-design.md) (status banner; see closure)
+- [High-Frequency Intelligent Skill Selection Plan](superpowers/plans/2026-07-15-high-frequency-intelligent-skill-selection.md) (execution record; see closure)
 - [MVP Roadmap](mvp-roadmap.md)
 - [Next Development Plan](next-development-plan.md)
 
 ## Closure And Readiness Reports
 
+- [High-Frequency Intelligent Skill Selection v3 Closure](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
 - [Hybrid Router v2 Final Closure](hybrid-router-v2-final-closure-report-2026-07-10.md)
 - [Maintenance Optimization Closure](maintenance-optimization-closure-report-2026-07-04.md)
 - [Reference Pattern Expansion Closure](reference-pattern-expansion-closure-report.md)

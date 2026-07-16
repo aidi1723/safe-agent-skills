@@ -1,6 +1,27 @@
 # Maintenance Log
 
-Date: 2026-07-11
+Date: 2026-07-16
+
+## 2026-07-16 High-Frequency Intelligent Skill Selection v3 Closure
+
+Closed the opt-in Router v3 structural milestone on local `main` at structural
+tip `6710ba8`, aligned operator docs after that tip, and removed the
+`feature/intelligent-skill-selection-v3` worktree and branch.
+
+Delivered scope includes the need gate, fixed seven-skill cohort recall,
+reviewed runtime routing examples, strict task-pack v3, candidate-bounded
+semantic shadow plumbing (influence still disabled on the public CLI), held-out
+evaluator (`router-eval-v3`), exact dependency-edge case scoring, and
+`dependency_edge_precision` acceptance tracking. Schema v3 candidates are
+`maxItems: 7` with `cohortSkillName` enum binding.
+
+Routine verification on merged `main`: `bash scripts/verify.sh` exited 0 with
+577 tests. Validation-split acceptance passed. The exhausted `final_test`
+one-shot and missing three-arm task evidence remain release blockers.
+
+Authoritative write-up:
+
+- [High-Frequency Intelligent Skill Selection v3 Closure Report](high-frequency-intelligent-skill-selection-v3-closure-report-2026-07-16.md)
 
 ## 2026-07-11 High-Frequency Specialist Coverage Completion
 
