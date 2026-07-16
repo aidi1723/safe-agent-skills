@@ -195,7 +195,7 @@ class SkillSelectionTest(unittest.TestCase):
         self.assertEqual(cyclic["execution_graph"]["edges"], [])
         self.assertIn("dependency_cycle", cyclic["execution_graph"]["reason_codes"])
 
-    def test_catalog_context_contract_does_not_imply_caller_input_is_missing(self):
+    def test_context_without_declared_producer_is_host_supplied(self):
         result = compose_skill_selection(
             need("single", ("execution.browser_check",)),
             [candidate("browser-check", "execution.browser_check", 0.9)],
@@ -210,6 +210,7 @@ class SkillSelectionTest(unittest.TestCase):
         )
 
         self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(result["selected_skill_names"], ["browser-check"])
         self.assertEqual(result["capability_resolution"]["missing_inputs"], [])
         self.assertEqual(result["selection"]["failure_reason"], "")
 
@@ -333,12 +334,53 @@ class SkillSelectionTest(unittest.TestCase):
                 "reason": "required_artifact:ui_review_report",
             },
         )
+        self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(result["capability_resolution"]["missing_inputs"], [])
         self.assertEqual(
-            result["execution_graph"]["edges"][0]["type"],
-            "artifact_dependency",
+            result["execution_graph"]["edges"],
+            [
+                {
+                    "from": "skill:design-ui-review",
+                    "to": "skill:execution-browser-check",
+                    "type": "artifact_dependency",
+                    "evidence": "ui_review_report",
+                }
+            ],
         )
 
-    def test_artifact_producer_conflict_preserves_declared_missing_input(self):
+    def test_unavailable_declared_producer_leaves_context_incomplete(self):
+        result = compose_skill_selection(
+            need("single", ("execution.browser_check",)),
+            [
+                candidate("browser-check", "execution.browser_check", 0.9),
+                candidate("review-producer", "design.ui_review", 0.34),
+            ],
+            {
+                "browser-check": profile(
+                    "browser-check",
+                    "execution.browser_check",
+                    requires=("ui_review_report",),
+                ),
+                "review-producer": profile(
+                    "review-producer",
+                    "design.ui_review",
+                    evidence=("ui_review_report",),
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(result["selected_skill_names"], ["browser-check"])
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"],
+            ["ui_review_report"],
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_required_input"
+        )
+
+    def test_artifact_producer_conflict_marks_context_missing(self):
         result = compose_skill_selection(
             need(
                 "single",
@@ -369,7 +411,7 @@ class SkillSelectionTest(unittest.TestCase):
         self.assertEqual(result["selected_skill_names"], ["browser-check"])
         self.assertEqual(
             result["capability_resolution"]["missing_inputs"],
-            ["target_page_or_flow"],
+            ["target_page_or_flow", "ui_review_report"],
         )
         self.assertEqual(
             result["selection"]["failure_reason"], "missing_required_input"
@@ -386,6 +428,52 @@ class SkillSelectionTest(unittest.TestCase):
             ],
         )
         self.assertEqual(result["execution_graph"]["edges"], [])
+
+    def test_missing_inputs_merge_deterministically_without_duplicates(self):
+        result = compose_skill_selection(
+            need(
+                "single",
+                ("execution.browser_check",),
+                missing_inputs=("caller_input", "report", "caller_input"),
+            ),
+            [
+                candidate("browser-check", "execution.browser_check", 0.9),
+                candidate(
+                    "report-producer",
+                    "design.ui_review",
+                    0.8,
+                    excluded=True,
+                ),
+                candidate("source-producer", "code.explore", 0.34),
+            ],
+            {
+                "browser-check": profile(
+                    "browser-check",
+                    "execution.browser_check",
+                    requires=("report", "source_map"),
+                ),
+                "report-producer": profile(
+                    "report-producer",
+                    "design.ui_review",
+                    evidence=("report",),
+                ),
+                "source-producer": profile(
+                    "source-producer",
+                    "code.explore",
+                    produces=("source_map",),
+                ),
+            },
+            explicit_order=[],
+        )
+
+        self.assertEqual(result["routing_status"], "incomplete")
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"],
+            ["caller_input", "report", "source_map"],
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_required_input"
+        )
 
     def test_low_margin_artifact_conflict_clarifies_when_other_inputs_complete(self):
         result = compose_skill_selection(
@@ -460,12 +548,17 @@ class SkillSelectionTest(unittest.TestCase):
             explicit_order=[],
         )
 
-        self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(result["routing_status"], "incomplete")
         self.assertEqual(
             result["selected_skill_names"],
             ["browser-check", "review-producer"],
         )
-        self.assertEqual(result["capability_resolution"]["missing_inputs"], [])
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"], ["source_map"]
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_required_input"
+        )
         self.assertEqual(
             result["selection"]["conflict_resolutions"],
             [
@@ -605,7 +698,7 @@ class SkillSelectionTest(unittest.TestCase):
             ["higher_final_score", "insufficient_margin"],
         )
 
-    def test_multiple_valid_producers_leave_context_for_the_host(self):
+    def test_multiple_valid_producers_leave_required_context_incomplete(self):
         result = compose_skill_selection(
             need("single", ("execution.browser_check",)),
             [
@@ -629,10 +722,14 @@ class SkillSelectionTest(unittest.TestCase):
             explicit_order=[],
         )
 
-        self.assertEqual(result["routing_status"], "complete")
+        self.assertEqual(result["routing_status"], "incomplete")
         self.assertEqual(result["selected_skill_names"], ["target"])
-        self.assertEqual(result["capability_resolution"]["missing_inputs"], [])
-        self.assertEqual(result["selection"]["failure_reason"], "")
+        self.assertEqual(
+            result["capability_resolution"]["missing_inputs"], ["report"]
+        )
+        self.assertEqual(
+            result["selection"]["failure_reason"], "missing_required_input"
+        )
         self.assertEqual(result["execution_graph"]["edges"], [])
 
     def test_uniqueness_is_computed_after_prior_conflict_losers(self):

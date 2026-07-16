@@ -124,7 +124,14 @@ def compose_skill_selection(
         for capability in _profile_values(profiles[name], "capabilities")
     }
     missing = sorted(set(required) - selected_capabilities - deferred_capabilities)
-    missing_inputs = list(need.get("missing_inputs", ()))
+    missing_inputs = list(
+        dict.fromkeys(
+            (
+                *need.get("missing_inputs", ()),
+                *_unresolved_declared_contexts(selected, profiles),
+            )
+        )
+    )
     mandatory_capabilities = set(need.get("mandatory_capabilities", ()))
     mandatory_skills = {
         name
@@ -374,6 +381,28 @@ def _has_selected_producer(
         source != target and artifact in _produced_values(profiles[source])
         for source in selected
     )
+
+
+def _unresolved_declared_contexts(
+    selected: Sequence[str],
+    profiles: Mapping[str, Mapping[str, Any]],
+) -> list[str]:
+    produced_by: dict[Any, set[str]] = defaultdict(set)
+    for source, profile in profiles.items():
+        for artifact in _produced_values(profile):
+            produced_by[artifact].add(source)
+
+    missing: list[str] = []
+    for target in selected:
+        for artifact in _profile_values(profiles[target], "requires_context"):
+            if _has_selected_producer(target, artifact, selected, profiles):
+                continue
+            if (
+                any(source != target for source in produced_by[artifact])
+                and artifact not in missing
+            ):
+                missing.append(artifact)
+    return missing
 
 
 def _routing_status(
