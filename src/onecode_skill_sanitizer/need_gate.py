@@ -17,13 +17,58 @@ CAPABILITY_SKILL = {
     "security.supply_chain": "security-supply-chain-review",
 }
 CAPABILITY_PATTERNS = {
-    "code.explore": re.compile(r"unfamiliar repo|map (?:the )?repo|repository map|repository orientation|source ownership|data flow|entry points?|where does|architecture|陌生代码库|梳理.*(?:代码库|repo|入口|模块)|(?:代码库|repo).*(?:映射|梳理)|调用链", re.I),
-    "code.review": re.compile(r"review (?:this |the )?(?:diff|patch|pr|code)|code review|pr.*review|risk[- ]review|code delta|find (?:bugs|defects)|check this change.*(?:concurrency|cleanup|regression)|审查.*(?:diff|PR|补丁|代码)|评审.*(?:缺陷|代码|补丁|变更)|代码变更.*(?:问题|风险)|回归风险", re.I),
+    "code.explore": re.compile(
+        r"unfamiliar (?:repo|repository|monorepo|codebase)|"
+        r"map (?:the )?(?:repo|repository|monorepo|codebase)|"
+        r"map (?:the |its |this )?local (?:integration|wiring|callers?)|"
+        r"(?:repo|repository|monorepo|codebase) map|"
+        r"repository orientation|source ownership|data flow|entry points?|"
+        r"where does|where is .*(?:implemented|defined|owned|handled)|"
+        r"architecture|陌生代码库|"
+        r"梳理.*(?:代码库|仓库|repo|入口|模块)|"
+        r"(?:代码库|仓库|repo).*(?:映射|梳理)|调用链",
+        re.I,
+    ),
+    "code.review": re.compile(
+        r"review (?:this |the )?(?:diff|patch|pr|code)|"
+        r"(?:review|inspect) (?:only )?(?:this |the )?.{0,40}?(?:diff|patch|pr)\b|"
+        r"code review|\bpr\b.*review|risk[- ]review|code delta|find (?:bugs|defects)|"
+        r"check this change.*(?:concurrency|cleanup|regression)|"
+        r"审查.*(?:diff|PR|补丁|代码)|评审.*(?:缺陷|代码|补丁|变更)|"
+        r"代码变更.*(?:问题|风险)|回归风险",
+        re.I,
+    ),
     "code.test": re.compile(r"regression test|regression coverage|test coverage|failing test|test boundary|contract test|old behavior.*fail|red[- ]green|回归测试|补.*测试|失败用例", re.I),
-    "execution.browser_check": re.compile(r"real browser|(?:run|check|verify|test|exercise) (?:the )?(?:existing )?UI flow (?:in )?(?:a )?(?:real )?browser|browser (?:check|flow|test)|playwright|screenshot|DOM state|canvas|console error|浏览器.*(?:验证|检查|跑|截图|复现)|打开.*页面", re.I),
-    "research.source": re.compile(r"primary sources?|official (?:sources?|documentation|records?)|citations?|fact[- ]check|verify (?:the |these )?claims?|research (?:the )?(?:claims|sources|package|community skill)|standards?.*evidence|web research|全网搜索|一手资料|官方资料|权威来源|查证|核实|引用|事实核查", re.I),
-    "design.ui_review": re.compile(r"polish (?:the )?(?:UI|dashboard)|review (?:the )?(?:UI|dashboard|layout)|visual hierarchy|spacing|responsive layout|accessibility|优化.*(?:UI|页面|界面)|视觉一致|响应式布局|可访问性", re.I),
-    "security.supply_chain": re.compile(r"supply[- ]chain|package (?:provenance|trust|before adoption)|install scripts?|plugin maintainer|community skill|dependency (?:risk|provenance|trust)|connector.*permissions?|供应链|包.*(?:来源|信任)|社区 Skill|插件.*风险|connector.*权限|许可证.*权限", re.I),
+    "execution.browser_check": re.compile(r"real browser|(?:run|check|verify|test|exercise) (?:the )?(?:existing )?UI flow(?: (?:in )?(?:a )?(?:real )?browser)?|(?:smoke[- ]test|check|verify).*browser[- ]visible|browser[- ](?:check|flow|test)|playwright|screenshot|DOM state|canvas|console error|浏览器.*(?:验证|检查|跑|截图|复现)|打开.*页面", re.I),
+    "research.source": re.compile(
+        r"primary sources?|official (?:sources?|documentation|records?)|citations?|"
+        r"(?:current|up[- ]to[- ]date|latest|fresh).*(?:cite|citation|source|publication|record)|"
+        r"fact[- ]check|verify (?:the |these )?.{0,30}?\bclaims?|"
+        r"research (?:the )?(?:claims|sources|package|community skill)|"
+        r"standards?.*evidence|web research|全网搜索|一手资料|官方资料|"
+        r"权威来源|查证|核实|引用|事实核查",
+        re.I,
+    ),
+    "design.ui_review": re.compile(
+        r"polish (?:the )?(?:UI|dashboard)|"
+        r"review (?:the )?(?:UI|dashboard|layout)|(?:UI|layout|interface) critique|"
+        r"critique (?:the )?(?:UI|layout|interface)|"
+        r"(?:review|critique).*(?:density|surfaces?|empty states?|colors?|layout|hierarchy)|"
+        r"visual hierarchy|spacing|responsive layout|accessibility|"
+        r"优化.*(?:UI|页面|界面)|"
+        r"评审.*(?:UI|页面|界面|配色|布局|视觉|密度|空状态)|"
+        r"视觉一致|响应式布局|可访问性",
+        re.I,
+    ),
+    "security.supply_chain": re.compile(
+        r"supply[- ]chain|package (?:provenance|trust|before adoption)|"
+        r"(?:npm|package|dependency|library|plugin)\s+audit.*(?:source|license|provenance|release)|"
+        r"install scripts?|plugin maintainer|community skill|"
+        r"dependency (?:risk|provenance|trust)|connector.*permissions?|"
+        r"供应链|包.*(?:来源|信任)|社区 Skill|插件.*风险|connector.*权限|"
+        r"许可证.*权限",
+        re.I,
+    ),
 }
 EXPLANATION_RE = re.compile(r"\b(?:explain|what is|describe)\b|解释|是什么|什么是|介绍", re.I)
 INVENTORY_RE = re.compile(r"\b(?:list|show)\b.*\bskills?\b|列出.*Skill|有哪些.*Skill", re.I)
@@ -51,6 +96,11 @@ MANDATORY_TEST_RE = re.compile(
     re.I,
 )
 NON_ACTION_BROWSER_RE = re.compile(r"screenshot (?:is )?attached|截图(?:已)?附", re.I)
+NON_ACTION_CODE_REVIEW_RE = re.compile(
+    r"code review (?:findings|report|results) (?:are|is) "
+    r"(?:ready|complete|attached|available)",
+    re.I,
+)
 AMBIGUOUS_SPECIALIZED_RE = re.compile(
     r"(?:check|review|看看|检查)(?: the| this)? ui[\s.!?。！？]*|"
     r"(?:check|review) (?:this |the )?(?:change|package)[\s.!?]*|"
@@ -85,8 +135,9 @@ CAPABILITY_NEGATION_PATTERNS = {
     ),
     "execution.browser_check": re.compile(
         rf"{NEGATION_PREFIX}\s*(?:"
+        r"(?:smoke[- ]test|check|verify).*browser[- ]visible|"
         r"(?:run|check|verify|test|exercise)\s+(?:the\s+)?(?:existing\s+)?"
-        r"UI flow\s+(?:in\s+)?(?:a\s+)?(?:real\s+)?browser|"
+        r"UI flow(?:\s+(?:in\s+)?(?:a\s+)?(?:real\s+)?browser)?|"
         r"(?:(?:open|run|use|check|verify|打开|使用|运行|检查|验证)\s*)?"
         r"(?:(?:a\s+|the\s+)?(?:real\s+)?(?:browser|playwright)(?![A-Za-z0-9_])|"
         r"浏览器))",
@@ -189,6 +240,11 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
                 if (
                     capability == "execution.browser_check"
                     and _is_non_action_browser_match(masked_clause, match)
+                ):
+                    continue
+                if (
+                    capability == "code.review"
+                    and _is_non_action_code_review_match(masked_clause, match)
                 ):
                     continue
                 _record_evidence(
@@ -345,6 +401,13 @@ def _is_non_action_browser_match(text: str, match: re.Match[str]) -> bool:
     return any(
         non_action.start() < match.end() and match.start() < non_action.end()
         for non_action in NON_ACTION_BROWSER_RE.finditer(text)
+    )
+
+
+def _is_non_action_code_review_match(text: str, match: re.Match[str]) -> bool:
+    return any(
+        non_action.start() < match.end() and match.start() < non_action.end()
+        for non_action in NON_ACTION_CODE_REVIEW_RE.finditer(text)
     )
 
 

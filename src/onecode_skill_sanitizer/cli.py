@@ -28,6 +28,7 @@ from .commands import reseal_content_command as reseal_content_command
 from .commands import reject_command as reject_command
 from .commands import router_eval_command as router_eval_command
 from .commands import router_eval_v2_command as router_eval_v2_command
+from .commands import router_eval_v3_command as router_eval_v3_command
 from .commands import sanitize_command as sanitize_command
 from .commands import sanitize_skill_text as sanitize_skill_text
 from .commands import sanitize_to_dir as sanitize_to_dir
@@ -268,6 +269,18 @@ def build_parser() -> argparse.ArgumentParser:
     router_eval_v2_parser.add_argument("--registry", default="catalog")
     router_eval_v2_parser.add_argument("--bundles", default="bundles/index.json")
     router_eval_v2_parser.set_defaults(func=router_eval_v2_command)
+
+    router_eval_v3_parser = subparsers.add_parser("router-eval-v3")
+    router_eval_v3_parser.add_argument("--eval", required=True)
+    router_eval_v3_parser.add_argument("--registry", default="catalog")
+    router_eval_v3_parser.add_argument("--bundles", default="bundles/index.json")
+    router_eval_v3_parser.add_argument(
+        "--routing-examples", default="catalog/routing-examples.json"
+    )
+    router_eval_v3_parser.add_argument(
+        "--split", choices=["validation", "final_test"], required=True
+    )
+    router_eval_v3_parser.set_defaults(func=router_eval_v3_command)
 
     claude_skills_bulk_plan_parser = subparsers.add_parser("claude-skills-bulk-plan")
     claude_skills_bulk_plan_parser.add_argument("--candidate-map", required=True)

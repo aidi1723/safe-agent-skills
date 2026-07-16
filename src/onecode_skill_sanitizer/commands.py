@@ -69,6 +69,10 @@ from .router_eval_v2 import DatasetValidationError
 from .router_eval_v2 import EvaluatorError
 from .router_eval_v2 import evaluate_router_v2
 from .router_eval_v2 import load_eval_dataset_v2
+from .router_eval_v3 import DatasetValidationError as RouterEvalV3DatasetValidationError
+from .router_eval_v3 import EvaluatorError as RouterEvalV3EvaluatorError
+from .router_eval_v3 import evaluate_router_v3
+from .router_eval_v3 import load_eval_dataset_v3
 from .scanner import highest_risk, line_findings, read_text_files, scan_text, source_hash
 from .skill_depth import audit_catalog_depth
 from .taxonomy import classify_skill, taxonomy_from_manifest
@@ -629,6 +633,46 @@ def router_eval_v2_command(args: argparse.Namespace) -> int:
         return 2
     print(json.dumps(result, indent=2, sort_keys=True, allow_nan=False))
     return 0
+
+
+def router_eval_v3_command(args: argparse.Namespace) -> int:
+    try:
+        cases = [
+            case
+            for case in load_eval_dataset_v3(resolve_project_asset_path(args.eval))
+            if case["split"] == args.split
+        ]
+        registry = resolve_project_asset_path(args.registry)
+        bundles = resolve_project_asset_path(args.bundles)
+        routing_examples = resolve_project_asset_path(args.routing_examples)
+        report = evaluate_router_v3(
+            cases,
+            route_builder=lambda case: build_task_pack_v3(
+                registry,
+                case["query"],
+                bundles,
+                routing_examples,
+            ),
+            redact_expected_labels=args.split == "final_test",
+        )
+    except (
+        RouterEvalV3DatasetValidationError,
+        RouterEvalV3EvaluatorError,
+        OSError,
+        ValueError,
+        SystemExit,
+    ) as exc:
+        print(
+            json.dumps(
+                {"status": "error", "error": str(exc)},
+                indent=2,
+                sort_keys=True,
+                allow_nan=False,
+            )
+        )
+        return 2
+    print(json.dumps(report, indent=2, sort_keys=True, allow_nan=False))
+    return 0 if report["acceptance"]["status"] == "passed" else 1
 
 def validate_bundles(registry_dir: Path, bundles_path: Path) -> dict:
     issues = []

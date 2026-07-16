@@ -36,6 +36,162 @@ class NeedGateTest(unittest.TestCase):
             ["design.ui_review", "execution.browser_check"],
         )
 
+    def test_repo_mapping_accepts_target_aliases_in_both_word_orders(self):
+        tasks = (
+            "Map the monorepo before changing the billing boundary.",
+            "repo map please: identify module owners and entrypoints",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "single")
+                self.assertEqual(decision["required_capabilities"], ["code.explore"])
+
+    def test_implementation_ownership_questions_require_code_exploration(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Where is quota enforcement implemented, and which services consume it?"
+            )
+        )
+
+        self.assertEqual(decision["decision"], "single")
+        self.assertEqual(decision["required_capabilities"], ["code.explore"])
+
+    def test_qualified_patch_and_diff_review_phrases_require_code_review(self):
+        tasks = (
+            "Review the authorization patch for race-condition risks.",
+            "Inspect only the payment diff for correctness defects.",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "single")
+                self.assertEqual(decision["required_capabilities"], ["code.review"])
+
+    def test_source_freshness_with_citation_request_requires_research(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Determine whether this benchmark remains up to date and cite the publication."
+            )
+        )
+
+        self.assertEqual(decision["decision"], "single")
+        self.assertEqual(decision["required_capabilities"], ["research.source"])
+
+    def test_specific_ui_critique_language_requires_design_review(self):
+        tasks = (
+            "UI critique: inspect density, surfaces, and empty states.",
+            "评审这个界面的配色、布局和信息密度。",
+        )
+        for task in tasks:
+            with self.subTest(task=task):
+                decision = decide_skill_need(normalize_task(task))
+                self.assertEqual(decision["decision"], "single")
+                self.assertEqual(
+                    decision["required_capabilities"], ["design.ui_review"]
+                )
+
+    def test_hyphenated_browser_check_is_an_execution_action(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Browser-check the checkout route before release."
+            )
+        )
+
+        self.assertEqual(decision["decision"], "single")
+        self.assertEqual(
+            decision["required_capabilities"], ["execution.browser_check"]
+        )
+
+    def test_running_a_ui_flow_is_a_browser_execution_action(self):
+        decision = decide_skill_need(
+            normalize_task("Run the UI flow for signup and record the result.")
+        )
+        excluded = decide_skill_need(
+            normalize_task("Do not run the UI flow for signup; only summarize the request.")
+        )
+
+        self.assertEqual(decision["decision"], "single")
+        self.assertEqual(
+            decision["required_capabilities"], ["execution.browser_check"]
+        )
+        self.assertEqual(excluded["decision"], "none")
+        self.assertIn("execution-browser-check", excluded["excluded_skills"])
+
+    def test_browser_visible_smoke_test_is_an_execution_action(self):
+        positive = decide_skill_need(
+            normalize_task("Smoke-test the browser-visible checkout behavior.")
+        )
+        negative = decide_skill_need(
+            normalize_task(
+                "Do not smoke-test the browser-visible checkout behavior; just describe it."
+            )
+        )
+
+        self.assertEqual(
+            positive["required_capabilities"], ["execution.browser_check"]
+        )
+        self.assertEqual(negative["decision"], "none")
+        self.assertIn("execution-browser-check", negative["excluded_skills"])
+
+    def test_package_source_and_license_audit_requires_supply_chain_review(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "npm audit the package source, license, and release chain before adoption."
+            )
+        )
+
+        self.assertEqual(decision["decision"], "single")
+        self.assertEqual(
+            decision["required_capabilities"], ["security.supply_chain"]
+        )
+
+    def test_chinese_repository_alias_requires_code_exploration(self):
+        decision = decide_skill_need(
+            normalize_task("先梳理仓库，再定位订单状态的所有者。")
+        )
+
+        self.assertEqual(decision["decision"], "single")
+        self.assertEqual(decision["required_capabilities"], ["code.explore"])
+
+    def test_primary_source_text_does_not_alias_the_pr_token(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Consult primary sources and review package provenance before adoption."
+            )
+        )
+
+        self.assertEqual(
+            decision["required_capabilities"],
+            ["research.source", "security.supply_chain"],
+        )
+
+    def test_mapping_local_integration_is_code_exploration(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Research official documentation, assess package trust, and map the local wiring."
+            )
+        )
+
+        self.assertEqual(decision["decision"], "composite")
+        self.assertEqual(
+            set(decision["required_capabilities"]),
+            {"code.explore", "research.source", "security.supply_chain"},
+        )
+
+    def test_qualified_claim_verification_requires_research(self):
+        decision = decide_skill_need(
+            normalize_task(
+                "Verify supplier warranty claims before evaluating package trust."
+            )
+        )
+
+        self.assertEqual(decision["decision"], "composite")
+        self.assertEqual(
+            decision["required_capabilities"],
+            ["research.source", "security.supply_chain"],
+        )
+
     def test_current_request_overrides_stale_history(self):
         normalized = normalize_task(
             "Earlier we planned browser testing. Current request: only review the patch; do not open a browser."
@@ -250,6 +406,21 @@ class NeedGateTest(unittest.TestCase):
         )
         self.assertEqual(attachment["decision"], "none")
         self.assertEqual(attachment["required_capabilities"], [])
+
+    def test_completed_code_review_artifact_is_not_a_new_review_action(self):
+        completed = decide_skill_need(
+            normalize_task(
+                "The code review report is complete; only add regression tests."
+            )
+        )
+        later_action = decide_skill_need(
+            normalize_task(
+                "The code review report is complete; review the new billing patch."
+            )
+        )
+
+        self.assertEqual(completed["required_capabilities"], ["code.test"])
+        self.assertEqual(later_action["required_capabilities"], ["code.review"])
 
     def test_latin_skill_names_allow_natural_cjk_adjacency(self):
         requested = decide_skill_need(normalize_task("使用code-test-regression"))

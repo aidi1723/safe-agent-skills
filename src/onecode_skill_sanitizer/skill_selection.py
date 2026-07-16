@@ -124,10 +124,7 @@ def compose_skill_selection(
         for capability in _profile_values(profiles[name], "capabilities")
     }
     missing = sorted(set(required) - selected_capabilities - deferred_capabilities)
-    missing_inputs = _append_missing_inputs(
-        list(need.get("missing_inputs", ())),
-        _unmet_contexts(selected, profiles),
-    )
+    missing_inputs = list(need.get("missing_inputs", ()))
     mandatory_capabilities = set(need.get("mandatory_capabilities", ()))
     mandatory_skills = {
         name
@@ -367,21 +364,6 @@ def _producer_conflict(
     return _ConflictEvent("hard", winner, rejected, (rejected,), margin)
 
 
-def _unmet_contexts(
-    selected: Sequence[str],
-    profiles: Mapping[str, Mapping[str, Any]],
-) -> list[str]:
-    missing: list[str] = []
-    for target in selected:
-        for artifact in _profile_values(profiles[target], "requires_context"):
-            if (
-                not _has_selected_producer(target, artifact, selected, profiles)
-                and artifact not in missing
-            ):
-                missing.append(artifact)
-    return missing
-
-
 def _has_selected_producer(
     target: str,
     artifact: str,
@@ -553,18 +535,6 @@ def _score_margin(left: Mapping[str, Any], right: Mapping[str, Any]) -> float:
         abs(float(left["final_score"]) - float(right["final_score"])),
         6,
     )
-
-
-def _append_missing_inputs(
-    caller_inputs: list[str], additional_inputs: Sequence[str]
-) -> list[str]:
-    combined = list(caller_inputs)
-    seen = set(caller_inputs)
-    for item in additional_inputs:
-        if item not in seen:
-            combined.append(item)
-            seen.add(item)
-    return combined
 
 
 def _empty_graph(status: str) -> dict[str, Any]:
