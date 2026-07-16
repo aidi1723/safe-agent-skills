@@ -585,6 +585,49 @@ class NeedGateTest(unittest.TestCase):
                 )
                 self.assertEqual(_positive_explicit_skill_occurrences(task), [])
 
+        explanations = (
+            "Explain how best to use code-review-risk before "
+            "code-test-regression.",
+            "解释如何正确使用 code-review-risk before "
+            "code-test-regression.",
+        )
+        for task in explanations:
+            with self.subTest(task=task):
+                self.assertNotIn(
+                    "positive",
+                    [event for _, _, event, _ in _canonical_action_events(task)],
+                )
+                self.assertEqual(_positive_explicit_skill_occurrences(task), [])
+
+    def test_bare_negative_action_event_requires_an_adjacent_skill(self):
+        unrelated = (
+            "Use code-review-risk, not the generic reviewer, before "
+            "code-test-regression."
+        )
+        adjacent = (
+            "Use code-review-risk, not use code-test-regression."
+        )
+
+        self.assertNotIn(
+            "negative",
+            [event for _, _, event, _ in _canonical_action_events(unrelated)],
+        )
+        self.assertEqual(
+            [
+                name
+                for name, _, _ in _positive_explicit_skill_occurrences(unrelated)
+            ],
+            ["code-review-risk", "code-test-regression"],
+        )
+        self.assertIn(
+            "negative",
+            [event for _, _, event, _ in _canonical_action_events(adjacent)],
+        )
+        self.assertEqual(
+            [name for name, _, _ in _positive_explicit_skill_occurrences(adjacent)],
+            ["code-review-risk"],
+        )
+
     def test_non_action_browser_evidence_is_clause_local(self):
         combined = decide_skill_need(
             normalize_task(

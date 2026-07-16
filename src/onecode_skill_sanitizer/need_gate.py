@@ -397,7 +397,18 @@ def _canonical_action_events(
     text: str,
 ) -> list[tuple[int, int, str, str]]:
     events: list[tuple[int, int, str, str]] = []
+    skill_occurrences = sorted(
+        (match.start(), match.end(), name)
+        for name, pattern in SKILL_NAME_PATTERNS.items()
+        for match in pattern.finditer(text)
+    )
+    skill_starts = {start for start, _, _ in skill_occurrences}
     for directive in SKILL_DIRECTIVE_RE.finditer(text):
+        if (
+            directive.lastgroup == "bare_negative"
+            and directive.end() not in skill_starts
+        ):
+            continue
         if directive.lastgroup == "positive":
             if _is_embedded_positive_directive(text, directive):
                 continue
@@ -415,11 +426,10 @@ def _canonical_action_events(
             (match.start(), match.end(), "information", "")
             for match in pattern.finditer(text)
         )
-    for name, pattern in SKILL_NAME_PATTERNS.items():
-        events.extend(
-            (match.start(), match.end(), "skill", name)
-            for match in pattern.finditer(text)
-        )
+    events.extend(
+        (start, end, "skill", name)
+        for start, end, name in skill_occurrences
+    )
     event_priority = {"negative": 0, "information": 0, "positive": 1, "skill": 2}
     return sorted(
         events,
@@ -432,7 +442,14 @@ def _is_embedded_positive_directive(
     directive: re.Match[str],
 ) -> bool:
     prefix = text[: directive.start()]
-    return bool(re.search(r"(?:\bhow\s+to|\u5982\u4f55)\s*$", prefix, re.I))
+    return bool(
+        re.search(
+            r"(?:\bhow(?:\s+[A-Za-z][A-Za-z-]*){0,3}\s+to|"
+            r"\u5982\u4f55[\u4e00-\u9fff]{0,8})\s*$",
+            prefix,
+            re.I,
+        )
+    )
 
 
 def _information_position(text: str) -> int | None:
