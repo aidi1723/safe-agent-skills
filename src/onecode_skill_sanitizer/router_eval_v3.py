@@ -39,6 +39,7 @@ ACCEPTANCE_THRESHOLDS = {
     "forbidden_skill_false_positive_rate": ("lt", 0.02),
     "forbidden_scenario_false_positive_rate": ("lt", 0.02),
     "dag_validity": ("ge", 0.98),
+    "dependency_edge_precision": ("ge", 0.70),
     "dependency_edge_recall": ("ge", 0.70),
     "multi_intent_exact_match": ("ge", 0.92),
     "scenario_f1": ("ge", 0.96),
@@ -682,7 +683,7 @@ def _score_case(case: dict[str, Any], route: object) -> dict[str, Any]:
         failure_dimensions.append("unexpected_skill")
     if selected & forbidden:
         failure_dimensions.append("forbidden_skill")
-    if expected_edges - actual_edges:
+    if expected_edges != actual_edges:
         failure_dimensions.append("dependency_edge")
     if not dag_valid:
         failure_dimensions.append("dag_validity")
@@ -794,6 +795,7 @@ _METRIC_NAMES = (
     "multi_intent_exact_match",
     "forbidden_skill_false_positive_rate",
     "forbidden_scenario_false_positive_rate",
+    "dependency_edge_precision",
     "dependency_edge_recall",
     "dag_validity",
     "status_accuracy",
@@ -823,7 +825,7 @@ def _aggregate_metrics(items: list[dict[str, Any]]) -> dict[str, float]:
     no_skill_total = no_skill_correct = 0
     exact = multi_total = multi_exact = 0
     forbidden_total = forbidden_hits = 0
-    dependency_total = dependency_hits = 0
+    dependency_expected_total = dependency_actual_total = dependency_hits = 0
     dag_valid = status_correct = 0
     for item in items:
         required = set(item["required_skills"])
@@ -865,7 +867,8 @@ def _aggregate_metrics(items: list[dict[str, Any]]) -> dict[str, float]:
         forbidden_hits += len(actual & forbidden)
         expected_edges = {tuple(edge) for edge in item["expected_edges"]}
         actual_edges = {tuple(edge) for edge in item["actual_edges"]}
-        dependency_total += len(expected_edges)
+        dependency_expected_total += len(expected_edges)
+        dependency_actual_total += len(actual_edges)
         dependency_hits += len(expected_edges & actual_edges)
         dag_valid += bool(item["dag_valid"])
         status_correct += item["expected_status"] == item["actual_status"]
@@ -890,8 +893,11 @@ def _aggregate_metrics(items: list[dict[str, Any]]) -> dict[str, float]:
         "multi_intent_exact_match": _ratio(multi_exact, multi_total, 1.0),
         "forbidden_skill_false_positive_rate": forbidden_rate,
         "forbidden_scenario_false_positive_rate": forbidden_rate,
+        "dependency_edge_precision": _ratio(
+            dependency_hits, dependency_actual_total, 1.0
+        ),
         "dependency_edge_recall": _ratio(
-            dependency_hits, dependency_total, 1.0
+            dependency_hits, dependency_expected_total, 1.0
         ),
         "dag_validity": dag_valid / len(items),
         "status_accuracy": status_correct / len(items),

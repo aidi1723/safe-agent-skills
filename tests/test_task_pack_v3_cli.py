@@ -1163,6 +1163,30 @@ class TaskPackV3BuilderTest(unittest.TestCase):
             <= set(evidence_properties)
         )
 
+    def test_schema_bounds_candidates_to_the_fixed_seven_skill_cohort(self):
+        from onecode_skill_sanitizer.skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
+
+        schema = json.loads(
+            (ROOT / "schemas/task-pack-v3.schema.json").read_text(encoding="utf-8")
+        )
+        candidates = schema["properties"]["candidates"]
+        cohort_skill = schema["$defs"]["cohortSkillName"]
+
+        self.assertEqual(candidates["maxItems"], 7)
+        self.assertEqual(cohort_skill["enum"], list(HIGH_FREQUENCY_SKILL_NAMES))
+        self.assertEqual(
+            schema["$defs"]["candidate"]["properties"]["skill"],
+            {"$ref": "#/$defs/cohortSkillName"},
+        )
+        self.assertEqual(
+            schema["$defs"]["selectedSkill"]["properties"]["name"],
+            {"$ref": "#/$defs/cohortSkillName"},
+        )
+        self.assertEqual(
+            schema["$defs"]["executionNode"]["properties"]["skill"],
+            {"$ref": "#/$defs/cohortSkillName"},
+        )
+
     @unittest.skipUnless(Draft202012Validator is not None, "jsonschema is not installed")
     def test_builder_payload_validates_and_rejects_unknown_fields(self):
         schema = json.loads(

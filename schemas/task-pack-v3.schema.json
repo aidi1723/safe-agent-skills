@@ -35,6 +35,7 @@
     "intent_graph": {"$ref": "#/$defs/intentGraph"},
     "candidates": {
       "type": "array",
+      "maxItems": 7,
       "items": {"$ref": "#/$defs/candidate"}
     },
     "selection": {"$ref": "#/$defs/selection"},
@@ -52,6 +53,18 @@
       "type": "array",
       "items": {"type": "string", "minLength": 1},
       "uniqueItems": true
+    },
+    "cohortSkillName": {
+      "type": "string",
+      "enum": [
+        "codebase-explore-map",
+        "code-review-risk",
+        "code-test-regression",
+        "execution-browser-check",
+        "research-source-check",
+        "design-ui-review",
+        "security-supply-chain-review"
+      ]
     },
     "hash": {
       "type": "string",
@@ -216,7 +229,7 @@
         "reason_codes"
       ],
       "properties": {
-        "skill": {"type": "string", "minLength": 1},
+        "skill": {"$ref": "#/$defs/cohortSkillName"},
         "registry_path": {"type": "string", "minLength": 1},
         "status": {"const": "trusted"},
         "description": {"type": "string", "minLength": 1},
@@ -423,7 +436,7 @@
         "policy"
       ],
       "properties": {
-        "name": {"type": "string", "minLength": 1},
+        "name": {"$ref": "#/$defs/cohortSkillName"},
         "status": {"const": "trusted"},
         "risk_level": {"enum": ["low", "medium", "high", "critical"]},
         "match_score": {"type": "number", "minimum": 0},
@@ -446,7 +459,7 @@
       "type": "object",
       "required": ["skill", "capabilities", "reason"],
       "properties": {
-        "skill": {"type": "string", "minLength": 1},
+        "skill": {"$ref": "#/$defs/cohortSkillName"},
         "capabilities": {"$ref": "#/$defs/stringList"},
         "reason": {"type": "string", "minLength": 1}
       },
@@ -524,7 +537,7 @@
       "required": ["id", "skill", "parallel"],
       "properties": {
         "id": {"type": "string", "minLength": 1},
-        "skill": {"type": "string", "minLength": 1},
+        "skill": {"$ref": "#/$defs/cohortSkillName"},
         "parallel": {"type": "boolean"}
       },
       "additionalProperties": false

@@ -482,6 +482,7 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             "multi_intent_exact_match": 1.0,
             "forbidden_skill_false_positive_rate": 0.5,
             "forbidden_scenario_false_positive_rate": 0.5,
+            "dependency_edge_precision": 1.0,
             "dependency_edge_recall": 0.0,
             "dag_validity": 1.0,
         }
@@ -489,6 +490,35 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             with self.subTest(metric=metric):
                 self.assertEqual(report["metrics"][metric], value)
         json.dumps(report, allow_nan=False)
+
+    def test_unexpected_dependency_edges_fail_the_case_and_hurt_precision(self):
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_router_v3
+
+        case = synthetic_case(
+            case_id="extra-edge",
+            category="multi_skill",
+            expected_need="composite",
+            expected_intents=["code.review", "code.test"],
+            required_skills=["code-review-risk", "code-test-regression"],
+            expected_edges=[],
+        )
+        route = synthetic_route(
+            need="composite",
+            intents=["code.review", "code.test"],
+            candidates=[
+                ("code-review-risk", 0.9),
+                ("code-test-regression", 0.8),
+            ],
+            selected=["code-review-risk", "code-test-regression"],
+            edges=[("code-review-risk", "code-test-regression")],
+        )
+
+        report = evaluate_router_v3([case], route_builder=lambda current: route)
+
+        self.assertFalse(report["cases"][0]["passed"])
+        self.assertIn("dependency_edge", report["cases"][0]["failure_dimensions"])
+        self.assertEqual(report["metrics"]["dependency_edge_precision"], 0.0)
+        self.assertEqual(report["metrics"]["dependency_edge_recall"], 1.0)
 
     def test_acceptance_gate_uses_exact_thresholds_and_rejects_invalid_values(self):
         from onecode_skill_sanitizer.router_eval_v3 import ACCEPTANCE_THRESHOLDS
@@ -498,6 +528,7 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             "forbidden_skill_false_positive_rate": 0.019,
             "forbidden_scenario_false_positive_rate": 0.019,
             "dag_validity": 0.98,
+            "dependency_edge_precision": 0.70,
             "dependency_edge_recall": 0.70,
             "multi_intent_exact_match": 0.92,
             "scenario_f1": 0.96,
@@ -513,6 +544,7 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
                 "forbidden_skill_false_positive_rate": ("lt", 0.02),
                 "forbidden_scenario_false_positive_rate": ("lt", 0.02),
                 "dag_validity": ("ge", 0.98),
+                "dependency_edge_precision": ("ge", 0.70),
                 "dependency_edge_recall": ("ge", 0.70),
                 "multi_intent_exact_match": ("ge", 0.92),
                 "scenario_f1": ("ge", 0.96),
@@ -881,6 +913,7 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             "no_skill_accuracy",
             "exact_selected_set_accuracy",
             "multi_intent_exact_match",
+            "dependency_edge_precision",
             "dependency_edge_recall",
             "dag_validity",
             "status_accuracy",
