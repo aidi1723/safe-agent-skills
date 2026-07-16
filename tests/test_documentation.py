@@ -81,6 +81,23 @@ class DocumentationTest(unittest.TestCase):
             self.assertIn("Semantic influence is disabled through the public CLI.", document)
             self.assertIn("The isolated 120 held-out cases are evaluator-only and must not be runtime inputs.", document)
 
+    def test_v3_cli_opt_in_and_one_shot_release_boundary_are_documented(self):
+        paths = [
+            ROOT / "README.md",
+            ROOT / "docs/router-development.md",
+            ROOT / "docs/agent-task-pack.md",
+            ROOT / "docs/index.md",
+        ]
+        documents = [" ".join(path.read_text(encoding="utf-8").split()) for path in paths]
+
+        for document in documents:
+            self.assertIn("--schema-version 3", document)
+            self.assertIn("bash scripts/verify.sh", document)
+            self.assertIn("skips `final_test` by default", document)
+            self.assertIn("ONECODE_RUN_ROUTER_V3_FINAL_TEST=1", document)
+            self.assertIn("future fresh, explicitly authorized one-shot release evaluation", document)
+            self.assertIn("Do not set it for the current rollout", document)
+
 
 if __name__ == "__main__":
     unittest.main()

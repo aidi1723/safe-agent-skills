@@ -10,6 +10,13 @@ Router v3 remains opt-in; Router v2 remains the default. The v3 scope is the
 eighth candidate requires a separate frequency, trust, examples, evaluation,
 and operator-review decision.
 
+Use `--schema-version 3` on `smart` or `task-pack` as the public CLI opt-in:
+
+```bash
+PYTHONPATH=src python3 -m onecode_skill_sanitizer smart \
+  "review this patch" --schema-version 3 --format json
+```
+
 Semantic providers are candidate-bounded and run in shadow only.
 Semantic influence is disabled through the public CLI. A semantic shadow
 result cannot change the deterministic skill set or grant the host any
@@ -23,6 +30,12 @@ Runtime examples are reviewed routing data.
 The isolated 120 held-out cases are evaluator-only and must not be runtime
 inputs.
 Skills are method guidance, not permission grants.
+
+Repository verification is separate from task-pack selection.
+`bash scripts/verify.sh` is the safe routine verification command and skips
+`final_test` by default. `ONECODE_RUN_ROUTER_V3_FINAL_TEST=1` is reserved for a
+future fresh, explicitly authorized one-shot release evaluation. Do not set it
+for the current rollout; its permitted run is exhausted and failed.
 
 ## Schema v2 Contract
 

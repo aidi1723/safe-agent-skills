@@ -53,6 +53,59 @@ class VerifyScriptTest(unittest.TestCase):
         self.assertIn("--split final_test", script)
         self.assertIn("--glob '!router_eval_v3.py'", script)
 
+    def test_ci_runs_routine_verification_without_one_shot_authorization(self):
+        workflow = Path(".github/workflows/verify.yml").read_text(encoding="utf-8")
+
+        self.assertIn("run: bash scripts/verify.sh", workflow)
+        self.assertNotIn("ONECODE_RUN_ROUTER_V3_FINAL_TEST", workflow)
+
+    def test_v3_final_test_is_default_off_guarded_and_after_all_routine_gates(self):
+        script = Path("scripts/verify.sh").read_text(encoding="utf-8")
+        router_command = (
+            "PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v3"
+        )
+
+        self.assertIn(
+            'ONECODE_RUN_ROUTER_V3_FINAL_TEST="${ONECODE_RUN_ROUTER_V3_FINAL_TEST:-0}"',
+            script,
+        )
+        case_start = script.index('case "$ONECODE_RUN_ROUTER_V3_FINAL_TEST" in')
+        invalid_start = script.index("  *)", case_start)
+        case_end = script.index("esac", invalid_start)
+        invalid_branch = script[invalid_start:case_end]
+        self.assertIn("ONECODE_RUN_ROUTER_V3_FINAL_TEST must be 0 or 1", invalid_branch)
+        self.assertIn("exit 2", invalid_branch)
+
+        self.assertEqual(script.count(router_command), 2)
+        self.assertEqual(script.count("--split validation"), 1)
+        self.assertEqual(script.count("--split final_test"), 1)
+        validation_call = script.index(router_command)
+        final_call = script.rindex(router_command)
+        final_split = script.index("--split final_test")
+        self.assertLess(validation_call, final_call)
+        self.assertGreater(final_split, final_call)
+
+        guard_start = script.index(
+            'if [[ "$ONECODE_RUN_ROUTER_V3_FINAL_TEST" == "1" ]]; then'
+        )
+        guard_end = script.index("\nfi", guard_start)
+        self.assertLess(guard_start, final_call)
+        self.assertLess(final_split, guard_end)
+        self.assertEqual(script[guard_end + len("\nfi"):].strip(), "")
+
+        routine_markers = [
+            "if rg -n 'high-frequency-skill-selection[.]json'",
+            "if grep -RInE --exclude='router_eval_v3.py'",
+        ]
+        for marker in routine_markers:
+            self.assertLess(script.index(marker), final_call)
+
+        last_routine_gate = script.index(
+            'if search_repo "TODO|FIXME|PLACEHOLDER|TBD|'
+        )
+        last_routine_gate_end = script.index("\nfi", last_routine_gate) + len("\nfi")
+        self.assertLess(last_routine_gate_end, guard_start)
+
 
 if __name__ == "__main__":
     unittest.main()

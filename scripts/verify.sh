@@ -4,6 +4,16 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
 
+ONECODE_RUN_ROUTER_V3_FINAL_TEST="${ONECODE_RUN_ROUTER_V3_FINAL_TEST:-0}"
+case "$ONECODE_RUN_ROUTER_V3_FINAL_TEST" in
+  0|1)
+    ;;
+  *)
+    echo 'ONECODE_RUN_ROUTER_V3_FINAL_TEST must be 0 or 1' >&2
+    exit 2
+    ;;
+esac
+
 if ! python3 -c 'import jsonschema' >/dev/null 2>&1; then
   echo 'Install development checks with: python3 -m pip install -e ".[dev]"' >&2
   exit 2
@@ -64,12 +74,6 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v3 \
   --bundles bundles/index.json \
   --routing-examples catalog/routing-examples.json \
   --split validation >/dev/null
-PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v3 \
-  --eval evals/high-frequency-skill-selection.json \
-  --registry catalog \
-  --bundles bundles/index.json \
-  --routing-examples catalog/routing-examples.json \
-  --split final_test >/dev/null
 if command -v rg >/dev/null 2>&1; then
   if rg -n 'high-frequency-skill-selection[.]json' src/onecode_skill_sanitizer \
     --glob '!router_eval_v3.py'; then
@@ -220,4 +224,13 @@ python3 -m json.tool examples/registry-index.example.json >/dev/null
 python3 -m json.tool examples/verify-report.example.json >/dev/null
 if search_repo "TODO|FIXME|PLACEHOLDER|TBD|待定" "scripts/verify.sh"; then
   exit 1
+fi
+
+if [[ "$ONECODE_RUN_ROUTER_V3_FINAL_TEST" == "1" ]]; then
+  PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v3 \
+    --eval evals/high-frequency-skill-selection.json \
+    --registry catalog \
+    --bundles bundles/index.json \
+    --routing-examples catalog/routing-examples.json \
+    --split final_test >/dev/null
 fi

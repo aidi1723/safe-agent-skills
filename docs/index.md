@@ -25,15 +25,21 @@ historical evidence unless a current guide links to them as normative input.
 
 Router v3 remains opt-in; Router v2 remains the default. The bounded v3 cohort
 uses deterministic selection for the router entry and seven high-frequency
-candidates. Semantic providers are candidate-bounded and shadow-only; semantic
-influence is disabled through the public CLI. Skills remain method guidance,
-not permission grants.
+candidates. The public CLI opt-in mechanism is `--schema-version 3` on `smart`
+or `task-pack`. Semantic providers are candidate-bounded and shadow-only;
+semantic influence is disabled through the public CLI. Skills remain method
+guidance, not permission grants.
 
 The validation split passes, but the one permitted `final_test` run failed
 release acceptance (`final_acceptance_failed`). No real three-arm task evidence
 was generated (`task_evaluation_missing`), so neither final nor task-level
 acceptance is established. The reviewed runtime examples are separate from the
 isolated 120 held-out evaluator-only cases.
+
+`bash scripts/verify.sh` is the safe routine verification command and skips
+`final_test` by default. `ONECODE_RUN_ROUTER_V3_FINAL_TEST=1` is reserved for a
+future fresh, explicitly authorized one-shot release evaluation. Do not set it
+for the current rollout; its permitted run is exhausted and failed.
 
 - [High-Frequency Intelligent Skill Selection Design](superpowers/specs/2026-07-15-high-frequency-intelligent-skill-selection-design.md)
 - [High-Frequency Intelligent Skill Selection Implementation Plan](superpowers/plans/2026-07-15-high-frequency-intelligent-skill-selection.md)

@@ -28,7 +28,9 @@ Router v3 remains opt-in; Router v2 remains the default. Its scope is the
 router entry plus exactly seven high-frequency candidates:
 `codebase-explore-map`, `code-review-risk`, `code-test-regression`,
 `execution-browser-check`, `research-source-check`, `design-ui-review`, and
-`security-supply-chain-review`. It is not whole-catalog routing.
+`security-supply-chain-review`. The public CLI opt-in mechanism is
+`--schema-version 3` on `smart` or `task-pack`; v2 remains the default. It is
+not whole-catalog routing.
 Adding an eighth candidate requires a separate frequency, trust, examples,
 evaluation, and operator-review decision.
 
@@ -170,11 +172,12 @@ Hybrid Router v2 contributions must satisfy these gates:
 - Sequential fixtures must assert required dependency edges, not merely intent
   or scenario selection.
 
-Run the focused v2 gates after installing development dependencies:
+Run the safe routine gates after installing development dependencies:
 
 ```bash
 python3 -m pip install -e ".[dev]"
 python3 -m ruff check .
+bash scripts/verify.sh
 PYTHONPATH=src python3 -m onecode_skill_sanitizer contract-check \
   --registry catalog --bundles bundles/index.json \
   --scenario website-build-launch --scenario code-review-hardening \
@@ -187,9 +190,11 @@ PYTHONPATH=src python3 -m onecode_skill_sanitizer router-eval-v2 \
   --bundles bundles/index.json
 ```
 
-The complete `scripts/verify.sh` release gate includes the one-shot v3
-`final_test`. Its permitted run is already exhausted for the current rollout,
-so do not invoke the complete gate during this rollout.
+`bash scripts/verify.sh` is the safe routine verification command and skips
+`final_test` by default. `ONECODE_RUN_ROUTER_V3_FINAL_TEST=1` is reserved for a
+future fresh, explicitly authorized one-shot release evaluation. Do not set it
+for the current rollout; its permitted run is exhausted and failed. Any other
+flag value fails with exit status 2.
 
 The v2 dataset is a separate corpus from `evals/router-quality-v2.json`. Its
 labels are manually curated and repository-declared as not generated from
@@ -291,10 +296,14 @@ Focused command:
 PYTHONPATH=src python3 -m unittest tests.test_router.RouterTest -v
 ```
 
-The complete verification script is reserved for an explicitly authorized
-release evaluation. Do not invoke it for the current v3 rollout because its
-one permitted `final_test` run is already exhausted. Do not claim routing
-quality improved until the applicable fresh verification passes.
+Safe routine verification:
+
+```bash
+bash scripts/verify.sh
+```
+
+The routine path skips `final_test` by default. Do not claim routing quality
+improved until the applicable fresh verification passes.
 
 ## Current Gap Policy
 

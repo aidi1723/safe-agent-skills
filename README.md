@@ -264,9 +264,11 @@ Router v3 remains opt-in; Router v2 remains the default. The v3 evaluation
 scope is the router entry plus exactly seven high-frequency candidates:
 `codebase-explore-map`, `code-review-risk`, `code-test-regression`,
 `execution-browser-check`, `research-source-check`, `design-ui-review`, and
-`security-supply-chain-review`. Deterministic selection is active. Semantic
-providers are candidate-bounded and run in shadow only. Semantic influence is
-disabled through the public CLI.
+`security-supply-chain-review`. The public CLI opt-in mechanism is
+`--schema-version 3` on `smart` or `task-pack`; it does not change the v2
+default. Deterministic selection is active. Semantic providers are
+candidate-bounded and run in shadow only. Semantic influence is disabled
+through the public CLI.
 
 The validation split passes, but the one permitted `final_test` run failed
 release acceptance (`final_acceptance_failed`). The separate
@@ -281,6 +283,8 @@ Skills are method guidance, not permission grants. See the
 evaluation boundaries.
 
 ```bash
+onecode-skill-sanitizer smart "review this patch" \
+  --schema-version 3 --format json
 onecode-skill-sanitizer smart "构建官网，同时审计 skill 路由器，验证通过后发布更新" \
   --schema-version 2 --format json
 onecode-skill-sanitizer smart "build a product website" \
@@ -392,11 +396,12 @@ onecode skills approve pdf
 
 ```bash
 python3 -m pip install -e ".[dev]"
-PYTHONPATH=src python3 -m unittest \
-  tests.test_verify_script tests.test_documentation -v
+bash scripts/verify.sh
 ```
 
-`jsonschema` is required by the complete verification suite. The full
-`scripts/verify.sh` release gate now contains the isolated v3 `final_test`.
-That split's one permitted run for the current rollout is exhausted and failed,
-so do not rerun the complete gate for this rollout.
+`jsonschema` is required by the verification suite. `bash scripts/verify.sh`
+is the safe routine verification command and skips `final_test` by default.
+`ONECODE_RUN_ROUTER_V3_FINAL_TEST=1` is reserved for a future fresh, explicitly
+authorized one-shot release evaluation. Do not set it for the current rollout;
+its permitted run is exhausted and failed. Any other flag value fails with
+exit status 2.
