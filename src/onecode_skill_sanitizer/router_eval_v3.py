@@ -145,6 +145,13 @@ def evaluate_task_outcomes(outcomes: Any) -> dict[str, Any]:
             raise DatasetValidationError(
                 f"{prefix} contamination record is invalid"
             )
+        if not (
+            contamination["v3_skill_evidence"]
+            and contamination["oracle_skill_evidence"]
+        ):
+            raise DatasetValidationError(
+                f"{prefix} requires v3 and oracle skill evidence"
+            )
         if contamination["no_skill_skill_evidence"]:
             contaminated_cases.append(case_id)
 

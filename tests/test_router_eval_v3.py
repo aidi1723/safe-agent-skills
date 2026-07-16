@@ -197,6 +197,8 @@ def synthetic_task_outcome(
     case_id: str = "task-1",
     *,
     assertions: list[dict] | None = None,
+    v3_skill_evidence: bool = True,
+    oracle_skill_evidence: bool = True,
     no_skill_contamination: bool = False,
 ) -> dict:
     return {
@@ -205,8 +207,8 @@ def synthetic_task_outcome(
             [synthetic_task_assertion()] if assertions is None else assertions
         ),
         "contamination": {
-            "v3_skill_evidence": True,
-            "oracle_skill_evidence": True,
+            "v3_skill_evidence": v3_skill_evidence,
+            "oracle_skill_evidence": oracle_skill_evidence,
             "no_skill_skill_evidence": no_skill_contamination,
         },
     }
@@ -1269,6 +1271,40 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             ):
                 evaluate_task_outcomes(outcomes)
 
+    def test_task_outcomes_require_selected_pack_and_oracle_skill_evidence(self):
+        from onecode_skill_sanitizer.router_eval_v3 import DatasetValidationError
+        from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
+
+        missing_evidence = {
+            "selected pack": synthetic_task_outcome(v3_skill_evidence=False),
+            "oracle": synthetic_task_outcome(oracle_skill_evidence=False),
+            "both arms": synthetic_task_outcome(
+                v3_skill_evidence=False,
+                oracle_skill_evidence=False,
+            ),
+        }
+        for label, outcome in missing_evidence.items():
+            with self.subTest(label=label), self.assertRaisesRegex(
+                DatasetValidationError,
+                "v3 and oracle skill evidence",
+            ):
+                evaluate_task_outcomes([outcome])
+
+        clean = evaluate_task_outcomes([synthetic_task_outcome()])
+        contaminated = evaluate_task_outcomes(
+            [
+                synthetic_task_outcome(
+                    case_id="contaminated",
+                    no_skill_contamination=True,
+                )
+            ]
+        )
+        self.assertEqual(clean["status"], "passed")
+        self.assertEqual(contaminated["status"], "failed")
+        self.assertEqual(
+            contaminated["no_skill_contamination_cases"], ["contaminated"]
+        )
+
     def test_task_outcomes_reject_assertion_contract_ids_and_nonbool_values(self):
         from onecode_skill_sanitizer.router_eval_v3 import DatasetValidationError
         from onecode_skill_sanitizer.router_eval_v3 import evaluate_task_outcomes
@@ -1448,6 +1484,60 @@ class RouterEvalV3DatasetTests(unittest.TestCase):
             self.assertEqual(json.loads(output.getvalue())["status"], "passed")
             for invocation in (v2, v3, router, network, process):
                 invocation.assert_not_called()
+
+    def test_task_outcome_cli_rejects_missing_arm_evidence_but_scores_contamination(self):
+        from onecode_skill_sanitizer.cli import main
+
+        fixtures = {
+            "missing-selected-pack": (
+                [synthetic_task_outcome(v3_skill_evidence=False)],
+                2,
+                "error",
+            ),
+            "missing-oracle": (
+                [synthetic_task_outcome(oracle_skill_evidence=False)],
+                2,
+                "error",
+            ),
+            "missing-both": (
+                [
+                    synthetic_task_outcome(
+                        v3_skill_evidence=False,
+                        oracle_skill_evidence=False,
+                    )
+                ],
+                2,
+                "error",
+            ),
+            "contaminated": (
+                [
+                    synthetic_task_outcome(
+                        case_id="contaminated",
+                        no_skill_contamination=True,
+                    )
+                ],
+                1,
+                "failed",
+            ),
+        }
+        with tempfile.TemporaryDirectory() as temp_dir:
+            for name, (payload, expected_code, expected_status) in fixtures.items():
+                with self.subTest(name=name):
+                    path = Path(temp_dir) / f"{name}.json"
+                    path.write_text(json.dumps(payload), encoding="utf-8")
+                    with redirect_stdout(io.StringIO()) as output:
+                        code = main(
+                            ["router-task-eval-v3", "--results", str(path)]
+                        )
+                    report = json.loads(output.getvalue())
+                    self.assertEqual(code, expected_code)
+                    self.assertEqual(report["status"], expected_status)
+                    if name == "contaminated":
+                        self.assertEqual(
+                            report["no_skill_contamination_cases"],
+                            ["contaminated"],
+                        )
+                    json.dumps(report, allow_nan=False)
 
     def test_loader_rejects_invalid_string_lists_and_duplicates(self):
         list_fields = (
