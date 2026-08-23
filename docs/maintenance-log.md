@@ -1,6 +1,63 @@
 # Maintenance Log
 
-Date: 2026-07-16
+Date: 2026-08-23
+
+## 2026-08-23 Scanner Protective-Phrasing False-Positive Fix
+
+Fixed a scanner false-positive gap flagged by local review drafts: text that
+warns against a dangerous action (for example "Never run `rm -rf /tmp/cache`
+without confirmation.") could be flagged as if it were an instruction to
+perform that action.
+
+The protective-phrasing exemption previously existed only inside
+`line_findings` (the sanitize/removal path) and only covered the
+`broad-filesystem-access` rule. The `scan_text` function that backs the real
+`scan` CLI command and `build_scan_report` had no exemption logic at all, so
+the exemption never reached actual scan reports.
+
+Changes in `src/onecode_skill_sanitizer/scanner.py`:
+
+- Extracted a shared `rule_findings(line, status)` helper that applies
+  `PROTECTIVE_SENSITIVE_BOUNDARY_PATTERN` before matching a rule.
+- Extended `PROTECTIVE_EXEMPT_RULE_IDS` from `{"broad-filesystem-access"}` to
+  `{"broad-filesystem-access", "destructive-shell", "privilege-escalation"}`.
+- Rewrote `scan_text` to evaluate the exemption per line (previously it
+  matched rules against the whole joined text blob with no exemption check).
+- `line_findings` now calls the same shared helper instead of duplicating the
+  loop.
+
+True-positive detection is unchanged: `sudo chmod -R 777`, `rm -rf` without a
+protective prefix, and `curl ... | bash` still report
+`privilege-escalation`, `destructive-shell`, and `shell-download-execute`.
+
+Added a regression test,
+`test_scan_does_not_flag_protective_shell_guidance` in
+`tests/test_scan_cli.py`, that scans protective guidance phrased as "Never
+run...", "Do not run...", and "Avoid using..." and asserts
+`destructive-shell` and `privilege-escalation` are absent with
+`risk_level: low`.
+
+Boundary: this fix affects new `scan` invocations and the `sanitize` path. It
+does not retroactively rescan the 172 skills already recorded in
+`catalog/index.json`; their `trusted` status is unaffected because their
+sealed manifests already recorded `findings: []` for the affected rules.
+
+Verification evidence:
+
+```text
+PYTHONPATH=src python3 -m unittest discover -s tests -q: 578 tests OK (was 577)
+uv run ruff check src/onecode_skill_sanitizer/scanner.py tests/test_scan_cli.py: OK
+manual reproduction: pre-fix protective phrasing flagged destructive-shell /
+  privilege-escalation via scan_text; post-fix it does not
+scoped private-path check (rg with .venv/.worktrees excluded): no matches
+```
+
+`bash scripts/verify.sh` was not used as the raw evidence for this entry: in
+this local dev environment it fails on `.venv/` (bundled ruff SBOM metadata
+referencing upstream CI build paths) and `.worktrees/*/.git` gitlink files,
+neither of which is tracked or present in a clean checkout. This is a
+pre-existing gap in the script's private-path grep (it excludes `.git/**` but
+not `.venv/**` or `.worktrees/**`) and is unrelated to this change.
 
 ## 2026-07-16 High-Frequency Intelligent Skill Selection v3 Closure
 

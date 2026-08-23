@@ -148,6 +148,33 @@ class ScanCliTest(unittest.TestCase):
             self.assertIn("shell-download-execute", finding_ids)
             self.assertEqual(report["summary"]["risk_level"], "critical")
 
+    def test_scan_does_not_flag_protective_shell_guidance(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            skill_dir = root / "execution-protective-guidance"
+            out_path = root / "report.json"
+            skill_dir.mkdir()
+            (skill_dir / "SKILL.md").write_text(
+                "\n".join(
+                    [
+                        "Use this workflow for bounded execution review.",
+                        "Never run rm -rf /tmp/cache without confirmation.",
+                        "Do not run sudo chmod -R 777 on any directory.",
+                        "Avoid using sudo su - to escalate privileges.",
+                    ]
+                ),
+                encoding="utf-8",
+            )
+
+            exit_code = main(["scan", str(skill_dir), "--out", str(out_path)])
+
+            self.assertEqual(exit_code, 0)
+            report = json.loads(out_path.read_text(encoding="utf-8"))
+            finding_ids = {finding["id"] for finding in report["findings"]}
+            self.assertNotIn("destructive-shell", finding_ids)
+            self.assertNotIn("privilege-escalation", finding_ids)
+            self.assertEqual(report["summary"]["risk_level"], "low")
+
     def test_scan_detects_obfuscated_shell_and_exfiltration_patterns(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)

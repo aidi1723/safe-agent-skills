@@ -126,6 +126,12 @@ PROTECTIVE_SENSITIVE_BOUNDARY_PATTERN = re.compile(
     re.IGNORECASE,
 )
 
+PROTECTIVE_EXEMPT_RULE_IDS = {
+    "broad-filesystem-access",
+    "destructive-shell",
+    "privilege-escalation",
+}
+
 SEVERITY_ORDER = {
     "low": 0,
     "medium": 1,
@@ -160,11 +166,20 @@ def source_hash(files: list[tuple[str, str]]) -> str:
 def scan_text(text: str) -> list[Finding]:
     normalized_text = normalize_scan_text(text)
     findings = []
-    for finding_id, severity, pattern, summary in RULES:
-        if pattern.search(normalized_text):
-            findings.append(Finding(finding_id, severity, "unresolved", summary))
+    for line in normalized_text.splitlines():
+        findings.extend(rule_findings(line, "unresolved"))
     findings.extend(structural_findings(normalized_text, "unresolved"))
     return dedupe_findings(findings)
+
+
+def rule_findings(line: str, status: str) -> list[Finding]:
+    findings = []
+    for finding_id, severity, pattern, summary in RULES:
+        if finding_id in PROTECTIVE_EXEMPT_RULE_IDS and PROTECTIVE_SENSITIVE_BOUNDARY_PATTERN.search(line):
+            continue
+        if pattern.search(line):
+            findings.append(Finding(finding_id, severity, status, summary))
+    return findings
 
 
 def structural_findings(text: str, status: str) -> list[Finding]:
@@ -340,12 +355,7 @@ def looks_like_path(value: str) -> bool:
 
 def line_findings(line: str) -> list[Finding]:
     normalized_line = normalize_scan_text(line)
-    findings = []
-    for finding_id, severity, pattern, summary in RULES:
-        if finding_id == "broad-filesystem-access" and PROTECTIVE_SENSITIVE_BOUNDARY_PATTERN.search(normalized_line):
-            continue
-        if pattern.search(normalized_line):
-            findings.append(Finding(finding_id, severity, "removed", summary))
+    findings = rule_findings(normalized_line, "removed")
     findings.extend(structural_findings(normalized_line, "removed"))
     return dedupe_findings(findings)
 
