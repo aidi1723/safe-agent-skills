@@ -1,0 +1,44 @@
+{
+  "approved_at": "2026-06-29T12:22:12Z",
+  "files": [
+    "SKILL.md",
+    "skill.json"
+  ],
+  "findings": [],
+  "hashes": {
+    "manifest_sha256": "0b67491d66e0cf1acd2ac3c3a56fb1080240db225a85a78cc4f5d9b5204438e1",
+    "sanitized_sha256": "0c7d4ea022d00446879075aa6f88f1e484b4570a318cd84a2364e65066240f28",
+    "source_sha256": "2f25785e6ad4a5edddeac18c73dc5518bca1bdcecf79be17eb28514cdd1bb6bb"
+  },
+  "recommendation": "Keep quarantined until sanitization and verifier binding are complete.",
+  "removed_fragments": [],
+  "required_verifiers": [],
+  "schema_version": 1,
+  "skill_name": "ai-hermes-tweet-workflow",
+  "source": {
+    "author": "Xquik-dev",
+    "captured_at": "2026-06-29T12:22:12Z",
+    "collected_by": "onecode-community-review",
+    "license": "MIT",
+    "path": "batches/batch-033-community-social-agent-workflows/ai-hermes-tweet-workflow",
+    "reference": "Community project reference: Hermes Tweet native Hermes Agent X plugin workflow",
+    "type": "github_reference",
+    "url": "https://github.com/Xquik-dev/hermes-tweet",
+    "usage": "reference_only"
+  },
+  "summary": {
+    "preserved_sections": [],
+    "removed_fragment_count": 0,
+    "rewritten_fragment_count": 0,
+    "risk_level": "low",
+    "status": "trusted",
+    "unresolved_finding_count": 0
+  },
+  "taxonomy": {
+    "artifact_type": "workflow",
+    "category": "ai",
+    "collection_priority": "P1",
+    "subcategory": "ai.tool_workflow",
+    "task_intent": "review Hermes Agent X social workflows with read-first and approval-gated boundaries"
+  }
+}

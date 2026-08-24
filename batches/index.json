@@ -1,5 +1,5 @@
 {
-  "batch_count": 32,
+  "batch_count": 33,
   "batches": [
     {
       "id": "batch-001-seed",
@@ -224,9 +224,16 @@
       "lifecycle_counts": {
         "promoted": 5
       }
+    },
+    {
+      "id": "batch-033-community-social-agent-workflows",
+      "item_count": 1,
+      "lifecycle_counts": {
+        "promoted": 1
+      }
     }
   ],
-  "item_count": 471,
+  "item_count": 472,
   "items": [
     {
       "batch": "batch-001-seed",
@@ -5879,11 +5886,23 @@
       "name": "research-multi-platform-search-boundary",
       "source_commit": "b44cb4d",
       "source_sha256": "33f90153d30f143b872fda539a8e2a7cd8794cc5aec1867c7b1469fd2a3fcdda"
+    },
+    {
+      "batch": "batch-033-community-social-agent-workflows",
+      "body_path": "batch-033-community-social-agent-workflows/ai-hermes-tweet-workflow/SKILL.md",
+      "canonical_path": "ai/ai-hermes-tweet-workflow/SKILL.md",
+      "catalog_sha256": "0c7d4ea022d00446879075aa6f88f1e484b4570a318cd84a2364e65066240f28",
+      "compacted": false,
+      "content_match": true,
+      "lifecycle": "promoted",
+      "name": "ai-hermes-tweet-workflow",
+      "source_commit": "edaaf446d7e0b4b9071e2da2d9d9bafed6d4b836",
+      "source_sha256": "0c7d4ea022d00446879075aa6f88f1e484b4570a318cd84a2364e65066240f28"
     }
   ],
   "lifecycle_counts": {
     "active_draft": 303,
-    "promoted": 168
+    "promoted": 169
   },
   "schema_version": 1
 }

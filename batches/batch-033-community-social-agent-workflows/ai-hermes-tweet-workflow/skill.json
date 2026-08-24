@@ -1,0 +1,17 @@
+{
+  "taxonomy": {
+    "category": "ai",
+    "subcategory": "ai.tool_workflow",
+    "task_intent": "review Hermes Agent X social workflows with read-first and approval-gated boundaries",
+    "artifact_type": "workflow",
+    "collection_priority": "P1"
+  },
+  "source": {
+    "type": "github_reference",
+    "url": "https://github.com/Xquik-dev/hermes-tweet",
+    "author": "Xquik-dev",
+    "license": "MIT",
+    "reference": "Community project reference: Hermes Tweet native Hermes Agent X plugin workflow",
+    "collected_by": "onecode-community-review"
+  }
+}

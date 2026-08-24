@@ -20,6 +20,7 @@ Each individual `SKILL.md` also contains:
 | ai | `ai-context-compression-budget-plan` | trusted | Use when planning context compression, long prompt trimming, memory summaries, retrieval snippets, or token-budget tradeoffs before AI execution. |
 | ai | `ai-crewai-role-workflow` | trusted | Use when designing role-based agent teams, task delegation, process sequencing, or collaborative agent workflows. |
 | ai | `ai-guidance-constrained-generation` | trusted | Use when an LLM task needs constrained generation, token-level control, or explicit output structure. |
+| ai | `ai-hermes-tweet-workflow` | trusted | Use when reviewing Hermes Agent workflows that need X social signal, read-first exploration, or approval-gated account actions through Hermes Tweet. |
 | ai | `ai-langchain-agent-orchestration` | trusted | Use when designing agent orchestration, tool routing, prompt chains, memory boundaries, or production LLM workflow structure. |
 | ai | `ai-litellm-gateway-cost-control` | review_required | Use when reviewing model gateway routing, provider fallback, budget limits, rate limits, or agent cost controls. |
 | ai | `ai-llama-cpp-local-inference-boundary` | trusted | Use when reviewing local LLM inference, offline model use, context limits, quantization tradeoffs, or local privacy boundaries. |

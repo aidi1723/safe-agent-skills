@@ -7,7 +7,7 @@ from referencing import Registry
 from referencing import Resource
 
 
-ROUTER_SCHEMA_V1_SHAPE_SHA256 = "c44cfd737c181a670152ee5400379c3686d428c877d2ba823b71d326804185e2"
+ROUTER_SCHEMA_V1_SHAPE_SHA256 = "a002afb33e923d2ef8b0c47506d6dfa5c09386d8cda661ee688204caef539b85"
 
 
 def normalized_payload_shape(value):
