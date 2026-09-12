@@ -23,6 +23,7 @@ from .need_gate import (
     positive_explicit_skill_occurrences,
 )
 from .registry import load_registry_index, utc_now, verify_registry
+from .scenario_matcher import match_scenario_bundle
 from .semantic_provider import SemanticProvider, rerank_candidates
 from .skill_candidates import HIGH_FREQUENCY_ENTRY_NAMES
 from .skill_candidates import load_cohort_profiles
@@ -107,6 +108,37 @@ def build_task_pack_v3(
         explicit_order=explicit_order,
     )
 
+    # Phase 3.1 (2026-09-13): Intersection filtering strategy
+    # For specialized tasks, filter to skills in both Cohort Top-7 AND Scenario Bundle
+    selected_scenario = None
+    if need["specialized_need"]:
+        matched = match_scenario_bundle(routing_current, bundles_path, threshold=0.12)
+        if matched:
+            selected_scenario = matched["id"]
+            # Get intersection of cohort top-7 candidates and scenario skills
+            cohort_top7_skills = {c["skill"] for c in candidates[:7]}
+            scenario_skills = set(matched["skills"])
+            intersection_skills = list(cohort_top7_skills & scenario_skills)
+
+            composed = dict(composed)
+            if intersection_skills:
+                # Use intersection skills
+                composed["selected_skill_names"] = intersection_skills
+                composed["selection_method"] = "scenario_cohort_intersection"
+            else:
+                # Fallback: no intersection, keep cohort selection
+                composed["selection_method"] = "cohort_only_no_intersection"
+
+            composed["scenario_match"] = {
+                "id": matched["id"],
+                "name": matched["name"],
+                "score": matched["match_score"],
+                "confidence": matched["match_confidence"],
+                "cohort_count": len(cohort_top7_skills),
+                "scenario_count": len(scenario_skills),
+                "intersection_count": len(intersection_skills),
+            }
+
     registry_index = load_registry_index(registry_dir)
     entries = {entry["name"]: entry for entry in registry_index["skills"]}
     selected_items = [
@@ -176,6 +208,7 @@ def build_task_pack_v3(
             **composed["selection"],
             "need_decision": need["decision"],
             "selected_skills": selected_items,
+            "selected_scenario": selected_scenario,
         },
         "capability_resolution": composed["capability_resolution"],
         "execution_graph": composed["execution_graph"],

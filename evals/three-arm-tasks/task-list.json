@@ -1,0 +1,585 @@
+{
+  "schema_version": 1,
+  "evaluation_name": "three_arm_router_v3_acceptance",
+  "created_at": "2026-09-12",
+  "description": "50 real-world tasks for three-arm evaluation: v3 router vs oracle vs baseline",
+  "task_count": 50,
+  "tasks": [
+    {
+      "id": "task-001",
+      "category": "website-build",
+      "description": "构建一个产品官网，包含响应式设计、SEO优化和性能检查",
+      "expected_scenario": "website-build-launch",
+      "expected_skills": [
+        "design-responsive-viewport-check",
+        "content-seo-review",
+        "execution-browser-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-002",
+      "category": "code-review",
+      "description": "审查这个 API 的安全性，检查认证、授权和输入验证",
+      "expected_scenario": "code-review-hardening",
+      "expected_skills": [
+        "code-review-risk",
+        "security-supply-chain-review",
+        "security-auth-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-003",
+      "category": "data-analysis",
+      "description": "分析销售数据，生成月度报告，包含趋势图和洞察",
+      "expected_scenario": "data-analysis-report",
+      "expected_skills": [
+        "data-table-analysis",
+        "data-table-calculation-verify",
+        "content-claims-compliance-filter"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-004",
+      "category": "rag-agent",
+      "description": "设计一个RAG文档问答系统，支持向量检索和来源引用",
+      "expected_scenario": "rag-agent-knowledge-app",
+      "expected_skills": [
+        "ai-llamaindex-rag-knowledge-workflow",
+        "research-source-check",
+        "research-citation-evidence-map"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-005",
+      "category": "codebase-explore",
+      "description": "探索这个代码库的架构，找出主要模块和依赖关系",
+      "expected_scenario": null,
+      "expected_skills": [
+        "codebase-explore-map",
+        "code-dependency-check"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-006",
+      "category": "security",
+      "description": "审计供应链安全，检查依赖包的漏洞和许可证合规性",
+      "expected_scenario": null,
+      "expected_skills": [
+        "security-supply-chain-review",
+        "compliance-license-check"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-007",
+      "category": "office",
+      "description": "将这个PDF报告转换为结构化数据，提取表格和关键信息",
+      "expected_scenario": null,
+      "expected_skills": [
+        "office-pdf-extract",
+        "data-table-analysis"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-008",
+      "category": "design",
+      "description": "审查这个UI设计，检查无障碍性、响应式和视觉一致性",
+      "expected_scenario": null,
+      "expected_skills": [
+        "design-ui-review",
+        "design-accessibility-check",
+        "design-responsive-viewport-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-009",
+      "category": "testing",
+      "description": "为这个模块编写测试用例，覆盖核心功能和边界情况",
+      "expected_scenario": null,
+      "expected_skills": [
+        "code-test-regression",
+        "code-review-risk"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-010",
+      "category": "open-source",
+      "description": "准备开源发布，包括文档、许可证检查和发布清单",
+      "expected_scenario": "open-source-release",
+      "expected_skills": [
+        "compliance-license-check",
+        "content-freshness-expiry-review",
+        "execution-publish-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-011",
+      "category": "website-build",
+      "description": "构建一个落地页，包含动效、表单验证和转化追踪",
+      "expected_scenario": "website-build-launch",
+      "expected_skills": [
+        "design-premium-landing-page",
+        "design-motion-interaction-polish",
+        "execution-browser-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-012",
+      "category": "commerce",
+      "description": "优化电商产品页面，提升搜索排名和转化率",
+      "expected_scenario": "commerce-listing-growth",
+      "expected_skills": [
+        "commerce-product-content-review",
+        "content-seo-review",
+        "design-ui-review"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-013",
+      "category": "content",
+      "description": "审查这篇公开文章，检查合规性、事实准确性和时效性",
+      "expected_scenario": null,
+      "expected_skills": [
+        "content-claims-compliance-filter",
+        "content-fact-contradiction-review",
+        "content-freshness-expiry-review"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-014",
+      "category": "ai-agent",
+      "description": "设计一个AI Agent的护栏系统，防止有害输出和权限滥用",
+      "expected_scenario": "security-agent-guardrails",
+      "expected_skills": [
+        "ai-tool-schema-protocol-check",
+        "security-permission-boundary-check",
+        "compliance-public-claim-risk-register"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-015",
+      "category": "data-pipeline",
+      "description": "审查数据管道，检查数据质量、隐私合规和错误处理",
+      "expected_scenario": null,
+      "expected_skills": [
+        "data-quality-check",
+        "compliance-privacy-boundary",
+        "ai-rule-failure-log-synthesis"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-016",
+      "category": "document",
+      "description": "将技术文档转换为知识库，支持检索和问答",
+      "expected_scenario": "document-to-knowledge-base",
+      "expected_skills": [
+        "ai-llamaindex-rag-knowledge-workflow",
+        "research-source-lineage-trace",
+        "content-freshness-expiry-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-017",
+      "category": "code-refactor",
+      "description": "重构这个模块，提升可读性和可维护性，保持功能不变",
+      "expected_scenario": "codebase-change-lifecycle",
+      "expected_skills": [
+        "code-refactor",
+        "code-test-regression",
+        "code-review-risk"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-018",
+      "category": "skill-router",
+      "description": "审查skill路由器的质量，验证选择准确性和执行图正确性",
+      "expected_scenario": "skill-router-quality-review",
+      "expected_skills": [
+        "ai-routing-accuracy-review",
+        "ai-dag-execution-graph-check",
+        "code-test-regression"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-019",
+      "category": "browser-automation",
+      "description": "编写浏览器自动化脚本，测试网页功能和性能",
+      "expected_scenario": null,
+      "expected_skills": [
+        "execution-playwright-browser-automation",
+        "execution-browser-check",
+        "code-test-regression"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-020",
+      "category": "multi-intent",
+      "description": "构建官网，同时审计skill路由器，验证通过后发布更新",
+      "expected_scenario": "website-build-launch",
+      "expected_skills": [
+        "design-ui-review",
+        "skill-router-quality-review",
+        "open-source-release"
+      ],
+      "complexity": "very-high"
+    },
+    {
+      "id": "task-021",
+      "category": "api-design",
+      "description": "设计RESTful API，包含认证、速率限制和错误处理",
+      "expected_scenario": null,
+      "expected_skills": [
+        "code-api-design",
+        "security-auth-review",
+        "security-api-boundary-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-022",
+      "category": "database",
+      "description": "优化数据库查询性能，添加索引和查询缓存",
+      "expected_scenario": null,
+      "expected_skills": [
+        "data-query-optimization",
+        "code-review-risk"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-023",
+      "category": "i18n",
+      "description": "为应用添加国际化支持，包括文本翻译和格式本地化",
+      "expected_scenario": null,
+      "expected_skills": [
+        "content-i18n-check",
+        "design-ui-review"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-024",
+      "category": "metrics",
+      "description": "设计业务指标体系，包含核心KPI和监控仪表板",
+      "expected_scenario": null,
+      "expected_skills": [
+        "business-metric-design",
+        "data-table-analysis",
+        "design-ui-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-025",
+      "category": "legal",
+      "description": "审查服务条款和隐私政策，确保合规性",
+      "expected_scenario": null,
+      "expected_skills": [
+        "compliance-terms-review",
+        "compliance-privacy-boundary",
+        "content-claims-compliance-filter"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-026",
+      "category": "ci-cd",
+      "description": "设置CI/CD管道，包含测试、构建和部署步骤",
+      "expected_scenario": null,
+      "expected_skills": [
+        "execution-ci-workflow",
+        "code-test-regression",
+        "execution-publish-check"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-027",
+      "category": "error-handling",
+      "description": "改进错误处理，添加重试机制和降级策略",
+      "expected_scenario": null,
+      "expected_skills": [
+        "ai-rule-failure-log-synthesis",
+        "code-review-risk",
+        "execution-recovery-plan"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-028",
+      "category": "email-template",
+      "description": "设计响应式邮件模板，支持多客户端和深色模式",
+      "expected_scenario": null,
+      "expected_skills": [
+        "design-responsive-viewport-check",
+        "content-template-review"
+      ],
+      "complexity": "low"
+    },
+    {
+      "id": "task-029",
+      "category": "vector-search",
+      "description": "实现向量搜索功能，使用Qdrant或Pinecone",
+      "expected_scenario": null,
+      "expected_skills": [
+        "data-qdrant-vector-retrieval",
+        "ai-llamaindex-rag-knowledge-workflow"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-030",
+      "category": "config-management",
+      "description": "设计配置管理系统，支持多环境和动态更新",
+      "expected_scenario": null,
+      "expected_skills": [
+        "engineering-config-boundary",
+        "security-permission-boundary-check"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-031",
+      "category": "table-processing",
+      "description": "处理Excel表格，验证数据准确性并生成汇总报告",
+      "expected_scenario": null,
+      "expected_skills": [
+        "office-spreadsheet-cleanup",
+        "data-table-calculation-verify",
+        "office-table-source-reconciliation"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-032",
+      "category": "architecture-review",
+      "description": "审查系统架构，识别单点故障和性能瓶颈",
+      "expected_scenario": null,
+      "expected_skills": [
+        "code-architecture-review",
+        "engineering-system-boundary"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-033",
+      "category": "token-optimization",
+      "description": "优化LLM调用的token使用，降低成本",
+      "expected_scenario": null,
+      "expected_skills": [
+        "ai-token-rate-budget-guard",
+        "ai-context-compression-budget-plan"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-034",
+      "category": "mcp-server",
+      "description": "开发MCP服务器，暴露工具给AI Agent",
+      "expected_scenario": null,
+      "expected_skills": [
+        "execution-mcp-tool-connector-review",
+        "ai-tool-schema-protocol-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-035",
+      "category": "langchain-agent",
+      "description": "使用LangChain构建AI Agent，支持工具调用和记忆",
+      "expected_scenario": null,
+      "expected_skills": [
+        "ai-langchain-agent-orchestration",
+        "ai-tool-schema-protocol-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-036",
+      "category": "requirement-analysis",
+      "description": "分析业务需求，生成功能规格文档",
+      "expected_scenario": null,
+      "expected_skills": [
+        "business-requirement-review",
+        "business-metric-design"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-037",
+      "category": "tailwind-component",
+      "description": "使用Tailwind和Radix构建组件库",
+      "expected_scenario": null,
+      "expected_skills": [
+        "design-tailwind-radix-system",
+        "design-system-consistency",
+        "design-accessibility-check"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-038",
+      "category": "seo-optimization",
+      "description": "优化网站SEO，提升搜索引擎排名",
+      "expected_scenario": null,
+      "expected_skills": [
+        "content-seo-review",
+        "content-freshness-expiry-review",
+        "execution-browser-check"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-039",
+      "category": "haystack-pipeline",
+      "description": "使用Haystack构建文档处理管道",
+      "expected_scenario": null,
+      "expected_skills": [
+        "data-haystack-rag-pipeline",
+        "data-rag-namespace-boundary-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-040",
+      "category": "litellm-gateway",
+      "description": "部署LiteLLM网关，管理多模型调用和成本",
+      "expected_scenario": null,
+      "expected_skills": [
+        "ai-litellm-gateway-cost-control",
+        "ai-model-route-fallback-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-041",
+      "category": "permission-design",
+      "description": "设计权限系统，支持RBAC和细粒度控制",
+      "expected_scenario": null,
+      "expected_skills": [
+        "security-permission-boundary-check",
+        "security-auth-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-042",
+      "category": "visual-regression",
+      "description": "建立视觉回归测试，检测UI变化",
+      "expected_scenario": null,
+      "expected_skills": [
+        "design-visual-quality-review",
+        "execution-browser-check",
+        "code-test-regression"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-043",
+      "category": "accessibility",
+      "description": "进行全面的无障碍审计，符合WCAG 2.1 AA标准",
+      "expected_scenario": null,
+      "expected_skills": [
+        "design-accessibility-check",
+        "design-ui-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-044",
+      "category": "skill-backlog",
+      "description": "整理Claude Skills积压，分类和优先级排序",
+      "expected_scenario": null,
+      "expected_skills": [
+        "business-claude-skills-backlog-orchestration",
+        "ai-routing-accuracy-review"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-045",
+      "category": "intake-orchestration",
+      "description": "设计垂直行业的需求收集流程",
+      "expected_scenario": null,
+      "expected_skills": [
+        "vertical-industry-intake-orchestration",
+        "business-requirement-review"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-046",
+      "category": "context-compression",
+      "description": "实现上下文压缩，保留关键信息",
+      "expected_scenario": null,
+      "expected_skills": [
+        "headroom-context-compression",
+        "ai-context-compression-budget-plan"
+      ],
+      "complexity": "medium"
+    },
+    {
+      "id": "task-047",
+      "category": "namespace-isolation",
+      "description": "设计命名空间隔离策略，防止数据泄露",
+      "expected_scenario": null,
+      "expected_skills": [
+        "data-rag-namespace-boundary-check",
+        "security-permission-boundary-check"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-048",
+      "category": "motion-design",
+      "description": "为界面添加动效，提升交互体验",
+      "expected_scenario": null,
+      "expected_skills": [
+        "design-motion-interaction-polish",
+        "design-ui-review"
+      ],
+      "complexity": "low"
+    },
+    {
+      "id": "task-049",
+      "category": "recovery-strategy",
+      "description": "设计故障恢复策略，包含重试和降级",
+      "expected_scenario": null,
+      "expected_skills": [
+        "execution-recovery-plan",
+        "ai-rule-failure-log-synthesis"
+      ],
+      "complexity": "high"
+    },
+    {
+      "id": "task-050",
+      "category": "integration-test",
+      "description": "编写集成测试，覆盖端到端工作流",
+      "expected_scenario": "codebase-change-lifecycle",
+      "expected_skills": [
+        "code-test-regression",
+        "code-review-risk",
+        "execution-browser-check"
+      ],
+      "complexity": "high"
+    }
+  ]
+}

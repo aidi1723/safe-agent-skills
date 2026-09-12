@@ -1,0 +1,1598 @@
+{
+  "evaluation_name": "three_arm_router_v3_acceptance",
+  "evaluated_at": "2026-09-12T22:14:35.394056",
+  "task_file": "evals/three-arm-tasks/task-list.json",
+  "arms_evaluated": [
+    "v3",
+    "oracle"
+  ],
+  "task_count": 5,
+  "results": [
+    {
+      "task_id": "task-001",
+      "description": "构建一个产品官网，包含响应式设计、SEO优化和性能检查",
+      "category": "website-build",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {
+            "acyclic": true,
+            "details": [],
+            "edges": [],
+            "nodes": [],
+            "reason_codes": [],
+            "status": "ready"
+          },
+          "route_status": "unknown",
+          "raw_output": {
+            "candidates": [
+              {
+                "description": "Use when creating, redesigning, reviewing, or polishing UI screens, dashboards, frontend views, design systems, responsive layouts, interaction states, or accessibility-sensitive interfaces.",
+                "deterministic_score": 0.017143,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.017143,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-near-04",
+                  "rt-design-02"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.017143,
+                    "similarity": 0.057143,
+                    "token_overlap": 2,
+                    "token_union": 35,
+                    "type": "reviewed_example",
+                    "value": "rt-near-04",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "design/design-ui-review",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "design-ui-review",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when reviewing package, plugin, connector, dependency, or skill supply-chain risk before adoption.",
+                "deterministic_score": 0.008333,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.008333,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-supply-02"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.008333,
+                    "similarity": 0.027778,
+                    "token_overlap": 1,
+                    "token_union": 36,
+                    "type": "reviewed_example",
+                    "value": "rt-supply-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "security/security-supply-chain-review",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "security-supply-chain-review",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when adding or reviewing regression tests, failure cases, fixtures, and verification commands for code changes.",
+                "deterministic_score": 0.007692,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.007692,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-test-02"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.007692,
+                    "similarity": 0.025641,
+                    "token_overlap": 1,
+                    "token_union": 39,
+                    "type": "reviewed_example",
+                    "value": "rt-test-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "code/code-test-regression",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "code-test-regression",
+                "status": "trusted"
+              }
+            ],
+            "capability_resolution": {
+              "covered_capabilities": [],
+              "covered_count": 0,
+              "missing_capabilities": [],
+              "missing_count": 0,
+              "missing_inputs": [],
+              "required_capabilities": [],
+              "status": "complete"
+            },
+            "compatibility": {
+              "v1": {
+                "losses": [
+                  "candidate_trace",
+                  "confidence_and_abstention",
+                  "marginal_capability_contributions",
+                  "real_dependency_evidence"
+                ],
+                "lossless": false
+              },
+              "v2": {
+                "losses": [
+                  "confidence_and_abstention"
+                ],
+                "lossless": false
+              }
+            },
+            "confidence": {
+              "clarify_margin": 0.08,
+              "level": "low",
+              "margin": 0.00881,
+              "overall": 0.017143,
+              "reason_codes": [
+                "routing_status:none",
+                "low_score_margin"
+              ],
+              "runner_up_score": 0.008333,
+              "selection_threshold": 0.35,
+              "top_score": 0.017143
+            },
+            "execution_graph": {
+              "acyclic": true,
+              "details": [],
+              "edges": [],
+              "nodes": [],
+              "reason_codes": [],
+              "status": "ready"
+            },
+            "generated_at": "2026-09-12T14:14:34Z",
+            "host_execution_protocol": {
+              "mode": "method_only",
+              "node_statuses": [
+                "pending",
+                "ready",
+                "running",
+                "waiting_approval",
+                "completed",
+                "failed",
+                "blocked",
+                "skipped"
+              ],
+              "runtime_boundary": "The host runtime controls permissions and execution."
+            },
+            "intent_graph": {
+              "intents": [
+                {
+                  "confidence": 0.8,
+                  "depends_on": [],
+                  "id": "i1",
+                  "required_artifacts": [
+                    "website",
+                    "copy",
+                    "release_checklist"
+                  ],
+                  "risk_flags": [
+                    "public_release"
+                  ],
+                  "source": "deterministic",
+                  "summary": "构建一个产品官网，包含响应式设计、SEO优化和性能检查",
+                  "task_type": "website_build"
+                }
+              ],
+              "unresolved_dependencies": []
+            },
+            "need_decision": {
+              "decision": "none",
+              "excluded_skills": [],
+              "explanation_only": false,
+              "explicit_skills": [],
+              "inventory_only": false,
+              "mandatory_capabilities": [],
+              "missing_inputs": [],
+              "policy_block_reasons": [],
+              "reason_codes": [
+                "no_specialized_need"
+              ],
+              "required_capabilities": [],
+              "specialized_need": false
+            },
+            "normalized_task": {
+              "current": "构建一个产品官网，包含响应式设计、SEO优化和性能检查",
+              "history": "",
+              "raw": "构建一个产品官网，包含响应式设计、SEO优化和性能检查",
+              "stale": "",
+              "stale_policy": ""
+            },
+            "provider": {
+              "candidate_scope_hash": "sha256:23f0bfb9a748517a46ccbdd4b65740c222c28ddf9828f997370e2e29f79421ab",
+              "fallback_reason": "not_requested",
+              "model_or_adapter": "none",
+              "requested": "none",
+              "response_status": "not_requested",
+              "used": "none",
+              "validation_reason_codes": []
+            },
+            "registry_verification": {
+              "catalog": {
+                "generated_at": "2026-09-12T14:14:34Z",
+                "issues": [],
+                "schema_version": 1,
+                "skill_count": 172,
+                "status": "ok",
+                "tampered_count": 0,
+                "trusted_count": 166,
+                "unknown_provenance_count": 0
+              },
+              "routing_examples": {
+                "content_hash": "sha256:f383ef716e7808194c15014e7d4cb222b405a2fb411850fae54814385795fb60",
+                "count": 35,
+                "status": "ok"
+              }
+            },
+            "route_id": "sha256:30690e117a7f91775d0f19a1c55c211467d76cf1212c3e208886f160f77cf5be",
+            "routing_metrics": {
+              "candidate_count": 3,
+              "cohort_candidate_count": 7,
+              "covered_capability_count": 0,
+              "required_capability_count": 0,
+              "runtime_example_count": 35,
+              "selected_skill_count": 0
+            },
+            "routing_mode": "deterministic",
+            "routing_status": "none",
+            "schema_version": 3,
+            "selection": {
+              "abstention_reason": "no_specialized_need",
+              "clarification_reason": "",
+              "conflict_resolutions": [],
+              "failure_reason": "",
+              "marginal_contributions": [],
+              "need_decision": "none",
+              "rejected_adjacent_candidates": [
+                "design-ui-review",
+                "security-supply-chain-review",
+                "code-test-regression"
+              ],
+              "selected_skill_names": [],
+              "selected_skills": []
+            }
+          }
+        },
+        "oracle": {
+          "selected_scenario": "website-build-launch",
+          "selected_skills": [
+            "design-responsive-viewport-check",
+            "content-seo-review",
+            "execution-browser-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-002",
+      "description": "审查这个 API 的安全性，检查认证、授权和输入验证",
+      "category": "code-review",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {
+            "acyclic": true,
+            "details": [],
+            "edges": [],
+            "nodes": [],
+            "reason_codes": [],
+            "status": "ready"
+          },
+          "route_status": "unknown",
+          "raw_output": {
+            "candidates": [
+              {
+                "description": "Use when reviewing package, plugin, connector, dependency, or skill supply-chain risk before adoption.",
+                "deterministic_score": 0.019355,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.019355,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-supply-02"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.019355,
+                    "similarity": 0.064516,
+                    "token_overlap": 2,
+                    "token_union": 31,
+                    "type": "reviewed_example",
+                    "value": "rt-supply-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "security/security-supply-chain-review",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "security-supply-chain-review",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when reviewing code changes for bugs, regressions, missing tests, unsafe assumptions, and maintainability risks.",
+                "deterministic_score": 0.011338,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.011338,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-review-02"
+                ],
+                "matched_intents": [],
+                "penalties": [
+                  {
+                    "contribution": -0.019697,
+                    "similarity": 0.030303,
+                    "token_overlap": 1,
+                    "token_union": 33,
+                    "type": "near_miss",
+                    "value": "rt-explore-02",
+                    "weight": -0.65
+                  }
+                ],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.031034,
+                    "similarity": 0.103448,
+                    "token_overlap": 3,
+                    "token_union": 29,
+                    "type": "reviewed_example",
+                    "value": "rt-review-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "code/code-review-risk",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "code-review-risk",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when first exploring an unfamiliar repository, mapping architecture, finding entry points, identifying ownership boundaries, or preparing a codebase context brief before implementation or review.",
+                "deterministic_score": 0.009091,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.009091,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-explore-02",
+                  "rt-compose-05"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.009091,
+                    "similarity": 0.030303,
+                    "token_overlap": 1,
+                    "token_union": 33,
+                    "type": "reviewed_example",
+                    "value": "rt-explore-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "code/codebase-explore-map",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "codebase-explore-map",
+                "status": "trusted"
+              }
+            ],
+            "capability_resolution": {
+              "covered_capabilities": [],
+              "covered_count": 0,
+              "missing_capabilities": [],
+              "missing_count": 0,
+              "missing_inputs": [],
+              "required_capabilities": [],
+              "status": "complete"
+            },
+            "compatibility": {
+              "v1": {
+                "losses": [
+                  "candidate_trace",
+                  "confidence_and_abstention",
+                  "marginal_capability_contributions",
+                  "real_dependency_evidence"
+                ],
+                "lossless": false
+              },
+              "v2": {
+                "losses": [
+                  "confidence_and_abstention"
+                ],
+                "lossless": false
+              }
+            },
+            "confidence": {
+              "clarify_margin": 0.08,
+              "level": "low",
+              "margin": 0.008017,
+              "overall": 0.019355,
+              "reason_codes": [
+                "routing_status:none",
+                "low_score_margin"
+              ],
+              "runner_up_score": 0.011338,
+              "selection_threshold": 0.35,
+              "top_score": 0.019355
+            },
+            "execution_graph": {
+              "acyclic": true,
+              "details": [],
+              "edges": [],
+              "nodes": [],
+              "reason_codes": [],
+              "status": "ready"
+            },
+            "generated_at": "2026-09-12T14:14:34Z",
+            "host_execution_protocol": {
+              "mode": "method_only",
+              "node_statuses": [
+                "pending",
+                "ready",
+                "running",
+                "waiting_approval",
+                "completed",
+                "failed",
+                "blocked",
+                "skipped"
+              ],
+              "runtime_boundary": "The host runtime controls permissions and execution."
+            },
+            "intent_graph": {
+              "intents": [
+                {
+                  "confidence": 0.5,
+                  "depends_on": [],
+                  "id": "i1",
+                  "required_artifacts": [],
+                  "risk_flags": [],
+                  "source": "deterministic",
+                  "summary": "审查这个 API 的安全性，检查认证、授权和输入验证",
+                  "task_type": "general"
+                }
+              ],
+              "unresolved_dependencies": []
+            },
+            "need_decision": {
+              "decision": "none",
+              "excluded_skills": [],
+              "explanation_only": false,
+              "explicit_skills": [],
+              "inventory_only": false,
+              "mandatory_capabilities": [],
+              "missing_inputs": [],
+              "policy_block_reasons": [],
+              "reason_codes": [
+                "no_specialized_need"
+              ],
+              "required_capabilities": [],
+              "specialized_need": false
+            },
+            "normalized_task": {
+              "current": "审查这个 API 的安全性，检查认证、授权和输入验证",
+              "history": "",
+              "raw": "审查这个 API 的安全性，检查认证、授权和输入验证",
+              "stale": "",
+              "stale_policy": ""
+            },
+            "provider": {
+              "candidate_scope_hash": "sha256:7e216b4b2c47da6658afaf6c0b881657055fb9abd23005c478695f9d20958c86",
+              "fallback_reason": "not_requested",
+              "model_or_adapter": "none",
+              "requested": "none",
+              "response_status": "not_requested",
+              "used": "none",
+              "validation_reason_codes": []
+            },
+            "registry_verification": {
+              "catalog": {
+                "generated_at": "2026-09-12T14:14:34Z",
+                "issues": [],
+                "schema_version": 1,
+                "skill_count": 172,
+                "status": "ok",
+                "tampered_count": 0,
+                "trusted_count": 166,
+                "unknown_provenance_count": 0
+              },
+              "routing_examples": {
+                "content_hash": "sha256:f383ef716e7808194c15014e7d4cb222b405a2fb411850fae54814385795fb60",
+                "count": 35,
+                "status": "ok"
+              }
+            },
+            "route_id": "sha256:ef2a9af893e54e12361fdf3410c102fd96af4d256cae7fd119bb6328818ba104",
+            "routing_metrics": {
+              "candidate_count": 3,
+              "cohort_candidate_count": 7,
+              "covered_capability_count": 0,
+              "required_capability_count": 0,
+              "runtime_example_count": 35,
+              "selected_skill_count": 0
+            },
+            "routing_mode": "deterministic",
+            "routing_status": "none",
+            "schema_version": 3,
+            "selection": {
+              "abstention_reason": "no_specialized_need",
+              "clarification_reason": "",
+              "conflict_resolutions": [],
+              "failure_reason": "",
+              "marginal_contributions": [],
+              "need_decision": "none",
+              "rejected_adjacent_candidates": [
+                "security-supply-chain-review",
+                "code-review-risk",
+                "codebase-explore-map"
+              ],
+              "selected_skill_names": [],
+              "selected_skills": []
+            }
+          }
+        },
+        "oracle": {
+          "selected_scenario": "code-review-hardening",
+          "selected_skills": [
+            "code-review-risk",
+            "security-supply-chain-review",
+            "security-auth-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-003",
+      "description": "分析销售数据，生成月度报告，包含趋势图和洞察",
+      "category": "data-analysis",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {
+            "acyclic": true,
+            "details": [],
+            "edges": [],
+            "nodes": [],
+            "reason_codes": [],
+            "status": "ready"
+          },
+          "route_status": "unknown",
+          "raw_output": {
+            "candidates": [
+              {
+                "description": "Use when reviewing code changes for bugs, regressions, missing tests, unsafe assumptions, and maintainability risks.",
+                "deterministic_score": 0.0,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.0,
+                "matched_capabilities": [],
+                "matched_examples": [],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [],
+                "reason_codes": [
+                  "no_positive_evidence",
+                  "rejected"
+                ],
+                "registry_path": "code/code-review-risk",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "code-review-risk",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when adding or reviewing regression tests, failure cases, fixtures, and verification commands for code changes.",
+                "deterministic_score": 0.0,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.0,
+                "matched_capabilities": [],
+                "matched_examples": [],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [],
+                "reason_codes": [
+                  "no_positive_evidence",
+                  "rejected"
+                ],
+                "registry_path": "code/code-test-regression",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "code-test-regression",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when first exploring an unfamiliar repository, mapping architecture, finding entry points, identifying ownership boundaries, or preparing a codebase context brief before implementation or review.",
+                "deterministic_score": 0.0,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.0,
+                "matched_capabilities": [],
+                "matched_examples": [],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [],
+                "reason_codes": [
+                  "no_positive_evidence",
+                  "rejected"
+                ],
+                "registry_path": "code/codebase-explore-map",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "codebase-explore-map",
+                "status": "trusted"
+              }
+            ],
+            "capability_resolution": {
+              "covered_capabilities": [],
+              "covered_count": 0,
+              "missing_capabilities": [],
+              "missing_count": 0,
+              "missing_inputs": [],
+              "required_capabilities": [],
+              "status": "complete"
+            },
+            "compatibility": {
+              "v1": {
+                "losses": [
+                  "candidate_trace",
+                  "confidence_and_abstention",
+                  "marginal_capability_contributions",
+                  "real_dependency_evidence"
+                ],
+                "lossless": false
+              },
+              "v2": {
+                "losses": [
+                  "confidence_and_abstention"
+                ],
+                "lossless": false
+              }
+            },
+            "confidence": {
+              "clarify_margin": 0.08,
+              "level": "low",
+              "margin": 0.0,
+              "overall": 0.0,
+              "reason_codes": [
+                "routing_status:none",
+                "low_score_margin"
+              ],
+              "runner_up_score": 0.0,
+              "selection_threshold": 0.35,
+              "top_score": 0.0
+            },
+            "execution_graph": {
+              "acyclic": true,
+              "details": [],
+              "edges": [],
+              "nodes": [],
+              "reason_codes": [],
+              "status": "ready"
+            },
+            "generated_at": "2026-09-12T14:14:34Z",
+            "host_execution_protocol": {
+              "mode": "method_only",
+              "node_statuses": [
+                "pending",
+                "ready",
+                "running",
+                "waiting_approval",
+                "completed",
+                "failed",
+                "blocked",
+                "skipped"
+              ],
+              "runtime_boundary": "The host runtime controls permissions and execution."
+            },
+            "intent_graph": {
+              "intents": [
+                {
+                  "confidence": 0.5,
+                  "depends_on": [],
+                  "id": "i1",
+                  "required_artifacts": [],
+                  "risk_flags": [],
+                  "source": "deterministic",
+                  "summary": "分析销售数据，生成月度报告，包含趋势图和洞察",
+                  "task_type": "general"
+                }
+              ],
+              "unresolved_dependencies": []
+            },
+            "need_decision": {
+              "decision": "none",
+              "excluded_skills": [],
+              "explanation_only": false,
+              "explicit_skills": [],
+              "inventory_only": false,
+              "mandatory_capabilities": [],
+              "missing_inputs": [],
+              "policy_block_reasons": [],
+              "reason_codes": [
+                "no_specialized_need"
+              ],
+              "required_capabilities": [],
+              "specialized_need": false
+            },
+            "normalized_task": {
+              "current": "分析销售数据，生成月度报告，包含趋势图和洞察",
+              "history": "",
+              "raw": "分析销售数据，生成月度报告，包含趋势图和洞察",
+              "stale": "",
+              "stale_policy": ""
+            },
+            "provider": {
+              "candidate_scope_hash": "sha256:25740c2a7304c4e1b40f27d40dcdec4b2e577735a15370dbe356aa76435c0aa5",
+              "fallback_reason": "not_requested",
+              "model_or_adapter": "none",
+              "requested": "none",
+              "response_status": "not_requested",
+              "used": "none",
+              "validation_reason_codes": []
+            },
+            "registry_verification": {
+              "catalog": {
+                "generated_at": "2026-09-12T14:14:34Z",
+                "issues": [],
+                "schema_version": 1,
+                "skill_count": 172,
+                "status": "ok",
+                "tampered_count": 0,
+                "trusted_count": 166,
+                "unknown_provenance_count": 0
+              },
+              "routing_examples": {
+                "content_hash": "sha256:f383ef716e7808194c15014e7d4cb222b405a2fb411850fae54814385795fb60",
+                "count": 35,
+                "status": "ok"
+              }
+            },
+            "route_id": "sha256:9c7d25147da3486e02b8d89efc417c29894dd6bd5b6c92532a1970e75219fe77",
+            "routing_metrics": {
+              "candidate_count": 3,
+              "cohort_candidate_count": 7,
+              "covered_capability_count": 0,
+              "required_capability_count": 0,
+              "runtime_example_count": 35,
+              "selected_skill_count": 0
+            },
+            "routing_mode": "deterministic",
+            "routing_status": "none",
+            "schema_version": 3,
+            "selection": {
+              "abstention_reason": "no_specialized_need",
+              "clarification_reason": "",
+              "conflict_resolutions": [],
+              "failure_reason": "",
+              "marginal_contributions": [],
+              "need_decision": "none",
+              "rejected_adjacent_candidates": [
+                "code-review-risk",
+                "code-test-regression",
+                "codebase-explore-map"
+              ],
+              "selected_skill_names": [],
+              "selected_skills": []
+            }
+          }
+        },
+        "oracle": {
+          "selected_scenario": "data-analysis-report",
+          "selected_skills": [
+            "data-table-analysis",
+            "data-table-calculation-verify",
+            "content-claims-compliance-filter"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-004",
+      "description": "设计一个RAG文档问答系统，支持向量检索和来源引用",
+      "category": "rag-agent",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {
+            "acyclic": true,
+            "details": [],
+            "edges": [],
+            "nodes": [
+              {
+                "id": "skill:research-source-check",
+                "parallel": true,
+                "skill": "research-source-check"
+              }
+            ],
+            "reason_codes": [],
+            "status": "ready"
+          },
+          "route_status": "unknown",
+          "raw_output": {
+            "candidates": [
+              {
+                "description": "Use when verifying factual claims against primary or high-quality sources with explicit citations.",
+                "deterministic_score": 0.531429,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.531429,
+                "matched_capabilities": [
+                  "research.source"
+                ],
+                "matched_examples": [],
+                "matched_intents": [
+                  "research.source"
+                ],
+                "penalties": [
+                  {
+                    "contribution": -0.018571,
+                    "similarity": 0.028571,
+                    "token_overlap": 1,
+                    "token_union": 35,
+                    "type": "near_miss",
+                    "value": "rt-supply-02",
+                    "weight": -0.65
+                  }
+                ],
+                "positive_evidence": [
+                  {
+                    "type": "capability",
+                    "value": [
+                      "research.source"
+                    ],
+                    "weight": 0.55
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "selected"
+                ],
+                "registry_path": "research/research-source-check",
+                "selected": true,
+                "semantic_score": null,
+                "skill": "research-source-check",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when reviewing package, plugin, connector, dependency, or skill supply-chain risk before adoption.",
+                "deterministic_score": 0.008571,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.008571,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-supply-02"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.008571,
+                    "similarity": 0.028571,
+                    "token_overlap": 1,
+                    "token_union": 35,
+                    "type": "reviewed_example",
+                    "value": "rt-supply-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "security/security-supply-chain-review",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "security-supply-chain-review",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when adding or reviewing regression tests, failure cases, fixtures, and verification commands for code changes.",
+                "deterministic_score": 0.007895,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.007895,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-test-02"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.007895,
+                    "similarity": 0.026316,
+                    "token_overlap": 1,
+                    "token_union": 38,
+                    "type": "reviewed_example",
+                    "value": "rt-test-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "code/code-test-regression",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "code-test-regression",
+                "status": "trusted"
+              }
+            ],
+            "capability_resolution": {
+              "covered_capabilities": [
+                "research.source"
+              ],
+              "covered_count": 1,
+              "missing_capabilities": [],
+              "missing_count": 0,
+              "missing_inputs": [],
+              "required_capabilities": [
+                "research.source"
+              ],
+              "status": "complete"
+            },
+            "compatibility": {
+              "v1": {
+                "losses": [
+                  "candidate_trace",
+                  "confidence_and_abstention",
+                  "marginal_capability_contributions",
+                  "real_dependency_evidence",
+                  "skill_level_selection"
+                ],
+                "lossless": false
+              },
+              "v2": {
+                "losses": [
+                  "confidence_and_abstention",
+                  "skill_level_selection"
+                ],
+                "lossless": false
+              }
+            },
+            "confidence": {
+              "clarify_margin": 0.08,
+              "level": "medium",
+              "margin": 0.522858,
+              "overall": 0.531429,
+              "reason_codes": [
+                "routing_status:complete"
+              ],
+              "runner_up_score": 0.008571,
+              "selection_threshold": 0.35,
+              "top_score": 0.531429
+            },
+            "execution_graph": {
+              "acyclic": true,
+              "details": [],
+              "edges": [],
+              "nodes": [
+                {
+                  "id": "skill:research-source-check",
+                  "parallel": true,
+                  "skill": "research-source-check"
+                }
+              ],
+              "reason_codes": [],
+              "status": "ready"
+            },
+            "generated_at": "2026-09-12T14:14:35Z",
+            "host_execution_protocol": {
+              "mode": "method_only",
+              "node_statuses": [
+                "pending",
+                "ready",
+                "running",
+                "waiting_approval",
+                "completed",
+                "failed",
+                "blocked",
+                "skipped"
+              ],
+              "runtime_boundary": "The host runtime controls permissions and execution."
+            },
+            "intent_graph": {
+              "intents": [
+                {
+                  "confidence": 1.0,
+                  "depends_on": [],
+                  "id": "i1",
+                  "required_artifacts": [
+                    "rag_design",
+                    "retrieval_plan",
+                    "citation_contract"
+                  ],
+                  "risk_flags": [
+                    "source_grounding",
+                    "prompt_injection"
+                  ],
+                  "source": "deterministic",
+                  "summary": "设计一个RAG文档问答系统，支持向量检索和来源引用",
+                  "task_type": "rag_agent"
+                }
+              ],
+              "unresolved_dependencies": []
+            },
+            "need_decision": {
+              "decision": "single",
+              "excluded_skills": [],
+              "explanation_only": false,
+              "explicit_skills": [],
+              "inventory_only": false,
+              "mandatory_capabilities": [],
+              "missing_inputs": [],
+              "policy_block_reasons": [],
+              "reason_codes": [
+                "specialized_need_detected"
+              ],
+              "required_capabilities": [
+                "research.source"
+              ],
+              "specialized_need": true
+            },
+            "normalized_task": {
+              "current": "设计一个RAG文档问答系统，支持向量检索和来源引用",
+              "history": "",
+              "raw": "设计一个RAG文档问答系统，支持向量检索和来源引用",
+              "stale": "",
+              "stale_policy": ""
+            },
+            "provider": {
+              "candidate_scope_hash": "sha256:97a8baf516194c26409b57d391db8b2e246b70a0c056c268f220b6bb79a710ee",
+              "fallback_reason": "not_requested",
+              "model_or_adapter": "none",
+              "requested": "none",
+              "response_status": "not_requested",
+              "used": "none",
+              "validation_reason_codes": []
+            },
+            "registry_verification": {
+              "catalog": {
+                "generated_at": "2026-09-12T14:14:35Z",
+                "issues": [],
+                "schema_version": 1,
+                "skill_count": 172,
+                "status": "ok",
+                "tampered_count": 0,
+                "trusted_count": 166,
+                "unknown_provenance_count": 0
+              },
+              "routing_examples": {
+                "content_hash": "sha256:f383ef716e7808194c15014e7d4cb222b405a2fb411850fae54814385795fb60",
+                "count": 35,
+                "status": "ok"
+              }
+            },
+            "route_id": "sha256:aefee49abca9a89bd9f8c75e41e0d06d1a76699a78ce89e76335313756ed69b8",
+            "routing_metrics": {
+              "candidate_count": 3,
+              "cohort_candidate_count": 7,
+              "covered_capability_count": 1,
+              "required_capability_count": 1,
+              "runtime_example_count": 35,
+              "selected_skill_count": 1
+            },
+            "routing_mode": "deterministic",
+            "routing_status": "complete",
+            "schema_version": 3,
+            "selection": {
+              "abstention_reason": "",
+              "clarification_reason": "",
+              "conflict_resolutions": [],
+              "failure_reason": "",
+              "marginal_contributions": [
+                {
+                  "capabilities": [
+                    "research.source"
+                  ],
+                  "reason": "marginal_capability_coverage",
+                  "skill": "research-source-check"
+                }
+              ],
+              "need_decision": "single",
+              "rejected_adjacent_candidates": [
+                "security-supply-chain-review",
+                "code-test-regression"
+              ],
+              "selected_skill_names": [
+                "research-source-check"
+              ],
+              "selected_skills": [
+                {
+                  "contract": {
+                    "approval_classes": [
+                      "network_access"
+                    ],
+                    "capability_vector": [
+                      "research.source"
+                    ],
+                    "estimated_cost": {
+                      "runtime": 1,
+                      "time": 2,
+                      "tokens": 2
+                    },
+                    "idempotent": true,
+                    "optional_context": [],
+                    "produces_artifacts": [
+                      "source_verification_report"
+                    ],
+                    "produces_evidence": [
+                      "claim_source_mapping"
+                    ],
+                    "requires_context": [
+                      "claims_to_verify",
+                      "source_requirements"
+                    ],
+                    "retry_policy": "host_decides",
+                    "schema_version": 2,
+                    "stage_hint": "verification"
+                  },
+                  "description": "Use when verifying factual claims against primary or high-quality sources with explicit citations.",
+                  "expected_output": "- claim-by-claim verification\n- concise source list\n- dates and publisher names\n- clear distinction between source facts and analysis",
+                  "failure_handling": "If a claim cannot be verified from reliable sources, state that it is\nunverified instead of filling the gap. Never fabricate citations, treat a\nsearch snippet as verification, silently resolve conflicting sources, or\nbypass access controls. Network, account, subscription, and external retrieval\nactions remain subject to host approval.",
+                  "hashes": {
+                    "manifest_sha256": "bd7a8c099013b16b858fbd34e04d56c0b437c2de8021778bcb5a6bed3e6da046",
+                    "sanitized_sha256": "bad7e3b98c6e6f3e2144ed912e7508ab2bebfcea554447f806f40a8408a6f9e1",
+                    "source_sha256": "6e4498e8804857bafc1994ec32d3fbf1cc97446745f6828a8f8146fe937f3e8b"
+                  },
+                  "match_score": 0,
+                  "name": "research-source-check",
+                  "policy": {
+                    "approval": {
+                      "required_for": [
+                        "trust",
+                        "execution"
+                      ]
+                    },
+                    "filesystem": {
+                      "scope": "workspace_only"
+                    },
+                    "network": {
+                      "scope": "none"
+                    }
+                  },
+                  "registry_path": "research/research-source-check",
+                  "risk_level": "low",
+                  "safe_workflow": "1. Decompose the request into exact material claims, definitions, dates, quantities, and decisions that require verification.\n2. Match each claim to the strongest available evidence, preferring primary records, official documentation, standards, statutes, filings, datasets, and original research.\n3. Assess source authority, directness, scope, date, version, methodology, independence, conflicts of interest, and whether the cited passage supports the complete claim.\n4. Record title, publisher or author, publication or update date, stable URL or identifier, access limits, and the exact claim supported.\n5. Compare independent sources when a claim is dynamic, disputed, high-impact, regulated, or dependent on definitions or methodology.\n6. Separate source facts, calculations, inference, forecasts, and opinion. Do not turn plausible analysis into a sourced fact.\n7. Resolve disagreements by comparing dates, scope, definitions, populations, versions, jurisdictions, methods, and incentives rather than silently averaging results.\n8. Report claim status, uncertainty, freshness limits, inaccessible evidence, and the event that would require rechecking.",
+                  "source": {
+                    "author": "OneCode Project",
+                    "captured_at": "2026-06-04T07:05:20Z",
+                    "collected_by": "onecode-local-seed",
+                    "license": "Apache-2.0",
+                    "path": "batches/batch-002-p1-seed/research-source-check",
+                    "reference": "docs/batches/batch-002-p1-seed.md",
+                    "type": "local_folder",
+                    "url": "https://github.com/aidi1723/onecode/tree/main/onecode-skill-sanitizer/batches/batch-002-p1-seed/research-source-check",
+                    "usage": "local_authoring"
+                  },
+                  "status": "trusted",
+                  "taxonomy": {
+                    "artifact_type": "report",
+                    "category": "research",
+                    "collection_priority": "P1",
+                    "subcategory": "research.source",
+                    "task_intent": "verify claims against primary sources"
+                  },
+                  "verifier_expectations": "- citation check\n- source freshness check\n- source type check\n- claim-to-source mapping",
+                  "when_to_use": "Use this skill when a task needs current facts, source attribution, comparison\nbetween sources, or verification of a claim before it is used in an answer."
+                }
+              ]
+            }
+          }
+        },
+        "oracle": {
+          "selected_scenario": "rag-agent-knowledge-app",
+          "selected_skills": [
+            "ai-llamaindex-rag-knowledge-workflow",
+            "research-source-check",
+            "research-citation-evidence-map"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-005",
+      "description": "探索这个代码库的架构，找出主要模块和依赖关系",
+      "category": "codebase-explore",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {
+            "acyclic": true,
+            "details": [],
+            "edges": [],
+            "nodes": [],
+            "reason_codes": [],
+            "status": "ready"
+          },
+          "route_status": "unknown",
+          "raw_output": {
+            "candidates": [
+              {
+                "description": "Use when first exploring an unfamiliar repository, mapping architecture, finding entry points, identifying ownership boundaries, or preparing a codebase context brief before implementation or review.",
+                "deterministic_score": 0.058065,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.058065,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-explore-02",
+                  "rt-compose-05"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.058065,
+                    "similarity": 0.193548,
+                    "token_overlap": 6,
+                    "token_union": 31,
+                    "type": "reviewed_example",
+                    "value": "rt-explore-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "code/codebase-explore-map",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "codebase-explore-map",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when running bounded browser inspection, form-flow checks, screenshots, or UI smoke verification.",
+                "deterministic_score": 0.016216,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.016216,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-compose-05"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.016216,
+                    "similarity": 0.054054,
+                    "token_overlap": 2,
+                    "token_union": 37,
+                    "type": "reviewed_example",
+                    "value": "rt-compose-05",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "execution/execution-browser-check",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "execution-browser-check",
+                "status": "trusted"
+              },
+              {
+                "description": "Use when reviewing package, plugin, connector, dependency, or skill supply-chain risk before adoption.",
+                "deterministic_score": 0.008571,
+                "excluded": false,
+                "exclusions": [],
+                "final_score": 0.008571,
+                "matched_capabilities": [],
+                "matched_examples": [
+                  "rt-supply-02"
+                ],
+                "matched_intents": [],
+                "penalties": [],
+                "positive_evidence": [
+                  {
+                    "contribution": 0.008571,
+                    "similarity": 0.028571,
+                    "token_overlap": 1,
+                    "token_union": 35,
+                    "type": "reviewed_example",
+                    "value": "rt-supply-02",
+                    "weight": 0.3
+                  }
+                ],
+                "reason_codes": [
+                  "deterministic_candidate",
+                  "rejected"
+                ],
+                "registry_path": "security/security-supply-chain-review",
+                "selected": false,
+                "semantic_score": null,
+                "skill": "security-supply-chain-review",
+                "status": "trusted"
+              }
+            ],
+            "capability_resolution": {
+              "covered_capabilities": [],
+              "covered_count": 0,
+              "missing_capabilities": [],
+              "missing_count": 0,
+              "missing_inputs": [],
+              "required_capabilities": [],
+              "status": "complete"
+            },
+            "compatibility": {
+              "v1": {
+                "losses": [
+                  "candidate_trace",
+                  "confidence_and_abstention",
+                  "marginal_capability_contributions",
+                  "real_dependency_evidence"
+                ],
+                "lossless": false
+              },
+              "v2": {
+                "losses": [
+                  "confidence_and_abstention"
+                ],
+                "lossless": false
+              }
+            },
+            "confidence": {
+              "clarify_margin": 0.08,
+              "level": "low",
+              "margin": 0.041849,
+              "overall": 0.058065,
+              "reason_codes": [
+                "routing_status:none",
+                "low_score_margin"
+              ],
+              "runner_up_score": 0.016216,
+              "selection_threshold": 0.35,
+              "top_score": 0.058065
+            },
+            "execution_graph": {
+              "acyclic": true,
+              "details": [],
+              "edges": [],
+              "nodes": [],
+              "reason_codes": [],
+              "status": "ready"
+            },
+            "generated_at": "2026-09-12T14:14:35Z",
+            "host_execution_protocol": {
+              "mode": "method_only",
+              "node_statuses": [
+                "pending",
+                "ready",
+                "running",
+                "waiting_approval",
+                "completed",
+                "failed",
+                "blocked",
+                "skipped"
+              ],
+              "runtime_boundary": "The host runtime controls permissions and execution."
+            },
+            "intent_graph": {
+              "intents": [
+                {
+                  "confidence": 0.5,
+                  "depends_on": [],
+                  "id": "i1",
+                  "required_artifacts": [],
+                  "risk_flags": [],
+                  "source": "deterministic",
+                  "summary": "探索这个代码库的架构，找出主要模块和依赖关系",
+                  "task_type": "general"
+                }
+              ],
+              "unresolved_dependencies": []
+            },
+            "need_decision": {
+              "decision": "none",
+              "excluded_skills": [],
+              "explanation_only": false,
+              "explicit_skills": [],
+              "inventory_only": false,
+              "mandatory_capabilities": [],
+              "missing_inputs": [],
+              "policy_block_reasons": [],
+              "reason_codes": [
+                "no_specialized_need"
+              ],
+              "required_capabilities": [],
+              "specialized_need": false
+            },
+            "normalized_task": {
+              "current": "探索这个代码库的架构，找出主要模块和依赖关系",
+              "history": "",
+              "raw": "探索这个代码库的架构，找出主要模块和依赖关系",
+              "stale": "",
+              "stale_policy": ""
+            },
+            "provider": {
+              "candidate_scope_hash": "sha256:fe55bd154b4e7316928d1f56a4f4c26bea9b7d636ea024453cc5fe6b71b6dcaf",
+              "fallback_reason": "not_requested",
+              "model_or_adapter": "none",
+              "requested": "none",
+              "response_status": "not_requested",
+              "used": "none",
+              "validation_reason_codes": []
+            },
+            "registry_verification": {
+              "catalog": {
+                "generated_at": "2026-09-12T14:14:35Z",
+                "issues": [],
+                "schema_version": 1,
+                "skill_count": 172,
+                "status": "ok",
+                "tampered_count": 0,
+                "trusted_count": 166,
+                "unknown_provenance_count": 0
+              },
+              "routing_examples": {
+                "content_hash": "sha256:f383ef716e7808194c15014e7d4cb222b405a2fb411850fae54814385795fb60",
+                "count": 35,
+                "status": "ok"
+              }
+            },
+            "route_id": "sha256:cc01787006cca1572634a1fbdde0c51696ea9686a2d83b8451b158986697701b",
+            "routing_metrics": {
+              "candidate_count": 3,
+              "cohort_candidate_count": 7,
+              "covered_capability_count": 0,
+              "required_capability_count": 0,
+              "runtime_example_count": 35,
+              "selected_skill_count": 0
+            },
+            "routing_mode": "deterministic",
+            "routing_status": "none",
+            "schema_version": 3,
+            "selection": {
+              "abstention_reason": "no_specialized_need",
+              "clarification_reason": "",
+              "conflict_resolutions": [],
+              "failure_reason": "",
+              "marginal_contributions": [],
+              "need_decision": "none",
+              "rejected_adjacent_candidates": [
+                "codebase-explore-map",
+                "execution-browser-check",
+                "security-supply-chain-review"
+              ],
+              "selected_skill_names": [],
+              "selected_skills": []
+            }
+          }
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "codebase-explore-map",
+            "code-dependency-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    }
+  ],
+  "aggregate_metrics": {
+    "total_tasks": 5,
+    "scenario_match_rate": 0.2,
+    "avg_skill_precision": 0.0,
+    "avg_skill_recall": 0.0,
+    "avg_skill_f1": 0.0,
+    "route_completion_rate": 0.0,
+    "route_blocked_rate": 0.0,
+    "passing_criteria": {
+      "scenario_match_rate >= 0.90": false,
+      "avg_skill_f1 >= 0.85": false,
+      "route_completion_rate >= 0.95": false,
+      "route_blocked_rate < 0.05": true
+    }
+  }
+}

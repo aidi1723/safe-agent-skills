@@ -1,0 +1,4 @@
+usage: run_three_arm_eval.py [-h] --tasks TASKS [--arms ARMS]
+                             [--registry REGISTRY] [--bundles BUNDLES]
+                             [--output OUTPUT] [--limit LIMIT]
+run_three_arm_eval.py: error: the following arguments are required: --tasks

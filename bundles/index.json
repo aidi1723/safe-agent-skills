@@ -7,20 +7,125 @@
       "name": "Website Build Launch",
       "scenario": "Build or polish a website, landing page, dashboard, or product page and prepare it for release.",
       "status": "trusted",
-      "task_signals": ["website", "landing page", "official site", "dashboard", "launch", "publish", "ui ux pro max", "visual designer", "css animation", "ai interface", "design system", "设计系统", "视觉", "css 动画", "ai 界面", "界面质感"],
+      "task_signals": [
+        "website",
+        "landing page",
+        "official site",
+        "dashboard",
+        "launch",
+        "publish",
+        "ui ux pro max",
+        "visual designer",
+        "css animation",
+        "ai interface",
+        "design system",
+        "设计系统",
+        "视觉",
+        "css 动画",
+        "ai 界面",
+        "界面质感",
+        "官网",
+        "网站",
+        "响应式",
+        "构建",
+        "建站",
+        "seo",
+        "性能",
+        "优化",
+        "落地页",
+        "动效",
+        "表单",
+        "转化",
+        "追踪",
+        "动画",
+        "交互"
+      ],
       "required_capabilities": [
-        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
-        {"id": "engineering_release", "required": true, "preferred_skills": ["engineering-build-release"]},
-        {"id": "ui_review", "required": true, "preferred_skills": ["design-ui-review"]},
-        {"id": "visual_quality", "required": false, "preferred_skills": ["design-visual-quality-review"]},
-        {"id": "design_consistency", "required": true, "preferred_skills": ["design-system-consistency"]},
-        {"id": "tailwind_radix_system", "required": false, "preferred_skills": ["design-tailwind-radix-system"]},
-        {"id": "premium_landing_design", "required": false, "preferred_skills": ["design-premium-landing-page"]},
-        {"id": "motion_polish", "required": false, "preferred_skills": ["design-motion-interaction-polish"]},
-        {"id": "seo_copy", "required": true, "preferred_skills": ["content-seo-brief"]},
-        {"id": "browser_verification", "required": true, "preferred_skills": ["execution-browser-check", "execution-playwright-browser-automation"]},
-        {"id": "publish_check", "required": true, "preferred_skills": ["execution-publish-check"]},
-        {"id": "social_post", "required": false, "preferred_skills": ["content-social-post"]}
+        {
+          "id": "requirements",
+          "required": true,
+          "preferred_skills": [
+            "business-requirements-brief"
+          ]
+        },
+        {
+          "id": "engineering_release",
+          "required": true,
+          "preferred_skills": [
+            "engineering-build-release"
+          ]
+        },
+        {
+          "id": "ui_review",
+          "required": true,
+          "preferred_skills": [
+            "design-ui-review"
+          ]
+        },
+        {
+          "id": "visual_quality",
+          "required": false,
+          "preferred_skills": [
+            "design-visual-quality-review"
+          ]
+        },
+        {
+          "id": "design_consistency",
+          "required": true,
+          "preferred_skills": [
+            "design-system-consistency"
+          ]
+        },
+        {
+          "id": "tailwind_radix_system",
+          "required": false,
+          "preferred_skills": [
+            "design-tailwind-radix-system"
+          ]
+        },
+        {
+          "id": "premium_landing_design",
+          "required": false,
+          "preferred_skills": [
+            "design-premium-landing-page"
+          ]
+        },
+        {
+          "id": "motion_polish",
+          "required": false,
+          "preferred_skills": [
+            "design-motion-interaction-polish"
+          ]
+        },
+        {
+          "id": "seo_copy",
+          "required": true,
+          "preferred_skills": [
+            "content-seo-brief"
+          ]
+        },
+        {
+          "id": "browser_verification",
+          "required": true,
+          "preferred_skills": [
+            "execution-browser-check",
+            "execution-playwright-browser-automation"
+          ]
+        },
+        {
+          "id": "publish_check",
+          "required": true,
+          "preferred_skills": [
+            "execution-publish-check"
+          ]
+        },
+        {
+          "id": "social_post",
+          "required": false,
+          "preferred_skills": [
+            "content-social-post"
+          ]
+        }
       ],
       "execution_order": [
         "business-requirements-brief",
@@ -71,14 +176,66 @@
       "name": "Code Review Hardening",
       "scenario": "Review generated code, pull requests, bug fixes, or automation changes before acceptance.",
       "status": "trusted",
-      "task_signals": ["code review", "pull request", "generated code", "bug fix", "refactor", "tests"],
+      "task_signals": [
+        "code review",
+        "pull request",
+        "generated code",
+        "bug fix",
+        "refactor",
+        "tests",
+        "审查",
+        "检查",
+        "安全",
+        "认证",
+        "授权",
+        "api",
+        "输入验证",
+        "代码审查"
+      ],
       "required_capabilities": [
-        {"id": "code_review", "required": true, "preferred_skills": ["code-review-risk"]},
-        {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
-        {"id": "schema_contract", "required": false, "preferred_skills": ["ai-pydantic-schema-contract", "ai-output-schema-eval"]},
-        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]},
-        {"id": "sandbox_boundary", "required": false, "preferred_skills": ["execution-e2b-sandbox-boundary"]},
-        {"id": "ci_check", "required": true, "preferred_skills": ["engineering-ci-troubleshoot"]}
+        {
+          "id": "code_review",
+          "required": true,
+          "preferred_skills": [
+            "code-review-risk"
+          ]
+        },
+        {
+          "id": "regression_test",
+          "required": true,
+          "preferred_skills": [
+            "code-test-regression"
+          ]
+        },
+        {
+          "id": "schema_contract",
+          "required": false,
+          "preferred_skills": [
+            "ai-pydantic-schema-contract",
+            "ai-output-schema-eval"
+          ]
+        },
+        {
+          "id": "supply_chain_review",
+          "required": true,
+          "preferred_skills": [
+            "security-supply-chain-review"
+          ]
+        },
+        {
+          "id": "sandbox_boundary",
+          "required": false,
+          "preferred_skills": [
+            "execution-e2b-sandbox-boundary"
+          ]
+        },
+        {
+          "id": "ci_check",
+          "required": true,
+          "preferred_skills": [
+            "engineering-ci-troubleshoot"
+          ]
+        }
       ],
       "execution_order": [
         "code-review-risk",
@@ -113,16 +270,89 @@
       "name": "Codebase Change Lifecycle",
       "scenario": "Explore a codebase, implement or debug changes, simplify the result, test it, and review before handoff.",
       "status": "trusted",
-      "task_signals": ["explore", "debugger", "test engineer", "simplify", "code lifecycle", "codebase change", "project map", "项目地图", "疑难 bug", "工程全流程", "摸清项目", "把关质量"],
+      "task_signals": [
+        "explore",
+        "debugger",
+        "test engineer",
+        "simplify",
+        "code lifecycle",
+        "codebase change",
+        "project map",
+        "项目地图",
+        "疑难 bug",
+        "工程全流程",
+        "摸清项目",
+        "把关质量",
+        "测试",
+        "测试用例",
+        "单元测试",
+        "覆盖",
+        "边界",
+        "场景",
+        "验证",
+        "重构",
+        "可读性",
+        "可维护性"
+      ],
       "required_capabilities": [
-        {"id": "project_context", "required": true, "preferred_skills": ["codebase-explore-map", "ecc-agent-coding-safety"]},
-        {"id": "debugging", "required": true, "preferred_skills": ["code-python-debug"]},
-        {"id": "code_review", "required": true, "preferred_skills": ["code-review-risk"]},
-        {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
-        {"id": "refactor_safety", "required": false, "preferred_skills": ["code-ast-refactor-safety"]},
-        {"id": "simplification", "required": false, "preferred_skills": ["code-simplify-refactor-plan", "code-dead-path-cleanup-review"]},
-        {"id": "engineering_release", "required": true, "preferred_skills": ["engineering-build-release"]},
-        {"id": "ci_check", "required": false, "preferred_skills": ["engineering-ci-troubleshoot"]}
+        {
+          "id": "project_context",
+          "required": true,
+          "preferred_skills": [
+            "codebase-explore-map",
+            "ecc-agent-coding-safety"
+          ]
+        },
+        {
+          "id": "debugging",
+          "required": true,
+          "preferred_skills": [
+            "code-python-debug"
+          ]
+        },
+        {
+          "id": "code_review",
+          "required": true,
+          "preferred_skills": [
+            "code-review-risk"
+          ]
+        },
+        {
+          "id": "regression_test",
+          "required": true,
+          "preferred_skills": [
+            "code-test-regression"
+          ]
+        },
+        {
+          "id": "refactor_safety",
+          "required": false,
+          "preferred_skills": [
+            "code-ast-refactor-safety"
+          ]
+        },
+        {
+          "id": "simplification",
+          "required": false,
+          "preferred_skills": [
+            "code-simplify-refactor-plan",
+            "code-dead-path-cleanup-review"
+          ]
+        },
+        {
+          "id": "engineering_release",
+          "required": true,
+          "preferred_skills": [
+            "engineering-build-release"
+          ]
+        },
+        {
+          "id": "ci_check",
+          "required": false,
+          "preferred_skills": [
+            "engineering-ci-troubleshoot"
+          ]
+        }
       ],
       "execution_order": [
         "codebase-explore-map",
@@ -163,13 +393,68 @@
       "name": "Codebase Graph Intelligence",
       "scenario": "Use structural code graph and MCP code intelligence patterns for call graph exploration, architecture queries, and git diff impact analysis.",
       "status": "trusted",
-      "task_signals": ["mcp code graph", "code graph index", "codebase graph", "call graph", "symbol graph", "architecture query", "git diff impact", "impact analysis", "structural code exploration", "codebase-memory-mcp", "代码图谱", "调用图", "符号图", "影响分析"],
+      "task_signals": [
+        "mcp code graph",
+        "code graph index",
+        "codebase graph",
+        "call graph",
+        "symbol graph",
+        "architecture query",
+        "git diff impact",
+        "impact analysis",
+        "structural code exploration",
+        "codebase-memory-mcp",
+        "代码图谱",
+        "调用图",
+        "符号图",
+        "影响分析",
+        "探索",
+        "架构",
+        "模块",
+        "依赖",
+        "代码库",
+        "梳理",
+        "分析",
+        "结构"
+      ],
       "required_capabilities": [
-        {"id": "graph_index_boundary", "required": true, "preferred_skills": ["code-codebase-graph-index-boundary"]},
-        {"id": "project_context", "required": true, "preferred_skills": ["codebase-explore-map"]},
-        {"id": "impact_analysis", "required": true, "preferred_skills": ["code-review-risk", "code-test-regression"]},
-        {"id": "source_confirmation", "required": true, "preferred_skills": ["code-review-risk"]},
-        {"id": "mcp_boundary", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "security-supply-chain-review"]}
+        {
+          "id": "graph_index_boundary",
+          "required": true,
+          "preferred_skills": [
+            "code-codebase-graph-index-boundary"
+          ]
+        },
+        {
+          "id": "project_context",
+          "required": true,
+          "preferred_skills": [
+            "codebase-explore-map"
+          ]
+        },
+        {
+          "id": "impact_analysis",
+          "required": true,
+          "preferred_skills": [
+            "code-review-risk",
+            "code-test-regression"
+          ]
+        },
+        {
+          "id": "source_confirmation",
+          "required": true,
+          "preferred_skills": [
+            "code-review-risk"
+          ]
+        },
+        {
+          "id": "mcp_boundary",
+          "required": true,
+          "preferred_skills": [
+            "ai-tool-schema-protocol-check",
+            "security-supply-chain-review"
+          ]
+        }
       ],
       "execution_order": [
         "code-codebase-graph-index-boundary",
@@ -202,13 +487,61 @@
       "name": "Security Agent Guardrails",
       "scenario": "Review an AI agent, connector, prompt, or workflow for safety boundaries.",
       "status": "trusted",
-      "task_signals": ["prompt injection", "connector", "tool permission", "agent safety", "guardrail", "sandbox"],
+      "task_signals": [
+        "connector",
+        "sandbox",
+        "prompt injection",
+        "有害",
+        "Agent",
+        "guardrail",
+        "注入",
+        "输出",
+        "防护",
+        "agent safety",
+        "安全",
+        "权限",
+        "护栏",
+        "滥用",
+        "tool permission",
+        "防御"
+      ],
       "required_capabilities": [
-        {"id": "prompt_injection_review", "required": true, "preferred_skills": ["security-prompt-injection-review"]},
-        {"id": "output_guardrail", "required": true, "preferred_skills": ["security-guardrails-output-validation", "ai-outlines-structured-generation"]},
-        {"id": "io_scanning", "required": true, "preferred_skills": ["security-llm-guard-io-scanning"]},
-        {"id": "supply_chain_review", "required": false, "preferred_skills": ["security-supply-chain-review"]},
-        {"id": "privacy_check", "required": true, "preferred_skills": ["compliance-privacy-check"]}
+        {
+          "id": "prompt_injection_review",
+          "required": true,
+          "preferred_skills": [
+            "security-prompt-injection-review"
+          ]
+        },
+        {
+          "id": "output_guardrail",
+          "required": true,
+          "preferred_skills": [
+            "security-guardrails-output-validation",
+            "ai-outlines-structured-generation"
+          ]
+        },
+        {
+          "id": "io_scanning",
+          "required": true,
+          "preferred_skills": [
+            "security-llm-guard-io-scanning"
+          ]
+        },
+        {
+          "id": "supply_chain_review",
+          "required": false,
+          "preferred_skills": [
+            "security-supply-chain-review"
+          ]
+        },
+        {
+          "id": "privacy_check",
+          "required": true,
+          "preferred_skills": [
+            "compliance-privacy-check"
+          ]
+        }
       ],
       "execution_order": [
         "security-prompt-injection-review",
@@ -240,15 +573,71 @@
       "name": "Agent Planning Orchestration",
       "scenario": "Clarify fuzzy requirements, break down the plan, and coordinate multi-agent execution boundaries.",
       "status": "trusted",
-      "task_signals": ["deep interview", "ralplan", "multi agent", "team", "agent team", "plan decomposition", "fuzzy requirements", "模糊需求", "方案拆解", "多 agent", "多agent", "厘清", "协同"],
+      "task_signals": [
+        "deep interview",
+        "ralplan",
+        "multi agent",
+        "team",
+        "agent team",
+        "plan decomposition",
+        "fuzzy requirements",
+        "模糊需求",
+        "方案拆解",
+        "多 agent",
+        "多agent",
+        "厘清",
+        "协同"
+      ],
       "required_capabilities": [
-        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
-        {"id": "workflow_decomposition", "required": true, "preferred_skills": ["ai-opensquilla-metaskill-workflow"]},
-        {"id": "agent_orchestration", "required": true, "preferred_skills": ["ai-langchain-agent-orchestration"]},
-        {"id": "role_workflow", "required": true, "preferred_skills": ["ai-crewai-role-workflow"]},
-        {"id": "multi_agent_review", "required": true, "preferred_skills": ["ai-autogen-multi-agent-review"]},
-        {"id": "routing_contract", "required": false, "preferred_skills": ["ai-tool-schema-protocol-check"]},
-        {"id": "output_schema_eval", "required": false, "preferred_skills": ["ai-output-schema-eval"]}
+        {
+          "id": "requirements",
+          "required": true,
+          "preferred_skills": [
+            "business-requirements-brief"
+          ]
+        },
+        {
+          "id": "workflow_decomposition",
+          "required": true,
+          "preferred_skills": [
+            "ai-opensquilla-metaskill-workflow"
+          ]
+        },
+        {
+          "id": "agent_orchestration",
+          "required": true,
+          "preferred_skills": [
+            "ai-langchain-agent-orchestration"
+          ]
+        },
+        {
+          "id": "role_workflow",
+          "required": true,
+          "preferred_skills": [
+            "ai-crewai-role-workflow"
+          ]
+        },
+        {
+          "id": "multi_agent_review",
+          "required": true,
+          "preferred_skills": [
+            "ai-autogen-multi-agent-review"
+          ]
+        },
+        {
+          "id": "routing_contract",
+          "required": false,
+          "preferred_skills": [
+            "ai-tool-schema-protocol-check"
+          ]
+        },
+        {
+          "id": "output_schema_eval",
+          "required": false,
+          "preferred_skills": [
+            "ai-output-schema-eval"
+          ]
+        }
       ],
       "execution_order": [
         "business-requirements-brief",
@@ -283,13 +672,63 @@
       "name": "Multi Platform Research Discovery",
       "scenario": "Plan public-source search across social, video, code, forum, and community platforms with citation and connector boundaries.",
       "status": "trusted",
-      "task_signals": ["agent-reach", "agent reach", "multi-platform search", "multi platform search", "social search", "public-source search", "reddit", "youtube", "github", "bilibili", "xiaohongshu", "twitter", "全平台搜索", "多平台搜索", "公开源采集", "社媒采集", "小红书", "零API"],
+      "task_signals": [
+        "agent-reach",
+        "agent reach",
+        "multi-platform search",
+        "multi platform search",
+        "social search",
+        "public-source search",
+        "reddit",
+        "youtube",
+        "github",
+        "bilibili",
+        "xiaohongshu",
+        "twitter",
+        "全平台搜索",
+        "多平台搜索",
+        "公开源采集",
+        "社媒采集",
+        "小红书",
+        "零API"
+      ],
       "required_capabilities": [
-        {"id": "platform_boundary", "required": true, "preferred_skills": ["research-multi-platform-search-boundary"]},
-        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]},
-        {"id": "freshness_check", "required": true, "preferred_skills": ["content-freshness-expiry-review"]},
-        {"id": "citation_check", "required": true, "preferred_skills": ["research-citation-evidence-map"]},
-        {"id": "connector_boundary", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "security-supply-chain-review"]}
+        {
+          "id": "platform_boundary",
+          "required": true,
+          "preferred_skills": [
+            "research-multi-platform-search-boundary"
+          ]
+        },
+        {
+          "id": "source_check",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check"
+          ]
+        },
+        {
+          "id": "freshness_check",
+          "required": true,
+          "preferred_skills": [
+            "content-freshness-expiry-review"
+          ]
+        },
+        {
+          "id": "citation_check",
+          "required": true,
+          "preferred_skills": [
+            "research-citation-evidence-map"
+          ]
+        },
+        {
+          "id": "connector_boundary",
+          "required": true,
+          "preferred_skills": [
+            "ai-tool-schema-protocol-check",
+            "security-supply-chain-review"
+          ]
+        }
       ],
       "execution_order": [
         "research-multi-platform-search-boundary",
@@ -321,13 +760,66 @@
       "name": "Investment Research Diligence",
       "scenario": "Structure AI-assisted investment research with evidence maps, bear cases, valuation assumptions, and regulated-advice boundaries.",
       "status": "trusted",
-      "task_signals": ["ai-berkshire", "ai berkshire", "berkshire", "value investing", "investment research", "investment memo", "valuation assumptions", "bear case", "capital allocation", "buffett", "munger", "价值投资", "投研", "投资研究", "估值假设", "反方观点", "四大师", "资本配置"],
+      "task_signals": [
+        "ai-berkshire",
+        "ai berkshire",
+        "berkshire",
+        "value investing",
+        "investment research",
+        "investment memo",
+        "valuation assumptions",
+        "bear case",
+        "capital allocation",
+        "buffett",
+        "munger",
+        "价值投资",
+        "投研",
+        "投资研究",
+        "估值假设",
+        "反方观点",
+        "四大师",
+        "资本配置"
+      ],
       "required_capabilities": [
-        {"id": "investment_framework", "required": true, "preferred_skills": ["business-value-investment-research-framework"]},
-        {"id": "source_check", "required": true, "preferred_skills": ["research-finance-analysis-review", "research-source-check"]},
-        {"id": "valuation_assumptions", "required": true, "preferred_skills": ["business-investment-memo-review", "business-financial-analysis-review"]},
-        {"id": "bear_case", "required": true, "preferred_skills": ["business-value-investment-research-framework", "business-investment-memo-review"]},
-        {"id": "regulated_boundary", "required": true, "preferred_skills": ["compliance-regulated-industry-boundary", "compliance-public-claim-risk-register"]}
+        {
+          "id": "investment_framework",
+          "required": true,
+          "preferred_skills": [
+            "business-value-investment-research-framework"
+          ]
+        },
+        {
+          "id": "source_check",
+          "required": true,
+          "preferred_skills": [
+            "research-finance-analysis-review",
+            "research-source-check"
+          ]
+        },
+        {
+          "id": "valuation_assumptions",
+          "required": true,
+          "preferred_skills": [
+            "business-investment-memo-review",
+            "business-financial-analysis-review"
+          ]
+        },
+        {
+          "id": "bear_case",
+          "required": true,
+          "preferred_skills": [
+            "business-value-investment-research-framework",
+            "business-investment-memo-review"
+          ]
+        },
+        {
+          "id": "regulated_boundary",
+          "required": true,
+          "preferred_skills": [
+            "compliance-regulated-industry-boundary",
+            "compliance-public-claim-risk-register"
+          ]
+        }
       ],
       "execution_order": [
         "business-value-investment-research-framework",
@@ -362,13 +854,62 @@
       "name": "Agent Role Library Governance",
       "scenario": "Design or review reusable expert-agent role libraries, AI agency teams, handoff contracts, and role conflict controls.",
       "status": "trusted",
-      "task_signals": ["agency-agents", "agency agents", "ai agency", "agent role library", "role library", "expert agent", "expert-agent", "agent team service", "handoff", "全栈智能体团队", "智能体团队服务", "专家角色库", "角色库", "多 agent 编排", "多agent编排"],
+      "task_signals": [
+        "agency-agents",
+        "agency agents",
+        "ai agency",
+        "agent role library",
+        "role library",
+        "expert agent",
+        "expert-agent",
+        "agent team service",
+        "handoff",
+        "全栈智能体团队",
+        "智能体团队服务",
+        "专家角色库",
+        "角色库",
+        "多 agent 编排",
+        "多agent编排"
+      ],
       "required_capabilities": [
-        {"id": "role_library_governance", "required": true, "preferred_skills": ["ai-agent-role-library-governance"]},
-        {"id": "agent_orchestration", "required": true, "preferred_skills": ["ai-langchain-agent-orchestration", "ai-opensquilla-metaskill-workflow"]},
-        {"id": "handoff_contract", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "ai-output-schema-eval"]},
-        {"id": "role_conflict_check", "required": true, "preferred_skills": ["ai-autogen-multi-agent-review", "ai-crewai-role-workflow"]},
-        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]}
+        {
+          "id": "role_library_governance",
+          "required": true,
+          "preferred_skills": [
+            "ai-agent-role-library-governance"
+          ]
+        },
+        {
+          "id": "agent_orchestration",
+          "required": true,
+          "preferred_skills": [
+            "ai-langchain-agent-orchestration",
+            "ai-opensquilla-metaskill-workflow"
+          ]
+        },
+        {
+          "id": "handoff_contract",
+          "required": true,
+          "preferred_skills": [
+            "ai-tool-schema-protocol-check",
+            "ai-output-schema-eval"
+          ]
+        },
+        {
+          "id": "role_conflict_check",
+          "required": true,
+          "preferred_skills": [
+            "ai-autogen-multi-agent-review",
+            "ai-crewai-role-workflow"
+          ]
+        },
+        {
+          "id": "supply_chain_review",
+          "required": true,
+          "preferred_skills": [
+            "security-supply-chain-review"
+          ]
+        }
       ],
       "execution_order": [
         "ai-agent-role-library-governance",
@@ -404,13 +945,59 @@
       "name": "Design MD System Governance",
       "scenario": "Create, review, or enforce DESIGN.md as a design-system source of truth with token, component-state, accessibility, and implementation alignment checks.",
       "status": "trusted",
-      "task_signals": ["design.md", "design md", "google design.md", "google design md", "design system spec", "design system source of truth", "design tokens", "component states", "设计系统规范", "设计系统 token", "组件状态", "设计源事实"],
+      "task_signals": [
+        "design.md",
+        "design md",
+        "google design.md",
+        "google design md",
+        "design system spec",
+        "design system source of truth",
+        "design tokens",
+        "component states",
+        "设计系统规范",
+        "设计系统 token",
+        "组件状态",
+        "设计源事实"
+      ],
       "required_capabilities": [
-        {"id": "design_md_contract", "required": true, "preferred_skills": ["design-design-md-system-contract"]},
-        {"id": "design_consistency", "required": true, "preferred_skills": ["design-system-consistency"]},
-        {"id": "token_mapping", "required": true, "preferred_skills": ["design-tailwind-radix-system", "design-system-consistency"]},
-        {"id": "component_states", "required": true, "preferred_skills": ["design-ui-review", "design-visual-quality-review"]},
-        {"id": "accessibility", "required": true, "preferred_skills": ["design-accessibility-check", "compliance-accessibility-policy"]}
+        {
+          "id": "design_md_contract",
+          "required": true,
+          "preferred_skills": [
+            "design-design-md-system-contract"
+          ]
+        },
+        {
+          "id": "design_consistency",
+          "required": true,
+          "preferred_skills": [
+            "design-system-consistency"
+          ]
+        },
+        {
+          "id": "token_mapping",
+          "required": true,
+          "preferred_skills": [
+            "design-tailwind-radix-system",
+            "design-system-consistency"
+          ]
+        },
+        {
+          "id": "component_states",
+          "required": true,
+          "preferred_skills": [
+            "design-ui-review",
+            "design-visual-quality-review"
+          ]
+        },
+        {
+          "id": "accessibility",
+          "required": true,
+          "preferred_skills": [
+            "design-accessibility-check",
+            "compliance-accessibility-policy"
+          ]
+        }
       ],
       "execution_order": [
         "design-design-md-system-contract",
@@ -444,13 +1031,62 @@
       "name": "Private Communication Governance",
       "scenario": "Review private messaging or secure communication workflows for identifier minimization, metadata privacy, E2EE boundaries, retention, and abuse handling.",
       "status": "trusted",
-      "task_signals": ["simplex chat", "simplex", "private messaging", "secure communication", "e2ee", "end-to-end encryption", "identifier minimization", "metadata privacy", "no user identifiers", "隐私通讯", "私密通讯", "无用户标识", "端到端加密", "元数据最小化", "元数据隐私"],
+      "task_signals": [
+        "simplex chat",
+        "simplex",
+        "private messaging",
+        "secure communication",
+        "e2ee",
+        "end-to-end encryption",
+        "identifier minimization",
+        "metadata privacy",
+        "no user identifiers",
+        "隐私通讯",
+        "私密通讯",
+        "无用户标识",
+        "端到端加密",
+        "元数据最小化",
+        "元数据隐私"
+      ],
       "required_capabilities": [
-        {"id": "private_comms_boundary", "required": true, "preferred_skills": ["compliance-private-communication-boundary"]},
-        {"id": "privacy_check", "required": true, "preferred_skills": ["compliance-privacy-check"]},
-        {"id": "metadata_minimization", "required": true, "preferred_skills": ["compliance-private-communication-boundary", "security-secret-context-redaction"]},
-        {"id": "encryption_boundary", "required": true, "preferred_skills": ["security-guardrails-output-validation", "security-supply-chain-review"]},
-        {"id": "abuse_handling", "required": true, "preferred_skills": ["compliance-terms-review", "security-prompt-injection-review"]}
+        {
+          "id": "private_comms_boundary",
+          "required": true,
+          "preferred_skills": [
+            "compliance-private-communication-boundary"
+          ]
+        },
+        {
+          "id": "privacy_check",
+          "required": true,
+          "preferred_skills": [
+            "compliance-privacy-check"
+          ]
+        },
+        {
+          "id": "metadata_minimization",
+          "required": true,
+          "preferred_skills": [
+            "compliance-private-communication-boundary",
+            "security-secret-context-redaction"
+          ]
+        },
+        {
+          "id": "encryption_boundary",
+          "required": true,
+          "preferred_skills": [
+            "security-guardrails-output-validation",
+            "security-supply-chain-review"
+          ]
+        },
+        {
+          "id": "abuse_handling",
+          "required": true,
+          "preferred_skills": [
+            "compliance-terms-review",
+            "security-prompt-injection-review"
+          ]
+        }
       ],
       "execution_order": [
         "compliance-private-communication-boundary",
@@ -484,14 +1120,67 @@
       "name": "Document To Knowledge Base",
       "scenario": "Turn PDFs, office files, or mixed documents into Markdown, retrieval-ready chunks, summaries, or knowledge-base entries.",
       "status": "trusted",
-      "task_signals": ["pdf", "document", "markdown", "knowledge base", "docs", "office file"],
+      "task_signals": [
+        "pdf",
+        "document",
+        "markdown",
+        "knowledge base",
+        "docs",
+        "office file",
+        "文档",
+        "提取",
+        "转换",
+        "表格",
+        "结构化",
+        "知识库",
+        "检索",
+        "问答"
+      ],
       "required_capabilities": [
-        {"id": "source_inventory", "required": true, "preferred_skills": ["office-pdf-report"]},
-        {"id": "file_conversion", "required": true, "preferred_skills": ["data-markitdown-file-to-markdown", "data-marker-pdf-markdown-review"]},
-        {"id": "document_partition", "required": true, "preferred_skills": ["data-unstructured-document-partition"]},
-        {"id": "rag_plan", "required": true, "preferred_skills": ["ai-llamaindex-rag-knowledge-workflow", "data-haystack-rag-pipeline"]},
-        {"id": "retrieval", "required": false, "preferred_skills": ["data-qdrant-vector-retrieval"]},
-        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]}
+        {
+          "id": "source_inventory",
+          "required": true,
+          "preferred_skills": [
+            "office-pdf-report"
+          ]
+        },
+        {
+          "id": "file_conversion",
+          "required": true,
+          "preferred_skills": [
+            "data-markitdown-file-to-markdown",
+            "data-marker-pdf-markdown-review"
+          ]
+        },
+        {
+          "id": "document_partition",
+          "required": true,
+          "preferred_skills": [
+            "data-unstructured-document-partition"
+          ]
+        },
+        {
+          "id": "rag_plan",
+          "required": true,
+          "preferred_skills": [
+            "ai-llamaindex-rag-knowledge-workflow",
+            "data-haystack-rag-pipeline"
+          ]
+        },
+        {
+          "id": "retrieval",
+          "required": false,
+          "preferred_skills": [
+            "data-qdrant-vector-retrieval"
+          ]
+        },
+        {
+          "id": "source_check",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check"
+          ]
+        }
       ],
       "execution_order": [
         "office-pdf-report",
@@ -531,15 +1220,71 @@
       "name": "Content Video Production",
       "scenario": "Plan copy, content matrix, video script, and media handoff for short-form or programmatic video production.",
       "status": "trusted",
-      "task_signals": ["copywriting", "content strategy", "remotion", "video production", "content matrix", "short video", "写文案", "内容矩阵", "一句话灵感", "成片", "短视频"],
+      "task_signals": [
+        "copywriting",
+        "content strategy",
+        "remotion",
+        "video production",
+        "content matrix",
+        "short video",
+        "写文案",
+        "内容矩阵",
+        "一句话灵感",
+        "成片",
+        "短视频"
+      ],
       "required_capabilities": [
-        {"id": "content_strategy", "required": true, "preferred_skills": ["content-strategy-matrix", "content-seo-brief"]},
-        {"id": "copywriting", "required": true, "preferred_skills": ["content-editorial-review", "content-brand-voice-boundary"]},
-        {"id": "claims_compliance", "required": true, "preferred_skills": ["content-claims-compliance-filter"]},
-        {"id": "video_script", "required": true, "preferred_skills": ["media-video-script-review"]},
-        {"id": "programmatic_video_boundary", "required": true, "preferred_skills": ["media-remotion-video-production-boundary"]},
-        {"id": "asset_review", "required": true, "preferred_skills": ["media-asset-review"]},
-        {"id": "publish_check", "required": false, "preferred_skills": ["execution-publish-check"]}
+        {
+          "id": "content_strategy",
+          "required": true,
+          "preferred_skills": [
+            "content-strategy-matrix",
+            "content-seo-brief"
+          ]
+        },
+        {
+          "id": "copywriting",
+          "required": true,
+          "preferred_skills": [
+            "content-editorial-review",
+            "content-brand-voice-boundary"
+          ]
+        },
+        {
+          "id": "claims_compliance",
+          "required": true,
+          "preferred_skills": [
+            "content-claims-compliance-filter"
+          ]
+        },
+        {
+          "id": "video_script",
+          "required": true,
+          "preferred_skills": [
+            "media-video-script-review"
+          ]
+        },
+        {
+          "id": "programmatic_video_boundary",
+          "required": true,
+          "preferred_skills": [
+            "media-remotion-video-production-boundary"
+          ]
+        },
+        {
+          "id": "asset_review",
+          "required": true,
+          "preferred_skills": [
+            "media-asset-review"
+          ]
+        },
+        {
+          "id": "publish_check",
+          "required": false,
+          "preferred_skills": [
+            "execution-publish-check"
+          ]
+        }
       ],
       "execution_order": [
         "content-strategy-matrix",
@@ -578,14 +1323,75 @@
       "name": "Agentic Media Production",
       "scenario": "Plan agent-driven media production with reference-video analysis, pipeline selection, provider routing, cost estimates, render QA, captions, and asset-rights gates.",
       "status": "trusted",
-      "task_signals": ["agentic video", "agentic media", "reference video", "reference-video", "paste a video", "tiktok video", "youtube short", "reels", "provider routing", "provider route", "cost estimate", "render qa", "ffprobe", "post-render", "openmontage", "参考视频", "成本估算", "渲染质检", "媒体管线"],
+      "task_signals": [
+        "agentic video",
+        "agentic media",
+        "reference video",
+        "reference-video",
+        "paste a video",
+        "tiktok video",
+        "youtube short",
+        "reels",
+        "provider routing",
+        "provider route",
+        "cost estimate",
+        "render qa",
+        "ffprobe",
+        "post-render",
+        "openmontage",
+        "参考视频",
+        "成本估算",
+        "渲染质检",
+        "媒体管线"
+      ],
       "required_capabilities": [
-        {"id": "agentic_video_pipeline", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan"]},
-        {"id": "reference_analysis", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "research-source-check"]},
-        {"id": "provider_route", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "ai-tool-schema-protocol-check"]},
-        {"id": "cost_estimate", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "ai-opensquilla-token-routing-pattern"]},
-        {"id": "render_qa", "required": true, "preferred_skills": ["media-agentic-video-pipeline-plan", "media-remotion-video-production-boundary"]},
-        {"id": "asset_review", "required": true, "preferred_skills": ["media-asset-review", "content-claims-compliance-filter"]}
+        {
+          "id": "agentic_video_pipeline",
+          "required": true,
+          "preferred_skills": [
+            "media-agentic-video-pipeline-plan"
+          ]
+        },
+        {
+          "id": "reference_analysis",
+          "required": true,
+          "preferred_skills": [
+            "media-agentic-video-pipeline-plan",
+            "research-source-check"
+          ]
+        },
+        {
+          "id": "provider_route",
+          "required": true,
+          "preferred_skills": [
+            "media-agentic-video-pipeline-plan",
+            "ai-tool-schema-protocol-check"
+          ]
+        },
+        {
+          "id": "cost_estimate",
+          "required": true,
+          "preferred_skills": [
+            "media-agentic-video-pipeline-plan",
+            "ai-opensquilla-token-routing-pattern"
+          ]
+        },
+        {
+          "id": "render_qa",
+          "required": true,
+          "preferred_skills": [
+            "media-agentic-video-pipeline-plan",
+            "media-remotion-video-production-boundary"
+          ]
+        },
+        {
+          "id": "asset_review",
+          "required": true,
+          "preferred_skills": [
+            "media-asset-review",
+            "content-claims-compliance-filter"
+          ]
+        }
       ],
       "execution_order": [
         "media-agentic-video-pipeline-plan",
@@ -622,14 +1428,67 @@
       "name": "Data Analysis Report",
       "scenario": "Clean a dataset, analyze tables, plan charts, and prepare a business or research report.",
       "status": "trusted",
-      "task_signals": ["dataset", "spreadsheet", "chart", "data analysis", "table", "report"],
+      "task_signals": [
+        "dataset",
+        "spreadsheet",
+        "chart",
+        "data analysis",
+        "table",
+        "report",
+        "数据",
+        "分析",
+        "销售",
+        "报告",
+        "趋势",
+        "洞察",
+        "图表",
+        "月度",
+        "季度",
+        "统计"
+      ],
       "required_capabilities": [
-        {"id": "data_quality", "required": true, "preferred_skills": ["data-quality-audit"]},
-        {"id": "table_analysis", "required": true, "preferred_skills": ["data-table-analysis"]},
-        {"id": "visualization", "required": true, "preferred_skills": ["data-visualization-plan"]},
-        {"id": "spreadsheet_cleanup", "required": false, "preferred_skills": ["office-spreadsheet-cleanup"]},
-        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]},
-        {"id": "report_brief", "required": true, "preferred_skills": ["office-docx-brief"]}
+        {
+          "id": "data_quality",
+          "required": true,
+          "preferred_skills": [
+            "data-quality-audit"
+          ]
+        },
+        {
+          "id": "table_analysis",
+          "required": true,
+          "preferred_skills": [
+            "data-table-analysis"
+          ]
+        },
+        {
+          "id": "visualization",
+          "required": true,
+          "preferred_skills": [
+            "data-visualization-plan"
+          ]
+        },
+        {
+          "id": "spreadsheet_cleanup",
+          "required": false,
+          "preferred_skills": [
+            "office-spreadsheet-cleanup"
+          ]
+        },
+        {
+          "id": "source_check",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check"
+          ]
+        },
+        {
+          "id": "report_brief",
+          "required": true,
+          "preferred_skills": [
+            "office-docx-brief"
+          ]
+        }
       ],
       "execution_order": [
         "data-quality-audit",
@@ -662,14 +1521,65 @@
       "name": "Open Source Release",
       "scenario": "Prepare a repository, package, catalog, or public artifact for open source publication.",
       "status": "trusted",
-      "task_signals": ["open source", "release", "github", "publish repo", "public repository"],
+      "task_signals": [
+        "open source",
+        "release",
+        "github",
+        "publish repo",
+        "public repository",
+        "部署",
+        "发布",
+        "上线",
+        "开源",
+        "许可证",
+        "清单",
+        "准备",
+        "检查",
+        "文档"
+      ],
       "required_capabilities": [
-        {"id": "publish_check", "required": true, "preferred_skills": ["execution-publish-check"]},
-        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]},
-        {"id": "license_review", "required": true, "preferred_skills": ["compliance-terms-review"]},
-        {"id": "editorial_review", "required": true, "preferred_skills": ["content-editorial-review"]},
-        {"id": "social_post", "required": false, "preferred_skills": ["content-social-post"]},
-        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]}
+        {
+          "id": "publish_check",
+          "required": true,
+          "preferred_skills": [
+            "execution-publish-check"
+          ]
+        },
+        {
+          "id": "supply_chain_review",
+          "required": true,
+          "preferred_skills": [
+            "security-supply-chain-review"
+          ]
+        },
+        {
+          "id": "license_review",
+          "required": true,
+          "preferred_skills": [
+            "compliance-terms-review"
+          ]
+        },
+        {
+          "id": "editorial_review",
+          "required": true,
+          "preferred_skills": [
+            "content-editorial-review"
+          ]
+        },
+        {
+          "id": "social_post",
+          "required": false,
+          "preferred_skills": [
+            "content-social-post"
+          ]
+        },
+        {
+          "id": "source_check",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check"
+          ]
+        }
       ],
       "execution_order": [
         "execution-publish-check",
@@ -701,13 +1611,50 @@
       "name": "Content SEO Publication",
       "scenario": "Draft, fact-check, optimize, and publish public content.",
       "status": "trusted",
-      "task_signals": ["article", "seo", "social", "public content", "blog", "post"],
+      "task_signals": [
+        "article",
+        "seo",
+        "social",
+        "public content",
+        "blog",
+        "post"
+      ],
       "required_capabilities": [
-        {"id": "seo_copy", "required": true, "preferred_skills": ["content-seo-brief"]},
-        {"id": "editorial_review", "required": true, "preferred_skills": ["content-editorial-review"]},
-        {"id": "prompt_pattern", "required": false, "preferred_skills": ["content-prompt-engineering-patterns"]},
-        {"id": "source_check", "required": true, "preferred_skills": ["research-source-check"]},
-        {"id": "social_post", "required": true, "preferred_skills": ["content-social-post"]}
+        {
+          "id": "seo_copy",
+          "required": true,
+          "preferred_skills": [
+            "content-seo-brief"
+          ]
+        },
+        {
+          "id": "editorial_review",
+          "required": true,
+          "preferred_skills": [
+            "content-editorial-review"
+          ]
+        },
+        {
+          "id": "prompt_pattern",
+          "required": false,
+          "preferred_skills": [
+            "content-prompt-engineering-patterns"
+          ]
+        },
+        {
+          "id": "source_check",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check"
+          ]
+        },
+        {
+          "id": "social_post",
+          "required": true,
+          "preferred_skills": [
+            "content-social-post"
+          ]
+        }
       ],
       "execution_order": [
         "content-seo-brief",
@@ -737,15 +1684,76 @@
       "name": "RAG Agent Knowledge App",
       "scenario": "Design a source-grounded RAG or knowledge-base agent with retrieval, citations, structured outputs, and safety checks.",
       "status": "trusted",
-      "task_signals": ["rag", "retrieval", "vector", "citation", "knowledge agent", "document agent"],
+      "task_signals": [
+        "rag",
+        "引用",
+        "retrieval",
+        "embedding",
+        "document agent",
+        "向量",
+        "knowledge agent",
+        "嵌入",
+        "知识库",
+        "来源",
+        "问答",
+        "RAG",
+        "vector",
+        "citation",
+        "检索",
+        "文档"
+      ],
       "required_capabilities": [
-        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
-        {"id": "agent_orchestration", "required": true, "preferred_skills": ["ai-langchain-agent-orchestration"]},
-        {"id": "rag_plan", "required": true, "preferred_skills": ["ai-llamaindex-rag-knowledge-workflow", "data-haystack-rag-pipeline"]},
-        {"id": "vector_retrieval", "required": true, "preferred_skills": ["data-qdrant-vector-retrieval"]},
-        {"id": "schema_contract", "required": true, "preferred_skills": ["ai-pydantic-schema-contract", "ai-output-schema-eval"]},
-        {"id": "citation_check", "required": true, "preferred_skills": ["research-source-check"]},
-        {"id": "prompt_injection_review", "required": false, "preferred_skills": ["security-prompt-injection-review"]}
+        {
+          "id": "requirements",
+          "required": true,
+          "preferred_skills": [
+            "business-requirements-brief"
+          ]
+        },
+        {
+          "id": "agent_orchestration",
+          "required": true,
+          "preferred_skills": [
+            "ai-langchain-agent-orchestration"
+          ]
+        },
+        {
+          "id": "rag_plan",
+          "required": true,
+          "preferred_skills": [
+            "ai-llamaindex-rag-knowledge-workflow",
+            "data-haystack-rag-pipeline"
+          ]
+        },
+        {
+          "id": "vector_retrieval",
+          "required": true,
+          "preferred_skills": [
+            "data-qdrant-vector-retrieval"
+          ]
+        },
+        {
+          "id": "schema_contract",
+          "required": true,
+          "preferred_skills": [
+            "ai-pydantic-schema-contract",
+            "ai-output-schema-eval"
+          ]
+        },
+        {
+          "id": "citation_check",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check"
+          ]
+        },
+        {
+          "id": "prompt_injection_review",
+          "required": false,
+          "preferred_skills": [
+            "security-prompt-injection-review"
+          ]
+        }
       ],
       "execution_order": [
         "business-requirements-brief",
@@ -784,14 +1792,73 @@
       "name": "Agent Long-Term Memory Governance",
       "scenario": "Design or review durable agent memory, graph memory contracts, recall disclosure, correction and deletion paths, tenant isolation, and retrieval boundaries.",
       "status": "trusted",
-      "task_signals": ["long-term memory", "long term memory", "graph memory", "persistent memory", "durable memory", "remember recall forget improve", "remember", "recall", "forget", "tenant isolation", "memory correction", "cognee", "长期记忆", "图谱记忆", "持久记忆", "租户隔离", "记忆治理"],
+      "task_signals": [
+        "long-term memory",
+        "long term memory",
+        "graph memory",
+        "persistent memory",
+        "durable memory",
+        "remember recall forget improve",
+        "remember",
+        "recall",
+        "forget",
+        "tenant isolation",
+        "memory correction",
+        "cognee",
+        "长期记忆",
+        "图谱记忆",
+        "持久记忆",
+        "租户隔离",
+        "记忆治理"
+      ],
       "required_capabilities": [
-        {"id": "memory_contract", "required": true, "preferred_skills": ["ai-graph-memory-contract"]},
-        {"id": "retrieval_boundary", "required": true, "preferred_skills": ["data-rag-namespace-boundary-check", "ai-langchain-agent-orchestration"]},
-        {"id": "tenant_isolation", "required": true, "preferred_skills": ["data-rag-namespace-boundary-check", "compliance-privacy-check"]},
-        {"id": "forget_path", "required": true, "preferred_skills": ["ai-graph-memory-contract", "compliance-privacy-check"]},
-        {"id": "source_disclosure", "required": true, "preferred_skills": ["research-source-check", "ai-graph-memory-contract"]},
-        {"id": "schema_contract", "required": false, "preferred_skills": ["ai-pydantic-schema-contract", "ai-output-schema-eval"]}
+        {
+          "id": "memory_contract",
+          "required": true,
+          "preferred_skills": [
+            "ai-graph-memory-contract"
+          ]
+        },
+        {
+          "id": "retrieval_boundary",
+          "required": true,
+          "preferred_skills": [
+            "data-rag-namespace-boundary-check",
+            "ai-langchain-agent-orchestration"
+          ]
+        },
+        {
+          "id": "tenant_isolation",
+          "required": true,
+          "preferred_skills": [
+            "data-rag-namespace-boundary-check",
+            "compliance-privacy-check"
+          ]
+        },
+        {
+          "id": "forget_path",
+          "required": true,
+          "preferred_skills": [
+            "ai-graph-memory-contract",
+            "compliance-privacy-check"
+          ]
+        },
+        {
+          "id": "source_disclosure",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check",
+            "ai-graph-memory-contract"
+          ]
+        },
+        {
+          "id": "schema_contract",
+          "required": false,
+          "preferred_skills": [
+            "ai-pydantic-schema-contract",
+            "ai-output-schema-eval"
+          ]
+        }
       ],
       "execution_order": [
         "ai-graph-memory-contract",
@@ -826,18 +1893,96 @@
       "name": "Claude Skills Backlog Coverage",
       "scenario": "Review, optimize, cluster, and safely cover remaining claude-skills candidate or reference-only backlog items in the trusted local skill catalog.",
       "status": "trusted",
-      "task_signals": ["claude-skills", "claude skills", "reference-only", "reference only", "backlog", "candidate map", "candidate skill", "remaining skills", "skill backlog", "候选 skill", "候选技能", "剩余 skill", "剩余技能", "纳入体系", "补充到我们的", "skill库", "sikll"],
+      "task_signals": [
+        "claude-skills",
+        "claude skills",
+        "reference-only",
+        "reference only",
+        "backlog",
+        "candidate map",
+        "candidate skill",
+        "remaining skills",
+        "skill backlog",
+        "候选 skill",
+        "候选技能",
+        "剩余 skill",
+        "剩余技能",
+        "纳入体系",
+        "补充到我们的",
+        "skill库",
+        "sikll"
+      ],
       "required_capabilities": [
-        {"id": "business_backlog", "required": true, "preferred_skills": ["business-claude-skills-backlog-orchestration"]},
-        {"id": "engineering_backlog", "required": true, "preferred_skills": ["engineering-claude-skills-operations-review"]},
-        {"id": "code_backlog", "required": true, "preferred_skills": ["code-claude-skills-engineering-role-review"]},
-        {"id": "content_backlog", "required": true, "preferred_skills": ["content-claude-skills-growth-review"]},
-        {"id": "compliance_backlog", "required": true, "preferred_skills": ["compliance-claude-skills-regulated-review"]},
-        {"id": "research_backlog", "required": true, "preferred_skills": ["research-claude-skills-evidence-review"]},
-        {"id": "execution_backlog", "required": false, "preferred_skills": ["execution-claude-skills-productivity-review"]},
-        {"id": "office_backlog", "required": false, "preferred_skills": ["office-claude-skills-document-review"]},
-        {"id": "ai_meta_backlog", "required": false, "preferred_skills": ["ai-claude-skills-meta-workflow-review"]},
-        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]}
+        {
+          "id": "business_backlog",
+          "required": true,
+          "preferred_skills": [
+            "business-claude-skills-backlog-orchestration"
+          ]
+        },
+        {
+          "id": "engineering_backlog",
+          "required": true,
+          "preferred_skills": [
+            "engineering-claude-skills-operations-review"
+          ]
+        },
+        {
+          "id": "code_backlog",
+          "required": true,
+          "preferred_skills": [
+            "code-claude-skills-engineering-role-review"
+          ]
+        },
+        {
+          "id": "content_backlog",
+          "required": true,
+          "preferred_skills": [
+            "content-claude-skills-growth-review"
+          ]
+        },
+        {
+          "id": "compliance_backlog",
+          "required": true,
+          "preferred_skills": [
+            "compliance-claude-skills-regulated-review"
+          ]
+        },
+        {
+          "id": "research_backlog",
+          "required": true,
+          "preferred_skills": [
+            "research-claude-skills-evidence-review"
+          ]
+        },
+        {
+          "id": "execution_backlog",
+          "required": false,
+          "preferred_skills": [
+            "execution-claude-skills-productivity-review"
+          ]
+        },
+        {
+          "id": "office_backlog",
+          "required": false,
+          "preferred_skills": [
+            "office-claude-skills-document-review"
+          ]
+        },
+        {
+          "id": "ai_meta_backlog",
+          "required": false,
+          "preferred_skills": [
+            "ai-claude-skills-meta-workflow-review"
+          ]
+        },
+        {
+          "id": "supply_chain_review",
+          "required": true,
+          "preferred_skills": [
+            "security-supply-chain-review"
+          ]
+        }
       ],
       "execution_order": [
         "business-claude-skills-backlog-orchestration",
@@ -878,17 +2023,84 @@
       "name": "Skill Router Quality Review",
       "scenario": "Review skill catalog routing, automatic skill selection, bundle composition, and router verification quality.",
       "status": "trusted",
-      "task_signals": ["safe-agent-skills", "safe agent skills", "skill router", "smart skill", "skill selection", "auto composition", "automatic composition", "智能选择", "自动搭配", "自动选择"],
+      "task_signals": [
+        "safe-agent-skills",
+        "safe agent skills",
+        "skill router",
+        "smart skill",
+        "skill selection",
+        "auto composition",
+        "automatic composition",
+        "智能选择",
+        "自动搭配",
+        "自动选择"
+      ],
       "required_capabilities": [
-        {"id": "skill_selection_quality", "required": true, "preferred_skills": ["ai-opensquilla-token-routing-pattern", "ai-langchain-agent-orchestration"]},
-        {"id": "bundle_quality", "required": true, "preferred_skills": ["ai-opensquilla-metaskill-workflow"]},
-        {"id": "routing_contract", "required": true, "preferred_skills": ["ai-tool-schema-protocol-check", "ai-pydantic-schema-contract"]},
-        {"id": "output_schema_eval", "required": true, "preferred_skills": ["ai-output-schema-eval"]},
-        {"id": "regression_test", "required": true, "preferred_skills": ["code-test-regression"]},
-        {"id": "failure_synthesis", "required": false, "preferred_skills": ["ai-rule-failure-log-synthesis"]},
-        {"id": "ci_check", "required": false, "preferred_skills": ["engineering-ci-troubleshoot"]},
-        {"id": "publish_check", "required": false, "preferred_skills": ["execution-publish-check"]},
-        {"id": "supply_chain_review", "required": true, "preferred_skills": ["security-supply-chain-review"]}
+        {
+          "id": "skill_selection_quality",
+          "required": true,
+          "preferred_skills": [
+            "ai-opensquilla-token-routing-pattern",
+            "ai-langchain-agent-orchestration"
+          ]
+        },
+        {
+          "id": "bundle_quality",
+          "required": true,
+          "preferred_skills": [
+            "ai-opensquilla-metaskill-workflow"
+          ]
+        },
+        {
+          "id": "routing_contract",
+          "required": true,
+          "preferred_skills": [
+            "ai-tool-schema-protocol-check",
+            "ai-pydantic-schema-contract"
+          ]
+        },
+        {
+          "id": "output_schema_eval",
+          "required": true,
+          "preferred_skills": [
+            "ai-output-schema-eval"
+          ]
+        },
+        {
+          "id": "regression_test",
+          "required": true,
+          "preferred_skills": [
+            "code-test-regression"
+          ]
+        },
+        {
+          "id": "failure_synthesis",
+          "required": false,
+          "preferred_skills": [
+            "ai-rule-failure-log-synthesis"
+          ]
+        },
+        {
+          "id": "ci_check",
+          "required": false,
+          "preferred_skills": [
+            "engineering-ci-troubleshoot"
+          ]
+        },
+        {
+          "id": "publish_check",
+          "required": false,
+          "preferred_skills": [
+            "execution-publish-check"
+          ]
+        },
+        {
+          "id": "supply_chain_review",
+          "required": true,
+          "preferred_skills": [
+            "security-supply-chain-review"
+          ]
+        }
       ],
       "execution_order": [
         "ai-opensquilla-metaskill-workflow",
@@ -929,21 +2141,132 @@
       "name": "Industry Application Orchestration",
       "scenario": "Profile multi-industry users, select trusted domain skills, review regulated boundaries, and package an industry AI application plan.",
       "status": "trusted",
-      "task_signals": ["industry solution", "industry application", "vertical solution", "vertical workflow", "solution pack", "healthcare", "clinical", "legal", "finance", "education", "manufacturing", "real estate", "saas users", "public sector", "multi industry", "行业", "垂直行业", "行业应用", "行业方案", "行业 ai", "医疗", "临床", "法务", "金融", "教育", "制造", "房地产", "多行业", "应用方案"],
+      "task_signals": [
+        "industry solution",
+        "industry application",
+        "vertical solution",
+        "vertical workflow",
+        "solution pack",
+        "healthcare",
+        "clinical",
+        "legal",
+        "finance",
+        "education",
+        "manufacturing",
+        "real estate",
+        "saas users",
+        "public sector",
+        "multi industry",
+        "行业",
+        "垂直行业",
+        "行业应用",
+        "行业方案",
+        "行业 ai",
+        "医疗",
+        "临床",
+        "法务",
+        "金融",
+        "教育",
+        "制造",
+        "房地产",
+        "多行业",
+        "应用方案"
+      ],
       "required_capabilities": [
-        {"id": "industry_intake", "required": true, "preferred_skills": ["vertical-industry-intake-orchestration"]},
-        {"id": "requirements", "required": true, "preferred_skills": ["business-requirements-brief"]},
-        {"id": "regulated_boundary", "required": true, "preferred_skills": ["compliance-regulated-industry-boundary", "compliance-privacy-check"]},
-        {"id": "domain_evidence", "required": true, "preferred_skills": ["research-source-check", "research-clinical-study-design-review", "research-finance-analysis-review"]},
-        {"id": "data_quality", "required": true, "preferred_skills": ["data-quality-audit"]},
-        {"id": "solution_packaging", "required": true, "preferred_skills": ["vertical-industry-solution-packaging"]},
-        {"id": "content_review", "required": false, "preferred_skills": ["content-editorial-review"]},
-        {"id": "saas_metrics", "required": false, "preferred_skills": ["business-saas-metrics-review"]},
-        {"id": "finance_operations", "required": false, "preferred_skills": ["business-finance-operations-review"]},
-        {"id": "education_plan", "required": false, "preferred_skills": ["vertical-education-plan"]},
-        {"id": "manufacturing_qc", "required": false, "preferred_skills": ["vertical-manufacturing-qc"]},
-        {"id": "real_estate_listing", "required": false, "preferred_skills": ["vertical-real-estate-listing"]},
-        {"id": "commerce_listing", "required": false, "preferred_skills": ["commerce-icbu-listing"]}
+        {
+          "id": "industry_intake",
+          "required": true,
+          "preferred_skills": [
+            "vertical-industry-intake-orchestration"
+          ]
+        },
+        {
+          "id": "requirements",
+          "required": true,
+          "preferred_skills": [
+            "business-requirements-brief"
+          ]
+        },
+        {
+          "id": "regulated_boundary",
+          "required": true,
+          "preferred_skills": [
+            "compliance-regulated-industry-boundary",
+            "compliance-privacy-check"
+          ]
+        },
+        {
+          "id": "domain_evidence",
+          "required": true,
+          "preferred_skills": [
+            "research-source-check",
+            "research-clinical-study-design-review",
+            "research-finance-analysis-review"
+          ]
+        },
+        {
+          "id": "data_quality",
+          "required": true,
+          "preferred_skills": [
+            "data-quality-audit"
+          ]
+        },
+        {
+          "id": "solution_packaging",
+          "required": true,
+          "preferred_skills": [
+            "vertical-industry-solution-packaging"
+          ]
+        },
+        {
+          "id": "content_review",
+          "required": false,
+          "preferred_skills": [
+            "content-editorial-review"
+          ]
+        },
+        {
+          "id": "saas_metrics",
+          "required": false,
+          "preferred_skills": [
+            "business-saas-metrics-review"
+          ]
+        },
+        {
+          "id": "finance_operations",
+          "required": false,
+          "preferred_skills": [
+            "business-finance-operations-review"
+          ]
+        },
+        {
+          "id": "education_plan",
+          "required": false,
+          "preferred_skills": [
+            "vertical-education-plan"
+          ]
+        },
+        {
+          "id": "manufacturing_qc",
+          "required": false,
+          "preferred_skills": [
+            "vertical-manufacturing-qc"
+          ]
+        },
+        {
+          "id": "real_estate_listing",
+          "required": false,
+          "preferred_skills": [
+            "vertical-real-estate-listing"
+          ]
+        },
+        {
+          "id": "commerce_listing",
+          "required": false,
+          "preferred_skills": [
+            "commerce-icbu-listing"
+          ]
+        }
       ],
       "execution_order": [
         "vertical-industry-intake-orchestration",
@@ -996,13 +2319,59 @@
       "name": "Commerce Listing Growth",
       "scenario": "Prepare marketplace listings, search keywords, inquiry replies, and trade communication.",
       "status": "trusted",
-      "task_signals": ["listing", "keyword", "inquiry", "trade", "buyer", "marketplace"],
+      "task_signals": [
+        "keyword",
+        "销售",
+        "商品",
+        "转化",
+        "排名",
+        "优化",
+        "流量",
+        "产品页",
+        "listing",
+        "SEO",
+        "buyer",
+        "trade",
+        "inquiry",
+        "marketplace",
+        "电商"
+      ],
       "required_capabilities": [
-        {"id": "listing", "required": true, "preferred_skills": ["commerce-icbu-listing"]},
-        {"id": "keyword_plan", "required": true, "preferred_skills": ["commerce-product-keyword-plan"]},
-        {"id": "inquiry_reply", "required": true, "preferred_skills": ["commerce-inquiry-reply"]},
-        {"id": "editorial_review", "required": false, "preferred_skills": ["content-editorial-review"]},
-        {"id": "requirements", "required": false, "preferred_skills": ["business-requirements-brief"]}
+        {
+          "id": "listing",
+          "required": true,
+          "preferred_skills": [
+            "commerce-icbu-listing"
+          ]
+        },
+        {
+          "id": "keyword_plan",
+          "required": true,
+          "preferred_skills": [
+            "commerce-product-keyword-plan"
+          ]
+        },
+        {
+          "id": "inquiry_reply",
+          "required": true,
+          "preferred_skills": [
+            "commerce-inquiry-reply"
+          ]
+        },
+        {
+          "id": "editorial_review",
+          "required": false,
+          "preferred_skills": [
+            "content-editorial-review"
+          ]
+        },
+        {
+          "id": "requirements",
+          "required": false,
+          "preferred_skills": [
+            "business-requirements-brief"
+          ]
+        }
       ],
       "execution_order": [
         "business-requirements-brief",
