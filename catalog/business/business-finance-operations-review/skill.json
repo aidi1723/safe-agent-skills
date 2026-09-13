@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T13:57:12Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "983d94be17b7fac5587ac7e2be41ffa898147bb10deeb42b5b08aac1733b1146",
+    "manifest_sha256": "f0d47d60e5cc65354eb75a153902718ac20fefd0957089a0f087ab6631ed3133",
     "sanitized_sha256": "da5381ccb82c241ece15cbc6739a937ee7aecbe046e5c5bf0214ae2222595d2f",
     "source_sha256": "14a3d94309f8c582e7c0b6a73984f2d7e6ef5ab800ede24fe51627d59ff90224"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.finance_ops",
     "task_intent": "review finance operations, budget control, forecast cadence, spend approvals, cash planning, and variance governance"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

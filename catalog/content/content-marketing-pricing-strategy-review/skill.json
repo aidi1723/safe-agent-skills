@@ -7,6 +7,7 @@
       "content.marketing_pricing"
     ],
     "cost_weight": 2,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "produces_evidence": [
       "marketing_pricing_review_report"
     ],
@@ -14,11 +15,11 @@
       "requirements_brief",
       "seo_copy"
     ],
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "a61cbacf211a6c986492bd9b91263d3aa4a3ed95360360bc17366da3163ec5c4",
+    "manifest_sha256": "a08325ce361271f890dde58ba21304cb8591b83beca11e4fa17a8653aa1b2934",
     "sanitized_sha256": "e609dd3abdc22e9a3d5083f80e53d9af870f5144de453de5b9417f2c3c773f07",
     "source_sha256": "a549233902c5fcdf096a39a3792b696023fcd6dec60d29bba6e359328f4a8293"
   },

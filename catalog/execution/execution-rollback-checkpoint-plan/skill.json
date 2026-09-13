@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T12:54:12Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "60fe196ad95169fcb684d31efd5f249485df506a1f73ec600317d0d828d1280d",
+    "manifest_sha256": "3ce7e0b0c83362496cf40d9b44cef2099a2eb18ee0223546a7acb49bf9e16f84",
     "sanitized_sha256": "e75b9e73daa7d3788c8fa06dfa3295ff65fa7b4e233ed1aac82666e31ff39ed8",
     "source_sha256": "d18d8fbbd7862b79df7a76ec20d29d7a28f0710b360d60483970713d32aa3d7c"
   },
@@ -45,8 +49,5 @@
     "subcategory": "execution.rollback",
     "task_intent": "plan checkpoints and rollback before risky work"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

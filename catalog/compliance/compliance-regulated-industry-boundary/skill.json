@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T16:48:20Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "54d8d51cad9970fa49fcd94e35866a509a6e4813b9469dbe145f240194072a56",
+    "manifest_sha256": "6f8ee4cede1976174f08e48b225e45612bdd711d443a29c194937c01b695e7ca",
     "sanitized_sha256": "23abc4901f2a65158be01246d4b9edac9d6bcb12ed16522b8a2987652a874279",
     "source_sha256": "0e6a9c24a658530bee94d37b513e24f290124895e0e78f3dc782f79bd81ee6ee"
   },
@@ -45,8 +49,5 @@
     "subcategory": "compliance.regulated_industry",
     "task_intent": "review regulated-industry boundaries for multi-industry AI workflows"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

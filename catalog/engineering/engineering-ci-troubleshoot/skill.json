@@ -16,6 +16,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "regression_test_plan"
     ],
@@ -32,12 +33,12 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
     "auxiliary_sha256": "b4dee9cf7a0fe98b0535b094e0251e2509734f114ee760566647d1ba9a9fb129",
-    "manifest_sha256": "043d2dbcd781267600011bd22a98f7c08cc5202dca289e3b9cdfc885bd36fddf",
+    "manifest_sha256": "8717727948bf91ba3b5caa5ce442e3af7f0554b39dcdf762d4c32507080331d5",
     "sanitized_sha256": "ad3b924ecc5e1399e950335c3af13d9db710eec60dd8234433140cd1a0583b96",
     "source_sha256": "7ebb47b816b11646f2a4ea6ed35a2f2b3ea9a5d2d924b69c69dd32c1327cb889"
   },

@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T13:01:46Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "6aee160f8f3b4e2ac54dd8b62efc2b4883e7f5ddd5c49cf348c5563aa1953e80",
+    "manifest_sha256": "36c5440cf815a85b50f2a164a737f2f496278183b92accf8daed2ccf39b140c8",
     "sanitized_sha256": "dcc5e31d41367016c1fb740525a0d825cf3b0b11ab10d92b7ec74ccaa9e0fefc",
     "source_sha256": "2ec6d3de7397188bc7963cf94a8f083e07e1f2d3a94fff2e062ec46d3fd36742"
   },
@@ -45,8 +49,5 @@
     "subcategory": "data.schema",
     "task_intent": "check schema fields and data contracts"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-03T12:40:44Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f3b18cd2c55a9e71c5ec207d4f87af89c816fefdd2be9269d8288dbae41adb3b",
+    "manifest_sha256": "15ceaff42a7a9c7917c6d03829037ac499906d6a5c7cd9f0fa7c22c9c2ae6adb",
     "sanitized_sha256": "028ca1ab256b24d7f83d268938f62f19e497dc9815d3cd638fc25e695f21fb97",
     "source_sha256": "3e149626624d518de4cdd53909cc7f3a3eb21e3edb08d7e2d18c4f2425583af1"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.finance",
     "task_intent": "structure value-investment research with evidence, bear-case, valuation, and regulated-advice boundaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T12:45:11Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "d5dfd26147b58889d2eade771f2dc9a38b39f95540a3288871f713e197f4497a",
+    "manifest_sha256": "a66fcb347bd81a512b761373e2fbcb52f0c4cc7adb73bd9e4f9a8ce9295c5a00",
     "sanitized_sha256": "3d0890e41306e08d36ab25ad458175f46a824ba47ec7a82b62db4279e0c32c37",
     "source_sha256": "fc6752f7d1473f7e76b257915947813c7c38ca2b4686f604c5ee981298e8a4fc"
   },
@@ -45,8 +49,5 @@
     "subcategory": "content.voice",
     "task_intent": "review brand voice and tone consistency"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

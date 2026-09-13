@@ -116,7 +116,13 @@ def build_task_pack_v3(
     if need["specialized_need"]:
         if use_bundle_v2:
             # Bundle v2: core + conditional skills based on task keywords
-            matched = match_scenario_bundle_v2(routing_current, bundles_path, threshold=0.12)
+            # Resolve bundle v2 path: bundles/index.json -> bundles/index-v2-tier1.json
+            # Check if bundles_path is already v2, otherwise derive it
+            if "v2" in bundles_path.name:
+                bundle_v2_path = bundles_path
+            else:
+                bundle_v2_path = bundles_path.parent / "index-v2-tier1.json"
+            matched = match_scenario_bundle_v2(routing_current, bundle_v2_path, threshold=0.12)
             if matched:
                 selected_scenario = matched["id"]
                 composed = dict(composed)

@@ -16,6 +16,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "routing_selection_plan"
     ],
@@ -31,12 +32,12 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "verification"
   },
   "findings": [],
   "hashes": {
     "auxiliary_sha256": "6911807209fab53fc36aad0009c91b09717d746253a3b57f74d5b2c53078be06",
-    "manifest_sha256": "32e0941d31bf17b248cc960c01cefb5d6d2281544e0d5cc4a0b91fd932878fd9",
+    "manifest_sha256": "5887328e489fd6c7756b25b7f89c6c13bb5f7067bfd58e41128a57b000a0471d",
     "sanitized_sha256": "b0829091df277a21679aa8c7f0b4a3eba21cb5e0868efbf1d34f3037792be721",
     "source_sha256": "a96d3b991d861b29cd396c08cdff925dc03f6fec4d50e18be3b0d82702ed8879"
   },

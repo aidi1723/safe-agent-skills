@@ -14,6 +14,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "requirements_brief",
       "build_artifact",
@@ -29,11 +30,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "review"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "36fd70dafb0a295e4bae421681abf7507981d4d98e8f1cdd9a5facf2596ada47",
+    "manifest_sha256": "5fa485d34c1f07cb4da8eccad55d6c88b199dc184390300c57ca90a015e8ca35",
     "sanitized_sha256": "9e5d6471343581814b7e9d10f63e6185e8ac6fe285c193bd4784e43d4439290b",
     "source_sha256": "c166662fd2ea04b63f370d46b5b4115f4333ae44255ed6dceff4b56d5afa1c17"
   },

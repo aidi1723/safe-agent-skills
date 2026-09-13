@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:10:07Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "4127f4be6d2b19c9423a01fedbe4d2c7016f43238842094111b8f3c00aaeddea",
+    "manifest_sha256": "a0c5b7e5371ee977fa184914d0b187a92b4c9d30962833c00c7bbad6880520f0",
     "sanitized_sha256": "d91e3855b9ed4eeb797c720766aa979429f49feb804f368a609f8cbbc2776b14",
     "source_sha256": "4320b8aacfa5d7a12d89bd648d337ca18b2eecc53fe8baf34ba1772752b68999"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.support",
     "task_intent": "triage customer support requests safely"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

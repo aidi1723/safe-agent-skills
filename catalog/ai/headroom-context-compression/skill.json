@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:35:45Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "2627c7ed6aefa751dcf143f956150489463d6c0bd8dfff1cd3b7763b90e19f0d",
+    "manifest_sha256": "267fb37f65de86ab012e251b7eb5cbbcf2060a606d5555f1aeb9123cb74904d6",
     "sanitized_sha256": "424b1807b880f90c0ebaf96f977cabb05b399a652b5e350b94d0abc948d67f05",
     "source_sha256": "6f6d6bfdab2347747a4ca02cfe0224797e4f1a1f139299b7b3e6d5f8839f8035"
   },
@@ -45,8 +49,5 @@
     "subcategory": "ai.context-compression",
     "task_intent": "compress AI workflow context while preserving decisions and safety boundaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

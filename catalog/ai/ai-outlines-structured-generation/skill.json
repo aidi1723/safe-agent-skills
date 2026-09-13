@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T09:25:13Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "815464e7e62e4f5dcc9a4f542813731330d40225bfdc20f9dec14708e663f3cb",
+    "manifest_sha256": "84dd2d390de670549ec45293f794ab055e78454fa934a5daafa90d6c9173ba2c",
     "sanitized_sha256": "d60f77bcafb22d66282bc8b82c8529ef4a34ada222b635a831d9a5077b953421",
     "source_sha256": "fd22d2a130d9bf6b067296ae5083962373644e7df09e2512666409a04753d1df"
   },
@@ -45,8 +49,5 @@
     "subcategory": "ai.structured_generation",
     "task_intent": "produce parser-safe structured AI outputs"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

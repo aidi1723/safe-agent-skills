@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:30:00Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "75f9977cc10dbe24948d5f6dc043b150f8773b2353b7395775a4fe618cef4462",
+    "manifest_sha256": "9e4c9368d04c761447f9cb5623d68138054891bc344347e8b15fbb60bac84ff2",
     "sanitized_sha256": "fe238fe9f2e499609623d5db081f8f684c21c4f12b6754d441685051f28e1493",
     "source_sha256": "518675c9ca274f6fe6a071a1bc650c471fdf20f4ca12da7baa3b15f280cdb97f"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.project_management",
     "task_intent": "review Scrum execution, backlog health, sprint risk, and project delivery evidence"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

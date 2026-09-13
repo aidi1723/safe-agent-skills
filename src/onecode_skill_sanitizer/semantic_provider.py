@@ -16,6 +16,7 @@ _NEED_DECISIONS = frozenset({"none", "single", "composite", "clarify"})
 _CANONICAL_CAPABILITIES = {
     "codebase-explore-map": "code.explore",
     "code-review-risk": "code.review",
+    "code-refactor": "code.refactor",
     "code-test-regression": "code.test",
     "execution-browser-check": "execution.browser_check",
     "research-source-check": "research.source",

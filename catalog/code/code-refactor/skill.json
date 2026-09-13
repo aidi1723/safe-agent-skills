@@ -13,6 +13,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "test_suite"
     ],
@@ -27,15 +28,14 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "auxiliary_sha256": null,
-    "manifest_sha256": "5801c4260bdfba9011b85054170b67a8e4b27aeec4da316702057098b5615a45",
-    "sanitized_sha256": "32633e86e3060800c1d58075f1b709a5c3be343306e90f4175b8d4f2d12787cc",
-    "source_sha256": "placeholder",
-    "self_hash": "ca3d9a347e9fc8039249faf3d351378d0f7e79f6c0c7d44fad8dd094caf39a2d"
+    "manifest_sha256": "68dd39e5afc1ef3d7ecaef4cb7204627268db021994e3cd993d1522fcdc88570",
+    "sanitized_sha256": "1cb85156ff82a33fe1834aaf707f43a889211c04c2ca3a55136a7c38e94fd29a",
+    "self_hash": "ca3d9a347e9fc8039249faf3d351378d0f7e79f6c0c7d44fad8dd094caf39a2d",
+    "source_sha256": "placeholder"
   },
   "name": "code-refactor",
   "policy": {

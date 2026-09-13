@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T13:01:46Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "a889e48d18138558885b129676b7fb6d13fb8800456b52d5047bc3309d5e8d9d",
+    "manifest_sha256": "339092f5d66ec2baa95ce4b4e4fac039dd3d194301182f8051a0c29140c4fcdf",
     "sanitized_sha256": "e04a900febe851e4e21606d8c1250de577676e135444ff33786644f90c779c55",
     "source_sha256": "2fe38ea2e4fef0beb4145c83f20dca71e647fc7ab23c72b34c452a8ddbb919c4"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.atlassian_templates",
     "task_intent": "review Jira and Confluence templates, project blueprints, workflow checklists, naming conventions, and template governance"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T16:17:52Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "28df1ea5c0acf6ade3595f9e7b90d54233d46477e3e7c6baf8bb045b2b85a0bd",
+    "manifest_sha256": "83df0ee45732506ddf3b80d2994dfd0e553bf6f48b8f103432cf42cffcdc9b1a",
     "sanitized_sha256": "3092f0083e32fae41fffa65614dfd6923a613d045fbdd1881646049478e3f7a4",
     "source_sha256": "a96a40aa4a6ffa4f19779b011485b8cc3b4fa528c733c9ff4bc02482deebbbc2"
   },
@@ -45,8 +49,5 @@
     "subcategory": "ai.claude_skills_meta_workflow",
     "task_intent": "review claude-skills meta workflow and loop-library references for trusted local orchestration coverage"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

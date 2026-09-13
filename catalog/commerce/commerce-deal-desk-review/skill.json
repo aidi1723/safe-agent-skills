@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:30:00Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "c62aa9a65b6097fd1dfb77e1fc55e15effe5943c7e16f89d93c613148877315b",
+    "manifest_sha256": "d6554f4456465e6d25a099ef97bbd0c1aaf92bba8702e8c07800cff8be631577",
     "sanitized_sha256": "1dc046c5e66c4eaae7b94b986bd41fe4abfc092992753aa45c48d8977490a1b6",
     "source_sha256": "40cb5eece1a439ba9bd964eaae5669e691cc8a258d04ec8b0d6904a9b1e22361"
   },
@@ -45,8 +49,5 @@
     "subcategory": "commerce.deal_desk",
     "task_intent": "review deal desk approvals, discounts, exceptions, and quote evidence"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

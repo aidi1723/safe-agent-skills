@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T13:16:46Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "646c3856335a21cb6716f1445a4647d1d14af3e4c15f4419eef504b9ec8ba10e",
+    "manifest_sha256": "ae686ac0397d44f7d7cd75fe965460da7c6be058f2a7e77f97ba080c615bf93a",
     "sanitized_sha256": "73809050746b5ba3d2fdfb3ad47237fd07ac3cd41347b7a4eee71eb343e59c6b",
     "source_sha256": "d8288bf571b8bc93200b5fdde4ab4c4a715bea9495982b20cff9452805eb7bb9"
   },
@@ -45,8 +49,5 @@
     "subcategory": "office.table-evidence",
     "task_intent": "reconcile document tables against source evidence"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

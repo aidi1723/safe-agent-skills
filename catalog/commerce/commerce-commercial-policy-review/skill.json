@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:39:08Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "1fee930eba76ed574288898ef533030a9a853b02dd24e425fd2cbab24777c453",
+    "manifest_sha256": "14a9f90e6b8713e20ec767abd3e98503a136d5538b2c624a4884b9f5a0f38bae",
     "sanitized_sha256": "553997d8bf67490f90b28e4ca0f8b9f285d9ed18c4ccbe42a90dea564d17949e",
     "source_sha256": "d779f51c774b0951a4210a1c6eda22a552ea6ff30373595fb3909998fbcad604"
   },
@@ -45,8 +49,5 @@
     "subcategory": "commerce.policy",
     "task_intent": "review commercial policy, approval rules, exceptions, and revenue governance boundaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

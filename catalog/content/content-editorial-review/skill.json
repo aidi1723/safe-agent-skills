@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "8f4199c36f835a250046177ec1b4f2d2f3fa7861bf7794197eb4cddbf64d1378",
+    "manifest_sha256": "da6d365189ec00490371729e292769fcd3d9fdb69a973ab3fb048dac60dc329b",
     "sanitized_sha256": "8aceb7f6cb724e26defb5469a7fecf2ee44de6ffb11bd40ad986a92a0726a497",
     "source_sha256": "13abab2fc301ce61c68759001c489ebbc0a752259204f49d3778c39e42a3da93"
   },
@@ -45,8 +49,5 @@
     "subcategory": "content.edit",
     "task_intent": "review and improve written content for publication readiness"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

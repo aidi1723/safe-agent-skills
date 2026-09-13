@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-03T12:40:34Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "9cee86be2909e6687ff43a6c936b310ea5c350160d385dc18db80a46b03e6eae",
+    "manifest_sha256": "170b78e7bb25b7f7d02a27ede73567e2a164eff704d0d5cfe054195bd845d83d",
     "sanitized_sha256": "33f90153d30f143b872fda539a8e2a7cd8794cc5aec1867c7b1469fd2a3fcdda",
     "source_sha256": "b7c8cd0bd088b2580e0ef8222eaa66433b9c610426119f46168096778844833a"
   },
@@ -45,8 +49,5 @@
     "subcategory": "research.source",
     "task_intent": "plan multi-platform public-source search with citation, account, connector, and scraping boundaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

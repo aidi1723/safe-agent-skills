@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T09:26:21Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "ee9d67f0c7e09127e5732660d55992f5df8955786b1c8895c2610609b1b870ba",
+    "manifest_sha256": "723344b7fae0ced8b6931b92a81fa87de95bce76e0bedb49f3d91df10c88a368",
     "sanitized_sha256": "b6ebffb190855c43dbb5725fe4a23245db1d9372f37d2724332e9dffe836d75b",
     "source_sha256": "8946c9c7897983a3a50283480e93d65ff2cf87fd3464ea0e9eb1e7b68d64294c"
   },
@@ -45,8 +49,5 @@
     "subcategory": "content.prompt",
     "task_intent": "design and review prompts and context instructions"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

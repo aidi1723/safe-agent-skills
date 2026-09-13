@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T13:09:10Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "a9eae971e07c9b36577cc43297d898b955fd6c81a9782cc31dba032bb43ca1ab",
+    "manifest_sha256": "89dfe6848a39c58f8f36d544f892c6f17064db668b3e19f7666b519af671e9ec",
     "sanitized_sha256": "43d173061faf40d0852d41391028c4e65b83c4aed78544b27034534d3525b5ef",
     "source_sha256": "eb21433e8de9d8d637f569edf58a583db843fa8b8b9d864986e8bcc9b04a5256"
   },
@@ -45,8 +49,5 @@
     "subcategory": "ai.context",
     "task_intent": "plan context compression and budget boundaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:39:08Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "09a2c9e3eea1af39dab89eedb6aba19aea7cc798561e7d063874ec5fa7fd9516",
+    "manifest_sha256": "604dd40a0206676a32b770382588e534b626e177db950db207ee9f1cb29912ec",
     "sanitized_sha256": "6225fbe0573e3bc9b56af87390da1a201b24022b2734d2ca1feaebec604ab493",
     "source_sha256": "cb86a0e96662cef3762781ca3a1adc26404b8ed04e7360dae2132612025ad5ab"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.knowledge_ops",
     "task_intent": "review Confluence knowledge structure, ownership, freshness, permissions, and wiki governance"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

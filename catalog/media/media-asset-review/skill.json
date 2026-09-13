@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:10:07Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "1e14415c45531790ac010216c9ebdc37dff793012608b9d76d3168f8d699e009",
+    "manifest_sha256": "bb662b914b5d9b5cee068cebdb1a9e5779a3803300fb23b042be1273aba6d2ca",
     "sanitized_sha256": "84e25802452dbc624295e268e381261b50cd5ffa51d4d030712291f894204146",
     "source_sha256": "e150ec1899867f8c20c94f1f8d9cbabb637577b03083c6178a072ee86f386e9a"
   },
@@ -45,8 +49,5 @@
     "subcategory": "media.image",
     "task_intent": "review media assets for readiness and usage risk"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

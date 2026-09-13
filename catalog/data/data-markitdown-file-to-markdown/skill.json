@@ -13,6 +13,7 @@
       "tokens": 2
     },
     "idempotent": false,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [],
     "produces_artifacts": [
       "markdown_corpus"
@@ -26,11 +27,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "9fec180f6d2eb1b8f2430111994e5e823d1abd5e35defba8c8203604f1571f45",
+    "manifest_sha256": "d88a8f73cf6152a617f6e1e38941422b16732f949d81dec11ca4cb345fc2ae49",
     "sanitized_sha256": "8c63709c028c08f23611f3e3df987de92098ea486be6b8a1eeaace0213df3c0c",
     "source_sha256": "f5a023b31314e3d488a1c87244c3574592860ffc8452a804640b604cf7e8733b"
   },

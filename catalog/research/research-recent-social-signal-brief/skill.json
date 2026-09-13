@@ -1,8 +1,12 @@
 {
   "allowed_tools": [],
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "dd7d7ed7030bc557be3409b79e89721e5f21f500dbf331dc9727b4c91dcb8341",
+    "manifest_sha256": "a308be8f5d49e3a8c3be10696139451530575c7650af0408643ea8cd0105630a",
     "sanitized_sha256": "2aff31bceaa53953759b03e52ed4b91b527dfc7f274da739638f2785930c6019",
     "source_sha256": "22411f183eb47a78124e12d42a12a7d913ac4513e0fe0a3f6b6ac635edd9fde7"
   },
@@ -43,8 +47,5 @@
     "subcategory": "research.recent_social",
     "task_intent": "synthesize recent multi-source social and market signals"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

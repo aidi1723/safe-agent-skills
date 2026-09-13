@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:10:07Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "712026bd3489895162e02d06043564e8b672c4a1636699052015c481162cd4a0",
+    "manifest_sha256": "3d56f8dfd95a971273769776b44d06bc17e708806c69ca20035019e006ba1cf1",
     "sanitized_sha256": "f03fdced2bf2d867c87c16dee13109cd8eaf5278e123211cbd97c6e94ea60d2b",
     "source_sha256": "b530b5d4dd1571ebe29505307bcddf9309e3b759d626803f65701690323ca3b6"
   },
@@ -45,8 +49,5 @@
     "subcategory": "vertical.education",
     "task_intent": "plan education workflows safely"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

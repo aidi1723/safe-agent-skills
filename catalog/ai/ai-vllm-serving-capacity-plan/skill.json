@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T09:26:21Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "454b4f7b099d48fb3580b188be5b816481ec04ad55b3754109fe353e3c466b9a",
+    "manifest_sha256": "64225324465177bc099cc66ffb01ff922f8b39c2b70975652c71f279d24c310a",
     "sanitized_sha256": "5405505aa267cf33b620853e70353c591b7a0fbe355e66fbcc2d699b98b2cba8",
     "source_sha256": "a73cda1d23a9e1b3f81cab6aa60de893c7a18e26bf6864076ea750905fef7483"
   },
@@ -45,8 +49,5 @@
     "subcategory": "ai.serving",
     "task_intent": "plan high-throughput LLM serving capacity and readiness"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

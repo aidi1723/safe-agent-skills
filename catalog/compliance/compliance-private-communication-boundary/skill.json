@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-03T12:40:44Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "34fbd5bf791c75be9e47eaa8c005b1cea448c3084795835fab20a5de3326c945",
+    "manifest_sha256": "851489501f1097ef546fc57e423c5cfac8c92cb3164965f54503863a6ffe9223",
     "sanitized_sha256": "cf58e783e73027a872f762a1b99f42c2d3f23eb4471721c56fe7e6cf2ae36811",
     "source_sha256": "f6bff17eaf631319320facd008650114386b95850fa8b458058d3cce9d4c58ef"
   },
@@ -45,8 +49,5 @@
     "subcategory": "compliance.privacy",
     "task_intent": "review private communication workflows for identifier minimization, metadata privacy, E2EE boundaries, retention, and abuse handling"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

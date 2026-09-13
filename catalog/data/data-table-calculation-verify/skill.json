@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T10:57:07Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "78d327f372206f4316fd1f27e839d398d1a221e78d7e404de1defc14367d6436",
+    "manifest_sha256": "212e2ebfc97b2ad39f759c1a7892730050365aaa5e9b793e1fd89825cca2f863",
     "sanitized_sha256": "b9c6cc30f14fcaf280676ab57319f9dd2be653fe28d550ab84666617301e93ab",
     "source_sha256": "579d8d7925d075cb67db87507c8f9201f1e976625773cbd3f41b6b6e94559fea"
   },
@@ -45,8 +49,5 @@
     "subcategory": "data.calculation",
     "task_intent": "verify table calculations and numeric claims in reports"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

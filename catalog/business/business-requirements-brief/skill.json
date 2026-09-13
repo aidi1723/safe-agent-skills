@@ -14,6 +14,7 @@
       "tokens": 1
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "task_brief"
     ],
@@ -29,11 +30,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "44e3a6e601727b833e4860bafbb3b082cb39b0abeb8269c6325dbd6de063a900",
+    "manifest_sha256": "6531b7107a798b022796e332434f25474d28523d15d48b7c1e4d426232d2a1e3",
     "sanitized_sha256": "2e802eb01d54ce6569692116c98662f5e019696023ccf187bbec7f293901018a",
     "source_sha256": "d012b81bda16b8d5ff0535b685806196a870436dbbfee6e1fd1b6c888e06f28b"
   },

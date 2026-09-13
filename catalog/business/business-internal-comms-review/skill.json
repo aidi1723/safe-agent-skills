@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:39:08Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "79e884b981af54e3db0c8a5c31d3b68b93653e06c23a4bc743b5140cde56fbd1",
+    "manifest_sha256": "fb5a63f231f668fa2efed73230b2f1df6131f02b995032ed51f89431669f3a72",
     "sanitized_sha256": "14c992ca6163820db7b7bd218b860757a169e97ae2e419c0df44061877ca475c",
     "source_sha256": "76a2208e3be071968fb1d0c52b2be74a06d08b375c706694ea0ab50065590ff9"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.communications",
     "task_intent": "review internal communications, change announcements, alignment notes, and approval boundaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

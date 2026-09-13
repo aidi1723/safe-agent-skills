@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T12:54:03Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "066eb6f14df669480a60a710dbf298b181d6b48817486ab5b67a9d775f29cfc7",
+    "manifest_sha256": "4c270a720266470c1f4ee1120d67a0f3b609a976c1ad9c62d12067fca2e56ffb",
     "sanitized_sha256": "20e03d31d8626101395420f3d04c86751d95f34b49c4c4ddb5e3a171ac34584f",
     "source_sha256": "f0e6cc59645578f0834f8492e3aeb082a1e89d583a1c24f7c6a169680415116d"
   },
@@ -45,8 +49,5 @@
     "subcategory": "compliance.license",
     "task_intent": "review license and reuse policy before adoption"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

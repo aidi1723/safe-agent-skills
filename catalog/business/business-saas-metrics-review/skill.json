@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:20:29Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f01c62f70b7d3f75a7fd90d48eba7167d47ccd210f3a34553a65bf6a20c90946",
+    "manifest_sha256": "9815a413a1178d5e8660560daf6300b1097de8222a95e832cf7b8ba3ee20b002",
     "sanitized_sha256": "1332eb8fe166f052053f09f2f4d594b2fc57f8c31b566318b255ea20e330dd31",
     "source_sha256": "937dcb7e6a1e336cfaaa3777f250d77c558e1826fecfd342eedd466dd4c0a80a"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.metrics",
     "task_intent": "review SaaS recurring revenue, retention, churn, and efficiency metrics"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

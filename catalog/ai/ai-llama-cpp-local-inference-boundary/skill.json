@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T09:26:21Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "a7e108c2c9d4164101c59aa87c2c184ef2d1118283c7defe56160d8cb198b377",
+    "manifest_sha256": "0e69a0ef94e46bcf6fb587d6ed8e50ac5ddbb2fe4a7ca5b57abcd47c76bf7d8c",
     "sanitized_sha256": "a03a317c20ec7e0a9e122273ffd6ae6583c63ae7e9105118f97d906c2a700016",
     "source_sha256": "a79fe2f0582b299338df7aa6929bfea432b4de72dd9bc01774e660090474ac90"
   },
@@ -45,8 +49,5 @@
     "subcategory": "ai.local_inference",
     "task_intent": "review local LLM inference boundaries and model provenance"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

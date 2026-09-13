@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T13:57:28Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e2d15e420ce7ccc2da79d0de6f1b70e99e895771174a40bae2f8cfa5a9ee414f",
+    "manifest_sha256": "41528d02904f132510c85022cb974179eff353ab636ac977a2d6b4eec2f6ffc1",
     "sanitized_sha256": "6f79d8f82fe6aa2bbf73aa429af376c21ba273d4ddf4c5239b9259a66e4c5277",
     "source_sha256": "2b731fe863df8f356b3bad373826abfb5f1d5012afcded4944d1555047106ef8"
   },
@@ -45,8 +49,5 @@
     "subcategory": "research.operations",
     "task_intent": "review research operations governance, study intake, participant handling, evidence lineage, repository hygiene, and insight delivery workflows"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

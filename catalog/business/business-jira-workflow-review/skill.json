@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:39:08Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "ff423be0cad793958455338e1e73a0c78c4399c75130029741c6dc785d2b5712",
+    "manifest_sha256": "34a2cc072610a98529f12189dd63afb3c1c6e81fa34daafc91fc509e544a62f0",
     "sanitized_sha256": "b7ddf22d14befb38fa9199bfe8545612b92eeba00478198271bb8f404f4e65c7",
     "source_sha256": "344b286fe20d61615cd75a6b8a033d05b1245c1db6b07a41ee3af5719d37ed09"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.project_management",
     "task_intent": "review Jira workflows, issue taxonomies, board hygiene, and delivery reporting boundaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:39:08Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "840ba1c7625ab57ae984d47c87d2f402dde90caecf08da028ca6deef59db3e09",
+    "manifest_sha256": "9cc552ccf5f10f16665e928df15568ed53c60e01125116a26ffba443d39ab771",
     "sanitized_sha256": "117d5280cbb549734bf8774ce68b8096312d86ec7a9b93581388684fb1f392fe",
     "source_sha256": "117d20e755dee06d85186baa72cc7cd19c955a455592fe18013aacc268860efb"
   },
@@ -45,8 +49,5 @@
     "subcategory": "commerce.partnerships",
     "task_intent": "review partnerships, channel strategy, alliance tradeoffs, and pilot evidence"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

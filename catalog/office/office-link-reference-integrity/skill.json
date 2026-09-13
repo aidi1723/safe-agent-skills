@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T13:16:35Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e9f4944f2f4e601a979c530a2c9b06c4ce0433a962f414c60bfd55a0e916bf0d",
+    "manifest_sha256": "136729f32b1657dc30df40f93d8cf84362ac2ee6e96e240154c645eb284e3cce",
     "sanitized_sha256": "c7d95f6182b411567d9d32441f26d68ef01f8a552029061300d573ce296584b8",
     "source_sha256": "d817b03377f16ba6d4a7b2509e8b5fb002abab4d4adbafe2e7fa6d6811f9b906"
   },
@@ -45,8 +49,5 @@
     "subcategory": "office.references",
     "task_intent": "check document link and reference integrity"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

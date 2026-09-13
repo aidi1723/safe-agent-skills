@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "ca94aa684eef57f8248764f27d972917d5e7e6a2897b901801f6ba2f4a736162",
+    "manifest_sha256": "1a733c98253fa36a5fff21911b4de74f90aeb866cc36810d995f7cd537d76590",
     "sanitized_sha256": "c35d1123ff3e2fe3e2a984d396db4cb8b498f68e92abcd33b6f57c1a567d964c",
     "source_sha256": "2eb8af96b886fa1333cae265e211253bc23479926b1482da90de568845f7e152"
   },
@@ -45,8 +49,5 @@
     "subcategory": "media.video",
     "task_intent": "review and improve video scripts and shot plans"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

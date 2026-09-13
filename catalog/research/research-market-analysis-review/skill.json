@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:51:57Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "71f32265946b3176452e54ddb2d74287a14cc15aff4d056f591a1c73c8974ae9",
+    "manifest_sha256": "1259160d67d2acabf7502320049ca6a832d8b94110fe2081ce723a6bdfc8170c",
     "sanitized_sha256": "c98cf966135595df589a63a5e2709b2b87484d85d59d9e7771789c4055774f7f",
     "source_sha256": "d5034226a085ae439b8793e48e681c9168562637c1f646ff7a1b9dd4663f2abe"
   },
@@ -45,8 +49,5 @@
     "subcategory": "research.market",
     "task_intent": "review market research, opportunity sizing, competitor signals, buyer evidence, and market assumptions"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

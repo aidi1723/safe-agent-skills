@@ -1,5 +1,9 @@
 {
   "allowed_tools": [],
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [
     {
       "id": "broad-filesystem-access",
@@ -9,7 +13,7 @@
     }
   ],
   "hashes": {
-    "manifest_sha256": "f784aee57992a96900f0ca175b618f7a3fe6964ac43e3fcef507f65a6dbabe15",
+    "manifest_sha256": "0ae0034821fd59f57236bcf24afb9515e51fe4716f7600e476d82e0fc08ab0f4",
     "sanitized_sha256": "30a92876502856b1e6bb4ba98406f229028240ec2d3ef7d74878e4a2d4dc218c",
     "source_sha256": "f6ebc71cd015c9dc543ace98c36b3b51cc53f3c2fc1710d06e576534c0e63cc3"
   },
@@ -50,8 +54,5 @@
     "subcategory": "ai.gateway",
     "task_intent": "review LLM gateway routing, budget limits, and provider fallback"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

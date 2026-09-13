@@ -7,6 +7,7 @@
       "execution.productivity_review"
     ],
     "cost_weight": 2,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "produces_evidence": [
       "productivity_review_report"
     ],
@@ -14,11 +15,11 @@
       "user_request",
       "workspace_context"
     ],
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "163cb27832acd04e5ef73f0b139501c1c663bc7624ec2ce4639337d8af379961",
+    "manifest_sha256": "f370670e86f88f977bba882bf37e0ed2ed4f08807e70a15e5203375b0bb7a477",
     "sanitized_sha256": "ae7b9da3636164d7bc92b9791f6fc86c3cb1d2511225a549c96e1587795768d7",
     "source_sha256": "98124b0b44b2154dab44943b576d4a6dd8eabcc207eb3278c5f35c6b352e0e7c"
   },

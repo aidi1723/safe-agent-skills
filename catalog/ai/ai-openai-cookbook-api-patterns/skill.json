@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T10:12:12Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "cf411c55786167a780d11ad0e64cece363eb729fb22aa8eca09347db0cd231a9",
+    "manifest_sha256": "3b0ebf61e31fa129ddaee2166bf3246a7176013a7d71218a83198f30b53ee9d5",
     "sanitized_sha256": "be5d403ae940bcb9eb2be597c1f164807b0496fa82449ca50759313c815c0b40",
     "source_sha256": "0b1fe931f78f828d0af1885afdd9021eb47be9dfe2111b2e7ae1324ddadc0a6d"
   },
@@ -45,8 +49,5 @@
     "subcategory": "ai.api_patterns",
     "task_intent": "review practical API patterns for LLM applications"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

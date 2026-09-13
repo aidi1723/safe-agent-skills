@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T12:58:26Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e70dad62c090b2886d97b1dda682f94a095b6ca186e0cee03dcea5697ac89797",
+    "manifest_sha256": "f0e0afa07194c2c65438d100ac888a83d739c760f9c1c6d2de492743bb38d561",
     "sanitized_sha256": "aa6411e4875f25fbe37553e86d535d7d0b2f4ad01eeac18e97727238d225b66f",
     "source_sha256": "4ab61fae5175387adb757ef299fab542416131abe0be63cbd1cc4045b8a64e33"
   },
@@ -45,8 +49,5 @@
     "subcategory": "security.sandbox",
     "task_intent": "review agent sandbox boundaries and refusal escalation policy"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

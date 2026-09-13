@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T16:17:52Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "34c0e2f5ed5de5d8a1cdb7f403631110632dfd827246dd5d7c5351183e9d1f04",
+    "manifest_sha256": "e4d43e672b2bc213b4ef3a83117b2ac62f2436158a0f6c6d144f6dca6645665c",
     "sanitized_sha256": "235297ea8e368b07c45456c7be6f8386e5e451e73c62aa9ecdf3799d15a44720",
     "source_sha256": "878eb209da01b0b3203b39f4ffb5f283c7b4d6b74baf4a37c0a842cee17abf6a"
   },
@@ -45,8 +49,5 @@
     "subcategory": "content.claude_skills_growth",
     "task_intent": "review claude-skills marketing, copywriting, CRO, lifecycle, ASO, and growth references through trusted content workflows"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

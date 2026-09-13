@@ -13,6 +13,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [],
     "produces_artifacts": [
       "pdf_markdown_review"
@@ -27,11 +28,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "6de2fae29aaecb001481bbba17be348e43da5c76104f3bd339a9f7426ddb38ee",
+    "manifest_sha256": "7a174cc37c1197e3e6d2b161d0427e73a2a6b42d39daf8612c1ec36ea53f18de",
     "sanitized_sha256": "b40724cb72afc93f0f5585bd7e7a0ba4efe7214debaa4acbfe4aadecd6100d1e",
     "source_sha256": "4e434a869988520126171b8b2f27d6fe3c106d835d8d615e1104ca191678e6e6"
   },

@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-05T10:56:41Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "119c751c9b31d423e165dec4cdc8c448c2b547913aaca58f3d39935c7ecf0251",
+    "manifest_sha256": "4f23f6a75fcd35f1516e46725a79bef5ec1db852e4e028b29e9823e6d5ad4300",
     "sanitized_sha256": "0c4cc4aeade78bb85bc7f61b089796bff2192eed73688de7f7c5a8ce2c3b045f",
     "source_sha256": "79d7e40137be1bdef0fbd4ec3abfbb1c4a959ceb8072b4f51ca97794143fb2e1"
   },
@@ -45,8 +49,5 @@
     "subcategory": "office.markdown",
     "task_intent": "review Markdown structure and documentation format integrity"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

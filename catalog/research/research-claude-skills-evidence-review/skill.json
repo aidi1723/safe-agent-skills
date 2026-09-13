@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T16:17:52Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "d4fca88ed2a8453df3b23f627bee898b535369cc29a23e1a9ce594b609a43e1b",
+    "manifest_sha256": "33c7a1f4a9f88d7f83aaeb8a750c1e6ab90478cf76a097eef90bffddee26ee41",
     "sanitized_sha256": "a528eeb40222544bbddadbd257dad83996abd11e6e8656b0e7ddbd25efc7f33a",
     "source_sha256": "080156325acf5227f6aeb189644bddf02ad7d75bd123a7dffa7273e8661d75a5"
   },
@@ -45,8 +49,5 @@
     "subcategory": "research.claude_skills_evidence",
     "task_intent": "review claude-skills grants, literature review, patent, dossier, syllabus, NotebookLM-style, and deep-research references"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

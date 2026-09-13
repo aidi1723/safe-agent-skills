@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:51:57Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "b8ab0a9207fe85597ca5a2d60ce0a58fb233f0c11a06947447c8006978f0d3fa",
+    "manifest_sha256": "c45b883bedeb9ae44775bac6489602ab01741d09225a5a72852144ccfb11fb64",
     "sanitized_sha256": "df09b68247f804f2856d570334f5c765586911e5cad02faffbff46d7a8812e2b",
     "source_sha256": "4c734269127613ce27d88caa81eb548c18ae630c5fcd3c27061712f02fdcf20d"
   },
@@ -45,8 +49,5 @@
     "subcategory": "business.sales_engineering",
     "task_intent": "review sales engineering discovery, solution fit, demo scope, and pre-sales handoff readiness"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }

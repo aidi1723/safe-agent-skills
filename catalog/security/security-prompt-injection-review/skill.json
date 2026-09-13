@@ -13,6 +13,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "prompt_or_skill_source"
     ],
@@ -28,11 +29,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e26cfb6f3fc864f7fe55e95f29495ada7f2494a70c0e51020cd4121a14e607d2",
+    "manifest_sha256": "b48f774a4090baa162eec6482c452371581708ddc9393ac4e5bfdc6e5167cf2f",
     "sanitized_sha256": "8e303e1dc3b88bbeedbe025d533ef50fe6aa22e588e0778ee581d21be78eb56f",
     "source_sha256": "8fb186df92da0dfc902b990c5a9b27de2aca1aa682ea27123e83e14f7ccddbfa"
   },

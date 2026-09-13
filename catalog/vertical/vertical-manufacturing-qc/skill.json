@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-06-04T07:47:37Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "cecfa220f57b61075cf731deca73fa5b6b16d73e79727820e45bc3bfac389b1c",
+    "manifest_sha256": "2676038aa47cad5b23019a81a0d23c8a28c34bbe7bdbc5db62b0908f83ca9359",
     "sanitized_sha256": "90885f9a513f29b569300bc5bb07e5b59eda8f6a85d009ed6ee124b50281a803",
     "source_sha256": "b4aa94375dc0d9c4483a8af95ddcf46fb6022e4b44846b5621a509f835305801"
   },
@@ -45,8 +49,5 @@
     "subcategory": "vertical.manufacturing",
     "task_intent": "prepare manufacturing quality-control checklists and defect summaries"
   },
-  "version": "0.1.0",
-  "contract": {
-    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
-  }
+  "version": "0.1.0"
 }
