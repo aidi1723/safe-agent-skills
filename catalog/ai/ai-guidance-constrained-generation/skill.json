@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T09:25:13Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "15bf51d244856fcef654eb6dc6e12ec342d4ef0bf87a0c39e9b21f72c4308d73",
+    "manifest_sha256": "6b7cf45ea132449a513fb05e8b2afe759743318cbc13e41ba35b8d16f73496f3",
     "sanitized_sha256": "56829ffce10f4983ad9a3cd2a135afdaf360107841a78b0798e7558d3a56ac9f",
     "source_sha256": "b408a20f91a76de3ada7bf0d8ddb42385c29099a2443bf5c6e2279a71a2403c4"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.constrained_generation",
     "task_intent": "control LLM generation with explicit output constraints"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

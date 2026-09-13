@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:47:36Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "848e291ad814419a8cf31de11ad3244361dfd0963aac5d3cb5847af25fe74feb",
+    "manifest_sha256": "91e63933fe682348c4a2a6001321db17f1d3185b633748975d1bcaf803b5ccc3",
     "sanitized_sha256": "6b78043d3d6aa1124d737cf88d75031ac54ed7280517c8f7ea1e608318e5eb80",
     "source_sha256": "9ac244fe631bf26deca5dc370402f1c94beebf896c28713a70ee105b1d9eb5d6"
   },
@@ -45,5 +45,8 @@
     "subcategory": "compliance.accessibility",
     "task_intent": "review accessibility policy commitments and evidence"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

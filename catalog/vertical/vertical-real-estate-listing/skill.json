@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:47:37Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "a8f6ee4f9af9ae534ddba9457898311232f20005707c8c09758dc88b3648268d",
+    "manifest_sha256": "eaaa6d065d0ed180b92ec6a9a634c45d684b84e6f0d072bcf9d8d017e1f0d65b",
     "sanitized_sha256": "8453d18fccb7e03ecdb505dc51dc9546dd9975f253f934a42d2daf8428f9ccf4",
     "source_sha256": "3fb3d065fc4ff9614a9e7d6edaa304f8daf84826faaa7941811fb3898ef4c9f5"
   },
@@ -45,5 +45,8 @@
     "subcategory": "vertical.real_estate",
     "task_intent": "draft and review real-estate listing content safely"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

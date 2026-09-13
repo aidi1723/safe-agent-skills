@@ -13,11 +13,11 @@
     "requires_context": [
       "requirements_brief"
     ],
-    "stage_hint": "planning"
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f636939e2f00faf75fd4b2c4983b145676af0b028779be19fd7641f131eefdcf",
+    "manifest_sha256": "000aa8ca8cf4ca460a7e6886a9e50ce32a096b500841f0468efcf848a741caa5",
     "sanitized_sha256": "d9feea2f437d1288f74ca93a3929aeeb5922ea9f24669a309a5f94c21953c9f8",
     "source_sha256": "03991bf5b34b8012e00597f3f272d69a33bad5fab60900fed22a4a8df19deb54"
   },

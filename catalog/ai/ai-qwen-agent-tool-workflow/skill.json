@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T10:12:52Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "761f758a3ca56395852e0436eadc539a193fda803aca655cc8556d555563c0cb",
+    "manifest_sha256": "e48df6014f8ef10f71b7a145d9b23a1f044ca24fc377c9452e2e94c7179e8bb6",
     "sanitized_sha256": "06351fc52839dd0c1238b730bf425bc1176a52974cc43296b5e1f5213cf6cb36",
     "source_sha256": "5d45e3137391c3883415ea548b4ca7eca5bacb6d3c5ec445d499b81da48d39b7"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.tool_workflow",
     "task_intent": "review model tool workflows with function calling, RAG, and connectors"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

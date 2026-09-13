@@ -26,11 +26,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "stage_hint": "review"
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "bab0e51c1f0a0849b32648b4171dff9069f5555cf98b74d1ca460e8dd4c72637",
+    "manifest_sha256": "805733751d6992cd9d09e8efd00c65947a4e15a69b490bff37373930142e8935",
     "sanitized_sha256": "c0005c155384ed3ef6a7fc7c64f13b74285945f7730ace3903c33c813df24dc2",
     "source_sha256": "b34a564b300023407053a45d02e9a9aa662add202ecb5663faf218909af02c34"
   },

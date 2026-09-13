@@ -1,0 +1,79 @@
+{
+  "allowed_tools": [],
+  "approval_note": "Approved for Phase 4 Tier 1 implementation.",
+  "approved_at": "2026-09-13T05:00:00Z",
+  "contract": {
+    "approval_classes": [],
+    "capability_vector": [
+      "code.refactor"
+    ],
+    "estimated_cost": {
+      "runtime": 0,
+      "time": 2,
+      "tokens": 2
+    },
+    "idempotent": true,
+    "optional_context": [
+      "test_suite"
+    ],
+    "produces_artifacts": [
+      "refactored_code"
+    ],
+    "produces_evidence": [
+      "refactoring_summary"
+    ],
+    "requires_context": [
+      "code_to_refactor"
+    ],
+    "retry_policy": "host_decides",
+    "schema_version": 2,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  },
+  "findings": [],
+  "hashes": {
+    "auxiliary_sha256": null,
+    "manifest_sha256": "5801c4260bdfba9011b85054170b67a8e4b27aeec4da316702057098b5615a45",
+    "sanitized_sha256": "32633e86e3060800c1d58075f1b709a5c3be343306e90f4175b8d4f2d12787cc",
+    "source_sha256": "placeholder",
+    "self_hash": "ca3d9a347e9fc8039249faf3d351378d0f7e79f6c0c7d44fad8dd094caf39a2d"
+  },
+  "name": "code-refactor",
+  "policy": {
+    "approval": {
+      "required_for": [
+        "trust",
+        "execution"
+      ]
+    },
+    "filesystem": {
+      "scope": "workspace_only"
+    },
+    "network": {
+      "allowed_hosts": []
+    }
+  },
+  "risk_level": "low",
+  "sanitization": {
+    "findings": [],
+    "sanitized_at": "2026-09-13T05:00:00Z"
+  },
+  "source": {
+    "author": "OneCode Project",
+    "captured_at": "2026-09-13T05:00:00Z",
+    "collected_by": "phase4-tier1-implementation",
+    "license": "Apache-2.0",
+    "path": "catalog/code/code-refactor",
+    "reference": "docs/router-v3-phase4-plan.md",
+    "type": "local_folder",
+    "url": null,
+    "usage": "local_authoring"
+  },
+  "status": "trusted",
+  "taxonomy": {
+    "artifact_type": "code",
+    "category": "code",
+    "collection_priority": "P1",
+    "subcategory": "code.refactor",
+    "task_intent": "refactor code to improve readability and maintainability"
+  }
+}

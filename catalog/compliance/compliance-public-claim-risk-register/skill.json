@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T13:17:08Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "79e533fa936147cfe779c25b20b09e32a1a049f0ba3f9bd11f94813b33410b6d",
+    "manifest_sha256": "1d624fdf13179e2be6809c772b792e932d1215c9f48afb4c8412a121803effcb",
     "sanitized_sha256": "db7fe77ded5adf6a1063aef198712251e146d1cfaa22064642cf2f040cabe21a",
     "source_sha256": "7ff2730e1248c6db71a8c938b0035d1903a3bc62c76b7afcc24e8be39e93c609"
   },
@@ -45,5 +45,8 @@
     "subcategory": "compliance.claims",
     "task_intent": "register public claim risk before publication"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

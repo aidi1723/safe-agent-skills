@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:30:00Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "2e3e9ae402a190dc8f17258adabf32d67961cae433ba02290f471f128dd7f185",
+    "manifest_sha256": "ad2e9dc076f2d8f11548a9a2652d7bd96f616aafc9e19ac5526ab096be51a29d",
     "sanitized_sha256": "a7aa611bd1a94b607e70b65ee1e1db37ee458da5e2e5fcb4d1bab8f238e9924c",
     "source_sha256": "fcb3fef508b575773a285e4a6cdadadc30ba9e6ced598f06b5986ff80264e252"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.finance",
     "task_intent": "review business financial analysis, variance, unit economics, and cash planning evidence"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

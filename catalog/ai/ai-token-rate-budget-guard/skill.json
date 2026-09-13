@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T12:54:22Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "fe9be514862c06c50f4a2481bf0c34c89fd3c690a9c8d10992f1e8f1c56e5669",
+    "manifest_sha256": "eb72857e6de9eabd7c153b460615f1cc20908acea94f429203ec199b750ab6a5",
     "sanitized_sha256": "919881b1c0987572f91ff70172324b5074174ee58e30f9bc959ca4ea0d3df3bd",
     "source_sha256": "930348316f2dc7c390e43f3ab38c613d0f5bfe3a54f0c068857be04a1d6415c2"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.budget",
     "task_intent": "guard token usage and rate budget for AI workflows"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

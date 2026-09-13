@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:30:00Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "068eddf5e8fd6b11865832b41bdd2a8a6e5d500e5ce7d3eb8f04abb2fdb8aa48",
+    "manifest_sha256": "733f39864ded26eada948063c27108fbf892be218d32f515d310ef5682623e7f",
     "sanitized_sha256": "0c596f0df0a6a45f2ebdbbd27c809d7607169ffde0e00733e339802ca55158be",
     "source_sha256": "a3472c43c5074a579c05e33632ed0320e2503cba28e40bd26e7112f32c84b325"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.process",
     "task_intent": "review process maps, handoffs, bottlenecks, controls, and workflow improvement evidence"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

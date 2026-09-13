@@ -4,7 +4,7 @@
   "approved_at": "2026-06-16T09:36:29Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "aeaa37d515d939a894f76733c2ccf6372a8ca045c63a0069bbbe9fc12772ec0d",
+    "manifest_sha256": "e5874ee91189c2dbbf97006ad0e986566a461ec561151d700ea35c022ffd997b",
     "sanitized_sha256": "2c3100f65ba767fa9f3c104a89a1140e4ec8d1a53157886e8f8d1a4a763c56d9",
     "source_sha256": "f80163a7d40ab4bb945403fe02286783581f062f92cd11e589b63c13792e656c"
   },
@@ -45,5 +45,8 @@
     "subcategory": "content.strategy",
     "task_intent": "plan a content matrix and multi-format content system"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

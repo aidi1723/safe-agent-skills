@@ -14,6 +14,7 @@ Usage:
 
 import argparse
 import json
+import os
 import subprocess
 import sys
 from datetime import datetime
@@ -27,7 +28,7 @@ def load_tasks(task_file: Path) -> Dict:
         return json.load(f)
 
 
-def run_v3_router(task_description: str, registry: Path, bundles: Path) -> Dict:
+def run_v3_router(task_description: str, registry: Path, bundles: Path, use_bundle_v2: bool = False) -> Dict:
     """
     Run Router v3 on a task and return selected skills.
 
@@ -40,7 +41,7 @@ def run_v3_router(task_description: str, registry: Path, bundles: Path) -> Dict:
         }
     """
     cmd = [
-        "python3", "-m", "onecode_skill_sanitizer",
+        sys.executable, "-m", "onecode_skill_sanitizer",
         "smart",
         task_description,
         "--schema-version", "3",
@@ -49,13 +50,20 @@ def run_v3_router(task_description: str, registry: Path, bundles: Path) -> Dict:
         "--format", "json"
     ]
 
+    if use_bundle_v2:
+        cmd.append("--use-bundle-v2")
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = "src"
+
     try:
         result = subprocess.run(
             cmd,
             capture_output=True,
             text=True,
             timeout=30,
-            env={"PYTHONPATH": "src"}
+            env=env,
+            cwd=Path(__file__).parent.parent
         )
 
         if result.returncode == 0:
@@ -117,7 +125,8 @@ def evaluate_single_task(
     task: Dict,
     arms: List[str],
     registry: Path,
-    bundles: Path
+    bundles: Path,
+    use_bundle_v2: bool = False
 ) -> Dict:
     """
     Evaluate a single task across selected arms.
@@ -146,7 +155,7 @@ def evaluate_single_task(
 
     if "v3" in arms:
         print(f"  Running v3 router...")
-        result["arms"]["v3"] = run_v3_router(description, registry, bundles)
+        result["arms"]["v3"] = run_v3_router(description, registry, bundles, use_bundle_v2)
 
     if "oracle" in arms:
         print(f"  Getting oracle selection...")
@@ -316,6 +325,12 @@ def main():
         default=None,
         help="Limit number of tasks to evaluate (for testing)"
     )
+    parser.add_argument(
+        "--use-bundle-v2",
+        action="store_true",
+        default=False,
+        help="Use Bundle v2 (core/conditional structure)"
+    )
 
     args = parser.parse_args()
 
@@ -335,7 +350,7 @@ def main():
     results = []
     for i, task in enumerate(tasks, 1):
         print(f"[{i}/{len(tasks)}] ", end="")
-        result = evaluate_single_task(task, arms, args.registry, args.bundles)
+        result = evaluate_single_task(task, arms, args.registry, args.bundles, args.use_bundle_v2)
         results.append(result)
         print()
 

@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:51:57Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "d68932b14fe7d97b1f33ac1ac509aaa1095c03f37dbe479851f045726d9cc328",
+    "manifest_sha256": "b40bce03426686e2533f0b0ef83e37ce61f9cb5f2cf45cb8d521c14785cb9940",
     "sanitized_sha256": "cbf59a3598ca75c9c64466a71d186c20a3f3df134142ca6d0d31ff499e0bc589",
     "source_sha256": "1e813c32d3a7f60f562d0d83f632fd8212e2677762b04b77dabd246ecc03a8cf"
   },
@@ -45,5 +45,8 @@
     "subcategory": "research.finance",
     "task_intent": "review finance assumptions, funding evidence, unit economics, grant budgets, and research operating costs"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

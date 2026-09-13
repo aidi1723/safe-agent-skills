@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:10:07Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f08b0622e4adf82f7345f6a45b6fa0d4b515f2d601967aeb227868f63e232727",
+    "manifest_sha256": "1e14415c45531790ac010216c9ebdc37dff793012608b9d76d3168f8d699e009",
     "sanitized_sha256": "84e25802452dbc624295e268e381261b50cd5ffa51d4d030712291f894204146",
     "source_sha256": "e150ec1899867f8c20c94f1f8d9cbabb637577b03083c6178a072ee86f386e9a"
   },
@@ -45,5 +45,8 @@
     "subcategory": "media.image",
     "task_intent": "review media assets for readiness and usage risk"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T12:45:18Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e358c174ac23570eb282d668ac0a56994e9be69e62465d097da961cc16e95547",
+    "manifest_sha256": "dda4e931c8a5e19349f10ad16b1348fdf58550004157f8828b1bf5b9503178ac",
     "sanitized_sha256": "34e7782685b510e9cc234eae027c67729359788e1a35460e9cdbab8646e7bce2",
     "source_sha256": "4c42072465a32405a75c363951633c9895d1c216149e2bea3862706d8c2775bf"
   },
@@ -45,5 +45,8 @@
     "subcategory": "research.lineage",
     "task_intent": "trace factual claims to source lineage"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

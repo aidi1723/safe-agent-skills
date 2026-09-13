@@ -30,11 +30,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "stage_hint": "planning"
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "9f6cfaec1f0248cb4b6308fc725f391cecc10c1f379b31ada1a4c6f5d4631d0b",
+    "manifest_sha256": "a5e68838a3a28283967dea33358df2fc24c512b4e429029b9b08b18961fb3da2",
     "sanitized_sha256": "dc9d9107d239bcb8d2470ca81b9c91cce9318934a7b21225b5f3dacaa6d38731",
     "source_sha256": "9d4befd7337a96bee73d4083e1dae474a77dc698abc5a51757df5cf243576a49"
   },

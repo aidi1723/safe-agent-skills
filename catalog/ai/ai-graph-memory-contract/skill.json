@@ -4,7 +4,7 @@
   "approved_at": "2026-07-03T11:11:39Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "9a0ca7b832c4f7607799e1029c1fceade0e5104cff8357a455fb4d9d1adda549",
+    "manifest_sha256": "90f8b06ace8039e30f132ff55858da1606dfc69c870a1460be62a6b7cbb0c90b",
     "sanitized_sha256": "8d54e14f509c448f444aa6713bd5df1895a79e803117f780ea7a7925a1465531",
     "source_sha256": "5c1436c32063d1844c5df9883f9082331513260f7180edb6e85bbba290fbe06a"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.memory",
     "task_intent": "define long-term graph memory operation contracts with provenance, disclosure, and tenant boundaries"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

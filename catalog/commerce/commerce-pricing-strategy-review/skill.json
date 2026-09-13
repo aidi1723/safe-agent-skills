@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:20:41Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "a57db7a1123a4f75f19c5cbbee1e34369342cbb9b2c5eec2aeebffd5519f79c5",
+    "manifest_sha256": "2b9d316cc8a836c6490f4a08ec2714e1dfb8b3b0d0dbfa84ef4d7b78fd7fa8f7",
     "sanitized_sha256": "8e1f92af733f54341c6a9e8fc01cd52cd05fd7a5016db89684e49c26b0f56a70",
     "source_sha256": "4e4d913e1816afff4d7b32e9994c2dcccd31664af5d636531a5051ef4745417c"
   },
@@ -45,5 +45,8 @@
     "subcategory": "commerce.pricing",
     "task_intent": "review pricing, packaging, discounting, and margin tradeoffs"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

@@ -5,7 +5,7 @@
   "findings": [],
   "hashes": {
     "auxiliary_sha256": "116b7e8f8df12c73f0a261fb063a7a9ae2b929a788e6d9c1b554fffa80c24ec3",
-    "manifest_sha256": "0400ac998994470bfe885be4b8c03ee88c85b1d0abfe92db57d07791dbde6a53",
+    "manifest_sha256": "8854979d056a5f4db41837c3a9df9e84c5977fc932e40b455865defcf0431861",
     "sanitized_sha256": "130398e1cec8db0eab0ef83ff454c2b61d57ce35ac8870c0fe7435909f737e3b",
     "source_sha256": "f9b6206d85b37cad967a410aa7515bec5ad9b9762234d7ce027895241a5b182f"
   },
@@ -46,5 +46,8 @@
     "subcategory": "office.docx",
     "task_intent": "draft and review structured office documents"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

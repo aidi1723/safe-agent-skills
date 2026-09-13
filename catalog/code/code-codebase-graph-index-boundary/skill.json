@@ -4,7 +4,7 @@
   "approved_at": "2026-07-03T11:11:39Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "6310250b769aead6434a9866db6e595bde23b4cbcc5ac5207b9f04d823f0f2cd",
+    "manifest_sha256": "25fa527888de32051226bd7e849c591036e4084ce42224c46db0465e88819059",
     "sanitized_sha256": "afc7bca7d53edec3ad55b2db93800644dd57cc989e68f44ceb5442b51158fdd8",
     "source_sha256": "10eb1eea6f2a732aa67442036522d3a6375882d4229c15b119599624dacabefd"
   },
@@ -45,5 +45,8 @@
     "subcategory": "code.explore",
     "task_intent": "review codebase graph index and MCP code intelligence boundaries for structural repository exploration"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:20:41Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "8e6c0bf9e3863d32613472c413a57bee92a955340ccfd49f6f440bc4182a3468",
+    "manifest_sha256": "bb37f1fbac8febcf59cf7d48dc340c997a4fcc1d7ba208ae60155d189327bdb7",
     "sanitized_sha256": "321d262d892a43f0398541065a6dd01b6192fc9d039d062015a953f4670255be",
     "source_sha256": "fac04e46f187f33e3d64d3bd9b739cbd16e31031461b9c30c112afb112c664b5"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.customer_success",
     "task_intent": "review customer health, churn risk, renewal readiness, and adoption gaps"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

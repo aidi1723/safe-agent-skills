@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:35:45Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "47b7e80d8f70d4d70ce8b316cb2fe31005f03b0bcd0d73d4db39ef0ffd83457a",
+    "manifest_sha256": "7a6500313102ff53a1dd25b55f226d824bfc041ab8820b156c369a89787aef31",
     "sanitized_sha256": "454e987bfa2f674bef8d3b3abc06259177e82985145e1047c04626e4586c39b4",
     "source_sha256": "47dfabdf228d71fe544a285d07a37749743ca08bf14a973c22b89e10c512ec7e"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.context-engineering",
     "task_intent": "adapt context-engineering patterns for safer AI coding workflows"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:47:37Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "7466870902d39d3970584530b2e0dc9d3e9d701c94493820c3aaf2bf825b48a7",
+    "manifest_sha256": "fc0eb5e8838f9e7f343d98ebea42b1ba9977519f587150a1ceb9aafc36896309",
     "sanitized_sha256": "8203f7738f50394bcbf8b54a588d76cbe65f2e23e4e243cd8bf398fcb60f10ea",
     "source_sha256": "d1200761d1db95b2ed237786862b6acb9568fa61e33bf62823fd454e9054fcc6"
   },
@@ -45,5 +45,8 @@
     "subcategory": "execution.files",
     "task_intent": "run bounded batch file workflows inside the workspace"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

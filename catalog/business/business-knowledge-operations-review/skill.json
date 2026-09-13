@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:30:00Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "1e09be712cbc725f180a64110a12250b082f39b9f5bceb70586e54ada7d1dca2",
+    "manifest_sha256": "549189cf7f66e1720c4d89921c76ae1dfc73551904f9d94034576207a5ec915c",
     "sanitized_sha256": "bb96a466daee2523a8a8719065589e141f41d8beae346ba87a0cf472947f2b29",
     "source_sha256": "22f000b6a4c877e7a049f18a02aee8f07857f50e1d9b1ba1ee6bde1fe65ac287"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.knowledge_ops",
     "task_intent": "review internal knowledge operations, documentation ownership, freshness, and discoverability"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

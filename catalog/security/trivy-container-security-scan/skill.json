@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:35:45Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "f11294132ee0e8b91f0e69870eede7f0261170f8021d5895fb50c39adc851719",
+    "manifest_sha256": "1656d860820b5de7c15e4eb8cfa694896d99f86a2c278832d6626a56b8d3e1b9",
     "sanitized_sha256": "0e8f526c9c1d1e2e140966c5b1f17c8ece3f9be16f81c3156a0a8eda6c757e05",
     "source_sha256": "bf9c26cdfb36665e2278b0933bdf3e9113a7ae9b75c49d6cf107663bb1381b30"
   },
@@ -45,5 +45,8 @@
     "subcategory": "security.container",
     "task_intent": "review container, dependency, IaC, secret, and SBOM security scan results"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

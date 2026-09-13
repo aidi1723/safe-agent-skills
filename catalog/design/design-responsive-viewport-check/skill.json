@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T10:56:41Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "ade5e88726fafecc164a061cda3e82b58b9cf8ba10bd3914dede5a7bb986b650",
+    "manifest_sha256": "7f1bf627b5723cf25f2d037a5e78fa3f0d7580234bb87fe8df586947e0aac57b",
     "sanitized_sha256": "1cb5d06263979d4a1b5acdd086f8a9687ebc5b7d187bebee8e2bd12e6eda2bf9",
     "source_sha256": "025a1ccc4a7ee18d28926022f2014fcab27e0c6370660037d37488d359195698"
   },
@@ -45,5 +45,8 @@
     "subcategory": "design.responsive",
     "task_intent": "check responsive layout behavior and viewport regressions"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

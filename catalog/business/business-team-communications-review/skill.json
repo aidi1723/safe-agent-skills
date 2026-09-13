@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:51:57Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "d1d0b589fe779137f7719d185a11fefe3e089be3c45bbb327e1fd3470fb922ee",
+    "manifest_sha256": "217e767b40d3a6fdc0a2de9e6056bd0129d90febecc56964addfd6744d4659c2",
     "sanitized_sha256": "2a0e59ce84a3644911814fcb86e778a4251756e2ceb30d1cf4bef300a364884b",
     "source_sha256": "c183170c9d8a709fe7eb8ef014d8be34d27de44e3f4cb0082a294e90fb6b10a2"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.team_communications",
     "task_intent": "review internal communications, stakeholder updates, escalation notes, and cross-functional alignment"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:51:57Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "ec56485bddb1aa7626bca9d360f9cfdf874dd842bb38034675ebfd44069c7b96",
+    "manifest_sha256": "6f2f9b711e212212b1df25bb38f76c78048553063304beb3ada35bf1a4fd27dd",
     "sanitized_sha256": "213d165c705799bc4f2a10c802d114dc20fa7ef4336b9e1c8ff5369c8833d4c3",
     "source_sha256": "b85548e66e83d43ab6b8db9fb5232ad7ed81baa0d06239387eec75d427324eba"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.contract_proposal",
     "task_intent": "review proposals, contract drafts, scope terms, acceptance criteria, and customer commitments"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

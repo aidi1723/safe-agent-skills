@@ -273,3 +273,107 @@ def get_scenario_top_matches(
 
     scored.sort(key=lambda x: x["score"], reverse=True)
     return scored[:top_k]
+
+
+def apply_bundle_selection_logic(
+    bundle: dict[str, Any],
+    task: str
+) -> list[str]:
+    """
+    Apply core/conditional selection logic to bundle.
+    
+    For Bundle v2 schema with core_skills and conditional_skills.
+    Falls back to legacy 'skills' field if core_skills is absent.
+    
+    Args:
+        bundle: Matched scenario bundle
+        task: Original task description
+    
+    Returns:
+        List of skill names to select for this task
+    """
+    # Bundle v2: Use core_skills + conditional matching
+    if "core_skills" in bundle:
+        selected = list(bundle.get("core_skills", []))
+        
+        # Check each conditional skill trigger
+        for conditional in bundle.get("conditional_skills", []):
+            trigger = conditional.get("trigger", "")
+            if trigger and re.search(trigger, task, re.IGNORECASE):
+                selected.extend(conditional.get("skills", []))
+        
+        return selected
+    
+    # Bundle v1: Use legacy skills field
+    return list(bundle.get("skills", []))
+
+
+def match_scenario_bundle_v2(
+    task: str,
+    bundles_path: Path,
+    threshold: float = SCENARIO_MATCH_THRESHOLD
+) -> dict[str, Any] | None:
+    """
+    Match task to best scenario bundle using Bundle v2 schema (core + conditional).
+    
+    Args:
+        task: Normalized task description
+        bundles_path: Path to bundles/index-v2-tier1.json or bundles/index.json
+        threshold: Minimum score to accept a match (default 0.30)
+    
+    Returns:
+        Matched scenario dict with skills selected via core/conditional logic, or None
+    """
+    bundles = load_scenario_bundles(bundles_path)
+    
+    if not bundles:
+        return None
+    
+    # Score all bundles
+    scored_bundles = []
+    for bundle in bundles:
+        score = calculate_scenario_score(task, bundle)
+        scored_bundles.append((bundle, score))
+    
+    # Sort by score descending
+    scored_bundles.sort(key=lambda x: x[1], reverse=True)
+    
+    # Return best match if above threshold
+    best_bundle, best_score = scored_bundles[0]
+    
+    if best_score >= threshold:
+        # Apply core + conditional selection logic
+        selected_skills = apply_bundle_selection_logic(best_bundle, task)
+        
+        # Count core and conditional skills
+        core_count = len(best_bundle.get("core_skills", []))
+        conditional_matched = []
+        conditional_skipped = []
+        
+        for conditional in best_bundle.get("conditional_skills", []):
+            trigger = conditional.get("trigger", "")
+            if trigger and re.search(trigger, task, re.IGNORECASE):
+                conditional_matched.append({
+                    "trigger": trigger,
+                    "skills": conditional.get("skills", [])
+                })
+            else:
+                conditional_skipped.append({
+                    "trigger": trigger,
+                    "skills": conditional.get("skills", [])
+                })
+        
+        return {
+            **best_bundle,
+            "skills": selected_skills,
+            "match_score": best_score,
+            "match_confidence": "high" if best_score >= 0.6 else "medium",
+            "skill_selection": {
+                "core_count": core_count,
+                "conditional_matched": conditional_matched,
+                "conditional_skipped": conditional_skipped,
+                "total_selected": len(selected_skills)
+            }
+        }
+    
+    return None

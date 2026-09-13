@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T13:01:26Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "4f450514283629012dfdf2b5ec17955d3a3b0e3c607a5fc36f1db172610dd894",
+    "manifest_sha256": "96034f80405c461f798f6d02f34aa64d0a4854279ee4b71b44e20af5698a0219",
     "sanitized_sha256": "f02d80640d8435214a7e2276b5fb68896b19a19e177738e036141ed2f44ac07d",
     "source_sha256": "aff69ddbec3ebd89d402aa9b4ba2f85f4e63721b5cf58e05b3d0b25eaf43fd9c"
   },
@@ -45,5 +45,8 @@
     "subcategory": "code.dependencies",
     "task_intent": "review dependency cycles and module boundaries"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

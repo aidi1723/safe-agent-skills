@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T13:16:19Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "ca952d932dd43a46953d94163f52f4485ce680695f5bfa96bfc4c797c5420439",
+    "manifest_sha256": "3c6206b4bdd1fc8d8780c5ca31f5aac63a9c3fe93f638197c295efc29632994b",
     "sanitized_sha256": "6eabda0ae8543e0a4fa45a9427254c1d7ca2e89f91d9f23b4d13b3bc4ddd31a5",
     "source_sha256": "4a6220d19f3b118a5317f9ab1e9c80a8948c62ab86b7da73ba3b17c828a0ab61"
   },
@@ -45,5 +45,8 @@
     "subcategory": "research.evidence",
     "task_intent": "map claims to citation evidence"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

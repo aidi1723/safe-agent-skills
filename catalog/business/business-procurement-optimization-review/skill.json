@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:20:41Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "2bebbb39e199a26405d98f9b3c0cdf1e26db9a85b9814a5050f1e5e359b1bf76",
+    "manifest_sha256": "5603c4b4ee7f29096b16ba8ee14d7946857c12856c5cd932c8ad32b0592850b7",
     "sanitized_sha256": "eea06d74c3e0a1635dad5052b563efeaa244dcc561978fccdcae16845b153a63",
     "source_sha256": "3c40b70b76eda1ea3c798c780787281284a205428a59f97c2786c8f09ad09c30"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.procurement",
     "task_intent": "review procurement spend, supplier risk, sourcing tradeoffs, and savings evidence"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

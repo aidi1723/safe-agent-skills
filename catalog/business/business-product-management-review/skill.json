@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:39:08Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "8786092f06d62947a0ab3b225531adc59d590ed18194e249adb663cf203e9916",
+    "manifest_sha256": "c10537cc6ef6635da3c4ad949f86847a7f55593c651fcb3cf684b029bcfd8d2f",
     "sanitized_sha256": "83e2e3897de1c9744b8f8b7b684115aa8a19b03a1a20225b4270e831079e4afe",
     "source_sha256": "31508bee68a56ed5b0e45a117868f65a0f0e51129e24d20761417d1f6128e755"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.product_management",
     "task_intent": "review product strategy, roadmap tradeoffs, PMF evidence, and prioritization assumptions"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

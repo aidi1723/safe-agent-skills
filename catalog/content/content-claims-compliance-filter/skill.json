@@ -14,11 +14,11 @@
       "requirements_brief",
       "seo_copy"
     ],
-    "stage_hint": "review"
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "a9e93fe8e2dacdd2f35e76ff8c9a98c20db0d88e4169f41c106b2eb583485f8b",
+    "manifest_sha256": "c74e1f62f03f7ba7feaa1ab49b7139f18f13cfe14a205c6802ecdd33bcf04dd4",
     "sanitized_sha256": "dd00d8b52c87cf5524a8f67fab07d06190489b5cd39e4682c8e39591b62954f8",
     "source_sha256": "8ade10e70311c3a09b962e1e3f2ee2bedbc1a0027ba5ab5abe08d8ebaee73f08"
   },

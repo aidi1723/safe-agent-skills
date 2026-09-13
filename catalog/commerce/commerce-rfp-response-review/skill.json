@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:20:41Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "7c49acad555d270fa435ef74f6cc7cb4ef0e94f68fa3cbcf11d2d4c88efc6086",
+    "manifest_sha256": "9b5088e2da2bba45419597f8ecc14e64615f32a74435ce2faa22ead553979f08",
     "sanitized_sha256": "055068c2f07f39c8c3300c3663f2270c3636d53cfb947454eea970137b9a2dca",
     "source_sha256": "4df953e3f79a2f9fa4d66cf4ed4437c4022be66da669427469f66d4b926f792d"
   },
@@ -45,5 +45,8 @@
     "subcategory": "commerce.rfp",
     "task_intent": "review RFP and tender response readiness with compliance mapping"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

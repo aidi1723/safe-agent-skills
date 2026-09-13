@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T13:08:49Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "540a67287af0071bc9a03dde3c4354561b9682e08c2d77d4b0f3aa435adc4f46",
+    "manifest_sha256": "3fa5de6562a78b93fff5010221a71805b8a7b01528915fe6c95faafc975f8cfc",
     "sanitized_sha256": "8e27430524779e7d293720a3d5b12b3e7d22a5c89ed5d5a980ebbe10f3b84129",
     "source_sha256": "742c62d179ea3f5b578b6964ef147758d7075ddc0c0fb80255f99fc858b0d038"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.streaming",
     "task_intent": "review streamed structured output boundaries"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

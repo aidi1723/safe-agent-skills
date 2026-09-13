@@ -10,6 +10,7 @@ from .skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 CAPABILITY_SKILL = {
     "code.explore": "codebase-explore-map",
     "code.review": "code-review-risk",
+    "code.refactor": "code-refactor",
     "code.test": "code-test-regression",
     "execution.browser_check": "execution-browser-check",
     "research.source": "research-source-check",
@@ -40,8 +41,15 @@ CAPABILITY_PATTERNS = {
         re.I,
     ),
     "code.test": re.compile(r"regression test|regression coverage|test coverage|failing test|test boundary|contract test|old behavior.*fail|red[- ]green|回归测试|补.*测试|失败用例", re.I),
+    "code.refactor": re.compile(
+        r"refactor|重构|"
+        r"improve (?:code )?(?:readability|maintainability)|"
+        r"提升.*(?:可读性|可维护性)|"
+        r"code cleanup|clean up (?:the )?code",
+        re.I,
+    ),
     "execution.browser_check": re.compile(
-        r"real browser|"
+        r"real browser|integration test|端到端|e2e|集成测试|"
         r"(?:run|check|verify|test|exercise) (?:the )?(?:existing )?UI flow"
         r"(?!\s+(?:(?:unit|integration|regression|contract|end-to-end|e2e)\s+)?tests?\b)"
         r"(?![^.;\n]*\bwithout\b[^.;\n]*\bbrowser\b)"

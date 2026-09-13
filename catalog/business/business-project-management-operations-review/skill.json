@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T13:57:22Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "875eb4cfb7cf3c1cc8b8748f4f935154840f036b18d9e360462eeec2df44942d",
+    "manifest_sha256": "9f1936c30c1632f7ef7752716ff74ffb98501587903f00d93d3337543696c733",
     "sanitized_sha256": "f88868985ca2943c805b37b6f3abe963c0ce0969cd9b4594a5088b4c7b84b905",
     "source_sha256": "0e610933dff9c12ad17b00414c84e78b089ee56c23689b4a122463a5f431dbdb"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.project_ops",
     "task_intent": "review project management operations, delivery cadence, scope control, stakeholder alignment, dependencies, and execution governance"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

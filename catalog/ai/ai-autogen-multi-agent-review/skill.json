@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T10:11:35Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "4db64ba6d7fa2c4f9a83e2d97c56353b7e392870f6828408e3a5e3d698298a6d",
+    "manifest_sha256": "73cc0f8704ce8f6442fd690a22223010fab77d86bfba82335abae8f34a35a0e5",
     "sanitized_sha256": "3db5c126cb110276ea5b5b5619707048a2261800ed41c11f8f9ba06581b5bc99",
     "source_sha256": "c6186295e35cbd96b1a4cc6344fd035233466d1a641b60117b6646e770f4a973"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.multi_agent",
     "task_intent": "review multi-agent collaboration roles and handoffs"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

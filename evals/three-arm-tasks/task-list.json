@@ -12,7 +12,7 @@
       "expected_scenario": "website-build-launch",
       "expected_skills": [
         "design-responsive-viewport-check",
-        "content-seo-review",
+        "content-seo-brief",
         "execution-browser-check"
       ],
       "complexity": "high"
@@ -140,7 +140,7 @@
       "expected_scenario": "commerce-listing-growth",
       "expected_skills": [
         "commerce-product-content-review",
-        "content-seo-review",
+        "content-seo-brief",
         "design-ui-review"
       ],
       "complexity": "medium"
@@ -211,8 +211,8 @@
       "description": "审查skill路由器的质量，验证选择准确性和执行图正确性",
       "expected_scenario": "skill-router-quality-review",
       "expected_skills": [
-        "ai-routing-accuracy-review",
-        "ai-dag-execution-graph-check",
+        "ai-output-schema-eval",
+        "ai-tool-schema-protocol-check",
         "code-test-regression"
       ],
       "complexity": "high"
@@ -441,7 +441,7 @@
       "description": "优化网站SEO，提升搜索引擎排名",
       "expected_scenario": null,
       "expected_skills": [
-        "content-seo-review",
+        "content-seo-brief",
         "content-freshness-expiry-review",
         "execution-browser-check"
       ],

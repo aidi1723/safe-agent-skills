@@ -1,0 +1,83 @@
+{
+  "evaluation_name": "three_arm_router_v3_acceptance",
+  "evaluated_at": "2026-09-13T13:54:37.370621",
+  "task_file": "../evals/three-arm-tasks/task-list.json",
+  "arms_evaluated": [
+    "v3"
+  ],
+  "task_count": 3,
+  "results": [
+    {
+      "task_id": "task-001",
+      "description": "构建一个产品官网，包含响应式设计、SEO优化和性能检查",
+      "category": "website-build",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": "/opt/homebrew/opt/python@3.14/bin/python3.14: No module named onecode_skill_sanitizer\n"
+        }
+      },
+      "metrics": {
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-002",
+      "description": "审查这个 API 的安全性，检查认证、授权和输入验证",
+      "category": "code-review",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": "/opt/homebrew/opt/python@3.14/bin/python3.14: No module named onecode_skill_sanitizer\n"
+        }
+      },
+      "metrics": {
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-003",
+      "description": "分析销售数据，生成月度报告，包含趋势图和洞察",
+      "category": "data-analysis",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": "/opt/homebrew/opt/python@3.14/bin/python3.14: No module named onecode_skill_sanitizer\n"
+        }
+      },
+      "metrics": {
+        "route_complete": false,
+        "route_blocked": false
+      }
+    }
+  ],
+  "aggregate_metrics": {
+    "total_tasks": 3,
+    "scenario_match_rate": 0.0,
+    "avg_skill_precision": 0.0,
+    "avg_skill_recall": 0.0,
+    "avg_skill_f1": 0.0,
+    "route_completion_rate": 0.0,
+    "route_blocked_rate": 0.0,
+    "passing_criteria": {
+      "scenario_match_rate >= 0.90": false,
+      "avg_skill_f1 >= 0.85": false,
+      "route_completion_rate >= 0.95": false,
+      "route_blocked_rate < 0.05": true
+    }
+  }
+}

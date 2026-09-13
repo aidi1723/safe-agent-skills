@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T13:09:00Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "d528db657bc20e699fbd0e0a7e3d5b949698da5208cdd0dab9890a7986fbfd14",
+    "manifest_sha256": "f7efd73a79cbad4eefceb7acd70b39ef0a0f73dc4afde6d15d0bdae64375cb1d",
     "sanitized_sha256": "6fe61e3d956a37843877f50416aab3b16374a96462e592dec205b837fd72dece",
     "source_sha256": "ab2a3548c1de2a7f9524d32f2026cc6d24507561f63713099c41bdb1a6fae2a6"
   },
@@ -45,5 +45,8 @@
     "subcategory": "data.rag-boundary",
     "task_intent": "check RAG retrieval namespace boundaries"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

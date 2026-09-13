@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:47:37Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "743cdca7b81d13235b01973e66b8e4a1e6728a93c7a8bf922504c66454bed286",
+    "manifest_sha256": "7692e0e6befc0f31dfff6284b2850f690ae4c43e4f9f1591ea94e8669bb47261",
     "sanitized_sha256": "d7a1816ecf16eb543c7b699c61dc45eb946f71627b523b251f6c8509789c660c",
     "source_sha256": "d5641f41f4e717a5182385519e1b341e20c9a83dbd75d981b2eac02f30ddc0ad"
   },
@@ -45,5 +45,8 @@
     "subcategory": "design.accessibility",
     "task_intent": "review UI accessibility and responsive readability"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

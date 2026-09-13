@@ -2,7 +2,7 @@
   "allowed_tools": [],
   "findings": [],
   "hashes": {
-    "manifest_sha256": "50fa0daa0aec859f8fba9fe0b640afaa84ebdba997265459c95f6c5e05ba8fc0",
+    "manifest_sha256": "29e9d5a19213d7e7b8d6c6e4dcb03a637c89c9c5f17a31a8537eaf65a1484b7a",
     "sanitized_sha256": "7c5c8ee35ae4f744eb69bc37860d2686f2d13f71a0cae2e1f21234cf6f8e83d5",
     "source_sha256": "7bb87a1b060b564367fe31aba63f2ffe55f61fd7647a9f7d6c9a7d0d00a57f0e"
   },
@@ -43,5 +43,8 @@
     "subcategory": "ai.memory",
     "task_intent": "review assistant memory and personalization workflows under explicit safety boundaries"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

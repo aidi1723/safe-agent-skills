@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T16:17:52Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "0af14a24a6e70a42760132cf60c6452a4b2fb90f637cb7e1c063039fc1a13160",
+    "manifest_sha256": "335f96b1f68535605bf014b55a0801f611601fd2035da36631eb6f862a4cd049",
     "sanitized_sha256": "e9a9b19a85c4810e60e4eff1228703c55ae532c429474094ad0afd5e5f082559",
     "source_sha256": "d318865c0be4e525e7529d20777a3c2d3388c6e2c11b7119bad26b0dd0008ac9"
   },
@@ -45,5 +45,8 @@
     "subcategory": "code.claude_skills_engineering_roles",
     "task_intent": "convert claude-skills engineering-role references into bounded code review, testing, architecture, and implementation guidance"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

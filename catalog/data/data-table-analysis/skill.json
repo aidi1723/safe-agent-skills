@@ -5,7 +5,7 @@
   "findings": [],
   "hashes": {
     "auxiliary_sha256": "c2aef217bbcad474461cbce2a52b78f72508757d7b3256eaab1331d952d3726f",
-    "manifest_sha256": "2aa95c0029e6eaed74d000f6254c4d030376ad69a67c5748e890f803a10398d0",
+    "manifest_sha256": "05b8d46de3197c341117930131e4c3d7299fc715f602b543626824cf4be85a09",
     "sanitized_sha256": "0974ec28ce2153192dd511a589dda9ad50599d405a57cc598476ebe4af77474d",
     "source_sha256": "718da8eb550b947211605894d823c991e48c834609aae89a512a82c93ea09861"
   },
@@ -46,5 +46,8 @@
     "subcategory": "data.analysis",
     "task_intent": "analyze tabular data with reproducible checks"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

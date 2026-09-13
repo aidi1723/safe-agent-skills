@@ -24,6 +24,7 @@ from .need_gate import (
 )
 from .registry import load_registry_index, utc_now, verify_registry
 from .scenario_matcher import match_scenario_bundle
+from .scenario_matcher_v2 import match_scenario_bundle_v2
 from .semantic_provider import SemanticProvider, rerank_candidates
 from .skill_candidates import HIGH_FREQUENCY_ENTRY_NAMES
 from .skill_candidates import load_cohort_profiles
@@ -68,6 +69,7 @@ def build_task_pack_v3(
     max_candidates: int = 3,
     semantic_provider: SemanticProvider | None = None,
     semantic_mode: str = "shadow",
+    use_bundle_v2: bool = False,
 ) -> dict[str, Any]:
     if not task.strip():
         raise ValueError("task must not be empty")
@@ -108,34 +110,53 @@ def build_task_pack_v3(
         explicit_order=explicit_order,
     )
 
-    # Phase 3.1 (2026-09-13): Intersection filtering strategy
-    # For specialized tasks, filter to skills in both Cohort Top-7 AND Scenario Bundle
+    # Phase 4.1 (2026-09-13): Bundle v2 with conditional skill selection
+    # For specialized tasks, use Bundle v2 (core + conditional) or fallback to Phase 3.1
     selected_scenario = None
     if need["specialized_need"]:
-        matched = match_scenario_bundle(routing_current, bundles_path, threshold=0.12)
-        if matched:
-            selected_scenario = matched["id"]
-            # Get intersection of cohort top-7 candidates and scenario skills
-            cohort_top7_skills = {c["skill"] for c in candidates[:7]}
-            scenario_skills = set(matched["skills"])
-            intersection_skills = list(cohort_top7_skills & scenario_skills)
+        if use_bundle_v2:
+            # Bundle v2: core + conditional skills based on task keywords
+            matched = match_scenario_bundle_v2(routing_current, bundles_path, threshold=0.12)
+            if matched:
+                selected_scenario = matched["id"]
+                composed = dict(composed)
+                composed["selected_skill_names"] = matched["skills"]
+                composed["selection_method"] = "scenario_bundle_v2_conditional"
+                composed["scenario_match"] = {
+                    "id": matched["id"],
+                    "name": matched["name"],
+                    "score": matched["match_score"],
+                    "confidence": matched["match_confidence"],
+                    "core_count": matched["skill_selection"]["core_count"],
+                    "conditional_matched": matched["skill_selection"]["conditional_matched"],
+                    "conditional_skipped": matched["skill_selection"]["conditional_skipped"],
+                }
+        else:
+            # Phase 3.1: Intersection filtering (fallback)
+            matched = match_scenario_bundle(routing_current, bundles_path, threshold=0.12)
+            if matched:
+                selected_scenario = matched["id"]
+                # Get intersection of cohort top-7 candidates and scenario skills
+                cohort_top7_skills = {c["skill"] for c in candidates[:7]}
+                scenario_skills = set(matched["skills"])
+                intersection_skills = list(cohort_top7_skills & scenario_skills)
 
-            composed = dict(composed)
-            if intersection_skills:
-                # Use intersection skills
-                composed["selected_skill_names"] = intersection_skills
-                composed["selection_method"] = "scenario_cohort_intersection"
-            else:
-                # Fallback: no intersection, keep cohort selection
-                composed["selection_method"] = "cohort_only_no_intersection"
+                composed = dict(composed)
+                if intersection_skills:
+                    # Use intersection skills
+                    composed["selected_skill_names"] = intersection_skills
+                    composed["selection_method"] = "scenario_cohort_intersection"
+                else:
+                    # Fallback: no intersection, keep cohort selection
+                    composed["selection_method"] = "cohort_only_no_intersection"
 
-            composed["scenario_match"] = {
-                "id": matched["id"],
-                "name": matched["name"],
-                "score": matched["match_score"],
-                "confidence": matched["match_confidence"],
-                "cohort_count": len(cohort_top7_skills),
-                "scenario_count": len(scenario_skills),
+                composed["scenario_match"] = {
+                    "id": matched["id"],
+                    "name": matched["name"],
+                    "score": matched["match_score"],
+                    "confidence": matched["match_confidence"],
+                    "cohort_count": len(cohort_top7_skills),
+                    "scenario_count": len(scenario_skills),
                 "intersection_count": len(intersection_skills),
             }
 

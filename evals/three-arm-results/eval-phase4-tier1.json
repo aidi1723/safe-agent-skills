@@ -1,0 +1,1603 @@
+{
+  "evaluation_name": "three_arm_router_v3_acceptance",
+  "evaluated_at": "2026-09-13T13:18:51.012250",
+  "task_file": "evals/three-arm-tasks/task-list.json",
+  "arms_evaluated": [
+    "v3",
+    "oracle"
+  ],
+  "task_count": 50,
+  "results": [
+    {
+      "task_id": "task-001",
+      "description": "构建一个产品官网，包含响应式设计、SEO优化和性能检查",
+      "category": "website-build",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "website-build-launch",
+          "selected_skills": [
+            "design-responsive-viewport-check",
+            "content-seo-brief",
+            "execution-browser-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-002",
+      "description": "审查这个 API 的安全性，检查认证、授权和输入验证",
+      "category": "code-review",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "code-review-hardening",
+          "selected_skills": [
+            "code-review-risk",
+            "security-supply-chain-review",
+            "security-auth-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-003",
+      "description": "分析销售数据，生成月度报告，包含趋势图和洞察",
+      "category": "data-analysis",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "data-analysis-report",
+          "selected_skills": [
+            "data-table-analysis",
+            "data-table-calculation-verify",
+            "content-claims-compliance-filter"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-004",
+      "description": "设计一个RAG文档问答系统，支持向量检索和来源引用",
+      "category": "rag-agent",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "rag-agent-knowledge-app",
+          "selected_skills": [
+            "ai-llamaindex-rag-knowledge-workflow",
+            "research-source-check",
+            "research-citation-evidence-map"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-005",
+      "description": "探索这个代码库的架构，找出主要模块和依赖关系",
+      "category": "codebase-explore",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "codebase-explore-map",
+            "code-dependency-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-006",
+      "description": "审计供应链安全，检查依赖包的漏洞和许可证合规性",
+      "category": "security",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "security-supply-chain-review",
+            "compliance-license-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-007",
+      "description": "将这个PDF报告转换为结构化数据，提取表格和关键信息",
+      "category": "office",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "office-pdf-extract",
+            "data-table-analysis"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-008",
+      "description": "审查这个UI设计，检查无障碍性、响应式和视觉一致性",
+      "category": "design",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "design-ui-review",
+            "design-accessibility-check",
+            "design-responsive-viewport-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-009",
+      "description": "为这个模块编写测试用例，覆盖核心功能和边界情况",
+      "category": "testing",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "code-test-regression",
+            "code-review-risk"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-010",
+      "description": "准备开源发布，包括文档、许可证检查和发布清单",
+      "category": "open-source",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "open-source-release",
+          "selected_skills": [
+            "compliance-license-check",
+            "content-freshness-expiry-review",
+            "execution-publish-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-011",
+      "description": "构建一个落地页，包含动效、表单验证和转化追踪",
+      "category": "website-build",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "website-build-launch",
+          "selected_skills": [
+            "design-premium-landing-page",
+            "design-motion-interaction-polish",
+            "execution-browser-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-012",
+      "description": "优化电商产品页面，提升搜索排名和转化率",
+      "category": "commerce",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "commerce-listing-growth",
+          "selected_skills": [
+            "commerce-product-content-review",
+            "content-seo-brief",
+            "design-ui-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-013",
+      "description": "审查这篇公开文章，检查合规性、事实准确性和时效性",
+      "category": "content",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "content-claims-compliance-filter",
+            "content-fact-contradiction-review",
+            "content-freshness-expiry-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-014",
+      "description": "设计一个AI Agent的护栏系统，防止有害输出和权限滥用",
+      "category": "ai-agent",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "security-agent-guardrails",
+          "selected_skills": [
+            "ai-tool-schema-protocol-check",
+            "security-permission-boundary-check",
+            "compliance-public-claim-risk-register"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-015",
+      "description": "审查数据管道，检查数据质量、隐私合规和错误处理",
+      "category": "data-pipeline",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "data-quality-check",
+            "compliance-privacy-boundary",
+            "ai-rule-failure-log-synthesis"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-016",
+      "description": "将技术文档转换为知识库，支持检索和问答",
+      "category": "document",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "document-to-knowledge-base",
+          "selected_skills": [
+            "ai-llamaindex-rag-knowledge-workflow",
+            "research-source-lineage-trace",
+            "content-freshness-expiry-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-017",
+      "description": "重构这个模块，提升可读性和可维护性，保持功能不变",
+      "category": "code-refactor",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "codebase-change-lifecycle",
+          "selected_skills": [
+            "code-refactor",
+            "code-test-regression",
+            "code-review-risk"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-018",
+      "description": "审查skill路由器的质量，验证选择准确性和执行图正确性",
+      "category": "skill-router",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "skill-router-quality-review",
+          "selected_skills": [
+            "ai-output-schema-eval",
+            "ai-tool-schema-protocol-check",
+            "code-test-regression"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-019",
+      "description": "编写浏览器自动化脚本，测试网页功能和性能",
+      "category": "browser-automation",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "execution-playwright-browser-automation",
+            "execution-browser-check",
+            "code-test-regression"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-020",
+      "description": "构建官网，同时审计skill路由器，验证通过后发布更新",
+      "category": "multi-intent",
+      "complexity": "very-high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "website-build-launch",
+          "selected_skills": [
+            "design-ui-review",
+            "skill-router-quality-review",
+            "open-source-release"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-021",
+      "description": "设计RESTful API，包含认证、速率限制和错误处理",
+      "category": "api-design",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "code-api-design",
+            "security-auth-review",
+            "security-api-boundary-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-022",
+      "description": "优化数据库查询性能，添加索引和查询缓存",
+      "category": "database",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "data-query-optimization",
+            "code-review-risk"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-023",
+      "description": "为应用添加国际化支持，包括文本翻译和格式本地化",
+      "category": "i18n",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "content-i18n-check",
+            "design-ui-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-024",
+      "description": "设计业务指标体系，包含核心KPI和监控仪表板",
+      "category": "metrics",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "business-metric-design",
+            "data-table-analysis",
+            "design-ui-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-025",
+      "description": "审查服务条款和隐私政策，确保合规性",
+      "category": "legal",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "compliance-terms-review",
+            "compliance-privacy-boundary",
+            "content-claims-compliance-filter"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-026",
+      "description": "设置CI/CD管道，包含测试、构建和部署步骤",
+      "category": "ci-cd",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "execution-ci-workflow",
+            "code-test-regression",
+            "execution-publish-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-027",
+      "description": "改进错误处理，添加重试机制和降级策略",
+      "category": "error-handling",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "ai-rule-failure-log-synthesis",
+            "code-review-risk",
+            "execution-recovery-plan"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-028",
+      "description": "设计响应式邮件模板，支持多客户端和深色模式",
+      "category": "email-template",
+      "complexity": "low",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "design-responsive-viewport-check",
+            "content-template-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-029",
+      "description": "实现向量搜索功能，使用Qdrant或Pinecone",
+      "category": "vector-search",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "data-qdrant-vector-retrieval",
+            "ai-llamaindex-rag-knowledge-workflow"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-030",
+      "description": "设计配置管理系统，支持多环境和动态更新",
+      "category": "config-management",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "engineering-config-boundary",
+            "security-permission-boundary-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-031",
+      "description": "处理Excel表格，验证数据准确性并生成汇总报告",
+      "category": "table-processing",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "office-spreadsheet-cleanup",
+            "data-table-calculation-verify",
+            "office-table-source-reconciliation"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-032",
+      "description": "审查系统架构，识别单点故障和性能瓶颈",
+      "category": "architecture-review",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "code-architecture-review",
+            "engineering-system-boundary"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-033",
+      "description": "优化LLM调用的token使用，降低成本",
+      "category": "token-optimization",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "ai-token-rate-budget-guard",
+            "ai-context-compression-budget-plan"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-034",
+      "description": "开发MCP服务器，暴露工具给AI Agent",
+      "category": "mcp-server",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "execution-mcp-tool-connector-review",
+            "ai-tool-schema-protocol-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-035",
+      "description": "使用LangChain构建AI Agent，支持工具调用和记忆",
+      "category": "langchain-agent",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "ai-langchain-agent-orchestration",
+            "ai-tool-schema-protocol-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-036",
+      "description": "分析业务需求，生成功能规格文档",
+      "category": "requirement-analysis",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "business-requirement-review",
+            "business-metric-design"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-037",
+      "description": "使用Tailwind和Radix构建组件库",
+      "category": "tailwind-component",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "design-tailwind-radix-system",
+            "design-system-consistency",
+            "design-accessibility-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-038",
+      "description": "优化网站SEO，提升搜索引擎排名",
+      "category": "seo-optimization",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "content-seo-brief",
+            "content-freshness-expiry-review",
+            "execution-browser-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-039",
+      "description": "使用Haystack构建文档处理管道",
+      "category": "haystack-pipeline",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "data-haystack-rag-pipeline",
+            "data-rag-namespace-boundary-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-040",
+      "description": "部署LiteLLM网关，管理多模型调用和成本",
+      "category": "litellm-gateway",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "ai-litellm-gateway-cost-control",
+            "ai-model-route-fallback-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-041",
+      "description": "设计权限系统，支持RBAC和细粒度控制",
+      "category": "permission-design",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "security-permission-boundary-check",
+            "security-auth-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-042",
+      "description": "建立视觉回归测试，检测UI变化",
+      "category": "visual-regression",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "design-visual-quality-review",
+            "execution-browser-check",
+            "code-test-regression"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-043",
+      "description": "进行全面的无障碍审计，符合WCAG 2.1 AA标准",
+      "category": "accessibility",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "design-accessibility-check",
+            "design-ui-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-044",
+      "description": "整理Claude Skills积压，分类和优先级排序",
+      "category": "skill-backlog",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "business-claude-skills-backlog-orchestration",
+            "ai-routing-accuracy-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-045",
+      "description": "设计垂直行业的需求收集流程",
+      "category": "intake-orchestration",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "vertical-industry-intake-orchestration",
+            "business-requirement-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-046",
+      "description": "实现上下文压缩，保留关键信息",
+      "category": "context-compression",
+      "complexity": "medium",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "headroom-context-compression",
+            "ai-context-compression-budget-plan"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-047",
+      "description": "设计命名空间隔离策略，防止数据泄露",
+      "category": "namespace-isolation",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "data-rag-namespace-boundary-check",
+            "security-permission-boundary-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-048",
+      "description": "为界面添加动效，提升交互体验",
+      "category": "motion-design",
+      "complexity": "low",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "design-motion-interaction-polish",
+            "design-ui-review"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-049",
+      "description": "设计故障恢复策略，包含重试和降级",
+      "category": "recovery-strategy",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": null,
+          "selected_skills": [
+            "execution-recovery-plan",
+            "ai-rule-failure-log-synthesis"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": true,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    },
+    {
+      "task_id": "task-050",
+      "description": "编写集成测试，覆盖端到端工作流",
+      "category": "integration-test",
+      "complexity": "high",
+      "arms": {
+        "v3": {
+          "selected_scenario": null,
+          "selected_skills": [],
+          "execution_graph": {},
+          "route_status": "error",
+          "error": ""
+        },
+        "oracle": {
+          "selected_scenario": "codebase-change-lifecycle",
+          "selected_skills": [
+            "code-test-regression",
+            "code-review-risk",
+            "execution-browser-check"
+          ],
+          "source": "oracle_predefined"
+        }
+      },
+      "metrics": {
+        "scenario_match": false,
+        "skill_precision": 0.0,
+        "skill_recall": 0.0,
+        "skill_f1": 0.0,
+        "route_complete": false,
+        "route_blocked": false
+      }
+    }
+  ],
+  "aggregate_metrics": {
+    "total_tasks": 50,
+    "scenario_match_rate": 0.74,
+    "avg_skill_precision": 0.0,
+    "avg_skill_recall": 0.0,
+    "avg_skill_f1": 0.0,
+    "route_completion_rate": 0.0,
+    "route_blocked_rate": 0.0,
+    "passing_criteria": {
+      "scenario_match_rate >= 0.90": false,
+      "avg_skill_f1 >= 0.85": false,
+      "route_completion_rate >= 0.95": false,
+      "route_blocked_rate < 0.05": true
+    }
+  }
+}

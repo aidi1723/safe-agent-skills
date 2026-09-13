@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T12:45:27Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "8b21b9d5dcd46e8843d69fc469fe542025edd94635d09b4cc80f79180ad592cf",
+    "manifest_sha256": "da84f62d13755cb06ace1a4d38c5c08a0ea87b9be5e7f7c6e6cf6db1fc24f279",
     "sanitized_sha256": "83cb78f546a33bc31c7fa77e8ec781d54f43525808c397bfb35133cc842c34ee",
     "source_sha256": "5d32112c259585c5b1fba7e37295ed3daa312c351a86a76adcee24f4e578e682"
   },
@@ -45,5 +45,8 @@
     "subcategory": "vertical.learning",
     "task_intent": "plan learning refresh and knowledge retention workflows"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

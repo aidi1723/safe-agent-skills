@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:30:00Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "441302813094c6cfa2d577e4441e58a5e9bcf4f7d8f92478adbd9f0e19b714c9",
+    "manifest_sha256": "739adabd9b2d7466c8f84defcc0e40b643245df5973d0f7587f110131362dd1c",
     "sanitized_sha256": "945df33cfe5eacbe1f919d943c673ec1de115d43593b1fb83e88c63c40a4e520",
     "source_sha256": "7f0e8bd154d05a2663693babe111ecea55958333902a2ca909fe0821ffb18d6a"
   },
@@ -45,5 +45,8 @@
     "subcategory": "commerce.forecast",
     "task_intent": "review commercial forecasts, pipeline assumptions, and revenue scenario evidence"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T12:30:00Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "7fa7da124c1835a9b8e78ba4424f660cf6bfd66bb08d607317d8b7c16a20b48b",
+    "manifest_sha256": "26bf88187cea82bb3d3c7bcadfc576f62a61bdf5eb819ff5c08454f5ea7e7d9b",
     "sanitized_sha256": "e75ff37e6f9847bce37d29d737d38b6a9c6a7d1f7ee5397b511fb2ff9ef283d5",
     "source_sha256": "c8d8af6e8846b5a47543f88fa36a127e7322457dfc11931648c209bd73fb15fc"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.revenue_operations",
     "task_intent": "review revenue operations, pipeline hygiene, funnel metrics, and GTM efficiency"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

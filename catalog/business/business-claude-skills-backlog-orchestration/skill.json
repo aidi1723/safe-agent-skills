@@ -4,7 +4,7 @@
   "approved_at": "2026-07-02T16:17:52Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "1b55d604a2a8378ec9ee0674c0b6367dd2d9e8faf5a584aef7f05322b38e8fe2",
+    "manifest_sha256": "baace36d68534d37e7b15487ce8ce8fba27605def1ec4f4a661685e34fdd26b1",
     "sanitized_sha256": "be41a459ef25dd542ebe1527c271de1f08f9176de5cadc066797b1facdc6d700",
     "source_sha256": "9868d584deae3e6757e014eda620b1e5406d37afa5ee753693924418e85aa169"
   },
@@ -45,5 +45,8 @@
     "subcategory": "business.claude_skills_backlog",
     "task_intent": "orchestrate claude-skills business, product, SaaS, UX, and executive backlog references through trusted local coverage"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

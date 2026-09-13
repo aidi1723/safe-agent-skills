@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T07:47:36Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "1b73001ab6e63f9d46a2025f262bb96adfdf153d223b83cabf1be2633dc2a48b",
+    "manifest_sha256": "aee9ede10e2157dcd40803ba6f88f580bc833c9dc3f6bca8b965971d10803dc4",
     "sanitized_sha256": "95df65b5566334a3955894736aea1ce9a6299d93cce2a2ddcda8b003599f4b58",
     "source_sha256": "120ae43bb74e01e6384fcb84afc225ca3ce5b0769f0ec3f51631eab9d4e3c0a2"
   },
@@ -45,5 +45,8 @@
     "subcategory": "commerce.keyword",
     "task_intent": "plan product listing keywords and marketplace search structure"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

@@ -9,7 +9,7 @@
     }
   ],
   "hashes": {
-    "manifest_sha256": "f8d93c8be4f5742d6fec9e13e09d79878d68ada114c2a133444af159035ec5e0",
+    "manifest_sha256": "d810d4dee11312ed3cc84e0e1ebc9d7097739dff055dec7390f355b54f46e166",
     "sanitized_sha256": "ff65d53511db0be100b80bb84f8610d35d8fc4f8bc68ab7e2b08b4bd7bdbd9ca",
     "source_sha256": "3e0cbcd05833e8bb9c9f3871f3758eb93626f551f23e25646ebee74e453ab67e"
   },
@@ -50,5 +50,8 @@
     "subcategory": "execution.connector",
     "task_intent": "review MCP and tool connector permissions and safety boundaries"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

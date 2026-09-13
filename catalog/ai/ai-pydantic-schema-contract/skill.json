@@ -4,7 +4,7 @@
   "approved_at": "2026-06-04T09:25:50Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "2a0e2659eeb1d25a4d463ede899c6f053ffeb23801b9784dd5009a5d8afd98d3",
+    "manifest_sha256": "98fc69f9de6c09580ce92267707da35262704ec5525e5e9e4beeb7ace10ba6ed",
     "sanitized_sha256": "ab2b332df8eaff6f10fe79cf4a65cc7cb6012f1b0b1163145f00b9a0251b273d",
     "source_sha256": "853d20f46044b4a934c482a9b3af1080eb6588af99c5edc0809e98bc6cee8057"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.schema",
     "task_intent": "define typed schema contracts for AI outputs"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }

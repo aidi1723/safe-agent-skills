@@ -4,7 +4,7 @@
   "approved_at": "2026-06-05T13:08:25Z",
   "findings": [],
   "hashes": {
-    "manifest_sha256": "e84400f2df3ce01251ee1a7677829a75152a6526ee964ce435a712fdc9736474",
+    "manifest_sha256": "e2e7f92b42763af12ffde17ab38ddc32543c0a2c10349d5a2e6014e66b72f664",
     "sanitized_sha256": "11ffddd2771e63c1b92173a6dd89cc150c719e03f9dad06dd3f7fe56df38634d",
     "source_sha256": "95b76045d4d2a45b4f7c68f280eea265431424cc566eda5ef6f6643e8b3fe72c"
   },
@@ -45,5 +45,8 @@
     "subcategory": "ai.routing",
     "task_intent": "review model routing and fallback boundaries"
   },
-  "version": "0.1.0"
+  "version": "0.1.0",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a"
+  }
 }
