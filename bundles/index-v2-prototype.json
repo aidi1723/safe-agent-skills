@@ -1,0 +1,133 @@
+{
+  "schema_version": "2.0-prototype",
+  "description": "Scenario Bundle v2 prototype with three-tier structure (core/conditional/optional)",
+  "last_updated": "2026-09-13",
+  "bundles": [
+    {
+      "id": "website-build-launch",
+      "name": "网站构建与发布",
+      "description": "构建和发布网站，包含设计、内容和功能验证",
+      "category": "design",
+      "task_signals": ["网站", "官网", "落地页", "landing", "website", "页面", "site"],
+      "core_skills": [],
+      "conditional_skills": [
+        {
+          "skill": "design-responsive-viewport-check",
+          "triggers": ["响应式", "自适应", "移动端", "responsive", "mobile", "适配"],
+          "priority": "high",
+          "description": "响应式设计检查"
+        },
+        {
+          "skill": "content-seo-review",
+          "triggers": ["SEO", "搜索", "优化", "排名", "search", "优化"],
+          "priority": "high",
+          "description": "SEO优化审查"
+        },
+        {
+          "skill": "execution-browser-check",
+          "triggers": ["性能", "检查", "测试", "performance", "浏览器", "browser"],
+          "priority": "medium",
+          "description": "浏览器功能和性能检查"
+        },
+        {
+          "skill": "design-premium-landing-page",
+          "triggers": ["落地页", "landing", "转化", "conversion", "营销"],
+          "priority": "medium",
+          "description": "高质量落地页设计"
+        },
+        {
+          "skill": "design-motion-interaction-polish",
+          "triggers": ["动效", "交互", "animation", "动画", "效果"],
+          "priority": "low",
+          "description": "动效和交互优化"
+        }
+      ],
+      "optional_skills": []
+    },
+    {
+      "id": "rag-agent-knowledge-app",
+      "name": "RAG知识问答应用",
+      "description": "基于检索增强生成的知识问答系统",
+      "category": "ai",
+      "task_signals": ["RAG", "知识库", "问答", "检索", "retrieval", "knowledge", "QA"],
+      "core_skills": [
+        "ai-llamaindex-rag-knowledge-workflow",
+        "research-source-check",
+        "research-citation-evidence-map"
+      ],
+      "conditional_skills": [
+        {
+          "skill": "data-qdrant-vector-retrieval",
+          "triggers": ["向量", "vector", "embedding", "Qdrant", "Pinecone", "向量数据库"],
+          "priority": "high",
+          "description": "向量检索实现"
+        }
+      ],
+      "optional_skills": []
+    },
+    {
+      "id": "code-review-hardening",
+      "name": "代码审查加固",
+      "description": "代码安全性和质量审查",
+      "category": "security",
+      "task_signals": ["审查", "安全", "review", "security", "漏洞", "风险"],
+      "core_skills": [
+        "code-review-risk",
+        "security-supply-chain-review",
+        "security-auth-review"
+      ],
+      "conditional_skills": [
+        {
+          "skill": "code-test-regression",
+          "triggers": ["测试", "test", "覆盖率", "coverage", "回归"],
+          "priority": "medium",
+          "description": "测试回归检查"
+        }
+      ],
+      "optional_skills": []
+    },
+    {
+      "id": "commerce-listing-growth",
+      "name": "电商产品增长",
+      "description": "电商产品页面优化，提升搜索排名和转化",
+      "category": "commerce",
+      "task_signals": ["电商", "产品", "商品", "listing", "commerce", "转化", "优化"],
+      "core_skills": [
+        "commerce-product-content-review",
+        "content-seo-review",
+        "design-ui-review"
+      ],
+      "conditional_skills": [],
+      "optional_skills": []
+    },
+    {
+      "id": "data-analysis-report",
+      "name": "数据分析报告",
+      "description": "数据分析和报告生成",
+      "category": "data",
+      "task_signals": ["数据", "分析", "报告", "data", "analysis", "report", "图表"],
+      "core_skills": [
+        "data-table-analysis",
+        "data-table-calculation-verify",
+        "content-claims-compliance-filter"
+      ],
+      "conditional_skills": [
+        {
+          "skill": "data-visualization-plan",
+          "triggers": ["可视化", "图表", "visualization", "chart", "dashboard"],
+          "priority": "medium",
+          "description": "数据可视化设计"
+        }
+      ],
+      "optional_skills": []
+    }
+  ],
+  "notes": [
+    "This is a prototype with 5 bundles for Phase 4.1 validation",
+    "Core skills: always selected when scenario matches",
+    "Conditional skills: selected only if task description contains trigger keywords",
+    "Priority: high > medium > low for disambiguation when multiple conditionals match",
+    "Target: reduce average bundle size from 8.2 to 4.0 skills (-51%)",
+    "Target: improve Skill F1 from 8.2% to >30%"
+  ]
+}

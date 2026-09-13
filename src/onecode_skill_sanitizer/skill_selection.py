@@ -6,7 +6,9 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
-SELECTION_THRESHOLD = 0.35
+# Lowered threshold for better recall (2026-09-12 quick fix)
+# Original: 0.35, New: 0.10 to reduce false negatives
+SELECTION_THRESHOLD = 0.10
 CLARIFY_MARGIN = 0.08
 
 

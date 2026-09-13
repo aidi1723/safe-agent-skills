@@ -407,3 +407,6 @@ is the safe routine verification command and skips `final_test` by default.
 authorized one-shot release evaluation. Do not set it for the current rollout;
 its permitted run is exhausted and failed. Any other flag value fails with
 exit status 2.
+
+## Acknowledgments
+- [LINUX DO](https://linux.do/)

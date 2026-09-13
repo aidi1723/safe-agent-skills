@@ -2,9 +2,13 @@
   "allowed_tools": [],
   "approval_note": "Approved by local operator.",
   "approved_at": "2026-07-02T12:39:08Z",
+  "contract": {
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
+    "stage_hint": "execution"
+  },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "c307114de2d1a40279e16e167e0051086c3322ea143aa4ab92833053330c7168",
+    "manifest_sha256": "34a2cc072610a98529f12189dd63afb3c1c6e81fa34daafc91fc509e544a62f0",
     "sanitized_sha256": "b7ddf22d14befb38fa9199bfe8545612b92eeba00478198271bb8f404f4e65c7",
     "source_sha256": "344b286fe20d61615cd75a6b8a033d05b1245c1db6b07a41ee3af5719d37ed09"
   },

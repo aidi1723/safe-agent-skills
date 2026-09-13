@@ -15,6 +15,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "workflow_review_scope"
     ],
@@ -33,11 +34,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "stage_hint": "planning"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "4e5b3f588b7d2e480bab5448e4e964a8ce57e93b4d573d6cd72cb79a7a2ee434",
+    "manifest_sha256": "244219e0e576aa1bf8ba68eb175f16244bb8341856df4aea3fce3fb45f3685e4",
     "sanitized_sha256": "c6d80969d90e023528dc6684e04bd64c029a95bb252b6957dcabfab05e78855f",
     "source_sha256": "f3da5086b6bffa6fb5a36657bc3780e748435415c4fd72ffd60bfac70093ab77"
   },

@@ -1,0 +1,151 @@
+{
+  "schema_version": 2,
+  "description": "Phase 4 Tier 1: High-impact scenario bundles with core/conditional structure",
+  "bundles": [
+    {
+      "id": "website-responsive-seo",
+      "name": "website-responsive-seo",
+      "scenario": "Build responsive product website with SEO optimization and performance checks",
+      "task_signals": [
+        "产品官网",
+        "product website",
+        "响应式",
+        "responsive",
+        "SEO优化",
+        "SEO optimization",
+        "性能检查",
+        "performance check"
+      ],
+      "core_skills": [
+        "design-responsive-viewport-check",
+        "content-seo-brief",
+        "execution-browser-check"
+      ],
+      "conditional_skills": [],
+      "selection_logic": {
+        "always_select": [
+          "design-responsive-viewport-check",
+          "content-seo-brief",
+          "execution-browser-check"
+        ],
+        "conditional": []
+      }
+    },
+    {
+      "id": "landing-page-conversion",
+      "name": "landing-page-conversion",
+      "scenario": "Build high-conversion landing page with animations and form validation",
+      "task_signals": [
+        "落地页",
+        "landing page",
+        "动效",
+        "animation",
+        "表单验证",
+        "form validation",
+        "转化追踪",
+        "conversion tracking"
+      ],
+      "core_skills": [
+        "design-premium-landing-page",
+        "design-motion-interaction-polish",
+        "execution-browser-check"
+      ],
+      "conditional_skills": [],
+      "selection_logic": {
+        "always_select": [
+          "design-premium-landing-page",
+          "design-motion-interaction-polish",
+          "execution-browser-check"
+        ],
+        "conditional": []
+      }
+    },
+    {
+      "id": "skill-router-quality-review",
+      "name": "skill-router-quality-review",
+      "scenario": "Audit skill router selection accuracy and execution graph correctness",
+      "task_signals": [
+        "skill路由器",
+        "skill router",
+        "路由准确性",
+        "routing accuracy",
+        "执行图",
+        "execution graph",
+        "DAG检查",
+        "DAG check"
+      ],
+      "core_skills": [
+        "ai-routing-accuracy-review",
+        "ai-dag-execution-graph-check",
+        "code-test-regression"
+      ],
+      "conditional_skills": [],
+      "selection_logic": {
+        "always_select": [
+          "ai-routing-accuracy-review",
+          "ai-dag-execution-graph-check",
+          "code-test-regression"
+        ],
+        "conditional": []
+      }
+    },
+    {
+      "id": "codebase-change-lifecycle",
+      "name": "codebase-change-lifecycle",
+      "scenario": "Code changes including refactoring, testing, and browser verification",
+      "task_signals": [
+        "代码变更",
+        "code change",
+        "重构",
+        "refactor",
+        "测试",
+        "test"
+      ],
+      "core_skills": [
+        "code-review-risk",
+        "code-test-regression"
+      ],
+      "conditional_skills": [
+        {
+          "skill": "code-refactor",
+          "trigger_keywords": [
+            "重构",
+            "refactor",
+            "可读性",
+            "可维护性",
+            "readability",
+            "maintainability"
+          ]
+        },
+        {
+          "skill": "execution-browser-check",
+          "trigger_keywords": [
+            "浏览器",
+            "browser",
+            "集成测试",
+            "integration test",
+            "端到端",
+            "end-to-end",
+            "e2e"
+          ]
+        }
+      ],
+      "selection_logic": {
+        "always_select": [
+          "code-review-risk",
+          "code-test-regression"
+        ],
+        "conditional": [
+          {
+            "skill": "code-refactor",
+            "trigger": "重构|refactor|可读性|可维护性|readability|maintainability"
+          },
+          {
+            "skill": "execution-browser-check",
+            "trigger": "浏览器|browser|集成测试|integration|端到端|e2e"
+          }
+        ]
+      }
+    }
+  ]
+}

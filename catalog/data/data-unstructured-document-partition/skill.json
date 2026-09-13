@@ -13,6 +13,7 @@
       "tokens": 2
     },
     "idempotent": false,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [],
     "produces_artifacts": [
       "partitioned_document_corpus"
@@ -30,7 +31,7 @@
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "38ed35422d67a904c22569c5724ed6d99efd5b69bede36a0daa5e7e03c4b1088",
+    "manifest_sha256": "f511862bfe745aa3729e1a319cd04611313c673584f5b03e123a9435460ffc7b",
     "sanitized_sha256": "65a6b8ceae85b898447a411b4b5573f1e5d02f1906a3fb941fb6e68049a36128",
     "source_sha256": "f2046501dbb0908ad91c9983938b74cfc84592070faa00955d31b866fd875540"
   },

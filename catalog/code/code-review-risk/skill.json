@@ -13,6 +13,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [],
     "produces_artifacts": [
       "code_review_findings"
@@ -32,7 +33,7 @@
   "findings": [],
   "hashes": {
     "auxiliary_sha256": "374e3545a5060eba0e29b1bca4822527ba1cdace7af144f581ec83ee68f111c2",
-    "manifest_sha256": "e3fdacf600b6adf9025e12ead6fbed7a1c159726ca456167b1174143e1d6662b",
+    "manifest_sha256": "7e3c4d2f5e6508578e48c1976afb1680550fa36945839d2a9db6e95dc52cbc68",
     "sanitized_sha256": "44073cb6937c4b62e4a13fc4c0fef521abce745f7acf80337f7c79596d094c6c",
     "source_sha256": "d15096f5f9f453ddef5edbd8eae0bbe729223174cd55691f5178f44eb5547a52"
   },

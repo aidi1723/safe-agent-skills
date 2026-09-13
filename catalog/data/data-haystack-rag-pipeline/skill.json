@@ -13,6 +13,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [],
     "produces_artifacts": [
       "rag_pipeline_map"
@@ -27,11 +28,11 @@
     ],
     "retry_policy": "host_decides",
     "schema_version": 2,
-    "stage_hint": "planning"
+    "stage_hint": "execution"
   },
   "findings": [],
   "hashes": {
-    "manifest_sha256": "dea0a76d00de8353e843df58e79e965485c422391e45274cba3eac769fe9dffa",
+    "manifest_sha256": "878e9b87323abc651ec03ed17c6e6380f13a0b11c93a8c69fc0256f7860c70b2",
     "sanitized_sha256": "d2210eb0467f54b11126dfe3357d3f2a9a1c10fcd87e90a12db0733ee2bb1c2e",
     "source_sha256": "8d6ff64f0e044652419ce8e12bb099cb701017f08260b178075b2ae5eef65629"
   },

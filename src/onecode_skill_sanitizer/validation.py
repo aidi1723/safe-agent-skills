@@ -346,6 +346,7 @@ def validate_contract(payload: dict, path: Path, issues: list[dict]) -> None:
         "estimated_cost",
         "idempotent",
         "retry_policy",
+        "manifest_content_hash",
     }
     for field in contract:
         if field not in allowed_fields:

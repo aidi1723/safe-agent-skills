@@ -228,6 +228,7 @@ def build_parser() -> argparse.ArgumentParser:
     smart_parser.add_argument("--format", choices=["json", "markdown"], default="json")
     smart_parser.add_argument("--schema-version", type=int, choices=[1, 2, 3], default=2)
     smart_parser.add_argument("--routing-examples", default="catalog/routing-examples.json")
+    smart_parser.add_argument("--use-bundle-v2", action="store_true", default=False, help="Use Bundle v2 with core/conditional structure")
     smart_parser.set_defaults(func=smart_command)
 
     verify_parser = subparsers.add_parser("verify")

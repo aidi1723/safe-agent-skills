@@ -10,6 +10,7 @@ from .skill_candidates import HIGH_FREQUENCY_SKILL_NAMES
 CAPABILITY_SKILL = {
     "code.explore": "codebase-explore-map",
     "code.review": "code-review-risk",
+    "code.refactor": "code-refactor",
     "code.test": "code-test-regression",
     "execution.browser_check": "execution-browser-check",
     "research.source": "research-source-check",
@@ -40,8 +41,15 @@ CAPABILITY_PATTERNS = {
         re.I,
     ),
     "code.test": re.compile(r"regression test|regression coverage|test coverage|failing test|test boundary|contract test|old behavior.*fail|red[- ]green|回归测试|补.*测试|失败用例", re.I),
+    "code.refactor": re.compile(
+        r"refactor|重构|"
+        r"improve (?:code )?(?:readability|maintainability)|"
+        r"提升.*(?:可读性|可维护性)|"
+        r"code cleanup|clean up (?:the )?code",
+        re.I,
+    ),
     "execution.browser_check": re.compile(
-        r"real browser|"
+        r"real browser|integration test|端到端|e2e|集成测试|"
         r"(?:run|check|verify|test|exercise) (?:the )?(?:existing )?UI flow"
         r"(?!\s+(?:(?:unit|integration|regression|contract|end-to-end|e2e)\s+)?tests?\b)"
         r"(?![^.;\n]*\bwithout\b[^.;\n]*\bbrowser\b)"
@@ -341,6 +349,15 @@ def decide_skill_need(normalized: NormalizedTask) -> dict[str, Any]:
     else:
         reason_codes = []
     if not has_positive_action:
+        # Quick fix (2026-09-12): Add heuristic rules for common task patterns
+        # to reduce false negatives from overly conservative need gate
+        should_use_skills, heuristic_reason = _heuristic_skill_need(current)
+        if should_use_skills:
+            # Override conservative decision: task likely needs skills
+            return _decision(
+                "single", [], explicit, excluded, [heuristic_reason],
+                False, False, [], [], [],
+            )
         return _decision(
             "none", [], explicit, excluded, reason_codes,
             explanation_only, inventory_only, [], [], [],
@@ -676,3 +693,78 @@ def _decision(
         "policy_block_reasons": policy_block_reasons,
         "reason_codes": reasons,
     }
+
+
+def _heuristic_skill_need(task: str) -> tuple[bool, str]:
+    """
+    Heuristic rules to detect common task patterns that need skills.
+    Quick fix (2026-09-12) to reduce false negatives.
+
+    Returns: (should_use_skills, reason_code)
+    """
+    task_lower = task.lower()
+
+    # Task type keywords that strongly indicate need for skills
+    TASK_TYPE_KEYWORDS = {
+        # Build/Create tasks
+        "构建", "build", "创建", "create", "搭建", "setup", "制作", "make",
+        # Review/Audit tasks
+        "审查", "review", "审计", "audit", "检查", "check", "评审", "inspect",
+        # Analysis/Research tasks
+        "分析", "analysis", "analyze", "研究", "research", "调研", "investigate",
+        # Design tasks
+        "设计", "design", "优化", "optimize", "改进", "improve",
+        # Test/Verify tasks
+        "测试", "test", "验证", "verify", "校验", "validate",
+        # Deploy/Release tasks
+        "部署", "deploy", "发布", "release", "上线", "launch",
+        # Security tasks
+        "安全", "security", "权限", "permission", "认证", "authentication",
+    }
+
+    # Domain-specific keywords
+    DOMAIN_KEYWORDS = {
+        # Web/UI
+        "网站", "website", "页面", "page", "官网", "landing", "响应式", "responsive",
+        "ui", "界面", "dashboard", "仪表盘",
+        # Data
+        "数据", "data", "表格", "table", "报告", "report", "图表", "chart",
+        "趋势", "trend", "洞察", "insight",
+        # Code
+        "代码", "code", "api", "函数", "function", "模块", "module",
+        # RAG/AI
+        "rag", "向量", "vector", "检索", "retrieval", "问答", "qa", "知识库", "knowledge",
+        # Architecture
+        "架构", "architecture", "模块", "module", "依赖", "dependency",
+    }
+
+    # Check for action verbs + domain nouns
+    has_task_keyword = any(kw in task_lower for kw in TASK_TYPE_KEYWORDS)
+    has_domain_keyword = any(kw in task_lower for kw in DOMAIN_KEYWORDS)
+
+    if has_task_keyword and has_domain_keyword:
+        return (True, "heuristic_task_type_domain_match")
+
+    # Check for specific high-confidence patterns
+    HIGH_CONFIDENCE_PATTERNS = [
+        # Website building
+        (r"(?:构建|build|创建|create).*(?:网站|website|官网|landing|页面|page)", "heuristic_website_build"),
+        # Code review
+        (r"(?:审查|review|检查|check).*(?:api|代码|code|安全|security)", "heuristic_code_review"),
+        # Data analysis
+        (r"(?:分析|analysis|analyze).*(?:数据|data|报告|report|趋势|trend)", "heuristic_data_analysis"),
+        # RAG/QA system
+        (r"(?:设计|design|构建|build).*(?:rag|问答|qa|知识库|knowledge)", "heuristic_rag_system"),
+        # Architecture exploration
+        (r"(?:探索|explore|梳理|map).*(?:架构|architecture|代码库|codebase|模块|module)", "heuristic_architecture_explore"),
+    ]
+
+    for pattern, reason in HIGH_CONFIDENCE_PATTERNS:
+        if re.search(pattern, task_lower, re.I):
+            return (True, reason)
+
+    # If task is longer than 20 chars and contains task keywords, likely needs skills
+    if len(task) > 20 and has_task_keyword:
+        return (True, "heuristic_complex_task")
+
+    return (False, "heuristic_no_match")

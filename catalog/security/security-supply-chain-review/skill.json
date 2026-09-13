@@ -14,6 +14,7 @@
       "tokens": 2
     },
     "idempotent": true,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "routing_selection_plan"
     ],
@@ -36,7 +37,7 @@
   "findings": [],
   "hashes": {
     "auxiliary_sha256": "50af9e23975700224e02d142b1a966fd05c9658a4f9386f5c887f18f68f6ea27",
-    "manifest_sha256": "cce58696f4dc1ecdd648196645d1f1c35417426105fb75883b7cffcdd1569dae",
+    "manifest_sha256": "a6a1c92ea1bde9ce5299219bdce9837220ce5161075ecab02f187e885576c7b2",
     "sanitized_sha256": "cdd395935130e165d3849e667a4c6b6ceccb8a3cd05950d2b5e11bcd5ac4be5d",
     "source_sha256": "463a67d8bb182b5b611ff624339b8dbb75ffc82deab5e76d181450508188ed3e"
   },

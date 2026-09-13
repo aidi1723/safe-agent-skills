@@ -1,0 +1,11 @@
+{
+  "hashes": {
+    "manifest_sha256": "68dd39e5afc1ef3d7ecaef4cb7204627268db021994e3cd993d1522fcdc88570",
+    "sanitized_sha256": "1cb85156ff82a33fe1834aaf707f43a889211c04c2ca3a55136a7c38e94fd29a"
+  },
+  "issues_fixed": [],
+  "issues_found": [],
+  "sanitized_at": "2026-09-13T12:58:00Z",
+  "skill_name": "code-refactor",
+  "status": "ok"
+}

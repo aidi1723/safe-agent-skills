@@ -16,6 +16,7 @@
       "tokens": 2
     },
     "idempotent": false,
+    "manifest_content_hash": "44136fa355b3678a1146ad16f7e8649e94fb4fc21fe77e8310c060f61caaff8a",
     "optional_context": [
       "requirements_brief"
     ],
@@ -39,7 +40,7 @@
   "findings": [],
   "hashes": {
     "auxiliary_sha256": "c0dfe6493a25c61eafbd81cd9f12de3b3cde0d415bea87b12994cefda3c62b27",
-    "manifest_sha256": "25eab3cb015d82d2bce8694248173ae421a77dc362e021a1b0a2c94d8709fe81",
+    "manifest_sha256": "31caff2ba8366a23670481f41b2b03c31670a1ffd1f054194ed775f7c6268197",
     "sanitized_sha256": "18b1ce5d2cedef80085f0ba2784180195d784a09f09db70e6bd2d419c0c2771e",
     "source_sha256": "3be3dc164161ed61558d526a919d4699a2dc98ff9a57f82ff0dc49763974dfa7"
   },

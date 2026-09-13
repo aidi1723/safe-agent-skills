@@ -367,12 +367,14 @@ def select_command(args: argparse.Namespace) -> int:
 
 def _run_v3_task_pack_command(args: argparse.Namespace) -> int:
     try:
+        use_bundle_v2 = getattr(args, "use_bundle_v2", False)
         task_pack = build_task_pack_v3(
             resolve_project_asset_path(args.registry),
             args.task,
             resolve_project_asset_path(args.bundles),
             resolve_project_asset_path(args.routing_examples),
             max_candidates=3,
+            use_bundle_v2=use_bundle_v2,
         )
     except (json.JSONDecodeError, OSError, ValueError, SystemExit):
         error = {

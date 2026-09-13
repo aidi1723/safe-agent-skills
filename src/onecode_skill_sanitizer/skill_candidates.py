@@ -19,6 +19,7 @@ HIGH_FREQUENCY_ENTRY_NAMES = (
     "safe-agent-router",
     "codebase-explore-map",
     "code-review-risk",
+    "code-refactor",
     "code-test-regression",
     "execution-browser-check",
     "research-source-check",
@@ -41,6 +42,11 @@ _COHORT_IDENTITY = MappingProxyType({
         "registry_path": "code/code-test-regression",
         "capability_vector": ("code.test",),
         "subcategory": "code.test",
+    }),
+    "code-refactor": MappingProxyType({
+        "registry_path": "code/code-refactor",
+        "capability_vector": ("code.refactor",),
+        "subcategory": "code.refactor",
     }),
     "execution-browser-check": MappingProxyType({
         "registry_path": "execution/execution-browser-check",
